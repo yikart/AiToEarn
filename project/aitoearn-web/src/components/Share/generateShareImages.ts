@@ -270,8 +270,6 @@ async function generateImageFromAllMessages(
 
     // 等待组件渲染完成
     setTimeout(async () => {
-      // 替换媒体URL
-      replaceMediaUrlsWithProxy(container)
       // 等待视频首帧
       await ensureVideoThumbnails(container)
       // 强制设置所有元素的样式（修复透明度问题）
@@ -519,31 +517,6 @@ function waitForImagesToLoad(container: HTMLElement, timeoutMs = 15000): Promise
         onSettled()
       }
     })
-  })
-}
-
-/**
- * 替换媒体 URL 为代理地址
- */
-function replaceMediaUrlsWithProxy(container: HTMLElement): void {
-  const awsUrl = process.env.NEXT_PUBLIC_S3_URL
-  const proxyUrl = process.env.NEXT_PUBLIC_S3_PROXY
-  if (!awsUrl || !proxyUrl)
-    return
-
-  container.querySelectorAll('img').forEach((img) => {
-    if (img.src?.startsWith(awsUrl)) {
-      img.src = proxyUrl + img.src.substring(awsUrl.length)
-    }
-  })
-
-  container.querySelectorAll('video').forEach((video) => {
-    if (video.src?.startsWith(awsUrl)) {
-      video.src = proxyUrl + video.src.substring(awsUrl.length)
-    }
-    if (video.poster?.startsWith(awsUrl)) {
-      video.poster = proxyUrl + video.poster.substring(awsUrl.length)
-    }
   })
 }
 

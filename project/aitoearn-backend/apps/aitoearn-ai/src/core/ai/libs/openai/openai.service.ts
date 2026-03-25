@@ -87,8 +87,6 @@ export class OpenaiService {
   }
 
   private normalizeVideoTimestamp(video: OpenAI.Videos.Video): OpenAI.Videos.Video {
-    // 判断阈值：10000000000 对应 2001-09-09
-    // 大于此值则认为是毫秒值，需转换为秒值
     if (video.created_at > 10000000000) {
       return {
         ...video,

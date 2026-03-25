@@ -39,6 +39,10 @@ export class ChannelAccountService {
     return this.accountRepository.getAccountByUid(uid, type)
   }
 
+  async listRelayAccountsByUserId(userId: string) {
+    return this.accountRepository.listRelayAccountsByUserId(userId)
+  }
+
   async updateAccountStatus(id: string, status: AccountStatus) {
     return this.accountRepository.update(id, { status })
   }

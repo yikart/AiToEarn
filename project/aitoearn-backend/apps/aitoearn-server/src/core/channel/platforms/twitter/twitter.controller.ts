@@ -21,11 +21,13 @@ export class TwitterController {
   })
   @Post('/auth/url')
   async getAuthUrl(@GetToken() token: TokenInfo, @Body() data: GetAuthUrlDto) {
-    return await this.twitterService.generateAuthorizeURL(
-      token.id,
-      data.scopes,
-      data.spaceId,
-    )
+    return await this.twitterService.generateAuthorizeURL({
+      userId: token.id,
+      scopes: data.scopes,
+      spaceId: data.spaceId,
+      callbackUrl: data.callbackUrl,
+      callbackMethod: data.callbackMethod,
+    })
   }
 
   @ApiDoc({
@@ -60,6 +62,14 @@ export class TwitterController {
       code: data.code,
       state: data.state,
     })
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
     return res.render('auth/back', result)
   }
 

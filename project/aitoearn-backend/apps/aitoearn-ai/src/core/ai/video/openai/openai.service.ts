@@ -126,6 +126,7 @@ export class OpenAIVideoService {
     return {
       ...result,
       id: aiLog.id,
+      points: pricing,
     }
   }
 
@@ -157,7 +158,7 @@ export class OpenAIVideoService {
     }
 
     const startedAt = new Date()
-    const result = await this.openaiLibService.remixVideo(aiLog.taskId, prompt)
+    const result = await this.openaiLibService.remixVideo(aiLog.taskId!, prompt)
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({

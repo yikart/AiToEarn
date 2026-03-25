@@ -34,13 +34,13 @@ export function MobileUserSection({
         data-testid="mobile-user-btn"
         className="flex w-full items-center gap-3 px-4 py-3 rounded-lg text-muted-foreground hover:bg-muted transition-colors cursor-pointer"
       >
-        {/* 用户头像 */}
-        <Avatar className="h-8 w-8">
+        <Avatar className="h-8 w-8 shrink-0 border border-border">
           <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-          <AvatarFallback>{userInfo.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+          <AvatarFallback className="bg-muted-foreground font-semibold text-background">
+            {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
+          </AvatarFallback>
         </Avatar>
 
-        {/* 用户名 */}
         <div className="flex min-w-0 flex-1 flex-col items-start">
           <span className="truncate text-sm font-medium text-foreground" data-testid="mobile-user-name">
             {userInfo.name || t('unknownUser')}

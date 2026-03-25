@@ -34,6 +34,10 @@ export interface DraftBoxConfig {
   selectedImageIds: string[]
   /** AI 生成描述 */
   promptValue: string
+  /** 是否为草稿模式（true=生成完整草稿，false=仅生成视频/图片） */
+  isDraftMode: boolean
+  /** 关联的品牌 ID，用于检测品牌切换后重新应用默认值 */
+  linkedBrandId: string
 }
 
 /** 默认配置（与原 systemStore 一致） */
@@ -50,6 +54,8 @@ const DEFAULT_CONFIG: DraftBoxConfig = {
   persistedMedias: [],
   selectedImageIds: [],
   promptValue: '',
+  isDraftMode: true,
+  linkedBrandId: '',
 }
 
 interface IDraftBoxConfigStore {
@@ -91,7 +97,7 @@ export const useDraftBoxConfigStore = createPersistStore(
   }),
   {
     name: 'DraftBoxConfig',
-    version: 5,
+    version: 7,
     migrate(persistedState: any, version: number) {
       if (version < 2) {
         // v1 → v2: 给已有配置补 persistedMedias 字段
@@ -119,6 +125,26 @@ export const useDraftBoxConfigStore = createPersistStore(
         for (const key of Object.keys(configs)) {
           if (configs[key].promptValue === undefined) {
             configs[key].promptValue = ''
+          }
+        }
+        persistedState.configs = configs
+      }
+      if (version < 6) {
+        // v5 → v6: 给已有配置补 isDraftMode 字段
+        const configs = persistedState.configs ?? {}
+        for (const key of Object.keys(configs)) {
+          if (configs[key].isDraftMode === undefined) {
+            configs[key].isDraftMode = true
+          }
+        }
+        persistedState.configs = configs
+      }
+      if (version < 7) {
+        // v6 → v7: 给已有配置补 linkedBrandId 字段
+        const configs = persistedState.configs ?? {}
+        for (const key of Object.keys(configs)) {
+          if (configs[key].linkedBrandId === undefined) {
+            configs[key].linkedBrandId = ''
           }
         }
         persistedState.configs = configs

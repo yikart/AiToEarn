@@ -5,8 +5,11 @@ import { RedisService } from '@yikart/redis'
 import { Auth, google } from 'googleapis'
 import { v4 as uuidv4 } from 'uuid'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { PlatformBaseService } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
+import { AuthCallbackResult } from '../common'
 import { GoogleBusinessCredential } from './google-business.dto'
 
 interface AuthTaskInfo {
@@ -14,6 +17,8 @@ interface AuthTaskInfo {
   userId: string
   status: 0 | 1
   accountId?: string
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 interface GoogleAccountInfo {
@@ -88,13 +93,20 @@ export class GoogleBusinessService extends PlatformBaseService {
   /**
    * 生成授权 URL
    */
-  async getAuthUrl(userId: string): Promise<{ url: string, state: string }> {
+  async getAuthUrl(
+    userId: string,
+    callbackUrl?: string,
+    callbackMethod?: 'GET' | 'POST',
+  ): Promise<{ url: string, state: string }> {
+    if (!config.channel.googleBusiness?.clientId && config.relay) {
+      throw new RelayAuthException()
+    }
     const state = uuidv4()
 
     // 保存授权任务到 Redis
     await this.redisService.setJson<AuthTaskInfo>(
-      `google-business:authTask:${state}`,
-      { state, userId, status: 0 },
+      ChannelRedisKeys.authTask('google_business', state),
+      { state, userId, status: 0, callbackUrl, callbackMethod },
       60 * 10, // 10 分钟过期
     )
 
@@ -114,10 +126,10 @@ export class GoogleBusinessService extends PlatformBaseService {
   async handleCallback(
     code: string,
     state: string,
-  ): Promise<{ status: number, message: string, accountId?: string }> {
+  ): Promise<AuthCallbackResult> {
     // 验证 state
     const authTask = await this.redisService.getJson<AuthTaskInfo>(
-      `google-business:authTask:${state}`,
+      ChannelRedisKeys.authTask('google_business', state),
     )
 
     if (!authTask || authTask.state !== state) {
@@ -179,15 +191,26 @@ export class GoogleBusinessService extends PlatformBaseService {
 
       // 更新 Redis 状态
       await this.redisService.setJson<AuthTaskInfo>(
-        `google-business:authTask:${state}`,
+        ChannelRedisKeys.authTask('google_business', state),
         { ...authTask, status: 1, accountId: account.id },
         60 * 5,
       )
 
       // 清理授权任务
-      await this.redisService.del(`google-business:authTask:${state}`)
+      await this.redisService.del(ChannelRedisKeys.authTask('google_business', state))
 
-      return { status: 1, message: '授权成功', accountId: account.id }
+      return {
+        status: 1,
+        message: '授权成功',
+        accountId: account.id,
+        nickname: account.nickname,
+        avatar: account.avatar,
+        platformUid: account.uid,
+        accountType: AccountType.GOOGLE_BUSINESS,
+        callbackUrl: authTask.callbackUrl,
+        callbackMethod: authTask.callbackMethod,
+        taskId: state,
+      }
     }
     catch (error) {
       this.logger.error('Google Business OAuth 回调处理失败', error)
@@ -199,6 +222,7 @@ export class GoogleBusinessService extends PlatformBaseService {
    * 获取有效的 Access Token（自动刷新）
    */
   async getValidAccessToken(accountId: string): Promise<string> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getCredential(accountId)
     if (!credential) {
       throw new AppException(ResponseCode.ChannelRefreshTokenFailed)
@@ -297,13 +321,14 @@ export class GoogleBusinessService extends PlatformBaseService {
    * 获取授权状态
    */
   async getAuthStatus(state: string): Promise<AuthTaskInfo | null> {
-    return this.redisService.getJson<AuthTaskInfo>(`google-business:authTask:${state}`)
+    return this.redisService.getJson<AuthTaskInfo>(ChannelRedisKeys.authTask('google_business', state))
   }
 
   /**
    * 获取 Access Token 状态
    */
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getCredential(accountId)
     if (!credential || !credential.accessToken) {
       this.updateAccountStatus(accountId, 0)

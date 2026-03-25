@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Logger, Param, Post, Query, Render, Res } from '@nestjs/common'
+import { Body, Controller, Get, Logger, Param, Post, Query, Res } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
@@ -54,6 +54,8 @@ export class MetaController {
       data.platform,
       data.scopes,
       data.spaceId || '',
+      data.callbackUrl,
+      data.callbackMethod,
     )
   }
 
@@ -96,14 +98,20 @@ export class MetaController {
     query: CreateAccountAndSetAccessTokenSchema,
   })
   @Get('/auth/back')
-  @Render('auth/meta')
   async createAccountAndSetAccessToken(
     @Query() query: CreateAccountAndSetAccessTokenDto,
+    @Res() res: Response,
   ) {
-    return await this.metaService.postOAuth2Callback(query.state, {
+    const result = await this.metaService.postOAuth2Callback(query.state, {
       code: query.code,
       state: query.state,
     })
+
+    if (result && 'callbackUrl' in result && result.callbackUrl) {
+      return res.render('auth/back', { ...result, autoPostCallback: true })
+    }
+
+    return res.render('auth/meta', result ?? {})
   }
 
   @Public()

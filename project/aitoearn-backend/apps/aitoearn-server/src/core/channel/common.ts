@@ -7,7 +7,7 @@ import {
   ThreadsPostOptions,
   WxGzhPublishOption,
   YoutubePublishOption,
-} from './channel.types'
+} from './channel.interfaces'
 
 export interface AccountPortraitReportData {
   accountId?: string

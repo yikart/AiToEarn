@@ -89,7 +89,8 @@
     "draftBox": "コンテンツ管理",
     "draftBoxSeoTitle": "コンテンツ管理 - AIバッチ作成と下書きエディタ",
     "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、AiToEarnでマルチプラットフォーム配信を整理。",
-    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn"
+    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn",
+    "agentAssets": "Agent素材"
   },
   "tasks": "マーケットプレイス",
   "signIn": {
@@ -128,20 +129,23 @@
   "networkError": "ネットワークエラーです。後でもう一度お試しください！",
   "contact": "お困りですか？サポートにお問い合わせください：",
   "uptime": {
-    "seoTitle": "サービスステータス - リアルタイムシステム監視",
-    "pageKeywords": "サービスステータス, システム監視, 稼働率追跡, サーバー状態, APIステータス, AiToEarnステータス, リアルタイム監視",
-    "pageTitle": "サービス状況",
-    "pageDescription": "AiToEarnサービスのリアルタイム状況と稼働時間を監視します。Agent、Server、AI、Database、Networkモジュールの運用状況をご確認ください。",
+    "seoTitle": "AIモデルステータス - リアルタイムモデル可用性監視",
+    "pageKeywords": "AIモデルステータス, モデル可用性, 稼働率追跡, AIサービス状態, モデル監視, AiToEarnステータス",
+    "pageTitle": "AIモデルステータス",
+    "pageDescription": "AIモデルのリアルタイム可用性と稼働時間を監視します。各モデルとプロバイダーの運用状況をご確認ください。",
     "loading": "読み込み中...",
     "noData": "データがありません",
     "uptimePercentage": "稼働率：",
     "normal": "正常",
     "timeout": "タイムアウト",
     "unavailable": "利用不可",
+    "provider": "プロバイダー",
+    "operation": "操作",
+    "latency": "レイテンシー",
+    "errorType": "エラー",
     "filter": {
       "title": "フィルター",
-      "module": "モジュール",
-      "type": "タイプ",
+      "model": "モデル",
       "timeRange": "期間",
       "all": "すべて",
       "last7Days": "過去7日間",
@@ -151,20 +155,7 @@
       "apply": "適用"
     },
     "copy": "コピー",
-    "copied": "コピーしました",
-    "module": {
-      "Agent": "Agent",
-      "Server": "Server",
-      "Ai": "AI",
-      "Database": "Database",
-      "Network": "Network",
-      "Other": "その他"
-    },
-    "type": {
-      "AgentStatus": "Agentステータス",
-      "AgentMcpStatus": "Agent MCPステータス",
-      "NewApiStatus": "NewApiステータス"
-    }
+    "copied": "コピーしました"
   },
   "websit": {
     "termsOfService": {
@@ -275,5 +266,6 @@
     "abroadContent": "{{platform}} は国際サイトでのみ利用可能です。国際サイトに移動しますか？",
     "ok": "移動",
     "cancel": "キャンセル"
-  }
+  },
+  "noMore": "これ以上データはありません"
 }

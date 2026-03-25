@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "postbuild": "next-sitemap",
     "dev": "next dev -p 6060",
     "dev:local": "cross-env NEXT_PUBLIC_API_URL=http://localhost:7001/api next dev",
     "build": "next build",
@@ -34,8 +33,7 @@
     "migrateToLocize": "locize migrate --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --api-key=c9805cd1-fd50-4d98-967a-383b39066de8 --path=./app/i18n/locales",
     "downloadLocales": "locize download --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --ver=latest --clean=true --path=./app/i18n/locales && npm run i18next-resources-for-ts",
     "syncLocales": "locize sync --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --api-key=bd8cb856-d6b3-4c82-a456-862c729a1674 --ver=latest --path=./app/i18n/locales --dry=true",
-    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts",
-    "prepare": "husky"
+    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts"
   },
   "dependencies": {
     "@ant-design/colors": "^7.2.1",
@@ -104,7 +102,6 @@
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.561.0",
     "next": "14.2.29",
-    "next-sitemap": "^4.2.3",
     "next-themes": "^0.4.6",
     "qrcode": "^1.5.4",
     "qs": "^6.14.0",
@@ -119,6 +116,7 @@
     "react-infinite-scroll-component": "^6.1.0",
     "react-markdown": "^10.1.0",
     "react-masonry-css": "^1.0.16",
+    "react-number-format": "^5.4.4",
     "react-qrcode-logo": "^4.0.0",
     "react-sortablejs": "^6.1.4",
     "react-transition-group": "^4.4.5",

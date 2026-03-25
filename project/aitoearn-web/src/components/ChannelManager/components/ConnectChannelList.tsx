@@ -8,7 +8,7 @@
 import { ArrowLeft, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
-import { PlatType, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
+import { isPlatformAvailable, PlatType, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -114,6 +114,7 @@ export function ConnectChannelList() {
         >
           <TooltipProvider>
             {RegionSortedPlatInfoArr.map(([key, value]) => {
+              const isRegionRestricted = !isPlatformAvailable(key)
               return (
                 <Tooltip key={key}>
                   <TooltipTrigger asChild>
@@ -131,6 +132,7 @@ export function ConnectChannelList() {
                         active:translate-y-0 active:scale-[0.98]
                         sm:h-[100px] sm:rounded-xl sm:p-3
                         md:h-[110px]
+                        ${isRegionRestricted ? 'opacity-50 grayscale' : ''}
                       `}
                       onClick={() => handlePlatformClick(key as PlatType)}
                     >

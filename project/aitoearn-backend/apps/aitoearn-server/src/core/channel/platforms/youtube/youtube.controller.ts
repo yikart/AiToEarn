@@ -57,6 +57,8 @@ export class YoutubeController {
   async getAuthUrl(
     @GetToken() token: TokenInfo,
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
     if (!token.mail) {
       throw new Error('缺少邮箱')
@@ -66,6 +68,8 @@ export class YoutubeController {
       token.mail,
       undefined,
       spaceId || '',
+      callbackUrl,
+      callbackMethod,
     )
   }
 
@@ -96,6 +100,11 @@ export class YoutubeController {
       taskId,
       query.code,
     )
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', { ...result, autoPostCallback: true })
+    }
+
     return res.render('auth/back', result)
   }
 

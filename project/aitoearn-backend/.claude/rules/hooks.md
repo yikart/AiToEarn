@@ -1,5 +1,7 @@
 # Hooks System
 
+> **Note:** This documents the local Claude Code hooks configuration (`~/.claude/settings.json`), not project coding standards. These hooks are configured per-developer.
+
 ## Hook Types
 
 - **PreToolUse**: Before tool execution (validation, parameter modification)

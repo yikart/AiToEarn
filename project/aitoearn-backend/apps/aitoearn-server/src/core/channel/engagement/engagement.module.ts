@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { ChannelSharedModule } from '../platforms/channel-shared.module'
 import { MetaModule } from '../platforms/meta/meta.module'
 import { YoutubeModule } from '../platforms/youtube/youtube.module'
 import { EngagementController } from './engagement.controller'
@@ -13,6 +14,7 @@ import { EngagementReplyToCommentConsumer } from './workers/reply-to-comment.con
 
 @Module({
   imports: [
+    ChannelSharedModule,
     MetaModule,
     YoutubeModule,
   ],

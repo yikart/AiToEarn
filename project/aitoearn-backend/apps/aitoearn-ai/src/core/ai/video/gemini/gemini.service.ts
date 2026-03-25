@@ -157,7 +157,6 @@ export class GeminiVideoService {
     }
 
     const result = await this.geminiLibService.createVideo(params)
-
     if (!result.operation.name || result.operation.error) {
       this.logger.error(result, 'Gemini Veo createVideo failed')
       throw new AppException(ResponseCode.AiCallFailed, result.operation.error)

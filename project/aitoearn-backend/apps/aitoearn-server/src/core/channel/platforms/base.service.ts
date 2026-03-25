@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { OAuth2CredentialRepository } from '@yikart/channel-db'
 import { AccountType } from '@yikart/common'
 import { AccountRepository } from '@yikart/mongodb'
+import { RelayAccountException } from '../../../core/relay/relay-account.exception'
 
 /**
  * 作品详情信息（用于创建发布记录）
@@ -76,6 +77,14 @@ export abstract class PlatformBaseService {
     // 默认实现：返回 true（不验证）
     // 各平台可覆盖此方法实现具体验证逻辑
     return true
+  }
+
+  protected async ensureLocalAccount(accountId: string) {
+    const account = await this.accountRepository.getById(accountId)
+    if (account?.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
+    return account
   }
 
   // 更新状态

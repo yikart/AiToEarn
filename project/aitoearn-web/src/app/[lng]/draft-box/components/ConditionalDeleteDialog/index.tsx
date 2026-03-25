@@ -10,7 +10,7 @@ import lodash from 'lodash'
 import { Loader2 } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { apiGetMaterialList } from '@/api/material'
-import { useDraftBoxStore } from '@/app/[lng]/draft-box/draftBoxStore'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import {
@@ -22,12 +22,13 @@ import {
 } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { NumberInput } from '@/components/ui/number-input'
 import { toast } from '@/lib/toast'
 
 // 外层：控制渲染时机
 const ConditionalDeleteDialog = memo(() => {
-  const open = useDraftBoxStore(state => state.conditionalDeleteDialogOpen)
-  const closeDialog = useDraftBoxStore(state => state.closeConditionalDeleteDialog)
+  const open = usePlanDetailStore(state => state.conditionalDeleteDialogOpen)
+  const closeDialog = usePlanDetailStore(state => state.closeConditionalDeleteDialog)
 
   if (!open)
     return null
@@ -47,24 +48,24 @@ ConditionalDeleteDialog.displayName = 'ConditionalDeleteDialog'
 const ConditionalDeleteDialogContent = memo(({ onOpenChange }: { onOpenChange: (open: boolean) => void }) => {
   const { t } = useTransClient('brandPromotion')
 
-  const currentPlan = useDraftBoxStore(state => state.currentPlan)
-  const filterDeleteMaterials = useDraftBoxStore(state => state.filterDeleteMaterials)
+  const currentPlan = usePlanDetailStore(state => state.currentPlan)
+  const filterDeleteMaterials = usePlanDetailStore(state => state.filterDeleteMaterials)
 
   const [title, setTitle] = useState('')
-  const [useCount, setUseCount] = useState('')
+  const [useCount, setUseCount] = useState<number | undefined>()
   const [matchCount, setMatchCount] = useState<number | null>(null)
   const [querying, setQuerying] = useState(false)
   const [deleting, setDeleting] = useState(false)
 
-  const hasCondition = title.trim() !== '' || useCount !== ''
+  const hasCondition = title.trim() !== '' || useCount !== undefined
 
   // 构建筛选条件
   const buildFilters = useCallback((): MaterialListFilters => {
     const filters: MaterialListFilters = {}
     if (title.trim())
       filters.title = title.trim()
-    if (useCount !== '')
-      filters.useCount = Number(useCount)
+    if (useCount !== undefined)
+      filters.useCount = useCount
     return filters
   }, [title, useCount])
 
@@ -100,7 +101,7 @@ const ConditionalDeleteDialogContent = memo(({ onOpenChange }: { onOpenChange: (
       return
     }
     setQuerying(true)
-    queryMatchCount(currentPlan._id, filters)
+    queryMatchCount(currentPlan.id, filters)
   }, [title, useCount, currentPlan, buildFilters, queryMatchCount])
 
   // 清理 debounce
@@ -151,12 +152,12 @@ const ConditionalDeleteDialogContent = memo(({ onOpenChange }: { onOpenChange: (
 
           <div className="space-y-2">
             <Label>{t('draftManage.conditionUseCount')}</Label>
-            <Input
+            <NumberInput
               data-testid="draftbox-cond-usecount-input"
-              type="number"
-              min={0}
               value={useCount}
-              onChange={e => setUseCount(e.target.value)}
+              onValueChange={v => setUseCount(v)}
+              decimalScale={0}
+              allowNegative={false}
               placeholder={t('draftManage.conditionUseCountPlaceholder')}
             />
           </div>

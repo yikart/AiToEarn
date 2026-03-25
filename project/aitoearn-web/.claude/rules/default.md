@@ -3,14 +3,17 @@
 ## 禁止事项
 
 - 使用硬编码货币符号/代码（如 `$`、`USD`、`¥`、`CNY`）→ 用 `appCurrencySymbol` / `appCurrency`（`/src/utils/currency.ts`）
+- 使用 `<Input type="number">` 或 `<input type="number">` → 用 `NumberInput`（`/src/components/ui/number-input.tsx`），自动处理清空、小数、格式化
 
 ## 开发前必查
 
-1. `src/lib/README.md` - 工具方法
-2. `src/components/README.md` - 组件
-3. `src/utils/README.md` - 工具函数
-4. `src/store/README.md` - 全局状态管理（Store）
-5. 新增时同步更新对应 README
+1. `src/utils/README.md` - 工具函数（格式化、OSS、货币、请求、下载等）
+2. `src/lib/README.md` - 工具方法（toast、confirm、cn、VIP、i18n 等）
+3. `src/hooks/` - 自定义 Hooks（useIsMobile、useMediaUpload、useKeepTimeCountdown、useVideoThumbnail 等）
+4. `src/components/README.md` - 公共组件（MediaPreview、Modal、LoginModal 等）
+5. `src/store/README.md` - 全局状态管理（useUserStore、useAccountStore 等）
+6. `src/app/config/` - 业务常量与枚举（PlatType、PubType、AccountStatus 等）
+7. 新增可复用代码时**必须同步更新对应 README**
 
 ## 项目特有工具
 
@@ -19,6 +22,7 @@
 - 货币显示用 `appCurrencySymbol` + `appCurrency`（`/src/utils/currency.ts`），自动适配国内外环境
 - SEO 元数据用 `getMetadata`（`/src/utils/general.ts`），不要自己拼接 title
 - 持久化 store 用 `createPersistStore`（`/src/lib/store.ts`）
+- 数字输入用 `NumberInput`（`/src/components/ui/number-input.tsx`），禁止使用 `<Input type="number">`
 - 语言配置：`src/lib/i18n/languageConfig.ts`
 - 国际化目录：`/src/app/i18n`
 
@@ -129,9 +133,9 @@ API 类型 → src/api/types/
 
 ### useTransClient 动态加载 namespace 导致闪烁
 
-**原因**：非预加载 namespace 动态加载触发重渲染
+**原因**：`settings.ts` 只预加载 `common` 和 `route`，其他 namespace 首次使用时异步 import → 首帧 `t('key')` 返回 key 本身（如 `"setup.title"`）→ 翻译加载后重渲染为真实文本，产生闪烁。
 
-**解决**：拆成两层组件
+**场景一：弹窗/条件渲染组件** — 拆成两层组件
 
 ```tsx
 // 外层：控制渲染时机（不用 hooks）
@@ -150,6 +154,28 @@ const ModalContent = memo(({ onOpenChange }) => {
   )
 })
 ```
+
+**场景二：有 loading 状态的组件（如依赖 API 数据）** — 外层预加载 namespace + 双重 ready 守卫
+
+当组件本身已有加载态（skeleton / spinner），**必须在外层同时等待 namespace ready**，否则会出现 `skeleton → key文本闪现 → 翻译文本` 的二次闪烁。
+
+```tsx
+const MyComponent = memo(({ id }: Props) => {
+  const { initialized, data } = useMyData(id)
+  // 外层预加载 namespace，子组件再调用时命中缓存，首帧即有翻译
+  const { ready: i18nReady } = useTransClient('myNamespace')
+
+  // 双重守卫：数据 + 翻译都就绪前持续显示骨架屏
+  if (!initialized || !i18nReady) {
+    return <LoadingSkeleton />
+  }
+
+  // 此时子组件内 useTransClient('myNamespace') 命中缓存，ready 立即为 true
+  return data ? <DataView data={data} /> : <EmptyState />
+})
+```
+
+**关键原则**：任何有 loading/skeleton 的组件，如果子组件使用了非预加载 namespace，都要在外层用 `useTransClient` 的 `ready` 状态守卫，确保只有一次 skeleton → 内容的干净过渡。
 
 ### 新增路由需要加 Middleware 白名单
 

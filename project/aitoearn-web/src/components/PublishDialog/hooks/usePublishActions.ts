@@ -192,7 +192,7 @@ export function usePublishActions({
         ) {
           if (!isMobile) {
             // PC端：显示二维码弹窗，优先使用 shortLink（标准 HTTPS URL，扫码兼容性更好）
-            setDouyinPermalink(`shortLink?apiLink=${encodeURIComponent(resData.shortLink)}`)
+            setDouyinPermalink(`/shortLink?apiLink=${encodeURIComponent(resData.shortLink)}`)
           }
           else {
             // 移动端：显示引导弹窗，用户点击按钮后唤起抖音 App

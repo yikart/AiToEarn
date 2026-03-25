@@ -4,7 +4,7 @@ import { AppException, getErrorDetail, ResponseCode, TableDto } from '@yikart/co
 import { PublishRecord } from '@yikart/mongodb'
 import { z } from 'zod'
 import { PublishRecordService } from '../publish-record/publish-record.service'
-import { PublishingChannel } from './channel.types'
+import { PublishingChannel } from './channel.interfaces'
 import { NewPublishData, PlatOptions } from './common'
 import { PostHistoryItemVoSchema } from './publish-response.vo'
 import { PublishDayInfoListFiltersDto, PubRecordListFilterDto, UpdatePublishTaskDto } from './publish.dto'

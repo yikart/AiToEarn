@@ -1,15 +1,15 @@
 /**
  * MobileContent - 创建/编辑素材弹窗的移动端布局组件
- * 全屏弹窗，布局：媒体上传区 → 标题输入 → 描述输入
+ * 全屏弹窗，布局：平台选择 → 媒体上传区 → 标题输入 → 描述输入
  */
 'use client'
 
 import type { CreateMaterialModalProps } from './index'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
-import { Bot, Play, X } from 'lucide-react'
+import { Bot, Play, TriangleAlert, X } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
-import { memo, useCallback, useMemo, useRef, useState } from 'react'
+import { memo, useCallback, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ReactSortable } from 'react-sortablejs'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
@@ -19,6 +19,7 @@ import { useTransClient } from '@/app/i18n/client'
 import MediaPreview from '@/components/common/MediaPreview'
 import BrushEditor from '@/components/common/MediaPreview/BrushEditor'
 import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
+import PubParmasMentionInput from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput'
 import PubParmasTextareaUpload from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextareaUpload'
 import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage'
 import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
@@ -26,7 +27,9 @@ import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
 import { Button } from '@/components/ui/button'
 import { DialogTitle } from '@/components/ui/dialog'
 import { toast } from '@/lib/toast'
+import InlinePlatformSelector from './InlinePlatformSelector'
 import { useCreateMaterialForm } from './useCreateMaterialForm'
+import { useMaterialValidation } from './useMaterialValidation'
 import './uploadItemTransition.css'
 
 const MobileContent = memo(
@@ -57,6 +60,8 @@ const MobileContent = memo(
       onSuccess,
     })
 
+    const { warnings, effectiveLimits } = useMaterialValidation(params, params.selectedPlatforms)
+
     // 预览状态
     const [previewData, setPreviewData] = useState<IImgFile | IVideoFile | undefined>(undefined)
     const [imagePreviewOpen, setImagePreviewOpen] = useState(false)
@@ -65,16 +70,15 @@ const MobileContent = memo(
     // 视频封面裁剪
     const [videoCoverSetingModal, setVideoCoverSetingModal] = useState(false)
     // 内部图片/视频状态（用于排序等操作后同步回 params）
-    const textareaRef = useRef<HTMLTextAreaElement>(null)
 
-    // 平台配置（素材弹窗统一使用 Tiktok 配置）
+    // 平台配置（用于上传类型判断，取 TikTok 作为基准）
     const platConfig = useMemo(() => {
       return AccountPlatInfoMap.get(PlatType.Tiktok)! || {}
     }, [])
 
     const imageMax = useMemo(() => {
-      return platConfig.commonPubParamsConfig?.imagesMax || 10
-    }, [platConfig])
+      return effectiveLimits.imagesMax?.value ?? platConfig.commonPubParamsConfig?.imagesMax ?? 10
+    }, [effectiveLimits, platConfig])
 
     const videoMax = 1
 
@@ -190,18 +194,6 @@ const MobileContent = memo(
       [updateParams],
     )
 
-    // textarea 自动增高
-    const handleDesChange = useCallback(
-      (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-        updateParams({ des: e.target.value })
-        // 自动调整高度
-        const el = e.target
-        el.style.height = 'auto'
-        el.style.height = `${el.scrollHeight}px`
-      },
-      [updateParams],
-    )
-
     return (
       <>
         {/* 弹窗层 */}
@@ -263,8 +255,36 @@ const MobileContent = memo(
           <div className="w-8" />
         </div>
 
+        {/* 平台选择器 */}
+        <div className="px-4 py-2 border-b border-border shrink-0">
+          <InlinePlatformSelector
+            selectedPlatforms={params.selectedPlatforms}
+            onPlatformsChange={platforms => updateParams({ selectedPlatforms: platforms })}
+          />
+        </div>
+
         {/* 可滚动内容区 */}
         <div className="flex-1 overflow-y-auto px-4 py-4">
+          {/* 警告区域 */}
+          {warnings.length > 0 && (
+            <div className="mb-4">
+              <div className="rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 mb-1.5">
+                  <TriangleAlert className="h-3.5 w-3.5" />
+                  {t('createMaterial.validationWarnings')}
+                </div>
+                <ul className="text-xs text-amber-600 dark:text-amber-400/80 space-y-0.5">
+                  {warnings.map((w, i) => (
+                    <li key={i}>
+                      •
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {/* 媒体上传区 */}
           <ReactSortable
             className="grid grid-cols-3 gap-2.5"
@@ -394,24 +414,32 @@ const MobileContent = memo(
 
           {/* 标题输入 */}
           <div className="mt-4 border-t border-border pt-4">
-            <input
-              type="text"
-              value={params.title}
-              placeholder={t('createMaterial.titlePlaceholder')}
-              onChange={e => updateParams({ title: e.target.value })}
-              className="w-full text-base font-medium bg-transparent border-none shadow-none outline-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="text"
+                value={params.title}
+                placeholder={t('createMaterial.titlePlaceholder')}
+                onChange={e => updateParams({ title: e.target.value })}
+                maxLength={effectiveLimits.titleMax?.value}
+                className="flex-1 min-w-0 text-base font-medium bg-transparent border-none shadow-none outline-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
+              />
+              {effectiveLimits.titleMax && (
+                <span className={`shrink-0 text-xs tabular-nums ${params.title.length > effectiveLimits.titleMax.value ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  {params.title.length}
+                  /
+                  {effectiveLimits.titleMax.value}
+                </span>
+              )}
+            </div>
           </div>
 
           {/* 描述输入 */}
           <div className="mt-3 border-t border-border pt-3">
-            <textarea
-              ref={textareaRef}
+            <PubParmasMentionInput
               value={params.des}
+              onChange={(value: string) => updateParams({ des: value })}
               placeholder={tPublish('form.descriptionPlaceholder')}
-              onChange={handleDesChange}
-              rows={4}
-              className="w-full text-sm bg-transparent border-none shadow-none outline-none resize-none placeholder:text-muted-foreground/50 focus-visible:ring-0"
+              maxLength={effectiveLimits.desMax?.value ?? 2200}
             />
           </div>
         </div>

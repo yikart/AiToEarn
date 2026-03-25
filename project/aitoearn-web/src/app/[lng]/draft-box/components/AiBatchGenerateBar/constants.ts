@@ -25,15 +25,12 @@ export interface VideoModelStaticConfig {
   maxVideoDuration: number
 }
 
-/** 允许上传图片的 modes */
-const IMAGE_UPLOAD_MODES = new Set(['image2video', 'multi-image2video', 'flf2video', 'lf2video'])
-
 /** 从 API 返回的 VideoModelInfo 动态生成静态配置 */
 export function getVideoModelConfigFromApi(model: VideoModelInfo): VideoModelStaticConfig {
   return {
     supportedRatios: new Set(model.aspectRatios),
-    maxImages: model.modes.some(m => IMAGE_UPLOAD_MODES.has(m)) ? model.maxInputImages : 0,
-    maxVideos: model.modes.includes('video2video') ? 1 : 0,
+    maxImages: model.maxInputImages > 0 ? model.maxInputImages : 0,
+    maxVideos: 1,
     maxVideoDuration: model.durations.length > 0 ? Math.max(...model.durations) : 8,
   }
 }

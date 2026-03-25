@@ -582,7 +582,7 @@ export const useChannelManagerStore = create(
 
       /** 授权成功处理 */
       handleAuthSuccess(account: SocialAccount) {
-        const { authState, onAuthSuccess } = get()
+        const { authState, onAuthSuccess, selectedPlatform } = get()
         const platform = authState.platform
 
         // 调用外部回调
@@ -590,10 +590,17 @@ export const useChannelManagerStore = create(
           onAuthSuccess(account, platform)
         }
 
-        // 重置状态，跳转到主页并选中该平台
+        // 移动端保持原筛选状态，PC 端切换到授权平台
+        const isMobile
+          = typeof window !== 'undefined'
+            && window.matchMedia('(max-width: 767px)').matches
+
+        // 重置状态，跳转到主页
         set({
           currentView: 'main',
-          selectedPlatform: platform || 'all',
+          selectedPlatform: isMobile
+            ? selectedPlatform
+            : (platform || 'all'),
           authState: { ...initialAuthState },
           isNewUser: false,
         })

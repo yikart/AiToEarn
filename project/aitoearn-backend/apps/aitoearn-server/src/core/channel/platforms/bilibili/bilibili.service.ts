@@ -10,6 +10,8 @@ import { RedisService } from '@yikart/redis'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { BilibiliApiService } from '../../libs/bilibili/bilibili-api.service'
 import {
   AccessToken,
@@ -19,7 +21,7 @@ import {
 } from '../../libs/bilibili/common'
 import { PlatformBaseService } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
-import { AuthTaskInfo } from '../common'
+import { AuthCallbackResult, AuthTaskInfo } from '../common'
 import { PlatformAuthExpiredException } from '../platform.exception'
 import { BilibiliAuthInfo } from './common'
 
@@ -39,10 +41,6 @@ export class BilibiliService extends PlatformBaseService {
     return config.channel.bilibili
   }
 
-  private getAuthDataCacheKey(taskId: string) {
-    return `channel:bilibili:authTask:${taskId}`
-  }
-
   /**
    * 创建用户授权任务
    * @param data
@@ -53,16 +51,21 @@ export class BilibiliService extends PlatformBaseService {
       userId: string
       type: 'h5' | 'pc'
       spaceId: string
+      callbackUrl?: string
+      callbackMethod?: 'GET' | 'POST'
     },
     options?: {
       transpond?: string
       accountAddPath?: string
     },
   ) {
+    if (!config.channel.bilibili.id && config.relay) {
+      throw new RelayAuthException()
+    }
     const taskId = uuidv4()
     const urlInfo = await this.getAuthUrl(taskId, data.type)
     const rRes = await this.redisService.setJson(
-      this.getAuthDataCacheKey(taskId),
+      ChannelRedisKeys.authTask('bilibili', taskId),
       {
         taskId,
         spaceId: data.spaceId,
@@ -73,6 +76,8 @@ export class BilibiliService extends PlatformBaseService {
           userId: data.userId,
         },
         status: 0,
+        callbackUrl: data.callbackUrl,
+        callbackMethod: data.callbackMethod,
       },
       60 * 5,
     )
@@ -107,11 +112,12 @@ export class BilibiliService extends PlatformBaseService {
       state: string
       status: number
       accountId?: string
-    }>(this.getAuthDataCacheKey(taskId))
+    }>(ChannelRedisKeys.authTask('bilibili', taskId))
     return data
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)
@@ -130,7 +136,7 @@ export class BilibiliService extends PlatformBaseService {
    */
   async getAccountAuthInfo(accountId: string) {
     const data = await this.redisService.getJson<AccessToken>(
-      `bilibili:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('bilibili', accountId),
     )
     return data
   }
@@ -179,7 +185,7 @@ export class BilibiliService extends PlatformBaseService {
       data: accessTokenInfo,
     })
     const cached = await this.redisService.setJson(
-      `${this.platform}:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('bilibili', accountId),
       accessTokenInfo,
     )
     this.logger.debug({
@@ -212,12 +218,8 @@ export class BilibiliService extends PlatformBaseService {
   async createAccountAndSetAccessToken(
     taskId: string,
     data: { code: string, state: string },
-  ): Promise<{
-    status: number
-    message?: string
-    accountId?: string
-  }> {
-    const cacheKey = this.getAuthDataCacheKey(taskId)
+  ): Promise<AuthCallbackResult> {
+    const cacheKey = ChannelRedisKeys.authTask('bilibili', taskId)
     const { code, state } = data
 
     const taskInfo
@@ -302,22 +304,31 @@ export class BilibiliService extends PlatformBaseService {
       60 * 3,
     )
 
-    return res
-      ? {
-          status: 1,
-          accountId: accountInfo.id,
-        }
-      : {
-          status: 0,
-          message: '设置授权Token失败，请稍后再试',
-        }
+    if (!res) {
+      return {
+        status: 0,
+        message: '设置授权Token失败，请稍后再试',
+      }
+    }
+
+    return {
+      status: 1,
+      accountId: accountInfo.id,
+      nickname: accountInfo.nickname,
+      avatar: accountInfo.avatar,
+      platformUid: accountInfo.uid,
+      accountType: AccountType.BILIBILI,
+      callbackUrl: taskInfo.callbackUrl,
+      callbackMethod: taskInfo.callbackMethod,
+      taskId,
+    }
   }
 
   private async getOAuth2Credential(
     accountId: string,
   ): Promise<AccessToken | null> {
     let credential = await this.redisService.getJson<AccessToken>(
-      `${this.platform.toLowerCase()}:accessToken:${accountId}`,
+      ChannelRedisKeys.accessToken('bilibili', accountId),
     )
     if (!credential) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
@@ -343,6 +354,7 @@ export class BilibiliService extends PlatformBaseService {
    * @returns
    */
   async getAccountAccessToken(accountId: string): Promise<string> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
       throw new PlatformAuthExpiredException(this.platform, accountId)

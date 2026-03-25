@@ -107,7 +107,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
     {
       name: 'bilibili',
       icon: bilibiliSvg,
-      url: 'https://cp.kuaishou.com/profile',
+      url: 'https://www.bilibili.com',
       pubTypes: new Set([PubType.VIDEO]),
       commonPubParamsConfig: {
         topicMax: 10,
@@ -268,10 +268,18 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
 ])
 export const AccountPlatInfoArr = Array.from(AccountPlatInfoMap)
 
-// ========== 平台排序 ==========
+// ========== 区域平台配置 ==========
 
-/** 完整平台列表 */
-export const RegionSortedPlatInfoArr = [...AccountPlatInfoArr]
+/** 判断平台是否可用（所有平台均可用） */
+export function isPlatformAvailable(_platType: PlatType): boolean {
+  return true
+}
+
+/** 隐藏的平台（向后兼容，空集合） */
+export const ABROAD_HIDDEN_PLATFORMS = new Set<PlatType>()
+
+/** 所有平台列表（无区域排序） */
+export const RegionSortedPlatInfoArr = AccountPlatInfoArr
 
 // ========== 任务推广相关配置 ==========
 
@@ -294,7 +302,7 @@ export const TaskPlatInfoArr = AccountPlatInfoArr.filter(
   ([platType]) => !TASK_EXCLUDED_PLATFORMS.has(platType),
 )
 
-/** 可用的任务推广平台列表 */
+/** 当前区域可用的任务推广平台列表 */
 export const RegionTaskPlatInfoArr = AccountPlatInfoArr.filter(
   ([platType]) => !TASK_EXCLUDED_PLATFORMS.has(platType),
 )

@@ -91,7 +91,8 @@
     "draftBoxSeoTitle": "Content Management - AI Batch Creation & Draft Editor",
     "draftBoxSeoDescription": "Manage all your content drafts in one place. Use AI to batch generate social media posts, edit drafts before publishing, and organize content for multi-platform distribution with AiToEarn.",
     "draftBoxSeoKeywords": "content management, draft editor, AI content generation, batch content creation, social media drafts, content scheduling, AiToEarn",
-    "brandPromotion": "AI Check-in"
+    "brandPromotion": "AI Check-in",
+    "agentAssets": "Agent Assets"
   },
   "tasks": "Marketplace",
   "signIn": {
@@ -130,20 +131,23 @@
   "networkError": "Network error, please try again later!",
   "contact": "Need help? Contact support:",
   "uptime": {
-    "seoTitle": "Service Status - Real-Time System Health Monitor",
-    "pageKeywords": "service status, system monitoring, uptime tracker, server health, API status, AiToEarn status, real-time monitoring",
-    "pageTitle": "Service Status",
-    "pageDescription": "Monitor the real-time status and uptime of AiToEarn services. Check the operational status of Agent, Server, AI, Database, and Network modules.",
+    "seoTitle": "AI Model Status - Real-Time Model Availability Monitor",
+    "pageKeywords": "AI model status, model availability, uptime tracker, AI service health, model monitoring, AiToEarn status",
+    "pageTitle": "AI Model Status",
+    "pageDescription": "Monitor the real-time availability and uptime of AI models. Check the operational status of each model and provider.",
     "loading": "Loading...",
     "noData": "No data",
     "uptimePercentage": "Uptime:",
     "normal": "Normal",
     "timeout": "Timeout",
     "unavailable": "Unavailable",
+    "provider": "Provider",
+    "operation": "Operation",
+    "latency": "Latency",
+    "errorType": "Error",
     "filter": {
       "title": "Filters",
-      "module": "Module",
-      "type": "Type",
+      "model": "Model",
       "timeRange": "Time Range",
       "all": "All",
       "last7Days": "Last 7 Days",
@@ -153,20 +157,7 @@
       "apply": "Apply"
     },
     "copy": "Copy",
-    "copied": "Copied",
-    "module": {
-      "Agent": "Agent",
-      "Server": "Server",
-      "Ai": "AI",
-      "Database": "Database",
-      "Network": "Network",
-      "Other": "Other"
-    },
-    "type": {
-      "AgentStatus": "Agent Status",
-      "AgentMcpStatus": "Agent MCP Status",
-      "NewApiStatus": "NewApi Status"
-    }
+    "copied": "Copied"
   },
   "websit": {
     "termsOfService": {
@@ -277,5 +268,6 @@
     "abroadContent": "{{platform}} is only available on the international site. Redirect to the international site?",
     "ok": "Go",
     "cancel": "Cancel"
-  }
+  },
+  "noMore": "No more data"
 }

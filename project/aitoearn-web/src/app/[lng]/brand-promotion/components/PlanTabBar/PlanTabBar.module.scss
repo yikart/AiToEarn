@@ -1,0 +1,13 @@
+/**
+ * PlanTabBar 样式
+ * 隐藏 Tab 区域的滚动条
+ */
+
+.scrollContainer {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+
+  &::-webkit-scrollbar {
+    display: none; /* Chrome/Safari */
+  }
+}

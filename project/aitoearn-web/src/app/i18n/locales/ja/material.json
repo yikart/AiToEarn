@@ -51,6 +51,10 @@
     "upload": "アップロード",
     "deleteMediaConfirm": "このメディアを削除してもよろしいですか？",
     "noMedia": "メディアリソースがありません",
+    "noVideo": "動画はまだありません",
+    "noImage": "画像はまだありません",
+    "noVideoDesc": "生成された動画はここに表示されます",
+    "noImageDesc": "生成された画像はここに表示されます",
     "uploadMediaHint": "下のボタンをクリックして{{type}}をアップロード",
     "searchPlaceholder": "グループを検索...",
     "default": "デフォルト",
@@ -69,7 +73,8 @@
     "selectImage": "画像を選択",
     "selectedCount": "{{count}}件選択中",
     "confirm": "確認",
-    "noMediaDesc": "このグループにメディアがありません"
+    "noMediaDesc": "このグループにメディアがありません",
+    "drafts": "下書き"
   },
   "aiGenerate": {
     "title": "AIツール",

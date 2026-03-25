@@ -36,7 +36,7 @@ export class InteractionRecordController {
     @Query() query: InteractionRecordListDto,
     @Param() param: TableDto,
   ) {
-    return await this.interactionRecordService.getList(query.filters, param)
+    return await this.interactionRecordService.getList({ ...query.filters, userId: token.id }, param)
   }
 
   @ApiDoc({

@@ -89,7 +89,8 @@
     "draftBox": "Inhaltsverwaltung",
     "draftBoxSeoTitle": "Content-Management - KI-Batch-Erstellung & Entwurfseditor",
     "draftBoxSeoDescription": "Alle Ihre Content-Entwürfe an einem Ort verwalten. Mit KI Social-Media-Posts generieren, Entwürfe vor der Veröffentlichung bearbeiten.",
-    "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn"
+    "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn",
+    "agentAssets": "Agent-Materialien"
   },
   "tasks": "Marktplatz",
   "signIn": {
@@ -128,20 +129,23 @@
   "networkError": "Netzwerkfehler, bitte später erneut versuchen!",
   "contact": "Brauchen Sie Hilfe? Kontaktieren Sie den Support:",
   "uptime": {
-    "seoTitle": "Servicestatus - Echtzeit-Systemüberwachung",
-    "pageKeywords": "Servicestatus, Systemüberwachung, Verfügbarkeits-Tracker, Server-Status, API-Status, AiToEarn-Status",
-    "pageTitle": "Dienststatus",
-    "pageDescription": "Überwachen Sie den Echtzeitstatus und die Verfügbarkeit der AiToEarn-Dienste. Prüfen Sie den Betriebsstatus von Agent, Server, KI, Datenbank und Netzwerkmodulen.",
+    "seoTitle": "KI-Modellstatus - Echtzeit-Verfügbarkeitsüberwachung",
+    "pageKeywords": "KI-Modellstatus, Modellverfügbarkeit, Verfügbarkeits-Tracker, KI-Service-Status, Modellüberwachung, AiToEarn-Status",
+    "pageTitle": "KI-Modellstatus",
+    "pageDescription": "Überwachen Sie die Echtzeit-Verfügbarkeit und Betriebszeit der KI-Modelle. Prüfen Sie den Betriebsstatus jedes Modells und Anbieters.",
     "loading": "Laden...",
     "noData": "Keine Daten",
     "uptimePercentage": "Verfügbarkeit:",
     "normal": "Normal",
     "timeout": "Zeitüberschreitung",
     "unavailable": "Nicht verfügbar",
+    "provider": "Anbieter",
+    "operation": "Vorgang",
+    "latency": "Latenz",
+    "errorType": "Fehler",
     "filter": {
       "title": "Filter",
-      "module": "Modul",
-      "type": "Typ",
+      "model": "Modell",
       "timeRange": "Zeitraum",
       "all": "Alle",
       "last7Days": "Letzte 7 Tage",
@@ -151,20 +155,7 @@
       "apply": "Anwenden"
     },
     "copy": "Kopieren",
-    "copied": "Kopiert",
-    "module": {
-      "Agent": "Agent",
-      "Server": "Server",
-      "Ai": "KI",
-      "Database": "Datenbank",
-      "Network": "Netzwerk",
-      "Other": "Sonstiges"
-    },
-    "type": {
-      "AgentStatus": "Agent-Status",
-      "AgentMcpStatus": "Agent-MCP-Status",
-      "NewApiStatus": "NewApi-Status"
-    }
+    "copied": "Kopiert"
   },
   "websit": {
     "termsOfService": {
@@ -275,5 +266,6 @@
     "abroadContent": "{{platform}} ist nur auf der internationalen Seite verfügbar. Zur internationalen Seite weiterleiten?",
     "ok": "Weiter",
     "cancel": "Abbrechen"
-  }
+  },
+  "noMore": "Keine weiteren Daten"
 }

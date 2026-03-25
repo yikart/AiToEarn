@@ -180,7 +180,7 @@ export class MaterialController {
   @Get('optimal')
   async optimalInGroup(@Query() query: GetOptimalMaterialDto) {
     const type = getMaterialTypeByAccountType(query.accountType)
-    const res = await this.materialService.optimalInGroup(query.groupId, type)
+    const res = await this.materialService.optimalInGroup(query.groupId, type, query.accountType)
     return res
   }
 

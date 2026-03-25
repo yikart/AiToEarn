@@ -106,7 +106,6 @@
     "videoEditMode": "Video Edit",
     "ratioLockedByVideo": "Ratio follows input video",
     "durationLockedByVideo": "Duration matches input video",
-    "durationAutoAdjusted": "Duration auto-adjusted to {{duration}}s",
     "dropToUpload": "Drop files here to upload",
     "resetConfig": "Reset",
     "targetPlatforms": "Target Platforms",
@@ -131,7 +130,10 @@
       "imageCountExceeded": "Image count exceeds the platform limit (max {{max}})"
     },
     "platformIncompatibleCount": "{{count}} incompatible",
-    "timeLimitedModelTip": "Time-limited models are not guaranteed to be available. If unavailable, please try again later or switch to another model."
+    "timeLimitedModelTip": "Time-limited models are not guaranteed to be available. If unavailable, please try again later or switch to another model.",
+    "draftModeOn": "Generate Draft",
+    "draftModeOffVideo": "Generate Video",
+    "draftModeOffImage": "Generate Image"
   },
   "tabs": {
     "overview": "Overview",
@@ -155,6 +157,8 @@
     "downloadQRCode": "Download QR Code",
     "draftSummary": "Draft Summary",
     "draftList": "{{count}} Drafts",
+    "videoList": "{{count}} Videos",
+    "imageList": "{{count}} Images",
     "viewMore": "View More",
     "publishRecordSummary": "Publish Records",
     "backToTop": "Back to Top",
@@ -220,12 +224,15 @@
     "shareCount": "Shares",
     "favoriteCount": "Favorites",
     "dataUpdatedAt": "Data Updated",
-    "noWorkLink": "No work link"
+    "noWorkLink": "No work link",
+    "untitled": "Untitled"
   },
   "material": {
     "emptyTitle": "No Materials",
     "emptyDesc": "Create materials or use Agent to batch generate",
     "useCount": "Used {{count}} times",
+    "draft": "Draft",
+    "untitled": "Untitled Draft",
     "generating": "Generating",
     "completed": "Completed"
   },
@@ -293,7 +300,18 @@
     "titlePlaceholder": "Enter draft title",
     "pleaseUploadMedia": "Please upload image or video",
     "titleRequired": "Please enter a title",
-    "descRequired": "Please enter a description"
+    "descRequired": "Please enter a description",
+    "targetPlatforms": "Target Platforms",
+    "selectAll": "Select All",
+    "deselectAll": "Deselect All",
+    "titleExceeded": "Title exceeds {{platform}} limit of {{max}} characters",
+    "descExceeded": "Description exceeds {{platform}} limit of {{max}} characters",
+    "imageExceeded": "Images exceed {{platform}} limit of {{max}}",
+    "validationWarnings": "Compatibility Warnings",
+    "instagramImageAspectRatio": "Instagram image aspect ratio must be between 4:5 and 1.91:1",
+    "instagramVideoAspectRatio": "Instagram video aspect ratio must be between 9:16 and 4:5",
+    "facebookImageAspectRatio": "Facebook image aspect ratio must be between 4:5 and 1.91:1",
+    "facebookVideoAspectRatio": "Facebook video aspect ratio must be between 9:16 and 4:5"
   },
   "planTab": {
     "more": "More",

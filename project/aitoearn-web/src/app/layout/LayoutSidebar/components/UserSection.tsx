@@ -28,7 +28,6 @@ function UserAvatar({
     return null
   }
 
-  // 点击打开默认设置页
   const handleClick = () => {
     onOpenSettings()
   }
@@ -44,13 +43,13 @@ function UserAvatar({
               collapsed ? 'justify-center p-1' : 'gap-2 px-2 py-1.5',
             )}
           >
-            {/* 用户头像 */}
-            <Avatar className="h-8 w-8">
+            <Avatar className="h-8 w-8 shrink-0 border border-border">
               <AvatarImage src={getOssUrl(userInfo.avatar) || ''} alt={userInfo.name || t('unknownUser')} />
-              <AvatarFallback>{userInfo.name?.charAt(0)?.toUpperCase() || 'U'}</AvatarFallback>
+              <AvatarFallback className="bg-muted-foreground font-semibold text-background">
+                {userInfo.name?.charAt(0)?.toUpperCase() || 'U'}
+              </AvatarFallback>
             </Avatar>
 
-            {/* 用户名 */}
             {!collapsed && (
               <div className="flex min-w-0 flex-1 flex-col items-start">
                 <span className="w-full truncate text-sm font-medium text-foreground text-left">
@@ -78,7 +77,6 @@ export function UserSection({ collapsed, onLogin, onOpenSettings }: UserSectionP
     return <UserAvatar collapsed={collapsed} onOpenSettings={onOpenSettings} />
   }
 
-  // 未登录状态
   if (collapsed) {
     return (
       <TooltipProvider>

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
 import {
   ReportLocationDto,
@@ -28,7 +28,6 @@ export class UserController {
     description: 'Retrieve user information by specifying the email address.',
     response: UserInfoVO,
   })
-  @Public()
   @Get('info/mail/:mail')
   async infoByMail(@Param('mail') mail: string) {
     const res = await this.userService.getUserInfoByMail(mail)

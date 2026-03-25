@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto'
 import {
   CanActivate,
   ExecutionContext,
@@ -7,6 +8,7 @@ import {
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
+import { ApiKeyRepository, UserRepository, UserStatus } from '@yikart/mongodb'
 import { AitoearnAuthConfig } from './aitoearn-auth.config'
 import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
@@ -18,6 +20,8 @@ export class AitoearnAuthGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     private readonly config: AitoearnAuthConfig,
+    private readonly apiKeyRepository: ApiKeyRepository,
+    private readonly userRepository: UserRepository,
   ) {
     this.secret = config.secret
   }
@@ -29,6 +33,29 @@ export class AitoearnAuthGuard implements CanActivate {
     ])
 
     const request = context.switchToHttp().getRequest()
+
+    // 1. API Key 认证
+    const apiKey = request.headers['x-api-key'] as string | undefined
+    if (apiKey) {
+      const keyHash = createHash('sha1').update(apiKey).digest('hex')
+      const record = await this.apiKeyRepository.getByKeyHash(keyHash)
+      if (!record) {
+        throw new UnauthorizedException()
+      }
+      await this.apiKeyRepository.updateLastUsedAt(record.id)
+      const user = await this.userRepository.getById(record.userId)
+      if (!user || user.isDelete || user.status !== UserStatus.OPEN) {
+        throw new UnauthorizedException()
+      }
+      request['user'] = {
+        id: record.userId,
+        mail: user.mail,
+        name: user.name,
+      }
+      return true
+    }
+
+    // 2. Bearer Token 认证
     const token = this.extractTokenFromHeader(request)
     if (!token) {
       if (isPublic) {

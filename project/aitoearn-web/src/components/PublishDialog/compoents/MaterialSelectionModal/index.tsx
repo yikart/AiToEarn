@@ -15,7 +15,8 @@ import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
 import { getAgentAssets } from '@/api/ai'
-import { getMediaGroupList, getMediaList } from '@/api/media'
+import { apiGetMaterialGroupList } from '@/api/material'
+import { getMediaList } from '@/api/media'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
@@ -56,31 +57,23 @@ const MEDIA_BREAKPOINTS = {
 const PAGE_SIZE = 20
 
 /**
- * 处理分组数据，提取封面和资源数量
+ * 将草稿箱 PromotionPlan 转换为 MediaGroup 兼容结构
  */
-function processGroups(list: MediaGroup[]): MediaGroup[] {
-  return list.map((group) => {
-    const mediaList = group.mediaList
-
-    // 查找第一个媒体作为预览
-    let previewMedia = null
-    if (mediaList && mediaList.list && mediaList.list.length > 0) {
-      previewMedia = mediaList.list[0]
-    }
-
-    return {
-      ...group,
-      cover: previewMedia?.thumbUrl || previewMedia?.url,
-      count: mediaList?.total || 0,
-      previewMedia: previewMedia
-        ? {
-            type: previewMedia.type,
-            url: previewMedia.url,
-            thumbUrl: previewMedia.thumbUrl,
-          }
-        : null,
-    }
-  })
+function adaptPlansToGroups(plans: { id: string, name: string, title?: string, desc?: string, isDefault?: boolean, createdAt?: string, updatedAt?: string }[]): MediaGroup[] {
+  return plans.map(plan => ({
+    _id: plan.id,
+    title: plan.name || plan.title || '',
+    type: 'img',
+    desc: plan.desc,
+    count: 0,
+    isDefault: plan.isDefault,
+    cover: undefined,
+    previewMedia: null,
+    userId: '',
+    userType: '',
+    createdAt: plan.createdAt || '',
+    updatedAt: plan.updatedAt || '',
+  }))
 }
 
 /**
@@ -123,35 +116,16 @@ const MaterialSelectionModalContent = memo(
     // 多选状态（仅图片模式）
     const [selectedMedia, setSelectedMedia] = useState<Set<string>>(new Set())
 
-    // 是否为多选模式（Agent 分组支持多种类型时，根据 mediaTypes 判断）
-    const isMultiSelect = isAgentGroup
-      ? typesArray.includes('img') // Agent 分组：包含图片即启用多选模式
-      : selectedGroup?.type === 'img' // 普通分组：图片组多选
+    // 是否为多选模式：包含图片类型即启用多选
+    const isMultiSelect = typesArray.includes('img')
 
-    // 获取分组列表
+    // 获取草稿箱分组列表
     const fetchGroups = useCallback(async () => {
       setGroupsLoading(true)
       try {
-        // 如果支持多种类型，分别获取然后合并
-        if (isMultipleTypes) {
-          const promises = typesArray.map(type => getMediaGroupList(1, 50, type))
-          const responses = await Promise.all(promises)
-          const allGroups: MediaGroup[] = []
-          responses.forEach((response) => {
-            if (response?.data?.list) {
-              allGroups.push(...response.data.list)
-            }
-          })
-          const processedGroups = processGroups(allGroups)
-          setGroups(processedGroups)
-        }
-        else {
-          // 单一类型
-          const response = await getMediaGroupList(1, 50, typesArray[0])
-          if (response?.data?.list) {
-            const processedGroups = processGroups(response.data.list)
-            setGroups(processedGroups)
-          }
+        const response = await apiGetMaterialGroupList(1, 100)
+        if (response?.data?.list) {
+          setGroups(adaptPlansToGroups(response.data.list))
         }
       }
       catch (error) {
@@ -160,19 +134,19 @@ const MaterialSelectionModalContent = memo(
       finally {
         setGroupsLoading(false)
       }
-    }, [typesArray, isMultipleTypes])
+    }, [])
 
     // 使用 ref 稳定化 fetchGroups 引用，避免 useEffect 因函数引用变化而重复执行
     const fetchGroupsRef = useRef(fetchGroups)
     fetchGroupsRef.current = fetchGroups
 
     // 获取媒体列表（首次加载）
-    const fetchMediaList = useCallback(async (groupId: string) => {
+    const fetchMediaList = useCallback(async (materialGroupId: string) => {
       setMediaLoading(true)
       setMediaPage(1)
       setHasMoreMedia(true)
       try {
-        const response = await getMediaList(groupId, 1, PAGE_SIZE)
+        const response = await getMediaList({ materialGroupId }, 1, PAGE_SIZE)
         if (response?.data?.list) {
           const list = response.data.list
           const total = response.data.total || 0
@@ -283,7 +257,7 @@ const MaterialSelectionModalContent = memo(
       setIsLoadingMore(true)
 
       try {
-        const response = await getMediaList(selectedGroup._id, nextPage, PAGE_SIZE)
+        const response = await getMediaList({ materialGroupId: selectedGroup._id }, nextPage, PAGE_SIZE)
         if (response?.data?.list) {
           const newList = response.data.list
           const total = response.data.total || 0
@@ -347,11 +321,8 @@ const MaterialSelectionModalContent = memo(
     // 点击媒体
     const handleMediaClick = useCallback(
       (media: MediaItem) => {
-        // 根据当前分组类型判断选择模式
-        // Agent 分组：按素材类型判断；普通分组：图片组多选
-        const currentIsMultiSelect = isAgentGroup
-          ? media.type === 'img'
-          : selectedGroup?.type === 'img'
+        // 图片多选，视频单选
+        const currentIsMultiSelect = media.type === 'img'
 
         if (currentIsMultiSelect) {
           // 图片多选：切换选中状态
@@ -372,7 +343,7 @@ const MaterialSelectionModalContent = memo(
           onOpenChange(false)
         }
       },
-      [selectedGroup, isAgentGroup, onSelect, onOpenChange],
+      [onSelect, onOpenChange],
     )
 
     // 确认选择（多选模式）
@@ -527,7 +498,7 @@ const MaterialSelectionModalContent = memo(
                           <SelectableMediaCard
                             media={media}
                             selected={selectedMedia.has(media._id)}
-                            multiSelect={isAgentGroup ? media.type === 'img' : isMultiSelect}
+                            multiSelect={media.type === 'img'}
                             onClick={handleMediaClick}
                           />
                         </div>

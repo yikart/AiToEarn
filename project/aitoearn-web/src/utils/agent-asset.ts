@@ -3,7 +3,7 @@
  * 提供 Agent 素材的类型判断和数据转换功能
  */
 
-import type { MediaItem } from '@/app/[lng]/material/materialStore/materialStore.types'
+import type { MediaItem } from '@/api/types/media'
 import type { AssetType, AssetVo } from '@/types/agent-asset'
 import { IMAGE_ASSET_TYPES, VIDEO_ASSET_TYPES } from '@/types/agent-asset'
 

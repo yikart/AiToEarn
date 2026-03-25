@@ -1,4 +1,4 @@
-import { AccountType, createZodDto, TableDto } from '@yikart/common'
+import { AccountType, createZodDto, FileUtil, TableDto } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
 import { z } from 'zod'
 
@@ -9,16 +9,16 @@ export class MaterialIdDto extends createZodDto(MaterialIdSchema) { }
 
 export const MaterialMediaSchema = z.object({
   id: z.string().optional().describe('资源ID'),
-  url: z.string(),
+  url: FileUtil.zodTrimHost(),
   type: z.enum(MediaType).describe('资源类型'),
-  thumbUrl: z.string().optional().describe('缩略图'),
+  thumbUrl: FileUtil.zodTrimHost().optional().describe('缩略图'),
   content: z.string().optional().describe('文本内容'),
   mediaId: z.string().optional().describe('资源ID'),
 })
 
 export const CreateMaterialSchema = z.object({
   groupId: z.string().describe('分组ID'),
-  coverUrl: z.string().optional().describe('封面图'),
+  coverUrl: FileUtil.zodTrimHost().optional().describe('封面图'),
   mediaList: z.array(MaterialMediaSchema).describe('资源列表'),
   title: z.string().describe('标题'),
   desc: z.string().optional().describe('描述'),
@@ -32,7 +32,7 @@ export const CreateMaterialSchema = z.object({
 export class CreateMaterialDto extends createZodDto(CreateMaterialSchema) { }
 
 export const UpdateMaterialSchema = z.object({
-  coverUrl: z.string().optional().describe('封面图'),
+  coverUrl: FileUtil.zodTrimHost().optional().describe('封面图'),
   mediaList: z.array(MaterialMediaSchema).describe('资源列表'),
   title: z.string().describe('标题'),
   desc: z.string().optional().describe('描述'),
@@ -40,6 +40,7 @@ export const UpdateMaterialSchema = z.object({
   option: z.any().optional().describe('其他属性'),
   autoDeleteMedia: z.boolean().optional().describe('自动删除草稿'),
   maxUseCount: z.number().int().positive().optional().describe('最大使用次数'),
+  accountTypes: z.array(z.enum(AccountType)).optional().describe('适用的频道类型'),
 })
 export class UpdateMaterialDto extends createZodDto(UpdateMaterialSchema) { }
 

@@ -6,7 +6,7 @@
 'use client'
 
 import type { TaskListItem } from '@/api/agent'
-import type { MediaItem } from '@/app/[lng]/material/materialStore/materialStore.types'
+import type { MediaItem } from '@/api/types/media'
 import type { MediaPreviewItem } from '@/components/common/MediaPreview'
 import { ArrowRight, Bot, History } from 'lucide-react'
 import Link from 'next/link'
@@ -173,7 +173,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
       case 'tasks':
         return '/tasks-history'
       case 'agent':
-        return '/material/agent-assets'
+        return '/agent-assets'
       default:
         return '/tasks-history'
     }

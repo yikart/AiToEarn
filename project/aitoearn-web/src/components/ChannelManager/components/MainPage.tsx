@@ -121,8 +121,9 @@ export function MainPage() {
       setDeleteDialog({ open: false, type: 'space', id: '', name: '' })
     }
     catch (error) {
-      const errorType = deleteDialog.type === 'space' ? '空间' : '频道'
-      toast.error(`删除${errorType}失败`)
+      toast.error(deleteDialog.type === 'space'
+        ? t('channelManager.deleteSpaceFailed')
+        : t('channelManager.deleteChannelFailed'))
     }
     finally {
       setDeleteLoading(null)

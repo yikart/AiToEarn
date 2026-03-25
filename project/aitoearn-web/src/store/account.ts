@@ -22,6 +22,8 @@ export interface IAccountStore {
   accountActive?: SocialAccount
   // 当前选择的空间ID
   activeSpaceId?: string
+  // 余额不足弹框状态
+  lowBalanceAlertOpen: boolean
 }
 
 const store: IAccountStore = {
@@ -35,6 +37,7 @@ const store: IAccountStore = {
   accountLoading: false,
   accountActive: undefined,
   activeSpaceId: undefined,
+  lowBalanceAlertOpen: false,
 }
 
 function getStore() {
@@ -49,6 +52,12 @@ export const useAccountStore = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        setLowBalanceAlertOpen(lowBalanceAlertOpen: boolean) {
+          set({
+            lowBalanceAlertOpen,
+          })
+        },
+
         clear() {
           set({
             ...getStore(),

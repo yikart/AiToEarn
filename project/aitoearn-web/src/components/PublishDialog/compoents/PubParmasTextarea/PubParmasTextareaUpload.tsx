@@ -18,7 +18,6 @@ import {
   formatVideo,
   VideoGrabFrame,
 } from '@/components/PublishDialog/PublishDialog.util'
-import { OSS_URL } from '@/constant'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
@@ -351,7 +350,7 @@ const PubParmasTextareaUpload = memo(
       // 处理图片素材导入
       const processImageMedia = useCallback(async (media: MediaItem): Promise<IImgFile> => {
         const ossUrl = getOssUrl(media.url)
-        const req = await fetch(ossUrl.replace(OSS_URL, '/ossProxy/'))
+        const req = await fetch(ossUrl)
         const blob = await req.blob()
         const imagefile = await formatImg({
           blob,
@@ -367,7 +366,7 @@ const PubParmasTextareaUpload = memo(
         const coverOss = getOssUrl(media.thumbUrl)
 
         // 下载封面
-        const req = await fetch(coverOss.replace(OSS_URL, '/ossProxy/'))
+        const req = await fetch(coverOss)
         const blob = await req.blob()
         const imagefile = await formatImg({
           blob,

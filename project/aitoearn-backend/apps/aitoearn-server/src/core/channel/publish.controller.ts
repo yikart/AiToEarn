@@ -5,13 +5,15 @@
  * @LastEditors: nevin
  * @Description: 发布
  */
-import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Logger, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, TableDto } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { plainToInstance } from 'class-transformer'
 import { PublishRecordService } from '../publish-record/publish-record.service'
+import { RelayClientService } from '../relay/relay-client.service'
+import { ChannelAccountService } from './platforms/channel-account.service'
 import { PostHistoryItemVo, PublishRecordItemVo } from './publish-response.vo'
 import {
   CreatePublishDto,
@@ -27,10 +29,14 @@ import { PublishingService } from './publishing/publishing.service'
 @ApiTags('渠道/发布')
 @Controller('plat/publish')
 export class PublishController {
+  private readonly logger = new Logger(PublishController.name)
+
   constructor(
     private readonly publishService: PublishService,
     private readonly publishingService: PublishingService,
     private readonly publishRecordService: PublishRecordService,
+    private readonly channelAccountService: ChannelAccountService,
+    private readonly relayClientService: RelayClientService,
   ) { }
 
   @ApiDoc({
@@ -84,7 +90,9 @@ export class PublishController {
     @GetToken() token: TokenInfo,
     @Body() data: PubRecordListFilterDto,
   ) {
-    return this.publishService.getList(data, token.id)
+    const local = await this.publishService.getList(data, token.id)
+    const relay = await this.fetchRelayData<PublishRecordItemVo[]>(token.id, '/plat/publish/getList', data)
+    return [...local, ...relay]
   }
 
   @ApiDoc({
@@ -97,7 +105,9 @@ export class PublishController {
     @GetToken() token: TokenInfo,
     @Body() data: PubRecordListFilterDto,
   ) {
-    return this.publishService.getPostHistory(data, token.id)
+    const local = await this.publishService.getPostHistory(data, token.id)
+    const relay = await this.fetchRelayData<PostHistoryItemVo[]>(token.id, '/plat/publish/posts', data)
+    return [...local, ...relay]
   }
 
   @ApiDoc({
@@ -110,7 +120,9 @@ export class PublishController {
     @GetToken() token: TokenInfo,
     @Body() data: PubRecordListFilterDto,
   ) {
-    return this.publishService.getQueuedPublishingTasks(data, token.id)
+    const local = await this.publishService.getQueuedPublishingTasks(data, token.id)
+    const relay = await this.fetchRelayData<PostHistoryItemVo[]>(token.id, '/plat/publish/statuses/queued/posts', data)
+    return [...local, ...relay]
   }
 
   @ApiDoc({
@@ -123,7 +135,9 @@ export class PublishController {
     @GetToken() token: TokenInfo,
     @Body() data: PubRecordListFilterDto,
   ) {
-    return this.publishService.getPublishedPosts(data, token.id)
+    const local = await this.publishService.getPublishedPosts(data, token.id)
+    const relay = await this.fetchRelayData<PostHistoryItemVo[]>(token.id, '/plat/publish/statuses/published/posts', data)
+    return [...local, ...relay]
   }
 
   @ApiDoc({
@@ -198,5 +212,25 @@ export class PublishController {
   @Post('updateTask')
   async updatePublishTask(@GetToken() token: TokenInfo, @Body() data: UpdatePublishTaskDto) {
     return this.publishService.updatePublishTask(data, token.id)
+  }
+
+  private async fetchRelayData<T extends unknown[]>(userId: string, path: string, data: PubRecordListFilterDto): Promise<T> {
+    if (!this.relayClientService.enabled) {
+      return [] as unknown as T
+    }
+    try {
+      const relayAccounts = await this.channelAccountService.listRelayAccountsByUserId(userId)
+      if (relayAccounts.length === 0) {
+        return [] as unknown as T
+      }
+      return await this.relayClientService.post<T>(path, {
+        ...data,
+        accountIds: relayAccounts.map(a => a.relayAccountRef),
+      })
+    }
+    catch (error) {
+      this.logger.error(`Fetch relay publish records failed: ${error}`)
+      return [] as unknown as T
+    }
   }
 }

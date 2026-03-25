@@ -1,7 +1,14 @@
 #!/usr/bin/env node
 
+import { arch } from 'node:os'
 import { Command } from 'commander'
 import { $, chalk, fs, path } from 'zx'
+
+function getDefaultPlatform() {
+  const a = arch()
+  const dockerArch = a === 'x64' ? 'amd64' : a
+  return [`linux/${dockerArch}`]
+}
 
 async function cleanOutputDir(contextDir, verbose = false) {
   if (await fs.pathExists(contextDir)) {
@@ -208,8 +215,13 @@ async function buildImage(projectName, contextDir, options = {}) {
     verbose = false,
     registries = ['registry.fly.io', 'registry.aitoearn.cn'],
     push = false,
-    platforms = ['linux/amd64'],
+    platforms = getDefaultPlatform(),
   } = options
+
+  if (platforms.length > 1 && !push) {
+    console.error(chalk.red('错误: 多平台构建必须配合 --push 使用（docker buildx 不支持多平台 --load）'))
+    process.exit(1)
+  }
 
   const platformStr = platforms.join(',')
 
@@ -231,7 +243,7 @@ async function buildImage(projectName, contextDir, options = {}) {
 
   // 为每个 registry 生成 tag 参数
   const tagArgs = registries.flatMap(registry => ['-t', `${registry}/${projectName}:${tag}`])
-  const pushArgs = push ? ['--push'] : []
+  const pushArgs = push ? ['--push'] : ['--load']
 
   try {
     // 构建镜像并打所有 tag
@@ -380,10 +392,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     .option('--context-only', '仅准备 Docker 上下文，不构建镜像', false)
     .option('-r, --registry <registry...>', 'Docker 镜像仓库地址（可多次指定）', ['registry.fly.io', 'registry.aitoearn.cn'])
     .option('-p, --push', '构建后推送镜像到仓库', false)
-    .option('--platform <platforms...>', '目标平台（可多次指定，如 linux/amd64 linux/arm64）', ['linux/amd64'])
+    .option('--platform <platforms...>', '目标平台（可多次指定，如 linux/amd64 linux/arm64），默认当前系统架构')
     .action(async (appName, options) => {
       try {
         const finalOptions = { ...options, contextOnly: options.contextOnly }
+        const platforms = options.platform || getDefaultPlatform()
 
         const result = await prepareContext(appName, finalOptions)
 
@@ -392,7 +405,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
             verbose: options.verbose,
             registries: options.registry,
             push: options.push,
-            platforms: options.platform,
+            platforms,
           })
         }
       }

@@ -76,6 +76,8 @@ export interface AuthInfo {
   expires_in?: number
   refresh_token_expires_in?: number
   userInfo?: object
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 export interface UserInfo {

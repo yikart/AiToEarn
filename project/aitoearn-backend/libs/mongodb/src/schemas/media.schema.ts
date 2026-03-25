@@ -44,6 +44,12 @@ export class Media extends WithTimestampSchema {
   groupId?: string // 所属组ID
 
   @Prop({
+    required: false,
+    index: true,
+  })
+  materialGroupId?: string // 所属组ID
+
+  @Prop({
     required: true,
     enum: MediaType,
     index: true,

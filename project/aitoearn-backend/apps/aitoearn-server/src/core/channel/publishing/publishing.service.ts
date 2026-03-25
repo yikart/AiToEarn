@@ -6,6 +6,7 @@ import { PublishRecord, PublishType } from '@yikart/mongodb'
 import { youtube_v3 } from 'googleapis'
 import { v4 as uuidv4 } from 'uuid'
 import { PublishRecordService } from '../../publish-record/publish-record.service'
+import { RelayAccountException } from '../../relay/relay-account.exception'
 import { DouyinDownloadType, DouyinPrivateStatus } from '../libs/douyin/common'
 import { ChannelAccountService } from '../platforms/channel-account.service'
 import { FacebookService } from '../platforms/meta/facebook.service'
@@ -112,6 +113,10 @@ export class PublishingService {
     if (!accountInfo)
       throw new AppException(ResponseCode.ChannelAccountInfoFailed)
 
+    if (accountInfo.relayAccountRef) {
+      throw new RelayAccountException(accountInfo.relayAccountRef, publishData.accountId)
+    }
+
     const { publishTime, accountType } = publishData
     const taskData = {
       ...publishData,
@@ -217,6 +222,13 @@ export class PublishingService {
     }
     if (task.status !== PublishStatus.PUBLISHED) {
       throw new AppException(ResponseCode.PublishTaskNotPublished)
+    }
+
+    if (task.accountId) {
+      const account = await this.channelAccountService.getAccountInfo(task.accountId)
+      if (account?.relayAccountRef) {
+        throw new RelayAccountException(account.relayAccountRef, task.accountId)
+      }
     }
 
     if (!supportPlatforms.includes(task.accountType)) {
@@ -414,6 +426,12 @@ export class PublishingService {
     if (!task || task.userId !== userId) {
       throw new AppException(ResponseCode.PublishTaskNotFound)
     }
+    if (task.accountId) {
+      const account = await this.channelAccountService.getAccountInfo(task.accountId)
+      if (account?.relayAccountRef) {
+        throw new RelayAccountException(account.relayAccountRef, task.accountId)
+      }
+    }
     if (task.queued && !!task.queueId) {
       await this.deleteQueueTask(task.queueId)
     }
@@ -430,6 +448,12 @@ export class PublishingService {
     const task = await this.publishRecordService.getOneById(id)
     if (!task || task.userId !== userId) {
       throw new AppException(ResponseCode.PublishTaskNotFound)
+    }
+    if (task.accountId) {
+      const account = await this.channelAccountService.getAccountInfo(task.accountId)
+      if (account?.relayAccountRef) {
+        throw new RelayAccountException(account.relayAccountRef, task.accountId)
+      }
     }
 
     await this.publishRecordService.updateById(
@@ -475,6 +499,13 @@ export class PublishingService {
     }
     if (taskInfo.status !== PublishStatus.WaitingForPublish) {
       throw new AppException(ResponseCode.PublishTaskStatusInvalid)
+    }
+
+    if (taskInfo.accountId) {
+      const account = await this.channelAccountService.getAccountInfo(taskInfo.accountId)
+      if (account?.relayAccountRef) {
+        throw new RelayAccountException(account.relayAccountRef, taskInfo.accountId)
+      }
     }
 
     await this.publishRecordService.updateById(id, { publishTime: new Date(), queued: true })

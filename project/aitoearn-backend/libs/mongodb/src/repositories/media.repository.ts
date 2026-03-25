@@ -64,6 +64,7 @@ export class MediaRepository extends BaseRepository<Media> {
   async getList(inFilter: {
     userId?: string
     groupId?: string
+    materialGroupId?: string
     type?: MediaType
     userType?: UserType
     useCount?: number
@@ -76,6 +77,7 @@ export class MediaRepository extends BaseRepository<Media> {
     const filter: RootFilterQuery<Media> = {
       ...(inFilter.userId && { userId: inFilter.userId }),
       ...(inFilter.groupId && { groupId: inFilter.groupId }),
+      ...(inFilter.materialGroupId && { materialGroupId: inFilter.materialGroupId }),
       ...(inFilter.userType && { userType: inFilter.userType }),
       ...(inFilter.type && { type: inFilter.type }),
       ...(inFilter.useCount !== undefined && { useCount: { $gte: inFilter.useCount } }),

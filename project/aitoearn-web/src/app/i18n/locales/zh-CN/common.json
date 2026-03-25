@@ -91,7 +91,8 @@
     "draftBoxSeoTitle": "内容管理 - AI批量创作与草稿编辑",
     "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用AiToEarn组织多平台分发内容。",
     "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, AiToEarn",
-    "brandPromotion": "AI打卡"
+    "brandPromotion": "AI打卡",
+    "agentAssets": "Agent素材"
   },
   "tasks": "内容市场",
   "signIn": {
@@ -127,20 +128,23 @@
     "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
   },
   "uptime": {
-    "seoTitle": "服务状态 - 实时系统健康监控",
-    "pageKeywords": "服务状态, 系统监控, 在线率追踪, 服务器健康, API状态, AiToEarn状态, 实时监控",
-    "pageTitle": "服务状态",
-    "pageDescription": "实时监控 AiToEarn 服务的运行状态和可用性。查看 Agent、服务器、AI、数据库和网络模块的运行状况。",
+    "seoTitle": "AI 模型状态 - 实时模型可用性监控",
+    "pageKeywords": "AI模型状态, 模型可用性, 在线率追踪, AI服务健康, 模型监控, AiToEarn状态",
+    "pageTitle": "AI 模型状态",
+    "pageDescription": "实时监控 AI 模型的可用性和运行状态。查看各模型和服务商的运行状况。",
     "loading": "加载中...",
     "noData": "暂无数据",
     "uptimePercentage": "正常运行时间：",
     "normal": "正常",
     "timeout": "超时",
     "unavailable": "中断",
+    "provider": "服务商",
+    "operation": "操作",
+    "latency": "延迟",
+    "errorType": "错误",
     "filter": {
       "title": "筛选条件",
-      "module": "模块",
-      "type": "类型",
+      "model": "模型",
       "timeRange": "时间范围",
       "all": "全部",
       "last7Days": "最近7天",
@@ -150,20 +154,7 @@
       "apply": "应用"
     },
     "copy": "复制",
-    "copied": "已复制",
-    "module": {
-      "Agent": "Agent",
-      "Server": "服务器",
-      "Ai": "AI",
-      "Database": "数据库",
-      "Network": "网络",
-      "Other": "其他"
-    },
-    "type": {
-      "AgentStatus": "Agent状态",
-      "AgentMcpStatus": "Agent Mcp 状态",
-      "NewApiStatus": "NewApi 状态"
-    }
+    "copied": "已复制"
   },
   "websit": {
     "termsOfService": {
@@ -274,5 +265,6 @@
     "abroadContent": "{{platform}} 仅在国际站支持，是否跳转到国际站？",
     "ok": "前往",
     "cancel": "取消"
-  }
+  },
+  "noMore": "没有更多了"
 }

@@ -17,11 +17,6 @@ const {
 } = process.env
 
 const {
-  FEISHU_WEBHOOK_URL,
-  FEISHU_WEBHOOK_SECRET,
-} = process.env
-
-const {
   VOLCENGINE_API_KEY,
   VOLCENGINE_ACCESS_KEY_ID,
   VOLCENGINE_SECRET_ACCESS_KEY,
@@ -70,11 +65,6 @@ module.exports = {
       enable: true,
       level: 'debug',
       pretty: false,
-    },
-    feishu: {
-      enable: true,
-      url: FEISHU_WEBHOOK_URL,
-      secret: FEISHU_WEBHOOK_SECRET,
     },
   },
   redis: {
@@ -131,8 +121,8 @@ module.exports = {
     gemini: {
       keyPairs: parseGeminiKeyPairs(),
       location: GEMINI_LOCATION || 'us-central1',
-      apiKey: OPENAI_API_KEY,
-      baseUrl: OPENAI_BASE_URL.replace(/\/v1$/, ''),
+      apiKey: AICSO_API_KEY,
+      baseUrl: AICSO_BASE_URL,
       ...(AI_PROXY_URL && { proxyUrl: AI_PROXY_URL }),
     },
     aicso: {
@@ -141,28 +131,28 @@ module.exports = {
     },
     aideo: {
       vCreative: {
-        basePrice: 0, // AI editing base price (cents/minute, 720P)
+        basePrice: 0,
       },
       vision: {
-        basePrice: 0, // Video understanding base price (cents/minute)
+        basePrice: 0,
       },
       highlight: {
-        basePrice: 0, // Highlight smart editing base price (cents/minute)
+        basePrice: 0,
       },
       aiTranslation: {
-        facialTranslation: 0, // Facial translation price (cents/minute) - the only supported translation type
+        facialTranslation: 0,
       },
       erase: {
-        basePrice: 0, // AI subtitle removal base price (cents/minute)
+        basePrice: 0,
       },
       videoEdit: {
-        basePrice: 0, // Video editing base price (cents/minute, 720P)
+        basePrice: 0,
       },
       dramaRecap: {
-        basePrice: 0, // Drama recap base price (cents/minute)
+        basePrice: 0,
       },
       styleTransfer: {
-        basePrice: 0, // Video style transfer base price (cents/minute)
+        basePrice: 0,
       },
     },
     models: {
@@ -339,6 +329,60 @@ module.exports = {
       video: {
         generation: [
           {
+            name: 'grok-video-3-15s',
+            description: 'Grok Video 15s',
+            channel: 'aicso-grok',
+            modes: ['text2video', 'image2video'],
+            resolutions: ['720p'],
+            durations: [15],
+            maxInputImages: 1,
+            aspectRatios: ['2:3', '3:2', '1:1'],
+            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
+            defaults: {
+              duration: 15,
+              aspectRatio: '9:16',
+            },
+            pricing: [
+              { duration: 15, price: 0 },
+            ],
+          },
+          {
+            name: 'veo3.1-components-4k',
+            description: 'Veo 3.1 4K',
+            channel: 'aicso-veo',
+            modes: ['text2video', 'image2video'],
+            resolutions: ['4k'],
+            durations: [8],
+            maxInputImages: 3,
+            aspectRatios: ['9:16', '16:9', '1:1'],
+            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
+            defaults: {
+              duration: 8,
+              aspectRatio: '9:16',
+            },
+            pricing: [
+              { duration: 8, price: 0 },
+            ],
+          },
+          {
+            name: 'veo3.1-components',
+            description: 'Veo 3.1',
+            channel: 'aicso-veo',
+            modes: ['text2video', 'image2video'],
+            resolutions: ['720p'],
+            durations: [8],
+            maxInputImages: 3,
+            aspectRatios: ['9:16', '16:9', '1:1'],
+            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
+            defaults: {
+              duration: 8,
+              aspectRatio: '9:16',
+            },
+            pricing: [
+              { duration: 8, price: 0 },
+            ],
+          },
+          {
             name: 'grok-imagine-video',
             description: 'Grok Video',
             channel: 'grok',
@@ -375,60 +419,6 @@ module.exports = {
               { mode: 'video2video', duration: 6, price: 0 },
               { mode: 'video2video', duration: 7, price: 0 },
               { mode: 'video2video', duration: 8, price: 0 },
-            ],
-          },
-          {
-            name: 'grok-video-3-15s',
-            description: 'Grok Video 15s',
-            channel: 'aicso-grok',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['720p'],
-            durations: [15],
-            maxInputImages: 1,
-            aspectRatios: ['2:3', '3:2', '1:1'],
-            tags: ['限时'],
-            defaults: {
-              duration: 15,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 15, price: 0 },
-            ],
-          },
-          {
-            name: 'veo3.1-components-4k',
-            description: 'Veo 3.1 4K',
-            channel: 'aicso-veo',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['4k'],
-            durations: [8],
-            maxInputImages: 3,
-            aspectRatios: ['9:16', '16:9', '1:1'],
-            tags: ['限时'],
-            defaults: {
-              duration: 8,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 8, price: 0 },
-            ],
-          },
-          {
-            name: 'veo3.1-components',
-            description: 'Veo 3.1',
-            channel: 'aicso-veo',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['720p'],
-            durations: [8],
-            maxInputImages: 3,
-            aspectRatios: ['9:16', '16:9', '1:1'],
-            tags: ['限时'],
-            defaults: {
-              duration: 8,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 8, price: 0 },
             ],
           },
         ],

@@ -134,3 +134,8 @@ export const AccountFilterSchema = z.object({
   types: z.array(z.enum(AccountType)).optional(),
 })
 export class AccountFilterDto extends createZodDto(AccountFilterSchema) {}
+
+const BatchAccountStatusDtoSchema = z.object({
+  accountIds: z.array(z.string().min(1)).min(1).describe('账号 ID 数组'),
+})
+export class BatchAccountStatusDto extends createZodDto(BatchAccountStatusDtoSchema, 'BatchAccountStatusDto') {}

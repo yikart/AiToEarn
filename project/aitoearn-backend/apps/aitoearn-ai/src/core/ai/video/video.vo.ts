@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto } from '@yikart/common'
+import { createPaginationVo, createZodDto, zodI18nString } from '@yikart/common'
 import { AiLogChannel } from '@yikart/mongodb'
 import { z } from 'zod'
 
@@ -47,7 +47,7 @@ const videoGenerationModelSchema = z.object({
   description: z.string().describe('模型描述'),
   summary: z.string().optional(),
   logo: z.string().optional(),
-  tags: z.string().array().default([]),
+  tags: z.array(zodI18nString()).default([]),
   mainTag: z.string().optional(),
   channel: z.enum(AiLogChannel).describe('渠道'),
   modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'video2video'])).describe('支持的模式'),

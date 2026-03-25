@@ -182,14 +182,14 @@ export function SpaceItem({
                 data-testid="cm-space-add-channel-btn"
                 variant="outline"
                 size="sm"
-                className="h-7 cursor-pointer shrink-0 px-2 sm:px-3"
+                className="h-7 cursor-pointer shrink-0 px-2"
                 onClick={(e) => {
                   e.stopPropagation()
                   onAddChannel()
                 }}
               >
-                <Plus className="h-3 w-3 sm:mr-1" />
-                <span className="hidden sm:inline">{t('channelManager.addChannel')}</span>
+                <Plus className="h-3 w-3 mr-1" />
+                <span>{t('channelManager.addChannel')}</span>
               </Button>
             )}
 

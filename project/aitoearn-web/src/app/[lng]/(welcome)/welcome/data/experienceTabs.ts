@@ -40,20 +40,8 @@ export const experienceTabs: ExperienceTab[] = [
     },
   },
   {
-    id: 'promotion',
-    number: 3,
-    titleKey: 'experience.tab1.title',
-    subtitleKey: 'experience.tab1.subtitle',
-    descriptionKey: 'experience.tab1.description',
-    video: {
-      url: '/assets/welcome/promotion.mp4',
-      poster: '/assets/welcome/interaction-cover.png',
-    },
-    isVertical: true,
-  },
-  {
     id: 'interaction',
-    number: 4,
+    number: 3,
     titleKey: 'experience.tab4.title',
     subtitleKey: 'experience.tab4.subtitle',
     descriptionKey: 'experience.tab4.description',

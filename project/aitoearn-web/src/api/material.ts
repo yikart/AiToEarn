@@ -1,4 +1,4 @@
-import type { DraftMaterial } from '@/app/[lng]/draft-box/types'
+import type { PromotionMaterial, PromotionPlan } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
 import type { PubType } from '@/app/config/publishConfig'
 import http from '@/utils/request'
 
@@ -29,7 +29,7 @@ export interface NewMaterialTask {
 
 // 创建素材草稿组
 export function apiCreateMaterialGroup(data: { name: string }) {
-  return http.post<{ _id: string }>('material/group', {
+  return http.post<{ id: string }>('material/group', {
     ...data,
     type: 'video',
   })
@@ -52,7 +52,7 @@ export function apiUpdateMaterialGroupInfo(
 
 // 获取草稿素材组列表
 export function apiGetMaterialGroupList(pageNo: number, pageSize: number) {
-  return http.get<{ list: any[], total: number }>(`material/group/list/${pageNo}/${pageSize}`)
+  return http.get<{ list: PromotionPlan[], total: number }>(`material/group/list/${pageNo}/${pageSize}`)
 }
 
 // 获取草稿素材组详情
@@ -76,6 +76,7 @@ export function apiCreateMaterial(
     type: PubType
     option?: Record<string, any>
     location?: number[]
+    accountTypes?: string[]
   },
   silent?: boolean,
 ) {
@@ -130,7 +131,7 @@ export async function apiGetMaterialList(groupId: string, pageNo: number, pageSi
     params.title = filters.title
   if (filters?.useCount !== undefined)
     params.useCount = filters.useCount
-  const res = await http.get<{ list: DraftMaterial[], total: number }>(`material/list/${pageNo}/${pageSize}`, params)
+  const res = await http.get<{ list: PromotionMaterial[], total: number }>(`material/list/${pageNo}/${pageSize}`, params)
   const list = res?.data?.list
   // 兼容代码，图文草稿补封面
   if (list && list.length > 0) {
@@ -164,6 +165,7 @@ export function apiUpdateMaterial(
     desc?: string
     location?: number[]
     option?: Record<string, any>
+    accountTypes?: string[]
   },
 ) {
   return http.put(`material/info/${id}`, data)

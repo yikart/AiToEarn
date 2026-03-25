@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common'
 import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { EngagementTaskStatus } from '@yikart/channel-db'
 import { Job } from 'bullmq'
+import { ChannelAccountService } from '../../platforms/channel-account.service'
 import { EngagementProvider } from '../engagement.interface'
 import { EngagementRecordService } from '../engagement.record.service'
 import { FacebookEngagementProvider } from '../providers/facebook.provider'
@@ -22,6 +23,7 @@ export class EngagementReplyToCommentConsumer extends WorkerHost {
     instagramProvider: InstagramEngagementProvider,
     threadsProvider: ThreadsEngagementProvider,
     private readonly engagementRecordService: EngagementRecordService,
+    private readonly channelAccountService: ChannelAccountService,
   ) {
     super()
     this.providerMap.set('facebook', facebookProvider)
@@ -46,6 +48,15 @@ export class EngagementReplyToCommentConsumer extends WorkerHost {
       this.logger.error(`Sub task ${job.data.taskId} not found`)
       return
     }
+
+    // 安全检查：relay 账号任务不应到达队列消费者
+    const account = await this.channelAccountService.getAccountInfo(subTask.accountId)
+    if (account?.relayAccountRef) {
+      this.logger.warn(`Relay account ${subTask.accountId} task reached engagement consumer, skipping sub task ${job.data.taskId}`)
+      await this.engagementRecordService.updateEngagementSubTaskStatus(job.data.taskId, EngagementTaskStatus.FAILED)
+      return
+    }
+
     if (subTask.status === EngagementTaskStatus.CREATED) {
       const provider = this.getProvider(subTask.platform)
       const resp = await provider.replyToComment(subTask.accountId, subTask.commentId, subTask.replyContent)

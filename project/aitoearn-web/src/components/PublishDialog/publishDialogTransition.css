@@ -11,7 +11,7 @@
 /* 右侧面板进入动画 - 激活状态 */
 .right-enter-active {
   width: 380px;
-  transition: all 300ms;
+  transition: width 300ms;
 }
 
 /* 右侧面板退出动画 - 初始状态 */
@@ -22,7 +22,7 @@
 /* 右侧面板退出动画 - 激活状态 */
 .right-exit-active {
   width: 0;
-  transition: all 300ms;
+  transition: width 300ms;
 }
 
 /* 左侧面板进入动画 - 初始状态 */
@@ -33,7 +33,7 @@
 /* 左侧面板进入动画 - 激活状态 */
 .left-enter-active {
   width: 380px;
-  transition: all 300ms;
+  transition: width 300ms;
 }
 
 /* 左侧面板退出动画 - 初始状态 */
@@ -44,5 +44,5 @@
 /* 左侧面板退出动画 - 激活状态 */
 .left-exit-active {
   width: 0;
-  transition: all 300ms;
+  transition: width 300ms;
 }

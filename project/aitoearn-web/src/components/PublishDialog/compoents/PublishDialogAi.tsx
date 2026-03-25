@@ -347,10 +347,10 @@ const PublishDialogAi = memo(
       // Video generation state
       const [videoModels, setVideoModels] = useState<any[]>([])
       const videoModelsLoadingRef = useRef(true) // Use ref to track loading state
-      // Initialize from localStorage or use default 'sora-2'
+      // Initialize from localStorage, will be set from API if empty
       const [selectedVideoModel, setSelectedVideoModel] = useState(() => {
         const savedModel = localStorage.getItem('ai_video_model')
-        return savedModel || 'sora-2'
+        return savedModel || ''
       })
       const [videoTaskId, setVideoTaskId] = useState<string | null>(null)
       const [videoStatus, setVideoStatus] = useState<string>('')
@@ -434,22 +434,10 @@ const PublishDialogAi = memo(
                 // Use saved model if it exists in list
                 setSelectedVideoModel(savedModel)
               }
-              else {
-                // Try to find sora-related model
-                const soraModel = res.data.find(
-                  (m: any) => m.name?.toLowerCase().includes('sora') || m.name === 'sora-2',
-                )
-
-                if (soraModel) {
-                  // Prefer sora model
-                  setSelectedVideoModel(soraModel.name)
-                  localStorage.setItem('ai_video_model', soraModel.name)
-                }
-                else if (res.data.length > 0) {
-                  // Use first model if no sora found
-                  setSelectedVideoModel(res.data[0].name)
-                  localStorage.setItem('ai_video_model', res.data[0].name)
-                }
+              else if (res.data.length > 0) {
+                // Use first available model
+                setSelectedVideoModel(res.data[0].name)
+                localStorage.setItem('ai_video_model', res.data[0].name)
               }
             }
           }
@@ -611,35 +599,16 @@ const PublishDialogAi = memo(
             let duration = 5
             let size = '720p'
 
-            if (selectedModel?.channel === 'kling' && selectedModel?.pricing) {
-              const durations = [
-                ...new Set(selectedModel.pricing.map((p: any) => p.duration)),
-              ] as number[]
-              const modes = [...new Set(selectedModel.pricing.map((p: any) => p.mode))] as string[]
-              if (durations.length > 0)
-                duration = durations[0]
-              if (modes.length > 0)
-                size = modes[0]
-            }
-            else {
-              if (selectedModel?.durations?.length > 0)
-                duration = selectedModel.durations[0]
-              if (selectedModel?.resolutions?.length > 0)
-                size = selectedModel.resolutions[0]
-            }
+            if (selectedModel?.durations?.length > 0)
+              duration = selectedModel.durations[0]
+            if (selectedModel?.resolutions?.length > 0)
+              size = selectedModel.resolutions[0]
 
             const data: any = {
               model: selectedVideoModel,
               prompt,
               duration,
-            }
-
-            // Use mode parameter for kling model
-            if (selectedModel?.channel === 'kling') {
-              data.mode = size
-            }
-            else {
-              data.size = size
+              size,
             }
 
             const res: any = await generateVideo(data)
@@ -706,7 +675,7 @@ const PublishDialogAi = memo(
               let match
               const replacements: Array<{ original: string, blobUrl: string }> = []
 
-              while ((match = base64Regex.exec(result.data.content)) !== null) {
+              while ((match = base64Regex.exec(result.data.content)) !== null) { // eslint-disable-line no-cond-assign
                 const [fullMatch, alt, base64Url] = match
                 try {
                   // Extract base64 data
@@ -1027,7 +996,7 @@ const PublishDialogAi = memo(
       const downloadVideoAsVideoFile = async (url: string): Promise<IVideoFile | null> => {
         try {
           // Convert relative path to full S3 URL for publishing
-          // API returns: ai/video/sora-2/...
+          // API returns: ai/video/{model}/...
           const ossUrl = `${getOssUrl(url)}`
           const filename = `ai-generated-video.mp4`
 
@@ -1268,7 +1237,7 @@ const PublishDialogAi = memo(
             const href = props.href || ''
 
             // Check if it's an audio file
-            if (/\.(aac|mp3|opus|wav)$/.test(href)) {
+            if (/\.(?:aac|mp3|opus|wav)$/.test(href)) {
               return (
                 <figure className="my-2">
                   <audio controls src={href}></audio>
@@ -1277,7 +1246,7 @@ const PublishDialogAi = memo(
             }
 
             // Check if it's a video file
-            if (/\.(3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href) || href.includes('video')) {
+            if (/\.(?:3gp|3g2|webm|ogv|mpeg|mp4|avi)$/.test(href) || href.includes('video')) {
               return (
                 <div className="my-2">
                   <video controls className="max-w-full max-h-[400px] rounded-lg block">
@@ -1607,22 +1576,10 @@ const PublishDialogAi = memo(
                   let duration = 5
                   let size = '720p'
 
-                  if (model?.channel === 'kling' && model?.pricing) {
-                    const durations = [
-                      ...new Set(model.pricing.map((p: any) => p.duration)),
-                    ] as number[]
-                    const modes = [...new Set(model.pricing.map((p: any) => p.mode))] as string[]
-                    if (durations.length > 0)
-                      duration = durations[0]
-                    if (modes.length > 0)
-                      size = modes[0]
-                  }
-                  else {
-                    if (model?.durations?.length > 0)
-                      duration = model.durations[0]
-                    if (model?.resolutions?.length > 0)
-                      size = model.resolutions[0]
-                  }
+                  if (model?.durations?.length > 0)
+                    duration = model.durations[0]
+                  if (model?.resolutions?.length > 0)
+                    size = model.resolutions[0]
 
                   return (
                     <div className="mt-2 p-2 bg-muted rounded text-xs text-muted-foreground">

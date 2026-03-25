@@ -1,6 +1,9 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AccountStatus } from '@yikart/channel-db'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
+import { BatchAccountStatusVo } from '../../account/account.vo'
+import { RelayAccountException } from '../../relay/relay-account.exception'
+import { RelayClientService } from '../../relay/relay-client.service'
 import { SocialMediaError } from '../libs/exception/base'
 import { PlatformBaseService, WorkDetailInfo } from './base.service'
 import { ChannelAccountService } from './channel-account.service'
@@ -11,15 +14,22 @@ export class PlatformService {
   @Inject('CHANNEL_PROVIDERS')
   private readonly platformServices: Record<AccountType, PlatformBaseService>
 
-  @Inject(ChannelAccountService)
+  @Inject()
   private readonly channelAccountService: ChannelAccountService
+
+  @Inject()
+  private readonly relayClientService: RelayClientService
 
   async getUserAccounts(userId: string) {
     const accounts = await this.channelAccountService.getUserAccountList(userId)
     if (!accounts || accounts.length === 0) {
       return []
     }
-    for (const account of accounts) {
+
+    const relayAccounts = accounts.filter(a => a.relayAccountRef)
+    const localAccounts = accounts.filter(a => !a.relayAccountRef)
+
+    for (const account of localAccounts) {
       const svc = this.platformServices[account.type]
       if (svc) {
         try {
@@ -27,12 +37,39 @@ export class PlatformService {
           account.status = status
         }
         catch (error) {
+          if (error instanceof RelayAccountException) {
+            throw error
+          }
           this.logger.error(`user:[${userId}] -- ${account.type} get access token status failed: ${error}`)
           account.status = AccountStatus.ABNORMAL
         }
       }
     }
+
+    if (relayAccounts.length > 0 && this.relayClientService.enabled) {
+      await this.fetchRelayAccountStatuses(relayAccounts)
+    }
+
     return accounts
+  }
+
+  private async fetchRelayAccountStatuses(relayAccounts: { _id: any, relayAccountRef: string | null, type: AccountType, status: number }[]) {
+    try {
+      const accountIds = relayAccounts.map(a => a.relayAccountRef).filter(Boolean) as string[]
+      const result = await this.relayClientService.post<BatchAccountStatusVo>('/account/batch-status', { accountIds })
+      const statusMap = result.statuses ?? {}
+      for (const account of relayAccounts) {
+        if (account.relayAccountRef && statusMap[account.relayAccountRef] !== undefined) {
+          account.status = statusMap[account.relayAccountRef]
+        }
+      }
+    }
+    catch (error) {
+      this.logger.error(`Fetch relay account statuses failed: ${error}`)
+      for (const account of relayAccounts) {
+        account.status = AccountStatus.ABNORMAL
+      }
+    }
   }
 
   getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string, accountId?: string) {
@@ -60,6 +97,14 @@ export class PlatformService {
       }
       throw new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
     }
+  }
+
+  async getAccountTokenStatus(accountId: string, accountType: AccountType): Promise<number> {
+    const svc = this.platformServices[accountType]
+    if (!svc) {
+      throw new AppException(ResponseCode.PlatformNotSupported)
+    }
+    return await svc.getAccessTokenStatus(accountId)
   }
 
   async updateAccountStatus(accountId: string, status: number) {

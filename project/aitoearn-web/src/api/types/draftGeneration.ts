@@ -19,7 +19,6 @@ export interface ImageModelInfo {
 export interface VideoModelPricing {
   duration: number
   price: number
-  mode?: string
   resolution?: string
   aspectRatio?: string
   discount?: string
@@ -29,8 +28,6 @@ export interface VideoModelPricing {
 export interface VideoModelInfo {
   name: string
   description: string
-  channel: string
-  modes: string[]
   resolutions: string[]
   durations: number[]
   maxInputImages: number

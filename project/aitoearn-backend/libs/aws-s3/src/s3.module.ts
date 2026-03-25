@@ -2,7 +2,7 @@ import type { DynamicModule, Provider } from '@nestjs/common'
 import { S3Client } from '@aws-sdk/client-s3'
 import { Global, Module } from '@nestjs/common'
 import { S3Config } from './s3.config'
-import { SIGN_S3_CLIENT } from './s3.constants'
+import { S3_SIGNING_CLIENT } from './s3.constants'
 import { S3Service } from './s3.service'
 
 @Global()
@@ -24,17 +24,17 @@ export class S3Module {
         useFactory: (s3Config: S3Config) => new S3Client({
           region: s3Config.region,
           endpoint: s3Config.endpoint,
-          forcePathStyle: true,
+          forcePathStyle: s3Config.forcePathStyle,
           credentials: buildCredentials(s3Config),
         }),
         inject: [S3Config],
       },
       {
-        provide: SIGN_S3_CLIENT,
+        provide: S3_SIGNING_CLIENT,
         useFactory: (s3Config: S3Config) => new S3Client({
           region: s3Config.region,
-          endpoint: s3Config.signEndpoint || s3Config.endpoint,
-          forcePathStyle: true,
+          endpoint: s3Config.publicEndpoint || s3Config.endpoint,
+          forcePathStyle: s3Config.forcePathStyle,
           credentials: buildCredentials(s3Config),
         }),
         inject: [S3Config],
@@ -46,7 +46,7 @@ export class S3Module {
       global: true,
       module: S3Module,
       providers,
-      exports: [S3Service, SIGN_S3_CLIENT],
+      exports: [S3Service],
     }
   }
 }

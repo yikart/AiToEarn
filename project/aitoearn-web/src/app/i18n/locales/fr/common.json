@@ -89,7 +89,8 @@
     "draftBox": "Gestion de contenu",
     "draftBoxSeoTitle": "Gestion de contenu - Création par lots IA et éditeur de brouillons",
     "draftBoxSeoDescription": "Gérez tous vos brouillons de contenu en un seul endroit. Utilisez l'IA pour générer des publications par lots et organisez la distribution multi-plateformes avec AiToEarn.",
-    "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, AiToEarn"
+    "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, AiToEarn",
+    "agentAssets": "Ressources Agent"
   },
   "tasks": "Marché",
   "signIn": {
@@ -128,20 +129,23 @@
   "networkError": "Erreur réseau, veuillez réessayer plus tard !",
   "contact": "Besoin d'aide ? Contactez le support :",
   "uptime": {
-    "seoTitle": "État du service - Surveillance système en temps réel",
-    "pageKeywords": "état du service, surveillance système, suivi disponibilité, état serveur, état API, AiToEarn statut",
-    "pageTitle": "État des services",
-    "pageDescription": "Surveillez l'état en temps réel et la disponibilité des services AiToEarn. Vérifiez le statut opérationnel des modules Agent, Serveur, IA, Base de données et Réseau.",
+    "seoTitle": "Statut des modèles IA - Surveillance de disponibilité en temps réel",
+    "pageKeywords": "statut modèle IA, disponibilité modèle, suivi disponibilité, santé service IA, surveillance modèle, AiToEarn statut",
+    "pageTitle": "Statut des modèles IA",
+    "pageDescription": "Surveillez la disponibilité en temps réel et le temps de fonctionnement des modèles IA. Vérifiez le statut opérationnel de chaque modèle et fournisseur.",
     "loading": "Chargement...",
     "noData": "Aucune donnée",
     "uptimePercentage": "Disponibilité :",
     "normal": "Normal",
     "timeout": "Délai dépassé",
     "unavailable": "Indisponible",
+    "provider": "Fournisseur",
+    "operation": "Opération",
+    "latency": "Latence",
+    "errorType": "Erreur",
     "filter": {
       "title": "Filtres",
-      "module": "Module",
-      "type": "Type",
+      "model": "Modèle",
       "timeRange": "Période",
       "all": "Tout",
       "last7Days": "7 derniers jours",
@@ -151,20 +155,7 @@
       "apply": "Appliquer"
     },
     "copy": "Copier",
-    "copied": "Copié",
-    "module": {
-      "Agent": "Agent",
-      "Server": "Serveur",
-      "Ai": "IA",
-      "Database": "Base de données",
-      "Network": "Réseau",
-      "Other": "Autre"
-    },
-    "type": {
-      "AgentStatus": "Statut Agent",
-      "AgentMcpStatus": "Statut MCP Agent",
-      "NewApiStatus": "Statut NewApi"
-    }
+    "copied": "Copié"
   },
   "websit": {
     "termsOfService": {
@@ -275,5 +266,6 @@
     "abroadContent": "{{platform}} n'est disponible que sur le site international. Rediriger vers le site international ?",
     "ok": "Aller",
     "cancel": "Annuler"
-  }
+  },
+  "noMore": "Plus de données"
 }

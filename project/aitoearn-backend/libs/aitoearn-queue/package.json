@@ -18,13 +18,13 @@
     "@yikart/common": "workspace:*",
     "@yikart/mongodb": "workspace:*",
     "@yikart/redis": "workspace:*",
-    "bullmq": "^5.0.0",
-    "nestjs-pino": "4.6.0",
+    "bullmq": "^5.71.0",
+    "nestjs-pino": "^4.6.1",
     "prom-client": "^15.0.0",
     "tslib": "^2.3.0",
     "zod": "^4.3.5"
   },
   "dependencies": {
-    "ioredis": "^5.7.0"
+    "ioredis": "5.9.3"
   }
 }

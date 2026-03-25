@@ -4,7 +4,7 @@ import * as path from 'node:path'
 import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-ai/claude-agent-sdk'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { UserType } from '@yikart/common'
+import { FileUtil, UserType } from '@yikart/common'
 import { AssetType } from '@yikart/mongodb'
 import { execa } from 'execa'
 import * as subtitle from 'subtitle'
@@ -20,20 +20,20 @@ const getVolcVideoInfoSchema = z.object({
 })
 
 const uploadAndGetVidSchema = z.object({
-  videoUrl: z.string().describe('Video URL'),
+  videoUrl: FileUtil.zodBuildUrl().nonoptional().describe('Video URL'),
 })
 
 const probeVideoMetadataSchema = z.object({
-  videoUrl: z.string().describe('Video URL'),
+  videoUrl: FileUtil.zodBuildUrl().nonoptional().describe('Video URL'),
 })
 
 const extractThumbnailSchema = z.object({
-  videoUrl: z.string().describe('Video URL'),
+  videoUrl: FileUtil.zodBuildUrl().nonoptional().describe('Video URL'),
   timeInSeconds: z.number().min(0).default(1).describe('Time point in seconds to extract frame, default 1 second'),
 })
 
 const generateSubtitleSchema = z.object({
-  mediaUrl: z.string().describe('Video or audio URL to transcribe'),
+  mediaUrl: FileUtil.zodBuildUrl().nonoptional().describe('Video or audio URL to transcribe'),
   language: z.string().optional().describe('Target language code, e.g., "zh-CN", "en-US"'),
 })
 

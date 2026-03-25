@@ -6,4 +6,6 @@ export interface TwitterOAuthTaskInfo {
   accountId?: string
   spaceId?: string
   taskId: string
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }

@@ -130,7 +130,8 @@ export class VolcengineVideoService {
     return {
       ...result,
       id: aiLog.id,
-    } as CreateVideoGenerationTaskResponse
+      points: pricing,
+    } as CreateVideoGenerationTaskResponse & { points: number }
   }
 
   /**

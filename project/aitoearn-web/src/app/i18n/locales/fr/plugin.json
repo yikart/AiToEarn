@@ -71,7 +71,6 @@
     "downloadDescription": "Le plugin de navigateur AiToEarn est spécialement conçu pour l'opération intelligente de Xiaohongshu. Veuillez cliquer sur le bouton ci-dessous pour télécharger et installer.",
     "downloadButton": "Télécharger maintenant",
     "chromeWebStore": "Chrome Web Store",
-    "githubRelease": "GitHub Release",
     "chinaDownload": "Téléchargement Chine",
     "activeDescription": "Votre plugin de navigateur est activé. Vous pouvez commencer à utiliser la fonction de publication !",
     "platformAccounts": "Comptes de plateforme",
@@ -96,6 +95,6 @@
     "title": "Bureau uniquement",
     "description": "L'extension de navigateur n'est pas disponible sur les appareils mobiles. Veuillez utiliser un navigateur de bureau pour installer et utiliser l'extension.",
     "goToPC": "Veuillez visiter sur PC",
-    "introduction": "Extension de navigateur pour la plateforme AiToEarn. Fonctionne avec AiToEarn web pour automatiser la publication de contenu Xiaohongshu — vidéos, carrousels d'images, titres, hashtags et plus encore, le tout en un clic. Agent IA intégré, propulsé par Claude Opus 4.6 — l'un des modèles d'IA les plus avancés au monde — vous aide à automatiser les tâches du navigateur par conversation naturelle. Installez pour débloquer toutes les fonctionnalités de la plateforme AiToEarn, y compris la publication en un clic, le suivi en temps réel et l'automatisation alimentée par l'IA."
+    "introduction": "Extension de navigateur pour la plateforme AiToEarn. Fonctionne avec AiToEarn web pour automatiser les interactions sur Xiaohongshu, TikTok et d'autres plateformes — suivre, aimer, ajouter aux favoris, commenter et plus encore."
   }
 }

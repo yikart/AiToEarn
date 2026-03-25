@@ -5,7 +5,7 @@
 
 'use client'
 
-import type { MediaItem } from '@/app/[lng]/material/materialStore/materialStore.types'
+import type { MediaItem } from '@/api/types/media'
 import { useTransClient } from '@/app/i18n/client'
 import { cn } from '@/lib/utils'
 import { MediaPreviewCard } from '../MediaPreviewCard'

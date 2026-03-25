@@ -85,20 +85,20 @@ export class GrokVideoService {
 
     const startedAt = new Date()
 
-    const result = videoUrl
-      ? await this.grokLibService.editVideo({
+    const result = await (videoUrl
+      ? this.grokLibService.editVideo({
           model,
           prompt,
           video: { url: videoUrl },
         })
-      : await this.grokLibService.createVideo({
+      : this.grokLibService.createVideo({
           model,
           prompt,
           duration,
           aspect_ratio: aspectRatio as GrokAspectRatio,
           resolution: resolution as GrokResolution,
           image: imageUrl ? { url: imageUrl } : undefined,
-        })
+        }))
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({

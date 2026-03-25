@@ -22,12 +22,25 @@ export interface DraftGenerationResponse {
   imageUrls?: string[]
 }
 
+/** 生成任务请求参数 */
+export interface DraftGenerationRequest {
+  model?: string
+  imageModel?: string
+  duration?: number
+  aspectRatio?: string
+  prompt?: string
+  imageUrls?: string[]
+  imageCount?: number
+  imageSize?: string
+}
+
 /** 生成任务详情 */
 export interface DraftGenerationTask {
   id: string
   status: DraftTaskStatus
   points: number
   errorMessage?: string
+  request?: DraftGenerationRequest
   response?: DraftGenerationResponse
   createdAt: string
   updatedAt: string
@@ -63,6 +76,12 @@ export type ImageModelType = string
 /** 草稿内容类型 */
 export type DraftContentType = 'video' | 'image_text'
 
+/** 视频草稿类型：draft=完整草稿（含标题描述话题），video=仅生成视频 */
+export type VideoDraftType = 'draft' | 'video'
+
+/** 图文草稿类型：draft=完整草稿，image=仅生成图片 */
+export type ImageTextDraftType = 'draft' | 'image'
+
 /** 创建 AI 批量生成草稿任务 */
 export function apiCreateDraftGeneration(data: {
   quantity: number
@@ -74,6 +93,7 @@ export function apiCreateDraftGeneration(data: {
   duration?: number
   aspectRatio?: string
   platforms?: string[]
+  draftType?: VideoDraftType
 }) {
   return http.post<CreateDraftGenerationVo>('ai/draft-generation/v2', data)
 }
@@ -89,6 +109,7 @@ export function apiCreateImageTextDraft(data: {
   aspectRatio?: string
   imageSize?: string
   platforms?: string[]
+  draftType?: ImageTextDraftType
 }) {
   return http.post<CreateDraftGenerationVo>('ai/draft-generation/image-text', data)
 }

@@ -138,6 +138,13 @@ export default function NotificationList({ onClose }: NotificationListProps) {
       return
     }
 
+    // 互动任务AI审核失败 → 已发布任务详情
+    if (item.type === 'interaction_ai_review_failed' && item.relatedId) {
+      onClose()
+      router.push(`/my-tasks/published/${item.relatedId}`)
+      return
+    }
+
     // Agent结果 → 聊天页
     if (item.type === 'agent_result' && item.relatedId) {
       onClose()
@@ -145,7 +152,7 @@ export default function NotificationList({ onClose }: NotificationListProps) {
       return
     }
 
-    // 提现通知 → 设置-个人Tab
+    // 提现通知 → 设置-个人资料Tab
     if (item.type === 'user_withdraw') {
       onClose()
       useSettingsModalStore.getState().openSettings('profile')

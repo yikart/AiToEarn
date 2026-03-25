@@ -35,6 +35,6 @@ import { PublishModule as PublishingModule } from './publishing/publishing.modul
     EngagementController,
     ChannelController,
   ],
-  exports: [ChannelService, PublishingModule],
+  exports: [ChannelService, PublishingModule, PlatModule],
 })
 export class ChannelModule { }

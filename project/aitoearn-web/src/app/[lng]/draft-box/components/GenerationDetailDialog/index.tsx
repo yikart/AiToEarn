@@ -5,13 +5,14 @@
 
 'use client'
 
-import type { DraftGenerationTask } from '@/api/draftGeneration'
+import type { DraftGenerationRequest, DraftGenerationTask } from '@/api/draftGeneration'
 import { AlertCircle, CheckCircle2, Loader2, Play } from 'lucide-react'
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { apiGetDraftGenerationList } from '@/api/draftGeneration'
-import { useDraftBoxStore } from '@/app/[lng]/draft-box/draftBoxStore'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
+import { MediaPreview } from '@/components/common/MediaPreview'
 import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
@@ -47,14 +48,110 @@ function getStatusVariant(status: DraftGenerationTask['status']): 'default' | 's
   }
 }
 
+// 请求参数展示
+const RequestParams = memo(({ request, t }: { request: DraftGenerationRequest, t: (key: string, options?: Record<string, unknown>) => string }) => {
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewIndex, setPreviewIndex] = useState(0)
+  const tags: { label: string, value: string }[] = []
+
+  if (request.model) {
+    tags.push({ label: t('detail.modelType'), value: request.model })
+  }
+  if (request.imageModel) {
+    tags.push({ label: t('detail.imageModel'), value: request.imageModel })
+  }
+  if (request.duration) {
+    tags.push({ label: t('detail.duration'), value: `${request.duration}s` })
+  }
+  if (request.aspectRatio) {
+    tags.push({ label: t('detail.aspectRatio'), value: request.aspectRatio })
+  }
+  if (request.imageCount) {
+    tags.push({ label: t('detail.imageCount'), value: `${request.imageCount}` })
+  }
+  if (request.imageSize) {
+    tags.push({ label: t('detail.imageResolution'), value: request.imageSize })
+  }
+
+  return (
+    <div className="mt-2 space-y-1.5">
+      {tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {tags.map(tag => (
+            <span
+              key={tag.label}
+              className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+            >
+              <span className="opacity-70">{tag.label}</span>
+              <span>{tag.value}</span>
+            </span>
+          ))}
+        </div>
+      )}
+      {request.prompt && (
+        <p className="text-xs text-muted-foreground line-clamp-2 break-all">
+          <span className="opacity-70">
+            {t('detail.promptTitle')}
+            ：
+          </span>
+          {request.prompt}
+        </p>
+      )}
+      {request.imageUrls && request.imageUrls.length > 0 && (
+        <div className="space-y-1">
+          <span className="text-xs text-muted-foreground opacity-70">{t('detail.referenceImages')}</span>
+          <div className="flex gap-1.5 flex-wrap">
+            {request.imageUrls.map((url, i) => (
+              <div
+                key={i}
+                className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0 cursor-pointer"
+                onClick={() => { setPreviewIndex(i); setPreviewOpen(true) }}
+              >
+                <Image
+                  src={getOssUrl(url)}
+                  alt={`ref-${i + 1}`}
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
+              </div>
+            ))}
+          </div>
+          <MediaPreview
+            open={previewOpen}
+            items={request.imageUrls.map(url => ({ type: 'image' as const, src: getOssUrl(url) }))}
+            initialIndex={previewIndex}
+            onClose={() => setPreviewOpen(false)}
+          />
+        </div>
+      )}
+    </div>
+  )
+})
+
+RequestParams.displayName = 'RequestParams'
+
 // 任务条目
 const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string, options?: Record<string, unknown>) => string }) => {
+  const [previewOpen, setPreviewOpen] = useState(false)
+  const [previewIndex, setPreviewIndex] = useState(0)
   const response = task.status === 'success' ? task.response : undefined
+
+  // 构建预览项列表和封面
+  const hasVideo = !!response?.videoUrl
+  const hasImages = (response?.imageUrls?.length ?? 0) > 0
   const coverSrc = response?.coverUrl
     ? getOssUrl(response.coverUrl)
     : response?.imageUrls?.[0]
       ? getOssUrl(response.imageUrls[0])
       : undefined
+
+  // 预览项：视频任务只预览视频，图片任务预览所有图片
+  const previewItems = response
+    ? hasVideo && response.videoUrl
+      ? [{ type: 'video' as const, src: getOssUrl(response.videoUrl), title: response.title }]
+      : (response.imageUrls || []).map(url => ({ type: 'image' as const, src: getOssUrl(url), title: response.title }))
+    : []
 
   return (
     <div className="flex items-start gap-3 p-3 rounded-lg border border-border/50 bg-muted/20">
@@ -73,48 +170,83 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
           )}
         </div>
 
+        {/* 请求参数 */}
+        {task.request && <RequestParams request={task.request} t={t} />}
+
         {/* 成功任务 - 渲染 response 内容 */}
         {response && (
-          <div className="flex gap-3 mt-2">
-            {coverSrc && (
-              <a
-                href={response.videoUrl ? getOssUrl(response.videoUrl) : coverSrc}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="relative shrink-0 w-20 h-20 rounded-md overflow-hidden bg-muted cursor-pointer block"
-              >
-                <Image
-                  src={coverSrc}
-                  alt={response.title || ''}
-                  fill
-                  className="object-cover"
-                  sizes="80px"
-                />
-                {response.videoUrl && (
+          <div className="mt-2">
+            {/* 视频任务：封面 + 文字信息 */}
+            {hasVideo && coverSrc && (
+              <div className="flex gap-3">
+                <div
+                  className="relative shrink-0 w-20 h-20 rounded-md overflow-hidden bg-muted cursor-pointer"
+                  onClick={() => { setPreviewIndex(0); setPreviewOpen(true) }}
+                >
+                  <Image
+                    src={coverSrc}
+                    alt={response.title || ''}
+                    fill
+                    className="object-cover"
+                    sizes="80px"
+                  />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30">
                     <Play className="h-5 w-5 text-white fill-white" />
                   </div>
-                )}
-              </a>
+                </div>
+                <div className="flex-1 min-w-0">
+                  {response.title && (
+                    <p className="text-sm font-medium line-clamp-1">{response.title}</p>
+                  )}
+                  {response.description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{response.description}</p>
+                  )}
+                  {response.topics?.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-1">
+                      {response.topics.map(topic => (
+                        <span key={topic} className="text-xs text-primary">
+                          #
+                          {topic}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
             )}
-            <div className="flex-1 min-w-0">
-              {response.title && (
-                <p className="text-sm font-medium line-clamp-1">{response.title}</p>
-              )}
-              {response.description && (
-                <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{response.description}</p>
-              )}
-              {response.topics?.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-1">
-                  {response.topics.map(topic => (
-                    <span key={topic} className="text-xs text-primary">
-                      #
-                      {topic}
-                    </span>
+
+            {/* 图片任务：展示所有生成图片 */}
+            {!hasVideo && hasImages && (
+              <div className="overflow-x-auto">
+                <div className="flex gap-1.5">
+                  {response.imageUrls!.map((url, i) => (
+                    <div
+                      key={i}
+                      className="relative w-20 h-20 rounded-md overflow-hidden bg-muted cursor-pointer"
+                      onClick={() => { setPreviewIndex(i); setPreviewOpen(true) }}
+                    >
+                      <Image
+                        src={getOssUrl(url)}
+                        alt={`result-${i + 1}`}
+                        fill
+                        className="object-cover"
+                        sizes="80px"
+                      />
+                    </div>
                   ))}
                 </div>
-              )}
-            </div>
+              </div>
+            )}
+
+            {/* 预览 */}
+            {previewItems.length > 0 && (
+              <MediaPreview
+                open={previewOpen}
+                items={previewItems}
+                initialIndex={previewIndex}
+                onClose={() => setPreviewOpen(false)}
+              />
+            )}
           </div>
         )}
 
@@ -222,8 +354,8 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
 GenerationDetailContent.displayName = 'GenerationDetailContent'
 
 export const GenerationDetailDialog = memo(() => {
-  const generationDetailDialogOpen = useDraftBoxStore(state => state.generationDetailDialogOpen)
-  const closeGenerationDetailDialog = useDraftBoxStore(state => state.closeGenerationDetailDialog)
+  const generationDetailDialogOpen = usePlanDetailStore(state => state.generationDetailDialogOpen)
+  const closeGenerationDetailDialog = usePlanDetailStore(state => state.closeGenerationDetailDialog)
 
   // 两层组件模式
   if (!generationDetailDialogOpen)

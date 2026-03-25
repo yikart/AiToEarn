@@ -1,15 +1,14 @@
 import { dir } from 'i18next'
+import { headers } from 'next/headers'
 import Script from 'next/script'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import AnnouncementBanner from '@/app/layout/AnnouncementBanner'
 import LayoutSidebar from '@/app/layout/LayoutSidebar'
 import { MainContent } from '@/app/layout/MainContent'
 import MobileNav from '@/app/layout/MobileNav'
 import { ChannelManager } from '@/components/ChannelManager'
 import { StructuredData } from '@/components/SEO/StructuredData'
 import { getHreflang } from '@/lib/i18n/languageConfig'
-import { getBaseUrl } from '@/utils/server-general'
 import { Providers } from '../layout/Providers'
 import '@/app/var.css'
 import '../globals.css'
@@ -20,7 +19,10 @@ export async function generateMetadata({ params }: { params: Promise<{ lng: stri
     lng = fallbackLng
   const { t } = await useTranslation(lng)
 
-  const baseUrl = await getBaseUrl()
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const proto = headersList.get('x-forwarded-proto') || 'https'
+  const baseUrl = `${proto}://${host}`
 
   // 生成hreflang链接
   const alternateRefs = languages.map(lang => ({
@@ -52,7 +54,11 @@ export default async function RootLayout({
   params: Promise<{ lng: string }>
 }>) {
   const { lng } = await params
-  const baseUrl = await getBaseUrl()
+  const headersList = await headers()
+  const host = headersList.get('host') || 'localhost:3000'
+  const proto = headersList.get('x-forwarded-proto') || 'https'
+  const baseUrl = `${proto}://${host}`
+  const autoLoginToken = process.env.AUTO_LOGIN_TOKEN || ''
 
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
@@ -93,7 +99,7 @@ export default async function RootLayout({
           }}
         />
         <Script src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" strategy="afterInteractive" />
-        <Providers lng={lng}>
+        <Providers lng={lng} autoLoginToken={autoLoginToken}>
           {/* 全局频道管理弹框 */}
           <ChannelManager />
           <p className="hidden">Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf</p>
@@ -103,7 +109,7 @@ export default async function RootLayout({
             {/* 桌面端侧边栏 */}
             <LayoutSidebar />
             {/* 主内容区域 - 根据页面类型动态控制 pt-14 */}
-            <MainContent banner={<AnnouncementBanner />}>{children}</MainContent>
+            <MainContent>{children}</MainContent>
             {/* eslint-disable-next-line next/no-sync-scripts */}
             <script src="/js/xhs_web_sign.js" />
             {/* eslint-disable-next-line next/no-sync-scripts */}

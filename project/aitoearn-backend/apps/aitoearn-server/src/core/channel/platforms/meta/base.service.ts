@@ -3,9 +3,10 @@ import { PublishType } from '@yikart/aitoearn-server-client'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { PlatformBaseService } from '../base.service'
 import { PlatformAuthExpiredException } from '../platform.exception'
-import { META_TIME_CONSTANTS, MetaRedisKeys } from './constants'
+import { META_TIME_CONSTANTS } from './constants'
 import { MetaUserOAuthCredential } from './meta.interfaces'
 
 @Injectable()
@@ -21,9 +22,9 @@ export class MetaBaseService extends PlatformBaseService {
   }
 
   protected async getOAuth2Credential(accountId: string): Promise<MetaUserOAuthCredential | null> {
-    let key = MetaRedisKeys.getAccessTokenKey(this.platform, accountId)
+    let key = ChannelRedisKeys.accessToken(this.platform, accountId)
     if (this.platform === AccountType.FACEBOOK) {
-      key = MetaRedisKeys.getUserPageAccessTokenKey(AccountType.FACEBOOK, accountId)
+      key = ChannelRedisKeys.pageAccessToken(AccountType.FACEBOOK, accountId)
     }
     let credential = await this.redisService.getJson<MetaUserOAuthCredential>(key)
     if (!credential) {
@@ -50,7 +51,7 @@ export class MetaBaseService extends PlatformBaseService {
       = now + tokenInfo.expires_in - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
     tokenInfo.expires_in = expireTime
     const cached = await this.redisService.setJson(
-      MetaRedisKeys.getAccessTokenKey(platform, accountId),
+      ChannelRedisKeys.accessToken(platform, accountId),
       tokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
@@ -73,6 +74,7 @@ export class MetaBaseService extends PlatformBaseService {
   override async getAccessTokenStatus(
     accountId: string,
   ): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       this.updateAccountStatus(accountId, 0)

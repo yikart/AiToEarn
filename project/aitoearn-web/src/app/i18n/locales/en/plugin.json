@@ -71,7 +71,6 @@
     "downloadDescription": "The AiToEarn browser plugin is specifically designed for the intelligent operation of Xiaohongshu. Please click the button below to download and install.",
     "downloadButton": "Download Now",
     "chromeWebStore": "Chrome Web Store",
-    "githubRelease": "GitHub Release",
     "chinaDownload": "China Download",
     "activeDescription": "Your browser plugin is activated. You can start using the publish feature!",
     "platformAccounts": "Platform Accounts",
@@ -96,6 +95,6 @@
     "title": "Desktop Only",
     "description": "The browser extension is not available on mobile devices. Please use a desktop browser to install and use the extension.",
     "goToPC": "Please visit on PC",
-    "introduction": "Browser extension for the AiToEarn platform. Works with AiToEarn web to automate Xiaohongshu content publishing — videos, image carousels, titles, hashtags, and more, all in one click. Built-in AI Agent, powered by Claude Opus 4.6 — one of the world's most advanced AI models — helps you automate browser tasks through natural conversation. Install to unlock full AiToEarn platform features including one-click publishing, real-time progress tracking, and AI-powered automation."
+    "introduction": "AiToEarn platform browser extension. Works with AiToEarn web to automate interactions on Xiaohongshu, TikTok and other platforms — follow, like, bookmark, comment and more."
   }
 }

@@ -5,6 +5,8 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import { TiktokPostMode, TiktokPrivacyLevel, TiktokSourceType } from '../../libs/tiktok/tiktok.enum'
 import {
   TiktokCreatorInfo,
@@ -20,7 +22,7 @@ import { TiktokService as TiktokApiService } from '../../libs/tiktok/tiktok.serv
 import { PlatformBaseService } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
 import { PlatformAuthExpiredException } from '../platform.exception'
-import { TIKTOK_DEFAULT_SCOPES, TIKTOK_TIME_CONSTANTS, TiktokRedisKeys } from './constants'
+import { TIKTOK_DEFAULT_SCOPES, TIKTOK_TIME_CONSTANTS } from './constants'
 import {
   PhotoSourceInfoDto,
   PostInfoDto,
@@ -37,6 +39,9 @@ export interface AuthTaskInfo {
   // QR Code 授权相关
   taskId?: string // 推广任务ID
   qrToken?: string // QR Code token
+  // 通用 OAuth 回调
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
 }
 
 export interface NoUserAuthInfo {
@@ -167,7 +172,13 @@ export class TiktokService extends PlatformBaseService {
     scopes?: string[]
     spaceId?: string
     taskId?: string
+    callbackUrl?: string
+    callbackMethod?: 'GET' | 'POST'
   }) {
+    if (!config.channel.tiktok.clientId && config.relay) {
+      throw new RelayAuthException()
+    }
+
     const state = randomBytes(32).toString('hex')
     const requestedScopes = data.scopes || this.defaultScopes
 
@@ -179,10 +190,12 @@ export class TiktokService extends PlatformBaseService {
       userId: data.userId,
       spaceId: data.spaceId,
       taskId: data.taskId,
+      callbackUrl: data.callbackUrl,
+      callbackMethod: data.callbackMethod,
     }
 
     const success = await this.redisService.setJson(
-      TiktokRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('tiktok', state),
       authTaskInfo,
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
     )
@@ -206,7 +219,7 @@ export class TiktokService extends PlatformBaseService {
       : 0
 
     const cached = await this.redisService.setJson(
-      TiktokRedisKeys.getAccessTokenKey(accountId),
+      ChannelRedisKeys.accessToken('tiktok', accountId),
       accessTokenInfo,
     )
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
@@ -224,7 +237,7 @@ export class TiktokService extends PlatformBaseService {
 
   private async getOAuth2Credential(accountId: string): Promise<TiktokOAuthResponse | null> {
     let credential = await this.redisService.getJson<TiktokOAuthResponse>(
-      TiktokRedisKeys.getAccessTokenKey(accountId),
+      ChannelRedisKeys.accessToken('tiktok', accountId),
     )
     if (!credential) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
@@ -252,7 +265,7 @@ export class TiktokService extends PlatformBaseService {
    */
   async getAuthInfo(taskId: string) {
     const result = await this.redisService.getJson<AuthTaskInfo>(
-      TiktokRedisKeys.getAuthTaskKey(taskId),
+      ChannelRedisKeys.authTask('tiktok', taskId),
     )
     if (!result) {
       this.logger.warn(`OAuth2 task not found for taskId: ${taskId}`)
@@ -274,7 +287,7 @@ export class TiktokService extends PlatformBaseService {
     const { code } = authData
 
     const authTaskInfo = await this.redisService.getJson<AuthTaskInfo>(
-      TiktokRedisKeys.getAuthTaskKey(taskId),
+      ChannelRedisKeys.authTask('tiktok', taskId),
     )
     if (!authTaskInfo) {
       return {
@@ -285,7 +298,7 @@ export class TiktokService extends PlatformBaseService {
 
     // 延长授权任务时间
     void this.redisService.expire(
-      TiktokRedisKeys.getAuthTaskKey(taskId),
+      ChannelRedisKeys.authTask('tiktok', taskId),
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
 
@@ -349,22 +362,32 @@ export class TiktokService extends PlatformBaseService {
       accountInfo.id,
     )
 
-    return taskUpdated
-      ? {
-          status: 1,
-          message: '授权成功',
-          accountId: accountInfo.id,
-        }
-      : {
-          status: 0,
-          message: '更新任务状态失败',
-        }
+    if (!taskUpdated) {
+      return {
+        status: 0,
+        message: '更新任务状态失败',
+      }
+    }
+
+    return {
+      status: 1,
+      message: '授权成功',
+      accountId: accountInfo.id,
+      callbackUrl: authTaskInfo.callbackUrl,
+      callbackMethod: authTaskInfo.callbackMethod,
+      taskId,
+      nickname: userInfo.data.user.display_name || userInfo.data.user.username,
+      avatar: userInfo.data.user.avatar_url,
+      platformUid: accessTokenInfo.open_id,
+      accountType: AccountType.TIKTOK,
+    }
   }
 
   /**
    * 获取有效的访问令牌
    */
   private async getValidAccessToken(accountId: string): Promise<string> {
+    await this.ensureLocalAccount(accountId)
     let tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -419,7 +442,7 @@ export class TiktokService extends PlatformBaseService {
     const accessToken = await this.getValidAccessToken(accountId)
     const result = await this.tiktokApiService.revokeAccessToken(accessToken)
 
-    await this.redisService.del(TiktokRedisKeys.getAccessTokenKey(accountId))
+    await this.redisService.del(ChannelRedisKeys.accessToken('tiktok', accountId))
 
     return result
   }
@@ -539,7 +562,7 @@ export class TiktokService extends PlatformBaseService {
     tokenInfo.expires_in = now + tokenInfo.expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_EXPIRE_BUFFER
     tokenInfo.refresh_expires_in = now + tokenInfo.refresh_expires_in - TIKTOK_TIME_CONSTANTS.TOKEN_REFRESH_THRESHOLD
     return await this.redisService.setJson(
-      TiktokRedisKeys.getAccessTokenKey(accountId),
+      ChannelRedisKeys.accessToken('tiktok', accountId),
       tokenInfo,
     )
   }
@@ -556,7 +579,7 @@ export class TiktokService extends PlatformBaseService {
     authTaskInfo.accountId = accountId
 
     return await this.redisService.setJson(
-      TiktokRedisKeys.getAuthTaskKey(taskId),
+      ChannelRedisKeys.authTask('tiktok', taskId),
       authTaskInfo,
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -613,6 +636,7 @@ export class TiktokService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)
@@ -718,7 +742,7 @@ export class TiktokService extends PlatformBaseService {
     }
 
     const success = await this.redisService.setJson(
-      TiktokRedisKeys.getAuthTaskKey(state),
+      ChannelRedisKeys.authTask('tiktok', state),
       authTaskInfo,
       TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
     )
@@ -737,7 +761,7 @@ export class TiktokService extends PlatformBaseService {
    */
   async checkQRCodeAuthStatus(taskId: string) {
     const authTaskInfo = await this.redisService.getJson<AuthTaskInfo>(
-      TiktokRedisKeys.getAuthTaskKey(taskId),
+      ChannelRedisKeys.authTask('tiktok', taskId),
     )
     if (!authTaskInfo || !authTaskInfo.qrToken) {
       return { status: 'expired' as const, message: '授权任务不存在或已过期' }

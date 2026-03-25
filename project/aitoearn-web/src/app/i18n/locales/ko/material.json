@@ -51,6 +51,10 @@
     "upload": "업로드",
     "deleteMediaConfirm": "이 미디어를 삭제하시겠습니까?",
     "noMedia": "미디어 리소스 없음",
+    "noVideo": "아직 동영상이 없습니다",
+    "noImage": "아직 이미지가 없습니다",
+    "noVideoDesc": "생성된 동영상이 여기에 표시됩니다",
+    "noImageDesc": "생성된 이미지가 여기에 표시됩니다",
     "uploadMediaHint": "아래 버튼을 클릭하여 {{type}}을(를) 업로드하세요",
     "searchPlaceholder": "그룹 검색...",
     "default": "기본",
@@ -69,7 +73,8 @@
     "selectImage": "이미지 선택",
     "selectedCount": "{{count}}개 선택됨",
     "confirm": "확인",
-    "noMediaDesc": "이 그룹에 미디어가 없습니다"
+    "noMediaDesc": "이 그룹에 미디어가 없습니다",
+    "drafts": "초안"
   },
   "aiGenerate": {
     "title": "AI 도구",

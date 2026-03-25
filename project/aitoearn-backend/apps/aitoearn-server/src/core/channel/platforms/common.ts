@@ -4,6 +4,21 @@ export interface AuthTaskInfo<T> {
   data?: T
   status: -1 | 0 | 1 // -1: 未开始,  0: 进行中, 1: 完成
   error?: string // 错误信息
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
+}
+
+export interface AuthCallbackResult {
+  status: number
+  message?: string
+  accountId?: string
+  nickname?: string
+  avatar?: string
+  platformUid?: string
+  accountType?: string
+  callbackUrl?: string
+  callbackMethod?: 'GET' | 'POST'
+  taskId?: string
 }
 
 export interface ChannelAccountDataCube {

@@ -113,9 +113,10 @@ export class VideoService {
 
     const channel = modelConfig.channel
 
-    const createTaskResponse = (taskId: string) => ({
+    const createTaskResponse = (taskId: string, points: number) => ({
       id: taskId,
       status: TaskStatus.Submitted,
+      points,
     })
 
     switch (channel) {
@@ -139,7 +140,7 @@ export class VideoService {
    */
   private async handleVolcengineGeneration<T>(
     request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string) => T,
+    createTaskResponse: (taskId: string, points: number) => T,
   ) {
     const { userId, userType, model, prompt, duration, size, image, image_tail } = request
 
@@ -181,7 +182,7 @@ export class VideoService {
       model,
       content,
     })
-    return createTaskResponse(result.id)
+    return createTaskResponse(result.id, result.points)
   }
 
   /**
@@ -189,7 +190,7 @@ export class VideoService {
    */
   private async handleOpenAIGeneration<T>(
     request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string) => T,
+    createTaskResponse: (taskId: string, points: number) => T,
   ) {
     const { userId, userType, model, prompt, image } = request
 
@@ -206,7 +207,7 @@ export class VideoService {
       seconds: request.duration ? request.duration.toString() as '10' | '15' | '25' : undefined,
       size: request.size as '720x1280' | '1280x720' | '1024x1792' | '1792x1024' | undefined,
     })
-    return createTaskResponse(result.id)
+    return createTaskResponse(result.id, result.points)
   }
 
   /**
@@ -214,7 +215,7 @@ export class VideoService {
    */
   private async handleGrokGeneration<T>(
     request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string) => T,
+    createTaskResponse: (taskId: string, points: number) => T,
   ) {
     const { userId, userType, model, prompt, video_url } = request
 
@@ -228,7 +229,7 @@ export class VideoService {
         prompt,
         videoUrl,
       })
-      return createTaskResponse(result.id)
+      return createTaskResponse(result.id, result.points)
     }
 
     const imageUrl = Array.isArray(request.image) ? request.image[0] : request.image
@@ -242,7 +243,7 @@ export class VideoService {
       resolution: request.metadata?.['resolution'] as string,
       imageUrl: imageUrl ? await this.toPresignedUrl(imageUrl) : undefined,
     })
-    return createTaskResponse(result.id)
+    return createTaskResponse(result.id, result.points)
   }
 
   /**
@@ -250,7 +251,7 @@ export class VideoService {
    */
   private async handleAicsoVeoGeneration<T>(
     request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string) => T,
+    createTaskResponse: (taskId: string, points: number) => T,
   ) {
     const { userId, userType, model, prompt } = request
 
@@ -282,12 +283,12 @@ export class VideoService {
       images: images.length > 0 ? images : undefined,
       aspectRatio: request.metadata?.['aspectRatio'] as string,
     })
-    return createTaskResponse(result.id)
+    return createTaskResponse(result.id, result.points)
   }
 
   private async handleAicsoGrokGeneration<T>(
     request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string) => T,
+    createTaskResponse: (taskId: string, points: number) => T,
   ) {
     const { userId, userType, model, prompt } = request
 
@@ -316,7 +317,7 @@ export class VideoService {
       aspectRatio: request.metadata?.['aspectRatio'] as string,
       size,
     })
-    return createTaskResponse(result.id)
+    return createTaskResponse(result.id, result.points)
   }
 
   private extractInput(aiLog: AiLog): VideoTaskInput {

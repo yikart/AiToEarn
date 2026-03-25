@@ -71,7 +71,7 @@ export class ImageConsumer extends WorkerHost {
     if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
       return true // 429 Too Many Requests
     }
-    if (errorMessage.match(/5\d{2}/)) {
+    if (/5\d{2}/.test(errorMessage)) {
       return true // 5xx 服务器错误
     }
 

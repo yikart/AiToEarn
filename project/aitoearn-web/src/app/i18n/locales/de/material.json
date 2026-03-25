@@ -51,6 +51,10 @@
     "upload": "Hochladen",
     "deleteMediaConfirm": "Sind Sie sicher, dass Sie dieses Medium löschen möchten?",
     "noMedia": "Keine Medienressourcen",
+    "noVideo": "Noch keine Videos",
+    "noImage": "Noch keine Bilder",
+    "noVideoDesc": "Generierte Videos werden hier angezeigt",
+    "noImageDesc": "Generierte Bilder werden hier angezeigt",
     "uploadMediaHint": "Klicken Sie auf die Schaltfläche unten, um {{type}} hochzuladen",
     "searchPlaceholder": "Gruppen suchen...",
     "default": "Standard",
@@ -69,7 +73,8 @@
     "selectImage": "Bild auswählen",
     "selectedCount": "{{count}} ausgewählt",
     "confirm": "Bestätigen",
-    "noMediaDesc": "Keine Medien in dieser Gruppe"
+    "noMediaDesc": "Keine Medien in dieser Gruppe",
+    "drafts": "Entwürfe"
   },
   "aiGenerate": {
     "title": "KI-Tools",

@@ -3,6 +3,7 @@ import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
+import { RelayAccountException } from '../../relay/relay-account.exception'
 import { ChannelAccountService } from '../platforms/channel-account.service'
 import { BilibiliDataService } from './bilibili-data.service'
 import { DataCubeBase } from './data.base'
@@ -29,6 +30,9 @@ export class DataCubeController {
     const account = await this.channelAccountService.getAccountInfo(accountId)
     if (!account)
       throw new AppException(ResponseCode.ChannelAccountNotFound)
+    if (account.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
     const dataCube = this.dataCubeMap.get(account.type)
     if (!dataCube)
       throw new AppException(ResponseCode.DataCubeAccountTypeNotSupported)

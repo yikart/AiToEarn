@@ -5,7 +5,9 @@ import {
   GenerateVideosOperation,
   GenerateVideosParameters,
   GoogleGenAI,
+  MediaModality,
   Modality,
+  ModalityTokenCount,
 } from '@google/genai'
 import { Injectable, Logger } from '@nestjs/common'
 import { GeminiKeyPairSelection } from './gemini-key-manager.interface'
@@ -15,6 +17,7 @@ import {
   GeminiGeneratedImage,
   GeminiImageGenerateRequest,
   GeminiImageGenerateResponse,
+  GeminiImageSize,
   GeminiImageUsage,
   GeminiModalityTokenDetails,
 } from './gemini.interface'
@@ -45,8 +48,8 @@ export class GeminiService {
   }
 
   async generateImage(request: GeminiImageGenerateRequest): Promise<GeminiImageGenerateResponse> {
-    const { prompt, imageUrls = [], imageSize, aspectRatio } = request
     const model = request.model || 'gemini-3.1-flash-image-preview'
+    const { prompt, imageUrls = [], imageSize, aspectRatio } = request
 
     this.logger.debug({ prompt, imageUrlsCount: imageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
 
@@ -99,8 +102,8 @@ export class GeminiService {
           promptTokenCount: response.usageMetadata.promptTokenCount || 0,
           candidatesTokenCount: response.usageMetadata.candidatesTokenCount || 0,
           totalTokenCount: response.usageMetadata.totalTokenCount || 0,
-          inputTokenDetails: this.extractGeminiModalityTokenDetails((response.usageMetadata as unknown as Record<string, unknown>)['promptTokensDetails']),
-          outputTokenDetails: this.extractGeminiModalityTokenDetails((response.usageMetadata as unknown as Record<string, unknown>)['candidatesTokensDetails']),
+          inputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['promptTokensDetails'] || []),
+          outputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['candidatesTokensDetails'] || []),
         }
       : undefined
 
@@ -110,14 +113,52 @@ export class GeminiService {
       usage,
     }, 'Image generation completed')
 
+    if (usage && images.length > 0 && (!usage.outputTokenDetails || !usage.outputTokenDetails.image)) {
+      const imageTokens = this.calculateImageTokens(model, imageSize)
+      if (imageTokens > 0) {
+        const totalImageTokens = imageTokens * images.length
+        usage.outputTokenDetails = {
+          ...usage.outputTokenDetails,
+          image: (usage.outputTokenDetails?.image || 0) + totalImageTokens,
+        }
+        usage.candidatesTokenCount += totalImageTokens
+        usage.totalTokenCount += totalImageTokens
+        this.logger.debug({ model, imageSize, imageCount: images.length, totalImageTokens }, 'Manually calculated image tokens')
+      }
+    }
+
     return { images, usage }
   }
 
-  private extractGeminiModalityTokenDetails(details: unknown): GeminiModalityTokenDetails | undefined {
-    if (!Array.isArray(details)) {
-      return undefined
+  private calculateImageTokens(model: string, size?: GeminiImageSize): number {
+    if (model.includes('gemini-3.1-flash')) {
+      switch (size) {
+        case '0.5K':
+          return 747
+        case '1K':
+          return 1120
+        case '2K':
+          return 1680
+        case '4K':
+          return 2520
+        default:
+          return 1120 // Default to 1K
+      }
     }
+    else if (model.includes('gemini-3-pro')) {
+      switch (size) {
+        case '4K':
+          return 2000
+        case '1K':
+        case '2K':
+        default:
+          return 1120 // 1K to 2K
+      }
+    }
+    return 0
+  }
 
+  private extractGeminiModalityTokenDetails(details: ModalityTokenCount[]): GeminiModalityTokenDetails | undefined {
     const result: GeminiModalityTokenDetails = {}
 
     for (const detail of details) {
@@ -125,9 +166,9 @@ export class GeminiService {
         continue
       }
 
-      const detailRecord = detail as Record<string, unknown>
-      const rawModality = detailRecord['modality']
-      const rawTokenCount = detailRecord['tokenCount']
+      const detailRecord = detail
+      const rawModality = detailRecord.modality
+      const rawTokenCount = detailRecord.tokenCount
 
       if (typeof rawModality !== 'string') {
         continue
@@ -140,16 +181,16 @@ export class GeminiService {
         continue
       }
 
-      if (modality.includes('text')) {
+      if (modality === MediaModality.TEXT) {
         result.text = (result.text || 0) + tokenCount
       }
-      else if (modality.includes('image')) {
+      else if (modality === MediaModality.IMAGE) {
         result.image = (result.image || 0) + tokenCount
       }
-      else if (modality.includes('audio')) {
+      else if (modality === MediaModality.AUDIO) {
         result.audio = (result.audio || 0) + tokenCount
       }
-      else if (modality.includes('video')) {
+      else if (modality === MediaModality.VIDEO) {
         result.video = (result.video || 0) + tokenCount
       }
     }

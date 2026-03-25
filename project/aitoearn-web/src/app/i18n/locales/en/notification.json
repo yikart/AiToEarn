@@ -70,6 +70,7 @@
     "task_review_approved": "Task Review",
     "ai_review_skipped": "AI Review",
     "task_submitted": "Task Submission",
+    "interaction_ai_review_failed": "AI Review",
     "other": "Other Notification"
   },
   "taskStatus": {

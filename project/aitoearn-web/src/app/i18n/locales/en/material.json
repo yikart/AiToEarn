@@ -51,6 +51,10 @@
     "upload": "Upload",
     "deleteMediaConfirm": "Are you sure to delete this media?",
     "noMedia": "No media resources",
+    "noVideo": "No videos yet",
+    "noImage": "No images yet",
+    "noVideoDesc": "Generated videos will appear here",
+    "noImageDesc": "Generated images will appear here",
     "uploadMediaHint": "Click the button below to upload {{type}}",
     "searchPlaceholder": "Search groups...",
     "default": "Default",
@@ -69,7 +73,8 @@
     "selectImage": "Select Image",
     "selectedCount": "{{count}} selected",
     "confirm": "Confirm",
-    "noMediaDesc": "No media in this group"
+    "noMediaDesc": "No media in this group",
+    "drafts": "Drafts"
   },
   "aiGenerate": {
     "title": "AI Tools",

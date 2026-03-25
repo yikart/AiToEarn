@@ -3,27 +3,7 @@ import { InstagramOAuth2Config } from '../../libs/instagram/constants'
 import { LinkedinOAuth2Config } from '../../libs/linkedin/constants'
 import { ThreadsOAuth2Config } from '../../libs/threads/constants'
 
-export class MetaRedisKeys {
-  private static readonly PREFIX = 'meta:'
-
-  static getAuthTaskKey(state: string): string {
-    return `${this.PREFIX}auth_task:${state}`
-  }
-
-  static getAccessTokenKey(platform: string, accountId: string): string {
-    return `${platform}:access_token:${accountId}`
-  }
-
-  static getUserPageAccessTokenKey(platform: string, pageId: string): string {
-    return `${platform}:page:access_token:${pageId}`
-  }
-
-  static getUserPageListKey(platform: string, accountId: string): string {
-    return `${platform}:user_page_list:${accountId}`
-  }
-}
-
-// thresholds for twitter oAuth
+// thresholds for meta oAuth
 export const META_TIME_CONSTANTS = {
   AUTH_TASK_EXPIRE: 5 * 60, // for oauth task
   AUTH_TASK_EXTEND: 3 * 60, // extend oauth task

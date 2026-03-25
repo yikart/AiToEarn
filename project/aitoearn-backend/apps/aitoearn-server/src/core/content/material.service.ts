@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { FileUtil, TableDto, UserType } from '@yikart/common'
+import { AccountType, FileUtil, TableDto, UserType } from '@yikart/common'
 import { AssetType, Material, MaterialRepository, MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
 import { NewMaterial, UpMaterial } from './common'
 import { MediaService } from './media.service'
@@ -126,8 +126,8 @@ export class MaterialService {
     return res
   }
 
-  async optimalInGroup(groupId: string, type?: MaterialType): Promise<Material | null> {
-    const res = await this.materialRepository.getOptimalByGroup(groupId, type)
+  async optimalInGroup(groupId: string, type?: MaterialType, accountType?: AccountType): Promise<Material | null> {
+    const res = await this.materialRepository.getOptimalByGroup(groupId, type, accountType)
     return res
   }
 

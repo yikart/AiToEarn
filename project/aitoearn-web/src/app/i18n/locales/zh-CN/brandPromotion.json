@@ -106,7 +106,6 @@
     "videoEditMode": "视频编辑",
     "ratioLockedByVideo": "比例跟随输入视频",
     "durationLockedByVideo": "时长跟随输入视频",
-    "durationAutoAdjusted": "时长已自动调整为 {{duration}}s",
     "dropToUpload": "拖拽文件到此处上传",
     "resetConfig": "重置配置",
     "targetPlatforms": "目标平台",
@@ -131,7 +130,10 @@
       "imageCountExceeded": "图片数量超出该平台限制（最多 {{max}} 张）"
     },
     "platformIncompatibleCount": "{{count}} 个不兼容",
-    "timeLimitedModelTip": "限时模型不保证可用性，如不可使用，可稍后再试或切换其他模型"
+    "timeLimitedModelTip": "限时模型不保证可用性，如不可使用，可稍后再试或切换其他模型",
+    "draftModeOn": "生成草稿",
+    "draftModeOffVideo": "生成视频",
+    "draftModeOffImage": "生成图片"
   },
   "tabs": {
     "overview": "概览",
@@ -155,6 +157,8 @@
     "downloadQRCode": "下载二维码",
     "draftSummary": "草稿摘要",
     "draftList": "{{count}} 个草稿",
+    "videoList": "{{count}} 个视频",
+    "imageList": "{{count}} 个图片",
     "viewMore": "查看更多",
     "publishRecordSummary": "发布记录",
     "backToTop": "回到顶部",
@@ -220,12 +224,15 @@
     "shareCount": "分享数",
     "favoriteCount": "收藏数",
     "dataUpdatedAt": "数据更新时间",
-    "noWorkLink": "暂无作品链接"
+    "noWorkLink": "暂无作品链接",
+    "untitled": "未命名"
   },
   "material": {
     "emptyTitle": "暂无草稿",
     "emptyDesc": "创建草稿或使用 Agent 批量生成",
     "useCount": "已使用 {{count}} 次",
+    "draft": "草稿",
+    "untitled": "未命名草稿",
     "generating": "生成中",
     "completed": "已生成"
   },
@@ -293,7 +300,18 @@
     "titlePlaceholder": "请输入草稿标题",
     "pleaseUploadMedia": "请上传图片或视频",
     "titleRequired": "请输入标题",
-    "descRequired": "请输入描述"
+    "descRequired": "请输入描述",
+    "targetPlatforms": "目标平台",
+    "selectAll": "全选",
+    "deselectAll": "取消全选",
+    "titleExceeded": "标题超过 {{platform}} 限制的 {{max}} 个字符",
+    "descExceeded": "描述超过 {{platform}} 限制的 {{max}} 个字符",
+    "imageExceeded": "图片数超过 {{platform}} 限制的 {{max}} 张",
+    "validationWarnings": "参数兼容性提示",
+    "instagramImageAspectRatio": "Instagram 图片宽高比需在 4:5 ~ 1.91:1 范围内",
+    "instagramVideoAspectRatio": "Instagram 视频宽高比需在 9:16 ~ 4:5 范围内",
+    "facebookImageAspectRatio": "Facebook 图片宽高比需在 4:5 ~ 1.91:1 范围内",
+    "facebookVideoAspectRatio": "Facebook 视频宽高比需在 9:16 ~ 4:5 范围内"
   },
   "planTab": {
     "more": "更多",

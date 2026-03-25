@@ -3,6 +3,8 @@ import { AiService, UserChatCompletionDto } from '@yikart/aitoearn-ai-client'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { EngagementTargetScope, EngagementTaskStatus, EngagementTaskType } from '@yikart/channel-db'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
+import { RelayAccountException } from '../../relay/relay-account.exception'
+import { ChannelAccountService } from '../platforms/channel-account.service'
 import { FacebookService } from '../platforms/meta/facebook.service'
 import { ReplyToCommentAnswer } from './ai.dto'
 import { AIGenCommentDto, FetchCommentRepliesRequest, FetchMetaPostsRequest, FetchPostCommentsRequest, FetchPostsRequest, LikePostRequest, PublishCommentReplyRequest, PublishCommentRequest, ReplyToCommentsDto } from './engagement.dto'
@@ -25,11 +27,19 @@ export class EngagementService {
     private readonly engagementRecordService: EngagementRecordService,
     private readonly queueService: QueueService,
     private readonly facebookService: FacebookService,
+    private readonly channelAccountService: ChannelAccountService,
   ) {
     this.providerMap.set('facebook', facebookProvider)
     this.providerMap.set('instagram', instagramProvider)
     this.providerMap.set('threads', threadsProvider)
     this.providerMap.set('youtube', youtubeProvider)
+  }
+
+  private async checkRelayAccount(accountId: string) {
+    const account = await this.channelAccountService.getAccountInfo(accountId)
+    if (account?.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
   }
 
   private getProvider(providerKey: string): EngagementProvider {
@@ -41,6 +51,7 @@ export class EngagementService {
   }
 
   async fetchUserPosts(data: FetchPostsRequest) {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     let pagination = data.pagination || null
     if (!pagination) {
@@ -54,31 +65,37 @@ export class EngagementService {
   }
 
   async getMetaPostDetail(accountId: string, platform: string, postId: string) {
+    await this.checkRelayAccount(accountId)
     const provider = this.getProvider(platform)
     return provider.getMetaPostDetail(accountId, postId)
   }
 
   async fetchPostComments(data: FetchPostCommentsRequest) {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     return provider.fetchPostComments(data.accountId, data.postId, data.pagination || null)
   }
 
   async fetchCommentReplies(data: FetchCommentRepliesRequest) {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     return provider.fetchCommentReplies(data.accountId, data.commentId, data.pagination || null)
   }
 
   async commentOnPost(data: PublishCommentRequest): Promise<PublishCommentResponse> {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     return provider.commentOnPost(data.accountId, data.postId, data.message)
   }
 
   async replyToComment(data: PublishCommentReplyRequest): Promise<PublishCommentResponse> {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     return provider.replyToComment(data.accountId, data.commentId, data.message)
   }
 
   async fetchMetaPosts(data: FetchMetaPostsRequest) {
+    await this.checkRelayAccount(data.accountId)
     const provider = this.getProvider(data.platform)
     const pagination = data.pagination || {
       before: data.before || undefined,
@@ -89,10 +106,12 @@ export class EngagementService {
   }
 
   async likePost(data: LikePostRequest): Promise<{ success: boolean }> {
+    await this.checkRelayAccount(data.accountId)
     return this.facebookService.likePost(data.accountId, data.postId)
   }
 
   async unlikePost(data: LikePostRequest): Promise<{ success: boolean }> {
+    await this.checkRelayAccount(data.accountId)
     return this.facebookService.unlikePost(data.accountId, data.postId)
   }
 
@@ -132,6 +151,7 @@ export class EngagementService {
   }
 
   async ReplyToCommentsByAI(data: ReplyToCommentsDto): Promise<{ id: string }> {
+    await this.checkRelayAccount(data.accountId)
     let targetScope = EngagementTargetScope.ALL
     if (data.comments?.length && data.comments.length > 0) {
       targetScope = EngagementTargetScope.PARTIAL

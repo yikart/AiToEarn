@@ -130,11 +130,11 @@ export const GoogleBusinessPublishOptionSchema = z.object({
   topicType: z.enum(['STANDARD', 'EVENT', 'OFFER']).default('STANDARD').describe('帖子类型'),
   callToAction: z.object({
     actionType: z.enum(['BOOK', 'ORDER', 'LEARN_MORE', 'SIGN_UP', 'CALL', 'GET_OFFER']).describe('按钮类型'),
-    url: z.string().url().describe('跳转链接'),
+    url: z.url().describe('跳转链接'),
   }).optional().describe('行动号召'),
   offer: z.object({
     couponCode: z.string().optional().describe('优惠码'),
-    redeemOnlineUrl: z.string().url().optional().describe('在线兑换链接'),
+    redeemOnlineUrl: z.url().optional().describe('在线兑换链接'),
     termsConditions: z.string().max(500).optional().describe('使用条款'),
   }).optional().describe('优惠信息'),
   event: z.object({

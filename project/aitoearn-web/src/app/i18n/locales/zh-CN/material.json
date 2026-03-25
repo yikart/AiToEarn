@@ -51,6 +51,10 @@
     "upload": "上传",
     "deleteMediaConfirm": "确定要删除这个媒体资源吗？",
     "noMedia": "暂无媒体资源",
+    "noVideo": "暂无视频",
+    "noImage": "暂无图片",
+    "noVideoDesc": "生成的视频将显示在这里",
+    "noImageDesc": "生成的图片将显示在这里",
     "uploadMediaHint": "点击下方按钮上传{{type}}资源",
     "searchPlaceholder": "搜索素材组...",
     "default": "默认",
@@ -69,7 +73,8 @@
     "selectImage": "选择图片",
     "selectedCount": "已选择 {{count}} 项",
     "confirm": "确认",
-    "noMediaDesc": "该分组暂无媒体资源"
+    "noMediaDesc": "该分组暂无媒体资源",
+    "drafts": "草稿箱"
   },
   "aiGenerate": {
     "title": "AI生成",

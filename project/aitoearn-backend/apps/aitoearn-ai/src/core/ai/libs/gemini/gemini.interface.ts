@@ -8,7 +8,7 @@ export enum VeoModel {
 /**
  * 图片生成尺寸选项
  */
-export type GeminiImageSize = '1K' | '2K' | '4K'
+export type GeminiImageSize = '0.5K' | '1K' | '2K' | '4K'
 
 /**
  * 图片生成宽高比选项

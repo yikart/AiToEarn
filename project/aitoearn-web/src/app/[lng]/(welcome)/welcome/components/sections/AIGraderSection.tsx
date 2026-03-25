@@ -8,6 +8,7 @@
 import { Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import { useRouter } from 'next/navigation'
+import { useState } from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
 import { Input } from '@/components/ui/input'
@@ -44,13 +45,14 @@ export function AIGraderSection() {
   const { t } = useTransClient('welcome')
   const router = useRouter()
   const token = useUserStore(state => state.token)
+  const [searchText, setSearchText] = useState('')
 
   const handleSubmit = (e: React.FormEvent | React.MouseEvent) => {
     e.preventDefault()
 
-    // 已登录用户直接跳转
+    // 已登录用户直接跳转到首页
     if (token) {
-      router.push('/draft-box')
+      router.push('/')
       return
     }
 
@@ -114,8 +116,9 @@ export function AIGraderSection() {
             >
               <div className="flex-1">
                 <Input
+                  value={searchText}
+                  onChange={e => setSearchText(e.target.value)}
                   placeholder={t('hero.placeholder')}
-                  disabled
                   className="!h-10 !border-0 !bg-transparent !shadow-none !ring-0 !pl-2"
                 />
               </div>

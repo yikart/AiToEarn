@@ -15,4 +15,7 @@ export interface DraftGenerationData {
   imageModel?: string
   imageCount?: number
   imageSize?: string
+  draftType?: 'draft' | 'video'
+  imageTextDraftType?: 'draft' | 'image'
+  platforms?: string[]
 }

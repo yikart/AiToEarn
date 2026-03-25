@@ -71,7 +71,6 @@
     "downloadDescription": "AiToEarn 浏览器插件专门用于小红书的智能操作。请点击下方按钮下载安装。",
     "downloadButton": "立即下载",
     "chromeWebStore": "Chrome 应用商店",
-    "githubRelease": "GitHub 下载",
     "chinaDownload": "中国地区下载",
     "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
     "platformAccounts": "平台账号",
@@ -96,6 +95,6 @@
     "title": "仅支持桌面端",
     "description": "浏览器插件无法在移动设备上使用，请前往电脑端浏览器安装和使用插件。",
     "goToPC": "请在电脑端访问",
-    "introduction": "AiToEarn 平台浏览器插件，配合 AiToEarn 网页端使用，可自动化小红书内容发布——视频、图文、标题、话题标签等，一键搞定。内置 AI Agent，由 Claude Opus 4.6 驱动——全球最先进的 AI 模型之一，通过自然对话帮你自动完成浏览器操作。安装即可解锁 AiToEarn 平台全部功能，包括一键发布、实时进度追踪和 AI 智能自动化。"
+    "introduction": "AiToEarn平台浏览器插件，配合AiToEarn网页端使用，可自动化小红书，tiktok等平台互动，实现关注，点赞，收藏，评论等。"
   }
 }

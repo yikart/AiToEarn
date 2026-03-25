@@ -72,7 +72,9 @@ const GetAuthUrlSchema = z.object({
   userId: z.string().optional(),
   spaceId: z.string().optional(),
   scopes: z.array(z.string()).optional(),
-  taskId: z.string().optional(), // 广告主推广任务ID
+  taskId: z.string().optional().describe('广告主推广任务ID'),
+  callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
+  callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
 })
 export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 

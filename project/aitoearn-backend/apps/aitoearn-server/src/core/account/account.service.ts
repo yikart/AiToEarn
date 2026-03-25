@@ -20,9 +20,9 @@ export class AccountService {
    * @param data
    */
   private async accountPortraitReport(
-    data: AccountPortraitReportData,
+    _data: AccountPortraitReportData,
   ) {
-    return await this.queueService.addTaskAccountPortraitReportJob(data)
+    // Task module removed — no-op
   }
 
   /**

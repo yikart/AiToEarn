@@ -5,6 +5,7 @@
 
 'use client'
 
+import type { BrandImage } from '../index'
 import { Check, ImagePlus } from 'lucide-react'
 import Image from 'next/image'
 import { memo, useCallback, useRef, useState } from 'react'
@@ -17,7 +18,7 @@ import {
 import { getOssUrl } from '@/utils/oss'
 
 interface ImageSelectorPopoverProps {
-  allImages: any[]
+  allImages: BrandImage[]
   selectedIds: string[]
   maxImages: number
   onImagesChange: (ids: string[]) => void

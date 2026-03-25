@@ -1,6 +1,6 @@
 /**
  * 发布弹框相关的模态框组件集合
- * 包含下载App弹窗、Facebook页面选择、抖音扫码、发布详情等弹窗
+ * 包含 Facebook 页面选择、抖音扫码、发布详情等弹窗
  */
 
 import { memo } from 'react'
@@ -9,10 +9,6 @@ import { DouyinQRCodeModal } from '@/components/PublishDialog/compoents/DouyinQR
 import FacebookPagesModal from './FacebookPagesModal'
 
 interface PublishModalsProps {
-  // 下载App弹窗（已移除，保留 props 兼容）
-  downloadModalVisible: boolean
-  setDownloadModalVisible: (visible: boolean) => void
-  currentPlatform: string
   // Facebook页面选择弹窗
   showFacebookPagesModal: boolean
   setShowFacebookPagesModal: (show: boolean) => void
@@ -25,6 +21,8 @@ interface PublishModalsProps {
   publishDetailVisible: boolean
   onPublishDetailClose: () => void
   currentPublishTaskId: string | undefined
+  // 发布完成后是否自动关闭弹框
+  autoCloseOnComplete?: boolean
 }
 
 /**
@@ -41,6 +39,7 @@ export const PublishModals = memo(
     publishDetailVisible,
     onPublishDetailClose,
     currentPublishTaskId,
+    autoCloseOnComplete,
   }: PublishModalsProps) => {
     return (
       <>
@@ -63,6 +62,7 @@ export const PublishModals = memo(
           visible={publishDetailVisible}
           onClose={onPublishDetailClose}
           taskId={currentPublishTaskId}
+          autoCloseOnComplete={autoCloseOnComplete}
         />
       </>
     )

@@ -372,7 +372,7 @@ const saveDraftHandler: IActionHandler = {
       const hasVideo = medias.some((m: IMediaItem) => m.type === 'VIDEO')
       const targetGroupType = hasVideo ? PubType.VIDEO : PubType.ImageText
       const defaultGroup = groups.find((g: any) => g.type === targetGroupType) || groups[0]
-      const finalGroupId = defaultGroup._id || defaultGroup.id
+      const finalGroupId = defaultGroup.id
 
       if (!finalGroupId) {
         toast.warning(t('aiGeneration.noDraftGroup' as any))

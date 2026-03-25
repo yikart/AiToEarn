@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto } from '@yikart/common'
+import { createPaginationVo, createZodDto, zodI18nString } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
@@ -24,6 +24,7 @@ export const DraftGenerationTaskVoSchema = z.object({
   status: z.enum(AiLogStatus).describe('任务状态'),
   points: z.number().describe('消耗积分'),
   errorMessage: z.string().optional().describe('错误信息'),
+  request: z.record(z.string(), z.unknown()).optional().describe('生成输入参数'),
   response: z.record(z.string(), z.unknown()).optional().describe('生成结果'),
   createdAt: z.date().describe('创建时间'),
   updatedAt: z.date().describe('更新时间'),
@@ -69,7 +70,7 @@ export const VideoModelVoSchema = z.object({
   durations: z.array(z.number()).describe('支持的时长'),
   maxInputImages: z.number().describe('最大输入图片数'),
   aspectRatios: z.array(z.string()).describe('支持的宽高比列表'),
-  tags: z.array(z.string()).default([]).describe('标签'),
+  tags: z.array(zodI18nString()).default([]).describe('标签'),
   defaults: z.object({
     resolution: z.string().optional().describe('默认分辨率'),
     aspectRatio: z.string().optional().describe('默认宽高比'),
@@ -82,5 +83,7 @@ export const DraftGenerationPricingVoSchema = z.object({
   imageModels: z.array(ImageModelVoSchema).describe('图片生成模型价格列表'),
   videoModels: z.array(VideoModelVoSchema).describe('视频生成模型价格列表'),
 })
+
+export type DraftGenerationPricingVoInput = z.input<typeof DraftGenerationPricingVoSchema>
 
 export class DraftGenerationPricingVo extends createZodDto(DraftGenerationPricingVoSchema, 'DraftGenerationPricingVo') {}

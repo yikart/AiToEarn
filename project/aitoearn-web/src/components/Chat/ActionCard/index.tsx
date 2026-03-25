@@ -16,6 +16,7 @@ import { useChannelManagerStore } from '@/components/ChannelManager'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
+import { useAccountStore } from '@/store'
 import { useAgentStore } from '@/store/agent'
 import { ActionRegistry } from '@/store/agent/handlers/action.handlers'
 import { PluginStatus, usePluginStore } from '@/store/plugin'
@@ -225,7 +226,7 @@ export function ActionCard({ action, className }: IActionCardProps) {
 
     switch (action.type) {
       case 'insufficientCredits':
-        toast.warning('Insufficient credits')
+        useAccountStore.getState().setLowBalanceAlertOpen(true)
         return
       case 'createChannel':
         // 未登录时跳转登录页

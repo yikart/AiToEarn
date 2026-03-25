@@ -2,11 +2,13 @@ import { Body, Controller, Get, Param, Post, Put, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, FileUtil, ResponseCode } from '@yikart/common'
+import { PlatformService } from '../channel/platforms/platforms.service'
 import {
   AccountIdDto,
   AccountListByIdsDto,
   AccountListBySpaceIdsDto,
   AccountStatisticsDto,
+  BatchAccountStatusDto,
   CreateAccountDto,
   DeleteAccountsDto,
   SortRankDto,
@@ -15,11 +17,15 @@ import {
   UpdateAccountStatusDto,
 } from './account.dto'
 import { AccountService } from './account.service'
+import { BatchAccountStatusVo } from './account.vo'
 
 @ApiTags('Home/Account')
 @Controller('account')
 export class AccountController {
-  constructor(private readonly accountService: AccountService) { }
+  constructor(
+    private readonly accountService: AccountService,
+    private readonly platformService: PlatformService,
+  ) { }
 
   @ApiDoc({
     summary: 'Create Account',
@@ -230,5 +236,31 @@ export class AccountController {
     @Body() body: SortRankDto,
   ) {
     return this.accountService.sortRank(token.id, body.groupId, body.list)
+  }
+
+  @ApiDoc({
+    summary: '批量查询账号 Token 状态',
+    body: BatchAccountStatusDto.schema,
+    response: BatchAccountStatusVo,
+  })
+  @Post('/batch-status')
+  async batchAccountStatus(
+    @GetToken() token: TokenInfo,
+    @Body() body: BatchAccountStatusDto,
+  ): Promise<BatchAccountStatusVo> {
+    const statuses: Record<string, number> = {}
+    for (const accountId of body.accountIds) {
+      const account = await this.accountService.getAccountById(accountId)
+      if (!account || account.userId !== token.id) {
+        continue
+      }
+      try {
+        statuses[accountId] = await this.platformService.getAccountTokenStatus(accountId, account.type)
+      }
+      catch {
+        statuses[accountId] = 0
+      }
+    }
+    return BatchAccountStatusVo.create({ statuses })
   }
 }

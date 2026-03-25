@@ -5,7 +5,7 @@
 
 'use client'
 
-import { BookOpen, Chrome, CloudDownload, Github, Monitor, Puzzle } from 'lucide-react'
+import { BookOpen, Chrome, CloudDownload, Monitor, Puzzle } from 'lucide-react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import { Button } from '@/components/ui/button'
@@ -40,12 +40,12 @@ function MobilePluginTip() {
       </div>
 
       {/* 插件介绍卡片 */}
-      <div className="w-full rounded-lg border border-border bg-muted/30 p-4">
+      <div className="w-full rounded-lg border border-border bg-muted/30 p-5">
         <div className="mb-2 flex items-center gap-2">
-          <Puzzle className="h-4 w-4 text-muted-foreground" />
-          <span className="text-xs font-medium text-muted-foreground">{t('header.downloadPlugin')}</span>
+          <Puzzle className="h-5 w-5 text-muted-foreground" />
+          <span className="text-sm font-medium text-muted-foreground">{t('header.downloadPlugin')}</span>
         </div>
-        <p className="text-xs leading-relaxed text-muted-foreground">
+        <p className="text-sm leading-relaxed text-muted-foreground">
           {t('mobile.introduction')}
         </p>
       </div>
@@ -80,18 +80,11 @@ export function PluginNotInstalled() {
       </p>
 
       {/* 下载按钮 */}
-      <div className="flex w-full max-w-xs flex-col gap-3">
+      <div className="flex w-full max-w-xs flex-col space-y-3">
         <Button className="w-full gap-2" asChild>
           <a href={PLUGIN_DOWNLOAD_LINKS.chrome} target="_blank" rel="noopener noreferrer">
             <Chrome className="h-4 w-4" />
             {t('header.chromeWebStore')}
-          </a>
-        </Button>
-
-        <Button variant="outline" className="w-full gap-2" asChild>
-          <a href={PLUGIN_DOWNLOAD_LINKS.github} target="_blank" rel="noopener noreferrer">
-            <Github className="h-4 w-4" />
-            {t('header.githubRelease')}
           </a>
         </Button>
 

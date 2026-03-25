@@ -16,6 +16,8 @@ const GetAuthUrlSchema = UserIdSchema.extend({
   spaceId: z.string().describe('空间ID'),
   type: z.enum(['pc', 'h5']).describe('授权类型'),
   prefix: z.string().optional().describe('前缀'),
+  callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
+  callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
 })
 export class GetAuthUrlDto extends createZodDto(GetAuthUrlSchema) {}
 

@@ -9,7 +9,7 @@ import type { PlatType } from '@/app/config/platConfig'
 import { Layers, Plus, Puzzle } from 'lucide-react'
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, isPlatformAvailable, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -137,6 +137,7 @@ export function ChannelSidebar() {
             const info = AccountPlatInfoMap.get(platform)
             const count = platformAccountCounts.get(platform) || 0
             const needsPlugin = isPluginPlatform(platform)
+            const isRegionRestricted = !isPlatformAvailable(platform)
 
             if (!info)
               return null
@@ -149,9 +150,11 @@ export function ChannelSidebar() {
                 onClick={() => handlePlatformClick(platform)}
                 className={cn(
                   'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
-                  selectedPlatform === platform
-                    ? 'bg-primary text-primary-foreground font-medium'
-                    : 'hover:bg-muted/60',
+                  isRegionRestricted
+                    ? 'opacity-50 grayscale'
+                    : selectedPlatform === platform
+                      ? 'bg-primary text-primary-foreground font-medium'
+                      : 'hover:bg-muted/60',
                 )}
               >
                 <div className="relative shrink-0">
@@ -189,6 +192,7 @@ export function ChannelSidebar() {
               {platformsWithoutAccounts.map((platform) => {
                 const info = AccountPlatInfoMap.get(platform)
                 const needsPlugin = isPluginPlatform(platform)
+                const isRegionRestricted = !isPlatformAvailable(platform)
 
                 if (!info)
                   return null
@@ -200,7 +204,9 @@ export function ChannelSidebar() {
                     onClick={() => handlePlatformClick(platform)}
                     className={cn(
                       'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors',
-                      'opacity-60 hover:bg-muted/60 hover:opacity-100',
+                      isRegionRestricted
+                        ? 'opacity-30 grayscale'
+                        : 'opacity-60 hover:bg-muted/60 hover:opacity-100',
                     )}
                   >
                     <div className="relative shrink-0">

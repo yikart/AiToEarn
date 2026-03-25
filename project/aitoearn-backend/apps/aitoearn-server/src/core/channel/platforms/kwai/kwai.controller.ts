@@ -19,11 +19,15 @@ export class KwaiController {
     @GetToken() token: TokenInfo,
     @Param('type') type: 'h5' | 'pc',
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
     return await this.kwaiService.createAuthTask({
       userId: token.id,
       type,
       spaceId: spaceId || '',
+      callbackUrl,
+      callbackMethod,
     })
   }
 
@@ -52,6 +56,14 @@ export class KwaiController {
       taskId,
       query,
     )
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
     return res.render('auth/back', result)
   }
 

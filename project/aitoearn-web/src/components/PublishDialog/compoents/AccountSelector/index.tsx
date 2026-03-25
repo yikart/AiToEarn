@@ -8,7 +8,7 @@ import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 
 import { memo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, isPlatformAvailable, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
@@ -74,6 +74,7 @@ export const AccountSelector = memo(
           const isChoosed = pubListChoosed.find(v => v.account.id === pubItem.account.id)
           const isOffline = pubItem.account.status === 0
           const isPcNotSupported = platConfig && platConfig.pcNoThis === true
+          const isRegionRestricted = !isPlatformAvailable(pubItem.account.type)
 
           return (
             <TooltipProvider key={pubItem.account.id}>
@@ -100,19 +101,19 @@ export const AccountSelector = memo(
                       handleAccountClick(pubItem)
                     }}
                   >
-                    {/* 账号头像：离线、PC不支持显示遮罩并禁用 */}
+                    {/* 账号头像：离线、PC不支持或区域限制显示遮罩并禁用 */}
                     <div className="relative">
                       <AvatarPlat
                         className={`cursor-pointer transition-all duration-300 p-[1px] ${
-                          isChoosed && !isOffline && !isPcNotSupported
+                          isChoosed && !isOffline && !isPcNotSupported && !isRegionRestricted
                             ? '[&>img]:grayscale-0'
                             : '[&>img]:grayscale hover:[&>img]:grayscale-0'
                         }`}
                         account={pubItem.account}
                         size="large"
-                        disabled={isOffline || !isChoosed || isPcNotSupported}
+                        disabled={isOffline || !isChoosed || isPcNotSupported || isRegionRestricted}
                       />
-                      {isOffline && (
+                      {isOffline && !isRegionRestricted && (
                         <div
                           onClick={(e) => {
                             e.stopPropagation()
@@ -129,7 +130,12 @@ export const AccountSelector = memo(
                           {t('badges.offline')}
                         </div>
                       )}
-                      {isPcNotSupported && !isOffline && (
+                      {isRegionRestricted && (
+                        <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-auto cursor-pointer text-center leading-tight">
+                          🌐
+                        </div>
+                      )}
+                      {isPcNotSupported && !isOffline && !isRegionRestricted && (
                         <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-none text-center leading-tight">
                           APP
                         </div>
@@ -137,9 +143,9 @@ export const AccountSelector = memo(
                     </div>
                   </div>
                 </TooltipTrigger>
-                {(isPcNotSupported || isOffline) && (
+                {(isPcNotSupported || isOffline || isRegionRestricted) && (
                   <TooltipContent>
-                    {isPcNotSupported ? t('tips.pcNotSupported') : t('tips.accountOffline')}
+                    {isRegionRestricted ? t('tips.regionRestricted') : isPcNotSupported ? t('tips.pcNotSupported') : t('tips.accountOffline')}
                   </TooltipContent>
                 )}
               </Tooltip>

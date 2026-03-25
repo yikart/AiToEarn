@@ -12,7 +12,7 @@ import { useEffect, useLayoutEffect, useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
 import LoginDialog from '@/app/layout/LoginDialog'
 import { useLoginDialogStore } from '@/app/layout/LoginDialog/store'
-import { InviteCodeHandler } from '@/components/InviteCodeHandler'
+import { LowBalanceAlertProvider } from '@/components/common/LowBalanceAlert/LowBalanceAlertProvider'
 import SettingsModal from '@/components/SettingsModal'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
 import NotificationCenter from '@/components/ui/NotificationCenter'
@@ -20,17 +20,16 @@ import { Toaster } from '@/components/ui/sonner'
 import { useUserStore } from '@/store/user'
 import { isPublicPage } from '@/utils/route'
 
-export function Providers({ children, lng }: { children: React.ReactNode, lng: string }) {
+export function Providers({ children, lng, autoLoginToken }: { children: React.ReactNode, lng: string, autoLoginToken?: string }) {
   const pathname = usePathname()
   const router = useRouter()
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
 
-  const { _hasHydrated, token, _appInitialized } = useUserStore(
+  const { _hasHydrated, token } = useUserStore(
     useShallow(state => ({
       _hasHydrated: state._hasHydrated,
       token: state.token,
-      _appInitialized: state._appInitialized,
     })),
   )
 
@@ -38,10 +37,14 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
   const { settingsVisible, settingsDefaultTab, closeSettings } = useSettingsModalStore()
 
   useEffect(() => {
-    if (_hasHydrated) {
-      useUserStore.getState().appInit()
+    if (!_hasHydrated)
+      return
+    // 自动登录：无 token 时使用环境变量注入的 token
+    if (!useUserStore.getState().token && autoLoginToken) {
+      useUserStore.getState().setToken(autoLoginToken)
     }
-  }, [_hasHydrated])
+    useUserStore.getState().appInit()
+  }, [_hasHydrated, autoLoginToken])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
@@ -49,8 +52,8 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
 
   // 未登录用户访问非公开页面时，跳转到登录页
   useEffect(() => {
-    // 等待持久化数据同步完成和 appInit 完成（含自动登录）
-    if (!_hasHydrated || !_appInitialized) {
+    // 等待持久化数据同步完成
+    if (!_hasHydrated) {
       return
     }
 
@@ -74,7 +77,7 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, _appInitialized, token, pathname])
+  }, [_hasHydrated, token, pathname])
 
   // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
   useLayoutEffect(() => {
@@ -98,11 +101,10 @@ export function Providers({ children, lng }: { children: React.ReactNode, lng: s
     <>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
         <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com">
-          {/* 邀请码处理 - 检测 URL 中的 ref 参数并绑定邀请关系 */}
-          <InviteCodeHandler />
           <Toaster position="top-center" richColors />
           {/* 专用右上角通知中心（不影响现有 toast） */}
           <NotificationCenter />
+          <LowBalanceAlertProvider />
           {/* 全局登录弹框 */}
           <LoginDialog />
           {/* 全局设置弹框 - 统一在此渲染，避免多处重复 */}

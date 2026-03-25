@@ -201,9 +201,12 @@ You can still use Docker for MongoDB/Redis, or configure your own services in th
 ```bash
 cd project/aitoearn-backend
 pnpm install
-npx nx serve aitoearn-ai
+# Copy config files for local development
+cp apps/aitoearn-ai/config/config.js apps/aitoearn-ai/config/local.config.js
+cp apps/aitoearn-server/config/config.js apps/aitoearn-server/config/local.config.js
+pnpm nx serve aitoearn-ai
 # in another terminal
-npx nx serve aitoearn-server
+pnpm nx serve aitoearn-server
 ```
 
 #### 2. Start the frontend `aitoearn-web`
@@ -242,9 +245,63 @@ The Electron project provides a desktop client for AiToEarn.
 </details>
 
 ## MCP Service
-https://www.modelscope.cn/mcp/servers/whh826219822/aitoearn
 
-https://www.npmjs.com/~aitoearn?activeTab=packages
+AiToEarn provides MCP (Model Context Protocol) server endpoints that allow AI assistants (such as Claude, Cursor, etc.) to interact with your AiToEarn instance programmatically — including publishing content, managing accounts, and more.
+
+### Endpoints
+
+AiToEarn exposes two MCP transport protocols:
+
+| Transport | Endpoint | Description |
+|-----------|----------|-------------|
+| **HTTP** | `{baseUrl}/api/unified/mcp` | Recommended. Stateless HTTP-based MCP transport |
+| **SSE** | `{baseUrl}/api/unified/sse` | Server-Sent Events transport for long-lived connections |
+
+### Quick Setup
+
+1. Go to **Settings → API Key** in the AiToEarn web interface and create an API Key.
+2. Configure your AI assistant's MCP client to connect to one of the endpoints above, passing your API Key via the `x-api-key` header.
+
+**Example for Claude Desktop** (`claude_desktop_config.json`):
+
+```json
+{
+  "mcpServers": {
+    "aitoearn": {
+      "type": "http",
+      "url": "https://aitoearn.ai/api/unified/mcp",
+      "headers": {
+        "x-api-key": "your-api-key"
+      }
+    }
+  }
+}
+```
+
+> For self-hosted instances, replace the URL with your own (e.g., `http://localhost:8080/api/unified/mcp`).
+
+## Relay Service
+
+Relay enables self-hosted AiToEarn instances to connect social media platform accounts via the official AiToEarn relay server (`https://aitoearn.ai`), without needing to configure OAuth credentials for each platform yourself.
+
+### How It Works
+
+1. Your self-hosted instance sends OAuth requests through the relay server.
+2. Users authorize on the platform via the relay server's OAuth credentials.
+3. The relay server forwards the authorization result back to your instance via the callback URL.
+
+### Setup
+
+1. Go to **Settings → API Key** on [https://aitoearn.ai](https://aitoearn.ai) and create an API Key.
+2. Configure the following environment variables in your `docker-compose.yml` under the `aitoearn-server` service:
+
+```yaml
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: your-api-key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+```
+
+3. Restart the service: `docker compose restart aitoearn-server`
 
 ## Contact
 https://t.me/harryyyy2025

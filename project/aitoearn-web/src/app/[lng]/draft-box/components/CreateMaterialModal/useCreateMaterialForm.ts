@@ -3,12 +3,14 @@ import type { MaterialMedia } from '@/api/material'
  * useCreateMaterialForm - 创建/编辑素材表单逻辑 Hook
  * 从 CreateMaterialModalContent 中提取的共享表单逻辑，供桌面端和移动端组件复用
  */
-import type { DraftMaterial } from '@/app/[lng]/draft-box/types'
+import type { PromotionMaterial } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
+import type { PlatType } from '@/app/config/platConfig'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { apiCreateMaterial, apiUpdateMaterial } from '@/api/material'
+import { RegionTaskPlatInfoArr } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { UploadTaskStatusEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
@@ -19,11 +21,12 @@ export interface FormParams {
   des: string
   images: IImgFile[]
   video?: IVideoFile
+  selectedPlatforms: PlatType[]
 }
 
 export interface UseCreateMaterialFormProps {
   groupId: string | null
-  editingMaterial?: DraftMaterial | null
+  editingMaterial?: PromotionMaterial | null
   isSubmitting?: boolean
   onClose: () => void
   onSuccess?: () => void
@@ -48,12 +51,16 @@ export function useCreateMaterialForm({
     })),
   )
 
+  // 默认全选平台
+  const defaultPlatforms = useMemo(() => RegionTaskPlatInfoArr.map(([p]) => p), [])
+
   // 表单参数
   const [params, setParams] = useState<FormParams>({
     title: '',
     des: '',
     images: [],
     video: undefined,
+    selectedPlatforms: defaultPlatforms,
   })
 
   const isEditing = !!editingMaterial
@@ -105,6 +112,9 @@ export function useCreateMaterialForm({
         des: editingMaterial.desc || '',
         video,
         images,
+        selectedPlatforms: editingMaterial.accountTypes?.length
+          ? editingMaterial.accountTypes as PlatType[]
+          : defaultPlatforms,
       })
     }
     else {
@@ -113,6 +123,7 @@ export function useCreateMaterialForm({
         des: '',
         images: [],
         video: undefined,
+        selectedPlatforms: defaultPlatforms,
       })
     }
   }, [editingMaterial])
@@ -267,19 +278,29 @@ export function useCreateMaterialForm({
         title: params.title.trim(),
         desc: params.des,
         type,
+        accountTypes: params.selectedPlatforms,
       }
 
-      if (isEditing && editingMaterial?._id) {
-        await apiUpdateMaterial(editingMaterial._id, {
+      if (isEditing && editingMaterial?.id) {
+        const res = await apiUpdateMaterial(editingMaterial.id, {
           coverUrl: materialData.coverUrl,
           mediaList: materialData.mediaList,
           title: materialData.title,
           desc: materialData.desc,
+          accountTypes: materialData.accountTypes,
         })
+        if (res?.code !== 0) {
+          toast.error(res?.message || t('createMaterial.createFailed'))
+          return
+        }
         toast.success(t('createMaterial.createSuccess'))
       }
       else {
-        await apiCreateMaterial(materialData)
+        const res = await apiCreateMaterial(materialData)
+        if (res?.code !== 0) {
+          toast.error(res?.message || t('createMaterial.createFailed'))
+          return
+        }
         toast.success(t('createMaterial.createSuccess'))
       }
 

@@ -19,6 +19,7 @@ import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { AccountType, getErrorMessage, getErrorStack } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { Job } from 'bullmq'
+import { ChannelAccountService } from '../../platforms/channel-account.service'
 import { PublishingErrorHandler } from '../error-handler.service'
 import { PublishService } from '../providers/base.service'
 import { PublishingUnrecoverableError } from '../publishing.exception'
@@ -38,6 +39,7 @@ export class ImmediatePublishPostConsumer extends WorkerHost {
   constructor(
     readonly publishingService: PublishingService,
     private readonly publishingErrorHandler: PublishingErrorHandler,
+    private readonly channelAccountService: ChannelAccountService,
   ) {
     super()
   }
@@ -68,6 +70,19 @@ export class ImmediatePublishPostConsumer extends WorkerHost {
       if (publishTaskInfo.status === PublishStatus.PUBLISHING) {
         this.logger.warn(`[task-${taskId}] Publish task already publishing: ${taskId}`)
         return
+      }
+
+      // 安全检查：relay 账号任务不应到达队列消费者
+      if (publishTaskInfo.accountId) {
+        const account = await this.channelAccountService.getAccountInfo(publishTaskInfo.accountId)
+        if (account?.relayAccountRef) {
+          this.logger.warn(`[task-${taskId}] Relay account ${publishTaskInfo.accountId} task reached queue consumer, skipping`)
+          await this.publishingService.updatePublishTaskStatus(taskId, {
+            status: PublishStatus.FAILED,
+            errorMsg: 'Relay account task should not reach queue consumer',
+          })
+          return { status: PublishStatus.FAILED }
+        }
       }
 
       // 标记为「发布中」

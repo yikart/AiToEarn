@@ -27,14 +27,6 @@ type NotificationDataByType
     data?: Record<string, unknown>
   })
   | (BaseNotificationData & {
-    type: NotificationType.UserWithdraw
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.TaskPunish
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
     type: NotificationType.AppRelease
     data?: Record<string, unknown>
   })

@@ -9,6 +9,8 @@ import * as _ from 'lodash'
 import { v4 as uuidv4 } from 'uuid'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { ChannelRedisKeys } from '../../channel.constants'
 import {
   AuthInfo,
   CreateBoardBody,
@@ -39,14 +41,6 @@ export class PinterestService extends PlatformBaseService {
     super()
   }
 
-  private getAuthDataCacheKey(taskId: string) {
-    return `channel:pinterest:authTask:${taskId}`
-  }
-
-  private getAccessTokenKey(id: string) {
-    return `pinterest:accessToken:${id}`
-  }
-
   private async saveOAuthCredential(accountId: string, tokenInfo: {
     access_token: string
     refresh_token?: string
@@ -66,7 +60,7 @@ export class PinterestService extends PlatformBaseService {
       expires_in: accessTokenExpiresAt,
       refresh_token_expires_in: refreshTokenExpiresAt,
     }
-    const cached = await this.redisService.setJson(this.getAccessTokenKey(accountId), cacheData)
+    const cached = await this.redisService.setJson(ChannelRedisKeys.accessToken('pinterest', accountId), cacheData)
 
     const persistResult = await this.oauth2CredentialRepository.upsertOne(
       accountId,
@@ -84,7 +78,7 @@ export class PinterestService extends PlatformBaseService {
   }
 
   private async getOAuth2Credential(accountId: string): Promise<AuthInfo | null> {
-    let credential = await this.redisService.getJson<AuthInfo>(this.getAccessTokenKey(accountId))
+    let credential = await this.redisService.getJson<AuthInfo>(ChannelRedisKeys.accessToken('pinterest', accountId))
     if (!credential) {
       const oauth2Credential = await this.oauth2CredentialRepository.getOne(
         accountId,
@@ -314,14 +308,17 @@ export class PinterestService extends PlatformBaseService {
    * @param userId userId
    * @returns
    */
-  async getAuth(userId: string, spaceId = '') {
+  async getAuth(userId: string, spaceId = '', callbackUrl?: string, callbackMethod?: 'GET' | 'POST') {
+    if (!config.channel.pinterest.id && config.relay) {
+      throw new RelayAuthException()
+    }
     const taskId = uuidv4().replace(/-/g, '')
-    const redisKeyByTaskId = this.getAuthDataCacheKey(taskId)
+    const redisKeyByTaskId = ChannelRedisKeys.authTask('pinterest', taskId)
     const scope
       = 'scope=boards:read,boards:write,pins:write,pins:read,catalogs:read,catalogs:write,pins:write_secret,pins:read_secret,user_accounts:read'
     const path = `response_type=code&redirect_uri=${this.redirectURL}&client_id=${this.client_id}&${scope}&state=${taskId}`
     const uri = `https://www.pinterest.com/oauth/?${path}`
-    const tokenInfo = { taskId, userId, status: ILoginStatus.wait, spaceId }
+    const tokenInfo = { taskId, userId, status: ILoginStatus.wait, spaceId, callbackUrl, callbackMethod }
     await this.redisService.setJson(redisKeyByTaskId, tokenInfo, 60 * 5)
     return { taskId, userId, status: ILoginStatus.wait, uri }
   }
@@ -334,7 +331,7 @@ export class PinterestService extends PlatformBaseService {
       const userInfo
         = await this.pinterestApiService.getAccountInfo(access_token)
       // 获取到token后第一时间创建account信息
-      const redisKeyByTaskId = this.getAuthDataCacheKey(state || '')
+      const redisKeyByTaskId = ChannelRedisKeys.authTask('pinterest', state || '')
       const redisCache
         = await this.redisService.getJson<AuthInfo & { spaceId?: string }>(redisKeyByTaskId)
       if (!redisCache) {
@@ -399,6 +396,13 @@ export class PinterestService extends PlatformBaseService {
         status: 1,
         message: '授权成功',
         accountId: accountInfo.id,
+        nickname: accountInfo.nickname,
+        avatar: accountInfo.avatar,
+        platformUid: accountInfo.uid,
+        accountType: AccountType.PINTEREST,
+        callbackUrl: redisCache.callbackUrl,
+        callbackMethod: redisCache.callbackMethod,
+        taskId: state,
       }
     }
     catch (error) {
@@ -416,7 +420,7 @@ export class PinterestService extends PlatformBaseService {
    * @returns
    */
   async checkAuth(taskId: string) {
-    const redisKeyByTaskId = this.getAuthDataCacheKey(taskId)
+    const redisKeyByTaskId = ChannelRedisKeys.authTask('pinterest', taskId)
     const tokenInfo: AuthInfo | null
       = await this.redisService.getJson<AuthInfo>(redisKeyByTaskId)
     if (_.isEmpty(tokenInfo))
@@ -426,6 +430,7 @@ export class PinterestService extends PlatformBaseService {
   }
 
   async getAccessToken(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const credential = await this.authorize(accountId)
     if (!credential || !credential.access_token) {
       throw new AppException(ResponseCode.ChannelAuthorizationExpired)
@@ -635,6 +640,7 @@ export class PinterestService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string) {
+    await this.ensureLocalAccount(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (_.isEmpty(tokenInfo) || !tokenInfo?.expires_in) {
       this.updateAccountStatus(accountId, 0)

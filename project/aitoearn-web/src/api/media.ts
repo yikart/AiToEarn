@@ -1,4 +1,4 @@
-import type { MediaGroup, MediaItem } from '@/app/[lng]/material/materialStore/materialStore.types'
+import type { MediaGroup, MediaItem } from '@/api/types/media'
 import http from '@/utils/request'
 
 // 创建媒体资源组
@@ -41,9 +41,15 @@ export function deleteMedia(id: string) {
 }
 
 // 获取媒体资源列表
-export function getMediaList(groupId: string, pageNo: number, pageSize: number) {
+export function getMediaList(
+  filter: { groupId?: string, materialGroupId?: string },
+  pageNo: number,
+  pageSize: number,
+  type?: 'video' | 'img',
+) {
   return http.get<{ list: MediaItem[], total: number }>(`media/list/${pageNo}/${pageSize}`, {
-    groupId,
+    ...filter,
+    ...(type ? { type } : {}),
   })
 }
 

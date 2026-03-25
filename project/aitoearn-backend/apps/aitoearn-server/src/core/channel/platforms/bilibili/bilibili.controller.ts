@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Logger, Param, Post, Query, Render } from '@nestjs/common'
+import { Body, Controller, Get, Logger, Param, Post, Query, Res } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode, SkipResponseInterceptor, TableDto } from '@yikart/common'
+import { Response } from 'express'
 import { BilibiliWebhookSchema } from '../../publishing/bilibili-webhook.dto'
 import { PublishingService } from '../../publishing/publishing.service'
 import { AccountIdDto, ArchiveListDto, GetArchiveListDto, GetArcStatDto } from './bilibili.dto'
@@ -40,16 +41,24 @@ export class BilibiliController {
     summary: 'Handle Bilibili OAuth Callback',
   })
   @Get('auth/back/:taskId')
-  @Render('auth/back')
   async getAccessToken(
     @Param('taskId') taskId: string,
     @Query() query: { code: string, state: string },
+    @Res() res: Response,
   ) {
-    const res = await this.bilibiliService.createAccountAndSetAccessToken(
+    const result = await this.bilibiliService.createAccountAndSetAccessToken(
       taskId,
       query,
     )
-    return res
+
+    if (result.status === 1 && result.callbackUrl) {
+      return res.render('auth/back', {
+        ...result,
+        autoPostCallback: true,
+      })
+    }
+
+    return res.render('auth/back', result)
   }
 
   @ApiDoc({
@@ -60,11 +69,15 @@ export class BilibiliController {
     @GetToken() token: TokenInfo,
     @Param('type') type: 'h5' | 'pc',
     @Query('spaceId') spaceId?: string,
+    @Query('callbackUrl') callbackUrl?: string,
+    @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
     return this.bilibiliService.createAuthTask({
       userId: token.id,
       type,
       spaceId: spaceId || '',
+      callbackUrl,
+      callbackMethod,
     })
   }
 

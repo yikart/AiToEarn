@@ -6,15 +6,17 @@
 
 'use client'
 
-import type { DraftMaterial } from '@/app/[lng]/draft-box/types'
+import type { PromotionMaterial } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
+import type { PlatType } from '@/app/config/platConfig'
 import { Calendar, Edit, Image as ImageIcon, Loader2, Send, Trash2, Video } from 'lucide-react'
 import NextImage from 'next/image'
 import { memo, useCallback, useState } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useShallow } from 'zustand/react/shallow'
+import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 
-import { useDraftBoxStore } from '@/app/[lng]/draft-box/draftBoxStore'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import {
   AlertDialog,
@@ -50,10 +52,8 @@ function MediaImage({ src, alt }: { src: string, alt: string }) {
     <div className="relative flex items-center justify-center w-full h-full">
       {/* Loading 骨架 - 增强效果 */}
       {!loaded && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-muted/80 gap-3">
-          {/* 旋转加载图标 */}
+        <div className="absolute inset-0 flex items-center justify-center bg-muted/80">
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-muted-foreground/30 border-t-primary" />
-          <span className="text-sm text-muted-foreground">加载中...</span>
         </div>
       )}
       <NextImage
@@ -73,7 +73,7 @@ function MediaImage({ src, alt }: { src: string, alt: string }) {
 }
 
 // 媒体预览组件 - 使用 Swiper 轮播
-const MediaPreview = memo(({ material }: { material: DraftMaterial }) => {
+const MediaPreview = memo(({ material }: { material: PromotionMaterial }) => {
   const mediaList = material.mediaList || []
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isHovered, setIsHovered] = useState(false)
@@ -177,7 +177,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
   const { t } = useTransClient('brandPromotion')
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
-  const { selectedDraft, isSubmitting } = useDraftBoxStore(
+  const { selectedDraft, isSubmitting } = usePlanDetailStore(
     useShallow(state => ({
       selectedDraft: state.selectedDraft,
       isSubmitting: state.isSubmitting,
@@ -189,7 +189,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
     closeDraftDetailDialog,
     deleteMaterial,
     openPublishDialog,
-  } = useDraftBoxStore(
+  } = usePlanDetailStore(
     useShallow(state => ({
       openEditMaterialModal: state.openEditMaterialModal,
       closeDraftDetailDialog: state.closeDraftDetailDialog,
@@ -219,7 +219,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
     if (!selectedDraft)
       return
 
-    const success = await deleteMaterial(selectedDraft._id)
+    const success = await deleteMaterial(selectedDraft.id)
     if (success) {
       toast.success(t('plan.deleteSuccess'))
       closeDraftDetailDialog()
@@ -309,6 +309,28 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
                 )}
               </div>
 
+              {/* 平台图标 */}
+              {selectedDraft.accountTypes && selectedDraft.accountTypes.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  {selectedDraft.accountTypes.map((type) => {
+                    const platInfo = AccountPlatInfoMap.get(type as PlatType)
+                    if (!platInfo)
+                      return null
+                    return (
+                      <NextImage
+                        key={type}
+                        src={platInfo.icon}
+                        alt={platInfo.name}
+                        width={20}
+                        height={20}
+                        className="w-5 h-5"
+                        unoptimized
+                      />
+                    )
+                  })}
+                </div>
+              )}
+
               {/* 创建时间 */}
               {selectedDraft.createdAt && (
                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -386,13 +408,13 @@ DraftDetailContent.displayName = 'DraftDetailContent'
 
 // 主组件
 export const DraftDetailDialog = memo(() => {
-  const { draftDetailDialogOpen } = useDraftBoxStore(
+  const { draftDetailDialogOpen } = usePlanDetailStore(
     useShallow(state => ({
       draftDetailDialogOpen: state.draftDetailDialogOpen,
     })),
   )
 
-  const closeDraftDetailDialog = useDraftBoxStore(state => state.closeDraftDetailDialog)
+  const closeDraftDetailDialog = usePlanDetailStore(state => state.closeDraftDetailDialog)
 
   // 根据疑难杂症记录 #2，拆成两层组件避免闪烁
   if (!draftDetailDialogOpen)

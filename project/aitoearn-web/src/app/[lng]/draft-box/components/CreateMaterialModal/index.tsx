@@ -5,8 +5,8 @@
  */
 'use client'
 
-import type { DraftMaterial } from '@/app/[lng]/draft-box/types'
-import { Bot } from 'lucide-react'
+import type { PromotionMaterial } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
+import { Bot, TriangleAlert } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { memo } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -23,15 +23,17 @@ import {
 import { Input } from '@/components/ui/input'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
+import InlinePlatformSelector from './InlinePlatformSelector'
 import MobileContent from './MobileContent'
 import { useCreateMaterialForm } from './useCreateMaterialForm'
+import { useMaterialValidation } from './useMaterialValidation'
 
 export interface CreateMaterialModalProps {
   open: boolean
   /** 素材组 ID（推广计划关联的素材组） */
   groupId: string | null
   /** 编辑模式下的素材数据 */
-  editingMaterial?: DraftMaterial | null
+  editingMaterial?: PromotionMaterial | null
   /** 是否正在提交 */
   isSubmitting?: boolean
   /** 关闭弹窗 */
@@ -67,6 +69,8 @@ const CreateMaterialModalContent = memo(
       onSuccess,
     })
 
+    const { warnings, effectiveLimits } = useMaterialValidation(params, params.selectedPlatforms)
+
     return (
       <>
         <DialogHeader>
@@ -76,6 +80,34 @@ const CreateMaterialModalContent = memo(
         </DialogHeader>
 
         <div className="flex flex-col gap-4 py-4 max-h-[70vh]">
+          {/* 平台选择器 */}
+          <div className="px-1">
+            <InlinePlatformSelector
+              selectedPlatforms={params.selectedPlatforms}
+              onPlatformsChange={platforms => updateParams({ selectedPlatforms: platforms })}
+            />
+          </div>
+
+          {/* 警告区域 */}
+          {warnings.length > 0 && (
+            <div className="px-1">
+              <div className="rounded-md bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 p-3">
+                <div className="flex items-center gap-1.5 text-xs font-medium text-amber-700 dark:text-amber-400 mb-1.5">
+                  <TriangleAlert className="h-3.5 w-3.5" />
+                  {t('createMaterial.validationWarnings')}
+                </div>
+                <ul className="text-xs text-amber-600 dark:text-amber-400/80 space-y-0.5">
+                  {warnings.map((w, i) => (
+                    <li key={i}>
+                      •
+                      {w}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          )}
+
           {/* 使用 PubParmasTextarea 组件 */}
           <div className="px-1 overflow-y-auto">
             <PubParmasTextarea
@@ -84,6 +116,8 @@ const CreateMaterialModalContent = memo(
               desValue={params.des}
               imageFileListValue={params.images}
               videoFileValue={params.video}
+              imagesMaxOverride={effectiveLimits.imagesMax?.value}
+              desMaxOverride={effectiveLimits.desMax?.value}
               onChange={({ value, imgs, video }) => {
                 updateParams({ des: value, images: imgs || [], video })
               }}
@@ -111,7 +145,21 @@ const CreateMaterialModalContent = memo(
                     value={params.title}
                     placeholder={t('createMaterial.titlePlaceholder')}
                     onChange={e => updateParams({ title: e.target.value })}
+                    maxLength={effectiveLimits.titleMax?.value}
                   />
+                  {effectiveLimits.titleMax && (
+                    <span className={cn(
+                      'shrink-0 ml-2 text-xs tabular-nums',
+                      params.title.length > effectiveLimits.titleMax.value
+                        ? 'text-destructive'
+                        : 'text-muted-foreground',
+                    )}
+                    >
+                      {params.title.length}
+                      /
+                      {effectiveLimits.titleMax.value}
+                    </span>
+                  )}
                 </div>
               )}
             />

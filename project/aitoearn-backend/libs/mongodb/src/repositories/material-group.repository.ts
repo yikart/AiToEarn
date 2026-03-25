@@ -92,6 +92,10 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
     return await this.materialGroupModel.findOne({ userId, isDefault: true }).sort({ createdAt: -1 }).lean({ virtuals: true })
   }
 
+  async listByIds(ids: string[]): Promise<MaterialGroup[]> {
+    return this.materialGroupModel.find({ _id: { $in: ids } }).lean({ virtuals: true })
+  }
+
   // 获取列表
   async getList(inFilter: {
     userId?: string
@@ -142,6 +146,29 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
       { $set: { openAffiliate: false } },
     )
     return res.modifiedCount
+  }
+
+  async listByLibraryId(libraryId: string): Promise<MaterialGroup[]> {
+    return this.materialGroupModel.find({ libraryId }).lean({ virtuals: true })
+  }
+
+  async countByLibraryIdAndUserId(libraryId: string, userId: string): Promise<number> {
+    return this.materialGroupModel.countDocuments({ libraryId, userId })
+  }
+
+  async updateLibraryIdById(id: string, libraryId: string | null): Promise<boolean> {
+    const res = await this.materialGroupModel.updateOne(
+      { _id: id },
+      { $set: { libraryId } },
+    )
+    return res.modifiedCount > 0
+  }
+
+  async updateLibraryIdToNullByLibraryId(libraryId: string): Promise<void> {
+    await this.materialGroupModel.updateMany(
+      { libraryId },
+      { $set: { libraryId: null } },
+    ).exec()
   }
 
   // 获取开启 openAffiliate 的素材组（最新的一个）

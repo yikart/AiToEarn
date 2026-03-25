@@ -55,3 +55,4 @@ nul
 tests/.auth/
 playwright-report/
 test-results/
+.gstack/

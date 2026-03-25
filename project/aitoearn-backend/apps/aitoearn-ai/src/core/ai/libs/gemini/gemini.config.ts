@@ -18,7 +18,7 @@ export type GeminiKeyPair = z.infer<typeof geminiKeyPairSchema>
 
 export const geminiConfigSchema = z.object({
   // Key Pairs 配置（必填）
-  keyPairs: z.array(geminiKeyPairSchema).min(1).describe('Gemini Key Pairs'),
+  keyPairs: z.array(geminiKeyPairSchema).describe('Gemini Key Pairs'),
   location: z.string().default('us-central1'),
 
   // 图片生成 API 配置（单 Key）

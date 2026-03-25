@@ -307,9 +307,9 @@
     "xhsMobileNotSupported": "对不起，小红书需要依赖浏览器插件，请去PC端AiToEarn操作小红书",
     "myChannels": "我的频道",
     "title": "频道管理",
-    "description": "管理您的频道和空间分组",
+    "description": "管理您的频道和分组",
     "platforms": "平台列表",
-    "allChannels": "全部频道",
+    "allChannels": "我的频道",
     "availablePlatforms": "可连接的平台",
     "connectNewChannel": "连接新频道",
     "backToChannels": "返回我的频道",
@@ -335,15 +335,15 @@
     "syncFailed": "账号同步失败",
     "tabs": {
       "channels": "频道",
-      "spaces": "空间"
+      "spaces": "分组"
     },
-    "searchPlaceholder": "搜索频道或空间...",
-    "createSpace": "新建空间",
-    "createSpaceNamePlaceholder": "输入空间名称",
-    "createSpaceSuccess": "创建空间成功",
-    "createSpaceFailed": "创建空间失败",
-    "editSpaceSuccess": "空间编辑成功",
-    "editSpaceFailed": "空间编辑失败",
+    "searchPlaceholder": "搜索频道或分组...",
+    "createSpace": "新建分组",
+    "createSpaceNamePlaceholder": "输入分组名称",
+    "createSpaceSuccess": "创建分组成功",
+    "createSpaceFailed": "创建分组失败",
+    "editSpaceSuccess": "分组编辑成功",
+    "editSpaceFailed": "分组编辑失败",
     "deleteChannelSuccess": "删除频道成功",
     "deleteChannelFailed": "删除频道失败",
     "sortSuccess": "排序成功",
@@ -359,10 +359,11 @@
     "reauth": "重新授权",
     "addToSpace": "添加到: {{space}}",
     "deleteDialogContent": "确定要删除 {{type}} \"{{name}}\" 吗？此操作无法撤销。",
-    "deleteSpaceConfirm": "确认删除空间",
-    "deleteSpaceSuccess": "删除空间成功",
-    "deleteSpaceFailed": "删除空间失败",
+    "deleteSpaceConfirm": "确认删除分组",
+    "deleteSpaceSuccess": "删除分组成功",
+    "deleteSpaceFailed": "删除分组失败",
     "noData": "暂无数据"
   },
-  "channel": "频道"
+  "channel": "频道",
+  "agentCreate": "Agent创建"
 }

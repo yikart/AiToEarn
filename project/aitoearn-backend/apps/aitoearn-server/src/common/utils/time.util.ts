@@ -23,5 +23,5 @@ export function getTodayEnd(): Date {
 
 // 获取当前的秒级时间戳
 export function getCurrentTimestamp(): number {
-  return Math.floor(new Date().getTime() / 1000)
+  return Math.floor(Date.now() / 1000)
 }
