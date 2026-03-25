@@ -58,7 +58,66 @@ git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
 ```
 
-### 2. Configure Environment Variables
+### 2. Start Services
+
+```bash
+docker compose up -d
+```
+
+First startup will pull images, which may take a few minutes.
+
+### 3. Check Status
+
+```bash
+docker compose ps
+```
+
+All services should show `healthy` or `running` status.
+
+### 4. Access the Application
+
+| URL | Description |
+|-----|-------------|
+| http://localhost:8080 | Web frontend (via Nginx) |
+| http://localhost:8080/api/ | Backend API (via Nginx) |
+| http://localhost:8080/_nhealth | Nginx health check |
+| http://localhost:9001 | RustFS object storage console |
+
+### 5. Configure Relay (Recommended)
+
+Relay allows self-hosted instances to connect social media platform accounts via the official AiToEarn relay server, without needing to configure OAuth credentials for each platform.
+
+**Setup:**
+
+1. Go to **Settings → API Key** at [https://aitoearn.ai](https://aitoearn.ai) and create an API Key.
+2. Configure in the `aitoearn-server` service of `docker-compose.yml`:
+
+```yaml
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: your-api-key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+```
+
+3. Restart the service: `docker compose restart aitoearn-server`
+
+### 6. Configure AI Services
+
+**Recommended: use a relay service like new-api / one-api** to manage all AI models through a single endpoint.
+
+- [new-api](https://github.com/Calcium-Ion/new-api) - Multi-model API relay
+- [one-api](https://github.com/songquanpeng/one-api) - OpenAI API management and distribution
+
+Configure in `docker-compose.yml`:
+
+```yaml
+# In both aitoearn-ai and aitoearn-server services
+OPENAI_BASE_URL: https://your-new-api-host/v1
+OPENAI_API_KEY: sk-your-new-api-key
+```
+
+> Default `sk-placeholder` values allow the app to start normally. AI features will return errors until real keys are configured.
+
+### 7. Configure Environment Variables (Production)
 
 All environment variables are configured directly in `docker-compose.yml`. **Default values are already provided for all settings, so you can start the application immediately without any changes.**
 
@@ -89,7 +148,7 @@ APP_DOMAIN: your-domain.com                   # change for production
 >
 > Generate random strings with: `openssl rand -hex 32`
 
-### 3. Configure Application Config Files
+### 8. Configure Application Config Files
 
 Configuration files are located in each application's `config/` subdirectory, mounted as read-only volumes into containers:
 
@@ -101,31 +160,6 @@ Configuration files are located in each application's `config/` subdirectory, mo
 These config files read environment variables from `process.env` (set by docker-compose.yml) and also contain hardcoded configuration (storage endpoints, AI model lists, etc.).
 
 **To change RustFS credentials or switch to external S3/OSS**, update the `assets` configuration in both config.js files, or override via the `ASSETS_CONFIG` environment variable (see below).
-
-### 4. Start Services
-
-```bash
-docker compose up -d
-```
-
-First startup will pull images, which may take a few minutes.
-
-### 5. Check Status
-
-```bash
-docker compose ps
-```
-
-All services should show `healthy` or `running` status.
-
-### 6. Access the Application
-
-| URL | Description |
-|-----|-------------|
-| http://localhost:8080 | Web frontend (via Nginx) |
-| http://localhost:8080/api/ | Backend API (via Nginx) |
-| http://localhost:8080/_nhealth | Nginx health check |
-| http://localhost:9001 | RustFS object storage console |
 
 ## Environment Variables Reference
 
@@ -521,27 +555,6 @@ To switch email providers (e.g., SendGrid, Mailgun), modify the `mail.transport`
 |--------|-------------|--------|
 | `aiClient.baseUrl` | URL to reach AI service | Env var `AI_URL` |
 | `aiClient.token` | Service communication token | Env var `INTERNAL_TOKEN` |
-
-#### Relay Configuration (Optional)
-
-Relay allows self-hosted instances to connect social media platform accounts via the official AiToEarn relay server, without needing to configure OAuth credentials for each platform.
-
-**Setup:**
-
-1. Go to **Settings → API Key** at [https://aitoearn.ai](https://aitoearn.ai) and create an API Key.
-2. Configure in the `aitoearn-server` service of `docker-compose.yml`:
-
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `RELAY_SERVER_URL` | Relay server URL | `https://aitoearn.ai/api` |
-| `RELAY_API_KEY` | Your API Key (created in step 1) | None |
-| `RELAY_CALLBACK_URL` | Local callback URL for receiving relay results | `http://127.0.0.1:8080/api/plat/relay-callback` |
-
-```yaml
-RELAY_SERVER_URL: https://aitoearn.ai/api
-RELAY_API_KEY: your-api-key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
-```
 
 ## Common Commands
 

@@ -58,7 +58,66 @@ git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
 ```
 
-### 2. 配置环境变量
+### 2. 启动服务
+
+```bash
+docker compose up -d
+```
+
+首次启动会拉取镜像，可能需要几分钟。
+
+### 3. 检查状态
+
+```bash
+docker compose ps
+```
+
+所有服务应显示 `healthy` 或 `running` 状态。
+
+### 4. 访问应用
+
+| 地址 | 说明 |
+|------|------|
+| http://localhost:8080 | Web 前端（通过 Nginx） |
+| http://localhost:8080/api/ | 后端 API（通过 Nginx） |
+| http://localhost:8080/_nhealth | Nginx 健康检查 |
+| http://localhost:9001 | RustFS 对象存储控制台 |
+
+### 5. 配置 Relay（推荐）
+
+Relay 允许自部署实例通过官方 AiToEarn 中继服务器连接社交媒体平台账号，无需自行配置各平台的 OAuth 凭据。
+
+**配置步骤：**
+
+1. 在 [https://aitoearn.ai](https://aitoearn.ai) 的 **设置 → API Key** 中创建一个 API Key。
+2. 在 `docker-compose.yml` 的 `aitoearn-server` 服务中配置：
+
+```yaml
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: 你的API-Key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+```
+
+3. 重启服务：`docker compose restart aitoearn-server`
+
+### 6. 配置 AI 服务
+
+**推荐：使用 new-api / one-api 等中继服务**统一管理所有 AI 模型。
+
+- [new-api](https://github.com/Calcium-Ion/new-api) - 多模型 API 中继
+- [one-api](https://github.com/songquanpeng/one-api) - OpenAI API 管理分发
+
+在 `docker-compose.yml` 中配置：
+
+```yaml
+# 同时在 aitoearn-ai 和 aitoearn-server 两个服务中设置
+OPENAI_BASE_URL: https://your-new-api-host/v1
+OPENAI_API_KEY: sk-your-new-api-key
+```
+
+> 默认的 `sk-placeholder` 值允许应用正常启动，但 AI 功能将返回错误，直到配置真实的密钥。
+
+### 7. 配置环境变量（生产环境）
 
 所有环境变量直接在 `docker-compose.yml` 文件中配置。**所有配置项都已提供默认值，无需修改即可直接启动应用。**
 
@@ -89,7 +148,7 @@ APP_DOMAIN: your-domain.com                   # 生产环境改为你的域名
 >
 > 可以使用 `openssl rand -hex 32` 生成随机字符串。
 
-### 3. 配置应用配置文件
+### 8. 配置应用配置文件
 
 配置文件位于各应用的 `config/` 子目录中，以只读卷挂载到容器中：
 
@@ -101,31 +160,6 @@ APP_DOMAIN: your-domain.com                   # 生产环境改为你的域名
 这些配置文件从 `process.env`（由 docker-compose.yml 设置）读取环境变量，同时包含一些硬编码配置（存储端点、AI 模型列表等）。
 
 **如需修改 RustFS 凭证或切换到外部 S3/OSS**，需同时更新两个 config.js 文件中的 `assets` 配置部分，或通过 `ASSETS_CONFIG` 环境变量覆盖（见下文）。
-
-### 4. 启动服务
-
-```bash
-docker compose up -d
-```
-
-首次启动会拉取镜像，可能需要几分钟。
-
-### 5. 检查状态
-
-```bash
-docker compose ps
-```
-
-所有服务应显示 `healthy` 或 `running` 状态。
-
-### 6. 访问应用
-
-| 地址 | 说明 |
-|------|------|
-| http://localhost:8080 | Web 前端（通过 Nginx） |
-| http://localhost:8080/api/ | 后端 API（通过 Nginx） |
-| http://localhost:8080/_nhealth | Nginx 健康检查 |
-| http://localhost:9001 | RustFS 对象存储控制台 |
 
 ## 环境变量详细说明
 
@@ -521,27 +555,6 @@ AI 服务的完整配置文件，挂载到 `aitoearn-ai:/app/config.js`。
 |--------|------|------|
 | `aiClient.baseUrl` | 访问 AI 服务的地址 | 环境变量 `AI_URL` |
 | `aiClient.token` | 服务通信 token | 环境变量 `INTERNAL_TOKEN` |
-
-#### Relay 配置（可选）
-
-Relay 允许自部署实例通过官方 AiToEarn 中继服务器连接社交媒体平台账号，无需自行配置各平台的 OAuth 凭据。
-
-**配置步骤：**
-
-1. 在 [https://aitoearn.ai](https://aitoearn.ai) 的 **设置 → API Key** 中创建一个 API Key。
-2. 在 `docker-compose.yml` 的 `aitoearn-server` 服务中配置：
-
-| 变量 | 说明 | 默认值 |
-|------|------|--------|
-| `RELAY_SERVER_URL` | Relay 服务器地址 | `https://aitoearn.ai/api` |
-| `RELAY_API_KEY` | 你的 API Key（第 1 步创建） | 无 |
-| `RELAY_CALLBACK_URL` | 本地回调地址，用于接收中继结果 | `http://127.0.0.1:8080/api/plat/relay-callback` |
-
-```yaml
-RELAY_SERVER_URL: https://aitoearn.ai/api
-RELAY_API_KEY: 你的API-Key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
-```
 
 ## 常用命令
 
