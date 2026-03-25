@@ -60,9 +60,9 @@ cd AiToEarn
 
 ### 2. Configure Environment Variables
 
-All environment variables are configured directly in `docker-compose.yml`.
+All environment variables are configured directly in `docker-compose.yml`. **Default values are already provided for all settings, so you can start the application immediately without any changes.**
 
-Edit `docker-compose.yml`. **At minimum, modify these required fields**:
+For production deployments, it is recommended to modify the following security-related fields:
 
 ```yaml
 # 1. mongodb service — change database password
@@ -79,17 +79,13 @@ INTERNAL_TOKEN: your-random-internal-token
 
 # 4. aitoearn-server service — change these variables (must match aitoearn-ai)
 MONGODB_PASSWORD: your-secure-password
-STATISTICS_DB_PASSWORD: your-secure-password  # defaults to same as MongoDB password
 REDIS_PASSWORD: your-secure-password
 JWT_SECRET: your-random-jwt-secret            # must match aitoearn-ai
 INTERNAL_TOKEN: your-random-internal-token    # must match aitoearn-ai
 APP_DOMAIN: your-domain.com                   # change for production
-
-# 5. aitoearn-web service — change for non-localhost deployments
-NEXT_PUBLIC_API_URL: https://your-domain.com/api
 ```
 
-> **Important**: When changing passwords, you must update ALL services that reference them. For example, the MongoDB password appears in the `mongodb`, `aitoearn-ai`, and `aitoearn-server` services.
+> **Note**: When changing passwords, you must update ALL services that reference them. For example, the MongoDB password appears in the `mongodb`, `aitoearn-ai`, and `aitoearn-server` services.
 >
 > Generate random strings with: `openssl rand -hex 32`
 
@@ -135,7 +131,9 @@ All services should show `healthy` or `running` status.
 
 All variables below are configured in the `environment` section of each service in `docker-compose.yml`.
 
-### Required
+### Core Settings
+
+All variables below have working defaults — the application starts out of the box. For production, change passwords and secrets.
 
 | Variable | Service(s) | Description | Default |
 |----------|------------|-------------|---------|
@@ -146,7 +144,6 @@ All variables below are configured in the `environment` section of each service 
 | `INTERNAL_TOKEN` | aitoearn-ai, aitoearn-server | Inter-service auth token | `change-this-secret-token` |
 | `APP_DOMAIN` | aitoearn-server | Application domain (for OAuth callbacks) | `localhost` |
 | `ASSETS_CONFIG` | aitoearn-ai, aitoearn-server | Asset storage config (JSON format, see above) | Built-in RustFS config |
-| `NEXT_PUBLIC_API_URL` | aitoearn-web | Frontend API URL (browser-facing) | `http://localhost:8080/api` |
 
 ### Internal Service Communication
 
@@ -156,17 +153,6 @@ These variables handle inter-service communication via Docker internal networkin
 |----------|---------|-------------|---------|
 | `SERVER_URL` | aitoearn-ai | URL to reach aitoearn-server | `http://aitoearn-server:3002` |
 | `AI_URL` | aitoearn-server | URL to reach aitoearn-ai | `http://aitoearn-ai:3010` |
-
-### Statistics Database
-
-Defaults to the same MongoDB instance. Can be separated for production.
-
-| Variable | Service | Description | Default |
-|----------|---------|-------------|---------|
-| `STATISTICS_DB_HOST` | aitoearn-server | Statistics DB host | `mongodb` |
-| `STATISTICS_DB_PORT` | aitoearn-server | Statistics DB port | `27017` |
-| `STATISTICS_DB_USERNAME` | aitoearn-server | Statistics DB username | `admin` |
-| `STATISTICS_DB_PASSWORD` | aitoearn-server | Statistics DB password | `password` |
 
 ### Assets Storage (RustFS)
 
@@ -187,7 +173,7 @@ To change RustFS credentials, update these locations:
 **`ASSETS_CONFIG` environment variable** (JSON format) configures asset storage. Required in both `aitoearn-ai` and `aitoearn-server` services:
 
 ```yaml
-ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 ```
 
 **For production** with AWS S3 or other providers, update `ASSETS_CONFIG` or the `assets` config in both config.js files:
@@ -255,7 +241,7 @@ Configure social media OAuth credentials as needed in the `aitoearn-server` serv
 | Bilibili | `BILIBILI_CLIENT_ID/SECRET` | https://open.bilibili.com |
 | Google | `GOOGLE_CLIENT_ID/SECRET` | https://console.cloud.google.com/apis/credentials |
 | Kwai | `KWAI_CLIENT_ID/SECRET` | https://open.kuaishou.com |
-| Pinterest | `PINTEREST_CLIENT_ID/SECRET`, `PINTEREST_TEST_AUTHORIZATION` | https://developers.pinterest.com |
+| Pinterest | `PINTEREST_CLIENT_ID/SECRET` | https://developers.pinterest.com |
 | TikTok | `TIKTOK_CLIENT_ID/SECRET` | https://developers.tiktok.com |
 | Twitter/X | `TWITTER_CLIENT_ID/SECRET` | https://developer.x.com/en/portal |
 | Facebook | `FACEBOOK_CLIENT_ID/SECRET`, `FACEBOOK_CONFIG_ID` | https://developers.facebook.com |
@@ -276,19 +262,10 @@ Configure social media OAuth credentials as needed in the `aitoearn-server` serv
 |----------|---------|-------------|-----------|
 | `MAIL_USER` / `MAIL_PASS` | aitoearn-server | Email (AWS SES SMTP) | AWS Console → SES → SMTP |
 | `ALI_SMS_*` (4 vars) | aitoearn-server | Aliyun SMS | https://dysms.console.aliyun.com |
-| `ALI_GREEN_ACCESS_KEY_ID/SECRET` | aitoearn-server | Aliyun Content Safety | https://yundun.console.aliyun.com |
 
-### Auto-Login Configuration (Optional)
+### Auto-Login
 
-To automatically initialize an admin token when aitoearn-server starts, use the docker-compose `command` to read a token file and set it as the `AUTO_LOGIN_TOKEN` environment variable:
-
-```yaml
-aitoearn-server:
-  command: >
-    sh -c 'export AUTO_LOGIN_TOKEN=$$(cat /run/secrets/auto-login-token 2>/dev/null || echo ""); exec node main.js'
-```
-
-> Note: The previous `AUTO_LOGIN_TOKEN_PATH` environment variable has been removed. The file contents are now read directly in the startup command.
+Auto-login is enabled by default. On first startup, the `aitoearn-init` service generates an admin token and saves it to a shared volume. The `aitoearn-web` service reads this token automatically and uses it to log in without manual authentication.
 
 ### Image Pull Policy
 
@@ -297,13 +274,13 @@ All application service images in Docker Compose use `pull_policy: always` to en
 ```yaml
 services:
   aitoearn-web:
-    image: aitoearn/web:latest
+    image: aitoearn/aitoearn-web:latest
     pull_policy: always
   aitoearn-server:
-    image: aitoearn/server:latest
+    image: aitoearn/aitoearn-server:latest
     pull_policy: always
   aitoearn-ai:
-    image: aitoearn/ai:latest
+    image: aitoearn/aitoearn-ai:latest
     pull_policy: always
 ```
 
@@ -693,9 +670,8 @@ lsof -i :6379
 
 ### Q: Frontend loads but API requests fail?
 
-1. Verify `NEXT_PUBLIC_API_URL` in the `aitoearn-web` service of `docker-compose.yml` is correct
-2. Check Nginx logs: `docker compose logs nginx`
-3. Check backend health: `docker compose ps`
+1. Check Nginx logs: `docker compose logs nginx`
+2. Check backend health: `docker compose ps`
 
 ### Q: OAuth login callback fails?
 
