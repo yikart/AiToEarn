@@ -47,8 +47,7 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, TikTok, YouTube, Facebook, In
   4. [How to Get an API Key](#get-api-key)
   5. [Contributing](#contributing)
   6. [Contact](#contact)
-  7. [FAQ](#faq)
-  8. [Recommended](#recommended)
+  7. [Recommended](#recommended)
 </details>
 
 ## Key Features
@@ -121,6 +120,8 @@ We've rebuilt the content creation workflow with Agents. Just tell the Agent wha
 **Video Content**: The Agent automatically invokes video generation models (Grok, Veo, Seedance, etc.), video translation modules, and video editing modules to produce a complete video.
 
 **Image & Text Content**: Supports top-tier image models like Nano Banana to create high-quality visual content automatically.
+
+**Batch Generation**: Submit creation tasks in bulk — the Agent generates multiple pieces of content in parallel, perfect for matrix account operations and large-scale content distribution.
 
 > ▶ Watch Demo Video
 
@@ -319,8 +320,6 @@ Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
 - WeChat: Scan to add
 
 <img src="presentation/wechat.jpg" alt="WeChat QR Code" width="200">
-
-## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
 ## Recommended
 

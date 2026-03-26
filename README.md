@@ -47,8 +47,7 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
   4. [如何获取 API Key](#get-api-key)
   5. [贡献指南](#贡献指南)
   6. [联系](#联系)
-  7. [常见问题](#常见问题)
-  8. [推荐](#推荐)
+  7. [推荐](#推荐)
 </details>
 
 ## 核心功能
@@ -121,6 +120,8 @@ AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
 **视频内容**：Agent 自动调用视频生成模型（Grok、Veo、Seedance 等）、视频翻译模块、视频剪辑模块，一站式完成视频制作。
 
 **图文内容**：支持调用 Nano Banana 等顶级图片模型，自动生成高质量图文内容。
+
+**批量生成**：支持批量下发创作任务，Agent 可并行生成多条内容，快速铺量，适合矩阵账号运营和大规模内容分发场景。
 
 > ▶ 观看演示视频
 
@@ -320,8 +321,6 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 - 微信：扫码添加
 
 <img src="presentation/wechat.jpg" alt="微信二维码" width="200">
-
-## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
 ## 推荐
 
