@@ -13,7 +13,7 @@ English | [简体中文](README.md)
 AiToEarn helps creators, brands, and businesses build, distribute, and monetize content with **AI-powered automation** across the world's most popular platforms.
 
 Supported Channels:
-Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
+Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## 🚀 Quick Start with AiToEarn (5 Ways)
 
@@ -79,9 +79,9 @@ Creators can sell content on the platform to complete brand promotion tasks. All
 
 ### 📢 Publish — Content Publishing Agent
 
-Distribute content to 14+ major platforms worldwide with one click — no more manual posting on each platform.
+Distribute content to 10+ major platforms worldwide with one click — no more manual posting on each platform.
 
-- **Multi-Platform Distribution**: Douyin, Kwai, WeChat Channels, WeChat Official Accounts, Bilibili, Rednote, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest, LinkedIn
+- **Multi-Platform Distribution**: Douyin, Kwai, Bilibili, Rednote, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest, LinkedIn
 - **Calendar Scheduler**: Plan and coordinate content publishing across all platforms like a calendar
 
 <div style="display: flex; justify-content: space-around;">
@@ -316,6 +316,9 @@ Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
 ## Contact
 
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- WeChat: Scan to add
+
+<img src="presentation/wechat.jpg" alt="WeChat QR Code" width="200">
 
 ## [FAQ](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 

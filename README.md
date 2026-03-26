@@ -13,7 +13,7 @@
 AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
 支持渠道：
-抖音、小红书（Rednote）、视频号、快手、哔哩哔哩、微信公众号、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
+抖音、小红书（Rednote）、快手、哔哩哔哩、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
 
 ## 🚀 快速使用 AiToEarn（5 种方式）
 
@@ -79,9 +79,9 @@ AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
 
 ### 📢 Publish —— 内容发布 Agent
 
-一键将内容分发到全球 14+ 主流平台，告别逐个平台手动发布。
+一键将内容分发到全球 10+ 主流平台，告别逐个平台手动发布。
 
-- **全网分发**：覆盖抖音、快手、视频号、微信公众号、B站、小红书、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedIn
+- **全网分发**：覆盖抖音、快手、B站、小红书、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedIn
 - **日历排期**：像排日程一样统一规划所有平台的内容发布时间
 
 <div style="display: flex; justify-content: space-around;">
