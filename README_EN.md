@@ -171,7 +171,7 @@ The simplest way — just open your browser:
 2. Click **Settings** in the left menu
 3. Go to **API Key**, click Create, and copy the generated key
 
-<img src="app-screenshot/0.%20api-key/b4d316c4-300c-4935-a8ef-801eb18f436d.png" alt="Get API Key" width="600">
+<img src="presentation/app-screenshot/0.%20api-key/api-key-settings.png" alt="Get API Key" width="600">
 
 > ⚠️ Keep your API Key safe. Do not share it with others.
 

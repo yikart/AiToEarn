@@ -175,7 +175,7 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
 2. 点击左侧菜单 **设置**
 3. 在 **API Key** 中点击创建，复制生成的 Key
 
-<img src="app-screenshot/0.%20api-key/b4d316c4-300c-4935-a8ef-801eb18f436d.png" alt="获取 API Key" width="600">
+<img src="presentation/app-screenshot/0.%20api-key/api-key-settings.png" alt="获取 API Key" width="600">
 
 > ⚠️ 请妥善保管你的 API Key，不要泄露给他人。
 
@@ -345,7 +345,7 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
 - 微信：扫码添加
 
-<img src="wechat.jpg" alt="微信二维码" width="200">
+<img src="presentation/wechat.jpg" alt="微信二维码" width="200">
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 

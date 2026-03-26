@@ -1,0 +1,26 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "aitoearn-web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["run", "dev"],
+      "port": 6060,
+      "cwd": "project/aitoearn-web"
+    },
+    {
+      "name": "aitoearn-server",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "serve", "aitoearn-server"],
+      "port": 3002,
+      "cwd": "project/aitoearn-backend"
+    },
+    {
+      "name": "aitoearn-ai",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "serve", "aitoearn-ai"],
+      "port": 3010,
+      "cwd": "project/aitoearn-backend"
+    }
+  ]
+}
