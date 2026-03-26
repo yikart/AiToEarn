@@ -1,21 +1,19 @@
-
 # [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![GitHub stars](https://img.shields.io/github/stars/yikart/AiToEarn?color=fa6470)](https://github.com/yikart/AiToEarn/stargazers)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x%20&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
+[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
 English | [简体中文](README.md)
 
-**Create · Publish · Engage · Monetize — all in one platform.**
+**Monetize · Publish · Engage · Create — all in one platform.**
 
 AiToEarn helps creators, brands, and businesses build, distribute, and monetize content with **AI-powered automation** across the world's most popular platforms.
 
 Supported Channels:
-Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts,
-TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
+Douyin, Xiaohongshu (Rednote), WeChat Channels, Kuaishou, Bilibili, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 ## 🚀 Quick Start with AiToEarn (5 Ways)
 
@@ -29,20 +27,13 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
 > 💡 **Options ②③④ require an API Key first.** See [How to Get an API Key](#get-api-key).
 
-## 🎥 Demo Video
-<a href="https://youtu.be/y900LxIrZT4">
-  <img src="./presentation/display-1.5.2png.png" alt="Watch the video" width="480">
-</a>
-
-[![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
-
 ## What's New
 
 - **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — Fixed numerous usability issues; added OpenClaw support for using AiToEarn directly within OpenClaw; added MCP protocol support for using AiToEarn in Claude, Cursor, and any MCP-compatible Agent or LLM.
-- **2025-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — We introduced support for offline business scenarios, covering restaurants, retail stores, hotels and guesthouses, beauty and hair salons, gyms, and other types of physical businesses. This feature transforms offline promotional activities into executable online distribution tasks.
+- **2025-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline business promotion solutions for restaurants, retail stores, hotels, beauty salons, gyms, and more.
 - **2025-01-06**: [1.5.3 version](https://www.aitoearn.ai/) — Fixed a large number of known issues.
-- **2024-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content, and help you operate AiToEarn. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
-- **2024-11-28**: Support automatic updates within the application. Add a large number of AI functions to the creation interface, such as abbreviation, expansion, image creation, video creation, tag generation, etc., supporting Nano Banana Pro. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+- **2024-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2024-11-28**: Support automatic updates within the application. Added AI functions: abbreviation, expansion, image creation, video creation, tag generation, etc. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 - **2024-11-12**: The first open-source, fully usable version. [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 
 <details>
@@ -51,104 +42,91 @@ TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
   <br/>
 
   1. [Quick Start with AiToEarn (5 Ways)](#-quick-start-with-aitoearn-5-ways)
-  2. [How to Get an API Key](#get-api-key)
+  2. [What's New](#whats-new)
   3. [Key Features](#key-features)
-  4. [Contributing](#contributing)
-  5. [Contact](#contact)
-  6. [FAQ](#faq)
-  7. [Recommended](#recommended)
+  4. [How to Get an API Key](#get-api-key)
+  5. [Contributing](#contributing)
+  6. [Contact](#contact)
+  7. [FAQ](#faq)
+  8. [Recommended](#recommended)
 </details>
 
-## [Key Features](https://aitoearn.ai/)
+## Key Features
 
-🚀 **AiToEarn is a full-stack AI-powered content growth & monetization platform.**
-From creative ideas, to multi-channel publishing, to analytics & monetization — AiToEarn helps you truly **Create · Publish · Engage · Monetize.**
+AiToEarn provides four core Agent capabilities around the creator's full monetization pipeline:
 
-### Agent — AI Assistant
-- **All In Agent**: Let the AI agent help you create and publish content, assisting you in operating AiToEarn.
+> **Monetize · Publish · Engage · Create**
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/agent_0.png" width="100%">
-</div>
+---
 
-### 1. Content Publishing — One-Click Multi-Platform
+### 💰 Monetize — Earn from Your Content
 
-* **Distribute Everywhere**: Publish to the widest range of global platforms (Douyin, Kwai, WeChat Channels, WeChat Official Accounts, Bilibili, Rednote, Facebook, Instagram, TikTok, LinkedIn, Threads, YouTube, Pinterest, X (Twitter)).
-* **Smart Import**: Import historical content for fast re-editing & redistribution.
-  * Example: Sync your Xiaohongshu posts to YouTube in one click.
-* **Calendar Scheduler**: Plan & coordinate content like a calendar across all platforms.
+The core mission of AiToEarn: **help every creator earn money**.
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/1. content publish/calendar.jpeg" width="30%">
-  <img src="presentation/app-screenshot/1. content publish/support_channels.jpeg" width="30%">
-</div>
+Creators can sell content on the platform to complete brand promotion tasks. All settlements are results-driven, with three models:
 
-### 2. Content Hotspot — Viral Inspiration Engine
-
-* **Case Library**: Explore how others create posts with 10,000+ likes.
-* **Trend Radar**: Discover the latest viral trends instantly, reduce creator anxiety.
+| Model | Full Name | Meaning |
+|-------|-----------|---------|
+| **CPS** | Cost Per Sale | Settle by transaction amount |
+| **CPE** | Cost Per Engagement | Settle by engagement count |
+| **CPM** | Cost Per Mille | Settle by view count |
 
 <div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot.jpg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot3.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2. content hotspot/hotspot4.jpeg" width="22%">
+  <img src="presentation/monetize-cn.png" width="50%">
 </div>
 
-### 3. Content Search — Brand & Market Insights
+---
 
-* **Brand Monitoring**: Track conversations about your brand in real-time.
-* **Content Discovery**: Search for posts, topics, and communities for targeted engagement.
+### 📢 Publish — Content Publishing Agent
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
+Distribute content to 14+ major platforms worldwide with one click — no more manual posting on each platform.
+
+- **Multi-Platform Distribution**: Douyin, Kwai, WeChat Channels, WeChat Official Accounts, Bilibili, Rednote, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest, LinkedIn
+- **Calendar Scheduler**: Plan and coordinate content publishing across all platforms like a calendar
+
+<div style="display: flex; justify-content: space-around;">
+  <img src="presentation/publish-cn.png" width="30%">
+  <img src="presentation/app-screenshot/1.%20content%20publish/support_channels.jpeg" width="30%">
 </div>
 
-### 4. Comments Search — Precision User Mining
+> ▶ Watch Demo Video
 
-* **Smart Comment Search**: Detect high-conversion signals like "link please" or "how to buy."
-* **Conversion Booster**: Reply instantly, drive higher engagement & sales.
+<a href="https://www.youtube.com/watch?v=5041jEKaiU8">
+  <img src="https://img.youtube.com/vi/5041jEKaiU8/0.jpg" alt="Publish Demo Video" width="480">
+</a>
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/4. comments search/commentsearch.gif" width="30%">
-  <img src="presentation/app-screenshot/4. comments search/commentfilter.jpeg" width="30%">
-</div>
+---
 
-### 5. Content Engagement — Growth Engine
+### 💬 Engage — Content Engagement Agent
 
-* **Unified Dashboard**: Manage all interactions in one place.
-* **Proactive Engagement**: Join trending conversations, connect with potential customers.
-* Turn **passive operations** into **active traffic growth.**
+Automate engagement operations across all supported platforms via the AiToEarn browser extension.
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <img src="presentation/app-screenshot/5. content engagement/commentfilter2.jpeg" width="30%">
-</div>
+- **Automated Actions**: Auto-like, bookmark, and follow — batch operations at scale
+- **AI Smart Replies**: Use LLMs to generate targeted replies for each comment
+- **Comment Mining**: Detect high-conversion signals like "link please" or "how to buy" and respond instantly
+- **Brand Monitoring**: Track brand mentions in real-time and proactively join trending conversations
 
-### 6. Content Analytics — Full-Funnel Data
+> ▶ Watch Demo Video
 
-* **Cross-Platform Comparison**: One platform may block traffic, but others won't.
-* **End-to-End Monitoring**: Track performance and build your path to 1M+ followers.
+<a href="https://youtu.be/-QoHNrZBmp0">
+  <img src="./presentation/engage-thumbnail-cn.png" alt="Engage Demo Video" width="480">
+</a>
 
-<img src="./presentation/data_center.png" alt="post" width="500"/>
+---
 
-### 7. (Coming Soon) AI Content Creation — End-to-End Assistant
+### 🎨 Create — Content Creation Agent
 
-* **AI Copywriting**: Auto-generate titles, captions & descriptions.
-* **AI Commenting**: Engage proactively, attract traffic.
-* **Image & Card Generator**: Speed up content workflows.
-* **Supported AI Video Models**: Seedance, Kling, Hailuo, Veo, Midjourney, Sora, Pika, Runway.
-* **Supported AI Image Models**: GPT, Flux.
-* **Next**: Tag generator, smart DMs, video editing, AI avatars, translation for global distribution.
+We've rebuilt the content creation workflow with Agents. Just tell the Agent what you need — it handles everything from idea to finished product.
 
-### 8. (Coming Soon) Content Marketplace — Trade & Monetize
+**Video Content**: The Agent automatically invokes video generation models (Grok, Veo, Seedance, etc.), video translation modules, and video editing modules to produce a complete video.
 
-* **Creators**: Sell your content directly, find buyers fast.
-* **Brands**: Purchase ready-made, high-quality content.
-* **AI-Powered Growth**:
-  **Let's use AI to earn. Let's earn money together!**
+**Image & Text Content**: Supports top-tier image models like Nano Banana to create high-quality visual content automatically.
+
+> ▶ Watch Demo Video
+
+<a href="https://youtu.be/y900LxIrZT4">
+  <img src="./presentation/display-1.5.2png.png" alt="Create Demo Video" width="480">
+</a>
 
 ---
 
@@ -290,6 +268,7 @@ For local development and debugging. You can use Docker for MongoDB/Redis, or po
 ```bash
 cd project/aitoearn-backend
 pnpm install
+# Copy config files for local development
 cp apps/aitoearn-ai/config/config.js apps/aitoearn-ai/config/local.config.js
 cp apps/aitoearn-server/config/config.js apps/aitoearn-server/config/local.config.js
 pnpm nx serve aitoearn-ai
@@ -310,10 +289,19 @@ pnpm run dev
 <summary>🖥️ Start Electron desktop project</summary>
 
 ```bash
+# Clone the repo
 git clone https://github.com/yikart/AttAiToEarn.git
+
+# Enter directory
 cd AttAiToEarn
-npm i
+
+# Install dependencies
+npm install
+
+# Compile sqlite (better-sqlite3 requires node-gyp and local Python)
 npm run rebuild
+
+# Start development
 npm run dev
 ```
 
@@ -333,9 +321,9 @@ Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
 
 ## Recommended
 
-* [MuseTalk](https://github.com/TMElyralab/MuseTalk)
-* [video_spider](https://github.com/5ime/video_spider)
-* [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
-* [facefusion](https://github.com/facefusion/facefusion)
-* [NarratoAI](https://github.com/linyqh/NarratoAI)
-* [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
+- [MuseTalk](https://github.com/TMElyralab/MuseTalk)
+- [video_spider](https://github.com/5ime/video_spider)
+- [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
+- [facefusion](https://github.com/facefusion/facefusion)
+- [NarratoAI](https://github.com/linyqh/NarratoAI)
+- [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)

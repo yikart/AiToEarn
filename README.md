@@ -1,4 +1,3 @@
-
 # [Aitoearn：一人公司的AI内容营销智能体](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
@@ -9,7 +8,7 @@
 
 简体中文 | [English](README_EN.md)
 
-**Create · Publish · Engage · Monetize —— 一站式平台。**
+**Monetize · Publish · Engage · Create —— 一站式平台。**
 
 AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
@@ -28,14 +27,6 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
 
 > 💡 **方式 ②③④ 都需要先获取 API Key**，请先看 [如何获取 API Key](#get-api-key)。
 
-## 🎥 Demo Video
-
-<a href="https://youtu.be/y900LxIrZT4">
-  <img src="./presentation/display-1.5.2png.png" alt="Watch the video" width="480">
-</a>
-
-[![Watch the video](https://img.youtube.com/vi/5041jEKaiU8/0.jpg)](https://www.youtube.com/watch?v=5041jEKaiU8)
-
 ## 最新动态
 
 - **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — 修复大量可用性问题；新增 OpenClaw（龙虾）支持，可在龙虾中直接使用 AiToEarn；新增 MCP 协议支持，可在 Claude、Cursor 等任何支持 MCP 的 Agent 或大模型中使用 AiToEarn。
@@ -51,108 +42,91 @@ AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主
   <br/>
 
   1. [快速使用 AiToEarn（5 种方式）](#-快速使用-aitoearn5-种方式)
-  2. [如何获取 API Key](#get-api-key)
+  2. [最新动态](#最新动态)
   3. [核心功能](#核心功能)
-  4. [贡献指南](#贡献指南)
-  5. [联系](#联系)
-  6. [常见问题](#常见问题)
-  7. [推荐](#推荐)
+  4. [如何获取 API Key](#get-api-key)
+  5. [贡献指南](#贡献指南)
+  6. [联系](#联系)
+  7. [常见问题](#常见问题)
+  8. [推荐](#推荐)
 </details>
 
-## [核心功能](https://aitoearn.ai/)
+## 核心功能
 
-🚀 **AiToEarn 是一个全链条的 AI 驱动内容增长与变现平台。**
+AiToEarn 围绕内容创作者的完整变现链路，提供四大 Agent 能力：
 
-从创意灵感，到多平台分发，再到数据分析与变现——AiToEarn 让你真正实现 **Create · Publish · Engage · Monetize**。
+> **Monetize · Publish · Engage · Create**
 
-### Agent —— 智能体
+---
 
-- **All In Agent**：让智能体帮你创作和发布，辅助你使用我们的 AiToEarn
+### 💰 Monetize —— 内容赚钱
+
+AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
+
+创作者可以在平台出售内容以完成商家的推广任务。所有结算以结果为导向，我们提供三种结算模式：
+
+| 结算模式 | 全称 | 含义 |
+|---------|------|------|
+| **CPS** | Cost Per Sale | 按成交额结算 |
+| **CPE** | Cost Per Engagement | 按互动量结算 |
+| **CPM** | Cost Per Mille | 按播放量结算 |
 
 <div style="display: flex; justify-content: space-around;">
-  <img src="presentation/agent_0.png" width="100%">
+  <img src="presentation/monetize-cn.png" width="50%">
 </div>
 
-### 1. 内容发布 —— 一键多平台
+---
 
-- **全网分发**：覆盖最广的平台矩阵（Douyin、Kwai、WeChat Channels、WeChat Official Accounts、Bilibili、Rednote、Facebook、Instagram、TikTok、LinkedIn、Threads、YouTube、Pinterest、X（Twitter））。
-- **智能导入**：导入历史内容，快速二次编辑与再分发。
-  - 例如：一键将你的小红书内容同步到 YouTube。
-- **日历排期**：像排日程一样统一规划所有平台的内容。
+### 📢 Publish —— 内容发布 Agent
+
+一键将内容分发到全球 14+ 主流平台，告别逐个平台手动发布。
+
+- **全网分发**：覆盖抖音、快手、视频号、微信公众号、B站、小红书、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedIn
+- **日历排期**：像排日程一样统一规划所有平台的内容发布时间
 
 <div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/1.%20content%20publish/calendar.jpeg" width="30%">
+  <img src="presentation/publish-cn.png" width="30%">
   <img src="presentation/app-screenshot/1.%20content%20publish/support_channels.jpeg" width="30%">
 </div>
 
-### 2. 热点灵感 —— 爆款灵感引擎
+> ▶ 观看演示视频
 
-- **案例库**：浏览 1 万+ 点赞量级内容的创作方法。
-- **趋势雷达**：第一时间捕捉热点，缓解创作者焦虑。
+<a href="https://www.youtube.com/watch?v=5041jEKaiU8">
+  <img src="https://img.youtube.com/vi/5041jEKaiU8/0.jpg" alt="Publish 演示视频" width="480">
+</a>
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/app-screenshot/2.%20content%20hotspot/hotspot.jpg" width="22%">
-  <img src="presentation/app-screenshot/2.%20content%20hotspot/hotspot2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2.%20content%20hotspot/hotspot3.jpeg" width="22%">
-  <img src="presentation/app-screenshot/2.%20content%20hotspot/hotspot4.jpeg" width="22%">
-</div>
+---
 
-### 3. 内容搜索 —— 品牌与市场洞察
+### 💬 Engage —— 内容互动 Agent
 
-- **品牌监测**：实时追踪关于你品牌的讨论。
-- **内容发现**：按主题、话题与社区检索，以更精准地参与互动。
+通过 AiToEarn 浏览器插件，在上述所有平台上实现自动化互动运营。
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch.gif" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch1.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch2.jpeg" width="22%">
-  <img src="presentation/app-screenshot/3.%20content%20search/contentsearch4.jpeg" width="22%">
-</div>
+- **自动化操作**：自动点赞、收藏、关注，批量高效运营
+- **AI 智能回复**：调用大模型为每条评论生成针对性回复，精准互动
+- **评论挖掘**：识别"求链接""怎么购买"等高转化信号，快速响应
+- **品牌监测**：实时追踪关于你品牌的讨论，主动参与热点话题
 
-### 4. 评论搜寻 —— 精准用户挖掘
+> ▶ 观看演示视频
 
-- **智能评论检索**：识别"求链接""怎么购买"等高转化信号。
-- **转化加速器**：快速回复，驱动更高互动与销量。
+<a href="https://youtu.be/-QoHNrZBmp0">
+  <img src="./presentation/engage-thumbnail-cn.png" alt="Engage 演示视频" width="480">
+</a>
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="presentation/app-screenshot/4.%20comments%20search/commentsearch.gif" width="30%">
-  <img src="presentation/app-screenshot/4.%20comments%20search/commentfilter.jpeg" width="30%">
-</div>
+---
 
-### 5. 互动运营 —— 增长引擎
+### 🎨 Create —— 内容创作 Agent
 
-- **统一工作台**：在一个界面管理全部互动。
-- **主动参与**：跟进热点话题，连接潜在用户。
+我们用 Agent 的方式重构了内容制作流程。只需告诉 Agent 你的内容需求，它会自动完成从创意到成品的全部工作。
 
-将**被动运营**转变为**主动引流**。
+**视频内容**：Agent 自动调用视频生成模型（Grok、Veo、Seedance 等）、视频翻译模块、视频剪辑模块，一站式完成视频制作。
 
-<div style="display: flex; justify-content: space-between; align-items: center;">
-  <img src="presentation/app-screenshot/5.%20content%20engagement/commentfilter2.jpeg" width="30%">
-</div>
+**图文内容**：支持调用 Nano Banana 等顶级图片模型，自动生成高质量图文内容。
 
-### 6. 数据分析 —— 全链路漏斗
+> ▶ 观看演示视频
 
-- **跨平台对比**：某个平台限流？其他平台一样能打。
-- **端到端监控**：追踪表现，构建通往 100 万+ 粉丝的路线图。
-
-<img src="./presentation/data_center.png" alt="数据中心" width="500">
-
-### 7.（即将推出）AI 内容创作 —— 端到端助手
-
-- **AI 文案**：自动生成标题、文案与描述。
-- **AI 评论**：主动互动，吸引流量。
-- **图片与卡片生成**：加速内容工作流。
-- **支持的视频模型**：Seedance、Kling、海螺（Hailuo）、Veo、Midjourney、Sora、Pika、Runway。
-- **支持的图像模型**：GPT、Flux。
-- **下一步**：标签生成、智能私信、视频剪辑、AI 数字人、全球分发多语种翻译等。
-
-### 8.（即将推出）内容交易市场 —— 创作即变现
-
-- **创作者**：直接出售你的内容，高效找到买家。
-- **品牌方**：即买即用的优质内容资源。
-- **AI 驱动增长**：
-
-**让我们用 AI 赚钱，一起赚！**
+<a href="https://youtu.be/y900LxIrZT4">
+  <img src="./presentation/display-1.5.2png.png" alt="Create 演示视频" width="480">
+</a>
 
 ---
 
