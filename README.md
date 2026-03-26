@@ -343,6 +343,9 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 ## 联系
 
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- 微信：扫码添加
+
+<img src="wechat.jpg" alt="微信二维码" width="200">
 
 ## [常见问题](https://heovzp8pm4.feishu.cn/wiki/UksHwxdFai45SvkLf0ycblwRnTc?from=from_copylink)
 
