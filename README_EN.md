@@ -1,4 +1,4 @@
-# [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
+# [Aitoearn: The Best Open-Source AI Agent for OPC (One-Person Company) Content Marketing](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -10,7 +10,7 @@ English | [简体中文](README.md)
 
 **Monetize · Publish · Engage · Create — all in one platform.**
 
-AiToEarn helps creators, brands, and businesses build, distribute, and monetize content with **AI-powered automation** across the world's most popular platforms.
+AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses build, distribute, and monetize content with **AI-powered automation** across the world's most popular platforms.
 
 Supported Channels:
 Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
@@ -70,9 +70,7 @@ Creators can sell content on the platform to complete brand promotion tasks. All
 | **CPE** | Cost Per Engagement | Settle by engagement count |
 | **CPM** | Cost Per Mille | Settle by view count |
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/monetize-cn.png" width="50%">
-</div>
+<img src="presentation/monetize-cn.png" width="30%">
 
 ---
 
@@ -83,10 +81,7 @@ Distribute content to 10+ major platforms worldwide with one click — no more m
 - **Multi-Platform Distribution**: Douyin, Kwai, Bilibili, Rednote, TikTok, YouTube, Facebook, Instagram, Threads, X (Twitter), Pinterest, LinkedIn
 - **Calendar Scheduler**: Plan and coordinate content publishing across all platforms like a calendar
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/publish-cn.png" width="30%">
-  <img src="presentation/app-screenshot/1.%20content%20publish/support_channels.jpeg" width="30%">
-</div>
+<img src="presentation/publish-cn.png" width="30%"> <img src="presentation/channel-cn.png" width="30%">
 
 > ▶ Watch Demo Video
 

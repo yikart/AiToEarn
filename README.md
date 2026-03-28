@@ -1,4 +1,4 @@
-# [Aitoearn：一人公司的AI内容营销智能体](https://aitoearn.ai)
+# [Aitoearn：OPC（一人公司）的AI内容营销智能体](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -10,7 +10,7 @@
 
 **Monetize · Publish · Engage · Create —— 一站式平台。**
 
-AiToEarn 通过 **AI 自动化**，帮助创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
+AiToEarn 通过 **AI 自动化**，帮助 OPC（一人公司）、创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
 
 支持渠道：
 抖音、小红书（Rednote）、快手、哔哩哔哩、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
@@ -70,9 +70,7 @@ AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
 | **CPE** | Cost Per Engagement | 按互动量结算 |
 | **CPM** | Cost Per Mille | 按播放量结算 |
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/monetize-cn.png" width="50%">
-</div>
+<img src="presentation/monetize-cn.png" width="30%">
 
 ---
 
@@ -83,10 +81,7 @@ AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
 - **全网分发**：覆盖抖音、快手、B站、小红书、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedIn
 - **日历排期**：像排日程一样统一规划所有平台的内容发布时间
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/publish-cn.png" width="30%">
-  <img src="presentation/app-screenshot/1.%20content%20publish/support_channels.jpeg" width="30%">
-</div>
+<img src="presentation/publish-cn.png" width="30%"> <img src="presentation/channel-cn.png" width="30%">
 
 > ▶ 观看演示视频
 
