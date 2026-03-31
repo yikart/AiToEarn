@@ -1,4 +1,96 @@
 {
-  "title": "Aitoearn: 最高のオープンソースコンテンツAIエージェント",
-  "content": "最高のオープンソースマトリックスツール"
+  "title": "Aitoearn：個人ビジネス向けAIコンテンツマーケティングエージェント",
+  "content": "最高のオープンソースマトリックスツール",
+  "common": {
+    "loading": "読み込み中...",
+    "error": "エラーが発生しました",
+    "success": "成功しました",
+    "cancel": "キャンセル",
+    "confirm": "確認",
+    "save": "保存",
+    "delete": "削除",
+    "edit": "編集",
+    "create": "作成",
+    "search": "検索",
+    "submit": "送信",
+    "back": "戻る",
+    "next": "次へ",
+    "previous": "前へ",
+    "close": "閉じる",
+    "settings": "設定",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "register": "新規登録",
+    "profile": "プロフィール"
+  },
+  "nav": {
+    "home": "ホーム",
+    "accounts": "アカウント",
+    "publish": "公開",
+    "create": "作成",
+    "engage": "エンゲージメント",
+    "monetize": "収益化",
+    "settings": "設定",
+    "tasks": "タスク履歴"
+  },
+  "platforms": {
+    "douyin": "抖音（Douyin）",
+    "xhs": "小紅書（Rednote）",
+    "kuaishou": "快手（Kuaishou）",
+    "bilibili": "bilibili",
+    "tiktok": "TikTok",
+    "youtube": "YouTube",
+    "facebook": "Facebook",
+    "instagram": "Instagram",
+    "threads": "Threads",
+    "twitter": "Twitter（X）",
+    "pinterest": "Pinterest",
+    "linkedin": "LinkedIn"
+  },
+  "publish": {
+    "title": "コンテンツを公開",
+    "selectAccount": "アカウントを選択",
+    "selectPlatform": "プラットフォームを選択",
+    "schedule": "予約投稿",
+    "publishNow": "今すぐ公開",
+    "uploadMedia": "メディアをアップロード",
+    "addCaption": "キャプションを追加",
+    "addTags": "タグを追加",
+    "calendar": "カレンダー"
+  },
+  "create": {
+    "title": "コンテンツを作成",
+    "videoContent": "動画コンテンツ",
+    "imageContent": "画像コンテンツ",
+    "textContent": "テキストコンテンツ",
+    "aiGenerate": "AIで生成",
+    "batchGenerate": "一括生成",
+    "template": "テンプレート"
+  },
+  "engage": {
+    "title": "エンゲージメント",
+    "autoLike": "自動いいね",
+    "autoFollow": "自動フォロー",
+    "autoComment": "自動コメント",
+    "smartReply": "AIスマート返信",
+    "commentMining": "コメントマイニング",
+    "brandMonitoring": "ブランドモニタリング"
+  },
+  "monetize": {
+    "title": "収益化",
+    "cps": "CPS（売上ベース）",
+    "cpe": "CPE（エンゲージメントベース）",
+    "cpm": "CPM（再生数ベース）",
+    "tasks": "タスク一覧",
+    "earnings": "収益履歴"
+  },
+  "settings": {
+    "title": "設定",
+    "general": "一般",
+    "account": "アカウント",
+    "apiKey": "API Key",
+    "language": "言語",
+    "theme": "テーマ",
+    "notifications": "通知"
+  }
 }

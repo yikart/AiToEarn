@@ -6,7 +6,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
-简体中文 | [English](README_EN.md)
+简体中文 | [English](README_EN.md) | [日本語](README_JA.md)
 
 **Monetize · Publish · Engage · Create —— 一站式平台。**
 
