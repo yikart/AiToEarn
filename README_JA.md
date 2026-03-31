@@ -29,12 +29,13 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
 
 ## 最新情報
 
-- **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — 多くの使いやすさの問題を修正。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
-- **2025-02-07**: [1.8.0バージョン](https://www.aitoearn.ai/) — オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多様なオフラインビジネスに対応。オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換し、コンテンツ公開とユーザー参加メカニズムを通じて店舗のオンライン露出と来店トラフィックの増加を支援。
-- **2025-01-06**: [1.5.3バージョン](https://www.aitoearn.ai/) — 多数の既知の問題を修正
-- **2024-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
-- **2024-11-28**: アプリ内自動更新に対応。作成画面に多くのAI機能を追加：要約、拡張、画像生成、動画生成、タグ生成など。Nano Banana Proにも対応。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
-- **2024-11-12**: 初のオープンソースで完全に使用可能なバージョン。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+- **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — コンテンツ取引マーケットプレイスをリリース。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
+- **2026-02-07**: [1.8.0バージョン](https://www.aitoearn.ai/) — オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多様なオフラインビジネスに対応。オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換し、コンテンツ公開とユーザー参加メカニズムを通じて店舗のオンライン露出と来店トラフィックの増加を支援。
+- **2025-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2025-11-28**: アプリ内自動更新に対応。作成画面に多くのAI機能を追加：要約、拡張、画像生成、動画生成、タグ生成など。Nano Banana Proにも対応。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+- **2025-11-12**: 初のオープンソースで完全に使用可能なバージョン。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+- **2025-09-16**: 初の海外展開バージョン、Facebook、Instagram、Threads、Twitter、YouTube、TikTok、Pinterestに対応。[v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
+- **2025-02-26**: 初のオープンソースバージョン、小紅書・抖音・快手・ビデオアカウントへのワンクリック動画投稿を実現。[v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)
 
 <details>
   <summary><h2 style="display:inline;margin:0">目次</h2></summary>

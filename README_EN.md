@@ -29,12 +29,13 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, TikTok, YouTube, Facebook, In
 
 ## What's New
 
-- **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — Fixed numerous usability issues; added OpenClaw support for using AiToEarn directly within OpenClaw; added MCP protocol support for using AiToEarn in Claude, Cursor, and any MCP-compatible Agent or LLM.
-- **2025-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline business promotion solutions for restaurants, retail stores, hotels, beauty salons, gyms, and more.
-- **2025-01-06**: [1.5.3 version](https://www.aitoearn.ai/) — Fixed a large number of known issues.
-- **2024-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
-- **2024-11-28**: Support automatic updates within the application. Added AI functions: abbreviation, expansion, image creation, video creation, tag generation, etc. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
-- **2024-11-12**: The first open-source, fully usable version. [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+- **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — Content marketplace launched; added OpenClaw support for using AiToEarn directly within OpenClaw; added MCP protocol support for using AiToEarn in Claude, Cursor, and any MCP-compatible Agent or LLM.
+- **2026-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline business promotion solutions for restaurants, retail stores, hotels, beauty salons, gyms, and more.
+- **2025-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2025-11-28**: Support automatic updates within the application. Added AI functions: abbreviation, expansion, image creation, video creation, tag generation, etc. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+- **2025-11-12**: The first open-source, fully usable version. [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
+- **2025-09-16**: First international version, added support for Facebook, Instagram, Threads, Twitter, YouTube, TikTok, Pinterest. [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
+- **2025-02-26**: First open-source release, initial support for one-click publishing to Xiaohongshu, Douyin, Kuaishou, and WeChat Channels. [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)
 
 <details>
   <summary><h2 style="display:inline;margin:0">Table of Contents</h2></summary>
