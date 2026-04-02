@@ -26,8 +26,8 @@ const {
   ANTHROPIC_BASE_URL,
   ANTHROPIC_API_KEY,
   GROK_API_KEY,
-  AICSO_API_KEY,
-  AICSO_BASE_URL,
+  GEMINI_API_KEY,
+  GEMINI_BASE_URL,
 } = process.env
 
 const {
@@ -37,7 +37,6 @@ const {
 const {
   GEMINI_KEY_PAIRS,
   GEMINI_LOCATION,
-  AI_PROXY_URL,
 } = process.env
 
 const {
@@ -106,28 +105,22 @@ module.exports = {
       urlAuthPrimaryKey: 'd8eea018341d4e9687ead69bea628271',
     },
     openai: {
-      baseUrl: AI_PROXY_URL ? `${AI_PROXY_URL}/${OPENAI_BASE_URL}` : OPENAI_BASE_URL,
+      baseUrl: OPENAI_BASE_URL,
       apiKey: OPENAI_API_KEY,
     },
     grok: {
       baseUrl: 'https://api.x.ai',
       apiKey: GROK_API_KEY,
-      ...(AI_PROXY_URL && { proxyUrl: AI_PROXY_URL }),
     },
     anthropic: {
-      baseUrl: AI_PROXY_URL ? `${AI_PROXY_URL}/${ANTHROPIC_BASE_URL}` : ANTHROPIC_BASE_URL,
+      baseUrl: ANTHROPIC_BASE_URL,
       apiKey: ANTHROPIC_API_KEY,
     },
     gemini: {
       keyPairs: parseGeminiKeyPairs(),
       location: GEMINI_LOCATION || 'us-central1',
-      apiKey: AICSO_API_KEY,
-      baseUrl: AICSO_BASE_URL,
-      ...(AI_PROXY_URL && { proxyUrl: AI_PROXY_URL }),
-    },
-    aicso: {
-      apiKey: AICSO_API_KEY,
-      ...(AICSO_BASE_URL && { baseUrl: AICSO_BASE_URL }),
+      apiKey: GEMINI_API_KEY,
+      baseUrl: GEMINI_BASE_URL,
     },
     aideo: {
       vCreative: {
@@ -185,20 +178,6 @@ module.exports = {
             tiers: [
               {
                 input: { text: '0', image: '0', video: '0', audio: '0' },
-                output: { text: '0' },
-              },
-            ],
-          },
-        },
-        {
-          name: 'gpt-5.1-all',
-          description: 'GPT 5.1',
-          inputModalities: ['text', 'image'],
-          outputModalities: ['text'],
-          pricing: {
-            tiers: [
-              {
-                input: { text: '0', image: '0' },
                 output: { text: '0' },
               },
             ],
@@ -288,20 +267,6 @@ module.exports = {
             ],
           },
         },
-        {
-          name: 'gemini-2.5-flash',
-          description: 'Gemini 2.5 Flash',
-          inputModalities: ['text', 'image', 'audio', 'video'],
-          outputModalities: ['text'],
-          pricing: {
-            tiers: [
-              {
-                input: { text: '0', image: '0', video: '0', audio: '0' },
-                output: { text: '0' },
-              },
-            ],
-          },
-        },
       ],
       image: {
         generation: [
@@ -328,60 +293,6 @@ module.exports = {
       },
       video: {
         generation: [
-          {
-            name: 'grok-video-3-15s',
-            description: 'Grok Video 15s',
-            channel: 'aicso-grok',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['720p'],
-            durations: [15],
-            maxInputImages: 1,
-            aspectRatios: ['2:3', '3:2', '1:1'],
-            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
-            defaults: {
-              duration: 15,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 15, price: 0 },
-            ],
-          },
-          {
-            name: 'veo3.1-components-4k',
-            description: 'Veo 3.1 4K',
-            channel: 'aicso-veo',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['4k'],
-            durations: [8],
-            maxInputImages: 3,
-            aspectRatios: ['9:16', '16:9', '1:1'],
-            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
-            defaults: {
-              duration: 8,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 8, price: 0 },
-            ],
-          },
-          {
-            name: 'veo3.1-components',
-            description: 'Veo 3.1',
-            channel: 'aicso-veo',
-            modes: ['text2video', 'image2video'],
-            resolutions: ['720p'],
-            durations: [8],
-            maxInputImages: 3,
-            aspectRatios: ['9:16', '16:9', '1:1'],
-            tags: [{ 'en-US': 'Sale', 'zh-CN': '限时' }],
-            defaults: {
-              duration: 8,
-              aspectRatio: '9:16',
-            },
-            pricing: [
-              { duration: 8, price: 0 },
-            ],
-          },
           {
             name: 'grok-imagine-video',
             description: 'Grok Video',
@@ -452,7 +363,7 @@ module.exports = {
     },
   },
   agent: {
-    baseUrl: AI_PROXY_URL ? `${AI_PROXY_URL}/${OPENAI_BASE_URL}/messages` : `${OPENAI_BASE_URL}/messages`,
+    baseUrl: `${OPENAI_BASE_URL}/messages`,
     apiKey: OPENAI_API_KEY,
   },
 }

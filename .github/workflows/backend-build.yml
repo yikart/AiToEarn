@@ -51,41 +51,8 @@ env:
   MONOREPO_DIR: project/aitoearn-backend
 
 jobs:
-  parse-manual-apps:
-    runs-on: ubuntu-latest
-    outputs:
-      manual_apps: ${{ steps.parse.outputs.manual_apps }}
-    if: github.event_name == 'workflow_dispatch'
-    steps:
-      - name: Parse manual app selection
-        id: parse
-        run: |
-          APPS=""
-          
-          if [ "${{ inputs.build_aitoearn_ai }}" = "true" ]; then
-            APPS="aitoearn-ai"
-          fi
-          
-          if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
-            if [ -n "$APPS" ]; then
-              APPS="$APPS,aitoearn-server"
-            else
-              APPS="aitoearn-server"
-            fi
-          fi
-          
-          echo "manual_apps=$APPS" >> $GITHUB_OUTPUT
-          
-          if [ -n "$APPS" ]; then
-            echo "✅ Manually selected apps: $APPS"
-          else
-            echo "⚠️  No apps selected"
-          fi
-
   generate-matrix:
     runs-on: ubuntu-latest
-    needs: [parse-manual-apps]
-    if: always() && (needs.parse-manual-apps.result == 'success' || needs.parse-manual-apps.result == 'skipped')
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
       has_changes: ${{ steps.set-matrix.outputs.has_changes }}
@@ -113,21 +80,44 @@ jobs:
         working-directory: ${{ env.MONOREPO_DIR }}
         run: pnpm install --frozen-lockfile
 
+      - name: Parse manual app selection
+        id: parse-manual
+        run: |
+          MANUAL_APPS=""
+
+          # If manual_apps passed via workflow_call, use directly
+          if [ -n "${{ inputs.manual_apps }}" ]; then
+            MANUAL_APPS="${{ inputs.manual_apps }}"
+            echo "✅ Using workflow_call manual apps: $MANUAL_APPS"
+          else
+            # Parse workflow_dispatch boolean inputs
+            if [ "${{ inputs.build_aitoearn_ai }}" = "true" ]; then
+              MANUAL_APPS="aitoearn-ai"
+            fi
+
+            if [ "${{ inputs.build_aitoearn_server }}" = "true" ]; then
+              if [ -n "$MANUAL_APPS" ]; then
+                MANUAL_APPS="$MANUAL_APPS,aitoearn-server"
+              else
+                MANUAL_APPS="aitoearn-server"
+              fi
+            fi
+
+            if [ -n "$MANUAL_APPS" ]; then
+              echo "✅ Manually selected apps: $MANUAL_APPS"
+            else
+              echo "⚠️  No apps manually selected"
+            fi
+          fi
+
+          echo "manual_apps=$MANUAL_APPS" >> $GITHUB_OUTPUT
+
       - name: Detect affected apps
         id: detect-changes
         working-directory: ${{ env.MONOREPO_DIR }}
         run: |
-          # Get manually selected apps (from workflow_dispatch or workflow_call)
-          MANUAL_APPS=""
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            MANUAL_APPS="${{ needs.parse-manual-apps.outputs.manual_apps }}"
-            if [ -z "$MANUAL_APPS" ]; then
-              echo "⚠️  Manual trigger but no apps selected, will auto-detect affected apps"
-            fi
-          elif [ "${{ github.event_name }}" = "workflow_call" ] && [ -n "${{ inputs.manual_apps }}" ]; then
-            MANUAL_APPS="${{ inputs.manual_apps }}"
-          fi
-          
+          MANUAL_APPS="${{ steps.parse-manual.outputs.manual_apps }}"
+
           # Check if manual mode
           if [ -n "$MANUAL_APPS" ]; then
             echo "🎯 Manual build mode: Using specified app list"
@@ -157,10 +147,30 @@ jobs:
             echo "Base: $BASE_REF"
             echo "Head: HEAD"
 
-            AFFECTED_APPS=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --exclude="browser-automation-worker" --base=$BASE_REF --head=HEAD 2>/dev/null || echo "")
+            echo ""
+            echo "📊 Diagnostic:"
+            git log --oneline -3
+            echo ""
+            echo "Changed files:"
+            git diff --name-only $BASE_REF HEAD 2>/dev/null || true
+            echo ""
+
+            NX_OUTPUT=$(pnpm nx show projects --affected --type=app --sep "," --exclude="@yikart/source" --base=$BASE_REF --head=HEAD 2>&1)
+            NX_EXIT_CODE=$?
+
+            echo "Nx exit code: $NX_EXIT_CODE"
+            echo "Nx output: $NX_OUTPUT"
+
+            if [ $NX_EXIT_CODE -ne 0 ]; then
+              echo "⚠️  Nx affected detection failed (exit code: $NX_EXIT_CODE)"
+              echo "Falling back to building ALL apps"
+              AFFECTED_APPS="aitoearn-ai,aitoearn-server"
+            else
+              AFFECTED_APPS="$NX_OUTPUT"
+            fi
 
             if [ -z "$AFFECTED_APPS" ]; then
-              echo "⚠️  No affected apps detected"
+              echo "ℹ️  No affected apps detected"
               echo "affected_apps=" >> $GITHUB_OUTPUT
             else
               echo "✅ Affected apps: $AFFECTED_APPS"

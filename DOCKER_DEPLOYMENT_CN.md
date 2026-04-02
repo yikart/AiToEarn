@@ -118,6 +118,12 @@ OPENAI_BASE_URL: https://your-new-api-host/v1
 OPENAI_API_KEY: sk-your-new-api-key
 ```
 
+配置好环境变量后，还需要确认 `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` 中的模型配置与你的 API 服务匹配（详见下方 [AI 服务与模型配置](#ai-服务与模型配置)），然后重启服务：
+
+```bash
+docker compose up -d
+```
+
 ### 生产环境安全配置
 
 默认密码均为 `password`，**生产环境务必修改**。
@@ -208,7 +214,7 @@ ASSETS_CONFIG: '{"provider":"s3","region":"ap-southeast-1","bucketName":"your-bu
 
 | 变量 | 所属服务 | 说明 | 获取方式 |
 |------|----------|------|----------|
-| `MAIL_USER` / `MAIL_PASS` | aitoearn-server | 邮件服务（AWS SES SMTP） | AWS Console → SES → SMTP |
+| `MAIL_USER` / `MAIL_PASS` | aitoearn-server | SMTP 邮件服务 | 你的 SMTP 服务商 |
 | `ALI_SMS_ACCESS_KEY_ID` 等 4 项 | aitoearn-server | 阿里云短信 | https://dysms.console.aliyun.com |
 
 ---
@@ -267,24 +273,99 @@ ASSETS_CONFIG: '{"provider":"s3","region":"ap-southeast-1","bucketName":"your-bu
 | `RELAY_API_KEY` | aitoearn-server | 你的 API Key |
 | `RELAY_CALLBACK_URL` | aitoearn-server | OAuth 回调地址（`http://127.0.0.1:8080/api/plat/relay-callback`） |
 
-### AI 服务
+### AI 服务与模型配置
 
-| 变量 | 说明 |
-|------|------|
-| `OPENAI_API_KEY` | OpenAI / 中转服务 API 密钥（两个服务都需要） |
-| `OPENAI_BASE_URL` | API 地址（两个服务都需要） |
-| `ANTHROPIC_API_KEY` | Anthropic Claude |
-| `ANTHROPIC_BASE_URL` | Anthropic API 地址 |
-| `VOLCENGINE_API_KEY` | 火山引擎（豆包） |
-| `VOLCENGINE_ACCESS_KEY_ID` | 火山引擎 Access Key |
-| `VOLCENGINE_SECRET_ACCESS_KEY` | 火山引擎 Secret Key |
-| `VOLCENGINE_VOD_SPACE_NAME` | 火山引擎 VOD 空间 |
-| `GROK_API_KEY` | xAI (Grok) |
-| `AICSO_API_KEY` | AICSO 服务 |
-| `AICSO_BASE_URL` | AICSO 地址 |
-| `GEMINI_KEY_PAIRS` | Google Gemini（JSON 数组） |
-| `GEMINI_LOCATION` | Gemini 区域（默认 `us-central1`） |
-| `AI_PROXY_URL` | AI 代理地址（可选） |
+AI 变量配置在 `aitoearn-ai` 服务中（部分变量 `aitoearn-server` 也需要，下文会标注）。默认的占位密钥允许应用正常启动，但 AI 功能需要填入真实密钥才能使用。
+
+模型定义在 `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` 的 `ai.models` 中，可自行增删改模型。所有模型定价必须设置为 `0`。修改后需重启服务生效：`docker compose restart aitoearn-ai`。
+
+#### OpenAI / 中转服务
+
+> **推荐使用 [new-api](https://github.com/Calcium-Ion/new-api) 或 [one-api](https://github.com/songquanpeng/one-api)**，一个地址统一管理 OpenAI、Claude、Gemini 等所有模型。
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `OPENAI_API_KEY` | API 密钥（`aitoearn-ai` + `aitoearn-server` 都需要） | `sk-placeholder` |
+| `OPENAI_BASE_URL` | API 地址（`aitoearn-ai` + `aitoearn-server` 都需要） | `https://api.openai.com/v1` |
+
+**内置模型：**
+
+| 模型 ID | 类型 | 说明 |
+|---------|------|------|
+| `gpt-5` | 对话 | text/image → text |
+| `gpt-image-1.5` | 图片生成/编辑 | 支持尺寸 1024x1024, 1536x1024, 1024x1536, auto |
+
+<details>
+<summary>模型配置示例</summary>
+
+```js
+// 对话模型 → ai.models.chat
+{
+  name: 'gpt-5',                       // 模型 ID
+  description: 'GPT 5',               // 显示名称
+  inputModalities: ['text', 'image'],  // 支持的输入类型
+  outputModalities: ['text'],          // 输出类型
+  pricing: {                           // 定价（必须为 0）
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0' } }],
+  },
+},
+
+// 图片模型 → ai.models.image.generation
+{
+  name: 'gpt-image-1.5',                                    // 模型 ID
+  description: 'gpt-image-1.5',                             // 显示名称
+  sizes: ['1024x1024', '1536x1024', '1024x1536', 'auto'],  // 支持的尺寸
+  qualities: ['high', 'medium', 'low'],                     // 质量选项
+  styles: [],                                               // 风格选项
+  pricing: '0',                                             // 单价（必须为 0）
+},
+```
+
+</details>
+
+#### Anthropic Claude
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `ANTHROPIC_API_KEY` | Anthropic API 密钥 | `sk-placeholder` |
+| `ANTHROPIC_BASE_URL` | Anthropic API 地址 | `https://api.anthropic.com` |
+
+> Agent（智能体）功能也通过此组变量调用 Claude。
+
+**内置模型：**
+
+| 模型 ID | 类型 | 说明 |
+|---------|------|------|
+| `claude-opus-4-5-20251101` | 对话 | Claude Opus 4.5 |
+| `claude-opus-4-6` | 对话 | Claude Opus 4.6 |
+| `claude-sonnet-4-5-20250929` | 对话 | Claude Sonnet 4.5 |
+
+<details>
+<summary>模型配置示例</summary>
+
+```js
+// 对话模型 → ai.models.chat
+{
+  name: 'claude-sonnet-4-5-20250929',  // 模型 ID
+  description: 'Claude Sonnet 4.5',    // 显示名称
+  inputModalities: ['text', 'image'],  // 支持的输入类型
+  outputModalities: ['text'],          // 输出类型
+  pricing: {                           // 定价（必须为 0）
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0' } }],
+  },
+},
+```
+
+</details>
+
+#### Google Gemini
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `GEMINI_KEY_PAIRS` | Vertex AI 密钥对（JSON 数组），用于对话和视频 | `'[]'` |
+| `GEMINI_LOCATION` | Vertex AI 区域 | `us-central1` |
+| `GEMINI_API_KEY` | 图片生成 API Key | |
+| `GEMINI_BASE_URL` | 图片生成 API 地址 | |
 
 `GEMINI_KEY_PAIRS` 格式：
 
@@ -293,50 +374,127 @@ ASSETS_CONFIG: '{"provider":"s3","region":"ap-southeast-1","bucketName":"your-bu
 GEMINI_KEY_PAIRS: '[]'
 
 # 使用 Gemini
-GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","bucket":"your-bucket"}]'
+GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","keyFile":"/path/to/sa.json","bucket":"your-bucket"}]'
 ```
 
----
+**内置模型：**
 
-## AI 模型配置参考
+| 模型 ID | 类型 | 说明 |
+|---------|------|------|
+| `gemini-3.1-pro-preview` | 对话 | Gemini 3.1 Pro Preview，text/image/audio/video → text |
+| `gemini-3-flash-preview` | 对话 | Gemini 3 Flash Preview，text/image/audio/video → text |
+| `gemini-3.1-flash-image-preview` | 图片生成 / 草稿生成 | NanoBanana 2，text/image → image |
+| `gemini-3-pro-image-preview` | 图片生成 / 草稿生成 | NanoBanana Pro，text/image → image |
 
-AI 模型定义在 `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` 中配置。
+<details>
+<summary>模型配置示例</summary>
 
-### 对话模型（ai.models.chat）
+```js
+// 多模态对话模型 → ai.models.chat
+{
+  name: 'gemini-3.1-pro-preview',                       // 模型 ID
+  description: 'Gemini 3.1 Pro Preview',                // 显示名称
+  inputModalities: ['text', 'image', 'audio', 'video'], // 支持的输入类型
+  outputModalities: ['text'],                           // 输出类型
+  pricing: {                                            // 分层定价（必须为 0）
+    tiers: [
+      {
+        maxInputTokens: 200000,                         // 该层最大输入 token 数
+        input: { text: '0', image: '0', video: '0', audio: '0' },
+        output: { text: '0' },
+      },
+      {                                                 // 超过 200K token 的定价层
+        input: { text: '0', image: '0', video: '0', audio: '0' },
+        output: { text: '0' },
+      },
+    ],
+  },
+},
 
-| 模型 ID | 显示名称 | 输入 | 输出 |
-|---------|----------|------|------|
-| `gemini-3.1-pro-preview` | Gemini 3.1 Pro Preview | text/image/audio/video | text |
-| `gemini-3-flash-preview` | Gemini 3 Flash Preview | text/image/audio/video | text |
-| `gpt-5.1-all` | GPT 5.1 | text/image | text |
-| `gpt-5` | GPT 5 | text/image | text |
-| `gemini-3.1-flash-image-preview` | Nano Banana 2 | text/image | image |
-| `gemini-3-pro-image-preview` | Nano Banana Pro | text/image | image |
-| `claude-opus-4-5-20251101` | Claude Opus 4.5 | text/image | text |
-| `claude-opus-4-6` | Claude Opus 4.6 | text/image | text |
-| `claude-sonnet-4-5-20250929` | Claude Sonnet 4.5 | text/image | text |
-| `gemini-2.5-flash` | Gemini 2.5 Flash | text/image/audio/video | text |
+// 图片生成模型 → ai.models.chat（outputModalities 含 image）
+{
+  name: 'gemini-3.1-flash-image-preview',  // 模型 ID
+  description: 'Nano Banana 2',            // 显示名称
+  inputModalities: ['text', 'image'],      // 支持的输入类型
+  outputModalities: ['image'],             // 输出类型为图片
+  pricing: {                               // 定价（必须为 0）
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0', image: '0' } }],
+  },
+},
+```
 
-### 图片模型（ai.models.image）
+</details>
 
-| 模型 ID | 支持尺寸 | 质量选项 | 编辑最大输入图片数 |
-|---------|----------|----------|-------------------|
-| `gpt-image-1.5` | 1024x1024, 1536x1024, 1024x1536, auto | high, medium, low | 16（仅编辑模式） |
+#### xAI (Grok)
 
-### 视频模型（ai.models.video.generation）
+| 变量 | 说明 |
+|------|------|
+| `GROK_API_KEY` | xAI Grok API Key |
 
-| 模型 ID | 显示名称 | 生成模式 | 分辨率 | 时长 | 宽高比 |
-|---------|----------|----------|--------|------|--------|
-| `grok-imagine-video` | Grok Video | text/image/video → video | 720p | 1-15 秒 | 1:1, 16:9, 9:16, 4:3, 3:4, 3:2, 2:3 |
-| `grok-video-3-15s` | Grok Video 15s | text/image → video | 720p | 15 秒 | 2:3, 3:2, 1:1 |
-| `veo3.1-components-4k` | Veo 3.1 4K | text/image → video | 4k | 8 秒 | 9:16, 16:9, 1:1 |
-| `veo3.1-components` | Veo 3.1 | text/image → video | 720p | 8 秒 | 9:16, 16:9, 1:1 |
+**内置模型：**
 
-### 草稿生成图片模型（ai.draftGeneration.imageModels）
+| 模型 ID | 类型 | 说明 |
+|---------|------|------|
+| `grok-imagine-video` | 视频生成 | text/image/video → video，720p，1-15 秒 |
 
-| 模型 ID | 显示名称 | 支持宽高比 | 最大输入图片数 |
-|---------|----------|-----------|---------------|
-| `gemini-3.1-flash-image-preview` | NanoBanana 2 | 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9 | 14 |
-| `gemini-3-pro-image-preview` | NanoBanana Pro | 同上 | 14 |
+<details>
+<summary>模型配置示例</summary>
 
-定价按分辨率（1K/2K/4K），默认均为 `0`（免费）。
+```js
+// 视频模型 → ai.models.video.generation
+{
+  name: 'grok-imagine-video',       // 模型 ID
+  description: 'Grok Video',       // 显示名称
+  channel: 'grok',                 // 关联的 AI 服务渠道
+  modes: ['text2video', 'image2video', 'video2video'], // 支持的生成模式
+  resolutions: ['720p'],           // 支持的分辨率
+  durations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // 支持的时长（秒）
+  maxInputImages: 1,               // 最大输入图片数
+  aspectRatios: ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'], // 支持的宽高比
+  defaults: { duration: 8, aspectRatio: '9:16' }, // 默认参数
+  pricing: [                       // 按时长定价（必须为 0）
+    { duration: 5, price: 0 },
+    { duration: 10, price: 0 },
+    { duration: 15, price: 0 },
+  ],
+},
+```
+
+</details>
+
+#### 火山引擎
+
+| 变量 | 说明 |
+|------|------|
+| `VOLCENGINE_API_KEY` | 火山引擎 API Key |
+| `VOLCENGINE_ACCESS_KEY_ID` | Access Key ID |
+| `VOLCENGINE_SECRET_ACCESS_KEY` | Secret Access Key |
+| `VOLCENGINE_VOD_SPACE_NAME` | VOD 点播空间名称 |
+
+提供以下功能：
+- **豆包视频生成**：在 `ai.models.video.generation` 中配置，channel 为 `volcengine`
+- **Aideo**：AI 视频编辑系列功能，包括视频风格转换、视频理解、高光智剪、面容翻译、字幕擦除、视频编辑、短剧解说、风格迁移，定价必须全部为 `0`
+
+<details>
+<summary>视频模型配置示例</summary>
+
+```js
+// 视频模型 → ai.models.video.generation
+{
+  name: 'doubao-seedance-1-0-lite-i2v',  // 模型 ID
+  description: 'Doubao Seedance Lite',   // 显示名称
+  channel: 'volcengine',                 // 关联的 AI 服务渠道
+  modes: ['text2video', 'image2video'],  // 支持的生成模式
+  resolutions: ['720p', '1080p'],        // 支持的分辨率
+  durations: [5, 10],                    // 支持的时长（秒）
+  maxInputImages: 1,                     // 最大输入图片数
+  aspectRatios: ['1:1', '16:9', '9:16'], // 支持的宽高比
+  defaults: { duration: 5, aspectRatio: '16:9' }, // 默认参数
+  pricing: [                             // 按时长定价（必须为 0）
+    { duration: 5, price: 0 },
+    { duration: 10, price: 0 },
+  ],
+},
+```
+
+</details>

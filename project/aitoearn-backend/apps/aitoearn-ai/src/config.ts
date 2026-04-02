@@ -6,7 +6,6 @@ import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
 import { redisConfigSchema } from '@yikart/redis'
 import { redlockConfigSchema } from '@yikart/redlock'
 import z from 'zod'
-import { aicsoConfigSchema } from './core/ai/libs/aicso'
 import { geminiConfigSchema } from './core/ai/libs/gemini'
 import { grokConfigSchema } from './core/ai/libs/grok'
 import { openaiConfigSchema } from './core/ai/libs/openai'
@@ -171,7 +170,6 @@ export const aiConfigSchema = z.object({
     callbackUrl: z.string().optional(),
   }),
   grok: grokConfigSchema,
-  aicso: aicsoConfigSchema,
   aideo: aideoPricingConfigSchema,
   gemini: geminiConfigSchema,
   anthropic: z.object({

@@ -118,6 +118,12 @@ OPENAI_BASE_URL: https://your-new-api-host/v1
 OPENAI_API_KEY: sk-your-new-api-key
 ```
 
+After configuring environment variables, verify that the model configuration in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` matches your API service (see [AI Services & Model Configuration](#ai-services--model-configuration) below), then restart:
+
+```bash
+docker compose up -d
+```
+
 ### Production Security
 
 Default passwords are all `password`. **Change them for production.**
@@ -208,7 +214,7 @@ ASSETS_CONFIG: '{"provider":"s3","region":"ap-southeast-1","bucketName":"your-bu
 
 | Variable | Service | Description | How to get |
 |----------|---------|-------------|-----------|
-| `MAIL_USER` / `MAIL_PASS` | aitoearn-server | Email (AWS SES SMTP) | AWS Console → SES → SMTP |
+| `MAIL_USER` / `MAIL_PASS` | aitoearn-server | SMTP email service | Your SMTP provider |
 | `ALI_SMS_*` (4 vars) | aitoearn-server | Aliyun SMS | https://dysms.console.aliyun.com |
 
 ---
@@ -267,24 +273,99 @@ All variables are in the `environment` section of each service in `docker-compos
 | `RELAY_API_KEY` | aitoearn-server | Your API Key |
 | `RELAY_CALLBACK_URL` | aitoearn-server | OAuth callback (`http://127.0.0.1:8080/api/plat/relay-callback`) |
 
-### AI Services
+### AI Services & Model Configuration
 
-| Variable | Description |
-|----------|-------------|
-| `OPENAI_API_KEY` | OpenAI / relay API key (both services) |
-| `OPENAI_BASE_URL` | API URL (both services) |
-| `ANTHROPIC_API_KEY` | Anthropic Claude |
-| `ANTHROPIC_BASE_URL` | Anthropic API URL |
-| `VOLCENGINE_API_KEY` | Volcengine (Doubao) |
-| `VOLCENGINE_ACCESS_KEY_ID` | Volcengine Access Key |
-| `VOLCENGINE_SECRET_ACCESS_KEY` | Volcengine Secret Key |
-| `VOLCENGINE_VOD_SPACE_NAME` | Volcengine VOD space |
-| `GROK_API_KEY` | xAI (Grok) |
-| `AICSO_API_KEY` | AICSO service |
-| `AICSO_BASE_URL` | AICSO URL |
-| `GEMINI_KEY_PAIRS` | Google Gemini (JSON array) |
-| `GEMINI_LOCATION` | Gemini region (default: `us-central1`) |
-| `AI_PROXY_URL` | AI proxy URL (optional) |
+AI variables are configured in the `aitoearn-ai` service (some are also needed in `aitoearn-server`, noted below). Default placeholder keys allow the app to start, but AI features require real keys.
+
+Models are defined in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js` under `ai.models`. You can add, remove, or modify models. All model pricing must be set to `0`. Restart the service after changes: `docker compose restart aitoearn-ai`.
+
+#### OpenAI / Relay Service
+
+> **Recommended: use [new-api](https://github.com/Calcium-Ion/new-api) or [one-api](https://github.com/songquanpeng/one-api)** to manage all AI models (OpenAI, Claude, Gemini, etc.) through a single endpoint.
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `OPENAI_API_KEY` | API key (`aitoearn-ai` + `aitoearn-server`) | `sk-placeholder` |
+| `OPENAI_BASE_URL` | API URL (`aitoearn-ai` + `aitoearn-server`) | `https://api.openai.com/v1` |
+
+**Built-in models:**
+
+| Model ID | Type | Description |
+|----------|------|-------------|
+| `gpt-5` | Chat | text/image → text |
+| `gpt-image-1.5` | Image generation/edit | Sizes: 1024x1024, 1536x1024, 1024x1536, auto |
+
+<details>
+<summary>Model configuration example</summary>
+
+```js
+// Chat model → ai.models.chat
+{
+  name: 'gpt-5',                       // Model ID
+  description: 'GPT 5',               // Display name
+  inputModalities: ['text', 'image'],  // Supported input types
+  outputModalities: ['text'],          // Output type
+  pricing: {                           // Pricing (must be 0)
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0' } }],
+  },
+},
+
+// Image model → ai.models.image.generation
+{
+  name: 'gpt-image-1.5',                                    // Model ID
+  description: 'gpt-image-1.5',                             // Display name
+  sizes: ['1024x1024', '1536x1024', '1024x1536', 'auto'],  // Supported sizes
+  qualities: ['high', 'medium', 'low'],                     // Quality options
+  styles: [],                                               // Style options
+  pricing: '0',                                             // Price (must be 0)
+},
+```
+
+</details>
+
+#### Anthropic Claude
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `ANTHROPIC_API_KEY` | Anthropic API key | `sk-placeholder` |
+| `ANTHROPIC_BASE_URL` | Anthropic API URL | `https://api.anthropic.com` |
+
+> The Agent feature also uses these variables to call Claude.
+
+**Built-in models:**
+
+| Model ID | Type | Description |
+|----------|------|-------------|
+| `claude-opus-4-5-20251101` | Chat | Claude Opus 4.5 |
+| `claude-opus-4-6` | Chat | Claude Opus 4.6 |
+| `claude-sonnet-4-5-20250929` | Chat | Claude Sonnet 4.5 |
+
+<details>
+<summary>Model configuration example</summary>
+
+```js
+// Chat model → ai.models.chat
+{
+  name: 'claude-sonnet-4-5-20250929',  // Model ID
+  description: 'Claude Sonnet 4.5',    // Display name
+  inputModalities: ['text', 'image'],  // Supported input types
+  outputModalities: ['text'],          // Output type
+  pricing: {                           // Pricing (must be 0)
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0' } }],
+  },
+},
+```
+
+</details>
+
+#### Google Gemini
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `GEMINI_KEY_PAIRS` | Vertex AI key pairs (JSON array) for chat and video | `'[]'` |
+| `GEMINI_LOCATION` | Vertex AI region | `us-central1` |
+| `GEMINI_API_KEY` | Image generation API key | |
+| `GEMINI_BASE_URL` | Image generation API URL | |
 
 `GEMINI_KEY_PAIRS` format:
 
@@ -293,50 +374,127 @@ All variables are in the `environment` section of each service in `docker-compos
 GEMINI_KEY_PAIRS: '[]'
 
 # Enabled
-GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","bucket":"your-bucket"}]'
+GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","keyFile":"/path/to/sa.json","bucket":"your-bucket"}]'
 ```
 
----
+**Built-in models:**
 
-## AI Model Reference
+| Model ID | Type | Description |
+|----------|------|-------------|
+| `gemini-3.1-pro-preview` | Chat | Gemini 3.1 Pro Preview, text/image/audio/video → text |
+| `gemini-3-flash-preview` | Chat | Gemini 3 Flash Preview, text/image/audio/video → text |
+| `gemini-3.1-flash-image-preview` | Image / Draft generation | NanoBanana 2, text/image → image |
+| `gemini-3-pro-image-preview` | Image / Draft generation | NanoBanana Pro, text/image → image |
 
-AI models are defined in `project/aitoearn-backend/apps/aitoearn-ai/config/config.js`.
+<details>
+<summary>Model configuration example</summary>
 
-### Chat Models (ai.models.chat)
+```js
+// Multimodal chat model → ai.models.chat
+{
+  name: 'gemini-3.1-pro-preview',                       // Model ID
+  description: 'Gemini 3.1 Pro Preview',                // Display name
+  inputModalities: ['text', 'image', 'audio', 'video'], // Supported input types
+  outputModalities: ['text'],                           // Output type
+  pricing: {                                            // Tiered pricing (must be 0)
+    tiers: [
+      {
+        maxInputTokens: 200000,                         // Max input tokens for this tier
+        input: { text: '0', image: '0', video: '0', audio: '0' },
+        output: { text: '0' },
+      },
+      {                                                 // Pricing tier for >200K tokens
+        input: { text: '0', image: '0', video: '0', audio: '0' },
+        output: { text: '0' },
+      },
+    ],
+  },
+},
 
-| Model ID | Display Name | Input | Output |
-|----------|-------------|-------|--------|
-| `gemini-3.1-pro-preview` | Gemini 3.1 Pro Preview | text/image/audio/video | text |
-| `gemini-3-flash-preview` | Gemini 3 Flash Preview | text/image/audio/video | text |
-| `gpt-5.1-all` | GPT 5.1 | text/image | text |
-| `gpt-5` | GPT 5 | text/image | text |
-| `gemini-3.1-flash-image-preview` | Nano Banana 2 | text/image | image |
-| `gemini-3-pro-image-preview` | Nano Banana Pro | text/image | image |
-| `claude-opus-4-5-20251101` | Claude Opus 4.5 | text/image | text |
-| `claude-opus-4-6` | Claude Opus 4.6 | text/image | text |
-| `claude-sonnet-4-5-20250929` | Claude Sonnet 4.5 | text/image | text |
-| `gemini-2.5-flash` | Gemini 2.5 Flash | text/image/audio/video | text |
+// Image generation model → ai.models.chat (outputModalities includes image)
+{
+  name: 'gemini-3.1-flash-image-preview',  // Model ID
+  description: 'Nano Banana 2',            // Display name
+  inputModalities: ['text', 'image'],      // Supported input types
+  outputModalities: ['image'],             // Output type is image
+  pricing: {                               // Pricing (must be 0)
+    tiers: [{ input: { text: '0', image: '0' }, output: { text: '0', image: '0' } }],
+  },
+},
+```
 
-### Image Models (ai.models.image)
+</details>
 
-| Model ID | Supported Sizes | Quality Options | Max Input Images (edit) |
-|----------|----------------|-----------------|------------------------|
-| `gpt-image-1.5` | 1024x1024, 1536x1024, 1024x1536, auto | high, medium, low | 16 (edit mode only) |
+#### xAI (Grok)
 
-### Video Models (ai.models.video.generation)
+| Variable | Description |
+|----------|-------------|
+| `GROK_API_KEY` | xAI Grok API key |
 
-| Model ID | Display Name | Modes | Resolution | Duration | Aspect Ratios |
-|----------|-------------|-------|------------|----------|---------------|
-| `grok-imagine-video` | Grok Video | text/image/video → video | 720p | 1-15s | 1:1, 16:9, 9:16, 4:3, 3:4, 3:2, 2:3 |
-| `grok-video-3-15s` | Grok Video 15s | text/image → video | 720p | 15s | 2:3, 3:2, 1:1 |
-| `veo3.1-components-4k` | Veo 3.1 4K | text/image → video | 4k | 8s | 9:16, 16:9, 1:1 |
-| `veo3.1-components` | Veo 3.1 | text/image → video | 720p | 8s | 9:16, 16:9, 1:1 |
+**Built-in models:**
 
-### Draft Generation Image Models (ai.draftGeneration.imageModels)
+| Model ID | Type | Description |
+|----------|------|-------------|
+| `grok-imagine-video` | Video generation | text/image/video → video, 720p, 1-15s |
 
-| Model ID | Display Name | Supported Aspect Ratios | Max Input Images |
-|----------|-------------|------------------------|-----------------|
-| `gemini-3.1-flash-image-preview` | NanoBanana 2 | 1:1, 2:3, 3:2, 3:4, 4:3, 4:5, 5:4, 9:16, 16:9 | 14 |
-| `gemini-3-pro-image-preview` | NanoBanana Pro | Same as above | 14 |
+<details>
+<summary>Model configuration example</summary>
 
-Pricing is per resolution (1K/2K/4K), all default to `0` (free).
+```js
+// Video model → ai.models.video.generation
+{
+  name: 'grok-imagine-video',       // Model ID
+  description: 'Grok Video',       // Display name
+  channel: 'grok',                 // AI service channel
+  modes: ['text2video', 'image2video', 'video2video'], // Supported generation modes
+  resolutions: ['720p'],           // Supported resolutions
+  durations: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15], // Supported durations (seconds)
+  maxInputImages: 1,               // Max input images
+  aspectRatios: ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3'], // Supported aspect ratios
+  defaults: { duration: 8, aspectRatio: '9:16' }, // Default parameters
+  pricing: [                       // Per-duration pricing (must be 0)
+    { duration: 5, price: 0 },
+    { duration: 10, price: 0 },
+    { duration: 15, price: 0 },
+  ],
+},
+```
+
+</details>
+
+#### Volcengine
+
+| Variable | Description |
+|----------|-------------|
+| `VOLCENGINE_API_KEY` | Volcengine API key |
+| `VOLCENGINE_ACCESS_KEY_ID` | Access Key ID |
+| `VOLCENGINE_SECRET_ACCESS_KEY` | Secret Access Key |
+| `VOLCENGINE_VOD_SPACE_NAME` | VOD space name |
+
+Features:
+- **Doubao video generation**: Configure in `ai.models.video.generation` with channel `volcengine`
+- **Aideo**: AI video editing features including style transfer, video understanding, highlight editing, facial translation, subtitle erasing, video editing, drama recap, and style migration. All pricing must be `0`
+
+<details>
+<summary>Video model configuration example</summary>
+
+```js
+// Video model → ai.models.video.generation
+{
+  name: 'doubao-seedance-1-0-lite-i2v',  // Model ID
+  description: 'Doubao Seedance Lite',   // Display name
+  channel: 'volcengine',                 // AI service channel
+  modes: ['text2video', 'image2video'],  // Supported generation modes
+  resolutions: ['720p', '1080p'],        // Supported resolutions
+  durations: [5, 10],                    // Supported durations (seconds)
+  maxInputImages: 1,                     // Max input images
+  aspectRatios: ['1:1', '16:9', '9:16'], // Supported aspect ratios
+  defaults: { duration: 5, aspectRatio: '16:9' }, // Default parameters
+  pricing: [                             // Per-duration pricing (must be 0)
+    { duration: 5, price: 0 },
+    { duration: 10, price: 0 },
+  ],
+},
+```
+
+</details>

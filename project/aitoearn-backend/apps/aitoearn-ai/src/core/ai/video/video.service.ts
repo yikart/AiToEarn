@@ -12,8 +12,6 @@ import {
   serializeModelTextCommand,
 } from '../libs/volcengine'
 import { ModelsConfigService } from '../models-config'
-import { AicsoGrokVideoCallbackDto, AicsoGrokVideoService } from './aicso-grok'
-import { AicsoVeoVideoCallbackDto, AicsoVeoVideoService } from './aicso-veo'
 import { GeminiVeoVideoCallbackDto, GeminiVideoService } from './gemini'
 import { GrokVideoCallbackDto, GrokVideoService } from './grok'
 import { OpenAIVideoCallbackDto, OpenAIVideoService } from './openai'
@@ -38,8 +36,6 @@ export class VideoService {
     private readonly volcengineVideoService: VolcengineVideoService,
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly grokVideoService: GrokVideoService,
-    private readonly aicsoVeoVideoService: AicsoVeoVideoService,
-    private readonly aicsoGrokVideoService: AicsoGrokVideoService,
     private readonly geminiVideoService: GeminiVideoService,
   ) {}
 
@@ -126,10 +122,6 @@ export class VideoService {
         return this.handleOpenAIGeneration(request, createTaskResponse)
       case AiLogChannel.Grok:
         return this.handleGrokGeneration(request, createTaskResponse)
-      case AiLogChannel.AicsoVeo:
-        return this.handleAicsoVeoGeneration(request, createTaskResponse)
-      case AiLogChannel.AicsoGrok:
-        return this.handleAicsoGrokGeneration(request, createTaskResponse)
       default:
         throw new AppException(ResponseCode.InvalidModel)
     }
@@ -246,80 +238,6 @@ export class VideoService {
     return createTaskResponse(result.id, result.points)
   }
 
-  /**
-   * 处理AicsoVeo渠道的视频生成
-   */
-  private async handleAicsoVeoGeneration<T>(
-    request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string, points: number) => T,
-  ) {
-    const { userId, userType, model, prompt } = request
-
-    const images: string[] = []
-    if (request.image) {
-      if (Array.isArray(request.image)) {
-        const presigned = await this.toPresignedUrls(request.image)
-        images.push(...presigned)
-      }
-      else {
-        const presigned = await this.toPresignedUrl(request.image)
-        if (presigned) {
-          images.push(presigned)
-        }
-      }
-    }
-    if (request.image_tail) {
-      const presigned = await this.toPresignedUrl(request.image_tail)
-      if (presigned) {
-        images.push(presigned)
-      }
-    }
-
-    const result = await this.aicsoVeoVideoService.createVideo({
-      userId,
-      userType,
-      model,
-      prompt,
-      images: images.length > 0 ? images : undefined,
-      aspectRatio: request.metadata?.['aspectRatio'] as string,
-    })
-    return createTaskResponse(result.id, result.points)
-  }
-
-  private async handleAicsoGrokGeneration<T>(
-    request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string, points: number) => T,
-  ) {
-    const { userId, userType, model, prompt } = request
-
-    const images: string[] = []
-    if (request.image) {
-      if (Array.isArray(request.image)) {
-        const presigned = await this.toPresignedUrls(request.image)
-        images.push(...presigned)
-      }
-      else {
-        const presigned = await this.toPresignedUrl(request.image)
-        if (presigned) {
-          images.push(presigned)
-        }
-      }
-    }
-
-    const size = (request.size || request.metadata?.['size']) as string | undefined
-
-    const result = await this.aicsoGrokVideoService.createVideo({
-      userId,
-      userType,
-      model,
-      prompt,
-      images: images.length > 0 ? images : undefined,
-      aspectRatio: request.metadata?.['aspectRatio'] as string,
-      size,
-    })
-    return createTaskResponse(result.id, result.points)
-  }
-
   private extractInput(aiLog: AiLog): VideoTaskInput {
     const request = (aiLog.request || {}) as Record<string, unknown>
 
@@ -330,10 +248,6 @@ export class VideoService {
         return this.openaiVideoService.extractInput(request)
       case AiLogChannel.Grok:
         return this.grokVideoService.extractInput(request)
-      case AiLogChannel.AicsoVeo:
-        return this.aicsoVeoVideoService.extractInput(request)
-      case AiLogChannel.AicsoGrok:
-        return this.aicsoGrokVideoService.extractInput(request)
       case AiLogChannel.Gemini:
         return this.geminiVideoService.extractInput(request)
       default:
@@ -387,10 +301,6 @@ export class VideoService {
         return this.openaiVideoService.getTaskResult(aiLog.response as unknown as OpenAIVideoCallbackDto)
       case AiLogChannel.Grok:
         return this.grokVideoService.getTaskResult(aiLog.response as unknown as GrokVideoCallbackDto)
-      case AiLogChannel.AicsoVeo:
-        return this.aicsoVeoVideoService.getTaskResult(aiLog.response as unknown as AicsoVeoVideoCallbackDto)
-      case AiLogChannel.AicsoGrok:
-        return this.aicsoGrokVideoService.getTaskResult(aiLog.response as unknown as AicsoGrokVideoCallbackDto)
       case AiLogChannel.Gemini:
         return this.geminiVideoService.getTaskResult(aiLog.response as unknown as GeminiVeoVideoCallbackDto)
       default:

@@ -154,11 +154,10 @@ services:
       VOLCENGINE_SECRET_ACCESS_KEY: ""
       VOLCENGINE_VOD_SPACE_NAME: ""
       GROK_API_KEY: ""
-      AICSO_API_KEY: ""
-      AICSO_BASE_URL: ""
+      GEMINI_API_KEY: ""
+      GEMINI_BASE_URL: ""
       GEMINI_KEY_PAIRS: '[]'
       GEMINI_LOCATION: us-central1
-      AI_PROXY_URL: ""
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3010/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s

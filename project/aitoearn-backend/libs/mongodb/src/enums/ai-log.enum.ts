@@ -39,6 +39,4 @@ export enum AiLogChannel {
   /** @deprecated Removed feature, kept for DB backward compatibility */
   Jimeng = 'jimeng',
   Grok = 'grok',
-  AicsoVeo = 'aicso-veo',
-  AicsoGrok = 'aicso-grok',
 }

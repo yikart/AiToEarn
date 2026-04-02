@@ -703,7 +703,7 @@ Return the result as JSON.`
     const imageModels = config.ai.draftGeneration.imageModels
 
     const videoModels = config.ai.models.video.generation
-      .filter(v => v.channel === AiLogChannel.Grok || v.channel === AiLogChannel.AicsoVeo || v.channel === AiLogChannel.AicsoGrok)
+      .filter(v => v.channel === AiLogChannel.Grok)
 
     return { imageModels, videoModels }
   }

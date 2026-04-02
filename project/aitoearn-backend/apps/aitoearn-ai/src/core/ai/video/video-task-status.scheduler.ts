@@ -4,13 +4,10 @@ import { WithLoggerContext } from '@yikart/common'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogType } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
 import { RedlockKey } from '../../../common'
-import { AicsoLibService } from '../libs/aicso'
 import { GeminiService } from '../libs/gemini'
 import { GrokLibService, GrokVideoTaskStatus } from '../libs/grok'
 import { OpenaiService } from '../libs/openai'
 import { VolcengineService } from '../libs/volcengine'
-import { AicsoGrokVideoService } from './aicso-grok'
-import { AicsoVeoVideoService } from './aicso-veo'
 import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
 import { OpenAIVideoCallbackDto, OpenAIVideoService } from './openai'
@@ -30,9 +27,6 @@ export class VideoTaskStatusScheduler {
     private readonly geminiVideoService: GeminiVideoService,
     private readonly grokLibService: GrokLibService,
     private readonly grokVideoService: GrokVideoService,
-    private readonly aicsoVeoVideoService: AicsoVeoVideoService,
-    private readonly aicsoLibService: AicsoLibService,
-    private readonly aicsoGrokVideoService: AicsoGrokVideoService,
   ) { }
 
   /**
@@ -99,14 +93,6 @@ export class VideoTaskStatusScheduler {
           throw e
         }
       }
-    }
-    else if (channel === AiLogChannel.AicsoVeo) {
-      const result = await this.aicsoLibService.getVideoStatus(taskId)
-      await this.aicsoVeoVideoService.callback(result)
-    }
-    else if (channel === AiLogChannel.AicsoGrok) {
-      const result = await this.aicsoLibService.getVideoStatus(taskId)
-      await this.aicsoGrokVideoService.callback(result)
     }
     else {
       this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)
