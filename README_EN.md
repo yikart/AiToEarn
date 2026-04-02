@@ -156,11 +156,19 @@ The simplest way — just open your browser:
 
 > Prerequisite: [Get an API Key](#get-api-key) first
 
-Just one step — send this message to OpenClaw (replace `your-api-key` with your own):
+**1. Install the plugin**
 
-> Help me use mcporter to install this MCP server: `https://aitoearn.ai/api/unified/mcp`, authentication header is `x-api-key: your-api-key`
+```bash
+openclaw plugins install @aitoearn/openclaw-plugin
+```
 
-OpenClaw will handle the setup automatically. After that, you can say things like "publish a post to Rednote" directly.
+**2. Configure the plugin**
+
+```bash
+openclaw aitoearn setup
+```
+
+Follow the prompts to select your environment and enter your API Key. Once configured, you can say things like "publish a post to Rednote" directly.
 
 ---
 

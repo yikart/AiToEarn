@@ -161,11 +161,19 @@ AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラット
 
 > 前提条件：[API Keyを取得済み](#get-api-key)
 
-ワンステップ — 以下のメッセージをOpenClawに送信（`あなたのAPI-Key`をご自身のものに置き換え）：
+**1. プラグインをインストール**
 
-> mcporterを使ってこのMCPサーバーをインストールしてください：`https://aitoearn.ai/api/unified/mcp`、認証ヘッダーは `x-api-key: あなたのAPI-Key`
+```bash
+openclaw plugins install @aitoearn/openclaw-plugin
+```
 
-OpenClawが自動的にセットアップを完了します。その後、「小紅書に投稿して」などの指示を直接OpenClawに伝えるだけで使えます。
+**2. プラグインを設定**
+
+```bash
+openclaw aitoearn setup
+```
+
+プロンプトに従って環境を選択し、API Keyを入力してください。設定完了後、「小紅書に投稿して」などの指示を直接OpenClawに伝えるだけで使えます。
 
 ---
 
