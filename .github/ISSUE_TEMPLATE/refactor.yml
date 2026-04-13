@@ -6,16 +6,14 @@ body:
   - type: checkboxes
     attributes:
       label: Self Checks
-      description: "To make sure we get to you in time, please check the following :)"
+      description: "Please review the following before submitting. We recommend completing as many items as possible."
       options:
         - label: I have read the [Contributing Guide](https://github.com/yikart/AiToEarn/blob/main/CONTRIBUTING.md).
-          required: true
+          required: false
         - label: I have searched for existing issues [search for existing issues](https://github.com/yikart/AiToEarn/issues), including closed ones.
-          required: true
-        - label: I confirm that I am using English to submit this report, otherwise it will be closed.
-          required: true
-        - label: 【中文用户 & Non English User】请使用英语提交，否则会被关闭 ：）
-          required: true
+          required: false
+        - label: I can provide the request in English if needed to help more contributors participate in the discussion.
+          required: false
         - label: "Please do not modify this template :) and fill in all the required fields."
           required: true
   - type: textarea

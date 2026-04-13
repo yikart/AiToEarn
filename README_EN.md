@@ -318,6 +318,8 @@ The Electron project provides a desktop client for AiToEarn.
 
 Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
 
+If you run into usage difficulties, questions, or unexpected behavior, please open a [GitHub Issue](https://github.com/yikart/AiToEarn/issues) first so we can track and respond in one place.
+
 ## Contact
 
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)

@@ -319,6 +319,8 @@ Electron 项目为 AiToEarn 提供桌面客户端。
 
 请查看 [贡献指南](./CONTRIBUTING.md) 开始参与。
 
+如果你在使用过程中遇到困难、使用问题或异常情况，优先通过 [GitHub Issues](https://github.com/yikart/AiToEarn/issues) 提交反馈，方便我们统一跟进和处理。
+
 ## 联系
 
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
