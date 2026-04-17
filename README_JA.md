@@ -161,19 +161,13 @@ AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラット
 
 > 前提条件：[API Keyを取得済み](#get-api-key)
 
-**1. プラグインをインストール**
+**プラグインをインストール**
 
 ```bash
-openclaw plugins install @aitoearn/openclaw-plugin
+npx -y @aitoearn/openclaw-plugin
 ```
 
-**2. プラグインを設定**
-
-```bash
-openclaw aitoearn setup
-```
-
-プロンプトに従って環境を選択し、API Keyを入力してください。設定完了後、「小紅書に投稿して」などの指示を直接OpenClawに伝えるだけで使えます。
+初回実行時にインストールと設定ガイドが自動で始まります。
 
 ---
 

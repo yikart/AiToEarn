@@ -156,19 +156,13 @@ The simplest way — just open your browser:
 
 > Prerequisite: [Get an API Key](#get-api-key) first
 
-**1. Install the plugin**
+**Install the plugin**
 
 ```bash
-openclaw plugins install @aitoearn/openclaw-plugin
+npx -y @aitoearn/openclaw-plugin
 ```
 
-**2. Configure the plugin**
-
-```bash
-openclaw aitoearn setup
-```
-
-Follow the prompts to select your environment and enter your API Key. Once configured, you can say things like "publish a post to Rednote" directly.
+The first run installs the plugin and guides setup automatically.
 
 ---
 

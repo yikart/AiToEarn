@@ -156,19 +156,13 @@ AiToEarn 最核心的目标：**帮助每一位创作者赚钱**。
 
 > 前置条件：已 [获取 API Key](#get-api-key)
 
-**1. 安装插件**
+**安装插件**
 
 ```bash
-openclaw plugins install @aitoearn/openclaw-plugin
+npx -y @aitoearn/openclaw-plugin
 ```
 
-**2. 配置插件**
-
-```bash
-openclaw aitoearn setup
-```
-
-按照提示选择环境并输入你的 API Key 即可。配置完成后，你就可以直接对龙虾说"帮我发一条小红书"之类的指令了。
+首次运行会自动完成安装和配置引导。
 
 ---
 
