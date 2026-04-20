@@ -29,6 +29,7 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, TikTok, YouTube, Facebook, In
 
 ## What's New
 
+- **2026-04-20**: OpenClaw now supports AiToEarn earning workflows, so you can receive and execute monetization tasks directly inside OpenClaw.
 - **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — Content marketplace launched; added OpenClaw support for using AiToEarn directly within OpenClaw; added MCP protocol support for using AiToEarn in Claude, Cursor, and any MCP-compatible Agent or LLM.
 - **2026-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline business promotion solutions for restaurants, retail stores, hotels, beauty salons, gyms, and more.
 - **2025-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
@@ -159,10 +160,14 @@ The simplest way — just open your browser:
 **Install the plugin**
 
 ```bash
-npx -y @aitoearn/openclaw-plugin
+npx -y @aitoearn/openclaw-plugin-cli
 ```
 
-The first run installs the plugin and guides setup automatically.
+On first run, follow the prompts to complete the required selections and enter your API Key to finish setup.
+
+After setup, you can receive and execute AiToEarn earning tasks directly inside OpenClaw:
+
+<img src="presentation/openclaw-earn-demo.png" alt="Run AiToEarn earning tasks in OpenClaw" width="360">
 
 ---
 

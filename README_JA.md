@@ -29,6 +29,7 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
 
 ## 最新情報
 
+- **2026-04-20**: OpenClaw（ロブスター）で AiToEarn の収益化タスクに新対応し、OpenClaw 内で直接受け取り実行できるようになりました。
 - **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — コンテンツ取引マーケットプレイスをリリース。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
 - **2026-02-07**: [1.8.0バージョン](https://www.aitoearn.ai/) — オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多様なオフラインビジネスに対応。オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換し、コンテンツ公開とユーザー参加メカニズムを通じて店舗のオンライン露出と来店トラフィックの増加を支援。
 - **2025-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
@@ -164,10 +165,14 @@ AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラット
 **プラグインをインストール**
 
 ```bash
-npx -y @aitoearn/openclaw-plugin
+npx -y @aitoearn/openclaw-plugin-cli
 ```
 
-初回実行時にインストールと設定ガイドが自動で始まります。
+初回実行時は案内に従って必要な項目を選択し、API Key を入力してインストールと設定を完了してください。
+
+設定後は、OpenClaw 内で AiToEarn の収益化タスクを直接受け取り実行できます。
+
+<img src="presentation/openclaw-earn-demo.png" alt="OpenClaw で AiToEarn の収益化タスクを実行" width="360">
 
 ---
 
