@@ -63,7 +63,7 @@ module.exports = {
     console: {
       enable: true,
       level: 'debug',
-      pretty: false,
+      pretty: true,
     },
   },
   redis: {

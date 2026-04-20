@@ -97,7 +97,7 @@ module.exports = {
     console: {
       enable: true,
       level: 'debug',
-      pretty: false,
+      pretty: true,
     },
   },
 
@@ -288,11 +288,13 @@ module.exports = {
   },
 
   // 中转服务（可选）
-  ...(RELAY_SERVER_URL && {
-    relay: {
-      serverUrl: RELAY_SERVER_URL,
-      apiKey: RELAY_API_KEY,
-      callbackUrl: RELAY_CALLBACK_URL,
-    },
-  }),
+  ...(RELAY_SERVER_URL && RELAY_API_KEY
+    ? {
+        relay: {
+          serverUrl: RELAY_SERVER_URL,
+          apiKey: RELAY_API_KEY,
+          callbackUrl: RELAY_CALLBACK_URL,
+        },
+      }
+    : {}),
 }
