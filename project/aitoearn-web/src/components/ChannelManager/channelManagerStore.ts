@@ -87,6 +87,84 @@ let pollingIntervalId: ReturnType<typeof setInterval> | null = null
 /** 倒计时定时器ID */
 let countdownIntervalId: ReturnType<typeof setInterval> | null = null
 
+interface AuthUrlResult {
+  authData: AuthUrlResponse | null
+  error: string | null
+}
+
+function getValidString(value: unknown): string | null {
+  if (typeof value !== 'string') {
+    return null
+  }
+
+  const trimmed = value.trim()
+  if (!trimmed || trimmed === 'undefined' || trimmed === 'null') {
+    return null
+  }
+
+  return trimmed
+}
+
+function getAuthErrorMessage(message?: unknown): string {
+  return getValidString(message) || t('channelManager.authFailedTip')
+}
+
+function parseAuthUrlResponse(
+  platform: PlatType,
+  res: any,
+  urlKey: 'url' | 'uri',
+  taskIdKeys: string[],
+): AuthUrlResult {
+  if (!res) {
+    return {
+      authData: null,
+      error: getAuthErrorMessage(),
+    }
+  }
+
+  if (res.code === 1) {
+    useUserStore.getState().logout()
+    return {
+      authData: null,
+      error: getAuthErrorMessage(res.message),
+    }
+  }
+
+  if (res.code !== 0) {
+    return {
+      authData: null,
+      error: getAuthErrorMessage(res.message),
+    }
+  }
+
+  const data = typeof res.data === 'object' && res.data !== null
+    ? res.data as Record<string, unknown>
+    : null
+
+  const url = data ? getValidString(data[urlKey]) : null
+  const taskId = data
+    ? taskIdKeys
+        .map(key => getValidString(data[key]))
+        .find((value): value is string => Boolean(value))
+    : null
+
+  if (!url || !taskId) {
+    console.warn(`[ChannelManager] Invalid auth response for ${platform}`, res)
+    return {
+      authData: null,
+      error: getAuthErrorMessage(res.message),
+    }
+  }
+
+  return {
+    authData: {
+      url,
+      taskId,
+    },
+    error: null,
+  }
+}
+
 /**
  * 清理所有定时器
  */
@@ -104,112 +182,74 @@ function clearAllTimers() {
 /**
  * 根据平台类型获取授权URL
  */
-async function getAuthUrl(platform: PlatType, spaceId?: string): Promise<AuthUrlResponse | null> {
+async function getAuthUrl(platform: PlatType, spaceId?: string): Promise<AuthUrlResult> {
   try {
     let res: any
 
     switch (platform) {
       case PlatType.KWAI:
         res = await createKwaiAuth('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.BILIBILI:
         res = await apiGetBilibiliLoginUrl('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Douyin:
         res = await createDouyinAuth('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.YouTube:
         res = await getYouTubeAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Tiktok:
         res = await getTiktokAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Facebook:
         res = await getFacebookAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Instagram:
         res = await getInstagramAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Threads:
         res = await getThreadsAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.LinkedIn:
         res = await getLinkedInAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.Twitter:
         // Twitter 使用与 Meta 系列相同的授权逻辑
         res = await getTwitterAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['taskId'])
 
       case PlatType.WxGzh:
         res = await getWxGzhAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.id || res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'url', ['id', 'taskId'])
 
       case PlatType.Pinterest:
         res = await getPinterestAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.uri, taskId: res.data.taskId }
-        }
-        break
+        return parseAuthUrlResponse(platform, res, 'uri', ['taskId'])
 
       default:
         console.warn(`Platform ${platform} not supported for OAuth`)
-        return null
+        return {
+          authData: null,
+          error: getAuthErrorMessage(),
+        }
     }
-
-    // 检查登录状态
-    if (res?.code === 1) {
-      useUserStore.getState().logout()
-      return null
-    }
-
-    return null
   }
   catch (error) {
     console.error(`Failed to get auth URL for ${platform}:`, error)
-    return null
+    return {
+      authData: null,
+      error: getAuthErrorMessage(error instanceof Error ? error.message : undefined),
+    }
   }
 }
 
@@ -386,14 +426,14 @@ export const useChannelManagerStore = create(
         const authWindow = window.open('about:blank')
         try {
           // 获取授权URL
-          const authData = await getAuthUrl(platform, spaceId)
+          const { authData, error } = await getAuthUrl(platform, spaceId)
 
           if (!authData) {
             authWindow?.close()
             set({
               authState: {
                 ...get().authState,
-                error: 'Failed to get auth URL',
+                error: error || t('channelManager.authFailedTip'),
                 isPolling: false,
               },
             })
