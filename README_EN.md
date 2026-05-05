@@ -224,7 +224,7 @@ SSE transport is also available: `https://aitoearn.ai/api/unified/sse`
 
 </details>
 
-> 💡 For self-hosted instances, replace `aitoearn.ai` with your own address (e.g., `localhost:8080`).
+> 💡 If you are a China user, replace `aitoearn.ai` with `aitoearn.cn`; if you are a self-hosted user, replace `aitoearn.ai` with your own address (e.g., `localhost:8080`).
 
 ---
 

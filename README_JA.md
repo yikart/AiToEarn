@@ -229,7 +229,7 @@ SSE接続もサポート：`https://aitoearn.ai/api/unified/sse`
 
 </details>
 
-> 💡 自己デプロイの場合は、`aitoearn.ai`をご自身のアドレス（例：`localhost:8080`）に置き換えてください。
+> 💡 中国のユーザーは `aitoearn.ai` を `aitoearn.cn` に置き換えてください；自己デプロイの場合は、`aitoearn.ai` をご自身のアドレス（例：`localhost:8080`）に置き換えてください。
 
 ---
 

@@ -224,7 +224,7 @@ MCP 地址：https://aitoearn.ai/api/unified/mcp
 
 </details>
 
-> 💡 如果你是自部署用户，将 `aitoearn.ai` 替换为你自己的地址（如 `localhost:8080`）。
+> 💡 如果你是中国用户，将 `aitoearn.ai` 替换为 `aitoearn.cn`；如果你是自部署用户，将 `aitoearn.ai` 替换为你自己的地址（如 `localhost:8080`）。
 
 ---
 
