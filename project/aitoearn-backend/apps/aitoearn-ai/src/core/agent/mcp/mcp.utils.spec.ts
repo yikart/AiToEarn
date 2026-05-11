@@ -3,6 +3,7 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { vi } from 'vitest'
 import { z } from 'zod'
 import {
+  createHttpBridgeServer,
   errorResult,
   formatList,
   formatObject,
@@ -11,6 +12,29 @@ import {
   successResult,
   wrapTool,
 } from './mcp.utils'
+
+const bridgeMocks = vi.hoisted(() => ({
+  connect: vi.fn(),
+  listTools: vi.fn(),
+  callTool: vi.fn(),
+  transport: vi.fn(),
+}))
+
+vi.mock('@modelcontextprotocol/sdk/client/index.js', () => ({
+  Client: vi.fn(function Client() {
+    return {
+      connect: bridgeMocks.connect,
+      listTools: bridgeMocks.listTools,
+      callTool: bridgeMocks.callTool,
+    }
+  }),
+}))
+
+vi.mock('@modelcontextprotocol/sdk/client/streamableHttp.js', () => ({
+  StreamableHTTPClientTransport: vi.fn(function StreamableHTTPClientTransport(url, options) {
+    bridgeMocks.transport(url, options)
+  }),
+}))
 
 describe('mcp.utils', () => {
   describe('srtTimestampToMs', () => {
@@ -94,6 +118,11 @@ describe('mcp.utils', () => {
       const content = [{ type: 'text', text: 'hello' }]
       const result = successResult(content)
       expect(result.content).toEqual(content)
+    })
+
+    it('should stringify primitive non-string content', () => {
+      const result = successResult(42 as never)
+      expect(result.content).toEqual([{ type: 'text', text: '42' }])
     })
   })
 
@@ -282,6 +311,11 @@ describe('mcp.utils', () => {
       expect(result).toBe('')
     })
 
+    it('should return primitive input from field filter for invalid object values', () => {
+      const result = formatObject('plain' as unknown as Record<string, unknown>)
+      expect(result).toBe('0: p\n1: l\n2: a\n3: i\n4: n')
+    })
+
     it('should filter by keepFields when provided', () => {
       const obj = { name: 'test', value: 123, extra: 'ignored' }
       const result = formatObject(obj, ['name', 'value'])
@@ -316,6 +350,63 @@ describe('mcp.utils', () => {
       const list = ['a', 'b']
       const result = formatList(list, (item, index) => `${index}: ${item}`)
       expect(result).toBe('Total 2:\n1. 0: a\n2. 1: b')
+    })
+  })
+
+  describe('createHttpBridgeServer', () => {
+    beforeEach(() => {
+      bridgeMocks.connect.mockResolvedValue(undefined)
+      bridgeMocks.listTools.mockResolvedValue({
+        tools: [{
+          name: 'remoteTool',
+          description: 'Remote tool',
+          inputSchema: {
+            type: 'object',
+            properties: {
+              prompt: { type: 'string' },
+            },
+          },
+        }],
+      })
+      bridgeMocks.callTool.mockResolvedValue({
+        content: [{ type: 'text', text: 'remote result' }],
+      })
+      bridgeMocks.transport.mockClear()
+    })
+
+    it('should expose remote MCP tools through SDK server', async () => {
+      const server = await createHttpBridgeServer('remote', 'https://example.com/mcp', {
+        Authorization: 'Bearer token',
+      }) as unknown as { name: string, tools: Array<{ name: string, description: string, handler: (params: unknown, context: unknown) => Promise<unknown> }> }
+
+      expect(bridgeMocks.transport).toHaveBeenCalledWith(new URL('https://example.com/mcp'), {
+        requestInit: { headers: { Authorization: 'Bearer token' } },
+      })
+      expect(bridgeMocks.connect).toHaveBeenCalled()
+      expect(server.name).toBe('remote')
+      expect(server.tools[0].name).toBe('remoteTool')
+      expect(server.tools[0].description).toBe('Remote tool')
+
+      const result = await server.tools[0].handler({ prompt: 'hello' }, {})
+      expect(bridgeMocks.callTool).toHaveBeenCalledWith({
+        name: 'remoteTool',
+        arguments: { prompt: 'hello' },
+      })
+      expect(result).toEqual({ content: [{ type: 'text', text: 'remote result' }] })
+    })
+
+    it('should default bridge tool description and schema when missing', async () => {
+      bridgeMocks.listTools.mockResolvedValue({
+        tools: [{
+          name: 'minimalTool',
+          inputSchema: true,
+        }],
+      })
+
+      const server = await createHttpBridgeServer('remote', 'https://example.com/mcp', {}) as unknown as { tools: Array<{ name: string, description: string }> }
+
+      expect(server.tools[0].name).toBe('minimalTool')
+      expect(server.tools[0].description).toBe('')
     })
   })
 })

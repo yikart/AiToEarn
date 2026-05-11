@@ -1,6 +1,7 @@
 import { resolve } from 'node:path'
 import { FileUtil } from '@yikart/common'
 import { vi } from 'vitest'
+import { z } from 'zod'
 
 // ============================================
 // 1. 初始化 FileUtil（必须在其他模块导入前执行）
@@ -36,29 +37,79 @@ vi.mock('commander', () => {
 })
 
 // ============================================
-// 3. Mock @nestjs/mongoose（防止 schema 初始化错误）
+// 3. Mock @yikart/mongodb（防止 schema 初始化错误）
 // ============================================
-vi.mock('@nestjs/mongoose', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('@nestjs/mongoose')>()
-
-  const createMockSchema = () => ({
-    index: vi.fn().mockReturnThis(),
-    pre: vi.fn().mockReturnThis(),
-    post: vi.fn().mockReturnThis(),
-    virtual: vi.fn().mockReturnThis(),
-    set: vi.fn().mockReturnThis(),
-    plugin: vi.fn().mockReturnThis(),
-  })
-
-  return {
-    ...actual,
-    Prop: () => () => {},
-    Schema: () => (target: unknown) => target,
-    SchemaFactory: {
-      createForClass: () => createMockSchema(),
-    },
-  }
-})
+vi.mock('@yikart/mongodb', () => ({
+  AiLogType: {
+    Chat: 'chat',
+    Image: 'image',
+    Card: 'card',
+    Video: 'video',
+    Agent: 'agent',
+    Aideo: 'aideo',
+    Crawler: 'crawler',
+    StyleTransfer: 'style-transfer',
+    VideoEdit: 'video-edit',
+    DraftGeneration: 'draft-generation',
+  },
+  AiLogStatus: {
+    Generating: 'generating',
+    Success: 'success',
+    Failed: 'failed',
+  },
+  AiLogChannel: {
+    NewApi: 'new-api',
+    Md2Card: 'md2card',
+    FireflyCard: 'fireflyCard',
+    Kling: 'kling',
+    Volcengine: 'volcengine',
+    Dashscope: 'dashscope',
+    Sora2: 'sora2',
+    OpenAI: 'openai',
+    ClaudeAgent: 'claude-agent',
+    Crawler: 'crawler',
+    StyleTransfer: 'style-transfer',
+    Gemini: 'gemini',
+    Jimeng: 'jimeng',
+    Grok: 'grok',
+  },
+  AssetType: {
+    AiImage: 'aiImage',
+    AiVideo: 'aiVideo',
+    AiCard: 'aiCard',
+    AiChatImage: 'aiChatImage',
+    AideoOutput: 'aideoOutput',
+    VideoEdit: 'videoEdit',
+    DramaRecap: 'dramaRecap',
+    StyleTransfer: 'styleTransfer',
+    ImageEdit: 'imageEdit',
+    Subtitle: 'subtitle',
+    UserMedia: 'userMedia',
+    UserFile: 'userFile',
+    PublishMedia: 'publishMedia',
+    Avatar: 'avatar',
+    AgentSession: 'agentSession',
+    VideoThumbnail: 'videoThumbnail',
+    Temp: 'temp',
+  },
+  AssetStatus: {
+    Pending: 'pending',
+    Uploaded: 'uploaded',
+    Confirmed: 'confirmed',
+    Failed: 'failed',
+  },
+  ContentGenerationTaskStatus: {
+    Running: 'running',
+    Completed: 'completed',
+    RequiresAction: 'requires_action',
+    Error: 'error',
+    Aborted: 'aborted',
+  },
+  ContentGenerationTaskRepository: class ContentGenerationTaskRepository {},
+  AiLogRepository: class AiLogRepository {},
+  AssetRepository: class AssetRepository {},
+  mongodbConfigSchema: z.object({}).passthrough(),
+}))
 
 // ============================================
 // 4. Mock @anthropic-ai/claude-agent-sdk（保留 tools 和 version 用于测试）

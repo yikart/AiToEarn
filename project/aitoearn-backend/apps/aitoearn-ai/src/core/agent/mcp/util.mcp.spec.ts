@@ -1,12 +1,13 @@
 import { Logger } from '@nestjs/common'
 import { ContentGenerationTaskRepository } from '@yikart/mongodb'
 import { vi } from 'vitest'
+import type { Mocked } from 'vitest'
 import { UtilMcp, UtilToolName } from './util.mcp'
 
 describe('utilMcp', () => {
   let utilMcp: UtilMcp
   let mockLogger: Logger
-  let mockContentGenerateRepository: vi.Mocked<ContentGenerationTaskRepository>
+  let mockContentGenerateRepository: Mocked<ContentGenerationTaskRepository>
 
   beforeEach(() => {
     mockLogger = {
@@ -17,7 +18,7 @@ describe('utilMcp', () => {
 
     mockContentGenerateRepository = {
       updateById: vi.fn().mockResolvedValue(undefined),
-    } as unknown as vi.Mocked<ContentGenerationTaskRepository>
+    } as unknown as Mocked<ContentGenerationTaskRepository>
 
     utilMcp = new UtilMcp(mockContentGenerateRepository)
     // Override the logger for testing

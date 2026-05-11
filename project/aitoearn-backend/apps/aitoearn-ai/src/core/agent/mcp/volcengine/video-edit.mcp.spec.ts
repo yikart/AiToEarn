@@ -4,10 +4,15 @@ import { CreditsType, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { vi } from 'vitest'
-import { VolcengineService } from '../../../ai/libs/volcengine'
+import type { Mock, Mocked } from 'vitest'
+import type { VolcengineService } from '../../../ai/libs/volcengine'
 import { VideoEditMcp, VideoEditToolName } from './video-edit.mcp'
 
 import { VolcengineVideoUtils } from './volcengine.utils'
+
+vi.mock('../../../ai/libs/volcengine', () => ({
+  VolcengineService: class VolcengineService {},
+}))
 
 // Mock VolcengineVideoUtils
 vi.mock('./volcengine.utils', () => ({
@@ -19,10 +24,10 @@ vi.mock('./volcengine.utils', () => ({
 describe('videoEditMcp', () => {
   let videoEditMcp: VideoEditMcp
   let mockLogger: Logger
-  let mockVolcengineService: vi.Mocked<VolcengineService>
-  let mockAssetsService: vi.Mocked<AssetsService>
-  let mockCreditsHelper: vi.Mocked<CreditsHelperService>
-  let mockAiLogRepo: vi.Mocked<AiLogRepository>
+  let mockVolcengineService: Mocked<VolcengineService>
+  let mockAssetsService: Mocked<AssetsService>
+  let mockCreditsHelper: Mocked<CreditsHelperService>
+  let mockAiLogRepo: Mocked<AiLogRepository>
 
   const userId = 'test-user-id'
   const userType = UserType.User
@@ -38,7 +43,7 @@ describe('videoEditMcp', () => {
       submitDirectEditTaskAsync: vi.fn(),
       getDirectEditResult: vi.fn(),
       getMediaInfos: vi.fn(),
-    } as unknown as vi.Mocked<VolcengineService>
+    } as unknown as Mocked<VolcengineService>
 
     // Mock the config property
     Object.defineProperty(mockVolcengineService, 'config', {
@@ -46,18 +51,18 @@ describe('videoEditMcp', () => {
       writable: true,
     })
 
-    mockAssetsService = {} as vi.Mocked<AssetsService>
+    mockAssetsService = {} as Mocked<AssetsService>
 
     mockCreditsHelper = {
       deductCredits: vi.fn().mockResolvedValue(undefined),
       addCredits: vi.fn().mockResolvedValue(undefined),
-    } as unknown as vi.Mocked<CreditsHelperService>
+    } as unknown as Mocked<CreditsHelperService>
 
     mockAiLogRepo = {
       create: vi.fn(),
       getById: vi.fn(),
       updateById: vi.fn().mockResolvedValue(undefined),
-    } as unknown as vi.Mocked<AiLogRepository>
+    } as unknown as Mocked<AiLogRepository>
 
     videoEditMcp = new VideoEditMcp(
       mockVolcengineService,
@@ -96,6 +101,19 @@ describe('videoEditMcp', () => {
       Width: 1920,
       Height: 1080,
     }
+
+    it('should calculate fallback price for resolutions above pricing table', () => {
+      expect((videoEditMcp as unknown as { calculateVideoEditPrice: (duration: number, resolution: string) => number })
+        .calculateVideoEditPrice(60, '5000x3000')).toBe(3.43)
+    })
+
+    it('should calculate longest track duration across all layers', () => {
+      expect((videoEditMcp as unknown as { calculateTotalDuration: (track: unknown) => number })
+        .calculateTotalDuration([
+          [{ TargetTime: [0, 2500] }],
+          [{ TargetTime: [0, 1000] }],
+        ])).toBe(2.5)
+    })
 
     it('should have correct tool name', () => {
       const tool = videoEditMcp.createSubmitDirectEditTaskTool(userId, userType)
@@ -250,6 +268,37 @@ describe('videoEditMcp', () => {
       )
     })
 
+    it('should handle Output configuration without Codec', async () => {
+      mockVolcengineService.submitDirectEditTaskAsync.mockResolvedValue({
+        ReqId: 'req-123',
+      })
+      mockAiLogRepo.create.mockResolvedValue({
+        id: 'ailog-123',
+      } as never)
+
+      const tool = videoEditMcp.createSubmitDirectEditTaskTool(userId, userType)
+      await tool.handler({
+        Canvas: sampleCanvas,
+        Track: sampleTrack,
+        Output: {
+          Fps: 30,
+          DisableAudio: true,
+        },
+      }, {})
+
+      expect(mockVolcengineService.submitDirectEditTaskAsync).toHaveBeenCalledWith(
+        expect.objectContaining({
+          EditParam: expect.objectContaining({
+            Output: expect.objectContaining({
+              Fps: 30,
+              DisableAudio: true,
+              Codec: undefined,
+            }),
+          }),
+        }),
+      )
+    })
+
     it('should auto-detect Canvas from vid:// video source when Canvas is omitted', async () => {
       mockVolcengineService.getMediaInfos.mockResolvedValue({
         MediaInfoList: [{
@@ -387,7 +436,7 @@ describe('videoEditMcp', () => {
         Status: 'success',
         OutputVid: 'output-vid-123',
       } as never)
-      ;(VolcengineVideoUtils.saveVideoFromVid as jest.Mock).mockResolvedValue(
+      ;(VolcengineVideoUtils.saveVideoFromVid as Mock).mockResolvedValue(
         'https://example.com/output.mp4',
       )
 
@@ -410,7 +459,7 @@ describe('videoEditMcp', () => {
         Status: 'success',
         OutputVid: 'output-vid-123',
       } as never)
-      ;(VolcengineVideoUtils.saveVideoFromVid as jest.Mock).mockResolvedValue(
+      ;(VolcengineVideoUtils.saveVideoFromVid as Mock).mockResolvedValue(
         'https://example.com/output.mp4',
       )
 
@@ -547,7 +596,7 @@ describe('videoEditMcp', () => {
         Status: 'success',
         OutputVid: 'output-vid-123',
       } as never)
-      ;(VolcengineVideoUtils.saveVideoFromVid as jest.Mock).mockResolvedValue(null)
+      ;(VolcengineVideoUtils.saveVideoFromVid as Mock).mockResolvedValue(null)
 
       const tool = videoEditMcp.createGetVideoEditTaskStatusTool(userId, userType)
       const result = await tool.handler({ taskId: 'ailog-123' }, {})

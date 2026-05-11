@@ -2,19 +2,26 @@ import { Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import { vi } from 'vitest'
-import { ChatService } from '../../ai/chat'
-import { ImageService } from '../../ai/image'
-import { GeminiVideoService, OpenAIVideoService, Sora2VideoService } from '../../ai/video'
+import type { Mocked } from 'vitest'
+import { z } from 'zod'
+import type { ImageService } from '../../ai/image'
+import type { GeminiVideoService, GrokVideoService, OpenAIVideoService } from '../../ai/video'
 import { MediaMcp, MediaToolName } from './media.mcp'
+
+vi.mock('../../ai/video', () => ({
+  geminiVeoVideoCreateRequestSchema: z.object({}).passthrough(),
+  GeminiVideoService: class GeminiVideoService {},
+  GrokVideoService: class GrokVideoService {},
+  OpenAIVideoService: class OpenAIVideoService {},
+}))
 
 describe('mediaMcp', () => {
   let mediaMcp: MediaMcp
   let mockLogger: Logger
-  let mockChatService: vi.Mocked<ChatService>
-  let mockOpenaiVideoService: vi.Mocked<OpenAIVideoService>
-  let mockImageService: vi.Mocked<ImageService>
-  let mockSora2VideoService: vi.Mocked<Sora2VideoService>
-  let mockGeminiVideoService: vi.Mocked<GeminiVideoService>
+  let mockOpenaiVideoService: Mocked<OpenAIVideoService>
+  let mockImageService: Mocked<ImageService>
+  let mockGeminiVideoService: Mocked<GeminiVideoService>
+  let mockGrokVideoService: Mocked<GrokVideoService>
 
   const userId = 'test-user-id'
   const userType = UserType.User
@@ -26,32 +33,32 @@ describe('mediaMcp', () => {
       fatal: vi.fn(),
     } as unknown as Logger
 
-    mockChatService = {} as vi.Mocked<ChatService>
-
     mockOpenaiVideoService = {
       createVideo: vi.fn(),
       getVideo: vi.fn(),
       createCharacter: vi.fn(),
       getCharacter: vi.fn(),
-    } as unknown as vi.Mocked<OpenAIVideoService>
+    } as unknown as Mocked<OpenAIVideoService>
 
     mockImageService = {
       userGeminiGeneration: vi.fn(),
-    } as unknown as vi.Mocked<ImageService>
-
-    mockSora2VideoService = {} as vi.Mocked<Sora2VideoService>
+    } as unknown as Mocked<ImageService>
 
     mockGeminiVideoService = {
       createVideo: vi.fn(),
       getVideo: vi.fn(),
-    } as unknown as vi.Mocked<GeminiVideoService>
+    } as unknown as Mocked<GeminiVideoService>
+
+    mockGrokVideoService = {
+      createVideo: vi.fn(),
+      getTask: vi.fn(),
+    } as unknown as Mocked<GrokVideoService>
 
     mediaMcp = new MediaMcp(
-      mockChatService,
       mockOpenaiVideoService,
       mockImageService,
-      mockSora2VideoService,
       mockGeminiVideoService,
+      mockGrokVideoService,
     )
     // Override the logger for testing
     Object.defineProperty(mediaMcp, 'logger', { value: mockLogger })
@@ -65,7 +72,7 @@ describe('mediaMcp', () => {
 
     it('should call imageService.userGeminiGeneration with correct params', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, input_token_details: undefined, output_token_details: undefined, points: 10 },
         images: [{ url: 'https://example.com/image1.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -89,7 +96,7 @@ describe('mediaMcp', () => {
 
     it('should pass selected gemini image model when provided', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, input_token_details: undefined, output_token_details: undefined, points: 10 },
         images: [{ url: 'https://example.com/image1.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -108,7 +115,7 @@ describe('mediaMcp', () => {
 
     it('should return generated image URLs', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, input_token_details: undefined, output_token_details: undefined, points: 10 },
         images: [
           { url: 'image1.png', data: '', mimeType: 'image/png' },
           { url: 'image2.png', data: '', mimeType: 'image/png' },
@@ -134,7 +141,7 @@ describe('mediaMcp', () => {
 
     it('should use default empty array for imageUrls when not provided', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, input_token_details: undefined, output_token_details: undefined, points: 10 },
         images: [{ url: 'image.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -229,6 +236,29 @@ describe('mediaMcp', () => {
       expect(textContent.text).toContain('task-123')
     })
 
+    it('should pass explicit seconds and size without defaults', async () => {
+      mockOpenaiVideoService.createVideo.mockResolvedValue({
+        id: 'task-123',
+        status: 'in_progress',
+      } as never)
+
+      const tool = mediaMcp.createGenerateVideoTool(userId, userType)
+      await tool.handler({
+        prompt: 'A cat walking',
+        model: 'sora-2',
+        input_reference: undefined,
+        seconds: '8',
+        size: '1280x720',
+      } as never, {})
+
+      expect(mockOpenaiVideoService.createVideo).toHaveBeenCalledWith(
+        expect.objectContaining({
+          seconds: '8',
+          size: '1280x720',
+        }),
+      )
+    })
+
     it('should return error result when video generation fails', async () => {
       mockOpenaiVideoService.createVideo.mockResolvedValue({
         id: 'task-123',
@@ -248,6 +278,26 @@ describe('mediaMcp', () => {
       expect(result.isError).toBe(true)
       const textContent = result.content[0] as { type: 'text', text: string }
       expect(textContent.text).toContain('Failed')
+    })
+
+    it('should return unknown error when video generation fails without error detail', async () => {
+      mockOpenaiVideoService.createVideo.mockResolvedValue({
+        id: 'task-123',
+        status: AiLogStatus.Failed,
+      } as never)
+
+      const tool = mediaMcp.createGenerateVideoTool(userId, userType)
+      const result = await tool.handler({
+        prompt: 'A cat walking',
+        model: 'sora-2',
+        input_reference: undefined,
+        seconds: undefined,
+        size: undefined,
+      } as never, {})
+
+      expect(result.isError).toBe(true)
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Unknown error')
     })
   })
 
@@ -284,6 +334,58 @@ describe('mediaMcp', () => {
       expect(textContent.text).toContain('video.mp4')
     })
 
+    it('should return completed status with video_url fallback and no start time', async () => {
+      mockOpenaiVideoService.getVideo.mockResolvedValue({
+        id: 'task-123',
+        object: 'video',
+        model: 'sora-2',
+        prompt: 'test',
+        status: 'completed',
+        video_url: 'fallback-video.mp4',
+        progress: 100,
+        created_at: 0,
+        completed_at: null,
+        expires_at: null,
+        error: null,
+        remixed_from_video_id: null,
+        seconds: '10',
+        size: '720x1280',
+      } as never)
+
+      const tool = mediaMcp.createGetVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('fallback-video.mp4')
+      expect(textContent.text).not.toContain('Start time:')
+    })
+
+    it('should fall through completed status without video URL', async () => {
+      mockOpenaiVideoService.getVideo.mockResolvedValue({
+        id: 'task-123',
+        object: 'video',
+        model: 'sora-2',
+        prompt: 'test',
+        status: 'completed',
+        progress: 100,
+        created_at: 0,
+        completed_at: null,
+        expires_at: null,
+        error: null,
+        remixed_from_video_id: null,
+        seconds: '10',
+        size: '720x1280',
+      } as never)
+
+      const tool = mediaMcp.createGetVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Video is completed, progress: 100%')
+    })
+
     it('should return failed status with error message', async () => {
       mockOpenaiVideoService.getVideo.mockResolvedValue({
         id: 'task-123',
@@ -308,6 +410,31 @@ describe('mediaMcp', () => {
       const textContent = result.content[0] as { type: 'text', text: string }
       expect(textContent.text).toContain('failed')
       expect(textContent.text).toContain('Processing error')
+    })
+
+    it('should return failed status with unknown error when message missing', async () => {
+      mockOpenaiVideoService.getVideo.mockResolvedValue({
+        id: 'task-123',
+        object: 'video',
+        model: 'sora-2',
+        prompt: 'test',
+        status: 'failed',
+        progress: 0,
+        error: null,
+        created_at: 0,
+        completed_at: null,
+        expires_at: null,
+        remixed_from_video_id: null,
+        seconds: '10',
+        size: '720x1280',
+      })
+
+      const tool = mediaMcp.createGetVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBe(true)
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Unknown error')
     })
 
     it('should return progress status when still processing', async () => {
@@ -418,6 +545,29 @@ describe('mediaMcp', () => {
       const textContent = result.content[0] as { type: 'text', text: string }
       expect(textContent.text).toContain('Failed')
     })
+
+    it('should return unknown error when character creation fails without error detail', async () => {
+      mockOpenaiVideoService.createCharacter.mockResolvedValue({
+        id: 'char-123',
+        object: 'character',
+        model: 'sora-2-character',
+        username: 'testchar',
+        status: 'failed',
+        created_at: Math.floor(Date.now() / 1000),
+      })
+
+      const tool = mediaMcp.createSoraCharacterTool(userId, userType)
+      const result = await tool.handler({
+        prompt: 'A young woman',
+        videoUrl: undefined,
+        taskId: undefined,
+        timestamps: '1,3',
+      } as never, {})
+
+      expect(result.isError).toBe(true)
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Unknown error')
+    })
   })
 
   describe('createGetSoraCharacterTool', () => {
@@ -462,6 +612,24 @@ describe('mediaMcp', () => {
       expect(result.isError).toBe(true)
       const textContent = result.content[0] as { type: 'text', text: string }
       expect(textContent.text).toContain('failed')
+    })
+
+    it('should return failed status with unknown error when message missing', async () => {
+      mockOpenaiVideoService.getCharacter.mockResolvedValue({
+        id: 'char-123',
+        object: 'character',
+        model: 'sora-2-character',
+        username: 'testchar',
+        status: 'failed',
+        created_at: Math.floor(Date.now() / 1000),
+      })
+
+      const tool = mediaMcp.createGetSoraCharacterTool(userId, userType)
+      const result = await tool.handler({ characterId: 'char-123' }, {})
+
+      expect(result.isError).toBe(true)
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Unknown error')
     })
 
     it('should return processing status', async () => {
@@ -611,6 +779,25 @@ describe('mediaMcp', () => {
       expect(textContent.text).toContain('Generation failed')
     })
 
+    it('should return failed status with unknown error when error missing', async () => {
+      mockGeminiVideoService.getVideo.mockResolvedValue({
+        name: 'test-operation',
+        status: AiLogStatus.Failed,
+        model: 'veo-3.1-fast-generate-001',
+        prompt: 'A sunset over the ocean',
+        createdAt: new Date(Date.now() - 60000),
+        completedAt: null,
+        generatedVideos: [],
+      })
+
+      const tool = mediaMcp.createGetVeoVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'veo-task-123' }, {})
+
+      expect(result.isError).toBe(true)
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Unknown error')
+    })
+
     it('should return processing status', async () => {
       mockGeminiVideoService.getVideo.mockResolvedValue({
         name: 'test-operation',
@@ -631,6 +818,76 @@ describe('mediaMcp', () => {
     })
   })
 
+  describe('createGenerateVideoWithGrokTool', () => {
+    it('should call grokVideoService.createVideo with correct params', async () => {
+      mockGrokVideoService.createVideo.mockResolvedValue({ id: 'grok-task-123', requestId: 'req-123', points: 1 })
+
+      const tool = mediaMcp.createGenerateVideoWithGrokTool(userId, userType)
+      const result = await tool.handler({
+        prompt: 'A cat walking',
+        model: 'grok-imagine-video',
+        aspectRatio: '16:9',
+        resolution: '720p',
+        duration: 6,
+        imageUrl: 'https://example.com/ref.png',
+      } as never, {})
+
+      expect(mockGrokVideoService.createVideo).toHaveBeenCalledWith({
+        userId,
+        userType,
+        prompt: 'A cat walking',
+        model: 'grok-imagine-video',
+        aspectRatio: '16:9',
+        resolution: '720p',
+        duration: 6,
+        imageUrl: 'https://example.com/ref.png',
+      })
+      expect(result.isError).toBeUndefined()
+      expect((result.content[0] as { text: string }).text).toContain('grok-task-123')
+    })
+  })
+
+  describe('createGetGrokVideoStatusTool', () => {
+    it('should return completed status with video URL', async () => {
+      mockGrokVideoService.getTask.mockResolvedValue({
+        status: 'succeeded',
+        videoUrl: 'video.mp4',
+      } as never)
+
+      const tool = mediaMcp.createGetGrokVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'grok-task-123' }, {})
+
+      expect(mockGrokVideoService.getTask).toHaveBeenCalledWith(userId, userType, 'grok-task-123')
+      expect(result.isError).toBeUndefined()
+      expect((result.content[0] as { text: string }).text).toContain('video.mp4')
+    })
+
+    it('should return error status with message', async () => {
+      mockGrokVideoService.getTask.mockResolvedValue({
+        status: 'failed',
+        error: 'Generation failed',
+      } as never)
+
+      const tool = mediaMcp.createGetGrokVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'grok-task-123' }, {})
+
+      expect(result.isError).toBe(true)
+      expect((result.content[0] as { text: string }).text).toContain('Generation failed')
+    })
+
+    it('should return processing status', async () => {
+      mockGrokVideoService.getTask.mockResolvedValue({
+        status: 'processing',
+      } as never)
+
+      const tool = mediaMcp.createGetGrokVideoStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'grok-task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      expect((result.content[0] as { text: string }).text).toContain('processing')
+    })
+  })
+
   describe('createServer', () => {
     it('should create server with correct name', () => {
       const server = mediaMcp.createServer(userId, userType)
@@ -642,8 +899,8 @@ describe('mediaMcp', () => {
       const toolNames = server.tools?.map(t => t.name)
 
       expect(toolNames).toContain(MediaToolName.GenerateImage)
-      expect(toolNames).toContain(MediaToolName.GenerateVideoWithVeo)
-      expect(toolNames).toContain(MediaToolName.GetVeoVideoStatus)
+      expect(toolNames).toContain(MediaToolName.GenerateVideoWithGrok)
+      expect(toolNames).toContain(MediaToolName.GetGrokVideoStatus)
     })
   })
 })

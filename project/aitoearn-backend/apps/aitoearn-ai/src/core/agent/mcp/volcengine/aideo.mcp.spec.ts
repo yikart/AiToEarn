@@ -1,14 +1,27 @@
 import { Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { vi } from 'vitest'
-import { AideoService } from '../../../ai/aideo'
+import type { Mocked } from 'vitest'
+import type { AideoService } from '../../../ai/aideo'
 import { AideoTaskStatus } from '../../../ai/libs/volcengine'
 import { AideoMcp, AideoToolName } from './aideo.mcp'
+
+vi.mock('../../../ai/aideo', () => ({
+  AideoService: class AideoService {},
+}))
+
+vi.mock('../../../ai/libs/volcengine', () => ({
+  AideoTaskStatus: {
+    Processing: 'Processing',
+    Completed: 'Completed',
+    Failed: 'Failed',
+  },
+}))
 
 describe('aideoMcp', () => {
   let aideoMcp: AideoMcp
   let mockLogger: Logger
-  let mockAideoService: vi.Mocked<AideoService>
+  let mockAideoService: Mocked<AideoService>
 
   const userId = 'test-user-id'
   const userType = UserType.User
@@ -23,7 +36,7 @@ describe('aideoMcp', () => {
     mockAideoService = {
       submitAideoTask: vi.fn(),
       getAideoTask: vi.fn(),
-    } as unknown as vi.Mocked<AideoService>
+    } as unknown as Mocked<AideoService>
 
     aideoMcp = new AideoMcp(mockAideoService)
     // Override the logger for testing
@@ -155,6 +168,198 @@ describe('aideoMcp', () => {
       expect(textContent.text).toContain('completed successfully')
       expect(textContent.text).toContain('https://example.com/translated.mp4')
       expect(textContent.text).toContain('vid-123')
+    })
+
+    it('should handle completed task without api responses', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Task completed successfully')
+    })
+
+    it('should include translation output VID when present', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          AITranslation: {
+            ProjectInfo: {
+              OutputVideo: {
+                Url: 'https://example.com/translated.mp4',
+                Vid: 'vid-123',
+              },
+            },
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Output VID: vid-123')
+    })
+
+    it('should omit translation output VID when absent', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          AITranslation: {
+            ProjectInfo: {
+              OutputVideo: {
+                Url: 'https://example.com/translated.mp4',
+              },
+            },
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('https://example.com/translated.mp4')
+      expect(textContent.text).not.toContain('Output VID:')
+    })
+
+    it('should include only highlight clips with URLs', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          Highlight: {
+            Edits: [
+              { url: 'https://example.com/clip-1.mp4' },
+              {},
+            ],
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Clip 1: https://example.com/clip-1.mp4')
+      expect(textContent.text).not.toContain('Clip 2:')
+    })
+
+    it('should include VCreative output URL from object output', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          VCreative: {
+            OutputJson: {
+              Result: { url: 'https://example.com/vcreative.mp4' },
+            },
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('https://example.com/vcreative.mp4')
+    })
+
+    it('should include VCreative root output URL from object output', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          VCreative: {
+            OutputJson: {
+              url: 'https://example.com/root-vcreative.mp4',
+            },
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('https://example.com/root-vcreative.mp4')
+    })
+
+    it('should ignore string VCreative output JSON', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          VCreative: {
+            OutputJson: '{"url":"https://example.com/string-output.mp4"}',
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).not.toContain('string-output.mp4')
+    })
+
+    it('should handle VCreative object output without URL', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          VCreative: {
+            OutputJson: {
+              Result: {},
+            },
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).not.toContain('Output Video URL:')
+    })
+
+    it('should include Vision analysis content', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{
+          Vision: {
+            Content: 'summary text',
+          },
+        }],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('summary text')
+    })
+
+    it('should handle completed response with no recognized output shape', async () => {
+      mockAideoService.getAideoTask.mockResolvedValue({
+        status: AideoTaskStatus.Completed,
+        apiResponses: [{}],
+      } as never)
+
+      const tool = aideoMcp.createGetAideoTaskStatusTool(userId, userType)
+      const result = await tool.handler({ taskId: 'task-123' }, {})
+
+      expect(result.isError).toBeUndefined()
+      const textContent = result.content[0] as { type: 'text', text: string }
+      expect(textContent.text).toContain('Task completed successfully')
     })
 
     it('should return erase output URL when completed', async () => {

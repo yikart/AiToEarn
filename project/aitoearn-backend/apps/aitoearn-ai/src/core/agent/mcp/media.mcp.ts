@@ -229,7 +229,7 @@ Returns task ID for status tracking.`,
         }
 
         if (result.status === 'completed' && (result.url || result.video_url)) {
-          const videoUrl = result.url || result.video_url || ''
+          const videoUrl = (result.url || result.video_url) as string
           const fullVideoUrl = FileUtil.buildUrl(videoUrl)
           return successResult(`Video is completed, task id: ${taskId} and video url is ${fullVideoUrl}${timeInfo}`)
         }
@@ -339,7 +339,7 @@ Returns task ID for status tracking.`,
         const { id, error } = response
 
         if (error) {
-          return errorResult(`Failed to generate video with Veo ${params.model}, Error: ${error || 'Unknown error'}`)
+          return errorResult(`Failed to generate video with Veo ${params.model}, Error: ${error}`)
         }
 
         return successResult(`Video is generating with Veo ${params.model}, task id: ${id}`)
