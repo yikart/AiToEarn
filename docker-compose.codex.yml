@@ -1,0 +1,11 @@
+services:
+  aitoearn-ai:
+    environment:
+      OPENAI_BASE_URL: http://${CODEX_OPENAI_HOST:-host.docker.internal}:${CODEX_OPENAI_PROXY_PORT:-52032}/v1
+      OPENAI_API_KEY: codex-local-proxy
+      OPENAI_CHAT_MODEL: gpt-5.5
+
+  aitoearn-server:
+    environment:
+      OPENAI_BASE_URL: http://${CODEX_OPENAI_HOST:-host.docker.internal}:${CODEX_OPENAI_PROXY_PORT:-52032}/v1
+      OPENAI_API_KEY: codex-local-proxy

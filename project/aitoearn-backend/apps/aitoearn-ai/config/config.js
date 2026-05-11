@@ -23,6 +23,7 @@ const {
   VOLCENGINE_VOD_SPACE_NAME,
   OPENAI_API_KEY,
   OPENAI_BASE_URL,
+  OPENAI_CHAT_MODEL = 'gpt-5.5',
   ANTHROPIC_BASE_URL,
   ANTHROPIC_API_KEY,
   GROK_API_KEY,
@@ -150,6 +151,20 @@ module.exports = {
     },
     models: {
       chat: [
+        {
+          name: OPENAI_CHAT_MODEL,
+          description: 'GPT-5.5 Codex xhigh',
+          inputModalities: ['text', 'image'],
+          outputModalities: ['text'],
+          pricing: {
+            tiers: [
+              {
+                input: { text: '0', image: '0' },
+                output: { text: '0' },
+              },
+            ],
+          },
+        },
         {
           name: 'gemini-3.1-pro-preview',
           description: 'Gemini 3.1 Pro Preview',
