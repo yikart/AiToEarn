@@ -1,4 +1,7 @@
 import { Module } from '@nestjs/common'
+import { AitoearnAiClientModule } from '@yikart/aitoearn-ai-client'
+import { AccountModule } from '../../account/account.module'
+import { ContentModule } from '../../content/content.module'
 import { AccountType } from '@yikart/common'
 import { ShortLinkModule } from '../../short-link/short-link.module'
 import { BilibiliModule } from '../platforms/bilibili/bilibili.module'
@@ -31,8 +34,12 @@ import { TiktokPubService } from './providers/tiktok.service'
 import { TwitterPubService } from './providers/twitter.service'
 import { WxGzhPubService } from './providers/wx-gzh.service'
 import { YoutubePubService } from './providers/youtube.service'
+import { XiaohongshuPubService } from './providers/xiaohongshu.service'
 import { PublishingService } from './publishing.service'
 import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-task.scheduler'
+import { AutoCreatePublishTaskScheduler } from './scheduler/auto-create-publish-task.scheduler'
+import { TwitterToXhsPipelineScheduler } from './scheduler/twitter-to-xhs-pipeline.scheduler'
+import { YoutubeToXhsPipelineScheduler } from './scheduler/youtube-to-xhs-pipeline.scheduler'
 
 @Module({
   imports: [
@@ -49,6 +56,9 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     PinterestModule,
     DouyinModule,
     GoogleBusinessModule,
+    AccountModule,
+    ContentModule,
+    AitoearnAiClientModule,
   ],
   providers: [
     CredentialInvalidationService,
@@ -71,7 +81,11 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     TwitterPubService,
     DouyinPubService,
     GoogleBusinessPubService,
+    XiaohongshuPubService,
     EnqueuePublishingTaskScheduler,
+    AutoCreatePublishTaskScheduler,
+    TwitterToXhsPipelineScheduler,
+    YoutubeToXhsPipelineScheduler,
     {
       provide: 'PUBLISHING_PROVIDERS',
       useFactory: (
@@ -87,6 +101,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         linkedin: LinkedinPublishService,
         douyin: DouyinPubService,
         googleBusiness: GoogleBusinessPubService,
+        xiaohongshu: XiaohongshuPubService,
       ) => ({
         [AccountType.BILIBILI]: bilibili,
         [AccountType.KWAI]: kwai,
@@ -100,6 +115,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         [AccountType.LINKEDIN]: linkedin,
         [AccountType.Douyin]: douyin,
         [AccountType.GOOGLE_BUSINESS]: googleBusiness,
+        [AccountType.Xhs]: xiaohongshu,
       }),
       inject: [
         BilibiliPubService,
@@ -114,6 +130,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         LinkedinPublishService,
         DouyinPubService,
         GoogleBusinessPubService,
+        XiaohongshuPubService,
       ],
     },
   ],

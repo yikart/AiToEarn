@@ -18,6 +18,7 @@ import {
   CreateThreadsPublishingTaskSchema,
   CreateTiktokPublishingTaskSchema,
   CreateTwitterPublishingTaskSchema,
+  CreateXhsPublishingTaskSchema,
   CreateYoutubePublishingTaskSchema,
   GetPublishingTaskStatusSchema,
   PublishTaskOption,
@@ -362,5 +363,20 @@ ${restrictionsText.join('\n')}
   })
   async publishPostToTwitter(data: z.infer<typeof CreateTwitterPublishingTaskSchema>) {
     return await this.doPublish(AccountType.TWITTER, data)
+  }
+
+  @Tool({
+    name: 'publishPostToXhs',
+    description: 'Publish content to Xiaohongshu (小红书). Supports images and video content.\n\n'
+      + 'Required parameters: accountId, content (text description)\n'
+      + 'Optional parameters: title, cover image URL, image URLs (1-9), video URL, topics/hashtags, publishing time\n\n'
+      + 'Workflow:\n'
+      + '(1) Confirm: content text, optional media URLs (images or video)\n'
+      + '(2) Call publishPostToXhs with parameters\n'
+      + '(3) Return flowId for status tracking',
+    parameters: CreateXhsPublishingTaskSchema,
+  })
+  async publishPostToXhs(data: z.infer<typeof CreateXhsPublishingTaskSchema>) {
+    return await this.doPublish(AccountType.Xhs, data)
   }
 }

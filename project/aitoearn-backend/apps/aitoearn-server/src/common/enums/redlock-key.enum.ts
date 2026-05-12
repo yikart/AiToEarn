@@ -9,4 +9,8 @@ export class RedlockKey {
   static AssetsExpiredCleanup = 'scheduler:assets-expired-cleanup'
   static AssetsR2EventsProcess = 'scheduler:assets-r2-events-process'
   static PublishingTaskEnqueue = 'scheduler:publishing-task-enqueue'
+  static AutoClaimEngagementTask = 'scheduler:auto-claim-engagement-task'
+  static AutoCreatePublishTask = 'scheduler:auto-create-publish-task'
+  static TwitterToXhsPipeline = 'scheduler:twitter-to-xhs-pipeline'
+  static YoutubeToXhsPipeline = 'scheduler:youtube-to-xhs-pipeline'
 }
