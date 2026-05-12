@@ -51,6 +51,20 @@ export class TwitterPubService extends PublishService {
 
   override async getMediaProcessingStatus(accountId: string, mediaId: string): Promise<string | void> {
     const mediaStatusInfo = await this.twitterService.getMediaUploadStatus(accountId, mediaId)
+    this.logger.debug({
+      path: '--- twitter getMediaProcessingStatus ---',
+      data: {
+        accountId,
+        mediaId,
+        mediaStatusInfo,
+      },
+    })
+    if (!mediaStatusInfo?.data?.processing_info) {
+      if (mediaStatusInfo?.data?.state === 'succeeded') {
+        return 'succeeded'
+      }
+      return 'in_progress'
+    }
     return mediaStatusInfo.data.processing_info.state
   }
 
@@ -420,11 +434,17 @@ export class TwitterPubService extends PublishService {
         errorMsg: `发布记录 ${publishRecord.id} 不包含有效的账号信息`,
       }
     }
+    if (!publishRecord.dataId) {
+      return {
+        success: false,
+        errorMsg: `发布记录 ${publishRecord.id} 不包含作品 ID，无法验证`,
+      }
+    }
     try {
       // Twitter/X 通过 API 获取推文信息验证发布状态
       const tweetInfo = await this.twitterService.getTweetDetail(
         publishRecord.accountId,
-        publishRecord.dataId || '',
+        publishRecord.dataId,
       )
 
       if (tweetInfo && tweetInfo.data && tweetInfo.data.id) {

@@ -328,6 +328,7 @@ export class TwitterService {
         Authorization: `Bearer ${accessToken}`,
       },
       params: {
+        command: 'STATUS',
         media_id: mediaId,
       },
     }
