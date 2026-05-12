@@ -7,6 +7,8 @@ import {
   ReportLocationDtoSchema,
   SetAiConfigDto,
   SetAiConfigItemDto,
+  SetEarnInfoDto,
+  SetEarnInfoDtoSchema,
   SwitchUserTypeDto,
   SwitchUserTypeDtoSchema,
   UpdateLocaleDto,
@@ -137,5 +139,18 @@ export class UserController {
     }
 
     return { userType: body.userType }
+  }
+
+  @ApiDoc({
+    summary: '设置赚钱模式',
+    description: '开启或关闭自动赚钱模式，设置循环间隔',
+    body: SetEarnInfoDtoSchema,
+  })
+  @Put('earn-info/set')
+  async setEarnInfo(
+    @GetToken() token: TokenInfo,
+    @Body() body: SetEarnInfoDto,
+  ) {
+    await this.userService.setEarnInfo(token.id, body.status, body.cycleInterval)
   }
 }

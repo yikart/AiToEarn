@@ -7,6 +7,7 @@ import { PublishMcpController } from '../channel/publish.mcp.controller'
 import { PublishModule as PublishingModule } from '../channel/publishing/publishing.module'
 import { ContentMcpController } from '../content/content.mcp.controller'
 import { ContentModule } from '../content/content.module'
+import { TaskMcpModule } from '../task/task-mcp.module'
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ContentModule } from '../content/content.module'
     AccountModule,
     PublishingModule,
     ContentModule,
+    TaskMcpModule,
   ],
   providers: [
     AccountMcpController,

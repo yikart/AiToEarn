@@ -126,7 +126,7 @@ export class MaterialService {
     return res
   }
 
-  async optimalInGroup(groupId: string, type?: MaterialType, accountType?: AccountType): Promise<Material | null> {
+  async optimalInGroup(groupId: string | undefined, type?: MaterialType, accountType?: AccountType): Promise<Material | null> {
     const res = await this.materialRepository.getOptimalByGroup(groupId, type, accountType)
     return res
   }

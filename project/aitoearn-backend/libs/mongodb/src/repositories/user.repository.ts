@@ -209,6 +209,17 @@ export class UserRepository extends BaseRepository<User> {
     return this.model.find({ libraryId, isDelete: false }).lean({ virtuals: true }).exec()
   }
 
+  async listWithOpenEarnInfo(page: number, pageSize: number) {
+    return this.findWithPagination({
+      page,
+      pageSize,
+      filter: {
+        isDelete: false,
+        'earnInfo.status': 1, // EarnInfoStatus.OPEN
+      },
+    })
+  }
+
   async updateUserTypeById(userId: string, userType: UserType): Promise<boolean> {
     const res = await this.model.updateOne(
       { _id: userId },

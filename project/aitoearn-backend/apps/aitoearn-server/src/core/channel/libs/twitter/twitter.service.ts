@@ -17,6 +17,8 @@ import {
   XMediaUploadResponse,
   XPostDetailResponse,
   XRePostResponse,
+  XSearchResponse,
+  XTrendingResponse,
   XUserTimelineRequest,
   XUserTimelineResponse,
 } from './twitter.interfaces'
@@ -410,5 +412,39 @@ export class TwitterService {
       },
     }
     return await this.request<XDeleteTweetResponse>(url, config)
+  }
+
+  async searchTweets(
+    accessToken: string,
+    query: string,
+    maxResults: number = 100,
+  ): Promise<XSearchResponse> {
+    const url = `${this.apiBaseUrl}/2/tweets/search/recent`
+    const config: AxiosRequestConfig = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: {
+        query,
+        max_results: maxResults,
+        'tweet.fields': 'id,text,author_id,created_at,public_metrics,attachments',
+        expansions: 'author_id',
+        'user.fields': 'id,name,username,profile_image_url,verified',
+      },
+    }
+    return await this.request<XSearchResponse>(url, config, { operation: 'searchTweets' })
+  }
+
+  async getTrendingTopics(accessToken: string): Promise<XTrendingResponse> {
+    const url = `${this.apiBaseUrl}/1.1/trends/place.json`
+    const config: AxiosRequestConfig = {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+      params: { id: 1 },
+    }
+    return await this.request<XTrendingResponse>(url, config, { operation: 'getTrendingTopics' })
   }
 }

@@ -78,7 +78,7 @@ export async function urlToBlob(url: string): Promise<Blob> {
     responseType: 'arraybuffer',
   })
 
-  return new Blob([response.data], { type: response.headers['content-type'] })
+  return new Blob([response.data], { type: String(response.headers['content-type'] ?? '') })
 }
 
 export async function fileUrlToBase64(url: string): Promise<string> {
@@ -101,7 +101,7 @@ export async function fileUrlToBlob(url: string): Promise<{ blob: Blob, fileName
     })
 
     const contentType
-      = response.headers['content-type'] || 'application/octet-stream'
+      = String(response.headers['content-type'] || 'application/octet-stream')
     const blob = new Blob([response.data], { type: contentType })
     return {
       blob,
@@ -123,7 +123,7 @@ export async function getFileSizeFromUrl(url: string): Promise<number> {
   try {
     const headResponse: AxiosResponse<unknown> = await axios.head(url)
     const contentLength = Number.parseInt(
-      headResponse.headers['content-length'],
+      String(headResponse.headers['content-length'] ?? '0'),
       10,
     )
     return contentLength
@@ -157,7 +157,7 @@ export async function getRemoteFileSize(url: string): Promise<number> {
     if (!response.headers['content-length']) {
       throw new Error('Content-Length header is missing')
     }
-    const contentLength = Number.parseInt(response.headers['content-length'], 10)
+    const contentLength = Number.parseInt(String(response.headers['content-length'] ?? '0'), 10)
     return contentLength
   }
   catch (error) {

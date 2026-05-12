@@ -43,7 +43,7 @@ export class AitoearnQueueModule {
           imports: [],
           useFactory: (redis: Redis) => ({
             prefix: config.prefix,
-            connection: redis,
+            connection: redis as any,
             telemetry: createPinoTelemetry(),
           }),
           inject: [Redis],

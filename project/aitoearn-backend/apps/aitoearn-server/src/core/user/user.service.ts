@@ -347,4 +347,14 @@ export class UserService {
     }
     return result
   }
+
+  async setEarnInfo(userId: string, status: number, cycleInterval: number): Promise<boolean> {
+    const res = await this.userRepository.updateById(userId, {
+      $set: {
+        earnInfo: { status, cycleInterval },
+      },
+    })
+    this.redisService.del(`UserInfo:${userId}`)
+    return res !== null
+  }
 }

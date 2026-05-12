@@ -274,3 +274,26 @@ export interface XDeleteTweetResponse {
   data: XDeleteTweetData
   errors?: TwitterAPIError[]
 }
+
+export interface XSearchResponseMeta {
+  newest_id: string
+  oldest_id: string
+  result_count: number
+  next_token?: string
+}
+
+export interface XSearchResponse {
+  data: XPostDetailResponseData[]
+  meta: XSearchResponseMeta
+  errors?: TwitterAPIError[]
+}
+
+export interface XTrendingTopic {
+  name: string
+  description?: string
+  tweet_volume?: number
+}
+
+export interface XTrendingResponse {
+  data: XTrendingTopic[]
+}

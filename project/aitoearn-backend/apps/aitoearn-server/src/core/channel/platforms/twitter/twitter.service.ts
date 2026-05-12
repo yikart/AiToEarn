@@ -11,7 +11,7 @@ import { config } from '../../../../config'
 import { RelayAuthException } from '../../../relay/relay-auth.exception'
 import { ChannelRedisKeys } from '../../channel.constants'
 import { XMediaCategory, XMediaType } from '../../libs/twitter/twitter.enum'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../libs/twitter/twitter.interfaces'
+import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XSearchResponse, XTrendingResponse, XUserTimelineRequest } from '../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../libs/twitter/twitter.service'
 import { PlatformBaseService } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
@@ -805,5 +805,31 @@ export class TwitterService extends PlatformBaseService {
     }
 
     return null
+  }
+
+  async searchTweets(
+    accountId: string,
+    query: string,
+    maxResults: number = 100,
+  ): Promise<XSearchResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.warn(`No access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.twitterApiService.searchTweets(
+      credential.access_token,
+      query,
+      maxResults,
+    )
+  }
+
+  async getTrendingTopics(accountId: string): Promise<XTrendingResponse | null> {
+    const credential = await this.authorize(accountId)
+    if (!credential) {
+      this.logger.warn(`No access token found for accountId: ${accountId}`)
+      return null
+    }
+    return await this.twitterApiService.getTrendingTopics(credential.access_token)
   }
 }

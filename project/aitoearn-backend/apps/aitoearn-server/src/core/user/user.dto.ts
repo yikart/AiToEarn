@@ -84,3 +84,12 @@ export class SwitchUserTypeDto extends createZodDto(
   SwitchUserTypeDtoSchema,
   'SwitchUserTypeDto',
 ) {}
+
+export const SetEarnInfoDtoSchema = z.object({
+  status: z.number().int().min(0).max(1).describe('赚钱模式状态：0=关闭，1=开启'),
+  cycleInterval: z.number().int().positive().describe('循环间隔时间（分钟）'),
+})
+export class SetEarnInfoDto extends createZodDto(
+  SetEarnInfoDtoSchema,
+  'SetEarnInfoDto',
+) {}

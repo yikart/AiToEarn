@@ -1,9 +1,23 @@
-import { Injectable } from '@nestjs/common'
-import { EngagementSubTask, EngagementSubTaskRepository, EngagementTask, EngagementTaskRepository, EngagementTaskStatus } from '@yikart/channel-db'
+import { Injectable, Logger } from '@nestjs/common'
+import { EngagementSubTask, EngagementSubTaskRepository, EngagementTask, EngagementTaskRepository, EngagementTaskStatus, EngagementTaskType } from '@yikart/channel-db'
 import { CreateEngagementSubTaskDto, CreateEngagementTaskDto } from './task.dto'
+
+export interface ListAvailableEngagementTasksParams {
+  limit: number
+  taskType?: EngagementTaskType
+  platform?: string
+  excludeUserId?: string
+}
+
+export interface GetEngagementTasksByUserIdParams {
+  status?: EngagementTaskStatus
+  limit: number
+}
 
 @Injectable()
 export class EngagementRecordService {
+  private readonly logger = new Logger(EngagementRecordService.name)
+
   constructor(
     private readonly engagementTaskRepository: EngagementTaskRepository,
     private readonly engagementSubTaskRepository: EngagementSubTaskRepository,
@@ -73,5 +87,53 @@ export class EngagementRecordService {
 
   async incrementEngagementTaskCompletedSubTasks(taskId: string, count: number): Promise<EngagementTask | null> {
     return this.engagementTaskRepository.updateCompletedSubTaskCount(taskId, count)
+  }
+
+  async listAvailableEngagementTasks(params: ListAvailableEngagementTasksParams): Promise<EngagementTask[]> {
+    const { limit, taskType, platform, excludeUserId } = params
+    const filter: Record<string, unknown> = {
+      status: EngagementTaskStatus.CREATED,
+    }
+    if (taskType) {
+      filter['taskType'] = taskType
+    }
+    if (platform) {
+      filter['platform'] = platform
+    }
+    if (excludeUserId) {
+      filter['userId'] = { $ne: excludeUserId }
+    }
+    const [tasks] = await this.engagementTaskRepository.listWithPagination({
+      filter,
+      page: 1,
+      pageSize: limit,
+    })
+    return tasks
+  }
+
+  async claimEngagementTask(taskId: string, data: { accountId: string; userId: string }): Promise<EngagementTask | null> {
+    const task = await this.engagementTaskRepository.findById(taskId)
+    if (!task || task.status !== EngagementTaskStatus.CREATED) {
+      return null
+    }
+    return this.engagementTaskRepository.updateInfo(taskId, {
+      status: EngagementTaskStatus.IN_PROGRESS,
+      accountId: data.accountId,
+      userId: data.userId,
+    })
+  }
+
+  async getEngagementTasksByUserId(userId: string, params: GetEngagementTasksByUserIdParams): Promise<EngagementTask[]> {
+    const { status, limit } = params
+    const filter: Record<string, unknown> = { userId }
+    if (status) {
+      filter['status'] = status
+    }
+    const [tasks] = await this.engagementTaskRepository.listWithPagination({
+      filter,
+      page: 1,
+      pageSize: limit,
+    })
+    return tasks
   }
 }

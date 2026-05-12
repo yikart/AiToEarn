@@ -44,4 +44,8 @@ export class EngagementTaskRepository extends BaseRepository<EngagementTask> {
   async updateCompletedSubTaskCount(taskId: string, count: number): Promise<EngagementTask | null> {
     return this.engagementTaskModel.findByIdAndUpdate(taskId, { $inc: { completedSubTaskCount: count } }, { new: true }).lean({ virtuals: true })
   }
+
+  async listWithPagination(params: { page: number, pageSize: number, filter?: Record<string, unknown> }) {
+    return this.findWithPagination(params)
+  }
 }
