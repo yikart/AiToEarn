@@ -28,7 +28,7 @@ export class BackupService {
   /**
    * 创建备份
    * @param name 备份名称（可选）
-   * @returns 备份文件 bài toán
+   * @returns 备份文件路径
    */
   async createBackup(name?: string): Promise<string> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
@@ -47,7 +47,7 @@ export class BackupService {
 
   /**
    * 从备份文件恢复
-   * @param backupPath 备份 file bài toán
+   * @param backupPath 备份文件路径
    */
   async restoreFromBackup(backupPath: string): Promise<void> {
     try {
