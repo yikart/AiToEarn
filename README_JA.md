@@ -151,26 +151,193 @@ AiToEarnの最重要目標は「すべてのクリエイターが稼げるよう
 
 ```bash
 npx -y @aitoearn/openclaw-plugin-cli
-初回起動時に環境を選択し、API Keyを入力してください。
+```
+
+初回起動時に環境を選択し、API Keyを入力してください。環境とKeyが一致することを確認してください：中国版は`aitoearn.cn`から取得したAPI Keyを使用、国際版は`aitoearn.ai`から取得したAPI Keyを使用。一致しないと401エラーが発生します。
+
 設定後、OpenClaw内でAiToEarnの収益化タスクを直接受け取り実行できます。
+
 <img src="presentation/openclaw-earn-demo.png" alt="OpenClaw で AiToEarn の収益化タスクを実行" width="360">
 
-③ Claude / Cursor などのAIアシスタントで使う
-前提：API Keyを取得済み
-MCPプロトコルに対応したすべてのAIアシスタントで利用可能です。
-環境MCP URLSSE URL中国版https://aitoearn.cn/api/unified/mcphttps://aitoearn.cn/api/unified/sse国際版https://aitoearn.ai/api/unified/mcphttps://aitoearn.ai/api/unified/sse
-Claude Desktop / Cursor / その他のツールの設定例は元の内容通り維持されています（詳細は必要に応じて確認してください）。
+---
 
-④ Dockerワンクリックデプロイ
-前提：Docker がインストール済み
-Bashgit clone https://github.com/yikart/AiToEarn.git
+## ③ Claude / Cursor などのAIアシスタントで使う <a id="use-in-claude"></a>
+
+> 前提：[API Keyを取得](#get-api-key)済み
+
+AiToEarnはMCPプロトコルに対応したすべてのAIアシスタントで利用可能です。以下は人気のツールの設定方法です：
+
+API Keyの取得元に合わせてURLを選択してください。一致しないと401エラーが発生します：
+
+| 環境   | MCP URL                               | SSE URL                               |
+| ------ | ------------------------------------- | ------------------------------------- |
+| 中国版 | `https://aitoearn.cn/api/unified/mcp` | `https://aitoearn.cn/api/unified/sse` |
+| 国際版 | `https://aitoearn.ai/api/unified/mcp` | `https://aitoearn.ai/api/unified/sse` |
+
+<details open>
+<summary><b>Claude Desktop</b></summary>
+
+`claude_desktop_config.json`を見つけ編集し、以下を追加：
+
+```json
+{
+  "mcpServers": {
+    "aitoearn": {
+      "type": "http",
+      "url": "https://aitoearn.ai/api/unified/mcp",
+      "headers": {
+        "x-api-key": "あなたのAPI-Key"
+      }
+    }
+  }
+}
+```
+
+</details>
+
+<details>
+<summary><b>Cursor</b></summary>
+
+CursorのMCP設定で以下を追加：
+
+```
+MCP URL: https://aitoearn.ai/api/unified/mcp
+認証ヘッダー: x-api-key: あなたのAPI-Key
+```
+
+</details>
+
+<details>
+<summary><b>その他のAIアシスタント（一般設定）</b></summary>
+
+MCPプロトコル対応のツールなら、2つの情報だけでOK：
+
+| 設定項目         | 値                                    |
+| ---------------- | ------------------------------------- |
+| **MCP URL**      | `https://aitoearn.ai/api/unified/mcp` |
+| **認証ヘッダー** | `x-api-key: あなたのAPI-Key`          |
+
+SSE接続もサポート：`https://aitoearn.ai/api/unified/sse`
+
+</details>
+
+> 💡 自己デプロイの場合は、`aitoearn.ai`をご自身のアドレス（例：`localhost:8080`）に置き換えてください。
+
+---
+
+## ④ Dockerワンクリックデプロイ <a id="use-docker"></a>
+
+> 前提：[Docker](https://docs.docker.com/get-docker/)がインストール済み
+
+自分のサーバーでAiToEarnを運用したいチーム向け。3つのコマンドで完了、データベースの手動インストール不要：
+
+```bash
+git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
 docker compose up -d
-起動後、http://localhost:8080 にアクセスして利用可能です。
-Relay設定（強く推奨）など、詳細は元の内容を維持しています。
+```
 
-⑤ ソースコードから開発
-開発モードでの起動手順（バックエンド・フロントエンド・Electron）は元の内容を維持しています。
+起動後、**[http://localhost:8080](http://localhost:8080)**にアクセスして利用可能です。
+
+#### Relay設定（強く推奨）
+
+> **Relayとは？** コンテンツ公開にはソーシャルメディアアカウント（TikTok、Instagram、YouTubeなど）へのログインが必要ですが、これらのプラットフォームのOAuthログインには開発者資格情報が必要です。Relayを設定すると、公式aitoearn.aiの資格情報を直接利用できます — **各プラットフォームで開発者登録する必要はありません**。
+
+`docker-compose.yml`の`aitoearn-server`サービスに以下を追加（[API Keyの取得方法](#get-api-key)参照）：
+
+`RELAY_API_KEY`の取得元に合わせて`RELAY_SERVER_URL`を選択：中国版Keyは`https://aitoearn.cn/api`、国際版Keyは`https://aitoearn.ai/api`を使用。一致しないと401エラーが発生します。
+
+```yaml
+RELAY_SERVER_URL: https://aitoearn.ai/api
+RELAY_API_KEY: あなたのAPI-Key
+RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+```
+
+その後再起動：`docker compose restart aitoearn-server`
+
+> 📖 完全なデプロイガイド（本番環境設定、AIサービス、OAuth、ストレージなど）：[DOCKER_DEPLOYMENT_CN.md](DOCKER_DEPLOYMENT_CN.md)。
+
+---
+
+## ⑤ ソースコードから開発 <a id="use-source"></a>
+
+<details>
+<summary>🧪 バックエンド・フロントエンドを手動で実行（開発モード）</summary>
+
+ローカル開発とデバッグ向け。MongoDB/RedisにはDockerを使用するか、独自のサービスを指定できます。
+
+#### 1. バックエンドサービスの起動
+
+```bash
+cd project/aitoearn-backend
+pnpm install
+# ローカル開発用の設定ファイルをコピー
+cp apps/aitoearn-ai/config/config.js apps/aitoearn-ai/config/local.config.js
+cp apps/aitoearn-server/config/config.js apps/aitoearn-server/config/local.config.js
+pnpm nx serve aitoearn-ai
+# 別のターミナルで
+pnpm nx serve aitoearn-server
+```
+
+#### 2. フロントエンド`aitoearn-web`の起動
+
+```bash
+cd aitoearn-web
+pnpm install
+pnpm run dev
+```
+
+</details>
+
+<details>
+<summary>🖥️ Electronデスクトッププロジェクトの起動</summary>
+
+```bash
+# リポジトリのクローン
+git clone https://github.com/yikart/AttAiToEarn.git
+
+# ディレクトリに入る
+cd AttAiToEarn
+
+# 依存関係のインストール
+npm install
+
+# sqliteのコンパイル（better-sqlite3はnode-gypとローカルPythonが必要）
+npm run rebuild
+
+# 開発開始
+npm run dev
+```
+
+ElectronプロジェクトはAiToEarnのデスクトップクライアントを提供します。
+
+</details>
+
+---
+
+## 貢献ガイド
+
+詳細は[貢献ガイド](./CONTRIBUTING.md)をご覧ください。
+
+## お問い合わせ
+
+使用中に問題が発生した場合、質問、または予期しない動作の場合は、まず[GitHub Issues](https://github.com/yikart/AiToEarn/issues)を作成してください。統一して追跡・対応します。
+
+- Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- WeChat：QRコードをスキャン
+
+<img src="presentation/wechat.jpg" alt="WeChat QRコード" width="200">
+
+## 推奨プロジェクト
+
+- [MuseTalk](https://github.com/TMElyralab/MuseTalk)
+- [video_spider](https://github.com/5ime/video_spider)
+- [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
+- [facefusion](https://github.com/facefusion/facefusion)
+- [NarratoAI](https://github.com/linyqh/NarratoAI)
+- [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
+
+Aitoearn — あなたのAIコンテンツマーケティングパートナー。
 
 貢献ガイド
 詳細は CONTRIBUTING.md をご覧ください。
@@ -190,6 +357,8 @@ facefusion
 NarratoAI
 MoneyPrinterTurbo
 
-
 Aitoearn — あなたのAIコンテンツマーケティングパートナー。
+
+```
+
 ```
