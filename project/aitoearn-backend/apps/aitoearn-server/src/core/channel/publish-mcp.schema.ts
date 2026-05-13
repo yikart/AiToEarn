@@ -75,7 +75,7 @@ export type PublishTaskOption = z.infer<typeof PublishTaskOptionSchema>
 const basePublishingFields = {
   accountId: z.string().describe('account id'),
   userTaskId: z.string().optional().describe('user task id'),
-  publishTime: z.string().datetime().optional().describe('publish time'),
+  publishTime: z.string().optional().describe('publish time (ISO 8601 format, e.g. 2025-01-01T00:00:00Z)'),
 }
 
 // Default schema for platforms without specific options
