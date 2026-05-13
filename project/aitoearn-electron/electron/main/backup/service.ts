@@ -28,11 +28,12 @@ export class BackupService {
   /**
    * 创建备份
    * @param name 备份名称（可选）
-   * @returns 备份文件路径
+   * @returns 备份文件 bài toán
    */
   async createBackup(name?: string): Promise<string> {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const fileName = `${name ? name + '_' : ''}${timestamp}.sql`;
+    const safeName = name ? path.basename(name) : '';
+    const fileName = `${safeName ? safeName + '_' : ''}${timestamp}.sql`;
     const backupPath = path.join(this.backupDir, fileName);
 
     try {
@@ -46,7 +47,7 @@ export class BackupService {
 
   /**
    * 从备份文件恢复
-   * @param backupPath 备份文件路径
+   * @param backupPath 备份 file bài toán
    */
   async restoreFromBackup(backupPath: string): Promise<void> {
     try {
