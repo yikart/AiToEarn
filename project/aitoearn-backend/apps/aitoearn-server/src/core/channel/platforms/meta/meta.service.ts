@@ -88,10 +88,12 @@ export class MetaService {
       params.append('config_id', oauthConfig.configId)
     }
     const pkceEnabled = metaOAuth2ConfigMap[platform].pkce
+    let codeVerifier = ''
+    let codeChallenge = ''
     if (pkceEnabled) {
       params.append('code_challenge_method', 'S256')
-      const codeVerifier = randomBytes(64).toString('hex')
-      const codeChallenge = createHash('sha256')
+      codeVerifier = randomBytes(64).toString('hex')
+      codeChallenge = createHash('sha256')
         .update(codeVerifier)
         .digest('base64url')
       params.append('code_challenge', codeChallenge)
@@ -107,7 +109,8 @@ export class MetaService {
         state,
         status: 0,
         userId,
-        pkce: false,
+        pkce: pkceEnabled,
+        codeVerifier,
         platform,
         spaceId,
         callbackUrl,
@@ -699,9 +702,10 @@ export class MetaService {
         authTaskInfo.platform,
       )
       if (!userProfile) {
+        this.logger.error(`Failed to fetch user profile for platform: ${authTaskInfo.platform}`)
         return {
           status: 0,
-          message: 'get user profile failed',
+          message: '获取用户信息失败 (Failed to fetch user profile)',
         }
       }
       userProfile['groupId'] = authTaskInfo.spaceId
@@ -721,7 +725,7 @@ export class MetaService {
           return {
             status: 0,
             message:
-              'No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.',
+              '未找到相关的 Facebook 公共主页。请确保您的账户下至少有一个公共主页，并且已授予必要的权限。 (No Facebook pages found. Please ensure you have at least one Page and granted permissions.)',
           }
         }
         if (pageAccounts.length > 0) {
