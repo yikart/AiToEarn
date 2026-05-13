@@ -46,9 +46,11 @@ jobs:
 
       - name: Generate version
         id: version
+        env:
+          INPUT_VERSION: ${{ github.event.inputs.version }}
         run: |
-          if [ -n "${{ github.event.inputs.version }}" ]; then
-            VERSION="${{ github.event.inputs.version }}"
+          if [ -n "$INPUT_VERSION" ]; then
+            VERSION="$INPUT_VERSION"
           else
             VERSION=$(date +%Y%m%d)-$(git rev-parse --short HEAD)
           fi
@@ -56,12 +58,16 @@ jobs:
 
       - name: Determine push latest
         id: push-latest
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          GITHUB_REF: ${{ github.ref }}
+          INPUT_PUSH_LATEST: ${{ github.event.inputs.push_latest }}
         run: |
           PUSH_LATEST=false
-          if [ "${{ github.event_name }}" = "push" ] && [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          if [ "$EVENT_NAME" = "push" ] && [ "$GITHUB_REF" = "refs/heads/main" ]; then
             PUSH_LATEST=true
             echo "📌 Main branch push: Will push latest tag"
-          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ github.event.inputs.push_latest }}" = "true" ]; then
+          elif [ "$EVENT_NAME" = "workflow_dispatch" ] && [ "$INPUT_PUSH_LATEST" = "true" ]; then
             PUSH_LATEST=true
             echo "📌 Manual trigger with push_latest: Will push latest tag"
           fi

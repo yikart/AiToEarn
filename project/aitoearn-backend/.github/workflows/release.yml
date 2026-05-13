@@ -43,32 +43,44 @@ jobs:
           cat dist/apps/${{ env.APP_NAME }}/package.json
 
       - name: Create release package
+        env:
+          APP_NAME: ${{ env.APP_NAME }}
+          RELEASE_TAG: ${{ env.RELEASE_TAG }}
         run: |
-          cp .npmrc dist/apps/${{ env.APP_NAME }}/
-          tar -czf ${{ env.APP_NAME }}-${{ env.RELEASE_TAG }}.tar.gz -C dist/apps/${{ env.APP_NAME }} .
-          echo "Package created: ${{ env.APP_NAME }}-${{ env.RELEASE_TAG }}.tar.gz"
-          ls -la ${{ env.APP_NAME }}-*.tar.gz
+          cp .npmrc "dist/apps/$APP_NAME/"
+          tar -czf "$APP_NAME-$RELEASE_TAG.tar.gz" -C "dist/apps/$APP_NAME" .
+          echo "Package created: $APP_NAME-$RELEASE_TAG.tar.gz"
+          ls -la "$APP_NAME-"*.tar.gz
 
       - name: Generate Release Notes
         id: generate_release_notes
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          RELEASE_TAG: ${{ env.RELEASE_TAG }}
+          APP_NAME: ${{ env.APP_NAME }}
         run: |
-          if [ "${{ github.event_name }}" = "push" ]; then
-            PREVIOUS_TAG=$(git describe --tags --abbrev=0 `git rev-list --tags --skip=1  --max-count=1`)
+          if [ "$EVENT_NAME" = "push" ]; then
+            PREVIOUS_TAG=$(git describe --tags --abbrev=0 "$(git rev-list --tags --skip=1 --max-count=1)")
             echo "Previous tag: $PREVIOUS_TAG"
-            LOG=$(git log $PREVIOUS_TAG..${{ env.RELEASE_TAG }} --pretty=format:"* %s (%h)")
+            LOG=$(git log "$PREVIOUS_TAG..$RELEASE_TAG" --pretty=format:"* %s (%h)")
           else
-            LOG="Manual release triggered for ${{ env.APP_NAME }}"
+            LOG="Manual release triggered for $APP_NAME"
           fi
-          echo "CHANGELOG<<EOF" >> $GITHUB_ENV
-          echo -e "## What's Changed\n\n$LOG" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          {
+            echo "CHANGELOG<<RELEASE_NOTES_EOF_$GITHUB_RUN_ID"
+            printf '## What'\''s Changed\n\n%s\n' "$LOG"
+            echo "RELEASE_NOTES_EOF_$GITHUB_RUN_ID"
+          } >> "$GITHUB_ENV"
 
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RELEASE_TAG: ${{ env.RELEASE_TAG }}
+          APP_NAME: ${{ env.APP_NAME }}
+          CHANGELOG: ${{ env.CHANGELOG }}
         run: |
-          gh release create ${{ env.RELEASE_TAG }} \
-            --title "${{ env.APP_NAME }} ${{ env.RELEASE_TAG }}" \
-            --notes "${{ env.CHANGELOG }}" \
-            ${{ env.APP_NAME }}-${{ env.RELEASE_TAG }}.tar.gz
+          gh release create "$RELEASE_TAG" \
+            --title "$APP_NAME $RELEASE_TAG" \
+            --notes "$CHANGELOG" \
+            "$APP_NAME-$RELEASE_TAG.tar.gz"
