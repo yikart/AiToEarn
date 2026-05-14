@@ -2,16 +2,16 @@ export const FacebookOAuth2Config = {
   pkce: false,
   shortLived: true,
   apiBaseUrl: '\''https://graph.facebook.com/'\'',
-  authURL: '\''https://www.facebook.com/v20.0/dialog/oauth'\'',
-  accessTokenURL: '\''https://graph.facebook.com/v20.0/oauth/access_token'\'',
+  authURL: '\''https://www.facebook.com/v24.0/dialog/oauth'\'',
+  accessTokenURL: '\''https://graph.facebook.com/v24.0/oauth/access_token'\'',
   longLivedAccessTokenURL:
-        '\''https://graph.facebook.com/v20.0/oauth/access_token'\'',
+        '\''https://graph.facebook.com/v24.0/oauth/access_token'\'',
   refreshTokenURL:
-        '\''https://graph.facebook.com/v20.0/oauth/access_token'\'',
+        '\''https://graph.facebook.com/v24.0/oauth/access_token'\'',
   // see https://developers.facebook.com/docs/graph-api/overview/#me
   userProfileURL:
         '\''https://graph.facebook.com/me?fields=id,first_name,last_name,middle_name,name,name_format,picture,short_name'\'',
-  pageAccountURL: '\''https://graph.facebook.com/v20.0/me/accounts'\'',
+  pageAccountURL: '\''https://graph.facebook.com/v24.0/me/accounts'\'',
 
   requestAccessTokenMethod: '\''POST'\'',
   defaultScopes: [

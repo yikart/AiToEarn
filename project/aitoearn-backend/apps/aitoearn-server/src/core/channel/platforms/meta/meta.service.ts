@@ -1,27 +1,27 @@
-import { createHash, randomBytes } from 'node:crypto'
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { createHash, randomBytes } from '\''node:crypto'\''
+import { Inject, Injectable, Logger } from '\''@nestjs/common'\''
 import {
   AccountStatus,
   AccountType,
   NewAccount,
-} from '@yikart/aitoearn-server-client'
-import { Account, OAuth2CredentialRepository } from '@yikart/channel-db'
-import { AppException, getErrorMessage, getErrorStack, ResponseCode } from '@yikart/common'
-import { RedisService } from '@yikart/redis'
-import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from 'axios'
-import { getCurrentTimestamp } from '../../../../common/utils/time.util'
-import { config } from '../../../../config'
-import { RelayAuthException } from '../../../relay/relay-auth.exception'
-import { ChannelRedisKeys } from '../../channel.constants'
+} from '\''@yikart/aitoearn-server-client'\''
+import { Account, OAuth2CredentialRepository } from '\''@yikart/channel-db'\''
+import { AppException, getErrorMessage, getErrorStack, ResponseCode } from '\''@yikart/common'\''
+import { RedisService } from '\''@yikart/redis'\''
+import axios, { AxiosRequestConfig, AxiosResponse, isAxiosError } from '\''axios'\''
+import { getCurrentTimestamp } from '\''../../../../common/utils/time.util'\''
+import { config } from '\''../../../../config'\''
+import { RelayAuthException } from '\''../../../relay/relay-auth.exception'\''
+import { ChannelRedisKeys } from '\''../../channel.constants'\''
 import {
   FacebookPageDetailRequest,
   FacebookPageDetailResponse,
-} from '../../libs/facebook/facebook.interfaces'
-import { ChannelAccountService } from '../channel-account.service'
+} from '\''../../libs/facebook/facebook.interfaces'\''
+import { ChannelAccountService } from '\''../channel-account.service'\''
 import {
   META_TIME_CONSTANTS,
   metaOAuth2ConfigMap,
-} from './constants'
+} from '\''./constants'\''
 import {
   FacebookAccountResponse,
   FacebookPage,
@@ -31,11 +31,11 @@ import {
   MetaUserOAuthCredential,
   OAuth2Credential,
   SelectFacebookPagesResponse,
-} from './meta.interfaces'
+} from '\''./meta.interfaces'\''
 
 @Injectable()
 export class MetaService {
-  private prefix = 'meta'
+  private prefix = '\''meta'\''
   private readonly redisService: RedisService
   private readonly channelAccountService: ChannelAccountService
   private readonly logger = new Logger(MetaService.name)
@@ -55,12 +55,12 @@ export class MetaService {
     userId: string,
     platform: string,
     oAuth2Scopes?: string[],
-    spaceId = '',
+    spaceId = '\'''\'',
     callbackUrl?: string,
-    callbackMethod?: 'GET' | 'POST',
+    callbackMethod?: '\''GET'\'' | '\''POST'\'',
   ) {
     this.logger.log(
-      `Generating authorize URL for userId: ${userId}, platform: ${platform}}`,
+      ,
     )
     const oauthConfig = config.channel.oauth[platform as keyof typeof config.channel.oauth]
     if (!oauthConfig.clientId && config.relay) {
@@ -70,39 +70,39 @@ export class MetaService {
       = oAuth2Scopes
         || oauthConfig.scopes
         || metaOAuth2ConfigMap[platform].defaultScopes
-    const state = randomBytes(32).toString('hex')
+    const state = randomBytes(32).toString('\''hex'\'')
     const scopeSeparator = metaOAuth2ConfigMap[platform].scopesSeparator
     const params = new URLSearchParams({
       client_id: oauthConfig.clientId,
       redirect_uri: oauthConfig.redirectUri,
-      response_type: 'code',
+      response_type: '\''code'\'',
       state,
     })
     if (scopes.length > 1) {
-      params.append('scope', scopes.join(scopeSeparator))
+      params.append('\''scope'\'', scopes.join(scopeSeparator))
     }
     else {
-      params.append('scope', scopes[0])
+      params.append('\''scope'\'', scopes[0])
     }
     if (oauthConfig.configId) {
-      params.append('config_id', oauthConfig.configId)
+      params.append('\''config_id'\'', oauthConfig.configId)
     }
     const pkceEnabled = metaOAuth2ConfigMap[platform].pkce
     if (pkceEnabled) {
-      params.append('code_challenge_method', 'S256')
-      const codeVerifier = randomBytes(64).toString('hex')
-      const codeChallenge = createHash('sha256')
+      params.append('\''code_challenge_method'\'', '\''S256'\'')
+      const codeVerifier = randomBytes(64).toString('\''hex'\'')
+      const codeChallenge = createHash('\''sha256'\'')
         .update(codeVerifier)
-        .digest('base64url')
-      params.append('code_challenge', codeChallenge)
+        .digest('\''base64url'\'')
+      params.append('\''code_challenge'\'', codeChallenge)
     }
 
     const authorizeURL = new URL(metaOAuth2ConfigMap[platform].authURL)
     authorizeURL.search = params.toString()
-    this.logger.debug(`Generated meta auth URL: ${authorizeURL.toString()}`)
+    this.logger.debug()
 
     const success = await this.redisService.setJson(
-      ChannelRedisKeys.authTask('meta', state),
+      ChannelRedisKeys.authTask('\''meta'\'', state),
       {
         state,
         status: 0,
@@ -124,7 +124,7 @@ export class MetaService {
    * 生成不需用户授权URL（Instagram）
    */
   async getNoUserAuthUrl(materialGroupId: string) {
-    const platform = 'instagram'
+    const platform = '\''instagram'\''
     const oauthConfig = config.channel.oauth[platform]
     const scopes = oauthConfig.scopes || metaOAuth2ConfigMap[platform].defaultScopes
     const scopeSeparator = metaOAuth2ConfigMap[platform].scopesSeparator
@@ -132,21 +132,21 @@ export class MetaService {
     const params = new URLSearchParams({
       client_id: oauthConfig.clientId,
       redirect_uri: oauthConfig.promotionRedirectUri,
-      response_type: 'code',
+      response_type: '\''code'\'',
       state: materialGroupId,
     })
 
     if (scopes.length > 1) {
-      params.append('scope', scopes.join(scopeSeparator))
+      params.append('\''scope'\'', scopes.join(scopeSeparator))
     }
     else {
-      params.append('scope', scopes[0])
+      params.append('\''scope'\'', scopes[0])
     }
 
     const authorizeURL = new URL(metaOAuth2ConfigMap[platform].authURL)
     authorizeURL.search = params.toString()
 
-    this.logger.debug(`Generated Instagram no-user auth URL: ${authorizeURL.toString()}`)
+    this.logger.debug()
 
     return { url: authorizeURL.toString(), state: materialGroupId }
   }
@@ -155,10 +155,10 @@ export class MetaService {
    * 处理Instagram授权重定向 - 创建账号并重定向到指定URL
    */
   async handleAuthRedirect(code: string, state: string): Promise<{ redirectUrl: string }> {
-    const platform = 'instagram'
+    const platform = '\''instagram'\''
     this.logger.log({
-      path: 'meta handleAuthRedirect --- 0 start',
-      data: { code: `${code.substring(0, 20)}...`, state },
+      path: '\''meta handleAuthRedirect --- 0 start'\'',
+      data: { code: , state },
     })
 
     // 获取访问令牌 - 使用promotionRedirectUri
@@ -168,22 +168,22 @@ export class MetaService {
     }
     catch (error) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- error getting credential',
+        path: '\''meta handleAuthRedirect --- error getting credential'\'',
         error: (error as Error).message,
         stack: (error as Error).stack,
       })
-      throw new AppException(ResponseCode.ChannelAccessTokenFailed, { step: 'getOAuthCredential', error: (error as Error).message })
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed, { step: '\''getOAuthCredential'\'', error: (error as Error).message })
     }
 
     if (!credential) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- credential is null',
+        path: '\''meta handleAuthRedirect --- credential is null'\'',
       })
-      throw new AppException(ResponseCode.ChannelAccessTokenFailed, { step: 'getOAuthCredential', error: 'credential is null' })
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed, { step: '\''getOAuthCredential'\'', error: '\''credential is null'\'' })
     }
 
     this.logger.log({
-      path: 'meta handleAuthRedirect --- 1 got credential',
+      path: '\''meta handleAuthRedirect --- 1 got credential'\'',
       data: { hasAccessToken: !!credential.access_token },
     })
 
@@ -194,33 +194,33 @@ export class MetaService {
     }
     catch (error) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- error getting user profile',
+        path: '\''meta handleAuthRedirect --- error getting user profile'\'',
         error: (error as Error).message,
         stack: (error as Error).stack,
       })
-      throw new AppException(ResponseCode.ChannelAccountInfoFailed, { step: 'getUserProfile', error: (error as Error).message })
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed, { step: '\''getUserProfile'\'', error: (error as Error).message })
     }
 
     if (!userProfile) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- userProfile is null',
+        path: '\''meta handleAuthRedirect --- userProfile is null'\'',
       })
-      throw new AppException(ResponseCode.ChannelAccountInfoFailed, { step: 'getUserProfile', error: 'userProfile is null' })
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed, { step: '\''getUserProfile'\'', error: '\''userProfile is null'\'' })
     }
 
     this.logger.log({
-      path: 'meta handleAuthRedirect --- 2 got userProfile',
+      path: '\''meta handleAuthRedirect --- 2 got userProfile'\'',
       data: { id: userProfile.id, username: userProfile.username },
     })
 
     // 创建账号数据（无用户授权场景，userId为空）
     const accountType = platform as AccountType
     const newAccountData = new NewAccount({
-      userId: '',
+      userId: '\'''\'',
       type: accountType,
       uid: userProfile.id || userProfile.sub,
       account: userProfile.username || userProfile.name,
-      avatar: userProfile.profile_picture_url || '',
+      avatar: userProfile.profile_picture_url || '\'''\'',
       nickname: userProfile.username || userProfile.name,
       lastStatsTime: new Date(),
       loginTime: new Date(),
@@ -239,23 +239,23 @@ export class MetaService {
     }
     catch (error) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- error creating account',
+        path: '\''meta handleAuthRedirect --- error creating account'\'',
         error: (error as Error).message,
         stack: (error as Error).stack,
       })
-      throw new AppException(ResponseCode.AccountCreateFailed, { step: 'createAccount', error: (error as Error).message })
+      throw new AppException(ResponseCode.AccountCreateFailed, { step: '\''createAccount'\'', error: (error as Error).message })
     }
 
     this.logger.log({
-      path: 'meta handleAuthRedirect --- 3 created account',
+      path: '\''meta handleAuthRedirect --- 3 created account'\'',
       data: { accountId: accountInfo?.id },
     })
 
     if (!accountInfo) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- accountInfo is null',
+        path: '\''meta handleAuthRedirect --- accountInfo is null'\'',
       })
-      throw new AppException(ResponseCode.AccountCreateFailed, { step: 'createAccount', error: 'accountInfo is null' })
+      throw new AppException(ResponseCode.AccountCreateFailed, { step: '\''createAccount'\'', error: '\''accountInfo is null'\'' })
     }
 
     // 保存访问令牌
@@ -269,7 +269,7 @@ export class MetaService {
     }
     catch (error) {
       this.logger.error({
-        path: 'meta handleAuthRedirect --- error saving credential',
+        path: '\''meta handleAuthRedirect --- error saving credential'\'',
         error: (error as Error).message,
         stack: (error as Error).stack,
       })
@@ -278,10 +278,10 @@ export class MetaService {
 
     // 构建重定向URL
     const baseUrl = config.channel.oauth[platform as keyof typeof config.channel.oauth].promotionBaseUrl
-    const redirectUrl = `${baseUrl}?accountId=${accountInfo.id}&materialGroupId=${state}&platform=${platform}`
+    const redirectUrl = 
 
     this.logger.log({
-      path: 'meta handleAuthRedirect --- 4 success',
+      path: '\''meta handleAuthRedirect --- 4 success'\'',
       data: { redirectUrl },
     })
 
@@ -293,7 +293,7 @@ export class MetaService {
     platform: string,
   ): Promise<OAuth2Credential | null> {
     const accessTokenURL = metaOAuth2ConfigMap[platform].accessTokenURL
-    const longLivedAccessTokenURL = metaOAuth2ConfigMap[platform].longLivedAccessTokenURL || ''
+    const longLivedAccessTokenURL = metaOAuth2ConfigMap[platform].longLivedAccessTokenURL || '\'''\''
     const oauthPlatformConfig = config.channel.oauth[platform as keyof typeof config.channel.oauth]
     const redirectURI = oauthPlatformConfig.promotionRedirectUri
     const clientId = oauthPlatformConfig.clientId
@@ -303,21 +303,21 @@ export class MetaService {
     const params = new URLSearchParams({
       client_id: clientId,
       client_secret: clientSecret,
-      grant_type: 'authorization_code',
+      grant_type: '\''authorization_code'\'',
       code,
       redirect_uri: redirectURI,
     })
 
-    this.logger.log(`Requesting access token with params: ${params.toString()}`)
+    this.logger.log()
 
     const reqConfig: AxiosRequestConfig = {
       method: requestAccessTokenMethod,
       url: accessTokenURL,
     }
 
-    if (requestAccessTokenMethod === 'POST') {
+    if (requestAccessTokenMethod === '\''POST'\'') {
       reqConfig.headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        '\''Content-Type'\'': '\''application/x-www-form-urlencoded'\'',
       }
       reqConfig.data = params.toString()
     }
@@ -327,7 +327,7 @@ export class MetaService {
 
     try {
       const response: AxiosResponse<OAuth2Credential> = await axios.request(reqConfig)
-      this.logger.log(`Access token response: ${JSON.stringify(response.data)}`)
+      this.logger.log()
 
       if (longLivedAccessTokenURL) {
         const llAccessTokenReqParamsMap = metaOAuth2ConfigMap[platform].longLivedParamsMap
@@ -335,9 +335,9 @@ export class MetaService {
           client_id: clientId,
           client_secret: clientSecret,
         }
-        const accessTokenKey = llAccessTokenReqParamsMap?.['access_token'] || 'access_token'
+        const accessTokenKey = llAccessTokenReqParamsMap?.['\''access_token'\''] || '\''access_token'\''
         lParams[accessTokenKey] = response.data.access_token
-        lParams['grant_type'] = metaOAuth2ConfigMap[platform].longLivedGrantType || 'ig_exchange_token'
+        lParams['\''grant_type'\''] = metaOAuth2ConfigMap[platform].longLivedGrantType || '\''ig_exchange_token'\''
 
         const longLivedAccessTokenReqParams = new URLSearchParams(lParams)
         const llTokenResponse: AxiosResponse<OAuth2Credential> = await axios.get(
@@ -356,20 +356,20 @@ export class MetaService {
     catch (error) {
       if (isAxiosError(error) && error.response) {
         this.logger.error(
-          `Error getting access token: ${error.response.status} - ${JSON.stringify(error.response.data)}`,
+          ,
         )
       }
-      this.logger.error(`Failed to get access token: ${getErrorMessage(error)}`)
+      this.logger.error()
       return null
     }
   }
 
   async getOAuth2TaskInfo(state: string) {
     const result = await this.redisService.getJson<MetaOAuth2TaskStatus>(
-      ChannelRedisKeys.authTask('meta', state),
+      ChannelRedisKeys.authTask('\''meta'\'', state),
     )
     if (!result) {
-      this.logger.warn(`OAuth2 task not found for state: ${state}`)
+      this.logger.warn()
       return {
         state,
         status: 0,
@@ -386,7 +386,7 @@ export class MetaService {
     const pkceEnabled = metaOAuth2ConfigMap[platform].pkce
     const accessTokenURL = metaOAuth2ConfigMap[platform].accessTokenURL
     const longLivedAccessTokenURL
-      = metaOAuth2ConfigMap[platform].longLivedAccessTokenURL || ''
+      = metaOAuth2ConfigMap[platform].longLivedAccessTokenURL || '\'''\''
     const oauthPlatformConfig = config.channel.oauth[platform as keyof typeof config.channel.oauth]
     const redirectURI = oauthPlatformConfig.redirectUri
     const clientId = oauthPlatformConfig.clientId
@@ -396,27 +396,27 @@ export class MetaService {
 
     const params = new URLSearchParams({
       client_id: clientId,
-      grant_type: 'authorization_code',
+      grant_type: '\''authorization_code'\'',
       code,
       redirect_uri: redirectURI,
     })
     if (pkceEnabled) {
-      params.append('code_verifier', info.codeVerifier || '')
+      params.append('\''code_verifier'\'', info.codeVerifier || '\'''\'')
     }
     else {
-      params.append('client_secret', clientSecret)
+      params.append('\''client_secret'\'', clientSecret)
     }
     this.logger.log(
-      `Requesting access token with params: ${params.toString()}`,
+      ,
     )
     const reqConfig: AxiosRequestConfig = {
       method: requestAccessTokenMethod,
       url: accessTokenURL,
     }
 
-    if (requestAccessTokenMethod === 'POST') {
+    if (requestAccessTokenMethod === '\''POST'\'') {
       reqConfig.headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
+        '\''Content-Type'\'': '\''application/x-www-form-urlencoded'\'',
       }
       reqConfig.data = params.toString()
     }
@@ -424,12 +424,12 @@ export class MetaService {
       reqConfig.params = params
     }
     this.logger.log(
-      `Requesting access token with config: ${JSON.stringify(reqConfig)}`,
+      ,
     )
     const response: AxiosResponse<OAuth2Credential>
       = await axios.request(reqConfig)
 
-    this.logger.log(`Access token response: ${JSON.stringify(response.data)}`)
+    this.logger.log()
     if (longLivedAccessTokenURL) {
       const llAccessTokenReqParamsMap
         = metaOAuth2ConfigMap[platform].longLivedParamsMap
@@ -438,10 +438,10 @@ export class MetaService {
         client_secret: clientSecret,
       }
       const accessTokenKey
-        = llAccessTokenReqParamsMap?.['access_token'] || 'access_token'
-      lParams[accessTokenKey] = response.data['access_token']
-      lParams['grant_type']
-        = metaOAuth2ConfigMap[platform].longLivedGrantType || 'fb_exchange_token'
+        = llAccessTokenReqParamsMap?.['\''access_token'\''] || '\''access_token'\''
+      lParams[accessTokenKey] = response.data['\''access_token'\'']
+      lParams['\''grant_type'\'']
+        = metaOAuth2ConfigMap[platform].longLivedGrantType || '\''fb_exchange_token'\''
 
       const longLivedAccessTokenReqParams = new URLSearchParams(lParams)
       const llTokenResponse: AxiosResponse<OAuth2Credential> = await axios.get(
@@ -468,10 +468,10 @@ export class MetaService {
     query: FacebookPageDetailRequest,
   ): Promise<FacebookPageDetailResponse> {
     try {
-      const url = `${metaOAuth2ConfigMap['facebook'].apiBaseUrl}/${pageId}`
+      const url = 
       const config: AxiosRequestConfig = {
         headers: {
-          Authorization: `Bearer ${pageAccessToken}`,
+          Authorization: ,
         },
         params: query,
       }
@@ -482,11 +482,11 @@ export class MetaService {
     catch (error) {
       if (isAxiosError(error) && error.response) {
         this.logger.error(
-          `Error fetching page details pageId: ${pageId}, req: ${JSON.stringify(query)}: ${error.response.status} - ${JSON.stringify(error.response.data)}`,
+          ,
         )
       }
       throw new Error(
-        `Error fetching page details, pageId: ${pageId}, req: ${JSON.stringify(query)}`,
+        ,
       )
     }
   }
@@ -499,7 +499,7 @@ export class MetaService {
     const url = new URL(userProfileURL)
     const config = {
       headers: {
-        Authorization: `Bearer ${accessToken}`,
+        Authorization: ,
       },
     }
     const response: AxiosResponse<Record<string, any>> = await axios.get(
@@ -510,7 +510,7 @@ export class MetaService {
   }
 
   async getFacebookPageList(userId: string): Promise<FacebookPage[]> {
-    const key = ChannelRedisKeys.userPageList('facebook', userId)
+    const key = ChannelRedisKeys.userPageList('\''facebook'\'', userId)
     const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (pages) {
       return pages
@@ -524,14 +524,14 @@ export class MetaService {
   ): Promise<SelectFacebookPagesResponse> {
     const result: SelectFacebookPagesResponse = {
       success: false,
-      message: '',
+      message: '\'''\'',
       selectedPageIds: [],
     }
-    const key = ChannelRedisKeys.userPageList('facebook', userId)
+    const key = ChannelRedisKeys.userPageList('\''facebook'\'', userId)
     const pages = await this.redisService.getJson<FacebookPage[]>(key)
     if (!pages || pages.length === 0) {
-      this.logger.warn(`No Facebook pages found for userId: ${userId}`)
-      result.message = 'No Facebook pages found for the user.'
+      this.logger.warn()
+      result.message = '\''No Facebook pages found for the user.'\''
       return result
     }
     const pageMap = new Map<string, FacebookPage>()
@@ -543,13 +543,13 @@ export class MetaService {
       const page = pageMap.get(pageId)
       if (!page) {
         this.logger.warn(
-          `Page ID ${pageId} not found in user's Facebook pages`,
+          ,
         )
-        result.message = `Page ID ${pageId} not found in user's Facebook pages`
+        result.message = 
         return result
       }
       const pageCredentialKey = ChannelRedisKeys.pageAccessToken(
-        'facebook',
+        '\''facebook'\'',
         pageId,
       )
       const pageCredential
@@ -557,7 +557,7 @@ export class MetaService {
           pageCredentialKey,
         )
       if (!pageCredential) {
-        result.message = `Page access token not found for userId: ${userId}, pageId: ${pageId}`
+        result.message = 
         return result
       }
       const accountInfo = await this.createAccount(
@@ -573,33 +573,34 @@ export class MetaService {
 
       if (!accountInfo) {
         this.logger.error(
-          `Failed to create account for userId: ${userId}, pageId: ${pageId}`,
+          ,
         )
-        result.message = `Failed to create account for userId: ${userId}, pageId: ${pageId}`
+        result.message = 
         return result
       }
       const newPageCredentialKey = ChannelRedisKeys.pageAccessToken(
-        'facebook',
+        '\''facebook'\'',
         accountInfo.id,
       )
       await this.redisService.setJson(newPageCredentialKey, pageCredential)
-      await this.redisService.del(pageCredentialKey)
+      // Keep the original mapping for a while to avoid race conditions
+      await this.redisService.expire(pageCredentialKey, 3600)
       await this.oauth2CredentialRepository.upsertOne(
         accountInfo.id,
         AccountType.FACEBOOK,
         {
           accessToken: pageCredential.access_token,
-          refreshToken: '',
+          refreshToken: '\'''\'',
           accessTokenExpiresAt: pageCredential.expires_in,
           raw: JSON.stringify(pageCredential),
         },
       )
       const previousFacebookCredentialKey = ChannelRedisKeys.accessToken(
-        'facebook',
+        '\''facebook'\'',
         userId,
       )
       const newFacebookCredentialKey = ChannelRedisKeys.accessToken(
-        'facebook',
+        '\''facebook'\'',
         pageCredential.facebook_user_id,
       )
       const facebookCredential
@@ -615,16 +616,16 @@ export class MetaService {
       }
       else {
         this.logger.warn(
-          `No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`,
+          ,
         )
         throw new Error(
-          `No Facebook user credential found for userId: ${userId} when selecting pageId: ${pageId}`,
+          ,
         )
       }
       result.selectedPageIds.push(pageId)
     }
     result.success = true
-    result.message = 'Selected Facebook pages successfully.'
+    result.message = '\''Selected Facebook pages successfully.'\''
     return result
   }
 
@@ -637,7 +638,7 @@ export class MetaService {
             access_token: accessToken,
           },
           headers: {
-            'Content-Type': 'application/json',
+            '\''Content-Type'\'': '\''application/json'\'',
           },
         },
       )
@@ -647,11 +648,11 @@ export class MetaService {
     catch (error) {
       if (isAxiosError(error) && error.response) {
         this.logger.error(
-          `Error fetching user account, status: ${error.response.status}, response: ${error.response.data}`,
+          ,
         )
       }
       this.logger.error(
-        `Failed to fetch user account: ${getErrorMessage(error)}, stack: ${getErrorStack(error) ?? 'N/A'}`,
+        ,
       )
       return []
     }
@@ -664,18 +665,18 @@ export class MetaService {
     const { code } = authData
 
     const authTaskInfo = await this.redisService.getJson<MetaOAuth2TaskInfo>(
-      ChannelRedisKeys.authTask('meta', state),
+      ChannelRedisKeys.authTask('\''meta'\'', state),
     )
     if (!authTaskInfo) {
-      this.logger.error(`OAuth task not found for state: ${state}`)
+      this.logger.error()
       return {
         status: 0,
-        message: '授权任务不存在或已过期',
+        message: '\''授权任务不存在或已过期'\'',
       }
     }
 
     void this.redisService.expire(
-      ChannelRedisKeys.authTask('meta', state),
+      ChannelRedisKeys.authTask('\''meta'\'', state),
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
 
@@ -683,14 +684,14 @@ export class MetaService {
       // get access token
       const credential = await this.getOAuthCredential(code, authTaskInfo)
       if (!credential) {
-        this.logger.error(`Failed to get access token for state: ${state}`)
+        this.logger.error()
         return {
           status: 0,
-          message: '获取访问令牌失败',
+          message: '\''获取访问令牌失败'\'',
         }
       }
       this.logger.log(
-        `Access token retrieved for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}, credential: ${JSON.stringify(credential)}`,
+        ,
       )
 
       // fetch user profile
@@ -701,27 +702,27 @@ export class MetaService {
       if (!userProfile) {
         return {
           status: 0,
-          message: 'get user profile failed',
+          message: '\''get user profile failed'\'',
         }
       }
-      userProfile['groupId'] = authTaskInfo.spaceId
+      userProfile['\''groupId'\''] = authTaskInfo.spaceId
 
       if (metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL) {
         this.logger.log(
-          `Fetching Facebook pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
+          ,
         )
         const pageAccounts = await this.getFacebookAccount(
           credential.access_token,
           metaOAuth2ConfigMap[authTaskInfo.platform].pageAccountURL,
         )
         this.logger.log(
-          `Fetched ${pageAccounts.length} pages for userId: ${authTaskInfo.userId}, platform: ${authTaskInfo.platform}`,
+          ,
         )
         if (pageAccounts.length === 0) {
           return {
             status: 0,
             message:
-              'No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.',
+              '\''No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.'\'',
           }
         }
         if (pageAccounts.length > 0) {
@@ -731,7 +732,7 @@ export class MetaService {
               pageAccount.id,
               pageAccount.access_token,
               {
-                fields: 'picture',
+                fields: '\''picture'\'',
               },
             )
             const expiredTime
@@ -745,7 +746,7 @@ export class MetaService {
               ),
               {
                 ...pageAccount,
-                facebook_user_id: userProfile['id'],
+                facebook_user_id: userProfile['\''id'\''],
                 expires_in: expiredTime,
                 spaceId: authTaskInfo.spaceId,
               } as FacebookPageCredentials,
@@ -774,17 +775,17 @@ export class MetaService {
       )
       if (!accountInfo) {
         this.logger.error(
-          `Failed to create account for userId: ${authTaskInfo.userId}, twitterId: ${userProfile['id']}`,
+          ,
         )
         return null
       }
       this.logger.log(
-        `Account created for userId: ${authTaskInfo.userId}, twitterId: ${userProfile['id']}`,
+        ,
       )
 
       const userCredential = {
         ...credential,
-        user_id: userProfile['id'] || userProfile['sub'],
+        user_id: userProfile['\''id'\''] || userProfile['\''sub'\''],
       } as MetaUserOAuthCredential
 
       const tokenSaved = await this.saveOAuthCredential(
@@ -795,7 +796,7 @@ export class MetaService {
 
       if (!tokenSaved) {
         this.logger.error(
-          `Failed to save access token for accountId: ${accountInfo.id}`,
+          ,
         )
         return null
       }
@@ -807,7 +808,7 @@ export class MetaService {
 
       if (!taskUpdated) {
         this.logger.error(
-          `Failed to update auth task status for state: ${state}, accountId: ${accountInfo.id}`,
+          ,
         )
         return null
       }
@@ -826,11 +827,11 @@ export class MetaService {
     catch (error) {
       if (isAxiosError(error) && error.response) {
         this.logger.error(
-          `Error in OAuth2 callback: ${error.response.status} - ${JSON.stringify(error.response.data)}`,
+          ,
         )
       }
       this.logger.error(
-        `Error processing OAuth2 callback for state: ${state}, code: ${code}, error: ${getErrorMessage(error)}`,
+        ,
         getErrorStack(error),
       )
       return null
@@ -843,36 +844,36 @@ export class MetaService {
     userProfile: Record<string, any>,
   ): Promise<Account | null> {
     this.logger.log(
-      `Creating account for userId: ${userId}, platform: ${accountType}, userProfile: ${JSON.stringify(userProfile)}`,
+      ,
     )
     const newAccountData = new NewAccount({
       userId,
       type: accountType,
-      uid: userProfile['id'] || userProfile['sub'],
-      account: userProfile['username'] || userProfile['name'],
+      uid: userProfile['\''id'\''] || userProfile['\''sub'\''],
+      account: userProfile['\''username'\''] || userProfile['\''name'\''],
       avatar:
-        userProfile['profile_picture_url']
-        || userProfile['threads_profile_picture_url']
-        || userProfile['picture']?.data?.url
-        || userProfile['picture']
-        || '',
-      nickname: userProfile['username'] || userProfile['name'],
+        userProfile['\''profile_picture_url'\'']
+        || userProfile['\''threads_profile_picture_url'\'']
+        || userProfile['\''picture'\'']?.data?.url
+        || userProfile['\''picture'\'']
+        || '\'''\'',
+      nickname: userProfile['\''username'\''] || userProfile['\''name'\''],
       lastStatsTime: new Date(),
       loginTime: new Date(),
-      groupId: userProfile['groupId'] || '',
+      groupId: userProfile['\''groupId'\''] || '\'''\'',
       status: AccountStatus.NORMAL,
     })
 
     const accountInfo = await this.channelAccountService.createAccount(
       {
         type: accountType,
-        uid: userProfile['id'] || userProfile['sub'],
+        uid: userProfile['\''id'\''] || userProfile['\''sub'\''],
       },
       newAccountData,
     )
     if (!accountInfo) {
       this.logger.error(
-        `Failed to create account for userId: ${userId}, twitterId: ${userProfile['id']}`,
+        ,
       )
       return null
     }
@@ -918,7 +919,7 @@ export class MetaService {
     authTaskInfo.accountId = accountId
 
     return await this.redisService.setJson(
-      ChannelRedisKeys.authTask('meta', state),
+      ChannelRedisKeys.authTask('\''meta'\'', state),
       authTaskInfo,
       META_TIME_CONSTANTS.AUTH_TASK_EXTEND,
     )
@@ -926,8 +927,8 @@ export class MetaService {
 
   private async getOAuth2Credential(platform: string, accountId: string): Promise<MetaUserOAuthCredential | null> {
     let key = ChannelRedisKeys.accessToken(platform, accountId)
-    if (platform === 'facebook') {
-      key = ChannelRedisKeys.pageAccessToken('facebook', accountId)
+    if (platform === '\''facebook'\'') {
+      key = ChannelRedisKeys.pageAccessToken('\''facebook'\'', accountId)
     }
     let credential = await this.redisService.getJson<MetaUserOAuthCredential>(key)
     if (!credential) {
@@ -938,7 +939,7 @@ export class MetaService {
       if (!oauth2Credential) {
         return null
       }
-      credential = JSON.parse(oauth2Credential.raw || '') as MetaUserOAuthCredential
+      credential = JSON.parse(oauth2Credential.raw || '\'''\'') as MetaUserOAuthCredential
     }
     return credential
   }

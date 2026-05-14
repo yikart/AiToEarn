@@ -56,7 +56,7 @@ export class FacebookService {
   private readonly longLivedAccessTokenURL: string = FacebookOAuth2Config.longLivedAccessTokenURL
 
   private readonly apiHost: string = 'https://graph.facebook.com/'
-  private readonly apiBaseUrl: string = 'https://graph.facebook.com/v23.0'
+  private readonly apiBaseUrl: string = 'https://graph.facebook.com/v24.0'
 
   constructor() { }
 
@@ -300,7 +300,7 @@ export class FacebookService {
   }
 
   // https://developers.facebook.com/docs/graph-api/reference/page/photos/#Creating
-  // https://developers.facebook.com/docs/graph-api/reference/v23.0/page/feed#publish
+  // https://developers.facebook.com/docs/graph-api/reference/v24.0/page/feed#publish
   // https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
   async publishFeedPost(
     pageId: string,
