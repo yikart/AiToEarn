@@ -162,10 +162,10 @@ export async function aiChatStream(data: {
   const token = useUserStore.getState().token
   const lang = useUserStore.getState().lang
 
-  // 获取当前域名，使用户配置的本地后端生效
-  const apiBaseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+  // 使用环境变量，保持 SSR 兼容性与 request.ts 一致
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-  const response = await fetch(`${apiBaseUrl}/api/ai/chat`, {
+  const response = await fetch(`${apiBaseUrl}/ai/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
