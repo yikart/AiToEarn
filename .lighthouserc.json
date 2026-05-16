@@ -1,0 +1,20 @@
+{
+  "ci": {
+    "collect": {
+      "url": ["http://localhost:3000/"],
+      "startServerCommand": "cd project && npm start",
+      "startServerReadyPattern": "ready"
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", { "minScore": 0.7 }],
+        "categories:accessibility": ["warn", { "minScore": 0.8 }],
+        "first-contentful-paint": ["warn", { "maxNumericValue": 3000 }],
+        "interactive": ["warn", { "maxNumericValue": 5000 }]
+      }
+    },
+    "upload": {
+      "target": "temporary-public-storage"
+    }
+  }
+}

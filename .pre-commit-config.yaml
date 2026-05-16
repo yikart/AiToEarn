@@ -1,0 +1,21 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-json
+      - id: check-added-large-files
+        args: ['--maxkb=1024']
+      - id: no-commit-to-branch
+        args: ['--branch', 'main']
+
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: v9.28.0
+    hooks:
+      - id: eslint
+        types: [file]
+        files: \.[jt]sx?$
+        additional_dependencies:
+          - eslint@9
