@@ -144,6 +144,7 @@ export function PhoneLoginForm({ onLoginSuccess, redirectUrl, inviteCode: _invit
             type="text"
             inputMode="numeric"
             maxLength={6}
+            autoComplete="off"
             placeholder={t('enterCode')}
             {...form.register('code')}
             className="h-12 rounded-xl border-input bg-background px-4 text-base placeholder:text-muted-foreground/70 focus:border-ring focus:ring-0"

@@ -9,11 +9,13 @@ import { cn } from '@/lib/utils'
 
 interface TableProps extends React.HTMLAttributes<HTMLTableElement> {
   children?: React.ReactNode
+  containerClassName?: string
+  containerRef?: React.Ref<HTMLDivElement>
 }
 
-function Table({ className, children, ...props }: TableProps) {
+function Table({ className, children, containerClassName, containerRef, ...props }: TableProps) {
   return (
-    <div className="w-full overflow-auto">
+    <div ref={containerRef} className={cn('w-full overflow-auto', containerClassName)}>
       <table className={cn('w-full caption-bottom text-sm', className)} {...props}>
         {children}
       </table>
@@ -41,7 +43,7 @@ function TableRow({ className, ...props }: React.HTMLAttributes<HTMLTableRowElem
   )
 }
 
-function TableHead({ className, ...props }: React.HTMLAttributes<HTMLTableCellElement>) {
+function TableHead({ className, ...props }: React.ThHTMLAttributes<HTMLTableCellElement>) {
   return (
     <th
       className={cn(
@@ -53,7 +55,7 @@ function TableHead({ className, ...props }: React.HTMLAttributes<HTMLTableCellEl
   )
 }
 
-function TableCell({ className, ...props }: React.HTMLAttributes<HTMLTableCellElement>) {
+function TableCell({ className, ...props }: React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
     <td className={cn('p-4 align-middle [&:has([role=checkbox])]:pr-0', className)} {...props} />
   )

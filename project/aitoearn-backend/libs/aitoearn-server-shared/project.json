@@ -1,0 +1,27 @@
+{
+  "name": "aitoearn-server-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/aitoearn-server-shared/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/aitoearn-server-shared",
+        "tsConfig": "libs/aitoearn-server-shared/tsconfig.lib.json",
+        "packageJson": "libs/aitoearn-server-shared/package.json",
+        "main": "libs/aitoearn-server-shared/src/index.ts",
+        "assets": ["libs/aitoearn-server-shared/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

@@ -17,25 +17,71 @@ interface NumberInputProps
   extends Omit<NumericFormatProps, 'value' | 'onValueChange' | 'customInput' | 'isAllowed'> {
   value?: number | null
   onValueChange?: (value: number | undefined) => void
-  /** 最小值，设置后输入框不允许清空或低于此值 */
+  /** 最小值：聚焦编辑时允许中间态，失焦后低于最小值会自动校正 */
   min?: number
+  /** 最大值：聚焦编辑时允许中间态，失焦后高于最大值会自动校正 */
+  max?: number
   className?: string
 }
 
 const NumberInput = React.forwardRef<HTMLInputElement, NumberInputProps>(
-  ({ className, value, onValueChange, min, ...props }, ref) => {
+  ({ className, value, onValueChange, min, max, allowNegative, onBlur, onFocus, ...props }, ref) => {
+    const [isFocused, setIsFocused] = React.useState(false)
+    const [draftValue, setDraftValue] = React.useState<string>(value == null ? '' : String(value))
+    const draftNumberRef = React.useRef<number | undefined>(value ?? undefined)
+
+    React.useEffect(() => {
+      if (!isFocused) {
+        draftNumberRef.current = value ?? undefined
+        setDraftValue(value == null ? '' : String(value))
+      }
+    }, [isFocused, value])
+
+    const resolveBlurValue = () => {
+      const draftNumber = draftNumberRef.current
+      if (draftNumber === undefined) {
+        if (min !== undefined)
+          return min
+        return draftValue.trim() && allowNegative === false ? 0 : undefined
+      }
+
+      if (min !== undefined && draftNumber < min)
+        return min
+      if (max !== undefined && draftNumber > max)
+        return max
+      if (allowNegative === false && draftNumber < 0)
+        return 0
+      return draftNumber
+    }
+
     return (
       <NumericFormat
+        {...props}
         getInputRef={ref}
         className={cn(inputBaseClass, className)}
-        value={value ?? ''}
-        onValueChange={(values) => {
-          onValueChange?.(values.floatValue)
+        value={isFocused ? draftValue : value ?? ''}
+        allowNegative={isFocused ? true : allowNegative}
+        onFocus={(event) => {
+          setIsFocused(true)
+          setDraftValue(value == null ? '' : String(value))
+          draftNumberRef.current = value ?? undefined
+          onFocus?.(event)
         }}
-        isAllowed={min !== undefined
-          ? ({ floatValue }) => floatValue !== undefined && floatValue >= min
-          : undefined}
-        {...props}
+        onValueChange={(values) => {
+          draftNumberRef.current = values.floatValue
+          setDraftValue(values.formattedValue)
+        }}
+        onBlur={(event) => {
+          const nextValue = resolveBlurValue()
+          const currentValue = value ?? undefined
+          draftNumberRef.current = nextValue
+          setDraftValue(nextValue == null ? '' : String(nextValue))
+          if (nextValue !== currentValue) {
+            onValueChange?.(nextValue)
+          }
+          setIsFocused(false)
+          onBlur?.(event)
+        }}
       />
     )
   },

@@ -36,23 +36,16 @@ export interface AuthTaskInfo {
   status: 0 | 1
   accountId?: string
   spaceId?: string
-  // QR Code 授权相关
-  taskId?: string // 推广任务ID
-  qrToken?: string // QR Code token
   // 通用 OAuth 回调
   callbackUrl?: string
   callbackMethod?: 'GET' | 'POST'
-}
-
-export interface NoUserAuthInfo {
-  state: string
-  url: string
 }
 
 @Injectable()
 export class TiktokService extends PlatformBaseService {
   protected override readonly platform: AccountType = AccountType.TIKTOK
   private readonly defaultScopes: string[]
+  private readonly authStatisticsFields = 'follower_count,likes_count,video_count'
   protected override readonly logger = new Logger(TiktokService.name)
 
   constructor(
@@ -67,111 +60,12 @@ export class TiktokService extends PlatformBaseService {
   }
 
   /**
-   * 生成不需用户授权URL
-   */
-  async getNoUserAuthUrl(promotionCode: string) {
-    this.logger.debug({
-      path: 'channel getNoUserAuthUrl --- 0',
-      data: {
-        promotionCode,
-        promotionRedirectUri: config.channel.tiktok.promotionRedirectUri,
-      },
-    })
-    const authUrl = this.tiktokApiService.generateAuthUrl(this.defaultScopes, promotionCode, config.channel.tiktok.promotionRedirectUri)
-
-    return { url: authUrl, state: promotionCode }
-  }
-
-  /**
-   * 处理授权重定向 - 创建账号并重定向到指定URL
-   */
-  async handleAuthRedirect(code: string, state: string): Promise<{ redirectUrl: string }> {
-    this.logger.debug({
-      path: 'handleAuthRedirect --- 0',
-      data: {
-        code,
-        state,
-      },
-    })
-    // 获取访问令牌 - 使用promotionRedirectUri，与授权URL生成时保持一致
-    const accessTokenInfo = await this.tiktokApiService.getAccessToken(code, config.channel.tiktok.promotionRedirectUri)
-    if (!accessTokenInfo) {
-      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
-    }
-    this.logger.debug({
-      path: 'handleAuthRedirect --- 1',
-      data: accessTokenInfo,
-    })
-    // 获取TikTok用户信息
-    const userInfo = await this.fetchUserInfo(accessTokenInfo.access_token)
-    this.logger.debug({
-      path: 'handleAuthRedirect --- 2',
-      data: userInfo,
-    })
-
-    // 检查账号是否已存在，如果存在则保留原有的 userId
-    const existingAccount = await this.channelAccountService.getAccountByTypeAndUid(
-      AccountType.TIKTOK,
-      accessTokenInfo.open_id,
-    )
-    const userId = existingAccount?.userId || ''
-
-    // 创建账号数据（无用户授权场景，如果账号不存在则 userId 为空）
-    const newAccountData = new NewAccount({
-      userId,
-      type: AccountType.TIKTOK,
-      uid: accessTokenInfo.open_id,
-      account: userInfo.data.user.username,
-      avatar: userInfo.data.user.avatar_url,
-      nickname: userInfo.data.user.display_name || userInfo.data.user.username,
-      status: AccountStatus.NORMAL,
-    })
-
-    const accountInfo = await this.channelAccountService.createAccount(
-      {
-        type: AccountType.TIKTOK,
-        uid: accessTokenInfo.open_id,
-      },
-      newAccountData,
-    )
-    this.logger.debug({
-      path: 'handleAuthRedirect --- 3',
-      data: accountInfo,
-    })
-
-    if (!accountInfo) {
-      throw new AppException(ResponseCode.AccountCreateFailed)
-    }
-
-    // 保存访问令牌
-    try {
-      await this.saveOAuthCredential(accountInfo.id, accessTokenInfo)
-    }
-    catch (error) {
-      this.logger.debug({
-        path: 'handleAuthRedirect --- 4',
-        data: error,
-      })
-    }
-
-    // 构建重定向URL
-    const baseUrl = config.channel.tiktok.promotionBaseUrl
-    const redirectUrl = `${baseUrl}?accountId=${accountInfo.id}&promotionCode=${state}`
-    this.logger.debug({
-      path: 'handleAuthRedirect --- 5',
-      data: redirectUrl,
-    })
-    return { redirectUrl }
-  }
-
-  /**
    * 生成授权URL
    */
   async getAuthUrl(data: {
     userId?: string
     scopes?: string[]
     spaceId?: string
-    taskId?: string
     callbackUrl?: string
     callbackMethod?: 'GET' | 'POST'
   }) {
@@ -189,7 +83,6 @@ export class TiktokService extends PlatformBaseService {
       status: 0,
       userId: data.userId,
       spaceId: data.spaceId,
-      taskId: data.taskId,
       callbackUrl: data.callbackUrl,
       callbackMethod: data.callbackMethod,
     }
@@ -356,6 +249,7 @@ export class TiktokService extends PlatformBaseService {
       }
     }
     // 更新任务状态
+    await this.syncAuthorizedAccountStatistics(accountInfo.id, accessTokenInfo.access_token)
     const taskUpdated = await this.updateAuthTaskStatus(
       taskId,
       authTaskInfo,
@@ -429,6 +323,15 @@ export class TiktokService extends PlatformBaseService {
    * 刷新访问令牌
    */
   async refreshAccessToken(
+    userId: string,
+    accountId: string,
+    refreshToken: string,
+  ): Promise<TiktokOAuthResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.refreshAccessTokenByAccountId(accountId, refreshToken)
+  }
+
+  async refreshAccessTokenByAccountId(
     accountId: string,
     refreshToken: string,
   ): Promise<TiktokOAuthResponse | null> {
@@ -438,7 +341,12 @@ export class TiktokService extends PlatformBaseService {
   /**
    * 撤销访问令牌
    */
-  async revokeAccessToken(accountId: string): Promise<TiktokRevokeResponse> {
+  async revokeAccessToken(userId: string, accountId: string): Promise<TiktokRevokeResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.revokeAccessTokenByAccountId(accountId)
+  }
+
+  async revokeAccessTokenByAccountId(accountId: string): Promise<TiktokRevokeResponse> {
     const accessToken = await this.getValidAccessToken(accountId)
     const result = await this.tiktokApiService.revokeAccessToken(accessToken)
 
@@ -450,7 +358,12 @@ export class TiktokService extends PlatformBaseService {
   /**
    * 获取创作者信息
    */
-  async getCreatorInfo(accountId: string): Promise<TiktokCreatorInfo> {
+  async getCreatorInfo(userId: string, accountId: string): Promise<TiktokCreatorInfo> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getCreatorInfoByAccountId(accountId)
+  }
+
+  async getCreatorInfoByAccountId(accountId: string): Promise<TiktokCreatorInfo> {
     const accessToken = await this.getValidAccessToken(accountId)
     return await this.tiktokApiService.getCreatorInfo(accessToken)
   }
@@ -464,44 +377,129 @@ export class TiktokService extends PlatformBaseService {
    * 初始化视频发布
    */
   async initVideoPublish(
+    userId: string,
     accountId: string,
     postInfo: PostInfoDto,
     sourceInfo: VideoFileUploadSourceDto | VideoPullUrlSourceDto,
   ): Promise<TiktokPublishResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.initVideoPublishByAccountId(accountId, postInfo, sourceInfo)
+  }
+
+  async initVideoPublishByAccountId(
+    accountId: string,
+    postInfo: PostInfoDto,
+    sourceInfo: VideoFileUploadSourceDto | VideoPullUrlSourceDto,
+  ): Promise<TiktokPublishResponse> {
+    this.logger.log({
+      path: 'tiktok.initVideoPublish.request',
+      data: {
+        accountId,
+        privacyLevel: postInfo.privacy_level,
+        hasTitle: !!postInfo.title,
+        source: sourceInfo.source,
+        hasVideoUrl: 'video_url' in sourceInfo,
+      },
+    })
     const accessToken = await this.getValidAccessToken(accountId)
-    return await this.tiktokApiService.initVideoPublish(accessToken, {
+    const result = await this.tiktokApiService.initVideoPublish(accessToken, {
       post_info: postInfo,
       source_info: sourceInfo,
     })
+    this.logger.log({
+      path: 'tiktok.initVideoPublish.response',
+      data: {
+        accountId,
+        publishId: result.publish_id,
+        hasUploadUrl: !!result.upload_url,
+      },
+    })
+    return result
   }
 
   /**
    * 初始化照片发布
    */
   async initPhotoPublish(
+    userId: string,
     accountId: string,
     postMode: TiktokPostMode,
     postInfo: PostInfoDto,
     sourceInfo: PhotoSourceInfoDto,
   ): Promise<TiktokPublishResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.initPhotoPublishByAccountId(accountId, postMode, postInfo, sourceInfo)
+  }
+
+  async initPhotoPublishByAccountId(
+    accountId: string,
+    postMode: TiktokPostMode,
+    postInfo: PostInfoDto,
+    sourceInfo: PhotoSourceInfoDto,
+  ): Promise<TiktokPublishResponse> {
+    this.logger.log({
+      path: 'tiktok.initPhotoPublish.request',
+      data: {
+        accountId,
+        postMode,
+        privacyLevel: postInfo.privacy_level,
+        hasTitle: !!postInfo.title,
+        photoCount: sourceInfo.photo_images.length,
+        photoCoverIndex: sourceInfo.photo_cover_index,
+        firstPhotoUrl: sourceInfo.photo_images[0],
+      },
+    })
     const accessToken = await this.getValidAccessToken(accountId)
-    return await this.tiktokApiService.initPhotoPublish(accessToken, {
+    const result = await this.tiktokApiService.initPhotoPublish(accessToken, {
       media_type: 'PHOTO',
       post_mode: postMode,
       post_info: postInfo,
       source_info: sourceInfo,
     })
+    this.logger.log({
+      path: 'tiktok.initPhotoPublish.response',
+      data: {
+        accountId,
+        publishId: result.publish_id,
+      },
+    })
+    return result
   }
 
   /**
    * 查询发布状态
    */
   async getPublishStatus(
+    userId: string,
     accountId: string,
     publishId: string,
   ): Promise<TiktokPublishStatusResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPublishStatusByAccountId(accountId, publishId)
+  }
+
+  async getPublishStatusByAccountId(
+    accountId: string,
+    publishId: string,
+  ): Promise<TiktokPublishStatusResponse> {
+    this.logger.log({
+      path: 'tiktok.getPublishStatus.request',
+      data: {
+        accountId,
+        publishId,
+      },
+    })
     const accessToken = await this.getValidAccessToken(accountId)
-    return await this.tiktokApiService.getPublishStatus(accessToken, publishId)
+    const result = await this.tiktokApiService.getPublishStatus(accessToken, publishId)
+    this.logger.log({
+      path: 'tiktok.getPublishStatus.response',
+      data: {
+        accountId,
+        publishId,
+        result,
+      },
+    })
+    return result
   }
 
   /**
@@ -540,6 +538,18 @@ export class TiktokService extends PlatformBaseService {
     accessToken: string,
   ): Promise<TikTokUserInfoResponse> {
     return await this.tiktokApiService.getUserInfo(accessToken)
+  }
+
+  private async syncAuthorizedAccountStatistics(accountId: string, accessToken: string) {
+    await this.syncAccountStatisticsOnAuth(accountId, async () => {
+      const info = await this.tiktokApiService.getUserInfo(accessToken, this.authStatisticsFields)
+      const user = info.data.user
+      return {
+        fansCount: user.follower_count,
+        likeCount: user.like_count,
+        workCount: user.video_count,
+      }
+    })
   }
 
   /**
@@ -636,7 +646,7 @@ export class TiktokService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
-    await this.ensureLocalAccount(accountId)
+    await this.getLocalAccountById(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)
@@ -660,8 +670,9 @@ export class TiktokService extends PlatformBaseService {
     type: PublishType
     videoType?: 'short' | 'long'
   }> {
-    const videoId = this.parseTiktokUrl(workLink)
-    const resolvedDataId = videoId || dataId || ''
+    const resolvedWorkLink = await this.normalizeTiktokWorkLink(workLink)
+    const resolvedWork = this.parseTiktokUrl(resolvedWorkLink)
+    const resolvedDataId = resolvedWork?.id || dataId || ''
     if (!resolvedDataId) {
       throw new AppException(ResponseCode.InvalidWorkLink)
     }
@@ -669,9 +680,24 @@ export class TiktokService extends PlatformBaseService {
     return {
       dataId: resolvedDataId,
       uniqueId: `${accountType}_${resolvedDataId}`,
-      type: PublishType.VIDEO,
-      videoType: 'short',
+      type: resolvedWork?.type === 'photo' ? PublishType.ARTICLE : PublishType.VIDEO,
+      videoType: resolvedWork?.type === 'photo' ? undefined : 'short',
     }
+  }
+
+  private async normalizeTiktokWorkLink(workLink: string): Promise<string> {
+    try {
+      const url = new URL(workLink)
+      const hostname = url.hostname.replace('www.', '')
+      if (hostname === 'vm.tiktok.com' || hostname === 'vt.tiktok.com') {
+        return await this.resolveRedirectUrl(workLink)
+      }
+    }
+    catch {
+      return workLink
+    }
+
+    return workLink
   }
 
   /**
@@ -682,9 +708,9 @@ export class TiktokService extends PlatformBaseService {
    * - https://vm.tiktok.com/SHORT_CODE
    * - https://vt.tiktok.com/SHORT_CODE
    * @param workLink TikTok 链接
-   * @returns videoId 或 null
+   * @returns 作品 ID 与类型，或 null
    */
-  private parseTiktokUrl(workLink: string): string | null {
+  private parseTiktokUrl(workLink: string): { id: string, type: 'video' | 'photo' | 'short' } | null {
     let url: URL
     try {
       url = new URL(workLink)
@@ -695,144 +721,29 @@ export class TiktokService extends PlatformBaseService {
 
     const hostname = url.hostname.replace('www.', '')
 
+    if (hostname === 'vm.tiktok.com' || hostname === 'vt.tiktok.com') {
+      return null
+    }
+
     if (hostname === 'tiktok.com' || hostname === 'm.tiktok.com') {
       const pathname = url.pathname
       // https://www.tiktok.com/@username/video/VIDEO_ID
       const videoMatch = pathname.match(/\/video\/(\d+)/)
       if (videoMatch) {
-        return videoMatch[1]
+        return { id: videoMatch[1], type: 'video' }
       }
       // https://www.tiktok.com/@username/photo/PHOTO_ID
       const photoMatch = pathname.match(/\/photo\/(\d+)/)
       if (photoMatch) {
-        return photoMatch[1]
+        return { id: photoMatch[1], type: 'photo' }
       }
     }
     else if (hostname === 'vm.tiktok.com' || hostname === 'vt.tiktok.com') {
       // 短链接，返回短码作为 ID
-      return url.pathname.slice(1).split(/[?&#/]/)[0] || null
+      const shortId = url.pathname.slice(1).split(/[?&#/]/)[0] || null
+      return shortId ? { id: shortId, type: 'short' } : null
     }
 
     return null
-  }
-
-  /**
-   * 创建 QR Code 授权任务
-   */
-  async createQRCodeAuthTask(data: {
-    taskId?: string
-    userId?: string
-    spaceId?: string
-  }) {
-    const state = randomBytes(32).toString('hex')
-    const scopes = this.defaultScopes
-
-    const qrCodeInfo = await this.tiktokApiService.getQRCode(scopes, state)
-    if (!qrCodeInfo) {
-      return null
-    }
-
-    const authTaskInfo: AuthTaskInfo = {
-      state,
-      status: 0,
-      userId: data.userId,
-      spaceId: data.spaceId,
-      taskId: data.taskId,
-      qrToken: qrCodeInfo.token,
-    }
-
-    const success = await this.redisService.setJson(
-      ChannelRedisKeys.authTask('tiktok', state),
-      authTaskInfo,
-      TIKTOK_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
-    )
-
-    return success
-      ? {
-          qrcodeUrl: qrCodeInfo.scan_qrcode_url,
-          taskId: state,
-          expiresIn: qrCodeInfo.expires_in,
-        }
-      : null
-  }
-
-  /**
-   * 检查 QR Code 扫码状态并处理授权
-   */
-  async checkQRCodeAuthStatus(taskId: string) {
-    const authTaskInfo = await this.redisService.getJson<AuthTaskInfo>(
-      ChannelRedisKeys.authTask('tiktok', taskId),
-    )
-    if (!authTaskInfo || !authTaskInfo.qrToken) {
-      return { status: 'expired' as const, message: '授权任务不存在或已过期' }
-    }
-
-    // 已完成授权
-    if (authTaskInfo.status === 1) {
-      return { status: 'confirmed' as const, accountId: authTaskInfo.accountId }
-    }
-
-    // 检查扫码状态
-    const statusInfo = await this.tiktokApiService.checkQRCodeStatus(authTaskInfo.qrToken)
-
-    if (statusInfo.status === 'confirmed' && statusInfo.code) {
-      // 用户已确认授权，换取 token 并创建账号
-      const result = await this.handleQRCodeAuthConfirmed(taskId, authTaskInfo, statusInfo.code)
-      return result
-    }
-
-    return { status: statusInfo.status }
-  }
-
-  /**
-   * 处理 QR Code 授权确认
-   */
-  private async handleQRCodeAuthConfirmed(
-    taskId: string,
-    authTaskInfo: AuthTaskInfo,
-    code: string,
-  ) {
-    // 获取访问令牌
-    const accessTokenInfo = await this.tiktokApiService.getAccessToken(code)
-    if (!accessTokenInfo) {
-      return { status: 'failed' as const, message: '获取访问令牌失败' }
-    }
-
-    // 获取用户信息
-    const userInfo = await this.fetchUserInfo(accessTokenInfo.access_token)
-    this.logger.log(`TikTok QR Code auth user info: ${JSON.stringify(userInfo)}`)
-
-    // 创建账号
-    const newAccountData = new NewAccount({
-      userId: authTaskInfo.userId || '',
-      type: AccountType.TIKTOK,
-      uid: accessTokenInfo.open_id,
-      account: userInfo.data.user.username,
-      avatar: userInfo.data.user.avatar_url,
-      nickname: userInfo.data.user.display_name || userInfo.data.user.username,
-      groupId: authTaskInfo.spaceId,
-      status: AccountStatus.NORMAL,
-    })
-
-    const accountInfo = await this.channelAccountService.createAccount(
-      { type: AccountType.TIKTOK, uid: accessTokenInfo.open_id },
-      newAccountData,
-    )
-
-    if (!accountInfo) {
-      return { status: 'failed' as const, message: '创建账号失败' }
-    }
-
-    // 保存令牌
-    await this.saveOAuthCredential(accountInfo.id, accessTokenInfo)
-
-    // 更新任务状态
-    await this.updateAuthTaskStatus(taskId, authTaskInfo, accountInfo.id)
-
-    return {
-      status: 'confirmed' as const,
-      accountId: accountInfo.id,
-      taskId: authTaskInfo.taskId,
-    }
   }
 }

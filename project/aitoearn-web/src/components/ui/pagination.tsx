@@ -13,6 +13,8 @@ import * as React from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { cn } from '@/lib/utils'
 import { Button, buttonVariants } from './button'
+import { Input } from './input'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'
 
 // ==================== 组合式分页组件 ====================
 
@@ -132,6 +134,19 @@ PaginationEllipsis.displayName = 'PaginationEllipsis'
 
 // ==================== 简化版分页组件 ====================
 
+const PAGE_LABEL_COMPACT_THRESHOLD = 10000
+
+function formatPageLabel(page: number) {
+  if (page < PAGE_LABEL_COMPACT_THRESHOLD) {
+    return String(page)
+  }
+
+  return new Intl.NumberFormat(undefined, {
+    notation: 'compact',
+    maximumFractionDigits: 1,
+  }).format(page)
+}
+
 interface PaginationProps {
   /** 当前页码 */
   current?: number
@@ -170,6 +185,8 @@ function Pagination({
   className,
   children,
 }: PaginationProps) {
+  const { t } = useTransClient('common')
+
   // 如果有 children，使用组合式渲染
   if (children) {
     return (
@@ -179,10 +196,10 @@ function Pagination({
     )
   }
 
-  const { t } = useTransClient('common')
-  const totalPages = Math.ceil(total / pageSize)
+  const totalPages = Math.max(1, Math.ceil(total / pageSize))
   const start = (current - 1) * pageSize + 1
   const end = Math.min(current * pageSize, total)
+  const showPageControls = totalPages > 1
 
   const handlePageChange = (page: number) => {
     if (page >= 1 && page <= totalPages) {
@@ -238,94 +255,100 @@ function Pagination({
   }
 
   return (
-    <div className={cn('flex flex-wrap items-center justify-center gap-3', className)}>
+    <div className={cn('flex flex-wrap items-center justify-center gap-2 text-sm', className)}>
       {/* 显示总数 */}
       {showTotal && (
-        <div className="text-sm text-muted-foreground whitespace-nowrap">
+        <div className="whitespace-nowrap rounded-full border border-border/70 bg-muted/30 px-2.5 py-1 text-xs font-medium text-muted-foreground">
           {showTotal(total, [start, end])}
         </div>
       )}
 
       {/* 分页按钮组 */}
-      <div className="flex items-center gap-1">
-        {/* 上一页 */}
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(current - 1)}
-          disabled={current === 1}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </Button>
+      {showPageControls && (
+        <div className="inline-flex items-center gap-1 rounded-xl border border-border/70 bg-card/95 p-1 shadow-sm shadow-primary/5">
+          {/* 上一页 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7 rounded-lg"
+            onClick={() => handlePageChange(current - 1)}
+            disabled={current === 1}
+          >
+            <ChevronLeft className="size-4" />
+          </Button>
 
-        {/* 页码 */}
-        {getPageNumbers().map((page, index) => {
-          if (page === 'ellipsis') {
+          {/* 页码 */}
+          {getPageNumbers().map((page, index) => {
+            if (page === 'ellipsis') {
+              return (
+                <span
+                  key={`ellipsis-${index}`}
+                  className="flex h-7 items-center justify-center px-1.5 text-xs text-muted-foreground"
+                >
+                  ...
+                </span>
+              )
+            }
+
+            const pageNum = page as number
+            const pageLabel = formatPageLabel(pageNum)
+
             return (
-              <span
-                key={`ellipsis-${index}`}
-                className="px-2 h-8 flex items-center justify-center text-muted-foreground"
+              <Button
+                key={pageNum}
+                variant={current === pageNum ? 'default' : 'ghost'}
+                size="icon"
+                className="h-7 w-auto min-w-7 max-w-14 rounded-lg px-2 text-xs tabular-nums"
+                title={String(pageNum)}
+                onClick={() => handlePageChange(pageNum)}
               >
-                ...
-              </span>
+                <span className="truncate">{pageLabel}</span>
+              </Button>
             )
-          }
+          })}
 
-          const pageNum = page as number
-          return (
-            <Button
-              key={pageNum}
-              variant={current === pageNum ? 'default' : 'outline'}
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => handlePageChange(pageNum)}
-            >
-              {pageNum}
-            </Button>
-          )
-        })}
-
-        {/* 下一页 */}
-        <Button
-          variant="outline"
-          size="icon"
-          className="h-8 w-8"
-          onClick={() => handlePageChange(current + 1)}
-          disabled={current === totalPages}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </Button>
-      </div>
+          {/* 下一页 */}
+          <Button
+            variant="ghost"
+            size="icon"
+            className="size-7 rounded-lg"
+            onClick={() => handlePageChange(current + 1)}
+            disabled={current === totalPages}
+          >
+            <ChevronRight className="size-4" />
+          </Button>
+        </div>
+      )}
 
       {/* 每页条数选择器 */}
       {showSizeChanger && (
-        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
-          <span className="text-muted-foreground">{t('pagination.perPage')}</span>
-          <select
-            value={pageSize}
-            onChange={e => handleSizeChange(Number(e.target.value))}
-            className="h-8 px-2 py-1 text-sm border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
-          >
-            {pageSizeOptions.map(option => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-          <span className="text-muted-foreground">{t('pagination.items')}</span>
+        <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-border/70 bg-card/95 px-2 py-1 text-xs text-muted-foreground shadow-sm shadow-primary/5">
+          <span>{t('pagination.perPage')}</span>
+          <Select value={String(pageSize)} onValueChange={value => handleSizeChange(Number(value))}>
+            <SelectTrigger className="h-7 w-16 rounded-lg px-2 text-xs">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent align="end">
+              {pageSizeOptions.map(option => (
+                <SelectItem key={option} value={option}>
+                  {option}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          <span>{t('pagination.items')}</span>
         </div>
       )}
 
       {/* 快速跳转 */}
       {showQuickJumper && (
-        <div className="flex items-center gap-2 text-sm whitespace-nowrap">
+        <div className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-xl border border-border/70 bg-card/95 px-2 py-1 text-xs text-muted-foreground shadow-sm shadow-primary/5">
           <span className="text-muted-foreground">{t('pagination.jumpTo')}</span>
-          <input
-            type="number"
-            min={1}
-            max={totalPages}
-            className="h-8 w-14 px-2 text-sm text-center border border-input rounded-md bg-background hover:bg-accent focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 transition-colors"
+          <Input
+            type="text"
+            inputMode="numeric"
+            pattern="[0-9]*"
+            className="h-7 w-14 rounded-lg px-2 text-center text-xs"
             placeholder={t('pagination.page')}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {

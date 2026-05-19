@@ -1,8 +1,9 @@
-import { Body, Controller, Get, Post, SetMetadata } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query, SetMetadata } from '@nestjs/common'
 import { SSE_METADATA } from '@nestjs/common/constants'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType, ZodValidationPipe } from '@yikart/common'
+import { AiLogChannel } from '@yikart/mongodb'
 import { ChatCompletionDto, ChatStreamProxyDto, chatStreamProxyDtoSchema, ClaudeChatProxyDto, claudeChatProxyDtoSchema } from './chat.dto'
 import { ChatService } from './chat.service'
 import { chatCompletionChunkVoSchema, ChatCompletionVo, ChatModelConfigVo } from './chat.vo'
@@ -18,10 +19,16 @@ export class ChatController {
   })
   @Public()
   @Get('/models/chat')
-  async getChatModels(@GetToken() token?: TokenInfo): Promise<ChatModelConfigVo[]> {
+  async getChatModels(
+    @GetToken() token?: TokenInfo,
+    @Query('channel') channel?: AiLogChannel,
+    @Query('scene') scene?: string,
+  ): Promise<ChatModelConfigVo[]> {
     const response = await this.chatService.getChatModelConfig({
       userId: token?.id,
       userType: UserType.User,
+      channel,
+      scene,
     })
     return response.map(item => ChatModelConfigVo.create(item))
   }

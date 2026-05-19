@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 import {
   BatchDeleteDto,
   GetUnreadCountDto,
@@ -92,7 +92,7 @@ export class NotificationController {
   @Get(':id')
   async getNotificationDetail(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ) {
     const result = await this.notificationService.findById(
       id,

@@ -119,22 +119,6 @@ export const NotificationCenter: React.FC = () => {
             // 用新 uid 替换旧通知，保持位置不变
             const updated = [...prev]
             updated[existingIndex] = { ...item, visible: true }
-            // 为新 uid 设置自动关闭
-            if (duration > 0) {
-              animationStartRef.current[uid] = Date.now()
-              remainingRef.current[uid] = duration
-              const timeoutId = window.setTimeout(() => {
-                setItems(p => p.map(it => (it.uid === uid ? { ...it, visible: false } : it)))
-                const removeId = window.setTimeout(() => {
-                  setItems(p => p.filter(it => it.uid !== uid))
-                  delete timeoutsRef.current[uid]
-                  delete remainingRef.current[uid]
-                  delete animationStartRef.current[uid]
-                }, 300)
-                timeoutsRef.current[uid] = removeId
-              }, duration)
-              timeoutsRef.current[uid] = timeoutId
-            }
             return updated
           }
           return [item, ...prev]
@@ -150,8 +134,8 @@ export const NotificationCenter: React.FC = () => {
         setItems(prev => prev.map(it => (it.uid === uid ? { ...it, visible: true } : it)))
       }, 10)
 
-      // 自动关闭（duration > 0，仅对无 key 或新增的通知）
-      if (duration > 0 && !key) {
+      // 自动关闭（duration > 0，带 key 的通知也需要自动关闭）
+      if (duration > 0) {
         // 记录动画开始时间
         animationStartRef.current[uid] = Date.now()
         remainingRef.current[uid] = duration

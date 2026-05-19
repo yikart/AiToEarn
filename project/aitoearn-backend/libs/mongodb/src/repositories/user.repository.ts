@@ -1,15 +1,13 @@
-import * as crypto from 'node:crypto'
 import { InjectModel } from '@nestjs/mongoose'
-import { Pagination } from '@yikart/common'
-import { FilterQuery, Model } from 'mongoose'
-import { UserStatus, UserType } from '../enums'
-import { User, UserAiInfo } from '../schemas'
+import { Pagination, VipStatus } from '@yikart/common'
+import { FilterQuery, Model, RootFilterQuery } from 'mongoose'
+import { UserStatus } from '../enums'
+import { User, UserAiInfo, UserVipInfo } from '../schemas'
 import { BaseRepository, LeanDoc } from './base.repository'
 
 export interface ListUserParams extends Pagination {
   status?: UserStatus
   mail?: string
-  popularizeCode?: string
   createdAt?: string[]
   keyword?: string
 }
@@ -64,21 +62,54 @@ export class UserRepository extends BaseRepository<User> {
     return userInfo
   }
 
-  async getByPopularizeCode(popularizeCode: string): Promise<User | null> {
-    const userInfo = await this.model.findOne({
-      popularizeCode,
-      status: UserStatus.OPEN,
-      isDelete: false,
-    }).lean({ virtuals: true })
-    return userInfo
-  }
-
   async getByPhone(phone: string): Promise<User | null> {
     const userInfo = await this.model.findOne({
       phone,
       isDelete: false,
     })
     return userInfo
+  }
+
+  async getByDouyinUnionid(douyinUnionid: string): Promise<User | null> {
+    const userInfo = await this.model.findOne({
+      douyinUnionid,
+      isDelete: false,
+    }).lean({ virtuals: true })
+    return userInfo
+  }
+
+  async getByDouyinMiniAppOpenid(douyinMiniAppOpenid: string): Promise<User | null> {
+    const userInfo = await this.model.findOne({
+      douyinMiniAppOpenid,
+      isDelete: false,
+    }).lean({ virtuals: true })
+    return userInfo
+  }
+
+  async clearDouyinMiniAppIdentity(identity: { douyinMiniAppOpenid?: string, douyinUnionid?: string }): Promise<void> {
+    const filters: RootFilterQuery<User>[] = []
+    if (identity.douyinUnionid) {
+      filters.push({ douyinUnionid: identity.douyinUnionid })
+    }
+    if (identity.douyinMiniAppOpenid) {
+      filters.push({ douyinMiniAppOpenid: identity.douyinMiniAppOpenid })
+    }
+
+    if (filters.length === 0) {
+      return
+    }
+
+    await this.model.updateMany(
+      { $or: filters },
+      { $unset: { douyinUnionid: '', douyinMiniAppOpenid: '' } },
+    ).exec()
+  }
+
+  async clearDouyinUnionidByUserId(userId: string): Promise<void> {
+    await this.model.updateOne(
+      { _id: userId },
+      { $unset: { douyinUnionid: '', douyinMiniAppOpenid: '' } },
+    ).exec()
   }
 
   async updateUserStatus(id: string, status: UserStatus): Promise<boolean> {
@@ -95,44 +126,6 @@ export class UserRepository extends BaseRepository<User> {
       { $set: { isDelete: true } },
     )
     return res.modifiedCount > 0
-  }
-
-  /**
-   * 生成推广码
-   * @param userInfo
-   * @returns
-   */
-  async updatePopularizeCodeById(userInfo: User) {
-    const identifier = userInfo.mail || userInfo.phone || userInfo.id
-    const phoneHash = crypto
-      .createHash('sha256')
-      .update(identifier)
-      .digest('hex')
-      .substring(0, 16)
-
-    const combinedSalt = `aitoearn${phoneHash}`
-
-    const hash = crypto
-      .createHash('sha256')
-      .update(userInfo.id)
-      .update(combinedSalt)
-      .digest('hex')
-
-    // 取部分哈希值转换为5位代码
-    const numericValue = Number.parseInt(hash.substring(0, 6), 16)
-    const code = numericValue
-      .toString(36)
-      .slice(-5)
-      .toUpperCase()
-      .padStart(5, '0')
-
-    // 更新用户的推广码
-    await this.model.updateOne(
-      { _id: userInfo.id },
-      { $set: { popularizeCode: code } },
-    )
-
-    return code
   }
 
   /**
@@ -209,11 +202,118 @@ export class UserRepository extends BaseRepository<User> {
     return this.model.find({ libraryId, isDelete: false }).lean({ virtuals: true }).exec()
   }
 
-  async updateUserTypeById(userId: string, userType: UserType): Promise<boolean> {
+  async listAllWithPagination(
+    pageInfo: { pageSize: number, pageNo: number },
+    query: { keyword?: string, status?: UserStatus, time?: string[] },
+  ): Promise<readonly [LeanDoc<User>[], number]> {
+    const { pageSize, pageNo } = pageInfo
+    const { keyword, status } = query
+    const escapedKeyword = keyword ? this.escapeRegExp(keyword) : undefined
+    const filter: RootFilterQuery<User> = {
+      ...(status !== undefined && { status }),
+      ...(escapedKeyword !== undefined && {
+        $or: [
+          { name: { $regex: escapedKeyword, $options: 'i' } },
+          { mail: { $regex: escapedKeyword, $options: 'i' } },
+          { phone: { $regex: escapedKeyword, $options: 'i' } },
+          {
+            $expr: {
+              $regexMatch: {
+                input: { $toString: '$_id' },
+                regex: escapedKeyword,
+                options: 'i',
+              },
+            },
+          },
+        ],
+      }),
+      ...(query.time && {
+        createdAt: {
+          $gte: query.time[0],
+          $lte: query.time[1],
+        },
+      }),
+    }
+    return this.findWithPagination({
+      page: pageNo,
+      pageSize,
+      filter,
+      options: { sort: { createdAt: -1 } },
+    })
+  }
+
+  private escapeRegExp(value: string): string {
+    return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+  }
+
+  async listAllEmails(): Promise<string[]> {
+    const users = await this.model
+      .find({ mail: { $exists: true, $ne: '' } })
+      .select('mail')
+      .lean({ virtuals: true })
+      .exec()
+    return users.map(u => u.mail)
+  }
+
+  async getNewUserTotal(startDate: Date, endDate: Date): Promise<number> {
+    return this.model.countDocuments({
+      createdAt: { $gte: startDate, $lte: endDate },
+    })
+  }
+
+  async getNewUserTrend(startDate: Date, endDate: Date): Promise<{ date: Date, count: number }[]> {
+    return this.model.aggregate([
+      { $match: { createdAt: { $gte: startDate, $lte: endDate } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+      { $sort: { _id: 1 } },
+      { $project: { _id: 0, date: { $dateFromString: { dateString: '$_id' } }, count: 1 } },
+    ])
+  }
+
+  async listIdsByCreatedAtRange(startDate: Date, endDate: Date): Promise<string[]> {
+    const users = await this.model.find({
+      createdAt: { $gte: startDate, $lte: endDate },
+    }).select('_id').lean().exec()
+
+    return users.map(user => user._id.toString())
+  }
+
+  async updateVipInfoById(userId: string, vipInfo: UserVipInfo): Promise<boolean> {
     const res = await this.model.updateOne(
       { _id: userId },
-      { $set: { userType } },
+      { $set: { vipInfo } },
     )
     return res.modifiedCount > 0
+  }
+
+  async updateVipStatus(userId: string, status: VipStatus): Promise<boolean> {
+    const res = await this.model.updateOne(
+      { _id: userId },
+      { $set: { 'vipInfo.status': status } },
+    )
+    return res.modifiedCount > 0
+  }
+
+  async clearVipInfo(userId: string): Promise<boolean> {
+    const res = await this.model.updateOne(
+      { _id: userId },
+      { $set: { vipInfo: null } },
+    )
+    return res.modifiedCount > 0
+  }
+
+  async clearAllVipInfo(): Promise<number> {
+    const res = await this.model.updateMany(
+      { vipInfo: { $ne: null } },
+      { $set: { vipInfo: null } },
+    )
+    return res.modifiedCount
+  }
+
+  async listNormalVipUsers(): Promise<LeanDoc<User>[]> {
+    const now = new Date()
+    return this.model.find({
+      'vipInfo.expireAt': { $gt: now },
+    }).lean({ virtuals: true })
   }
 }

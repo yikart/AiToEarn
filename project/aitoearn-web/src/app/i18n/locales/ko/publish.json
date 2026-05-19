@@ -24,7 +24,7 @@
     "cancelText": "삭제"
   },
   "buttons": {
-    "customizePerAccount": "계정별 사용자 정의",
+    "customizePerAccount": "다음 단계",
     "cancel": "취소",
     "cancelPublish": "게시 취소",
     "schedulePublish": "예약 게시",
@@ -47,7 +47,8 @@
     "tiktokForbidden": "이 플랫폼은 아직 게시를 지원하지 않습니다",
     "xhsOffline": "샤오홍슈 계정이 오프라인입니다. 앱을 다운로드하여 작업해 주세요",
     "emptyChannel": "이 채널에 계정이 없습니다",
-    "regionRestricted": "이 플랫폼은 현재 지역에서 사용할 수 없습니다"
+    "noAccount": "아직 계정이 없습니다. 채널을 추가해주세요",
+    "addChannel": "채널 추가"
   },
   "status": {
     "publishFailed": "실패",
@@ -89,9 +90,12 @@
     "searchLocation": "위치 검색",
     "selectLocation": "위치 선택",
     "descriptionPlaceholder": "작성 시작",
+    "topicHint": "\"#\"을 입력해 주제를 설정하세요",
     "fans": "팔로워",
     "searchPlaceholder": "검색...",
-    "noResults": "결과를 찾을 수 없습니다"
+    "noResults": "결과를 찾을 수 없습니다",
+    "description": "Description",
+    "noLocationsFound": "위치를 찾을 수 없습니다"
   },
   "writingAssistant": "AI 어시스턴트",
   "aiAssistant": "AI 어시스턴트",
@@ -222,27 +226,28 @@
     "videoMaxExceeded": "업로드된 동영상 수는 {{maxCount}}개를 초과할 수 없습니다",
     "instagramImageValidation": "Instagram 게시물 이미지 종횡비는 4:5에서 1.91:1 사이여야 합니다.",
     "instagramReelAspectRatio": "Instagram 릴 동영상 종횡비는 4:5에서 9:16 사이여야 합니다.",
-    "facebookReelDuration": "Facebook 릴 동영상 길이는 3-90초여야 합니다",
-    "facebookStoryDuration": "Facebook 스토리 동영상 길이는 3초-4시간이어야 합니다",
+    "facebookReelDuration": "Facebook Reel 동영상 길이는 3~90초여야 합니다",
+    "facebookStoryDuration": "Facebook Story 동영상 길이는 3~60초여야 합니다",
     "instagramVideoSize": "Instagram 동영상 크기는 100MB를 초과할 수 없습니다",
-    "instagramReelDuration": "Instagram 릴 동영상 길이는 5초-15분이어야 합니다",
-    "instagramStoryDuration": "Instagram 스토리 동영상 길이는 3-60초여야 합니다",
+    "instagramReelDuration": "Instagram Reel 동영상 길이는 3초~15분이어야 합니다",
+    "instagramStoryDuration": "Instagram Story 동영상 길이는 3~60초여야 합니다",
     "threadsVideoSize": "Threads 동영상 크기는 1GB를 초과할 수 없습니다",
     "threadsVideoDuration": "Threads 동영상 길이는 0보다 크고 5분 이하여야 합니다",
     "threadsImageMin": "Threads는 최소 2개의 이미지가 필요합니다",
-    "pinterestVideoDuration": "Pinterest 동영상 길이는 4초-15분이어야 합니다",
-    "pinterestVideoSize": "Pinterest 동영상 크기는 1GB를 초과할 수 없습니다",
+    "pinterestVideoDuration": "Pinterest 동영상 길이는 4초~15분이어야 합니다",
+    "pinterestVideoSize": "Pinterest 동영상 크기는 2GB를 초과할 수 없습니다",
     "tiktokVideoDuration": "TikTok 동영상 길이는 3초에서 10분이어야 합니다",
-    "tiktokVideoSize": "TikTok 동영상 크기는 1GB를 초과할 수 없습니다",
-    "tiktokVideoMinResolution": "TikTok 동영상 최소 해상도는 360x360입니다",
+    "tiktokVideoSize": "TikTok 동영상 크기는 4GB를 초과할 수 없습니다",
+    "tiktokImageMinResolution": "TikTok 이미지 최소 해상도는 360x360입니다",
+    "tiktokImageFormat": "TikTok 이미지 형식은 JPEG, JPG, WEBP만 지원합니다",
     "twitterVideoDuration": "Twitter 동영상 길이는 0.5-140초여야 합니다",
     "twitterVideoSize": "Twitter 동영상 크기는 512MB를 초과할 수 없습니다",
-    "facebookPostImageSize": "Facebook 게시물 이미지 크기는 10MB를 초과할 수 없습니다",
+    "facebookPostImageSize": "Facebook 게시물 이미지 크기는 4MB를 초과할 수 없습니다",
     "facebookStoryImageSize": "Facebook 스토리 이미지 크기는 4MB를 초과할 수 없습니다",
     "instagramImageSize": "Instagram 이미지 크기는 8MB를 초과할 수 없습니다",
-    "pinterestImageSize": "Pinterest 이미지 크기는 10MB를 초과할 수 없습니다",
+    "pinterestImageSize": "Pinterest 이미지 크기는 20MB를 초과할 수 없습니다",
     "tiktokImageSize": "TikTok 이미지 크기는 20MB를 초과할 수 없습니다",
-    "tiktokImageResolution": "TikTok 이미지 최대 해상도는 1080x1920 또는 1920x1080입니다",
+    "tiktokVideoResolution": "TikTok 동영상 최대 해상도는 1080x1920 또는 1920x1080입니다",
     "tiktokPrivacyLevelRequired": "TikTok 동영상의 공개 수준을 선택해 주세요",
     "tiktokContentDisclosureRequired": "콘텐츠 공개 유형을 선택해 주세요: 자체 브랜드 홍보 또는 제3자 홍보",
     "twitterImageSize": "Twitter 이미지 크기는 5MB를 초과할 수 없습니다",
@@ -252,7 +257,34 @@
     "youtubeVideoDuration": "YouTube 동영상 길이는 12시간을 초과할 수 없습니다",
     "categoryRequired": "카테고리를 선택해야 합니다!",
     "kwaiResolutionSuggestion": "권장 동영상 해상도: 1080x1920 (세로).",
-    "kwaiDurationSuggestion": "권장 동영상 길이: 15초 - 3분."
+    "kwaiDurationSuggestion": "권장 동영상 길이: 15초 - 3분.",
+    "xhsVideoSize": "RedNote 동영상 크기는 20GB를 초과할 수 없습니다",
+    "xhsImageSize": "RedNote 이미지 크기는 장당 20MB를 초과할 수 없습니다",
+    "xhsVideoDuration": "RedNote 동영상 길이는 4시간을 초과할 수 없습니다",
+    "bilibiliVideoSize": "Bilibili 동영상 크기는 16GB를 초과할 수 없습니다",
+    "bilibiliVideoDuration": "Bilibili 동영상 길이는 10시간을 초과할 수 없습니다",
+    "douyinVideoSize": "Douyin 동영상 크기는 4GB를 초과할 수 없습니다",
+    "douyinVideoDuration": "Douyin 동영상 길이는 15분을 초과할 수 없습니다",
+    "kwaiVideoSize": "Kwai 동영상 크기는 12GB를 초과할 수 없습니다",
+    "kwaiVideoDuration": "Kwai 동영상 길이는 1시간을 초과할 수 없습니다",
+    "facebookVideoSize": "Facebook 동영상 크기는 4GB를 초과할 수 없습니다",
+    "facebookPostVideoDuration": "Facebook Post 동영상 길이는 4시간을 초과할 수 없습니다",
+    "facebookStoryVideoSize": "Facebook Story 동영상 크기는 1000MB를 초과할 수 없습니다",
+    "instagramReelVideoSize": "Instagram Reel 동영상 크기는 300MB를 초과할 수 없습니다",
+    "instagramStoryVideoSize": "Instagram Story 동영상 크기는 100MB를 초과할 수 없습니다",
+    "threadsImageSize": "Threads 이미지 크기는 8MB를 초과할 수 없습니다",
+    "linkedinImageSize": "LinkedIn 이미지 크기는 5MB를 초과할 수 없습니다",
+    "linkedinVideoSize": "LinkedIn 동영상 크기는 500MB를 초과할 수 없습니다",
+    "linkedinVideoDuration": "LinkedIn 동영상 길이는 3초~30분이어야 합니다",
+    "wxSphVideoSize": "WeChat Channels 동영상 크기는 20GB를 초과할 수 없습니다",
+    "wxSphVideoDuration": "WeChat Channels 동영상 길이는 8시간을 초과할 수 없습니다",
+    "wxGzhImageSize": "WeChat Official Account 이미지 크기는 10MB를 초과할 수 없습니다",
+    "twitterAltTextMax": "Twitter media alt text cannot exceed 1000 characters",
+    "twitterPollDuration": "Poll duration must be 5-10080 minutes",
+    "twitterPollMinOptions": "Poll requires at least 2 options",
+    "twitterPollNoMedia": "Polls cannot include images or videos",
+    "twitterPollOptionInvalid": "Poll options must be 1-25 characters",
+    "twitterTaggedUsersLimit": "Twitter image posts can tag up to 10 users"
   },
   "preview": {
     "title": "미리보기",
@@ -309,7 +341,8 @@
     "getChatModelsFailed": "채팅 모델을 가져오는 데 실패했습니다",
     "mobileNotSupported": "이 기능은 모바일에서 지원되지 않습니다. 데스크톱을 사용해 주세요",
     "publishSubmitted": "게시물이 제출되었습니다. 콘텐츠가 처리되어 {{platform}} 프로필에 표시되기까지 몇 분이 걸릴 수 있습니다.",
-    "douyinScanPublish": "Douyin 게시에는 Douyin 앱으로 QR 코드를 스캔해야 합니다. QR 코드 팝업을 확인해 주세요."
+    "douyinScanPublish": "Douyin 게시에는 Douyin 앱으로 QR 코드를 스캔해야 합니다. QR 코드 팝업을 확인해 주세요.",
+    "wxSphLinkPollingLoginRequired": "WeChat Channels login has expired. Please log in again and keep your browser open; the plugin will continue fetching the work link."
   },
   "badges": {
     "offline": "오프라인",
@@ -350,6 +383,18 @@
       "processNote": "참고: 게시 후 콘텐츠가 처리되어 프로필에 표시되기까지 몇 분이 걸릴 수 있습니다."
     }
   },
+  "xhs": {
+    "declaration": {
+      "title": "콘텐츠 신고",
+      "placeholder": "신고 유형 선택",
+      "none": "선택 안 함",
+      "options": {
+        "1": "가상 연출, 오락용",
+        "2": "게시물에 AI 생성 콘텐츠 포함",
+        "3": "마케팅 광고 포함"
+      }
+    }
+  },
   "previewvideo": "동영상 미리보기",
   "record": {
     "metrics": {
@@ -359,7 +404,9 @@
       "shares": "공유"
     },
     "viewWork": "작품 보기",
-    "updatedAt": "수정 시간"
+    "updatedAt": "수정 시간",
+    "wxSphReviewPendingDesc": "WeChat Channels에서 동영상 심사가 승인되면 작품 링크가 자동으로 업데이트됩니다. 브라우저를 열어 두고 로그인 상태를 유지해 주세요.",
+    "wxSphReviewPendingShort": "WeChat Channels 심사 대기 중"
   },
   "clientType": {
     "label": "소스",
@@ -395,5 +442,76 @@
   },
   "errorSummary": {
     "title": "{{count}}개 계정에 문제가 있습니다"
+  },
+  "wxSph": {
+    "search": {
+      "loading": "Searching...",
+      "minKeyword": "Enter at least 2 characters to search",
+      "pluginUnavailable": "The current plugin version does not support WeChat Channels search. Please update the plugin and try again."
+    },
+    "location": {
+      "title": "Location",
+      "hint": "Search WeChat Channels locations by keyword and choose one to submit with the post.",
+      "clear": "Clear",
+      "searchPlaceholder": "Search and select a location",
+      "searchFailed": "Location search failed",
+      "empty": "No matching locations found",
+      "selected": "Selected: {{name}}",
+      "addressEmpty": "No address available"
+    },
+    "activity": {
+      "title": "Activity",
+      "hint": "Search WeChat Channels activities by keyword and choose one to join.",
+      "clear": "Clear",
+      "searchPlaceholder": "Search and select an activity",
+      "searchFailed": "Activity search failed",
+      "empty": "No matching activities found",
+      "selected": "Selected: {{name}}"
+    },
+    "extLink": {
+      "title": "Link",
+      "placeholder": "Paste an extension link",
+      "hint": "Optional. It will be passed to the WeChat Channels extended reading field when publishing."
+    },
+    "original": {
+      "title": "Declare Original",
+      "hint": "After declaration, the post can show an original mark and may be eligible for ad revenue."
+    }
+  },
+  "twitter": {
+    "addPollOption": "Add option",
+    "aiContent": "AI content",
+    "altText": "Alt text",
+    "altTextImagePlaceholder": "Describe this image (1-1000 chars)",
+    "altTextVideoPlaceholder": "Describe this video (1-1000 chars)",
+    "containsAi": "Contains AI-generated media",
+    "duration": "Duration (min):",
+    "durationRange": "5–10080",
+    "everyone": "Everyone",
+    "mediaDisabledByPoll": "Poll is enabled. Media enhancements apply after removing the poll.",
+    "noMediaOptions": "Add images or a video to set media tags and alt text.",
+    "poll": "Poll",
+    "pollMediaWarning": "Polls cannot include images or videos. Remove media to add a poll.",
+    "pollOptionPlaceholder": "Option {{n}} (1-25 chars)",
+    "pollOptions": "({{count}} options)",
+    "pollOptionsLabel": "Poll options",
+    "pollReply": "Poll reply:",
+    "replySettings": {
+      "following": "People you follow",
+      "mentionedUsers": "Only mentioned users",
+      "subscribers": "Subscribers",
+      "verified": "Verified users"
+    },
+    "replyTo": "Reply to",
+    "sections": {
+      "basic": "Basic settings",
+      "media": "Media enhancements",
+      "mediaDesc": "Tag users on images and add alt text for media.",
+      "poll": "Poll",
+      "pollDesc": "Polls cannot be posted with images or videos."
+    },
+    "tagUsers": "Tag users",
+    "tagUsersLimit": "Max 10 users, image posts only",
+    "tagUsersPlaceholder": "User ID"
   }
 }

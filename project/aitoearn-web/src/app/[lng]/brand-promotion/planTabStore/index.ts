@@ -29,50 +29,73 @@ const initialState: IPlanTabStoreState = {
 export const usePlanTabStore = createPersistStore(
   initialState,
   (set, get) => {
+    const mergePlanToTop = (list: PromotionPlan[], plan: PromotionPlan) => {
+      return [plan, ...list.filter(item => item.id !== plan.id)]
+    }
+
+    const syncTabs = async (preferredPlanId?: string | null) => {
+      set({ tabPlansLoading: true })
+      try {
+        const res = await apiGetMaterialGroupList(1, PAGE_SIZE)
+        const list = res?.data?.list || []
+        const total = res?.data?.total || 0
+
+        const { selectedPlanId } = get()
+        const validPreferredPlanId = preferredPlanId && list.some(p => p.id === preferredPlanId)
+          ? preferredPlanId
+          : null
+
+        let validSelectedId: string | null = null
+        if (validPreferredPlanId) {
+          validSelectedId = validPreferredPlanId
+        }
+        else if (selectedPlanId && list.some(p => p.id === selectedPlanId)) {
+          validSelectedId = selectedPlanId
+        }
+        else if (list.length > 0) {
+          validSelectedId = list[0].id
+        }
+
+        set({
+          tabPlans: list,
+          morePlans: list,
+          selectedPlanId: validSelectedId,
+          initialized: true,
+          morePlansPagination: {
+            current: 1,
+            pageSize: PAGE_SIZE,
+            total,
+            hasMore: list.length < total,
+          },
+        })
+      }
+      catch {
+        set({ initialized: true })
+      }
+      finally {
+        set({ tabPlansLoading: false })
+      }
+    }
+
     const methods = {
       /**
        * 初始化 Tab 列表
        * 加载第一页推广计划，恢复或默认选中
        */
-      initTabs: async () => {
+      initTabs: async (preferredPlanId?: string | null) => {
         const { initialized } = get()
         if (initialized)
           return
 
-        set({ tabPlansLoading: true })
-        try {
-          const res = await apiGetMaterialGroupList(1, PAGE_SIZE)
-          const list = res?.data?.list || []
-          const total = res?.data?.total || 0
+        await syncTabs(preferredPlanId)
+      },
 
-          const { selectedPlanId } = get()
-          // 恢复持久化选中，若不在列表中则选第一个
-          let validSelectedId: string | null = null
-          if (selectedPlanId && list.some(p => p.id === selectedPlanId)) {
-            validSelectedId = selectedPlanId
-          }
-          else if (list.length > 0) {
-            validSelectedId = list[0].id
-          }
-
-          set({
-            tabPlans: list,
-            selectedPlanId: validSelectedId,
-            initialized: true,
-            morePlansPagination: {
-              current: 1,
-              pageSize: PAGE_SIZE,
-              total,
-              hasMore: list.length < total,
-            },
-          })
-        }
-        catch {
-          set({ initialized: true })
-        }
-        finally {
-          set({ tabPlansLoading: false })
-        }
+      /**
+       * 强制刷新 Tab 列表
+       * 用于跨页面新增计划后重新拉取
+       */
+      refreshTabs: async (preferredPlanId?: string | null) => {
+        await syncTabs(preferredPlanId)
       },
 
       /**
@@ -131,29 +154,29 @@ export const usePlanTabStore = createPersistStore(
        * 创建计划后同步
        * 刷新 tabPlans + 自动选中新计划
        */
-      onPlanCreated: async (newPlanId?: string) => {
-        try {
-          const res = await apiGetMaterialGroupList(1, PAGE_SIZE)
-          const list = (res?.data?.list || []) as PromotionPlan[]
-          const total = res?.data?.total || 0
+      onPlanCreated: async (newPlanId?: string, optimisticPlan?: PromotionPlan) => {
+        if (newPlanId && optimisticPlan) {
+          const { tabPlans, morePlans, morePlansPagination } = get()
+          const nextTabPlans = mergePlanToTop(tabPlans, optimisticPlan)
+          const nextMorePlans = mergePlanToTop(morePlans, optimisticPlan)
+          const total = Math.max(morePlansPagination.total + 1, nextTabPlans.length)
 
           set({
-            tabPlans: list,
+            tabPlans: nextTabPlans,
+            morePlans: nextMorePlans,
+            selectedPlanId: newPlanId,
+            initialized: true,
             morePlansPagination: {
+              ...morePlansPagination,
               current: 1,
-              pageSize: PAGE_SIZE,
               total,
-              hasMore: list.length < total,
+              hasMore: nextTabPlans.length < total,
             },
           })
+        }
 
-          // 自动选中新计划
-          if (newPlanId && list.some(p => p.id === newPlanId)) {
-            set({ selectedPlanId: newPlanId })
-          }
-          else if (list.length > 0) {
-            set({ selectedPlanId: list[0].id })
-          }
+        try {
+          await syncTabs(newPlanId)
         }
         catch {
           // 静默失败

@@ -335,76 +335,82 @@ export class YoutubeService extends PlatformBaseService {
     expires_in: number,
     spaceId?: string,
   ): Promise<Account> {
-    try {
-      let newAccount = email
-      let newNickname = ''
-      let newAvatar = ''
-      let channelId = ''
+    let newAccount = email
+    let newNickname = ''
+    let newAvatar = ''
+    let channelId = ''
+    let fansCount: number | undefined
+    let readCount: number | undefined
+    let workCount: number | undefined
 
-      // 获取当前用户的YouTube频道信息
-      const response = await this.youtubeClient.channels.list({
-        part: ['snippet', 'statistics'],
-        mine: true,
-      })
+    // 获取当前用户的YouTube频道信息
+    const response = await this.youtubeClient.channels.list({
+      part: ['snippet', 'statistics'],
+      mine: true,
+    })
 
-      if (!response.data.items || response.data.items.length === 0) {
-        this.logger.log(`无法获取YouTube频道信息，将从Google用户信息获取`)
-        try {
-          const userInfoData = await this.youtubeApiService.getUserInfoFromGoogle(accessToken)
-          if (!userInfoData) {
-            throw new Error('获取Google用户信息失败')
-          }
-
-          // 使用Google用户信息更新账号数据
-          newAccount = googleId || userInfoData.email
-          newNickname = userInfoData.name || ''
-          newAvatar = userInfoData.picture || ''
+    if (!response.data.items || response.data.items.length === 0) {
+      this.logger.log(`无法获取YouTube频道信息，将从Google用户信息获取`)
+      try {
+        const userInfoData = await this.youtubeApiService.getUserInfoFromGoogle(accessToken)
+        if (!userInfoData) {
+          throw new Error('获取Google用户信息失败')
         }
-        catch (error) {
-          this.logger.error('获取Google用户信息失败:', error)
-          newAccount = googleId
-          newNickname = 'YouTube User'
-        }
-      }
-      else {
-        const channel = response.data.items[0]
-        channelId = channel.id || ''
-        newAccount = channel.id || ''
-        newNickname = channel.snippet?.title || ''
-        newAvatar = channel.snippet?.thumbnails?.default?.url || ''
-      }
 
-      const channelInfo = new NewAccount({
-        userId,
+        // 使用Google用户信息更新账号数据
+        newAccount = googleId || userInfoData.email
+        newNickname = userInfoData.name || ''
+        newAvatar = userInfoData.picture || ''
+      }
+      catch (error) {
+        this.logger.error(error, '获取Google用户信息失败')
+        newAccount = googleId
+        newNickname = 'YouTube User'
+      }
+    }
+    else {
+      const channel = response.data.items[0]
+      channelId = channel.id || ''
+      newAccount = channel.id || ''
+      newNickname = channel.snippet?.title || ''
+      newAvatar = channel.snippet?.thumbnails?.default?.url || ''
+      fansCount = channel.statistics?.subscriberCount ? Number(channel.statistics.subscriberCount) : undefined
+      readCount = channel.statistics?.viewCount ? Number(channel.statistics.viewCount) : undefined
+      workCount = channel.statistics?.videoCount ? Number(channel.statistics.videoCount) : undefined
+    }
+
+    const channelInfo = new NewAccount({
+      userId,
+      type: AccountType.YOUTUBE,
+      uid: googleId,
+      channelId,
+      account: newAccount,
+      nickname: newNickname,
+      avatar: newAvatar,
+      refresh_token: refreshToken,
+      groupId: spaceId,
+      status: AccountStatus.NORMAL,
+      loginTime: new Date(),
+      lastStatsTime: new Date(),
+    })
+    const accountInfo = await this.channelAccountService.createAccount(
+      {
         type: AccountType.YOUTUBE,
         uid: googleId,
-        channelId,
-        account: newAccount,
-        nickname: newNickname,
-        avatar: newAvatar,
-        refresh_token: refreshToken,
-        groupId: spaceId,
-        status: AccountStatus.NORMAL,
-        loginTime: new Date(),
-        lastStatsTime: new Date(),
-      })
-      const accountInfo = await this.channelAccountService.createAccount(
-        {
-          type: AccountType.YOUTUBE,
-          uid: googleId,
-        },
-        channelInfo,
-      )
+      },
+      channelInfo,
+    )
 
-      if (!accountInfo)
-        throw new Error('创建账号失败')
+    if (!accountInfo)
+      throw new Error('创建账号失败')
 
-      return accountInfo
-    }
-    catch (error) {
-      this.logger.error('更新YouTube账号信息失败:', error, (error as Error).stack)
-      throw new Error('更新YouTube账号信息失败')
-    }
+    await this.syncAccountStatisticsOnAuth(accountInfo.id, async () => ({
+      fansCount,
+      readCount,
+      workCount,
+    }))
+
+    return accountInfo
   }
 
   /**
@@ -438,8 +444,12 @@ export class YoutubeService extends PlatformBaseService {
    * @param accountId 账号ID
    * @returns 访问令牌
    */
-  async getUserAccessToken(accountId: string) {
-    await this.ensureLocalAccount(accountId)
+  async getUserAccessToken(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getUserAccessTokenByAccountId(accountId)
+  }
+
+  async getUserAccessTokenByAccountId(accountId: string) {
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential || !credential.access_token) {
       this.logger.error(`youtube credential not found for accountId: ${accountId}`)
@@ -480,13 +490,16 @@ export class YoutubeService extends PlatformBaseService {
    * @param accountId 账号ID
    * @returns 是否已授权
    */
-  async isAuthorized(accountId: string): Promise<boolean> {
+  async isAuthorized(userId: string, accountId: string): Promise<boolean> {
     try {
-      const accessToken = await this.getUserAccessToken(accountId)
+      const accessToken = await this.getUserAccessToken(userId, accountId)
       return !!accessToken
     }
     catch (error) {
-      return error as boolean
+      if (error instanceof PlatformAuthExpiredException) {
+        return false
+      }
+      throw error
     }
   }
 
@@ -576,6 +589,16 @@ export class YoutubeService extends PlatformBaseService {
    * 获取视频类别列表。
    */
   async getVideoCategoriesList(
+    userId: string,
+    accountId: string,
+    id?: string,
+    regionCode?: string,
+  ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getVideoCategoriesListByAccountId(accountId, id, regionCode)
+  }
+
+  async getVideoCategoriesListByAccountId(
     accountId: string,
     id?: string,
     regionCode?: string,
@@ -584,25 +607,32 @@ export class YoutubeService extends PlatformBaseService {
     if (!(await this.ensureValidAccessToken(accountId))) {
       throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
-    try {
-      const response = await this.youtubeClient.videoCategories.list({
-        part: ['snippet'],
-        ...(id && { id: [id] }),
-        ...(regionCode && { regionCode }),
-        auth: this.oauth2Client,
-      })
-      return response.data
-    }
-    catch (err) {
-      this.logger.error(`The API returned an error: ${err}`)
-      throw err
-    }
+    const response = await this.youtubeClient.videoCategories.list({
+      part: ['snippet'],
+      ...(id && { id: [id] }),
+      ...(regionCode && { regionCode }),
+      auth: this.oauth2Client,
+    })
+    return response.data
   }
 
   /**
    * 获取视频列表。
    */
   async getVideosList(
+    userId: string,
+    accountId: string,
+    chart?: string,
+    id?: string[],
+    myRating?: boolean,
+    maxResults?: number,
+    pageToken?: string,
+  ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getVideosListByAccountId(accountId, chart, id, myRating, maxResults, pageToken)
+  }
+
+  async getVideosListByAccountId(
     accountId: string,
     chart?: string,
     id?: string[],
@@ -735,7 +765,7 @@ export class YoutubeService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error(`Failed to get work detail for ${dataId}:`, error)
+      this.logger.error(error, `Failed to get work detail for ${dataId}`)
       return null
     }
   }
@@ -768,7 +798,14 @@ export class YoutubeService extends PlatformBaseService {
 
       // 2. 获取视频信息
       const videoInfoResult = await this.getVideosInfo(accountId, dataId)
-      if (!this.isVideoListResponse(videoInfoResult) || !videoInfoResult.data.items?.length) {
+      if (videoInfoResult instanceof AppException) {
+        throw videoInfoResult
+      }
+      if (!this.isVideoListResponse(videoInfoResult)) {
+        this.logger.warn(`Failed to fetch video info for ${dataId}`)
+        throw new AppException(ResponseCode.ChannelAccountInfoFailed)
+      }
+      if (!videoInfoResult.data.items?.length) {
         this.logger.warn(`Unable to fetch video info for ${dataId}`)
         throw new AppException(ResponseCode.WorkDetailNotFound)
       }
@@ -791,8 +828,8 @@ export class YoutubeService extends PlatformBaseService {
       if (error instanceof AppException) {
         throw error
       }
-      this.logger.error(`Failed to verify work ownership for ${dataId}:`, error)
-      throw new AppException(ResponseCode.WorkDetailNotFound)
+      this.logger.error(error, `Failed to verify work ownership for ${dataId}`)
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed)
     }
   }
 
@@ -924,7 +961,7 @@ export class YoutubeService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -952,7 +989,7 @@ export class YoutubeService extends PlatformBaseService {
     selfDeclaredMadeForKids = false,
     contentLength?: number,
   ) {
-    const accessToken = await this.getUserAccessToken(accountId)
+    const accessToken = await this.getUserAccessTokenByAccountId(accountId)
     if (!accessToken)
       throw new AppException(ResponseCode.ChannelAccessTokenFailed, { accountId })
 
@@ -1056,7 +1093,7 @@ export class YoutubeService extends PlatformBaseService {
     uploadToken: string,
     partNumber: number,
   ) {
-    const accessToken = await this.getUserAccessToken(accountId)
+    const accessToken = await this.getUserAccessTokenByAccountId(accountId)
     if (!accessToken)
       throw new AppException(ResponseCode.ChannelAccessTokenFailed, { accountId })
 
@@ -1117,7 +1154,7 @@ export class YoutubeService extends PlatformBaseService {
     uploadToken: string,
     totalSize: number,
   ) {
-    const accessToken = await this.getUserAccessToken(accountId)
+    const accessToken = await this.getUserAccessTokenByAccountId(accountId)
     if (!accessToken)
       throw new AppException(ResponseCode.ChannelAccessTokenFailed, { accountId })
 
@@ -1151,6 +1188,18 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 评论列表
    */
   async getCommentsList(
+    userId: string,
+    accountId: string,
+    parentId?: string,
+    id?: string[],
+    maxResults?: number,
+    pageToken?: string,
+  ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getCommentsListByAccountId(accountId, parentId, id, maxResults, pageToken)
+  }
+
+  async getCommentsListByAccountId(
     accountId: string,
     parentId?: string,
     id?: string[],
@@ -1189,7 +1238,12 @@ export class YoutubeService extends PlatformBaseService {
    * @param snippet 元数据
    * @returns 创建结果
    */
-  async insertComment(accountId: string, parentId: string, textOriginal: string) {
+  async insertComment(userId: string, accountId: string, parentId: string, textOriginal: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.insertCommentByAccountId(accountId, parentId, textOriginal)
+  }
+
+  async insertCommentByAccountId(accountId: string, parentId: string, textOriginal: string) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1226,7 +1280,12 @@ export class YoutubeService extends PlatformBaseService {
    * @param snippet 元数据
    * @returns 创建结果
    */
-  async updateComment(accountId: string, id: string, textOriginal: string) {
+  async updateComment(userId: string, accountId: string, id: string, textOriginal: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.updateCommentByAccountId(accountId, id, textOriginal)
+  }
+
+  async updateCommentByAccountId(accountId: string, id: string, textOriginal: string) {
     try {
       // 使用封装的辅助方法
       if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1248,7 +1307,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1262,6 +1321,17 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 设置结果
    */
   async setModerationStatusComments(
+    userId: string,
+    accountId: string,
+    id: string[],
+    moderationStatus: string,
+    banAuthor: boolean,
+  ): Promise<any> {
+    await this.getLocalAccount(userId, accountId)
+    return this.setModerationStatusCommentsByAccountId(accountId, id, moderationStatus, banAuthor)
+  }
+
+  async setModerationStatusCommentsByAccountId(
     accountId: string,
     id: string[],
     moderationStatus: string,
@@ -1286,7 +1356,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1296,7 +1366,12 @@ export class YoutubeService extends PlatformBaseService {
    * @param id 评论ID
    * @returns 删除结果
    */
-  async deleteComment(accountId: string, id: string) {
+  async deleteComment(userId: string, accountId: string, id: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.deleteCommentByAccountId(accountId, id)
+  }
+
+  async deleteCommentByAccountId(accountId: string, id: string) {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
       this.logger.log(`get youtube access token error. accountId" ${accountId}`)
@@ -1312,7 +1387,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error deleting comment:', error)
+      this.logger.error(error, 'Error deleting comment')
       return error
     }
   }
@@ -1321,6 +1396,21 @@ export class YoutubeService extends PlatformBaseService {
    * 获取评论会话列表。
    */
   async getCommentThreadsList(
+    userId: string,
+    accountId: string,
+    allThreadsRelatedToChannelId?: string,
+    id?: string[],
+    videoId?: string,
+    maxResults?: number,
+    pageToken?: string,
+    order?: string,
+    searchTerms?: string,
+  ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getCommentThreadsListByAccountId(accountId, allThreadsRelatedToChannelId, id, videoId, maxResults, pageToken, order, searchTerms)
+  }
+
+  async getCommentThreadsListByAccountId(
     accountId: string,
     allThreadsRelatedToChannelId?: string,
     id?: string[],
@@ -1388,7 +1478,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 创建顶级评论
    */
-  async insertCommentThreads(accountId: string, channelId: string | undefined, videoId: string, textOriginal: string) {
+  async insertCommentThreads(userId: string, accountId: string, channelId: string | undefined, videoId: string, textOriginal: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.insertCommentThreadsByAccountId(accountId, channelId, videoId, textOriginal)
+  }
+
+  async insertCommentThreadsByAccountId(accountId: string, channelId: string | undefined, videoId: string, textOriginal: string) {
     try {
       // 使用封装的辅助方法
       if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1423,7 +1518,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 对视频的点赞、踩。
    */
-  async setVideosRate(accountId: string, videoId: string, rating: string) {
+  async setVideosRate(userId: string, accountId: string, videoId: string, rating: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.setVideosRateByAccountId(accountId, videoId, rating)
+  }
+
+  async setVideosRateByAccountId(accountId: string, videoId: string, rating: string) {
     try {
       // 使用封装的辅助方法
       if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1441,7 +1541,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error rating video:', error)
+      this.logger.error(error, 'Error rating video')
       // this.handleApiError(error);
       return error
     }
@@ -1450,7 +1550,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 获取视频的点赞、踩。
    */
-  async getVideosRating(accountId: string, videoIds: string[]) {
+  async getVideosRating(userId: string, accountId: string, videoIds: string[]) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getVideosRatingByAccountId(accountId, videoIds)
+  }
+
+  async getVideosRatingByAccountId(accountId: string, videoIds: string[]) {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
       this.logger.log(`get youtube access token error. accountId" ${accountId}`)
@@ -1480,6 +1585,11 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 删除视频
    */
+  async deletePostForUser(userId: string, accountId: string, postId: string): Promise<boolean> {
+    await this.getLocalAccount(userId, accountId)
+    return this.deletePost(accountId, postId)
+  }
+
   override async deletePost(accountId: string, postId: string): Promise<boolean> {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1487,25 +1597,24 @@ export class YoutubeService extends PlatformBaseService {
       throw new AppException(ResponseCode.ChannelAccessTokenFailed)
     }
 
-    try {
-      const response = await this.youtubeClient.videos.delete({
-        auth: this.oauth2Client,
-        id: postId,
-      })
+    const response = await this.youtubeClient.videos.delete({
+      auth: this.oauth2Client,
+      id: postId,
+    })
 
-      this.logger.log('Video deleted:', response.data)
-      return true
-    }
-    catch (error) {
-      this.logger.error('Error deleting video:', error)
-      throw new Error((error as Error).message)
-    }
+    this.logger.log('Video deleted:', response.data)
+    return true
   }
 
   /**
    * 更新视频。
    */
-  async updateVideo(accountId: string, videoSchema: youtube_v3.Schema$Video) {
+  async updateVideo(userId: string, accountId: string, videoSchema: youtube_v3.Schema$Video) {
+    await this.getLocalAccount(userId, accountId)
+    return this.updateVideoByAccountId(accountId, videoSchema)
+  }
+
+  async updateVideoByAccountId(accountId: string, videoSchema: youtube_v3.Schema$Video) {
     if (!(await this.ensureValidAccessToken(accountId))) {
       this.logger.log(`get youtube access token error. accountId" ${accountId}`)
       throw new AppException(ResponseCode.ChannelAccessTokenFailed)
@@ -1524,7 +1633,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 创建播放列表。
    */
-  async insertPlayList(accountId: string, snippet: any, status: any) {
+  async insertPlayList(userId: string, accountId: string, snippet: any, status: any) {
+    await this.getLocalAccount(userId, accountId)
+    return this.insertPlayListByAccountId(accountId, snippet, status)
+  }
+
+  async insertPlayListByAccountId(accountId: string, snippet: any, status: any) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1566,7 +1680,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1574,7 +1688,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 获取播放列表。
    */
-  async getPlayList(accountId: string, channelId?: string, id?: string, mine?: boolean, maxResults?: number, pageToken?: string) {
+  async getPlayList(userId: string, accountId: string, channelId?: string, id?: string, mine?: boolean, maxResults?: number, pageToken?: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPlayListByAccountId(accountId, channelId, id, mine, maxResults, pageToken)
+  }
+
+  async getPlayListByAccountId(accountId: string, channelId?: string, id?: string, mine?: boolean, maxResults?: number, pageToken?: string) {
     // 设置 OAuth2 客户端凭证
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1624,7 +1743,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 更新播放列表。
    */
-  async updatePlayList(accountId: string, id: string, title: string, description?: string, privacyStatus?: string, podcastStatus?: string) {
+  async updatePlayList(userId: string, accountId: string, id: string, title: string, description?: string, privacyStatus?: string, podcastStatus?: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.updatePlayListByAccountId(accountId, id, title, description, privacyStatus, podcastStatus)
+  }
+
+  async updatePlayListByAccountId(accountId: string, id: string, title: string, description?: string, privacyStatus?: string, podcastStatus?: string) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1680,7 +1804,7 @@ export class YoutubeService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1688,7 +1812,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 删除播放列表
    */
-  async deletePlaylist(accountId: string, playListId: string) {
+  async deletePlaylist(userId: string, accountId: string, playListId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.deletePlaylistByAccountId(accountId, playListId)
+  }
+
+  async deletePlaylistByAccountId(accountId: string, playListId: string) {
     // 设置 OAuth2 客户端凭证
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1705,7 +1834,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error deleting video:', error)
+      this.logger.error(error, 'Error deleting video')
       return error
     }
   }
@@ -1713,7 +1842,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 将视频添加到播放列表中
    */
-  async addVideoToPlaylist(accountId: string, snippet: any, contentDetails: any) {
+  async addVideoToPlaylist(userId: string, accountId: string, snippet: any, contentDetails: any) {
+    await this.getLocalAccount(userId, accountId)
+    return this.addVideoToPlaylistByAccountId(accountId, snippet, contentDetails)
+  }
+
+  async addVideoToPlaylistByAccountId(accountId: string, snippet: any, contentDetails: any) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1742,7 +1876,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1750,7 +1884,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 获取播放列表项。
    */
-  async getPlayItemsList(accountId: string, id?: string, playlistId?: string, maxResults?: number, pageToken?: string, videoId?: string) {
+  async getPlayItemsList(userId: string, accountId: string, id?: string, playlistId?: string, maxResults?: number, pageToken?: string, videoId?: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPlayItemsListByAccountId(accountId, id, playlistId, maxResults, pageToken, videoId)
+  }
+
+  async getPlayItemsListByAccountId(accountId: string, id?: string, playlistId?: string, maxResults?: number, pageToken?: string, videoId?: string) {
     // 设置 OAuth2 客户端凭证
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
@@ -1839,7 +1978,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1847,7 +1986,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 更新播放列表项。
    */
-  async updatePlayItems(accountId: string, playlistItemsId: string, snippet: any, contentDetails: any) {
+  async updatePlayItems(userId: string, accountId: string, playlistItemsId: string, snippet: any, contentDetails: any) {
+    await this.getLocalAccount(userId, accountId)
+    return this.updatePlayItemsByAccountId(accountId, playlistItemsId, snippet, contentDetails)
+  }
+
+  async updatePlayItemsByAccountId(accountId: string, playlistItemsId: string, snippet: any, contentDetails: any) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1875,7 +2019,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -1883,7 +2027,12 @@ export class YoutubeService extends PlatformBaseService {
   /**
    * 删除播放列表项
    */
-  async deletePlayItems(accountId: string, playlistItemsId: string) {
+  async deletePlayItems(userId: string, accountId: string, playlistItemsId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.deletePlayItemsByAccountId(accountId, playlistItemsId)
+  }
+
+  async deletePlayItemsByAccountId(accountId: string, playlistItemsId: string) {
     try {
       // 设置 OAuth2 客户端凭证
       // 使用封装的辅助方法
@@ -1900,7 +2049,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error deleting video:', error)
+      this.logger.error(error, 'Error deleting video')
       return error
     }
   }
@@ -1915,7 +2064,12 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 频道列表
    */
   // async getChannelsList(params: GetChannelsListParams) {
-  async getChannelsList(accountId: string, forHandle?: string, forUsername?: string, id?: string[], mine?: boolean, maxResults?: number, pageToken?: string) {
+  async getChannelsList(userId: string, accountId: string, forHandle?: string, forUsername?: string, id?: string[], mine?: boolean, maxResults?: number, pageToken?: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getChannelsListByAccountId(accountId, forHandle, forUsername, id, mine, maxResults, pageToken)
+  }
+
+  async getChannelsListByAccountId(accountId: string, forHandle?: string, forUsername?: string, id?: string[], mine?: boolean, maxResults?: number, pageToken?: string) {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
       this.logger.log(`get youtube access token error. accountId" ${accountId}`)
@@ -1987,7 +2141,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error Channels update:', error)
+      this.logger.error(error, 'Error Channels update')
       return error
     }
   }
@@ -2002,7 +2156,12 @@ export class YoutubeService extends PlatformBaseService {
    * @param pageToken 分页令牌
    * @returns 频道板块列表
    */
-  async getChannelSectionsList(accountId: string, channelId?: string, id?: string[], mine?: boolean) {
+  async getChannelSectionsList(userId: string, accountId: string, channelId?: string, id?: string[], mine?: boolean) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getChannelSectionsListByAccountId(accountId, channelId, id, mine)
+  }
+
+  async getChannelSectionsListByAccountId(accountId: string, channelId?: string, id?: string[], mine?: boolean) {
     // 使用封装的辅助方法
     if (!(await this.ensureValidAccessToken(accountId))) {
       return '获取访问令牌失败'
@@ -2074,7 +2233,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error Channel Section insert:', error)
+      this.logger.error(error, 'Error Channel Section insert')
       return error
     }
   }
@@ -2112,7 +2271,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error uploading video:', error)
+      this.logger.error(error, 'Error uploading video')
       return error
     }
   }
@@ -2138,7 +2297,7 @@ export class YoutubeService extends PlatformBaseService {
       return response.data
     }
     catch (error) {
-      this.logger.error('Error deleting video:', error)
+      this.logger.error(error, 'Error deleting video')
       return error
     }
   }
@@ -2161,7 +2320,7 @@ export class YoutubeService extends PlatformBaseService {
       return response?.data?.items?.[0]?.default?.url
     }
     catch (error) {
-      this.logger.error('Error deleting video:', error)
+      this.logger.error(error, 'Error deleting video')
       return false
     }
   }
@@ -2172,7 +2331,7 @@ export class YoutubeService extends PlatformBaseService {
    * @returns 成功返回true，失败返回false
    */
   private async ensureValidAccessToken(accountId: string): Promise<boolean> {
-    const accessToken = await this.getUserAccessToken(accountId)
+    const accessToken = await this.getUserAccessTokenByAccountId(accountId)
 
     if (!accessToken) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -2234,7 +2393,7 @@ export class YoutubeService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
-    await this.ensureLocalAccount(accountId)
+    await this.getLocalAccountById(accountId)
     const credential = await this.getOAuth2Credential(accountId)
     if (credential && credential.access_token) {
       this.updateAccountStatus(accountId, 1)
@@ -2427,20 +2586,27 @@ export class YoutubeService extends PlatformBaseService {
     }
   }
 
-  async updateChannelId(accountId: string) {
-    const channelListResult = await this.getChannelsList(accountId, undefined, undefined, undefined, true)
+  async updateChannelId(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.updateChannelIdByAccountId(accountId)
+  }
+
+  async updateChannelIdByAccountId(accountId: string) {
+    const account = await this.getLocalAccountById(accountId)
+    if (!account) {
+      throw new AppException(ResponseCode.AccountNotFound)
+    }
+
+    const channelListResult = await this.getChannelsListByAccountId(accountId, undefined, undefined, undefined, true)
 
     const items = (channelListResult as any)?.data?.items
     const fetchedChannelId = items?.[0]?.id as string | undefined
 
     if (fetchedChannelId && fetchedChannelId.trim() !== '') {
-      const accountInfo = await this.channelAccountService.getAccountInfo(accountId)
-      if (accountInfo) {
-        const currentChannelId = accountInfo.channelId || ''
-        if (currentChannelId !== fetchedChannelId) {
-          this.logger.debug(`更新频道 channelId: ${currentChannelId} -> ${fetchedChannelId}`)
-          await this.channelAccountService.updateAccountInfo(accountId, { channelId: fetchedChannelId })
-        }
+      const currentChannelId = account.channelId || ''
+      if (currentChannelId !== fetchedChannelId) {
+        this.logger.debug(`更新频道 channelId: ${currentChannelId} -> ${fetchedChannelId}`)
+        await this.channelAccountService.updateAccountInfo(accountId, { channelId: fetchedChannelId })
       }
     }
     return fetchedChannelId || ''

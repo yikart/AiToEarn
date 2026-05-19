@@ -9,12 +9,14 @@
 'use client'
 
 import type { SocialAccount } from '@/api/types/account.type'
-import { Bot, SquarePen, UserPlus } from 'lucide-react'
+import { BarChart3, Bot, SquarePen, UserPlus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import TwitterExploreDialog from '@/components/twitter/TwitterAnalyticsDialog'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
@@ -32,6 +34,7 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
   const [collapsedSpaces, setCollapsedSpaces] = useState<Set<string>>(new Set())
   const [sortLoading, setSortLoading] = useState<string | null>(null)
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+  const [analyticsOpen, setAnalyticsOpen] = useState(false)
 
   const {
     accountList,
@@ -155,6 +158,14 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
     return [...accountGroupList].sort((a, b) => (a.rank || 0) - (b.rank || 0))
   }, [accountGroupList])
 
+  const handleNewWorkClick = useCallback(() => {
+    onNewWork?.()
+  }, [onNewWork])
+
+  const handleAgentCreateClick = useCallback(() => {
+    router.push('/ai-social')
+  }, [router])
+
   return (
     <>
       <div className="h-14 md:h-16 flex items-center justify-between px-3 md:px-6 border-b bg-background shrink-0">
@@ -163,7 +174,7 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
           {/* 新建作品按钮 - 移动端显示文字，因为添加账号按钮移到下拉菜单了 */}
           <Button
             data-testid="accounts-new-work-btn"
-            onClick={onNewWork}
+            onClick={handleNewWorkClick}
             className="h-8 md:h-9 gap-1 md:gap-2 px-3 md:px-4 cursor-pointer"
           >
             <SquarePen className="h-4 w-4" />
@@ -188,13 +199,38 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
           {/* Agent创建按钮 */}
           <Button
             variant="outline"
-            onClick={() => router.push('/ai-social')}
+            onClick={handleAgentCreateClick}
             className="h-8 md:h-9 gap-1 md:gap-2 px-2 md:px-4 cursor-pointer"
           >
             <Bot className="h-4 w-4" />
             <span>{t('agentCreate')}</span>
           </Button>
+
+          {/* Twitter 数据分析入口 */}
+          {accountActive?.type === PlatType.Twitter && (
+            <>
+              <div className="border-l border-border h-6 mx-1 md:mx-2 hidden md:block" />
+              <Button
+                variant="outline"
+                onClick={() => setAnalyticsOpen(true)}
+                className="h-8 md:h-9 gap-1 md:gap-2 px-2 md:px-4 cursor-pointer"
+              >
+                <BarChart3 className="h-4 w-4" />
+                <span>{t('explore')}</span>
+              </Button>
+            </>
+          )}
         </div>
+
+        {/* Twitter 数据分析弹窗 */}
+        {accountActive?.type === PlatType.Twitter && (
+          <TwitterExploreDialog
+            open={analyticsOpen}
+            onOpenChange={setAnalyticsOpen}
+            accountId={accountActive.id}
+            username={accountActive.account}
+          />
+        )}
 
         {/* 右侧: 频道选择器(按空间分组) */}
         <AccountSelector

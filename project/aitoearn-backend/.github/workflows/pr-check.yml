@@ -58,8 +58,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -138,4 +136,3 @@ jobs:
           echo "✅ 未检测到变更，跳过检查"
           echo "### ✅ 无变更" >> $GITHUB_STEP_SUMMARY
           echo "未检测到需要检查的项目变更" >> $GITHUB_STEP_SUMMARY
-

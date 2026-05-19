@@ -7,10 +7,11 @@ import {
 } from '@modelcontextprotocol/sdk/types.js'
 import { Inject, Injectable, Scope } from '@nestjs/common'
 import { ContextIdFactory, ModuleRef } from '@nestjs/core'
-import { getErrorMessage } from '@yikart/common'
+import { getErrorMessage, zodToJsonSchemaOptions } from '@yikart/common'
 import { z, ZodTypeAny } from 'zod'
 import { ResultTool } from '../../interfaces'
 import { HttpRequest } from '../../interfaces/http-adapter.interface'
+import { MCP_TOOL_MONITOR, McpToolMonitor } from '../../interfaces/mcp-tool-monitor.interface'
 import { McpRegistryService } from '../mcp-registry.service'
 import { McpHandlerBase } from './mcp-handler.base'
 
@@ -20,6 +21,7 @@ export class McpToolsHandler extends McpHandlerBase {
     moduleRef: ModuleRef,
     registry: McpRegistryService,
     @Inject('MCP_MODULE_ID') private readonly mcpModuleId: string,
+    @Inject(MCP_TOOL_MONITOR) private readonly toolMonitor: McpToolMonitor,
   ) {
     super(moduleRef, registry, McpToolsHandler.name)
   }
@@ -76,7 +78,7 @@ export class McpToolsHandler extends McpHandlerBase {
         // Add input schema if defined
         if (tool.metadata.parameters) {
           toolSchema['inputSchema'] = z.toJSONSchema(tool.metadata.parameters, {
-            target: 'draft-7',
+            ...zodToJsonSchemaOptions,
             io: 'input',
           }) as ResultTool['inputSchema']
         }
@@ -84,7 +86,7 @@ export class McpToolsHandler extends McpHandlerBase {
         // Add output schema if defined, ensuring it has type: 'object'
         if (tool.metadata.outputSchema) {
           const outputSchema = z.toJSONSchema(tool.metadata.outputSchema, {
-            target: 'draft-7',
+            ...zodToJsonSchemaOptions,
             io: 'output',
           })
 
@@ -170,10 +172,22 @@ export class McpToolsHandler extends McpHandlerBase {
 
           this.logger.debug(transformedResult, 'CallToolRequestSchema result')
 
+          try {
+            await this.toolMonitor.onToolSuccess(request.params.name)
+          }
+          catch (e) {
+            this.logger.error(e, 'Failed to record tool monitor status')
+          }
+
           return transformedResult
         }
         catch (error) {
           this.logger.error(error)
+
+          try {
+            await this.toolMonitor.onToolError(request.params.name, error)
+          }
+          catch {}
 
           // Re-throw McpErrors (like validation errors) so they are handled by the MCP protocol layer
           if (error instanceof McpError) {

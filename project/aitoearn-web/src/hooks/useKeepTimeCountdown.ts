@@ -16,7 +16,7 @@ function calcRemaining(keepTime: number, acceptedAt?: string): number {
 export function formatCountdown(totalSeconds: number): string {
   if (totalSeconds < 0)
     return ''
-  const hours = Math.floor(totalSeconds / 3600)
+  const hours = Math.floor((totalSeconds % 86400) / 3600)
   const minutes = Math.floor((totalSeconds % 3600) / 60)
   const seconds = totalSeconds % 60
 
@@ -49,6 +49,7 @@ export function useKeepTimeCountdown(keepTime: number, acceptedAt?: string) {
 
   return {
     remaining, // 剩余秒数，-1 表示不限时，0 表示已过期
+    days: remaining > 0 ? Math.floor(remaining / 86400) : 0,
     isExpired: remaining === 0,
     isUnlimited: remaining < 0,
     formatted: formatCountdown(remaining),

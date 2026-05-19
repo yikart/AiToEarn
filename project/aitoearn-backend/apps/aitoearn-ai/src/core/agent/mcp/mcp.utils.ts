@@ -1,4 +1,5 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
+import type { AiAvailabilityService } from '../../ai-availability'
 import { createSdkMcpServer, InferShape, McpSdkServerConfigWithInstance, tool } from '@anthropic-ai/claude-agent-sdk'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
@@ -79,12 +80,13 @@ export function errorResult(message: ContentInput): CallToolResult {
 }
 
 /**
- * 包装工具定义，自动添加日志和错误处理
+ * 包装工具定义，自动添加日志、错误处理和可用性监控
  * @param logger Logger 实例
  * @param toolName 工具名称
  * @param description 工具描述
  * @param schema Zod Object schema 用于类型验证
  * @param handler 业务逻辑处理器
+ * @param aiAvailability AI 可用性监控服务
  * @returns tool 函数的返回值
  */
 export function wrapTool<T extends z.ZodRawShape>(
@@ -93,14 +95,21 @@ export function wrapTool<T extends z.ZodRawShape>(
   description: string,
   schema: T,
   handler: (params: InferShape<T>) => Promise<CallToolResult>,
+  aiAvailability: AiAvailabilityService,
 ) {
+  const availabilityContext = { provider: 'mcp', operation: toolName, module: 'agent' }
+
   return tool(
     toolName,
     description,
     schema,
     async (params) => {
       try {
-        return await handler(params)
+        const result = await aiAvailability.execute(
+          availabilityContext,
+          () => handler(params),
+        )
+        return result
       }
       catch (error) {
         const errMessage = getErrorMessage(error)
@@ -112,7 +121,6 @@ export function wrapTool<T extends z.ZodRawShape>(
 
         logger.fatal({ toolName, params }, 'Tool handler error')
         logger.fatal(error, `Tool handler error ${toolName}`)
-
         return errorResult(errMessage)
       }
     },

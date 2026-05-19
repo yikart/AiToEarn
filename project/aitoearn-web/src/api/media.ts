@@ -1,6 +1,12 @@
 import type { MediaGroup, MediaItem } from '@/api/types/media'
 import http from '@/utils/request'
 
+export interface TransferMediaParams {
+  ids: string[]
+  targetGroupId: string
+  mode: 'move' | 'copy'
+}
+
 // 创建媒体资源组
 export function createMediaGroup(data: { title: string, desc: string, type: 'video' | 'img' }) {
   return http.post('media/group', data)
@@ -38,6 +44,16 @@ export function createMedia(data: any) {
 // 删除媒体资源
 export function deleteMedia(id: string) {
   return http.delete(`media/${id}`)
+}
+
+// 批量删除媒体资源
+export function batchDeleteMedia(ids: string[]) {
+  return http.delete('media/ids', { ids })
+}
+
+// 批量转移媒体资源
+export function transferMedia(data: TransferMediaParams) {
+  return http.post<{ count: number }>('media/transfer', data)
 }
 
 // 获取媒体资源列表

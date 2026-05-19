@@ -72,6 +72,13 @@ const DeleteByUseCountSchema = z.object({
 })
 export class DeleteByUseCountDto extends createZodDto(DeleteByUseCountSchema, 'DeleteByUseCountDto') {}
 
+const TransferMaterialSchema = z.object({
+  ids: z.array(z.string()).min(1).describe('草稿ID列表'),
+  targetGroupId: z.string().describe('目标草稿箱ID'),
+  mode: z.enum(['move', 'copy']).describe('转移模式：move 移动，copy 复制'),
+})
+export class TransferMaterialDto extends createZodDto(TransferMaterialSchema, 'TransferMaterialDto') {}
+
 const GetOptimalMaterialSchema = z.object({
   groupId: z.string().describe('草稿箱ID'),
   accountType: z.enum(AccountType).describe('平台类型'),

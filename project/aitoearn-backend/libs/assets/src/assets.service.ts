@@ -1,8 +1,9 @@
 import type { Readable } from 'node:stream'
-import { Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode, UserType } from '@yikart/common'
 import { Asset, AssetRepository, AssetStatus, AssetType } from '@yikart/mongodb'
 import * as mime from 'mime-types'
+import { ASSETS_CONFIG, AssetsConfig } from './assets.config'
 import {
   ConfirmAssetDto,
   ListAssetsDto,
@@ -28,6 +29,7 @@ export class AssetsService {
     private readonly storage: StorageProvider,
     private readonly assetRepository: AssetRepository,
     private readonly videoMetadataService: VideoMetadataService,
+    @Inject(ASSETS_CONFIG) protected readonly options: AssetsConfig,
   ) {}
 
   async createUploadSign(
@@ -35,6 +37,9 @@ export class AssetsService {
     dto: UploadAssetDto,
     userType: UserType = UserType.User,
   ): Promise<Required<UploadResult>> {
+    if (this.options.maxSize != null && dto.size && dto.size >= this.options.maxSize) {
+      throw new AppException(ResponseCode.AssetTooLarge)
+    }
     const pathOptions: PathGeneratorOptions = {
       userId,
       userType,
@@ -187,6 +192,9 @@ export class AssetsService {
   }
 
   async confirmUpload(dto: ConfirmAssetDto): Promise<Asset> {
+    if (this.options.maxSize != null && dto.size && dto.size >= this.options.maxSize) {
+      throw new AppException(ResponseCode.AssetTooLarge)
+    }
     const asset = await this.assetRepository.getById(dto.assetId)
 
     if (!asset) {
@@ -223,6 +231,10 @@ export class AssetsService {
 
   parsePathFromUrl(url: string): string {
     return this.storage.parsePathFromUrl(url)
+  }
+
+  async toPresignedUrl(urlOrPath: string, expiresIn = 3600): Promise<string> {
+    return this.storage.toPresignedUrl(urlOrPath, expiresIn)
   }
 
   async getOrCreateAssetByPath(path: string, userId: string, userType: UserType = UserType.User): Promise<Asset> {
@@ -348,6 +360,10 @@ export class AssetsService {
     const headResult = await this.storage.headObject(asset.path)
     if (!headResult) {
       throw new AppException(ResponseCode.AssetUploadFailed)
+    }
+
+    if (this.options.maxSize != null && headResult.contentLength && headResult.contentLength >= this.options.maxSize) {
+      throw new AppException(ResponseCode.AssetTooLarge)
     }
 
     const expectedMimeType = asset.filename

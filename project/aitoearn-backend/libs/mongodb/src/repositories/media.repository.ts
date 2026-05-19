@@ -23,6 +23,26 @@ export class MediaRepository extends BaseRepository<Media> {
     return mediaList
   }
 
+  async updateGroupIdByIds(ids: string[], targetGroupId: string, userId: string): Promise<number> {
+    const res = await this.mediaModel.updateMany(
+      { _id: { $in: ids }, userId },
+      { $set: { groupId: targetGroupId } },
+    )
+    return res.modifiedCount
+  }
+
+  async updateMaterialGroupByIds(ids: string[], targetGroupId: string, userId: string): Promise<number> {
+    const res = await this.mediaModel.updateMany(
+      { _id: { $in: ids }, userId },
+      { $set: { materialGroupId: targetGroupId } },
+    )
+    return res.modifiedCount
+  }
+
+  async listByIdsAndUserId(ids: string[], userId: string): Promise<Media[]> {
+    return this.mediaModel.find({ _id: { $in: ids }, userId }).lean({ virtuals: true })
+  }
+
   // 批量删除素材
   async deleteManyByIds(ids: string[], filter?: FilterQuery<Media>): Promise<boolean> {
     const res = await this.mediaModel.deleteMany({ _id: { $in: ids }, ...filter })

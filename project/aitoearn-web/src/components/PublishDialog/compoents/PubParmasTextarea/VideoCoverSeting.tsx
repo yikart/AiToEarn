@@ -158,7 +158,7 @@ const VideoCoverSeting = memo(
       try {
         const canvas = cropper.current.getCroppedCanvas()
         const blob = await new Promise<Blob | null>((resolve) => {
-          canvas.toBlob(resolve, 'image/png')
+          canvas.toBlob(resolve, 'image/jpeg', 0.92)
         })
 
         if (!blob) {
@@ -167,7 +167,7 @@ const VideoCoverSeting = memo(
 
         const cover = await formatImg({
           blob,
-          path: `${saveImgId}.${imgFile.file.type.split('/')[1] || 'png'}`,
+          path: `${saveImgId}.jpg`,
         })
 
         // 上传封面到 OSS

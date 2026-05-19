@@ -9,6 +9,9 @@ export default antfu(
       '**/dist',
       '**/*.md',
       '**/migrations',
+      '**/*.generated.d.ts',
+      '**/*.types.d.ts',
+      '**/*.schema.json',
     ],
     plugins: {
       imports: importPlugin,

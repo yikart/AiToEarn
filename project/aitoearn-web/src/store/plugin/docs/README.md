@@ -5,6 +5,7 @@
 ```
 src/store/plugin/
 ├── index.ts              # 统一导出
+├── request.ts            # 插件代理请求封装
 ├── store.ts              # Zustand Store 状态管理
 ├── hooks.ts              # 自定义 Hooks
 ├── baseTypes.ts              # TypeScript 类型定义
@@ -111,6 +112,24 @@ export function OneClickPublish() {
 
   return <button onClick={() => handleOneClick(...)}>一键发布</button>;
 }
+```
+
+### 5. 代理请求
+
+```typescript
+import { proxyRequest } from '@/store/plugin'
+
+const response = await proxyRequest({
+  url: 'https://httpbin.org/anything',
+  headers: {
+    accept: 'application/json',
+  },
+  body: {
+    source: 'aitoearn-website',
+  },
+})
+
+console.log(response.status, response.body)
 ```
 
 ## 📚 API 文档

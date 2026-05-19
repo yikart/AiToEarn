@@ -5,10 +5,11 @@
 
 'use client'
 
-import type { DraftGenerationRequest, DraftGenerationTask } from '@/api/draftGeneration'
+import type { DraftGenerationResponse, DraftGenerationTask } from '@/api/draftGeneration'
 import { AlertCircle, CheckCircle2, Loader2, Play } from 'lucide-react'
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { apiGetDraftGenerationList } from '@/api/draftGeneration'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
@@ -21,8 +22,44 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { formatRelativeTime } from '@/lib/utils'
+import { cn, formatRelativeTime } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
+import { GenerationParamsCard } from '../GenerationParamsCard'
+import { LOAD_MORE_OBSERVER_OPTIONS } from '../loadMoreObserver'
+
+function getTaskResponse(task: DraftGenerationTask): DraftGenerationResponse | undefined {
+  return task.response && typeof task.response === 'object' ? task.response : undefined
+}
+
+function getStringValue(record: Record<string, unknown> | undefined, key: string) {
+  const value = record?.[key]
+  return typeof value === 'string' && value.trim() ? value : undefined
+}
+
+function getResponseTitle(response: DraftGenerationResponse) {
+  return response.title || getStringValue(response.plan, 'title')
+}
+
+function getResponseDescription(response: DraftGenerationResponse) {
+  return response.description || getStringValue(response.plan, 'description')
+}
+
+function getResponseTopics(response: DraftGenerationResponse) {
+  const topics = response.topics ?? response.plan?.topics
+  if (!Array.isArray(topics))
+    return []
+  return topics.filter((topic): topic is string => typeof topic === 'string' && topic.trim().length > 0)
+}
+
+function mergeTaskList(current: DraftGenerationTask[], incoming: DraftGenerationTask[]) {
+  const taskMap = new Map<string, DraftGenerationTask>()
+  current.forEach(task => taskMap.set(task.id, task))
+  incoming.forEach((task) => {
+    const currentTask = taskMap.get(task.id)
+    taskMap.set(task.id, currentTask ? { ...currentTask, ...task } : task)
+  })
+  return Array.from(taskMap.values()).sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+}
 
 // 状态图标映射
 function StatusIcon({ status }: { status: DraftGenerationTask['status'] }) {
@@ -48,94 +85,26 @@ function getStatusVariant(status: DraftGenerationTask['status']): 'default' | 's
   }
 }
 
-// 请求参数展示
-const RequestParams = memo(({ request, t }: { request: DraftGenerationRequest, t: (key: string, options?: Record<string, unknown>) => string }) => {
-  const [previewOpen, setPreviewOpen] = useState(false)
-  const [previewIndex, setPreviewIndex] = useState(0)
-  const tags: { label: string, value: string }[] = []
-
-  if (request.model) {
-    tags.push({ label: t('detail.modelType'), value: request.model })
-  }
-  if (request.imageModel) {
-    tags.push({ label: t('detail.imageModel'), value: request.imageModel })
-  }
-  if (request.duration) {
-    tags.push({ label: t('detail.duration'), value: `${request.duration}s` })
-  }
-  if (request.aspectRatio) {
-    tags.push({ label: t('detail.aspectRatio'), value: request.aspectRatio })
-  }
-  if (request.imageCount) {
-    tags.push({ label: t('detail.imageCount'), value: `${request.imageCount}` })
-  }
-  if (request.imageSize) {
-    tags.push({ label: t('detail.imageResolution'), value: request.imageSize })
-  }
-
-  return (
-    <div className="mt-2 space-y-1.5">
-      {tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {tags.map(tag => (
-            <span
-              key={tag.label}
-              className="inline-flex items-center gap-1 rounded-md bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
-            >
-              <span className="opacity-70">{tag.label}</span>
-              <span>{tag.value}</span>
-            </span>
-          ))}
-        </div>
-      )}
-      {request.prompt && (
-        <p className="text-xs text-muted-foreground line-clamp-2 break-all">
-          <span className="opacity-70">
-            {t('detail.promptTitle')}
-            ：
-          </span>
-          {request.prompt}
-        </p>
-      )}
-      {request.imageUrls && request.imageUrls.length > 0 && (
-        <div className="space-y-1">
-          <span className="text-xs text-muted-foreground opacity-70">{t('detail.referenceImages')}</span>
-          <div className="flex gap-1.5 flex-wrap">
-            {request.imageUrls.map((url, i) => (
-              <div
-                key={i}
-                className="relative w-10 h-10 rounded overflow-hidden bg-muted shrink-0 cursor-pointer"
-                onClick={() => { setPreviewIndex(i); setPreviewOpen(true) }}
-              >
-                <Image
-                  src={getOssUrl(url)}
-                  alt={`ref-${i + 1}`}
-                  fill
-                  className="object-cover"
-                  sizes="40px"
-                />
-              </div>
-            ))}
-          </div>
-          <MediaPreview
-            open={previewOpen}
-            items={request.imageUrls.map(url => ({ type: 'image' as const, src: getOssUrl(url) }))}
-            initialIndex={previewIndex}
-            onClose={() => setPreviewOpen(false)}
-          />
-        </div>
-      )}
-    </div>
-  )
-})
-
-RequestParams.displayName = 'RequestParams'
+function getStatusClassName(status: DraftGenerationTask['status']) {
+  if (status === 'generating')
+    return 'border-primary/20 bg-primary/10 text-primary shadow-none'
+}
 
 // 任务条目
-const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string, options?: Record<string, unknown>) => string }) => {
+const TaskItem = memo(({
+  task,
+  t,
+  applyTargetGroupId,
+  onApplied,
+}: {
+  task: DraftGenerationTask
+  t: (key: string, options?: Record<string, unknown>) => string
+  applyTargetGroupId?: string | null
+  onApplied?: () => void
+}) => {
   const [previewOpen, setPreviewOpen] = useState(false)
   const [previewIndex, setPreviewIndex] = useState(0)
-  const response = task.status === 'success' ? task.response : undefined
+  const response = getTaskResponse(task)
 
   // 构建预览项列表和封面
   const hasVideo = !!response?.videoUrl
@@ -145,12 +114,15 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
     : response?.imageUrls?.[0]
       ? getOssUrl(response.imageUrls[0])
       : undefined
+  const title = response ? getResponseTitle(response) : ''
+  const description = response ? getResponseDescription(response) : ''
+  const topics = response ? getResponseTopics(response) : []
 
   // 预览项：视频任务只预览视频，图片任务预览所有图片
   const previewItems = response
     ? hasVideo && response.videoUrl
-      ? [{ type: 'video' as const, src: getOssUrl(response.videoUrl), title: response.title }]
-      : (response.imageUrls || []).map(url => ({ type: 'image' as const, src: getOssUrl(url), title: response.title }))
+      ? [{ type: 'video' as const, src: getOssUrl(response.videoUrl), title }]
+      : (response.imageUrls || []).map(url => ({ type: 'image' as const, src: getOssUrl(url), title }))
     : []
 
   return (
@@ -160,7 +132,7 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant={getStatusVariant(task.status)} className="text-xs">
+          <Badge variant={getStatusVariant(task.status)} className={cn('text-xs', getStatusClassName(task.status))}>
             {t(`detail.taskStatus.${task.status}`)}
           </Badge>
           {task.points > 0 && (
@@ -171,11 +143,29 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
         </div>
 
         {/* 请求参数 */}
-        {task.request && <RequestParams request={task.request} t={t} />}
+        {task.request && (
+          <GenerationParamsCard
+            params={task.request}
+            t={t}
+            className="mt-2"
+            compact
+            applyTargetGroupId={applyTargetGroupId}
+            onApplied={onApplied}
+          />
+        )}
 
-        {/* 成功任务 - 渲染 response 内容 */}
+        {/* 已生成的部分结果 */}
         {response && (
           <div className="mt-2">
+            {response.requestedImageCount && response.requestedImageCount > 0 && (
+              <p className="mb-2 text-xs text-muted-foreground">
+                {t('detail.generatedImageProgress', {
+                  generated: response.generatedImageCount ?? response.imageUrls?.length ?? 0,
+                  requested: response.requestedImageCount,
+                })}
+              </p>
+            )}
+
             {/* 视频任务：封面 + 文字信息 */}
             {hasVideo && coverSrc && (
               <div className="flex gap-3">
@@ -185,7 +175,7 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
                 >
                   <Image
                     src={coverSrc}
-                    alt={response.title || ''}
+                    alt={title || ''}
                     fill
                     className="object-cover"
                     sizes="80px"
@@ -195,15 +185,15 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
-                  {response.title && (
-                    <p className="text-sm font-medium line-clamp-1">{response.title}</p>
+                  {title && (
+                    <p className="text-sm font-medium line-clamp-1">{title}</p>
                   )}
-                  {response.description && (
-                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{response.description}</p>
+                  {description && (
+                    <p className="text-xs text-muted-foreground line-clamp-2 mt-0.5">{description}</p>
                   )}
-                  {response.topics?.length > 0 && (
+                  {topics.length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-1">
-                      {response.topics.map(topic => (
+                      {topics.map(topic => (
                         <span key={topic} className="text-xs text-primary">
                           #
                           {topic}
@@ -217,7 +207,7 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
 
             {/* 图片任务：展示所有生成图片 */}
             {!hasVideo && hasImages && (
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto max-w-full">
                 <div className="flex gap-1.5">
                   {response.imageUrls!.map((url, i) => (
                     <div
@@ -264,7 +254,13 @@ const TaskItem = memo(({ task, t }: { task: DraftGenerationTask, t: (key: string
 TaskItem.displayName = 'TaskItem'
 
 // 弹框内容
-const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
+const GenerationDetailContent = memo(({
+  onClose,
+  applyTargetGroupId,
+}: {
+  onClose: () => void
+  applyTargetGroupId?: string | null
+}) => {
   const { t } = useTransClient('brandPromotion')
   const [tasks, setTasks] = useState<DraftGenerationTask[]>([])
   const [loading, setLoading] = useState(true)
@@ -272,6 +268,7 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
   const [page, setPage] = useState(1)
   const loadMoreRef = useRef<HTMLDivElement>(null)
   const pageSize = 20
+  const liveGenerationTasks = usePlanDetailStore(state => state.generationTasks)
 
   const fetchTasks = useCallback(async (pageNum: number) => {
     setLoading(true)
@@ -296,6 +293,12 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
     fetchTasks(1)
   }, [fetchTasks])
 
+  useEffect(() => {
+    if (liveGenerationTasks.length === 0)
+      return
+    setTasks(prev => mergeTaskList(prev, liveGenerationTasks))
+  }, [liveGenerationTasks])
+
   // IntersectionObserver 无限滚动
   useEffect(() => {
     const el = loadMoreRef.current
@@ -310,7 +313,7 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
           fetchTasks(nextPage)
         }
       },
-      { threshold: 0.1 },
+      LOAD_MORE_OBSERVER_OPTIONS,
     )
 
     observer.observe(el)
@@ -326,11 +329,17 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
       <ScrollArea className="max-h-[60vh]">
         <div className="space-y-2 pr-2">
           {tasks.map(task => (
-            <TaskItem key={task.id} task={task} t={t} />
+            <TaskItem
+              key={task.id}
+              task={task}
+              t={t}
+              applyTargetGroupId={applyTargetGroupId}
+              onApplied={onClose}
+            />
           ))}
 
           {/* 加载触发器 */}
-          <div ref={loadMoreRef} />
+          <div ref={loadMoreRef} className="h-px" />
 
           {/* 加载中 */}
           {loading && (
@@ -354,8 +363,13 @@ const GenerationDetailContent = memo(({ onClose }: { onClose: () => void }) => {
 GenerationDetailContent.displayName = 'GenerationDetailContent'
 
 export const GenerationDetailDialog = memo(() => {
-  const generationDetailDialogOpen = usePlanDetailStore(state => state.generationDetailDialogOpen)
-  const closeGenerationDetailDialog = usePlanDetailStore(state => state.closeGenerationDetailDialog)
+  const { generationDetailDialogOpen, closeGenerationDetailDialog, currentPlanId } = usePlanDetailStore(
+    useShallow(state => ({
+      generationDetailDialogOpen: state.generationDetailDialogOpen,
+      closeGenerationDetailDialog: state.closeGenerationDetailDialog,
+      currentPlanId: state.currentPlan?.id ?? null,
+    })),
+  )
 
   // 两层组件模式
   if (!generationDetailDialogOpen)
@@ -364,7 +378,10 @@ export const GenerationDetailDialog = memo(() => {
   return (
     <Dialog open onOpenChange={closeGenerationDetailDialog}>
       <DialogContent data-testid="draftbox-generation-detail-dialog" className="sm:max-w-2xl">
-        <GenerationDetailContent onClose={closeGenerationDetailDialog} />
+        <GenerationDetailContent
+          onClose={closeGenerationDetailDialog}
+          applyTargetGroupId={currentPlanId}
+        />
       </DialogContent>
     </Dialog>
   )

@@ -37,6 +37,23 @@ export class PublishingService extends BaseService {
     return res
   }
 
+  async updatePublishRecordWorkLink(recordId: string, workLink: string) {
+    const url = `/internal/publishRecord/workLink/update`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: {
+        id: recordId,
+        workLink,
+        linkStatus: 'ready',
+      },
+    }
+    const res = await this.request<PublishRecord>(
+      url,
+      config,
+    )
+    return res
+  }
+
   async getPublishRecordByDataId(dataId: string, uid: string) {
     const url = `/internal/${uid}/publishing/records/${dataId}`
     const config: AxiosRequestConfig = {

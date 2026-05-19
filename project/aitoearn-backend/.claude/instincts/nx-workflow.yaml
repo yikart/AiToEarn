@@ -34,13 +34,8 @@ pnpm nx test <project>
 ```
 
 ## Available Projects
-- `aitoearn-admin-server`
 - `aitoearn-ai`
-- `aitoearn-channel`
-- `aitoearn-payment`
 - `aitoearn-server`
-- `aitoearn-task`
-- `browser-automation-worker`
 
 ## Build Verification Rules
 - Always use `pnpm nx build <project>` to verify

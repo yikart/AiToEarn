@@ -1,4 +1,5 @@
 import { z, ZodType } from 'zod'
+import { ZodErrorWithInput } from '../exceptions/zod-error-with-input.exception'
 
 export interface ZodDto<
   TOutput = unknown,
@@ -22,7 +23,10 @@ export function createZodDto<
     public static schema = schema
 
     public static create(input: TInput) {
-      return this.schema.parse(input)
+      const result = this.schema.safeParse(input)
+      if (result.success)
+        return result.data
+      throw new ZodErrorWithInput(result.error.issues, input)
     }
   }
 

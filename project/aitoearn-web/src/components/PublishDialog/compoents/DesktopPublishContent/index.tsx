@@ -10,13 +10,14 @@ import type {
 } from '@/components/PublishDialog/compoents/PublishDialogAi'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
 
-import { ChevronDown, FolderOpen, Layers, X } from 'lucide-react'
+import { ChevronDown, FolderOpen, Layers, Plus, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import { useWindowSize } from 'react-use'
 import { useShallow } from 'zustand/react/shallow'
 import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { useChannelManagerStore } from '@/components/ChannelManager/channelManagerStore'
 import AccountSelector from '@/components/PublishDialog/compoents/AccountSelector'
 import ErrorSummary from '@/components/PublishDialog/compoents/ErrorSummary'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
@@ -28,6 +29,7 @@ import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelec
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
 import { usePlatformAuth } from '@/components/PublishDialog/hooks/usePlatformAuth'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -52,21 +54,9 @@ interface DesktopPublishContentProps {
   onSyncToEditor: (content: string, images?: IImgFile[], video?: any, append?: boolean) => void
   onTextSelection: (action: AIAction, selectedText: string) => void
   onImageToImage: (imageFile: IImgFile) => void
-  // 内容检测相关
   createLoading: boolean
-  hasDescription: boolean
-  needsContentModeration: boolean
-  moderationLoading: boolean
-  moderationResult: boolean | null
-  moderationDesc: string
-  moderationLevel: any
-  onContentModeration: () => Promise<void>
   // 发布
   onPublish: () => void
-  // 下载App弹窗回调
-  onPcNotSupportedClick: (platformName: string) => void
-  // Facebook 授权成功回调
-  onFacebookAuthSuccess: () => void
 }
 
 /**
@@ -81,19 +71,11 @@ export const DesktopPublishContent = memo(
     onTextSelection,
     onImageToImage,
     createLoading,
-    hasDescription,
-    needsContentModeration,
-    moderationLoading,
-    moderationResult,
-    moderationDesc,
-    moderationLevel,
-    onContentModeration,
     onPublish,
-    onPcNotSupportedClick,
-    onFacebookAuthSuccess,
   }: DesktopPublishContentProps) => {
     const { t } = useTransClient('publish')
     const { width } = useWindowSize()
+    const aiPanelBreakpoint = 1550
 
     // ============ 从 Store 获取状态（不再通过 props 传递）============
 
@@ -153,12 +135,7 @@ export const DesktopPublishContent = memo(
     })
 
     // 平台授权
-    const { handleOfflineAvatarClick } = usePlatformAuth({
-      accountGroupList,
-      getAccountList,
-      onFacebookAuthSuccess,
-      t,
-    })
+    const { handleOfflineAvatarClick } = usePlatformAuth()
 
     // ============ Local State & Refs ============
 
@@ -167,6 +144,7 @@ export const DesktopPublishContent = memo(
 
     // 追踪是否是用户主动切换频道（而非初始化或数据变化）
     const isUserSwitchingSpace = useRef(false)
+    const appliedAccountActiveIdRef = useRef<string | undefined>(undefined)
 
     // ============ Computed Values ============
 
@@ -234,6 +212,16 @@ export const DesktopPublishContent = memo(
     // 当选择单个账号时，自动选中该账号
     useEffect(() => {
       if (!accountActive) {
+        appliedAccountActiveIdRef.current = undefined
+        return
+      }
+
+      if (pubList.length === 0) {
+        appliedAccountActiveIdRef.current = undefined
+        return
+      }
+
+      if (appliedAccountActiveIdRef.current === accountActive.id) {
         return
       }
 
@@ -241,6 +229,7 @@ export const DesktopPublishContent = memo(
       const targetPubItem = pubList.find(pubItem => pubItem.account.id === accountActive.id)
       if (targetPubItem) {
         setPubListChoosed([targetPubItem])
+        appliedAccountActiveIdRef.current = accountActive.id
       }
     }, [accountActive, pubList, setPubListChoosed])
 
@@ -297,7 +286,7 @@ export const DesktopPublishContent = memo(
     return (
       <div className="flex-1 flex max-h-[calc(100vh-80px)]" data-testid="publish-dialog-container">
         {/* 左侧 AI 助手（宽屏时） */}
-        {width >= 1400 && (
+        {width >= aiPanelBreakpoint && (
           <CSSTransition in={openLeftSide} timeout={300} classNames="left" unmountOnExit>
             <PublishDialogAi
               ref={aiAssistantRef}
@@ -406,7 +395,6 @@ export const DesktopPublishContent = memo(
             {/* 账户选择器 */}
             <AccountSelector
               onOfflineClick={handleOfflineAvatarClick}
-              onPcNotSupportedClick={onPcNotSupportedClick}
             />
 
             {/* 错误汇总 */}
@@ -456,7 +444,20 @@ export const DesktopPublishContent = memo(
               )}
 
               {/* 空状态提示 */}
-              {pubListChoosed.length === 0
+              {pubList.length === 0 ? (
+                <div className="flex flex-col items-center justify-center text-center py-10 gap-3">
+                  <p className="text-muted-foreground text-sm">{t('tips.noAccount')}</p>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="cursor-pointer"
+                    onClick={() => useChannelManagerStore.getState().openConnectList()}
+                  >
+                    <Plus className="h-4 w-4 mr-1" />
+                    {t('tips.addChannel')}
+                  </Button>
+                </div>
+              ) : pubListChoosed.length === 0
                 && pubList.some(
                   v =>
                     v.params.des || v.params.video || (v.params.images && v.params.images.length > 0),
@@ -479,13 +480,6 @@ export const DesktopPublishContent = memo(
           {/* 底部操作栏 */}
           <PublishFooter
             createLoading={createLoading}
-            hasDescription={hasDescription}
-            needsContentModeration={needsContentModeration}
-            moderationLoading={moderationLoading}
-            moderationResult={moderationResult}
-            moderationDesc={moderationDesc}
-            moderationLevel={moderationLevel}
-            onContentModeration={onContentModeration}
             onPublish={onPublish}
             onNextStep={handleNextStep}
           />
@@ -494,7 +488,7 @@ export const DesktopPublishContent = memo(
         {/* 右侧预览和AI助手（窄屏时） */}
         <div className="flex relative [&>#publishDialogAi]:absolute [&>#publishDialogAi]:top-0 [&>#publishDialogAi]:h-full [&>#publishDialogAi]:z-20">
           {/* 屏幕宽度不够时，AI助手绝对定位覆盖在预览上方 */}
-          {width < 1400 && (
+          {width < aiPanelBreakpoint && (
             <CSSTransition in={openLeftSide} timeout={300} classNames="left" unmountOnExit>
               <PublishDialogAi
                 ref={aiAssistantRef}

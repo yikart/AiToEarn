@@ -51,7 +51,7 @@ export function GroupCard({ group, onClick }: GroupCardProps) {
           />
         ) : (
           // 无封面占位符
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-slate-500/10 to-gray-500/10">
+          <div className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-muted-foreground/10 to-muted-foreground/10">
             <FolderOpen className="w-10 h-10 text-muted-foreground/50 mb-1.5" />
           </div>
         )}

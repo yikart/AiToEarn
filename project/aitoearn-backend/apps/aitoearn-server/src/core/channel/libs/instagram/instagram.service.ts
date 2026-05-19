@@ -48,7 +48,7 @@ export class InstagramService {
         error,
         operation,
       )
-      this.logger.error(`[IG:${operation}] error ${url} message=${err.message} status=${err.status} rawStatus=${err.rawStatus} rawError=${JSON.stringify(err.rawError)}`)
+      this.logger.error(err, `[IG:${operation}] error ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }
@@ -75,7 +75,7 @@ export class InstagramService {
     accessToken: string,
     req: CreateMediaContainerRequest,
   ): Promise<CreateMediaContainerResponse> {
-    const url = `${this.apiBaseUrl}/v23.0/${igUserId}/media`
+    const url = `${this.apiBaseUrl}/${igUserId}/media`
     const formData = new FormData()
     Object.keys(req).forEach((key) => {
       if (key !== 'children') {
@@ -131,7 +131,7 @@ export class InstagramService {
     accessToken: string,
     creationId: string,
   ): Promise<CreateMediaContainerResponse> {
-    const url = `${this.apiBaseUrl}/v23.0/${igUserId}/media_publish`
+    const url = `${this.apiBaseUrl}/${igUserId}/media_publish`
     const formData = new FormData()
     formData.append('creation_id', creationId)
     const config: AxiosRequestConfig = {

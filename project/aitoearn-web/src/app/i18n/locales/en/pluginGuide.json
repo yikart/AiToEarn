@@ -7,11 +7,15 @@
   "title": "Browser Plugin Guide",
   "lastUpdated": "Last Updated",
   "introduction": "This guide will walk you through how to install and use the AiToEarn browser plugin, enabling you to manage your social media accounts and publish content more conveniently.",
+  "recommendedBrowser": {
+    "title": "Recommended Browsers",
+    "content": "Edge and Google Chrome. The tutorial below uses Google Chrome for all examples."
+  },
   "tableOfContents": "Contents",
   "sections": {
     "installation": "Install Plugin",
     "manualInstall": "Manual Installation",
-    "manualInstallDesc": "For GitHub or China Download channels",
+    "manualInstallDesc": "For Latest GitHub Channel Download and Latest China Download",
     "authorize": "Authorize Plugin",
     "loginAccount": "Login Social Media Account",
     "syncAccount": "Sync Account"
@@ -25,10 +29,29 @@
     "step2": {
       "title": "Step 2: Download the Plugin",
       "content": "Select the download method in the dialog and click to download the plugin.",
-      "caption": "Choose the appropriate download channel",
-      "note": "Difference between Chrome Web Store and GitHub Release installation:",
-      "noteItem1": "Plugins downloaded from GitHub Release require you to enable developer mode in your browser to install, but the resources installed here are the latest plugins.",
-      "noteItem2": "Plugins downloaded from Chrome Web Store can be installed directly."
+      "caption": "Choose a download channel in the plugin dialog",
+      "note": "Download channel notes:",
+      "channels": {
+        "chrome": {
+          "title": "Chrome Web Store:",
+          "content": " We recommend installing from the Chrome Web Store, but store reviews can take time. When new features are released early, the Chrome Web Store version may still be an older build. If you do not need the latest features immediately, you can wait for the review to finish. Chrome Web Store also updates plugins automatically. If you need the latest plugin package, use Latest China Download or Latest GitHub Channel Download."
+        },
+        "github": {
+          "title": "Latest GitHub Channel Download:",
+          "content": " This channel provides the newest plugin package. New browser-plugin updates are published here first, then submitted to the Chrome Web Store, which usually takes another 4-5 days for review."
+        },
+        "china": {
+          "title": "Latest China Download:",
+          "content": " Users in mainland China who cannot use the Chrome Web Store can download the latest plugin package from this channel."
+        }
+      },
+      "updateNote": {
+        "prefix": "Note: users who install from Latest China Download or Latest GitHub Channel Download will still receive Chrome Web Store auto-updates after review. If you need the update sooner, please see",
+        "linkText": "the manual update guide",
+        "suffix": "."
+      },
+      "noteItem1": "We recommend installing the extension from the Chrome Web Store.",
+      "noteItem2": "If you cannot access the Chrome Web Store in China, download the extension from Latest China Download (zip). When new features are released, Chrome Web Store review can take some time, so this channel may occasionally be newer than the Chrome Web Store version."
     },
     "step3": {
       "title": "Step 3: Check Installation Status",
@@ -84,7 +107,9 @@
   },
   "manualInstall": {
     "tip": "Tip",
-    "tipContent": "If you have successfully installed the plugin from Chrome Web Store, you can skip this section and go directly to the \"Authorize Plugin\" chapter.",
+    "tipPrefix": "If you have already installed the plugin from the Chrome Web Store, you can skip this section and go directly to the",
+    "tipLinkText": "Authorize Plugin",
+    "tipSuffix": "section.",
     "step1": {
       "title": "Enter Extensions Management Page",
       "content": "Click the three-dot menu in the upper right corner of the browser, and click to enter \"Manage Extensions\" page."
@@ -94,17 +119,22 @@
       "content": "In the upper right corner of the extensions page, enable \"Developer mode\"."
     },
     "step3": {
-      "title": "Find the Downloaded Plugin File",
+      "title": "Locate the Downloaded Package",
       "content": "Open your browser's download folder and find the downloaded .crx plugin package."
     },
     "step4": {
-      "title": "Drag and Drop to Install Plugin",
-      "content": "Drag and drop the .crx plugin package to the extensions page."
+      "title": "Drag the Package into Extensions",
+      "content": "Drag the .crx plugin package into the browser extensions area."
     },
     "step5": {
-      "title": "Confirm Installation",
-      "content": "In the pop-up dialog, click \"Add extension\" to confirm the installation."
-    }
+      "title": "Confirm Extension Installation",
+      "content": "Click \"Add extension\" in the confirmation dialog to install the plugin."
+    },
+    "step6": {
+      "title": "Turn Off Developer Mode",
+      "content": "After the installation is complete, you can turn off Developer mode."
+    },
+    "tipContent": "If you installed the extension from the Chrome Web Store, you can skip this section and go directly to Authorize the extension."
   },
   "faq": {
     "title": "FAQ",

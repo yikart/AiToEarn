@@ -1,6 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common'
-import { getUser } from '@yikart/common'
+import { Injectable } from '@nestjs/common'
+import { getUser, toTextResult, toYamlTextResult } from '@yikart/common'
 import { Tool } from '@yikart/nest-mcp'
+import * as _ from 'lodash'
 import { z } from 'zod'
 import { AccountGroupService } from './account-group.service'
 import { AccountService } from './account.service'
@@ -11,10 +12,14 @@ const getAccountListByGroupIdSchema = z.object({
   groupId: z.string(),
 })
 
+const getAllAccountsSchema = z.object({})
+
+const getAccountDetailSchema = z.object({
+  accountId: z.string().describe('Account ID'),
+})
+
 @Injectable()
 export class AccountMcpController {
-  private readonly logger = new Logger(AccountMcpController.name)
-
   constructor(
     private readonly accountService: AccountService,
     private readonly accountGroupService: AccountGroupService,
@@ -28,17 +33,10 @@ export class AccountMcpController {
   async getAccountGroupList(_params: z.infer<typeof getAccountGroupListSchema>) {
     const user = getUser()
     const result = await this.accountGroupService.getAccountGroup(user.id)
-    const formatted = result
-      .map(group => `ID: ${group.id}, Name: ${group.name}, IP: ${group.proxyIp || 'None'}`)
-      .join('\n')
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Account Groups:\n${formatted}`,
-        },
-      ],
-    }
+    return toYamlTextResult(result.map(group => ({
+      ..._.omit(group, ['_id', '__v', 'userId', 'ip', 'proxyIp', 'browserConfig']),
+      hasBrowserConfig: Boolean(group.browserConfig),
+    })))
   }
 
   @Tool({
@@ -48,18 +46,59 @@ export class AccountMcpController {
   })
   async getAccountListByGroupId(params: z.infer<typeof getAccountListByGroupIdSchema>) {
     const user = getUser()
-    const { groupId } = params
-    const result = await this.accountService.getAccountListByUserIdAndGroupId(user.id, groupId)
-    const formatted = result
-      .map(account => `[${account.type}] ${account.account || account.uid} (id: ${account.id})`)
-      .join('\n')
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Accounts:\n${formatted}`,
-        },
-      ],
+    const result = await this.accountService.getAccountListByUserIdAndGroupId(user.id, params.groupId)
+    return toYamlTextResult(result.map(account => _.omit(account, [
+      '_id',
+      '__v',
+      'userId',
+      'loginCookie',
+      'access_token',
+      'refresh_token',
+      'token',
+    ])))
+  }
+
+  @Tool({
+    name: 'getAllAccounts',
+    description: 'Get all accounts for the authenticated user (ungrouped). Returns platform type, name, ID, group ID, and status for each account.',
+    parameters: getAllAccountsSchema,
+  })
+  async getAllAccounts(_params: z.infer<typeof getAllAccountsSchema>) {
+    const user = getUser()
+    const result = await this.accountService.getUserAccounts(user.id)
+    return toYamlTextResult({
+      total: result.length,
+      list: result.map(account => _.omit(account, [
+        '_id',
+        '__v',
+        'userId',
+        'loginCookie',
+        'access_token',
+        'refresh_token',
+        'token',
+      ])),
+    })
+  }
+
+  @Tool({
+    name: 'getAccountDetail',
+    description: 'Get detailed information of a single account. Provide account ID to get full details including platform type, UID, name, avatar, status, and group.',
+    parameters: getAccountDetailSchema,
+  })
+  async getAccountDetail(params: z.infer<typeof getAccountDetailSchema>) {
+    const user = getUser()
+    const account = await this.accountService.getAccountById(params.accountId)
+    if (!account || account.userId !== user.id) {
+      return toTextResult('Account not found.', true)
     }
+    return toYamlTextResult(_.omit(account, [
+      '_id',
+      '__v',
+      'userId',
+      'loginCookie',
+      'access_token',
+      'refresh_token',
+      'token',
+    ]))
   }
 }

@@ -114,13 +114,14 @@ export function Carousel({
 interface CarouselContentProps {
   children: ReactNode
   className?: string
+  viewportClassName?: string
 }
 
-export function CarouselContent({ children, className }: CarouselContentProps) {
+export function CarouselContent({ children, className, viewportClassName }: CarouselContentProps) {
   const { emblaRef } = useCarousel()
 
   return (
-    <div ref={emblaRef} className="overflow-hidden">
+    <div ref={emblaRef} className={cn('overflow-hidden', viewportClassName)}>
       <div className={cn('flex', className)}>
         {children}
       </div>

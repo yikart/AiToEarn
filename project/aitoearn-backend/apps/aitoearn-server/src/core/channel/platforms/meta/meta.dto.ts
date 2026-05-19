@@ -42,17 +42,6 @@ export const GetAuthInfoSchema = z.object({
 })
 export class GetAuthInfoDto extends createZodDto(GetAuthInfoSchema) {}
 
-export const GetNoUserAuthUrlSchema = z.object({
-  materialGroupId: z.string().describe('素材组ID'),
-})
-export class GetNoUserAuthUrlDto extends createZodDto(GetNoUserAuthUrlSchema) {}
-
-export const AuthRedirectQuerySchema = z.object({
-  code: z.string(),
-  state: z.string(),
-})
-export class AuthRedirectQueryDto extends createZodDto(AuthRedirectQuerySchema) {}
-
 export const CreateAccountAndSetAccessTokenSchema = z.object({
   code: z.string(),
   state: z.string(),

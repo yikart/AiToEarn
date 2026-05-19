@@ -1,6 +1,6 @@
 /**
  * EmailLoginForm - 邮箱验证码登录表单（国外环境）
- * 支持 Google 登录 + 邮箱验证码登录
+ * 支持 Google 登录 + 邮箱验证码登录，可按场景隐藏 Google 登录
  */
 
 'use client'
@@ -31,6 +31,8 @@ interface EmailLoginFormProps {
   redirectUrl?: string
   /** 覆盖 searchParams 的 inviteCode */
   inviteCode?: string
+  /** 是否显示 Google 登录 */
+  showGoogleLogin?: boolean
 }
 
 interface EmailLoginFormData {
@@ -38,7 +40,12 @@ interface EmailLoginFormData {
   code: string
 }
 
-export function EmailLoginForm({ onLoginSuccess, redirectUrl, inviteCode: inviteCodeProp }: EmailLoginFormProps = {}) {
+export function EmailLoginForm({
+  onLoginSuccess,
+  redirectUrl,
+  inviteCode: inviteCodeProp,
+  showGoogleLogin = true,
+}: EmailLoginFormProps = {}) {
   const router = useRouter()
   const searchParams = useSearchParams()
   const redirect = redirectUrl ?? searchParams.get('redirect')
@@ -50,6 +57,9 @@ export function EmailLoginForm({ onLoginSuccess, redirectUrl, inviteCode: invite
   const [googleBtnWidth, setGoogleBtnWidth] = useState(0)
 
   useEffect(() => {
+    if (!showGoogleLogin)
+      return
+
     const el = googleContainerRef.current
     if (!el)
       return
@@ -62,7 +72,7 @@ export function EmailLoginForm({ onLoginSuccess, redirectUrl, inviteCode: invite
     observer.observe(el)
 
     return () => observer.disconnect()
-  }, [])
+  }, [showGoogleLogin])
 
   const schema = useMemo(
     () =>
@@ -170,30 +180,34 @@ export function EmailLoginForm({ onLoginSuccess, redirectUrl, inviteCode: invite
 
   return (
     <>
-      {/* Google 登录 */}
-      <div ref={googleContainerRef} className="space-y-3">
-        {googleBtnWidth > 0 && (
-          <GoogleLogin
-            key={`${i18n.language}-${googleBtnWidth}`}
-            onSuccess={handleGoogleSuccess}
-            onError={() => toast.error(t('googleLoginFailed'))}
-            useOneTap={false}
-            theme="outline"
-            shape="rectangular"
-            text="continue_with"
-            locale={i18n.language.replace('-', '_')}
-            size="large"
-            width={String(googleBtnWidth)}
-          />
-        )}
-      </div>
+      {showGoogleLogin && (
+        <>
+          {/* Google 登录 */}
+          <div ref={googleContainerRef} className="space-y-3">
+            {googleBtnWidth > 0 && (
+              <GoogleLogin
+                key={`${i18n.language}-${googleBtnWidth}`}
+                onSuccess={handleGoogleSuccess}
+                onError={() => toast.error(t('googleLoginFailed'))}
+                useOneTap={false}
+                theme="outline"
+                shape="rectangular"
+                text="continue_with"
+                locale={i18n.language.replace('-', '_')}
+                size="large"
+                width={String(googleBtnWidth)}
+              />
+            )}
+          </div>
 
-      {/* 分隔线 */}
-      <div className="my-6 flex items-center gap-4">
-        <div className="h-px flex-1 bg-border" />
-        <span className="text-sm text-muted-foreground/70">{t('or')}</span>
-        <div className="h-px flex-1 bg-border" />
-      </div>
+          {/* 分隔线 */}
+          <div className="my-6 flex items-center gap-4">
+            <div className="h-px flex-1 bg-border" />
+            <span className="text-sm text-muted-foreground/70">{t('or')}</span>
+            <div className="h-px flex-1 bg-border" />
+          </div>
+        </>
+      )}
 
       {/* 邮箱验证码表单 */}
       <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
@@ -217,6 +231,7 @@ export function EmailLoginForm({ onLoginSuccess, redirectUrl, inviteCode: invite
               type="text"
               inputMode="numeric"
               maxLength={6}
+              autoComplete="off"
               placeholder={t('enterCode')}
               {...form.register('code')}
               className="h-12 rounded-xl border-input bg-background px-4 text-base placeholder:text-muted-foreground/70 focus:border-ring focus:ring-0"

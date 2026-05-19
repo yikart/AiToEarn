@@ -48,7 +48,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
   }, [newSpaceName, onSpaceCreated, t])
 
   return (
-    <div className="flex gap-2">
+    <div className="flex min-w-0 gap-2 p-px">
       {showCreateSpace ? (
         <>
           <Input
@@ -66,9 +66,9 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
             }}
             disabled={creatingSpace}
             autoFocus
-            className="flex-1"
+            className="h-11 min-w-0 flex-1 rounded-lg border-border/70 bg-background"
           />
-          <Button data-testid="cm-create-space-confirm" onClick={addNewSpace} size="sm" disabled={!newSpaceName.trim() || creatingSpace}>
+          <Button data-testid="cm-create-space-confirm" onClick={addNewSpace} size="sm" disabled={!newSpaceName.trim() || creatingSpace} className="h-11 cursor-pointer rounded-lg px-4">
             {creatingSpace ? (
               <Loader2 className="h-4 w-4 animate-spin mr-1" />
             ) : (
@@ -84,6 +84,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
               setShowCreateSpace(false)
             }}
             size="sm"
+            className="h-11 cursor-pointer rounded-lg px-4"
           >
             {t('deleteConfirm.cancel')}
           </Button>
@@ -93,7 +94,7 @@ export function CreateSpaceSection({ onSpaceCreated }: CreateSpaceSectionProps) 
           data-testid="cm-create-space-btn"
           variant="outline"
           onClick={() => setShowCreateSpace(true)}
-          className="w-full cursor-pointer justify-start border-dashed"
+          className="h-11 w-full max-w-[166px] cursor-pointer justify-center rounded-lg border-dashed border-primary/50 bg-background px-5 font-semibold text-primary shadow-sm hover:border-primary/70 hover:bg-primary/5 hover:text-primary"
           disabled={showCreateSpace}
         >
           <Plus className="mr-2 h-4 w-4" />

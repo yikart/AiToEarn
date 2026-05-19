@@ -10,4 +10,14 @@ export const emailReg
   = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\])|(([a-z\-0-9]+\.)+[a-z]{2,}))$/i
 
 // URL 链接验证（要求 http/https 协议 + 合法域名 + 任意合法路径）
-export const urlReg = /^https?:\/\/[\w-]+(\.[\w-]+)+([/\w\-.~:@!$&'()*+,;=%]*)*(\?\S*)?(#\S*)?$/i
+export function isValidUrl(url: string): boolean {
+  try {
+    const parsed = new URL(url)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  }
+  catch {
+    return false
+  }
+}
+/** @deprecated 使用 isValidUrl 代替，正则存在 ReDoS 风险 */
+export const urlReg = /^https?:\/\/\S+$/i

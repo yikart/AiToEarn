@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { getErrorMessage } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { Job } from 'bullmq'
-import { SocialMediaError } from '../libs/exception'
+import { SocialMediaError, SocialMediaErrorKind } from '../libs/exception'
 import { CredentialInvalidationService } from './credential-invalidation.service'
 import { PublishingException, PublishingUnrecoverableError } from './publishing.exception'
 import { PublishingService } from './publishing.service'
@@ -60,10 +60,10 @@ export class PublishingErrorHandler {
     }
 
     if (error instanceof SocialMediaError) {
-      if (error.isNetworkError) {
+      if (error.kind === SocialMediaErrorKind.Network) {
         throw error
       }
-      if (error.status === 401) {
+      if (error.kind === SocialMediaErrorKind.Auth) {
         await this.handleAuthFailure(taskId)
         await this.failTask(taskId, error.message)
         throw new PublishingUnrecoverableError(error.message, error)

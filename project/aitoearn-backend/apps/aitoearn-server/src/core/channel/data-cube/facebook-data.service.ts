@@ -25,7 +25,7 @@ export class FacebookDataService extends DataCubeBase {
   }
 
   async getAccountDataCube(accountId: string) {
-    const res = await this.facebookService.getAccountInsights(accountId)
+    const res = await this.facebookService.getAccountInsightsByAccountId(accountId)
     return {
       fensNum: res.fensNum,
       playNum: res.playNum,
@@ -41,7 +41,7 @@ export class FacebookDataService extends DataCubeBase {
 
   async getArcDataCube(accountId: string, dataId: string) {
     this.logger.log('getArcDataCube', accountId, dataId)
-    const res = await this.facebookService.getPostInsights(accountId, dataId)
+    const res = await this.facebookService.getPostInsightsByAccountId(accountId, dataId)
     return res || {}
   }
 

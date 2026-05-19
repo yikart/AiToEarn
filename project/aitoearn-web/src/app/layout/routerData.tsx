@@ -56,3 +56,5 @@ export const routerData: IRouterDataItem[] = [
     icon: <Bot size={20} />,
   },
 ]
+
+export const visibleRouterData = routerData

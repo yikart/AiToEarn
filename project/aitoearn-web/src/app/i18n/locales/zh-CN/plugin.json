@@ -26,7 +26,8 @@
     "platforms": "平台",
     "status": "状态",
     "time": "时间",
-    "viewDetail": "查看详情"
+    "viewDetail": "查看详情",
+    "untitled": "未命名"
   },
   "publishDetail": {
     "title": "发布详情",
@@ -39,8 +40,16 @@
     "shareLink": "分享链接",
     "failReason": "失败原因",
     "close": "关闭",
+    "minimize": "最小化",
     "unknownAccount": "未知账号",
     "creatingRecord": "创建发布记录中..."
+  },
+  "publishFloating": {
+    "xhsPublishing": "小红书正在发布",
+    "pluginPublishing": "插件正在发布",
+    "openDetail": "点击查看发布详情",
+    "completed": "插件发布已完成",
+    "failed": "插件发布失败，请查看发布详情"
   },
   "common": {
     "confirm": "确定",
@@ -70,13 +79,21 @@
     "downloadPlugin": "下载插件",
     "downloadDescription": "AiToEarn 浏览器插件专门用于小红书的智能操作。请点击下方按钮下载安装。",
     "downloadButton": "立即下载",
-    "chromeWebStore": "Chrome 应用商店",
+    "chromeWebStore": "Chrome 商店安装（版本较旧）",
     "chinaDownload": "中国地区下载",
+    "chinaLatestZipDownload": "中国地区最新版本下载",
+    "githubLatestDownload": "github渠道最新版本下载",
     "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
     "platformAccounts": "平台账号",
     "notLoggedIn": "未登录",
-    "xhsNotLoggedInTip": "小红书需要登录创作者中心",
+    "xhsNotLoggedInTip": "抓取笔记详情需登录<homeLink>小红书主页</homeLink>；如需发布内容，还需登录<creatorLink>小红书创作者中心</creatorLink>",
+    "xhsHomeLoggedInOnlyStatus": "已登录主页",
+    "xhsHomeLoggedInOnlyTip": "已登录小红书主页，当前可抓取笔记详情；如需发布内容，请前往小红书创作者中心登录",
+    "xhsCreatorLoggedInOnlyStatus": "仅创作者中心已登录",
+    "xhsCreatorLoggedInOnlyTip": "已登录小红书创作者中心，但暂时无法抓取笔记详情，请前往小红书主页登录",
+    "xhsNoteDetailReady": "可抓笔记详情",
     "loginNow": "立即登录",
+    "authPolling": "正在检测授权状态",
     "viewPublishList": "查看发布列表",
     "permissionRequired": "需要授权",
     "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
@@ -86,15 +103,40 @@
     "syncSuccess": "账号同步成功",
     "syncFailed": "账号同步失败",
     "xhsHome": "主页",
-    "xhsCreator": "创作者",
+    "xhsCreator": "创作者中心",
     "xhsLoginHomeTip": "登录小红书主页",
     "xhsLoginCreatorTip": "登录小红书创作者后台",
-    "viewGuide": "使用有困难，不会安装？"
+    "xhsCreatorQuickLoginLabel": "一键登录说明",
+    "xhsCreatorQuickLoginTip": "登录小红书主页后创作者中心可以一键登录",
+    "viewGuide": "查看授权教程",
+    "viewInstallGuide": "不会安装？点击查看浏览器插件安装教程"
   },
   "mobile": {
     "title": "仅支持桌面端",
     "description": "浏览器插件无法在移动设备上使用，请前往电脑端浏览器安装和使用插件。",
     "goToPC": "请在电脑端访问",
     "introduction": "AiToEarn平台浏览器插件，配合AiToEarn网页端使用，可自动化小红书，tiktok等平台互动，实现关注，点赞，收藏，评论等。"
+  },
+  "version": {
+    "title": "插件版本",
+    "description": "这里会显示您当前安装的插件版本，并和站点要求的最新版本进行对比。",
+    "current": "当前版本",
+    "latest": "最新版本",
+    "updatableTag": "可更新",
+    "popoverTitle": "插件可更新到 v{{version}}",
+    "unknown": "未获取到",
+    "upToDate": "已是最新版本",
+    "updateAvailable": "发现新版本",
+    "unavailable": "版本信息暂不可用",
+    "updateDescription": "当前插件版本不是最新版本，建议尽快更新后再继续使用，避免功能差异或兼容性问题。",
+    "googleStoreNotice": "从Google 应用商店安装的插件有自动更新机制，如果您不是急需使用某些功能，可以等待一周左右，Google 应用商店安装会自动更新，如果急需某些功能，可以手动更新插件",
+    "googleStoreShortNotice": "Google 商店安装版本会自动更新",
+    "downloadLatestZip": "中国地区最新版本下载",
+    "updatableTo": "可更新至 v{{version}}",
+    "updateButton": "更新插件",
+    "updateNow": "更新到 v{{version}}",
+    "viewUpdateGuide": "查看更新教程",
+    "latestDescription": "当前插件已经是最新版本，可以继续正常使用。",
+    "unavailableDescription": "暂时无法读取插件版本号，您可以稍后重新打开弹框再试。"
   }
 }

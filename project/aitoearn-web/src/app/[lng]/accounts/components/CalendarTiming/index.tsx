@@ -72,12 +72,15 @@ const CalendarTiming = memo(
     const calendarTimingCalendarRef = useRef<HTMLDivElement>(null)
     const [publishDialogOpen, setPublishDialogOpen] = useState(false)
     const [defaultAccountIds, setDefaultAccountIds] = useState<string[]>()
-    const { accountList, accountActive } = useAccountStore(
+    const { accountList, accountActive, accountLoading, accountListInitialized } = useAccountStore(
       useShallow(state => ({
         accountList: state.accountList,
         accountActive: state.accountActive,
+        accountLoading: state.accountLoading,
+        accountListInitialized: state.accountListInitialized,
       })),
     )
+    const accountListInitialLoading = accountLoading && !accountListInitialized
 
     // 使用新建作品 hook
     const publishDialogRef = useRef<IPublishDialogRef>(null)
@@ -99,6 +102,10 @@ const CalendarTiming = memo(
       )
 
     useEffect(() => {
+      if (isMobile || window.matchMedia('(max-width: 767px)').matches) {
+        return undefined
+      }
+
       setCalendarRef(calendarRef.current!)
       window.addEventListener('resize', handleResize)
 
@@ -116,7 +123,7 @@ const CalendarTiming = memo(
 
       // 清理事件监听
       return () => window.removeEventListener('resize', handleResize)
-    }, [])
+    }, [isMobile])
 
     // 监听 URL 参数，自动打开发布弹窗
     useEffect(() => {
@@ -149,6 +156,10 @@ const CalendarTiming = memo(
     }, [])
 
     useEffect(() => {
+      if (isMobile || window.matchMedia('(max-width: 767px)').matches) {
+        return
+      }
+
       // 账号切换或视图类型切换时重新获取数据
       // 注意：不依赖 currentDate，因为日期变化在导航函数中已处理
       if (calendarViewType === 'week') {
@@ -157,7 +168,7 @@ const CalendarTiming = memo(
       else {
         getPubRecord({ dateRange: getMonthDateRange(currentDate) })
       }
-    }, [accountActive, calendarViewType])
+    }, [accountActive, calendarViewType, isMobile])
 
     // 处理窗口大小变化
     const handleResize = () => {
@@ -307,6 +318,7 @@ const CalendarTiming = memo(
             })
           }}
           accounts={accountList}
+          accountListInitialLoading={accountListInitialLoading}
         />
 
         {/* 移动端：使用自定义日历组件 */}

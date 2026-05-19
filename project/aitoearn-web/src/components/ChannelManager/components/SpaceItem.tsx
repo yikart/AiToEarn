@@ -32,6 +32,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
+import { cn } from '@/lib/utils'
 import { ChannelItem } from './ChannelItem'
 
 interface AccountGroup {
@@ -96,27 +97,32 @@ export function SpaceItem({
   return (
     <div
       data-testid="cm-space-item"
-      className={`min-w-0 border rounded-lg overflow-hidden ${isSorting ? 'opacity-60 pointer-events-none' : ''}`}
+      className={cn(
+        'relative min-w-0 overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm transition-shadow before:absolute before:inset-x-0 before:top-0 before:h-px before:bg-gradient-back before:content-[""] hover:shadow-md',
+        isSorting && 'pointer-events-none opacity-60',
+      )}
     >
       {/* 空间标题栏 */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 py-2 px-2 sm:px-4 bg-muted/30 border-b hover:bg-muted/50 transition-colors overflow-hidden">
+      <div className="flex items-center gap-1.5 overflow-hidden border-b border-border/70 bg-background px-2 py-3 transition-colors hover:bg-muted/20 sm:gap-3 sm:px-5">
         {/* 可点击的折叠区域 */}
         <div
           data-testid="cm-space-toggle"
-          className="flex flex-1 items-center gap-1.5 sm:gap-2.5 min-w-0 cursor-pointer"
+          className="flex min-w-0 flex-1 cursor-pointer items-center gap-1.5 sm:gap-3"
           onClick={() => !isEditing && onToggleCollapse()}
         >
           {isCollapsed ? (
-            <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 hover:text-foreground transition-colors" />
+            <ChevronRight className="h-4 w-4 shrink-0 text-muted-foreground transition-colors hover:text-foreground" />
           ) : (
-            <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0 hover:text-foreground transition-colors" />
+            <ChevronDown className="h-4 w-4 shrink-0 text-muted-foreground transition-colors hover:text-foreground" />
           )}
 
-          <Box className="h-4 w-4 text-primary shrink-0" />
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+            <Box className="h-4 w-4" />
+          </span>
 
           {isEditing ? (
             <div
-              className="flex-1 flex flex-wrap sm:flex-nowrap gap-1.5 sm:gap-2 min-w-0"
+              className="flex min-w-0 flex-1 flex-wrap gap-1.5 sm:flex-nowrap sm:gap-2"
               onClick={e => e.stopPropagation()}
             >
               <Input
@@ -130,14 +136,14 @@ export function SpaceItem({
                     onCancelEdit()
                 }}
                 autoFocus
-                className="h-7 text-sm flex-1 min-w-0"
+                className="h-8 min-w-0 flex-1 rounded-lg text-sm"
               />
               <div className="flex gap-1.5 sm:gap-2">
                 <Button
                   onClick={onSaveEdit}
                   size="sm"
                   disabled={editingSpaceLoading}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-lg"
                 >
                   {editingSpaceLoading ? (
                     <Loader2 className="h-4 w-4 animate-spin sm:mr-1" />
@@ -150,7 +156,7 @@ export function SpaceItem({
                   onClick={onCancelEdit}
                   size="sm"
                   disabled={editingSpaceLoading}
-                  className="cursor-pointer"
+                  className="cursor-pointer rounded-lg"
                 >
                   <span className="hidden sm:inline">{t('common.cancel', '取消')}</span>
                   <span className="sm:hidden">✕</span>
@@ -159,11 +165,11 @@ export function SpaceItem({
             </div>
           ) : (
             <>
-              <div className="flex-1 min-w-0">
-                <div data-testid="cm-space-name" className="font-medium text-sm truncate">{space.name}</div>
+              <div className="min-w-0 flex-1">
+                <div data-testid="cm-space-name" className="truncate text-base font-semibold text-foreground">{space.name}</div>
               </div>
 
-              <div className="text-xs text-muted-foreground shrink-0">
+              <div className="shrink-0 text-sm font-medium text-muted-foreground">
                 <span className="hidden sm:inline">
                   {t('channelManager.channelCount', { count: channels.length })}
                 </span>
@@ -182,19 +188,19 @@ export function SpaceItem({
                 data-testid="cm-space-add-channel-btn"
                 variant="outline"
                 size="sm"
-                className="h-7 cursor-pointer shrink-0 px-2"
+                className="h-9 shrink-0 cursor-pointer rounded-lg border-primary/45 bg-background px-4 font-semibold text-primary shadow-sm hover:border-primary/70 hover:bg-primary/5 hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation()
                   onAddChannel()
                 }}
               >
-                <Plus className="h-3 w-3 mr-1" />
+                <Plus className="mr-1 h-4 w-4" />
                 <span>{t('channelManager.addChannel')}</span>
               </Button>
             )}
 
             {isSorting && (
-              <div className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
+              <div className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground">
                 <Loader2 className="h-3 w-3 animate-spin" />
                 {t('channelManager.sorting', '排序中...')}
               </div>
@@ -207,7 +213,7 @@ export function SpaceItem({
                     data-testid="cm-space-more-menu"
                     variant="ghost"
                     size="sm"
-                    className="h-8 w-8 p-0 shrink-0"
+                    className="h-8 w-8 shrink-0 rounded-lg p-0 text-muted-foreground hover:text-foreground"
                     onClick={e => e.stopPropagation()}
                   >
                     <MoreVertical className="h-4 w-4" />
@@ -215,7 +221,7 @@ export function SpaceItem({
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={onStartEdit}>
-                    <Edit className="h-4 w-4 mr-2" />
+                    <Edit className="mr-2 h-4 w-4" />
                     {t('actions.edit')}
                   </DropdownMenuItem>
                   {canMoveUp && (
@@ -227,7 +233,7 @@ export function SpaceItem({
                       }}
                       disabled={isSorting}
                     >
-                      <ChevronUp className="h-4 w-4 mr-2" />
+                      <ChevronUp className="mr-2 h-4 w-4" />
                       {t('channelManager.moveUp', '上移')}
                     </DropdownMenuItem>
                   )}
@@ -240,13 +246,13 @@ export function SpaceItem({
                       }}
                       disabled={isSorting}
                     >
-                      <ChevronDown className="h-4 w-4 mr-2" />
+                      <ChevronDown className="mr-2 h-4 w-4" />
                       {t('channelManager.moveDown', '下移')}
                     </DropdownMenuItem>
                   )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={onDelete} className="text-destructive">
-                    <Trash2 className="h-4 w-4 mr-2" />
+                    <Trash2 className="mr-2 h-4 w-4" />
                     {t('actions.delete')}
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -258,9 +264,9 @@ export function SpaceItem({
 
       {/* 频道列表 */}
       {!isCollapsed && (
-        <div className="divide-y">
+        <div className="divide-y divide-border/70">
           {channels.length === 0 ? (
-            <div className="text-sm text-muted-foreground py-8 text-center">
+            <div className="py-8 text-center text-sm text-muted-foreground">
               {t('channelManager.noChannels', '暂无频道')}
             </div>
           ) : (

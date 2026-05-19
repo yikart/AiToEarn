@@ -1,118 +1,130 @@
-import type { MobileNavListProps } from '../types'
 /**
- * MobileNavList - 移动端导航列表，包含主导航和"更多"折叠菜单
+ * MobileNavList - 移动端导航列表
+ * 路由导航可折叠/展开（持久化），功能项（GitHub/帮助文档）始终显示
  */
-import {
-  ChevronDown,
-  ChevronUp,
-  Globe,
-  MoreHorizontal,
-} from 'lucide-react'
-import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import type { MobileNavListProps } from '../types'
+import type { IRouterDataItem } from '@/app/layout/routerData'
+import { ChevronDown, ChevronUp, Code2, HelpCircle } from 'lucide-react'
+import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
-import { routerData } from '@/app/layout/routerData'
-import { NAV_GROUP_KEYS } from '@/app/layout/shared'
+import { DOCS_URL, GITHUB_REPO } from '@/app/layout/shared/constants'
+import { useGitHubStars } from '@/app/layout/shared/hooks/useGitHubStars'
+import { useVisibleRouterData } from '@/app/layout/shared/hooks/useVisibleRouterData'
 import { cn } from '@/lib/utils'
+import { useSystemStore } from '@/store/system'
 import { MobileMyChannelsButton } from './MobileMyChannelsButton'
 import { MobileNavItem } from './MobileNavItem'
 
-export function MobileNavList({
-  currentRoute,
-  onClose,
-  onOpenMyChannels,
-}: MobileNavListProps) {
+function isRouteActive(item: IRouterDataItem, currentRoute: string): boolean {
+  if (item.path === currentRoute) {
+    return true
+  }
+
+  return item.children?.some(child => isRouteActive(child, currentRoute)) ?? false
+}
+
+export function MobileNavList({ currentRoute, onClose, onOpenMyChannels }: MobileNavListProps) {
   const { t } = useTransClient(['route', 'common'])
-  const [moreOpen, setMoreOpen] = useState(false)
+  const starCount = useGitHubStars()
+  const visibleRoutes = useVisibleRouterData()
 
-  // Main items: only Home and Publish (accounts)
-  const mainItems = routerData.filter(i => !NAV_GROUP_KEYS.includes(i.translationKey as typeof NAV_GROUP_KEYS[number]))
-  // Grouped items in specified order
-  const groupedItems = NAV_GROUP_KEYS
-    .map(key => routerData.find(i => i.translationKey === key))
-    .filter((i): i is (typeof routerData)[0] => i !== undefined)
+  const { mobileNavExpanded, setMobileNavExpanded } = useSystemStore(
+    useShallow(state => ({
+      mobileNavExpanded: state.mobileNavExpanded,
+      setMobileNavExpanded: state.setMobileNavExpanded,
+    })),
+  )
 
-  // Auto-expand if current route is in grouped items
-  useEffect(() => {
-    const isCurrentRouteInGroup = groupedItems.some(item => item.path === currentRoute)
-    if (isCurrentRouteInGroup && !moreOpen) {
-      setMoreOpen(true)
-    }
-  }, [currentRoute, groupedItems, moreOpen])
+  const funcItemClassName = cn(
+    'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full',
+    'text-muted-foreground hover:bg-brand-cyan/10 hover:text-brand-cyan',
+  )
+
+  const renderRouteItem = (item: IRouterDataItem, level = 0): React.ReactNode => {
+    const isActive = isRouteActive(item, currentRoute)
+
+    return (
+      <div key={item.path || item.translationKey} className="space-y-1">
+        {item.path ? (
+          <MobileNavItem
+            path={item.path}
+            translationKey={item.translationKey}
+            icon={level === 0 ? item.icon : undefined}
+            isActive={isActive}
+            onClose={onClose}
+            className={cn(level > 0 && 'ml-6 py-2.5 text-sm')}
+          />
+        ) : null}
+        {item.children?.length ? (
+          <div className={cn('space-y-1 border-l border-border/70 pl-2', level === 0 && 'ml-4')}>
+            {item.children.map((child: IRouterDataItem) => renderRouteItem(child, level + 1))}
+          </div>
+        ) : null}
+      </div>
+    )
+  }
 
   return (
     <nav className="flex flex-col gap-1 p-4" data-testid="mobile-nav-list">
-      {/* Main navigation items: Home, Publish */}
-      {mainItems.map(item => (
-        <MobileNavItem
-          key={item.path || item.name}
-          path={item.path || '/'}
-          translationKey={item.translationKey}
-          icon={item.icon}
-          isActive={item.path === currentRoute}
-          onClose={onClose}
-        />
-      ))}
+      {/* 导航折叠/展开按钮 */}
+      <button
+        onClick={() => setMobileNavExpanded(!mobileNavExpanded)}
+        className={cn(
+          'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full cursor-pointer',
+          'text-muted-foreground hover:bg-brand-cyan/10 hover:text-brand-cyan',
+          mobileNavExpanded && 'bg-brand-cyan/10 text-brand-cyan',
+        )}
+        data-testid="mobile-nav-toggle"
+      >
+        <span className="flex-1 text-left">{t('route:navigation')}</span>
+        {mobileNavExpanded ? (
+          <ChevronUp size={18} className="text-muted-foreground" />
+        ) : (
+          <ChevronDown size={18} className="text-muted-foreground" />
+        )}
+      </button>
 
-      {/* 我的频道 */}
-      <MobileMyChannelsButton onClose={onClose} onOpenMyChannels={onOpenMyChannels} />
+      {/* 路由导航项 - 折叠/展开 */}
+      {mobileNavExpanded && (
+        <div className="flex flex-col gap-1" data-testid="mobile-nav-routes">
+          {visibleRoutes.map((item: IRouterDataItem) => renderRouteItem(item))}
 
-      {/* "More" collapsible section */}
-      {groupedItems.length > 0 && (
-        <div className="mt-1">
-          {/* More button */}
-          <button
-            onClick={() => setMoreOpen(s => !s)}
-            data-testid="mobile-more-btn"
-            className={cn(
-              'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full',
-              'text-muted-foreground hover:bg-muted hover:text-foreground',
-              moreOpen && 'bg-muted text-foreground',
-            )}
-          >
-            <span className="flex items-center justify-center">
-              <MoreHorizontal size={20} />
-            </span>
-            <span className="flex-1 text-left">{t('sidebar.more')}</span>
-            {moreOpen ? (
-              <ChevronUp size={18} className="text-muted-foreground" />
-            ) : (
-              <ChevronDown size={18} className="text-muted-foreground" />
-            )}
-          </button>
-
-          {/* Expanded items */}
-          {moreOpen && (
-            <div className="mt-1 ml-2 flex flex-col gap-1" data-testid="mobile-more-group">
-              {groupedItems.map(item => (
-                <MobileNavItem
-                  key={item.path || item.name}
-                  path={item.path || '/'}
-                  translationKey={item.translationKey}
-                  icon={item.icon}
-                  isActive={item.path === currentRoute}
-                  onClose={onClose}
-                />
-              ))}
-
-              {/* 前往官网 */}
-              <Link
-                href="/welcome"
-                onClick={onClose}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all',
-                  'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  currentRoute === '/welcome' && 'bg-primary/10 text-primary',
-                )}
-              >
-                <Globe size={20} className="text-muted-foreground" />
-                <span>{t('common:goToWebsite')}</span>
-              </Link>
-
-            </div>
-          )}
+          {/* 我的频道 */}
+          <MobileMyChannelsButton onClose={onClose} onOpenMyChannels={onOpenMyChannels} />
         </div>
       )}
+
+      {/* 功能导航项 - 始终显示 */}
+      <a
+        href={`https://github.com/${GITHUB_REPO}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={funcItemClassName}
+        data-testid="mobile-github-link"
+      >
+        <span className="flex items-center justify-center">
+          <Code2 size={20} />
+        </span>
+        <span>GitHub</span>
+        {starCount && (
+          <span className="ml-auto rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground">
+            {starCount}
+          </span>
+        )}
+      </a>
+
+      <a
+        href={DOCS_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={funcItemClassName}
+        data-testid="mobile-docs-link"
+      >
+        <span className="flex items-center justify-center">
+          <HelpCircle size={20} />
+        </span>
+        <span>{t('common:helpDocs')}</span>
+      </a>
     </nav>
   )
 }

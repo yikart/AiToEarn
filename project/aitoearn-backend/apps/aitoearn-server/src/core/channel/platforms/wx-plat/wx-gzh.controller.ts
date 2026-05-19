@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Internal, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
+import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
 import { WxGzhService } from './wx-gzh.service'
 import { GetUserCumulateDataDto } from './wx-plat.dto'
 import { WxPlatService } from './wx-plat.service'
@@ -12,6 +13,7 @@ export class WxGzhController {
   constructor(
     private readonly wxPlatService: WxPlatService,
     private readonly wxGzhService: WxGzhService,
+    private readonly metricEventHelperService: MetricEventHelperService,
   ) {}
 
   @ApiDoc({
@@ -28,6 +30,11 @@ export class WxGzhController {
     const res = await this.wxPlatService.createAuthTask(
       { userId: token.id, type, spaceId: spaceId || '', callbackUrl, callbackMethod },
     )
+
+    await this.metricEventHelperService.record(token.id, MetricEventName.aiPublishAddChannels, {
+      bizKey: res.taskId,
+      properties: { platform: 'wx_gzh' },
+    })
 
     return {
       id: res.taskId,
@@ -55,7 +62,7 @@ export class WxGzhController {
     @GetToken() token: TokenInfo,
     @Query() query: GetUserCumulateDataDto,
   ) {
-    return this.wxGzhService.getusercumulate(query.accountId, query.beginDate, query.endDate)
+    return this.wxGzhService.getusercumulate(token.id, query.accountId, query.beginDate, query.endDate)
   }
 
   @ApiDoc({
@@ -67,16 +74,16 @@ export class WxGzhController {
     @GetToken() token: TokenInfo,
     @Query() query: GetUserCumulateDataDto,
   ) {
-    return this.wxGzhService.getuserread(query.accountId, query.beginDate, query.endDate)
+    return this.wxGzhService.getuserread(token.id, query.accountId, query.beginDate, query.endDate)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Accumulated User Metrics (Crawler)',
     body: GetUserCumulateDataDto.schema,
   })
   @Post('/getUserCumulate')
   async getCrawlerUserCumulate(@Body() data: GetUserCumulateDataDto) {
-    return this.wxGzhService.getusercumulate(data.accountId, data.beginDate, data.endDate)
+    return this.wxGzhService.getusercumulateByAccountId(data.accountId, data.beginDate, data.endDate)
   }
 }

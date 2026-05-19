@@ -33,7 +33,7 @@ export class WxGzhDataService extends DataCubeBase {
 
   async getAccountDataCube(accountId: string) {
     const [startTime, endTime] = [dayjs().startOf('day').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]
-    const res = await this.wxGzhService.getusercumulate(accountId, startTime, endTime)
+    const res = await this.wxGzhService.getusercumulateByAccountId(accountId, startTime, endTime)
     const lastData = res.list[0]
 
     return {

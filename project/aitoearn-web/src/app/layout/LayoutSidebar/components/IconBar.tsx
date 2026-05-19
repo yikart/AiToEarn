@@ -17,6 +17,7 @@ export function IconBar({
   isLoggedIn,
   unreadCount,
   onOpenNotification,
+  onOpenSettings,
 }: IconBarProps) {
   const { t } = useTransClient('common')
 
@@ -84,6 +85,7 @@ export function IconBar({
           </Tooltip>
         </TooltipProvider>
       )}
+
     </div>
   )
 }

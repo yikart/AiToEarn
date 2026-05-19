@@ -108,12 +108,13 @@ export class MaterialService {
   }
 
   async deleteByUseCount(userId: string, groupId: string, minUseCount: number): Promise<boolean> {
-    return this.materialRepository.deleteByFilter({
+    const filter = {
       userId,
       userType: UserType.User,
       groupId,
       useCount: { $gte: minUseCount },
-    })
+    }
+    return this.materialRepository.deleteByFilter(filter)
   }
 
   async updateInfo(id: string, data: UpMaterial): Promise<boolean> {
@@ -145,6 +146,30 @@ export class MaterialService {
   ) {
     const res = await this.materialRepository.getList(filter, page)
     return res
+  }
+
+  async transferToGroup(
+    userId: string,
+    ids: string[],
+    targetGroupId: string,
+    mode: 'move' | 'copy',
+  ): Promise<number> {
+    if (mode === 'move') {
+      return this.materialRepository.updateGroupIdByIds(ids, targetGroupId, userId)
+    }
+
+    const materials = await this.materialRepository.listByIdsAndUserId(ids, userId)
+    if (materials.length === 0) {
+      return 0
+    }
+
+    const copies = materials.map(({ id: _id, ...material }) => ({
+      ...material,
+      groupId: targetGroupId,
+      useCount: 0,
+    }))
+    const created = await this.materialRepository.createMany(copies)
+    return created.length
   }
 
   async optimalByIds(materialIds: string[]) {

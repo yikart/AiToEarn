@@ -2,6 +2,11 @@ import { z } from 'zod'
 
 // ========== Volcengine Track Structure Schema (matches volcengine.interface.ts) ==========
 
+const targetTimeSchema = z
+  .array(z.number())
+  .length(2)
+  .transform(value => value as [number, number])
+
 // TransformFilter - 2D Transform
 export const transformFilterSchema = z.object({
   Type: z.literal('transform').describe('Filter type'),
@@ -18,7 +23,7 @@ export const transformFilterSchema = z.object({
 // LutFilter - Color Filter
 export const lutFilterSchema = z.object({
   Type: z.literal('lut_filter').describe('Filter type'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Filter time range in element [startMs, endMs]'),
+  TargetTime: targetTimeSchema.describe('Filter time range in element [startMs, endMs]'),
   Source: z.string().describe('Filter ID'),
   Intensity: z.number().optional().describe('Filter intensity [0,1]'),
 })
@@ -26,7 +31,7 @@ export const lutFilterSchema = z.object({
 // EffectFilter - Visual Effect
 export const effectFilterSchema = z.object({
   Type: z.literal('effect_filter').describe('Filter type'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Filter time range in element [startMs, endMs]'),
+  TargetTime: targetTimeSchema.describe('Filter time range in element [startMs, endMs]'),
   Source: z.string().describe('Effect ID'),
 })
 
@@ -96,7 +101,7 @@ export const audioVolumeFilterSchema = z.object({
 // EqFilter - Image Equalizer
 export const eqFilterSchema = z.object({
   Type: z.literal('equalizer').describe('Filter type'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Filter time range in element [startMs, endMs]'),
+  TargetTime: targetTimeSchema.describe('Filter time range in element [startMs, endMs]'),
   Brightness: z.number().optional().describe('Brightness [0, 1]'),
   Saturation: z.number().optional().describe('Saturation [0, 1]'),
   Tone: z.number().optional().describe('Tone [0, 1]'),
@@ -105,7 +110,7 @@ export const eqFilterSchema = z.object({
 // DelogoFilter - Local Blur
 export const delogoFilterSchema = z.object({
   Type: z.literal('delogo').describe('Filter type'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Filter time range in element [startMs, endMs]'),
+  TargetTime: targetTimeSchema.describe('Filter time range in element [startMs, endMs]'),
   DelogoType: z.string().optional().describe('Delogo type, default gaussian'),
   PosX: z.number().describe('Local blur area top-left X coordinate (pixels), NOT center point'),
   PosY: z.number().describe('Local blur area top-left Y coordinate (pixels), NOT center point'),
@@ -118,7 +123,7 @@ export const delogoFilterSchema = z.object({
 // GaussianFilter - Gaussian Blur
 export const gaussianFilterSchema = z.object({
   Type: z.literal('gaussian').describe('Filter type'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Filter time range in element [startMs, endMs]'),
+  TargetTime: targetTimeSchema.describe('Filter time range in element [startMs, endMs]'),
   Radius: z.number().describe('Gaussian blur radius [10,70]'),
   Sigma: z.number().describe('Gaussian blur intensity [10,70]'),
 })
@@ -145,7 +150,7 @@ export const filterSchema = z.union([
 export const trackElementSchema = z.object({
   Type: z.enum(['video', 'audio', 'image', 'text', 'subtitle', 'effect', 'gaussian', 'text_roll']).describe('Element type'),
   Source: z.string().optional().describe('Resource source: vid://xxx, mid://xxx, tos://xxx or URL'),
-  TargetTime: z.tuple([z.number(), z.number()]).describe('Track time range [startMs, endMs], in milliseconds'),
+  TargetTime: targetTimeSchema.describe('Track time range [startMs, endMs], in milliseconds'),
   // text/subtitle specific fields
   Text: z.string().optional().describe('Text content'),
   TextRes: z.string().optional().describe('Fancy text ID'),

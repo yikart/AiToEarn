@@ -48,7 +48,7 @@ export class YoutubeEngagementProvider implements EngagementProvider {
   }
 
   private async fetchYoutubeCommentsThreads(accountId: string, videoId: string, pagination: KeysetPagination | OffsetPagination | null): Promise<FetchPostCommentsResponse> {
-    const rawResp = await this.youtubeService.getCommentThreadsList(
+    const rawResp = await this.youtubeService.getCommentThreadsListByAccountId(
       accountId,
       undefined, // allThreadsRelatedToChannelId
       undefined, // id
@@ -89,7 +89,7 @@ export class YoutubeEngagementProvider implements EngagementProvider {
   }
 
   private async fetchYoutubeComments(accountId: string, parentId: string, pagination: KeysetPagination | OffsetPagination | null): Promise<FetchPostCommentsResponse> {
-    const rawResp = await this.youtubeService.getCommentsList(
+    const rawResp = await this.youtubeService.getCommentsListByAccountId(
       accountId,
       parentId,
       undefined,
@@ -127,7 +127,7 @@ export class YoutubeEngagementProvider implements EngagementProvider {
   }
 
   private async publishYoutubeCommentThreads(accountId: string, targetId: string, message: string): Promise<PublishCommentResponse> {
-    const rawResp = await this.youtubeService.insertCommentThreads(accountId, undefined, targetId, message)
+    const rawResp = await this.youtubeService.insertCommentThreadsByAccountId(accountId, undefined, targetId, message)
 
     if (isGaxiosResponse<youtube_v3.Schema$CommentThread>(rawResp) && rawResp.data?.id) {
       return {
@@ -144,7 +144,7 @@ export class YoutubeEngagementProvider implements EngagementProvider {
   }
 
   private async publishYoutubeComment(accountId: string, targetId: string, message: string): Promise<PublishCommentResponse> {
-    const rawResp = await this.youtubeService.insertComment(accountId, targetId, message)
+    const rawResp = await this.youtubeService.insertCommentByAccountId(accountId, targetId, message)
 
     if (isGaxiosResponse<youtube_v3.Schema$Comment>(rawResp) && rawResp.data?.id) {
       return {

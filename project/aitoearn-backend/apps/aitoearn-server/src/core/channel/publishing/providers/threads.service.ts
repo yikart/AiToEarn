@@ -38,7 +38,7 @@ export class ThreadsPublishService extends PublishService {
       return objectInfo.permalink ?? ''
     }
     catch (error) {
-      this.logger.error(`Failed to get threads post permalink, accountId: ${accountId}, postId: ${postId}, error: ${error}`)
+      this.logger.error(error, `Failed to get threads post permalink, accountId: ${accountId}, postId: ${postId}`)
       return ''
     }
   }
@@ -103,17 +103,18 @@ export class ThreadsPublishService extends PublishService {
       const createContainerReq: ThreadsContainerRequest = {
         media_type: 'IMAGE',
         image_url: imgUrl,
-        text: publishTask.desc || '',
-      }
-      if (locationId) {
-        createContainerReq.location_id
-          = publishTask.option.threads.location_id
-      }
-      if (publishTask.topics && publishTask.topics.length > 0) {
-        createContainerReq.topic_tag = publishTask.topics[0]
       }
       if (isCarouselItem) {
         createContainerReq.is_carousel_item = true
+      }
+      else {
+        createContainerReq.text = this.generatePostMessage(publishTask)
+        if (locationId) {
+          createContainerReq.location_id = locationId
+        }
+        if (publishTask.topics && publishTask.topics.length > 0) {
+          createContainerReq.topic_tag = publishTask.topics[0]
+        }
       }
       const container = await this.threadsService.createItemContainer(
         accountId,
@@ -156,8 +157,10 @@ export class ThreadsPublishService extends PublishService {
 
   async immediatePublish(publishTask: PublishRecord): Promise<PublishingTaskResult> {
     if (publishTask.videoUrl)
-      publishTask.videoUrl = this.assetsService.buildUrl(publishTask.videoUrl)
-    publishTask.imgUrlList = publishTask.imgUrlList?.map(url => this.assetsService.buildUrl(url)) || []
+      publishTask.videoUrl = await this.assetsService.toPresignedUrl(publishTask.videoUrl)
+    publishTask.imgUrlList = publishTask.imgUrlList
+      ? await Promise.all(publishTask.imgUrlList.map(url => this.assetsService.toPresignedUrl(url)))
+      : []
     publishTask.coverUrl = publishTask.coverUrl ? this.assetsService.buildUrl(publishTask.coverUrl) : undefined
 
     const postType = await this.determinePostType(publishTask)
@@ -195,7 +198,7 @@ export class ThreadsPublishService extends PublishService {
 
     if (mediasStatus.medias.length > 1) {
       containerTypes = ThreadsMediaType.CAROUSEL
-      const containerIdList = mediasStatus.medias.map(media => media.taskId)
+      const containerIdList = mediasStatus.medias.map(media => media.taskId).join(',')
       const createContainerReq: ThreadsContainerRequest = {
         media_type: containerTypes,
         children: containerIdList,
@@ -263,7 +266,7 @@ export class ThreadsPublishService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error(`验证 Threads 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 Threads 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,

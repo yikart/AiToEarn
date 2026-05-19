@@ -7,8 +7,6 @@ import {
   ReportLocationDtoSchema,
   SetAiConfigDto,
   SetAiConfigItemDto,
-  SwitchUserTypeDto,
-  SwitchUserTypeDtoSchema,
   UpdateLocaleDto,
   UpdateLocaleDtoSchema,
   UpdateUserInfoDto,
@@ -110,32 +108,5 @@ export class UserController {
     @Body() body: UpdateLocaleDto,
   ) {
     await this.userService.updateLocale(token.id, body.locale)
-  }
-
-  @ApiDoc({
-    summary: '切换用户身份',
-    description: '在创作者和商家身份之间切换',
-    body: SwitchUserTypeDtoSchema,
-  })
-  @Put('type/switch')
-  async switchUserType(
-    @GetToken() token: TokenInfo,
-    @Body() body: SwitchUserTypeDto,
-  ) {
-    const userInfo = await this.userService.getUserInfoById(token.id)
-    if (!userInfo) {
-      throw new AppException(ResponseCode.UserNotFound)
-    }
-
-    if (userInfo.userType === body.userType) {
-      return { userType: body.userType }
-    }
-
-    const success = await this.userService.switchUserType(token.id, body.userType)
-    if (!success) {
-      throw new AppException(ResponseCode.UserNotFound)
-    }
-
-    return { userType: body.userType }
   }
 }

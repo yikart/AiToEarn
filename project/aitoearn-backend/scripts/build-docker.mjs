@@ -213,10 +213,14 @@ async function createDepsWorkspace(projects, graph, contextDir, verbose = false)
 async function buildImage(projectName, contextDir, options = {}) {
   const {
     verbose = false,
-    registries = ['registry.fly.io', 'registry.aitoearn.cn'],
+    registries = [],
     push = false,
     platforms = getDefaultPlatform(),
   } = options
+
+  if (push && registries.length === 0) {
+    throw new Error('推送镜像时必须通过 --registry 指定至少一个镜像仓库')
+  }
 
   if (platforms.length > 1 && !push) {
     console.error(chalk.red('错误: 多平台构建必须配合 --push 使用（docker buildx 不支持多平台 --load）'))
@@ -242,16 +246,20 @@ async function buildImage(projectName, contextDir, options = {}) {
   const localImageName = `${projectName}:${tag}`
 
   // 为每个 registry 生成 tag 参数
-  const tagArgs = registries.flatMap(registry => ['-t', `${registry}/${projectName}:${tag}`])
+  const remoteImageNames = registries.map(registry => `${registry}/${projectName}:${tag}`)
+  const imageNames = push ? remoteImageNames : [localImageName, ...remoteImageNames]
+  const tagArgs = imageNames.flatMap(imageName => ['-t', imageName])
   const pushArgs = push ? ['--push'] : ['--load']
 
   try {
     // 构建镜像并打所有 tag
     await $({ cwd: contextDir })`docker buildx build --build-arg APP_NAME=${projectName} --platform ${platformStr} -t ${localImageName} ${tagArgs} ${pushArgs} .`
     console.info(chalk.green(`Docker 镜像构建完成:`))
-    console.info(chalk.gray(`  本地: ${localImageName}`))
-    for (const registry of registries) {
-      console.info(chalk.gray(`  远程: ${registry}/${projectName}:${tag}`))
+    if (!push) {
+      console.info(chalk.gray(`  本地: ${localImageName}`))
+    }
+    for (const imageName of remoteImageNames) {
+      console.info(chalk.gray(`  远程: ${imageName}`))
     }
   }
   catch (error) {
@@ -390,7 +398,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     .option('-o, --output <dir>', '输出目录', 'tmp/docker-context')
     .option('-v, --verbose', '显示详细日志', false)
     .option('--context-only', '仅准备 Docker 上下文，不构建镜像', false)
-    .option('-r, --registry <registry...>', 'Docker 镜像仓库地址（可多次指定）', ['registry.fly.io', 'registry.aitoearn.cn'])
+    .option('-r, --registry <registry...>', 'Docker 镜像仓库地址（可多次指定）', [])
     .option('-p, --push', '构建后推送镜像到仓库', false)
     .option('--platform <platforms...>', '目标平台（可多次指定，如 linux/amd64 linux/arm64），默认当前系统架构')
     .action(async (appName, options) => {

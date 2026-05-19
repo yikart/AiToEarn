@@ -414,5 +414,57 @@
       "contactTitle": "Contactez-nous pour obtenir de l'aide :",
       "contactEmail": "E-mail : metat@aitoearning.com (Demandes pré-lancement uniquement)"
     }
+  },
+  "ecosystem": {
+    "analyze": "Content Analysis",
+    "analyzeDesc": "Global trends & creative inspiration",
+    "analyzeDetails": [
+      "Global Trending Topics",
+      "Creative Inspiration"
+    ],
+    "buy": "Buy",
+    "consumer": "Content Consumer",
+    "create": "Content Creation",
+    "createDesc": "AI generates video, images, copy",
+    "createDetails": [
+      "Video Generation: Veo3.1, Sora-2",
+      "Image Generation & Editing: Nano banana Pro, GPT-image-1.5",
+      "Video Editing: Composition, mixing, rotation, splitting, speed, cropping, transitions, effects, audio, text, filters & more",
+      "Video Understanding: Multimodal AI-based video comprehension",
+      "Video Style Transfer: Transform real videos into anime, cartoon, or sketch styles",
+      "Video Translation: Voice cloning, lip-sync, supporting Chinese, English, Japanese, Korean, German, French, Russian, Thai, Spanish, Portuguese, Italian & more",
+      "Smart Clipping: Intelligently extract highlights from dramas, TV shows, livestreams & long videos"
+    ],
+    "creator": "Content Creator",
+    "dashboard": "Data Dashboard",
+    "dashboardDesc": "Unified data analytics across platforms",
+    "dashboardDetails": [
+      "Unified data analytics across all platforms"
+    ],
+    "features": {
+      "clip": "Smart Clipping: Intelligently extract highlights from dramas, TV shows, livestreams & long videos",
+      "edit": "Video Editing: Composition, mixing, rotation, splitting, speed, cropping, transitions, effects, audio, text, filters & more",
+      "image": "Image Generation & Editing: Nano banana Pro, GPT-image-1.5",
+      "style": "Video Style Transfer: Transform real videos into anime, cartoon, or sketch styles",
+      "translate": "Video Translation: Voice cloning, lip-sync, supporting Chinese, English, Japanese, Korean, German, French, Russian, Thai, Spanish, Portuguese, Italian & more",
+      "understand": "Video Understanding: Multimodal AI-based video comprehension",
+      "video": "Video Generation: Veo3.1, Sora-2"
+    },
+    "manage": "Content Management",
+    "manageDesc": "Auto likes, bookmarks, comments",
+    "manageDetails": [
+      "Automatically like, bookmark, and comment on specific content"
+    ],
+    "platforms": "Supported Platforms",
+    "publish": "Content Publishing",
+    "publishDesc": "One-click multi-platform distribution",
+    "publishDetails": [
+      "Douyin, Xiaohongshu (Rednote), WeChat Video, Kuaishou, Bilibili, WeChat Official Account",
+      "TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn"
+    ],
+    "sell": "Sell",
+    "subtitle": "AI-Powered Content Creation & Monetization Ecosystem",
+    "title": "Understanding AiToEarn",
+    "trade": "Content Trading"
   }
 }

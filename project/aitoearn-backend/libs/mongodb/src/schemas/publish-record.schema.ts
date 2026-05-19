@@ -6,9 +6,9 @@
  * @Description: 发布记录
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { AccountType } from '@yikart/common'
+import { AccountType, WorkStatus } from '@yikart/common'
 import mongoose from 'mongoose'
-import { PublishRecordSource, PublishStatus, PublishType } from '../enums'
+import { PublishRecordLinkStatus, PublishRecordSource, PublishStatus, PublishType } from '../enums'
 import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
 import { PublishErrorData } from './publishing-task-meta.schema'
 import { WithTimestampSchema } from './timestamp.schema'
@@ -32,28 +32,16 @@ export class PublishRecord extends WithTimestampSchema {
   @Prop({
     required: false,
     type: String,
+    index: true,
   })
-  userTaskId?: string // 用户任务ID
-
-  @Prop({
-    required: false,
-    type: String,
-  })
-  taskId?: string // 任务ID
+  materialGroupId?: string // 草稿箱ID
 
   @Prop({
     required: false,
     type: String,
     index: true,
   })
-  materialGroupId?: string // 草稿箱ID (广告主线下任务)
-
-  @Prop({
-    required: false,
-    type: String,
-    index: true,
-  })
-  materialId?: string // 草稿ID (广告主线下任务)
+  materialId?: string // 草稿ID
 
   @Prop({
     required: true,
@@ -177,6 +165,44 @@ export class PublishRecord extends WithTimestampSchema {
     type: String,
   })
   workLink?: string
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  originalWorkLink?: string
+
+  @Prop({
+    required: false,
+    type: String,
+    enum: WorkStatus,
+  })
+  workStatus?: WorkStatus
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  platformWorkId?: string
+
+  @Prop({
+    required: false,
+    type: String,
+    enum: PublishRecordLinkStatus,
+  })
+  linkStatus?: PublishRecordLinkStatus
+
+  @Prop({
+    required: false,
+    type: String,
+  })
+  linkError?: string
+
+  @Prop({
+    required: false,
+    type: mongoose.Schema.Types.Mixed,
+  })
+  linkMeta?: Record<string, any>
 
   @Prop({
     required: false,

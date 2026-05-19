@@ -1,7 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AccountModule } from '../account/account.module'
 import { ContentModule } from '../content/content.module'
-import { CreditsModule } from '../credits/credits.module'
 import { NotificationModule } from '../notification/notification.module'
 import { PublishModule } from '../publish-record/publish-record.module'
 import { ShortLinkModule } from '../short-link/short-link.module'
@@ -23,7 +22,6 @@ import { UserInternalController } from './user.controller'
     PublishModule,
     NotificationModule,
     ContentModule,
-    CreditsModule,
     ShortLinkModule,
   ],
   providers: [AccountInternalService, PublishingInternalService],

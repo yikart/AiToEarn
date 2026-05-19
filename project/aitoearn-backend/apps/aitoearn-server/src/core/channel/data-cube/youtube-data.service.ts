@@ -32,7 +32,7 @@ export class YoutubeDataService extends DataCubeBase {
   // 账户数据
   async getAccountDataCube(accountId: string) {
     this.logger.log(`getAccountDataCube accountId: ${accountId}`)
-    const res = await this.youtubeService.getChannelsList(accountId, undefined, undefined, undefined, true)
+    const res = await this.youtubeService.getChannelsListByAccountId(accountId, undefined, undefined, undefined, true)
 
     if (!isYoutubeResponse(res)) {
       return { fensNum: 0, arcNum: 0, playNum: 0 }
@@ -57,7 +57,7 @@ export class YoutubeDataService extends DataCubeBase {
   // 作品数据
   async getArcDataCube(accountId: string, dataId: string) {
     this.logger.log('getArcDataCube', accountId, dataId)
-    const res = await this.youtubeService.getVideosList(accountId, undefined, [dataId])
+    const res = await this.youtubeService.getVideosListByAccountId(accountId, undefined, [dataId])
 
     if (!isYoutubeResponse(res)) {
       return { fensNum: 0, likeNum: 0, playNum: 0, commentNum: 0 }

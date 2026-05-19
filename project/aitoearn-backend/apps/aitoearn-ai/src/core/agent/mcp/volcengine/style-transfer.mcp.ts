@@ -2,6 +2,7 @@ import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-a
 import { Injectable, Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../../ai-availability'
 import { VideoStyleTransferService } from '../../../ai/aideo'
 import { AideoTaskStatus } from '../../../ai/libs/volcengine'
 import { McpServerName } from '../../agent.constants'
@@ -28,6 +29,7 @@ export class StyleTransferMcp {
 
   constructor(
     private readonly videoStyleTransferService: VideoStyleTransferService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) { }
 
   createSubmitVideoStyleTransferTool(userId: string, userType: UserType) {
@@ -53,6 +55,7 @@ Processing time: ~10 minutes per 1-minute video. Returns taskId for status track
         })
         return successResult(`Video style transfer task submitted successfully. TaskId: ${result.taskId}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -79,6 +82,7 @@ Processing time: ~10 minutes per 1-minute video. Returns taskId for status track
           return errorResult(`Task failed: ${result.errorMessage}`)
         }
       },
+      this.aiAvailability,
     )
   }
 

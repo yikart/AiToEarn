@@ -191,18 +191,19 @@ export class Material extends WithTimestampSchema {
   })
   autoDeleteMedia: boolean
 
-  // 是否开启推广
-  @Prop({
-    required: true,
-    default: true,
-  })
-  openAffiliate: boolean
-
   // 模型
   @Prop({
     required: false,
   })
   model?: string
+
+  // AI 生成参数（如 prompt、aspectRatio、duration、imageUrls 等，仅 AI 生成草稿有值）
+  @Prop({
+    required: false,
+    default: undefined,
+    type: Object,
+  })
+  generationParams?: Record<string, any>
 
   // 适用的频道类型
   @Prop({

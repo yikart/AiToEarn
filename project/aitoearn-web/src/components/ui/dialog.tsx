@@ -47,6 +47,7 @@ const DialogContent = React.forwardRef<
     {
       className,
       children,
+      forceMount,
       overlayStyle,
       overlayClassName,
       hideCloseButton,
@@ -59,10 +60,11 @@ const DialogContent = React.forwardRef<
     const preventEvent = (e: Event) => e.preventDefault()
 
     return (
-      <DialogPortal>
+      <DialogPortal forceMount={forceMount}>
         <DialogOverlay className={overlayClassName} style={overlayStyle} />
         <DialogPrimitive.Content
           ref={ref}
+          forceMount={forceMount}
           // 抑制 Radix UI 的 Description 警告，允许 Dialog 没有 Description
           aria-describedby={props['aria-describedby'] ?? undefined}
           // 允许 Radix 的默认自动聚焦行为，确保 Dialog 内的 Input 等元素可以正常获取焦点
@@ -128,7 +130,7 @@ function DialogBody({ className, ...props }: React.HTMLAttributes<HTMLDivElement
         // 正 padding 恢复内容的视觉边距
         'px-4 sm:px-6',
         // 滚动相关样式
-        'flex-1 overflow-y-auto',
+        'min-h-0 flex-1 overflow-y-auto',
         className,
       )}
       {...props}

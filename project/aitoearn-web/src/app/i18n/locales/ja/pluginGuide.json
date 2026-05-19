@@ -11,7 +11,7 @@
   "sections": {
     "installation": "プラグインのインストール",
     "manualInstall": "手動インストール",
-    "manualInstallDesc": "GitHubまたは中国ダウンロードチャンネル向け",
+    "manualInstallDesc": "For Latest GitHub Channel Download and Latest China Download",
     "authorize": "プラグインの認証",
     "loginAccount": "ソーシャルメディアアカウントへのログイン",
     "syncAccount": "アカウントの同期"
@@ -25,10 +25,29 @@
     "step2": {
       "title": "ステップ2：プラグインをダウンロード",
       "content": "ダイアログでダウンロード方法を選択し、クリックしてプラグインをダウンロードします。",
-      "caption": "適切なダウンロードチャンネルを選択",
-      "note": "Chrome ウェブストアとGitHub Releaseインストールの違い：",
-      "noteItem1": "GitHub Releaseからダウンロードしたプラグインは、インストールするためにブラウザの開発者モードを有効にする必要がありますが、ここでインストールされるリソースは最新のプラグインです。",
-      "noteItem2": "Chrome ウェブストアからダウンロードしたプラグインは、直接インストールできます。"
+      "caption": "Choose a download channel in the plugin dialog",
+      "note": "Download channel notes:",
+      "noteItem1": "プラグインは Chrome ウェブストアからインストールすることをおすすめします。",
+      "noteItem2": "中国地域で Chrome ウェブストアにアクセスできない場合は、\"Latest China Download (zip)\" からダウンロードできます。新機能を先に公開した場合、Chrome ウェブストアの審査に時間がかかるため、このチャネルのプラグインのほうが Chrome ウェブストア版より新しいことがあります。",
+      "channels": {
+        "chrome": {
+          "title": "Chrome Web Store:",
+          "content": " We recommend installing from the Chrome Web Store, but store reviews can take time. When new features are released early, the Chrome Web Store version may still be an older build. If you do not need the latest features immediately, you can wait for the review to finish. Chrome Web Store also updates plugins automatically. If you need the latest plugin package, use Latest China Download or Latest GitHub Channel Download."
+        },
+        "github": {
+          "title": "Latest GitHub Channel Download:",
+          "content": " This channel provides the newest plugin package. New browser-plugin updates are published here first, then submitted to the Chrome Web Store, which usually takes another 4-5 days for review."
+        },
+        "china": {
+          "title": "Latest China Download:",
+          "content": " Users in mainland China who cannot use the Chrome Web Store can download the latest plugin package from this channel."
+        }
+      },
+      "updateNote": {
+        "prefix": "Note: users who install from Latest China Download or Latest GitHub Channel Download will still receive Chrome Web Store auto-updates after review. If you need the update sooner, please see",
+        "linkText": "the manual update guide",
+        "suffix": "."
+      }
     },
     "step3": {
       "title": "ステップ3：インストール状況を確認",
@@ -94,17 +113,24 @@
       "content": "拡張機能ページの右上で、「開発者モード」を有効にします。"
     },
     "step3": {
-      "title": "ダウンロードしたプラグインファイルを見つける",
-      "content": "ブラウザのダウンロードフォルダを開き、ダウンロードした.crxプラグインパッケージを見つけます。"
+      "title": "Locate the Downloaded Package",
+      "content": "Open your browser's download folder and find the downloaded .crx plugin package."
     },
     "step4": {
-      "title": "ドラッグ＆ドロップでプラグインをインストール",
-      "content": ".crxプラグインパッケージを拡張機能ページにドラッグ＆ドロップします。"
+      "title": "Drag the Package into Extensions",
+      "content": "Drag the .crx plugin package into the browser extensions area."
     },
     "step5": {
-      "title": "インストールを確認",
-      "content": "ポップアップダイアログで、「拡張機能を追加」をクリックしてインストールを確認します。"
-    }
+      "title": "Confirm Extension Installation",
+      "content": "Click \"Add extension\" in the confirmation dialog to install the plugin."
+    },
+    "step6": {
+      "title": "Turn Off Developer Mode",
+      "content": "After the installation is complete, you can turn off Developer mode."
+    },
+    "tipPrefix": "If you have already installed the plugin from the Chrome Web Store, you can skip this section and go directly to the",
+    "tipLinkText": "Authorize Plugin",
+    "tipSuffix": "section."
   },
   "faq": {
     "title": "よくある質問",
@@ -113,5 +139,9 @@
       "answer": "小紅書クリエイターセンターにログインしていない可能性があります。小紅書のホームページで、右上のボタンをクリックして、小紅書クリエイターセンターにすばやくログインしてください。"
     }
   },
-  "viewGuide": "ガイドを見る"
+  "viewGuide": "ガイドを見る",
+  "recommendedBrowser": {
+    "title": "Recommended Browsers",
+    "content": "Edge and Google Chrome. The tutorial below uses Google Chrome for all examples."
+  }
 }

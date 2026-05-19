@@ -23,31 +23,7 @@ type NotificationDataByType
     data: NotificationAgentResultData
   })
   | (BaseNotificationData & {
-    type: NotificationType.TaskReminder
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
     type: NotificationType.AppRelease
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.AiReviewSkipped
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.TaskSubmitted
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.TaskReviewRejected
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.TaskReviewApproved
-    data?: Record<string, unknown>
-  })
-  | (BaseNotificationData & {
-    type: NotificationType.TaskSettled
     data?: Record<string, unknown>
   })
 

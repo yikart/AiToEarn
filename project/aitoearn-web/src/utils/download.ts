@@ -11,8 +11,9 @@
 export async function fetchWithProgress(
   url: string,
   onProgress?: (progress: number) => void,
+  init?: RequestInit,
 ): Promise<Blob> {
-  const response = await fetch(url)
+  const response = await fetch(url, init ?? { mode: 'no-cors' })
   if (!response.ok) {
     throw new Error(`Download failed: ${response.status}`)
   }

@@ -1,11 +1,11 @@
-import type { AdaptMaterialDto, MaterialAdaptationVo } from './types/ai'
+import type { ChatModel } from './types/ai'
 import type { AssetListVo } from '@/types/agent-asset'
 import { useUserStore } from '@/store/user'
 import http from '@/utils/request'
 
 // 获取聊天大模型列表
-export function getChatModels() {
-  return http.get('ai/models/chat')
+export function getChatModels(scene?: 'comment' | 'web', silent?: boolean) {
+  return http.get<ChatModel[]>(`ai/models/chat?scene=${scene || 'web'}`, undefined, silent)
 }
 
 // 保存用户AI配置项（设置默认模型等）
@@ -88,26 +88,6 @@ export function getVideoGenerations(params?: { page?: number, pageSize?: number 
   return http.get('ai/video/generations', params)
 }
 
-// 保留旧的接口以保持向后兼容性（可选）
-// 文生图 - 旧接口（已废弃）
-export function textToImage(data: {
-  prompt: string
-  width: number
-  height: number
-  sessionIds: string[]
-}) {
-  return http.post('tools/ai/jm/task', data)
-}
-
-// 获取文生图任务结果 - 旧接口（已废弃）
-export function getTextToImageTaskResult(id: string) {
-  return http.get<{
-    imgList: string[]
-    status: string
-    taskId: string
-  }>(`tools/ai/jm/task/${id}`)
-}
-
 // AI回复评论
 export function createAiReplyTask(data: {
   accountId: string
@@ -162,10 +142,7 @@ export async function aiChatStream(data: {
   const token = useUserStore.getState().token
   const lang = useUserStore.getState().lang
 
-  // 使用环境变量，保持 SSR 兼容性与 request.ts 一致
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL || '';
-
-  const response = await fetch(`${apiBaseUrl}/ai/chat`, {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/ai/chat`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -194,18 +171,10 @@ export async function aiChatStream(data: {
 /**
  * 获取 Agent 生成的素材列表
  * @param params - 分页参数
+ * @param params.page - 页码
+ * @param params.pageSize - 每页数量
  * @returns 素材列表
  */
 export function getAgentAssets(params?: { page?: number, pageSize?: number }) {
   return http.get<AssetListVo>('ai/assets', params)
-}
-
-/**
- * 适配素材到指定平台
- * 调用 AI 生成针对目标平台优化的标题、描述和话题
- * @param data - 素材 ID 和目标平台列表
- * @returns 适配后的素材内容
- */
-export function apiAdaptMaterial(data: AdaptMaterialDto) {
-  return http.post<MaterialAdaptationVo[]>('ai/material-adaptation', data)
 }

@@ -21,10 +21,10 @@ export function MobileMyChannelsButton({
       data-testid="mobile-my-channels"
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all w-full',
-        'text-muted-foreground hover:bg-muted hover:text-foreground',
+        'text-muted-foreground hover:bg-brand-cyan/10 hover:text-brand-cyan',
       )}
     >
-      <span className="flex items-center justify-center text-primary">
+      <span className="flex items-center justify-center text-brand-cyan">
         <Tv size={20} />
       </span>
       <span>{t('channelManager.myChannels')}</span>

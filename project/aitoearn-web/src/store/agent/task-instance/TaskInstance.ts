@@ -90,7 +90,6 @@ export class TaskInstance {
     this.instanceId = taskId // 实例ID = 初始 taskId
     this._taskId = taskId
     this.ctx = ctx
-    console.log(`[TaskInstance] Created instance: ${this.instanceId}`)
   }
 
   // ========== 生命周期方法 ==========
@@ -103,7 +102,6 @@ export class TaskInstance {
     if (oldTaskId === realTaskId) {
       return
     }
-    console.log(`[TaskInstance] Migrating taskId: ${oldTaskId} -> ${realTaskId}`)
     this._taskId = realTaskId
     this.ctx.migrateTaskData(oldTaskId, realTaskId)
   }
@@ -120,7 +118,6 @@ export class TaskInstance {
    */
   abort(): void {
     if (this.sseAbort) {
-      console.log(`[TaskInstance] Aborting SSE for task: ${this.taskId}`)
       this.sseAbort()
       this.sseAbort = null
     }

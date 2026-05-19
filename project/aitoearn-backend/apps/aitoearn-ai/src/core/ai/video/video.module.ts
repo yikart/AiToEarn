@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { ModelsConfigModule } from '../models-config'
+import { DashscopeVideoModule } from './dashscope'
 import { GeminiVideoModule } from './gemini'
 import { GrokVideoModule } from './grok'
 import { OpenAIVideoModule } from './openai'
@@ -15,9 +16,10 @@ import { VolcengineVideoModule } from './volcengine'
     OpenAIVideoModule,
     GeminiVideoModule,
     GrokVideoModule,
+    DashscopeVideoModule,
   ],
   controllers: [VideoController],
   providers: [VideoService, VideoTaskStatusScheduler],
-  exports: [VideoService, VolcengineVideoModule, OpenAIVideoModule, GeminiVideoModule, GrokVideoModule],
+  exports: [VideoService, VolcengineVideoModule, OpenAIVideoModule, GeminiVideoModule, GrokVideoModule, DashscopeVideoModule],
 })
 export class VideoModule {}

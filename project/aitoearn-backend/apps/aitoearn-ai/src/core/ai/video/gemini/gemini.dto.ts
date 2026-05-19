@@ -1,4 +1,4 @@
-import { createZodDto, UserType } from '@yikart/common'
+import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
@@ -8,6 +8,7 @@ const geminiVeoVideoCreateBaseSchema = z.object({
   negativePrompt: z.string().optional().describe('否定提示词'),
   duration: z.number().default(8).describe('视频时长 (秒)'),
   resolution: z.enum(['720p', '1080p', '4000']).default('720p').describe('视频分辨率'),
+  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 const geminiVeoTIToVideoSchema = z.object({

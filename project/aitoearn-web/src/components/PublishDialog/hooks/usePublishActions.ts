@@ -3,7 +3,6 @@
  * 处理发布内容的核心逻辑
  */
 
-import type { PlatType } from '@/app/config/platConfig'
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 
 import type {
@@ -11,6 +10,7 @@ import type {
   PluginPlatformType,
   PublishParams as PluginPublishParams,
 } from '@/store/plugin'
+import lodash from 'lodash'
 import { useCallback } from 'react'
 import { apiCreatePublish } from '@/api/plat/publish'
 import {
@@ -18,7 +18,8 @@ import {
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { AccountStatus } from '@/app/config/accountConfig'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { toast } from '@/lib/toast'
@@ -31,7 +32,8 @@ interface UsePublishActionsParams {
   isMobile: boolean
   suppressAutoPublish?: boolean
   taskIdForPublish?: string
-  onPublishConfirmed?: (taskId?: string, publishRecordId?: string, workLink?: string) => void
+  materialIdForPublish?: string
+  onPublishConfirmed?: (taskId?: string, publishRecordId?: string) => void
   onPublishStart?: () => void
   onClose: () => void
   onPubSuccess?: () => void
@@ -50,6 +52,38 @@ export function isPluginSupportedPlatform(platType: PlatType | string): boolean 
   return PLUGIN_SUPPORTED_PLATFORMS.includes(platType as PluginPlatformType)
 }
 
+function normalizePublishOption(item: PubItem) {
+  const option = lodash.cloneDeep(item.params.option)
+
+  if (item.account.type === PlatType.Instagram && item.params.video) {
+    option.instagram = {
+      ...option.instagram,
+      content_category: 'reel',
+    }
+  }
+  else if (item.account.type === PlatType.Instagram && !option.instagram?.content_category) {
+    option.instagram = {
+      ...option.instagram,
+      content_category: 'post',
+    }
+  }
+
+  if (item.account.type === PlatType.Facebook && item.params.video) {
+    option.facebook = {
+      ...option.facebook,
+      content_category: 'reel',
+    }
+  }
+  else if (item.account.type === PlatType.Facebook && !option.facebook?.content_category) {
+    option.facebook = {
+      ...option.facebook,
+      content_category: 'post',
+    }
+  }
+
+  return option
+}
+
 /**
  * 发布操作 Hook
  */
@@ -59,6 +93,7 @@ export function usePublishActions({
   isMobile,
   suppressAutoPublish,
   taskIdForPublish,
+  materialIdForPublish,
   onPublishConfirmed,
   onPublishStart,
   onClose,
@@ -77,6 +112,12 @@ export function usePublishActions({
    * 3. 显示发布详情弹框
    */
   const pubClick = useCallback(async () => {
+    const offlineItem = pubListChoosed.find(item => item.account.status === AccountStatus.DISABLE)
+    if (offlineItem) {
+      toast.error(t('tips.accountOffline'))
+      return
+    }
+
     setCreateLoading(true)
     onPublishStart?.()
 
@@ -116,7 +157,7 @@ export function usePublishActions({
           accountId: item.account.id,
           params: {
             platform: item.account.type as PluginPlatformType,
-            type: item.params.video?.ossUrl ? 'video' : 'image',
+            type: item.params.video ? 'video' : 'image',
             title: item.params.title || '',
             desc: item.params.des || '',
             topics: item.params.topics || [],
@@ -150,6 +191,7 @@ export function usePublishActions({
 
     // 1. 先执行 API 发布（非插件支持平台）
     for (const item of apiPublishItems) {
+      const normalizedOption = normalizePublishOption(item)
       const res = await apiCreatePublish({
         topics: item.params.topics ?? [],
         flowId: generateUUID(),
@@ -159,6 +201,7 @@ export function usePublishActions({
         accountId: item.account.id,
         accountType: item.account.type,
         userTaskId: taskIdForPublish,
+        ...(materialIdForPublish ? { materialId: materialIdForPublish } : {}),
         videoUrl: item.params.video?.ossUrl,
         coverUrl:
           item.params.video?.cover.ossUrl
@@ -170,7 +213,7 @@ export function usePublishActions({
             ?.map(v => v.ossUrl)
             .filter((url): url is string => url !== undefined) || [],
         publishTime,
-        option: item.params.option,
+        option: normalizedOption,
       })
 
       if (res?.code !== 0) {
@@ -206,24 +249,20 @@ export function usePublishActions({
     // 2. 再执行插件发布（插件支持平台）
     const hasPluginItems = pluginPublishItems.length > 0
     if (hasPluginItems) {
-      let pluginWorkLink: string | undefined
-
       // 异步执行插件发布，不阻塞主流程
       usePluginStore.getState().executePluginPublish({
         items: pluginPublishItems,
         platformTaskIdMap,
         publishTime,
         userTaskId: taskIdForPublish, // 传递任务ID用于关联发布记录
-        onFirstPublishSuccess: (data) => {
-          pluginWorkLink = data.shareLink
-        },
+        ...(materialIdForPublish ? { materialId: materialIdForPublish } : {}),
         onComplete: (pluginPublishRecordId) => {
           // 发布完成后刷新发布记录
           useCalendarTiming.getState().getPubRecord()
           // 插件发布完成后，触发 onPublishConfirmed（仅在有插件项且抑制自动发布时）
           if (suppressAutoPublish && onPublishConfirmed) {
             try {
-              onPublishConfirmed(taskIdForPublish, pluginPublishRecordId || firstPublishRecordId, pluginWorkLink)
+              onPublishConfirmed(taskIdForPublish, pluginPublishRecordId || firstPublishRecordId)
             }
             catch (e) {
               console.error('onPublishConfirmed callback failed', e)
@@ -283,6 +322,7 @@ export function usePublishActions({
     isMobile,
     suppressAutoPublish,
     taskIdForPublish,
+    materialIdForPublish,
     onPublishConfirmed,
     onPublishStart,
     onClose,

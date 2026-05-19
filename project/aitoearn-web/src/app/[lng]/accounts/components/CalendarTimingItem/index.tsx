@@ -17,7 +17,16 @@ import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
+import { useSystemStore } from '@/store/system'
+import {
+  filterCalendarFestivalEvents,
+  getChinaCalendarEvents,
+  getChinaCalendarLunarInfo,
+} from '../CalendarTiming/calendarFestival.utils'
+import CalendarFestivalSummary from '../CalendarTiming/CalendarFestivalSummary'
+import CalendarLunarText from '../CalendarTiming/CalendarLunarText'
 import CalendarRecord from './components/CalendarRecord'
 import { CustomDragLayer } from './components/CustomDragLayer'
 
@@ -39,6 +48,7 @@ const CalendarTimingItem = memo(
     ) => {
       const { t } = useTransClient('account')
       const isMobile = useIsMobile()
+      const lng = useGetClientLng()
 
       // arg.date 是当前格子的日期，Date 类型
       const today = new Date()
@@ -70,6 +80,12 @@ const CalendarTimingItem = memo(
           recordMap: state.recordMap,
         })),
       )
+      const { showSolarFestivals, showSolarTerms } = useSystemStore(
+        useShallow(state => ({
+          showSolarFestivals: state.calendarShowSolarFestivals,
+          showSolarTerms: state.calendarShowSolarTerms,
+        })),
+      )
 
       const reservationsTimesLast = useMemo(() => {
         return argDate >= nowDate ? reservationsTimes : []
@@ -88,6 +104,17 @@ const CalendarTimingItem = memo(
           return records?.slice(0, maxRecords - reservationsTimesLast.length)
         }
       }, [isMore, records, reservationsTimesLast, recordMap, maxRecords])
+
+      const festivals = useMemo(() => {
+        return filterCalendarFestivalEvents(getChinaCalendarEvents(arg.date, lng), {
+          showSolarFestivals,
+          showSolarTerms,
+        })
+      }, [arg.date, lng, showSolarFestivals, showSolarTerms])
+      const lunar = useMemo(() => getChinaCalendarLunarInfo(arg.date, lng), [arg.date, lng])
+      const legalFestival = festivals.find(item => item.type === 'holiday' || item.type === 'workday')
+      const hasFestival = festivals.length > 0
+      const isToday = argDate.getTime() === nowDate.getTime()
 
       // 进入视图时将"今天"尽量居中显示（仅在日历容器内滚动）
       useEffect(() => {
@@ -121,23 +148,55 @@ const CalendarTimingItem = memo(
           }}
           className={cn(
             'calendarTimingItem--js',
-            'box-border p-1.5 md:p-2.5 flex flex-col font-semibold',
+            'relative box-border p-1.5 md:p-2.5 flex flex-col font-semibold overflow-hidden',
             'min-h-[120px] md:min-h-[200px] h-full group',
             'transition-colors',
-            argDate < nowDate && 'bg-muted/30',
+            isToday && 'ring-1 ring-inset ring-primary/15',
+            isToday && !hasFestival && 'bg-gradient-to-br from-primary/5 via-background to-brand-cyan/5',
+            argDate < nowDate && !hasFestival && 'bg-muted/30',
             // 只在桌面端显示拖拽高亮
             !isMobile && isOver && 'bg-accent/50',
           )}
         >
           {/* 顶部：日期和添加按钮 */}
-          <div className="flex justify-between items-center mb-1 md:mb-1.5 group/top">
-            <div
-              className={cn(
-                'w-5 h-5 md:w-6 md:h-6 leading-5 md:leading-6 text-center rounded-full text-xs md:text-sm font-semibold',
-                argDate.getTime() === nowDate.getTime() && 'bg-(--primary-color) text-white',
-              )}
-            >
-              {arg.date.getDate()}
+          <div className="relative z-10 mb-2.5 flex items-start justify-between gap-1 group/top">
+            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+              <CalendarFestivalSummary
+                festivals={festivals}
+                date={arg.date}
+                lunar={lunar}
+                headerClassName="w-fit max-w-full flex-wrap px-1 py-0.5"
+                headerContent={(
+                  <>
+                    <span
+                      className={cn(
+                        'inline-flex h-6 min-w-6 shrink-0 items-center justify-center rounded-full px-1.5 text-xs md:text-sm font-bold tabular-nums transition-colors',
+                        isToday
+                          ? 'bg-background text-primary ring-2 ring-primary/30 shadow-sm shadow-primary/15'
+                          : 'text-foreground',
+                      )}
+                    >
+                      {arg.date.getDate()}
+                    </span>
+                    <CalendarLunarText lunar={lunar} className="max-w-[4.5rem]" />
+                    {legalFestival && (
+                      <span
+                        className={cn(
+                          'inline-flex h-4 min-w-4 shrink-0 items-center justify-center rounded-full px-1 text-[10px] font-bold leading-none shadow-sm',
+                          legalFestival.isWorkday
+                            ? 'border border-border bg-background text-muted-foreground'
+                            : 'bg-gradient-back text-gradient-foreground shadow-primary/15',
+                        )}
+                        title={t(legalFestival.statusTitleKey)}
+                        aria-label={t(legalFestival.statusTitleKey)}
+                      >
+                        {t(legalFestival.statusKey)}
+                      </span>
+                    )}
+                  </>
+                )}
+                className="max-w-full overflow-visible"
+              />
             </div>
 
             {/* 添加按钮：移动端始终可见，桌面端 hover 显示 */}

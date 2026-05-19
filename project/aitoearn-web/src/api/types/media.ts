@@ -11,6 +11,8 @@ export interface MediaMetadata {
   size: number
   /** MIME 类型 */
   mimeType: string
+  /** 视频时长（秒） */
+  duration?: number
 }
 
 /**

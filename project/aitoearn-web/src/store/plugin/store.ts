@@ -11,6 +11,7 @@ import type {
   PublishParams,
   PublishTask,
   PublishTaskListConfig,
+  WxSphLinkAnchor,
 } from './types/baseTypes'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IPubParams } from '@/components/PublishDialog/publishDialog.type'
@@ -23,15 +24,27 @@ import { createOrUpdateAccountApi } from '@/api/account'
 import { apiCreatePublishRecord } from '@/api/plat/publish'
 import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
 import { AccountStatus } from '@/app/config/accountConfig'
+import { PlatType } from '@/app/config/platConfig'
+import { directTrans } from '@/app/i18n/client'
+import { PluginVersionLast } from '@/constant'
+import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { useUserStore } from '@/store/user'
 import { generateUUID, parseTopicString } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
+import { isPluginPlatformAccountReady } from './account.utils'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
-import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
+import {
+  buildPluginPlatformConfig,
+  calculateOverallStatus,
+  createInitialPlatformAccounts,
+  generateId,
+} from './plugin.utils'
 import {
   PlatformTaskStatus,
   PLUGIN_SUPPORTED_PLATFORMS,
   PluginStatus as Status,
+  WX_SPH_LOGIN_EXPIRED_CODE,
 } from './types/baseTypes'
 
 // 启用 dayjs utc 插件
@@ -81,10 +94,10 @@ export interface ExecutePluginPublishParams {
   onComplete?: (publishRecordId?: string) => void
   /** 关联的用户任务ID（如果是从任务流程发布） */
   userTaskId?: string
+  /** 关联的草稿素材 ID（如果是从任务流程发布且存在推荐草稿） */
+  materialId?: string
   /** 是否跳过添加发布任务到 store（用于 PluginPublishCard 内联发布，避免触发弹框） */
   skipAddTask?: boolean
-  /** 首次发布成功回调，返回 shareLink */
-  onFirstPublishSuccess?: (data: { shareLink?: string }) => void
 }
 
 /** 平台账号信息映射 */
@@ -106,8 +119,112 @@ function getPublishKey(platform: PluginPlatformType, accountId?: string): string
   return accountId ? `${platform}-${accountId}` : platform
 }
 
+function getPluginErrorCode(error: unknown) {
+  if (!error || typeof error !== 'object') {
+    return undefined
+  }
+
+  return (error as { code?: string, errorCode?: string }).code
+    || (error as { code?: string, errorCode?: string }).errorCode
+}
+function isFinalProgressEvent(progress: ProgressEvent) {
+  return progress.stage === 'complete' || progress.stage === 'error'
+}
+
+function getWxSphLinkAnchor(result: { workId?: string, platformData?: unknown }) {
+  const platformData = result.platformData as WxSphLinkAnchor | undefined
+  const mediaMd5sum = platformData?.mediaMd5sum || result.workId
+
+  if (!mediaMd5sum) {
+    return null
+  }
+
+  return {
+    mediaMd5sum,
+    videoClipTaskId: platformData?.videoClipTaskId,
+    scheduledTime: platformData?.scheduledTime,
+  }
+}
+
+function getPluginApiBaseUrl() {
+  const apiBaseUrl = process.env.NEXT_PUBLIC_API_URL
+  if (!apiBaseUrl)
+    return undefined
+
+  if (apiBaseUrl.startsWith('http://') || apiBaseUrl.startsWith('https://'))
+    return apiBaseUrl
+
+  if (typeof window === 'undefined')
+    return apiBaseUrl
+
+  return new URL(apiBaseUrl, window.location.origin).toString()
+}
+
+async function notifyWxSphLoginRequired() {
+  await usePluginStore.getState().refreshAllPlatformAccounts()
+  toast.warning(directTrans('publish', 'messages.wxSphLinkPollingLoginRequired'), {
+    id: 'wx-sph-link-polling-login-required',
+    duration: 6,
+  })
+}
+
+async function startWxSphLinkPolling(params: {
+  recordId: string
+  accountId: string
+  result: { workId?: string, platformData?: unknown }
+}) {
+  const anchor = getWxSphLinkAnchor(params.result)
+  if (!anchor || !window.AIToEarnPlugin?.wxSphStartLinkPolling)
+    return
+
+  const token = useUserStore.getState().token
+  const apiBaseUrl = getPluginApiBaseUrl()
+  try {
+    const response = await window.AIToEarnPlugin.wxSphStartLinkPolling({
+      recordId: params.recordId,
+      mediaMd5sum: anchor.mediaMd5sum,
+      videoClipTaskId: anchor.videoClipTaskId,
+      scheduledTime: anchor.scheduledTime,
+      accountId: params.accountId,
+      apiBaseUrl,
+      authToken: token,
+    })
+
+    if (response?.code === WX_SPH_LOGIN_EXPIRED_CODE) {
+      await notifyWxSphLoginRequired()
+    }
+  }
+  catch (error) {
+    const errorCode = getPluginErrorCode(error)
+    if (errorCode === WX_SPH_LOGIN_EXPIRED_CODE) {
+      await notifyWxSphLoginRequired()
+    }
+    console.error('Failed to start WxSph link polling:', error)
+  }
+}
+
 /** 平台发布进度映射，key 为 platform 或 platform-accountId */
 export type PlatformProgressMap = Map<string, ProgressEvent>
+export type PluginVersionLoadStatus = 'idle' | 'loading' | 'ready' | 'unavailable'
+const FALLBACK_PLUGIN_VERSION = '3.0.0'
+
+function comparePluginVersions(currentVersion: string, latestVersion: string) {
+  const currentParts = currentVersion.split('.').map(part => Number.parseInt(part, 10) || 0)
+  const latestParts = latestVersion.split('.').map(part => Number.parseInt(part, 10) || 0)
+  const maxLength = Math.max(currentParts.length, latestParts.length)
+
+  for (let index = 0; index < maxLength; index += 1) {
+    const current = currentParts[index] ?? 0
+    const latest = latestParts[index] ?? 0
+
+    if (current > latest)
+      return 1
+    if (current < latest)
+      return -1
+  }
+
+  return 0
+}
 
 /** 插件 Store 状态接口（只定义属性） */
 export interface IPluginStore {
@@ -128,8 +245,16 @@ export interface IPluginStore {
   platformAccounts: PlatformAccountsMap
   /** 插件弹框是否可见 */
   pluginModalVisible: boolean
+  /** 当前打开中的发布详情弹框数量，用于全局悬浮入口避让 */
+  publishDetailModalOpenCount: number
   /** 是否正在创建发布记录 */
   isCreatingRecord: boolean
+  /** 当前插件版本 */
+  pluginVersion: string | null
+  /** 插件版本获取状态 */
+  pluginVersionStatus: PluginVersionLoadStatus
+  /** 插件是否可更新 */
+  pluginNeedsUpdate: boolean
 }
 
 const store: IPluginStore = {
@@ -148,7 +273,11 @@ const store: IPluginStore = {
   },
   platformAccounts: createInitialPlatformAccounts(),
   pluginModalVisible: false,
+  publishDetailModalOpenCount: 0,
   isCreatingRecord: false,
+  pluginVersion: null,
+  pluginVersionStatus: 'idle',
+  pluginNeedsUpdate: false,
 }
 
 function getStore() {
@@ -173,11 +302,76 @@ export const usePluginStore = create(
         set({ pluginModalVisible: false })
       },
 
+      /** 标记发布详情弹框已打开 */
+      registerPublishDetailModalOpen() {
+        set(state => ({
+          publishDetailModalOpenCount: state.publishDetailModalOpenCount + 1,
+        }))
+      },
+
+      /** 标记发布详情弹框已关闭 */
+      unregisterPublishDetailModalOpen() {
+        set(state => ({
+          publishDetailModalOpenCount: Math.max(0, state.publishDetailModalOpenCount - 1),
+        }))
+      },
+
+      /** 清空插件版本信息 */
+      clearPluginVersion() {
+        set({
+          pluginVersion: null,
+          pluginVersionStatus: 'idle',
+          pluginNeedsUpdate: false,
+        })
+      },
+
+      /** 获取插件版本信息 */
+      async fetchPluginVersion(force = false) {
+        const plugin = typeof window !== 'undefined' ? window.AIToEarnPlugin : undefined
+        const isInstalled = !!plugin
+        const { pluginVersion, pluginVersionStatus, status } = get()
+
+        if (!isInstalled || status !== Status.READY) {
+          methods.clearPluginVersion()
+          return null
+        }
+
+        if (!force && pluginVersionStatus === 'loading')
+          return pluginVersion
+
+        if (!force && pluginVersionStatus === 'ready' && pluginVersion)
+          return pluginVersion
+
+        set({ pluginVersionStatus: 'loading' })
+
+        try {
+          const version = (await plugin?.getVersion?.())?.version?.trim() || FALLBACK_PLUGIN_VERSION
+
+          set({
+            pluginVersion: version,
+            pluginVersionStatus: 'ready',
+            pluginNeedsUpdate: comparePluginVersions(version, PluginVersionLast) < 0,
+          })
+
+          return version
+        }
+        catch (error) {
+          console.error('获取插件版本失败:', error)
+          set({
+            pluginVersion: FALLBACK_PLUGIN_VERSION,
+            pluginVersionStatus: 'ready',
+            pluginNeedsUpdate: comparePluginVersions(FALLBACK_PLUGIN_VERSION, PluginVersionLast) < 0,
+          })
+          return FALLBACK_PLUGIN_VERSION
+        }
+      },
+
       /** 检查插件是否安装 */
       checkPlugin() {
         const isAvailable = typeof window !== 'undefined' && !!window.AIToEarnPlugin
 
         if (!isAvailable) {
+          methods.clearPluginVersion()
           set({ status: Status.NOT_INSTALLED })
           return false
         }
@@ -192,6 +386,7 @@ export const usePluginStore = create(
       async checkPermission() {
         const isInstalled = typeof window !== 'undefined' && !!window.AIToEarnPlugin
         if (!isInstalled) {
+          methods.clearPluginVersion()
           set({ status: Status.NOT_INSTALLED })
           return false
         }
@@ -199,15 +394,18 @@ export const usePluginStore = create(
           const result = await window.AIToEarnPlugin!.checkPermission()
           if (result.granted) {
             set({ status: Status.READY })
+            void methods.fetchPluginVersion(true)
             return true
           }
           else {
+            methods.clearPluginVersion()
             set({ status: Status.INSTALLED_NO_PERMISSION })
             return false
           }
         }
         catch (error) {
           console.error('权限检查失败:', error)
+          methods.clearPluginVersion()
           set({ status: Status.INSTALLED_NO_PERMISSION })
           return false
         }
@@ -352,7 +550,10 @@ export const usePluginStore = create(
             return acc
 
           const platformAccount = accounts[acc.type as keyof typeof accounts]
-          const shouldBeOnline = platformAccount?.uid === acc.uid
+          const shouldBeOnline
+            = !!platformAccount
+              && isPluginPlatformAccountReady(platformAccount)
+              && platformAccount.uid === acc.uid
           const newStatus = shouldBeOnline ? AccountStatus.USABLE : AccountStatus.DISABLE
 
           if (acc.status !== newStatus) {
@@ -379,8 +580,8 @@ export const usePluginStore = create(
         const { platformAccounts } = get()
         const account = platformAccounts[platform]
 
-        if (!account) {
-          console.warn('同步账号失败：该平台未登录', platform)
+        if (!account || !isPluginPlatformAccountReady(account)) {
+          console.warn('同步账号失败：该平台未完成登录', platform)
           return null
         }
 
@@ -433,6 +634,7 @@ export const usePluginStore = create(
           set({
             platformAccounts: { ...platformAccounts, [platform]: result },
           })
+          await methods.syncAccountToDatabase(platform)
           return result
         }
         catch (error) {
@@ -444,13 +646,13 @@ export const usePluginStore = create(
       /** 发布内容到指定平台 */
       async publish(params: PublishParams, onProgress?: ProgressCallback) {
         const { status, publishingPlatforms, platformProgress } = get()
+        const platform = params.platform
 
         // 解析话题
         const { topics, cleanedString } = parseTopicString(params.desc || '')
         params.topics = [...new Set(params.topics?.concat(topics))]
         params.desc = cleanedString
 
-        const platform = params.platform
         const accountId = params.accountId
         // 使用 platform + accountId 作为唯一标识，支持同一平台多账号同时发布
         const publishKey = getPublishKey(platform, accountId)
@@ -519,6 +721,11 @@ export const usePluginStore = create(
         }
         catch (error) {
           // 发布失败，移除该账号的发布状态，更新进度为错误
+          const errorCode = getPluginErrorCode(error)
+          if (platform === PlatType.WxSph && errorCode === WX_SPH_LOGIN_EXPIRED_CODE) {
+            await methods.refreshAllPlatformAccounts()
+          }
+
           const updatedPlatforms = new Set(get().publishingPlatforms)
           updatedPlatforms.delete(publishKey)
           const errorProgress: ProgressEvent = {
@@ -526,6 +733,10 @@ export const usePluginStore = create(
             progress: 0,
             message: error instanceof Error ? error.message : '发布失败',
             timestamp: Date.now(),
+            data: {
+              code: errorCode,
+              error: error instanceof Error ? error : new Error('发布失败'),
+            },
           }
           const updatedPlatformProgress = new Map(get().platformProgress)
           updatedPlatformProgress.set(publishKey, errorProgress)
@@ -686,12 +897,11 @@ export const usePluginStore = create(
        * @returns Promise<void>
        */
       async executePluginPublish(params: ExecutePluginPublishParams): Promise<void> {
-        const { items, platformTaskIdMap, publishTime, onProgress, onComplete, userTaskId, onFirstPublishSuccess } = params
-        let firstSuccessCalled = false
+        const { items, platformTaskIdMap, publishTime, onProgress, onComplete, userTaskId, materialId } = params
         let firstPublishRecordId: string | undefined
 
         // 创建发布任务
-        const platformTasks: any = items.map((item) => {
+        const platformTasks: PlatformPublishTask[] = items.map((item) => {
           const platform = item.account.type as PluginPlatformType
           const accountId = item.account.id
           const requestId = platformTaskIdMap.get(accountId) || ''
@@ -705,6 +915,7 @@ export const usePluginStore = create(
             title: item.params.title || '',
             desc: item.params.des || '',
             topics: item.params.topics || [],
+            platformConfig: buildPluginPlatformConfig(platform, item.params),
           }
 
           // 添加视频或图片参数
@@ -727,11 +938,7 @@ export const usePluginStore = create(
             requestId,
             params: publishParams,
             status: PlatformTaskStatus.PENDING,
-            progress: {
-              stage: 'waiting',
-              progress: 0,
-              message: '等待开始...',
-            },
+            progress: null,
             result: null,
             startTime: Date.now(),
             endTime: null,
@@ -739,15 +946,25 @@ export const usePluginStore = create(
           }
         })
 
-        // 添加到发布任务列表（除非 skipAddTask 为 true）
+        // Avoid adding a duplicate task when the same requestId was already registered.
+        const existingRequestIds = new Set(
+          platformTasks
+            .map(platformTask => platformTask.requestId)
+            .filter((requestId): requestId is string => !!requestId),
+        )
+        const hasExistingPublishTask = existingRequestIds.size > 0 && get().publishTasks.some(task =>
+          task.platformTasks.some(platformTask => (
+            !!platformTask.requestId && existingRequestIds.has(platformTask.requestId)
+          )),
+        )
+
         let taskId: string | undefined
-        if (!params.skipAddTask) {
+        if (!params.skipAddTask && !hasExistingPublishTask) {
           taskId = methods.addPublishTask({
             title: items[0]?.params.title || '插件发布任务',
             description: `发布到 ${items.length} 个平台`,
             platformTasks,
           })
-          console.log('[PluginStore] Created publish task:', taskId)
         }
 
         // 并行执行插件发布（不等待，同时发布多个平台）
@@ -779,6 +996,7 @@ export const usePluginStore = create(
               title: item.params.title || '',
               desc: item.params.des || '',
               topics: item.params.topics || [],
+              platformConfig: buildPluginPlatformConfig(platform, item.params),
             }
 
             // 如果有定时发布时间，则传入
@@ -829,13 +1047,15 @@ export const usePluginStore = create(
                 progress,
               })
 
-              // 触发外部进度回调
-              onProgress?.({
-                ...progress,
-                accountId,
-                platform,
-                requestId,
-              })
+              // 触发外部进度回调（最终态由后续统一回调，避免重复通知）
+              if (!isFinalProgressEvent(progress)) {
+                onProgress?.({
+                  ...progress,
+                  accountId,
+                  platform,
+                  requestId,
+                })
+              }
             })
 
             // 发布成功，更新任务状态
@@ -845,6 +1065,7 @@ export const usePluginStore = create(
                 success: true,
                 workId: result.workId,
                 shareLink: result.shareLink,
+                platformData: result.platformData,
               },
               endTime: Date.now(),
             })
@@ -861,18 +1082,14 @@ export const usePluginStore = create(
               data: {
                 workId: result.workId,
                 shareLink: result.shareLink,
+                platformData: result.platformData,
               },
             })
-
-            // 首次发布成功时，回传 shareLink
-            if (!firstSuccessCalled) {
-              firstSuccessCalled = true
-              onFirstPublishSuccess?.({ shareLink: result.shareLink })
-            }
 
             // 发布成功后，创建发布记录
             set({ isCreatingRecord: true })
             try {
+              const wxSphAnchor = platform === PlatType.WxSph ? getWxSphLinkAnchor(result) : null
               const recordRes = await apiCreatePublishRecord({
                 flowId: generateUUID(),
                 type: item.params.video ? 'video' : 'article',
@@ -880,7 +1097,8 @@ export const usePluginStore = create(
                 desc: item.params.des || '',
                 accountId: item.account.id,
                 accountType: item.account.type,
-                // 小红书不传 userTaskId，由前端单独调用 apiSubmitTask 提交
+                userTaskId,
+                ...(materialId ? { materialId } : {}),
                 videoUrl: item.params.video?.ossUrl,
                 coverUrl:
                   item.params.video?.cover?.ossUrl
@@ -893,17 +1111,26 @@ export const usePluginStore = create(
                     .filter((url): url is string => url !== undefined) || [],
                 topics: item.params.topics || [],
                 status: 1, // 已发布
-                dataId: `${result.workId}`,
+                dataId: wxSphAnchor?.mediaMd5sum || `${result.workId}`,
                 workLink: result.shareLink,
+                linkStatus: wxSphAnchor && !result.shareLink ? 'pending' : undefined,
+                linkMeta: wxSphAnchor || undefined,
                 uid: item.account.uid,
                 // @ts-ignore
                 publishTime: publishTime || dayjs(Date.now()).utc().format(),
+                option: {},
               })
               // 发布记录创建成功，记录首个 publishRecordId
               if (recordRes?.data?.id) {
-                console.log('发布记录创建成功:', recordRes.data.id)
                 if (!firstPublishRecordId) {
                   firstPublishRecordId = recordRes.data.id
+                }
+                if (platform === PlatType.WxSph) {
+                  startWxSphLinkPolling({
+                    recordId: recordRes.data.id,
+                    accountId,
+                    result,
+                  })
                 }
               }
             }
@@ -917,6 +1144,7 @@ export const usePluginStore = create(
           catch (error) {
             // 发布失败
             const errorMessage = error instanceof Error ? error.message : '发布失败'
+            const errorCode = getPluginErrorCode(error)
 
             methods.updatePlatformTaskByRequestId(requestId, {
               status: PlatformTaskStatus.ERROR,
@@ -924,6 +1152,7 @@ export const usePluginStore = create(
               result: {
                 success: false,
                 failReason: errorMessage,
+                errorCode,
               },
               endTime: Date.now(),
             })
@@ -938,6 +1167,7 @@ export const usePluginStore = create(
               platform,
               requestId,
               data: {
+                code: errorCode,
                 error: error instanceof Error ? error : new Error(errorMessage),
               },
             })

@@ -1,12 +1,14 @@
 import { AccountType } from '@yikart/aitoearn-server-client'
 import { createZodDto } from '@yikart/common'
 import {
+  PublishRecordSource,
   PublishStatus,
   PublishType,
 } from '@yikart/mongodb'
 import { ObjectId } from 'mongodb'
 import { v4 as uuid } from 'uuid'
 import { z } from 'zod'
+import { TwitterPublishOptionSchema } from '../platforms/twitter/twitter-post-options.schema'
 
 export const PublishRecordIdSchema = z.object({
   id: z.string().describe('ID'),
@@ -146,19 +148,6 @@ export const GoogleBusinessPublishOptionSchema = z.object({
   }).optional().describe('活动信息'),
 })
 
-/**
- * 抖音直发
- */
-export const CreateDouyinPublishSchema = z.object({
-  title: z.string().optional(),
-  desc: z.string().optional(),
-  videoUrl: z.string().optional(),
-  coverUrl: z.string().optional(),
-  imgUrlList: z.array(z.string()).optional(),
-  topics: z.array(z.string()),
-})
-export class CreateDouyinPublishDto extends createZodDto(CreateDouyinPublishSchema) { }
-
 export const CreatePublishSchema = z.object({
   flowId: z.string({ message: '流水ID' }).optional().default(uuid()),
   accountId: z.string({ message: '账户ID' }),
@@ -166,10 +155,9 @@ export const CreatePublishSchema = z.object({
   type: z.enum(PublishType, { message: '类型' }),
   title: z.string().optional(),
   desc: z.string().optional(),
-  taskId: z.string({ message: '任务ID' }).optional(), // 任务ID
-  userTaskId: z.string({ message: '用户任务ID' }).optional(), // 用户任务ID
-  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID (广告主线下任务)
-  materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID (广告主线下任务)
+  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID
+  materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID
+  source: z.nativeEnum(PublishRecordSource).optional().describe('发布来源'),
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgUrlList: z.array(z.string()).optional(),
@@ -185,6 +173,7 @@ export const CreatePublishSchema = z.object({
     pinterest: pinterestPublishOptionSchema.optional(),
     tiktok: TiktokPublishOptionSchema.optional(),
     googleBusiness: GoogleBusinessPublishOptionSchema.optional(),
+    twitter: TwitterPublishOptionSchema.optional(),
   }).optional(),
 })
 export class CreatePublishDto extends createZodDto(CreatePublishSchema) { }
@@ -216,10 +205,8 @@ export const CreatePublishRecordSchema = z.object({
   status: z.enum(PublishStatus, { message: '状态' }),
   title: z.string().optional(),
   desc: z.string().optional(),
-  userTaskId: z.string({ message: '用户任务ID' }).optional(), // 用户任务ID
-  taskId: z.string({ message: '任务ID' }).optional(), // 任务ID
-  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID (广告主线下任务)
-  materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID (广告主线下任务)
+  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID
+  materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),
   imgList: z.array(z.string()).optional(),
@@ -233,6 +220,7 @@ export const CreatePublishRecordSchema = z.object({
     instagram: InstagramPublishOptionSchema.optional(),
     threads: threadsPublishOptionSchema.optional(),
     pinterest: pinterestPublishOptionSchema.optional(),
+    twitter: TwitterPublishOptionSchema.optional(),
   }).optional(),
 })
 export class CreatePublishRecordDto extends createZodDto(CreatePublishRecordSchema) { }

@@ -8,7 +8,7 @@
 
 import type { PromotionMaterial } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
 import type { PlatType } from '@/app/config/platConfig'
-import { Calendar, Edit, Image as ImageIcon, Loader2, Send, Trash2, Video } from 'lucide-react'
+import { ArrowRightLeft, Calendar, Edit, Image as ImageIcon, Loader2, Send, Trash2, Video } from 'lucide-react'
 import NextImage from 'next/image'
 import { memo, useCallback, useState } from 'react'
 import { Navigation, Pagination } from 'swiper/modules'
@@ -38,7 +38,9 @@ import { ScrollArea } from '@/components/ui/scroll-area'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { formatDate } from '@/utils/format'
+import { useTransferDraftDialogStore } from '../transferDraftDialogStore'
 import styles from './DraftDetailDialog.module.scss'
+import { GenerationParamsCard } from './GenerationParamsCard'
 import { LazyImage } from './LazyImage'
 import 'swiper/css'
 import 'swiper/css/navigation'
@@ -173,30 +175,33 @@ const MediaPreview = memo(({ material }: { material: PromotionMaterial }) => {
 MediaPreview.displayName = 'MediaPreview'
 
 // 详情弹框内容组件
-const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
+interface DraftDetailContentProps {
+  allowTransfer?: boolean
+}
+
+const DraftDetailContent = memo(({ allowTransfer = true }: DraftDetailContentProps) => {
   const { t } = useTransClient('brandPromotion')
   const [deleteConfirmOpen, setDeleteConfirmOpen] = useState(false)
 
-  const { selectedDraft, isSubmitting } = usePlanDetailStore(
-    useShallow(state => ({
-      selectedDraft: state.selectedDraft,
-      isSubmitting: state.isSubmitting,
-    })),
-  )
-
   const {
+    selectedDraft,
+    isSubmitting,
     openEditMaterialModal,
     closeDraftDetailDialog,
     deleteMaterial,
     openPublishDialog,
   } = usePlanDetailStore(
     useShallow(state => ({
+      selectedDraft: state.selectedDraft,
+      isSubmitting: state.isSubmitting,
       openEditMaterialModal: state.openEditMaterialModal,
       closeDraftDetailDialog: state.closeDraftDetailDialog,
       deleteMaterial: state.deleteMaterial,
       openPublishDialog: state.openPublishDialog,
     })),
   )
+
+  const openTransferDialog = useTransferDraftDialogStore(state => state.openDialog)
 
   // 处理编辑
   const handleEdit = useCallback(() => {
@@ -213,6 +218,19 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
       openPublishDialog(selectedDraft)
     }
   }, [selectedDraft, closeDraftDetailDialog, openPublishDialog])
+
+  const handleTransfer = useCallback(() => {
+    if (!selectedDraft) {
+      return
+    }
+
+    closeDraftDetailDialog()
+    openTransferDialog({
+      currentPlanId: selectedDraft.groupId,
+      draftIds: [selectedDraft.id],
+      mediaIds: [],
+    })
+  }, [closeDraftDetailDialog, openTransferDialog, selectedDraft])
 
   // 处理删除
   const handleDelete = useCallback(async () => {
@@ -253,7 +271,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
               {/* 标题 */}
               <div>
                 <h3 className="text-lg font-medium">
-                  {selectedDraft.title || '未命名草稿'}
+                  {selectedDraft.title || t('material.untitled')}
                 </h3>
               </div>
 
@@ -275,6 +293,19 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
                       {topic}
                     </span>
                   ))}
+                </div>
+              )}
+
+              {/* AI 生成参数 */}
+              {selectedDraft.generationParams && (
+                <div className="rounded-xl border border-border/60 bg-muted/20 p-3">
+                  <GenerationParamsCard
+                    params={selectedDraft.generationParams}
+                    t={t}
+                    showPlatforms={false}
+                    applyTargetGroupId={selectedDraft.groupId}
+                    onApplied={closeDraftDetailDialog}
+                  />
                 </div>
               )}
 
@@ -347,19 +378,29 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
           </ScrollArea>
 
           {/* 固定底部的操作按钮 */}
-          <div className="flex items-center gap-2 pt-4 border-t mt-4 flex-shrink-0">
+          <div className="mt-4 flex flex-wrap items-center gap-2 border-t pt-4 flex-shrink-0">
             <Button
               data-testid="draftbox-detail-edit-btn"
               variant="outline"
-              className="flex-1 cursor-pointer"
+              className="min-w-[calc(50%-0.25rem)] flex-1 cursor-pointer md:min-w-0"
               onClick={handleEdit}
             >
               <Edit className="h-4 w-4 mr-2" />
               {t('draft.edit')}
             </Button>
+            {allowTransfer && (
+              <Button
+                variant="outline"
+                className="min-w-[calc(50%-0.25rem)] flex-1 cursor-pointer md:min-w-0"
+                onClick={handleTransfer}
+              >
+                <ArrowRightLeft className="h-4 w-4 mr-2" />
+                {t('draftManage.transfer')}
+              </Button>
+            )}
             <Button
               data-testid="draftbox-detail-publish-btn"
-              className="flex-1 cursor-pointer"
+              className="min-w-[calc(50%-0.25rem)] flex-1 cursor-pointer md:min-w-0"
               onClick={handlePublish}
             >
               <Send className="h-4 w-4 mr-2" />
@@ -368,7 +409,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
             <Button
               data-testid="draftbox-detail-delete-btn"
               variant="outline"
-              className="flex-1 cursor-pointer text-destructive hover:text-destructive"
+              className="min-w-[calc(50%-0.25rem)] flex-1 cursor-pointer text-destructive hover:text-destructive md:min-w-0"
               onClick={() => setDeleteConfirmOpen(true)}
             >
               <Trash2 className="h-4 w-4 mr-2" />
@@ -384,7 +425,7 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
           <AlertDialogHeader>
             <AlertDialogTitle>{t('plan.deleteConfirmTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              {t('plan.deleteConfirmDesc', { name: selectedDraft.title || '未命名草稿' })}
+              {t('plan.deleteConfirmDesc', { name: selectedDraft.title || t('material.untitled') })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -407,7 +448,11 @@ const DraftDetailContent = memo(({ onClose }: { onClose: () => void }) => {
 DraftDetailContent.displayName = 'DraftDetailContent'
 
 // 主组件
-export const DraftDetailDialog = memo(() => {
+interface DraftDetailDialogProps {
+  allowTransfer?: boolean
+}
+
+export const DraftDetailDialog = memo(({ allowTransfer = true }: DraftDetailDialogProps) => {
   const { draftDetailDialogOpen } = usePlanDetailStore(
     useShallow(state => ({
       draftDetailDialogOpen: state.draftDetailDialogOpen,
@@ -423,7 +468,7 @@ export const DraftDetailDialog = memo(() => {
   return (
     <Dialog open onOpenChange={closeDraftDetailDialog}>
       <DialogContent data-testid="draftbox-detail-dialog" className="sm:max-w-md md:max-w-6xl">
-        <DraftDetailContent onClose={closeDraftDetailDialog} />
+        <DraftDetailContent allowTransfer={allowTransfer} />
       </DialogContent>
     </Dialog>
   )

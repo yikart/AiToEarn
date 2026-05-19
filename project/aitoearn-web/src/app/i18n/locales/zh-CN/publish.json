@@ -24,7 +24,7 @@
     "cancelText": "不恢复"
   },
   "buttons": {
-    "customizePerAccount": "自定义每个账户",
+    "customizePerAccount": "下一步",
     "cancel": "取消",
     "cancelPublish": "取消发布",
     "schedulePublish": "定时发布",
@@ -47,7 +47,8 @@
     "xhsOffline": "小红书账号已离线，请下载App进行操作",
     "selectAccount": "请选择要发布的账户",
     "emptyChannel": "该频道暂无账户",
-    "regionRestricted": "该平台在当前区域不可用"
+    "noAccount": "还没有添加账户，先去添加频道吧",
+    "addChannel": "添加频道"
   },
   "status": {
     "publishFailed": "发布失败",
@@ -90,9 +91,11 @@
     "selectLocation": "请选择位置",
     "description": "描述",
     "descriptionPlaceholder": "开始写",
+    "topicHint": "输入“#”可设置话题",
     "fans": "粉丝",
     "searchPlaceholder": "搜索...",
-    "noResults": "未找到结果"
+    "noResults": "未找到结果",
+    "noLocationsFound": "未找到位置"
   },
   "writingAssistant": "写作助手",
   "aiAssistant": "AI助手",
@@ -224,36 +227,64 @@
     "instagramImageValidation": "Instagram Post 图片比例需在 4:5 ~ 1.91:1 范围内。",
     "instagramReelAspectRatio": "Instagram Reel 视频宽高比需在 4:5 ~ 9:16 范围内。",
     "facebookReelDuration": "Facebook Reel视频时长需为3–90秒",
-    "facebookStoryDuration": "Facebook Story视频时长需为3–4小时",
+    "facebookStoryDuration": "Facebook Story视频时长需为3–60秒",
     "instagramVideoSize": "Instagram视频大小不能超过100MB",
-    "instagramReelDuration": "Instagram Reel视频时长需为5秒–15分钟",
+    "instagramReelDuration": "Instagram Reel视频时长需为3秒–15分钟",
     "instagramStoryDuration": "Instagram Story视频时长需为3–60秒",
     "threadsVideoSize": "Threads视频大小不能超过1GB",
     "threadsVideoDuration": "Threads视频时长需为0秒以上且不超过5分钟",
     "threadsImageMin": "Threads图片至少需要两张",
     "pinterestVideoDuration": "Pinterest视频时长需为4秒–15分钟",
-    "pinterestVideoSize": "Pinterest视频大小不能超过1GB",
+    "pinterestVideoSize": "Pinterest视频大小不能超过2GB",
     "tiktokVideoDuration": "TikTok视频时长需为3秒至10分钟",
-    "tiktokVideoSize": "TikTok视频大小不能超过1GB",
-    "tiktokVideoMinResolution": "TikTok视频最小分辨率为360x360",
+    "tiktokVideoSize": "TikTok视频大小不能超过4GB",
+    "tiktokImageMinResolution": "TikTok图片最小分辨率为360x360",
+    "tiktokImageFormat": "TikTok图片格式仅支持 JPEG、JPG、WEBP",
     "twitterVideoDuration": "Twitter视频时长需为0.5秒–140秒",
     "twitterVideoSize": "Twitter视频大小不能超过512MB",
-    "facebookPostImageSize": "Facebook Post图片大小不能超过10MB",
+    "facebookPostImageSize": "Facebook Post图片大小不能超过4MB",
     "facebookStoryImageSize": "Facebook Story图片大小不能超过4MB",
     "instagramImageSize": "Instagram图片大小不能超过8MB",
-    "pinterestImageSize": "Pinterest图片大小不能超过10MB",
+    "pinterestImageSize": "Pinterest图片大小不能超过20MB",
     "tiktokImageSize": "TikTok图片大小不能超过20MB",
-    "tiktokImageResolution": "TikTok图片最大分辨率为1080x1920或1920x1080",
+    "tiktokVideoResolution": "TikTok视频最大分辨率为1080x1920或1920x1080",
     "tiktokPrivacyLevelRequired": "请选择 TikTok 视频的隐私级别",
     "tiktokContentDisclosureRequired": "请选择您的内容披露类型：推广您自己的品牌或推广第三方品牌",
     "twitterImageSize": "Twitter图片大小不能超过5MB",
     "twitterImageResolution": "Twitter图片最大分辨率为8192x8192",
+    "twitterPollMinOptions": "投票至少需要 2 个选项",
+    "twitterPollDuration": "投票时长须为 5-10080 分钟",
+    "twitterPollNoMedia": "投票不能包含图片或视频",
+    "twitterPollOptionInvalid": "投票选项需为 1-25 个字符",
+    "twitterTaggedUsersLimit": "Twitter 图片最多标记 10 个用户",
+    "twitterAltTextMax": "Twitter 媒体替代文本不能超过 1000 个字符",
     "youtubeResolutionSuggestion": "建议视频分辨率：1920×1080（16:9）或 1080×1920（9:16）。",
     "youtubeVideoSize": "YouTube视频大小不能超过256GB",
     "youtubeVideoDuration": "YouTube视频时长不能超过12小时",
     "categoryRequired": "您必须选择视频分类！",
     "kwaiResolutionSuggestion": "推荐视频分辨率：1080x1920（竖屏）。",
-    "kwaiDurationSuggestion": "视频时长建议：15秒-3分钟。"
+    "kwaiDurationSuggestion": "视频时长建议：15秒-3分钟。",
+    "xhsVideoSize": "小红书视频大小不能超过20GB",
+    "xhsImageSize": "小红书图片大小不能超过20MB/张",
+    "xhsVideoDuration": "小红书视频时长不能超过4小时",
+    "bilibiliVideoSize": "B站视频大小不能超过16GB",
+    "bilibiliVideoDuration": "B站视频时长不能超过10小时",
+    "douyinVideoSize": "抖音视频大小不能超过4GB",
+    "douyinVideoDuration": "抖音视频时长不能超过15分钟",
+    "kwaiVideoSize": "快手视频大小不能超过12GB",
+    "kwaiVideoDuration": "快手视频时长不能超过1小时",
+    "facebookVideoSize": "Facebook视频大小不能超过4GB",
+    "facebookPostVideoDuration": "Facebook Post视频时长不能超过4小时",
+    "facebookStoryVideoSize": "Facebook Story视频大小不能超过1000MB",
+    "instagramReelVideoSize": "Instagram Reel视频大小不能超过300MB",
+    "instagramStoryVideoSize": "Instagram Story视频大小不能超过100MB",
+    "threadsImageSize": "Threads图片大小不能超过8MB",
+    "linkedinImageSize": "LinkedIn图片大小不能超过5MB",
+    "linkedinVideoSize": "LinkedIn视频大小不能超过500MB",
+    "linkedinVideoDuration": "LinkedIn视频时长需为3秒–30分钟",
+    "wxSphVideoSize": "微信视频号视频大小不能超过20GB",
+    "wxSphVideoDuration": "微信视频号视频时长不能超过8小时",
+    "wxGzhImageSize": "微信公众号图片大小不能超过10MB"
   },
   "preview": {
     "title": "预览",
@@ -308,7 +339,10 @@
     "authFailed": "授权失败",
     "parseCachedChatModelsFailed": "解析缓存的聊天模型失败",
     "getChatModelsFailed": "获取聊天模型失败",
-    "mobileNotSupported": "该功能暂不支持移动端，请使用电脑端操作"
+    "mobileNotSupported": "该功能暂不支持移动端，请使用电脑端操作",
+    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 {{platform}} 个人主页上。",
+    "douyinScanPublish": "抖音发布需要使用抖音 App 扫码确认，请留意扫码弹窗。",
+    "wxSphLinkPollingLoginRequired": "微信视频号登录已失效，请重新登录并保持浏览器开启，插件会继续获取作品链接。"
   },
   "badges": {
     "offline": "已离线",
@@ -349,9 +383,17 @@
       "processNote": "提示：发布后内容可能需要几分钟处理，才会显示在您的个人主页上。"
     }
   },
-  "messages": {
-    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 {{platform}} 个人主页上。",
-    "douyinScanPublish": "抖音发布需要使用抖音 App 扫码确认，请留意扫码弹窗。"
+  "xhs": {
+    "declaration": {
+      "title": "内容声明",
+      "placeholder": "请选择声明类型",
+      "none": "不填写",
+      "options": {
+        "1": "虚拟演绎，仅供娱乐",
+        "2": "笔记含AI合成内容",
+        "3": "内容包含营销广告"
+      }
+    }
   },
   "previewvideo": "预览视频",
   "record": {
@@ -362,7 +404,9 @@
       "shares": "分享数"
     },
     "viewWork": "查看作品",
-    "updatedAt": "更新时间"
+    "updatedAt": "更新时间",
+    "wxSphReviewPendingDesc": "视频号审核通过后会自动更新作品链接，请保持浏览器开启并保持视频号登录。",
+    "wxSphReviewPendingShort": "等待视频号审核"
   },
   "clientType": {
     "label": "来源",
@@ -398,5 +442,76 @@
   },
   "errorSummary": {
     "title": "发现 {{count}} 个账号存在问题"
+  },
+  "twitter": {
+    "replyTo": "回复权限",
+    "everyone": "所有人",
+    "replySettings": {
+      "following": "你关注的人",
+      "mentionedUsers": "仅提及的用户",
+      "subscribers": "订阅者",
+      "verified": "认证用户"
+    },
+    "aiContent": "AI 内容",
+    "containsAi": "包含 AI 生成的媒体",
+    "poll": "投票",
+    "pollOptions": "({{count}} 个选项)",
+    "pollOptionsLabel": "投票选项",
+    "addPollOption": "添加选项",
+    "pollOptionPlaceholder": "选项 {{n}}（1-25 字符）",
+    "duration": "持续时间（分钟）：",
+    "durationRange": "5–10080",
+    "pollReply": "投票回复：",
+    "tagUsers": "标记用户",
+    "tagUsersPlaceholder": "用户 ID",
+    "tagUsersLimit": "最多 10 个用户，仅限图片帖",
+    "altText": "替代文本",
+    "altTextImagePlaceholder": "描述此图片（1-1000 字符）",
+    "altTextVideoPlaceholder": "描述此视频（1-1000 字符）",
+    "pollMediaWarning": "投票不能包含图片或视频，请先移除媒体再添加投票",
+    "mediaDisabledByPoll": "已启用投票，媒体增强项会在移除投票后生效。",
+    "noMediaOptions": "添加图片或视频后可设置媒体标记和替代文本。",
+    "sections": {
+      "basic": "基础设置",
+      "poll": "投票",
+      "pollDesc": "投票与图片、视频互斥。",
+      "media": "媒体增强",
+      "mediaDesc": "为图片标记用户，并为媒体补充替代文本。"
+    }
+  },
+  "wxSph": {
+    "search": {
+      "loading": "搜索中...",
+      "minKeyword": "请输入至少 2 个字符搜索",
+      "pluginUnavailable": "当前插件版本不支持视频号搜索，请更新插件后重试。"
+    },
+    "location": {
+      "title": "地理位置",
+      "hint": "输入关键词搜索视频号位置，选择后会随作品一起提交。",
+      "clear": "清空",
+      "searchPlaceholder": "搜索并选择地理位置",
+      "searchFailed": "位置搜索失败",
+      "empty": "未找到相关位置",
+      "selected": "已选择：{{name}}",
+      "addressEmpty": "暂无地址信息"
+    },
+    "activity": {
+      "title": "活动",
+      "hint": "输入关键词搜索视频号活动，选择后作品会参与该活动。",
+      "clear": "清空",
+      "searchPlaceholder": "搜索并选择活动",
+      "searchFailed": "活动搜索失败",
+      "empty": "未找到相关活动",
+      "selected": "已选择：{{name}}"
+    },
+    "extLink": {
+      "title": "链接",
+      "placeholder": "粘贴扩展链接",
+      "hint": "可选；发布时会透传给视频号扩展阅读字段。"
+    },
+    "original": {
+      "title": "声明原创",
+      "hint": "声明后作品将展示原创标记，有机会获得广告收入。"
+    }
   }
 }

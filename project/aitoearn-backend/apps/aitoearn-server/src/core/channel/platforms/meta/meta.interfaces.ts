@@ -6,6 +6,7 @@ export interface MetaOAuth2TaskInfo {
   userId: string
   status: 0 | 1
   accountId?: string
+  accountIds?: string[]
   spaceId?: string
   callbackUrl?: string
   callbackMethod?: 'GET' | 'POST'
@@ -48,12 +49,21 @@ export interface FacebookPageInfo {
 export interface FacebookPageCredentials extends FacebookPageInfo {
   facebook_user_id: string
   spaceId?: string
+  profile_picture_url?: string
 }
 
 export interface FacebookPage {
   id: string
   name: string
   profile_picture_url?: string
+}
+
+export interface MetaAuthorizedAccount {
+  accountId: string
+  nickname: string
+  avatar?: string
+  platformUid: string
+  accountType: string
 }
 
 export interface FacebookAccountResponse {

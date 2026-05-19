@@ -26,25 +26,32 @@ const FacebookParams = memo(
         onImageToImage,
         isMobile,
       )
+      const defaultContentCategory = pubItem.params.video ? 'reel' : 'post'
 
       // 初始化Facebook参数
       useEffect(() => {
         const option = pubItem.params.option
-        if (!option.facebook?.content_category) {
+        const currentCategory = option.facebook?.content_category
+        const nextCategory
+          = pubItem.params.video
+            ? (currentCategory === 'reel' ? undefined : 'reel')
+            : (!currentCategory ? 'post' : undefined)
+
+        if (nextCategory) {
           setOnePubParams(
             {
               option: {
                 ...option,
                 facebook: {
                   ...option.facebook,
-                  content_category: 'post',
+                  content_category: nextCategory,
                 },
               },
             },
             pubItem.account.id,
           )
         }
-      }, [pubItem.account.id, setOnePubParams])
+      }, [pubItem.account.id, pubItem.params.option, pubItem.params.video, setOnePubParams])
 
       return (
         <>
@@ -61,7 +68,7 @@ const FacebookParams = memo(
                     {t('form.type')}
                   </div>
                   <RadioGroup
-                    value={pubItem.params.option.facebook?.content_category || 'video'}
+                    value={pubItem.params.option.facebook?.content_category || defaultContentCategory}
                     onValueChange={(value) => {
                       const option = pubItem.params.option
                       setOnePubParams(

@@ -6,8 +6,8 @@
  * @Description: PublishRecord
  */
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountType, TableDto } from '@yikart/common'
-import { PublishRecord, PublishRecordRepository, PublishStatus, PublishType } from '@yikart/mongodb'
+import { AccountType, TableDto, WorkStatus } from '@yikart/common'
+import { PublishRecord, PublishRecordLinkStatus, PublishRecordRepository, PublishRecordSource, PublishStatus, PublishType } from '@yikart/mongodb'
 import { UpdateQuery } from 'mongoose'
 import { MaterialService } from '../content/material.service'
 import {
@@ -182,44 +182,6 @@ export class PublishRecordService {
   }
 
   /**
-   * 根据任务ID和用户ID获取发布记录
-   * @param taskId 任务ID
-   * @param userId 用户ID
-   * @returns 发布记录
-   */
-  async getPublishRecordByTaskId(taskId: string, userId: string) {
-    const res = await this.publishRecordRepository.getPublishRecordByTaskId(taskId, userId)
-    return res
-  }
-
-  /**
-   * 根据广告主推广任务ID获取发布记录列表（广告主用）
-   * @param advertiserTaskId 广告主任务ID
-   * @param query 查询条件（状态、平台类型、分页）
-   * @returns 发布记录列表
-   */
-  async getPublishRecordListByAdvertiserTaskId(
-    advertiserTaskId: string,
-    query?: {
-      status?: number
-      accountType?: AccountType
-      pageNo?: number
-      pageSize?: number
-    },
-  ) {
-    return this.publishRecordRepository.getPublishRecordListByAdvertiserTaskId(advertiserTaskId, query)
-  }
-
-  /**
-   * 根据广告主推广任务ID获取发布统计数据（广告主用）
-   * @param advertiserTaskId 广告主任务ID
-   * @returns 发布统计数据
-   */
-  async getPublishStatisticsByAdvertiserTaskId(advertiserTaskId: string) {
-    return this.publishRecordRepository.getPublishStatisticsByAdvertiserTaskId(advertiserTaskId)
-  }
-
-  /**
    * 根据用户UID和作品ID获取发布记录
    * @param uid 用户UID
    * @param dataId 作品ID
@@ -227,16 +189,6 @@ export class PublishRecordService {
    */
   async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
     const res = await this.publishRecordRepository.getPublishRecordByDataIdAndUid(uid, dataId)
-    return res
-  }
-
-  /**
-   * 根据用户任务ID获取发布记录
-   * @param userTaskId 用户任务ID
-   * @returns 发布记录
-   */
-  async getPublishRecordToUserTask(userTaskId: string) {
-    const res = await this.publishRecordRepository.getPublishRecordToUserTask(userTaskId)
     return res
   }
 
@@ -257,6 +209,20 @@ export class PublishRecordService {
     if (!res)
       return false
     this.doTaskProcess(res)
+    return !!res
+  }
+
+  /**
+   * 发布平台回调失败：根据作品ID和UID更新发布状态为失败，并记录失败原因
+   * @param filter 查询条件（作品ID和UID）
+   * @param errorMsg 失败原因
+   * @returns 是否更新成功
+   */
+  async failPublishRecordByData(
+    filter: { dataId: string, uid: string },
+    errorMsg: string,
+  ): Promise<boolean> {
+    const res = await this.publishRecordRepository.failPublishRecordByData(filter, errorMsg)
     return !!res
   }
 
@@ -299,6 +265,63 @@ export class PublishRecordService {
   }
 
   /**
+   * 根据发布记录ID更新作品链接及其派生字段
+   * @param id 发布记录ID
+   * @param data 作品链接更新数据
+   * @returns 更新后的发布记录
+   */
+  async updateWorkLinkById(
+    id: string,
+    data: {
+      workLink?: string
+      originalWorkLink?: string | null
+      dataId?: string
+      uniqueId?: string
+      platformWorkId?: string
+      workStatus?: WorkStatus | null
+      linkStatus: PublishRecordLinkStatus
+      linkError?: string
+      linkMeta?: Record<string, unknown>
+      type?: PublishType
+    },
+  ) {
+    const $set: Partial<PublishRecord> = {
+      linkStatus: data.linkStatus,
+      linkError: data.linkError || '',
+      ...(data.workLink && { workLink: data.workLink }),
+      ...(data.dataId && { dataId: data.dataId }),
+      ...(data.uniqueId && { uniqueId: data.uniqueId }),
+      ...(data.platformWorkId && { platformWorkId: data.platformWorkId }),
+      ...(data.linkMeta !== undefined && { linkMeta: data.linkMeta }),
+      ...(data.type && { type: data.type }),
+    }
+    const $unset: Record<string, 1> = {}
+
+    if ('originalWorkLink' in data) {
+      if (data.originalWorkLink) {
+        $set.originalWorkLink = data.originalWorkLink
+      }
+      else {
+        $unset['originalWorkLink'] = 1
+      }
+    }
+
+    if ('workStatus' in data) {
+      if (data.workStatus) {
+        $set.workStatus = data.workStatus
+      }
+      else {
+        $unset['workStatus'] = 1
+      }
+    }
+
+    return this.publishRecordRepository.updateById(id, {
+      $set,
+      ...(Object.keys($unset).length && { $unset }),
+    })
+  }
+
+  /**
    * 根据流水ID获取发布记录
    * @param flowId 流水ID
    * @returns 发布记录
@@ -314,6 +337,16 @@ export class PublishRecordService {
    */
   async getOneById(id: string) {
     return this.publishRecordRepository.findOneById(id)
+  }
+
+  /**
+   * 根据作品ID和账户类型获取单条发布记录
+   * @param dataId 作品ID
+   * @param accountType 账户类型
+   * @returns 发布记录
+   */
+  async getOneByDataId(dataId: string, accountType: AccountType) {
+    return this.publishRecordRepository.findOneByDataId(dataId, accountType)
   }
 
   /**
@@ -386,6 +419,16 @@ export class PublishRecordService {
    */
   async listByTime(end: Date) {
     return this.publishRecordRepository.getPublishTaskListByTime(end)
+  }
+
+  /**
+   * 获取长时间停留在发布中的任务列表
+   * @param cutoffTime 超时截止时间
+   * @param limit 单批处理数量
+   * @returns 发布中超时任务列表
+   */
+  async listStalePublishingTasks(cutoffTime: Date, limit: number) {
+    return this.publishRecordRepository.getStalePublishingTasks(cutoffTime, limit)
   }
 
   /**
@@ -503,10 +546,21 @@ export class PublishRecordService {
     materialGroupId: string,
     query?: {
       accountType?: AccountType
+      source?: PublishRecordSource
       pageNo?: number
       pageSize?: number
     },
   ) {
     return this.publishRecordRepository.listPublishedByMaterialGroupIdWithPagination(materialGroupId, query)
+  }
+
+  async listPublishedByMaterialGroupId(
+    materialGroupId: string,
+    query?: {
+      accountType?: AccountType
+      source?: PublishRecordSource
+    },
+  ) {
+    return this.publishRecordRepository.listPublishedByMaterialGroupId(materialGroupId, query)
   }
 }

@@ -1,26 +1,32 @@
-import { DynamicModule, Module } from '@nestjs/common'
+import type { DynamicModule, FactoryProvider, ModuleMetadata } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
-import { AitoearnAuthConfig } from './aitoearn-auth.config'
+import { AITOEARN_AUTH_OPTIONS, AitoearnAuthOptions } from './aitoearn-auth.config'
 import { AitoearnAuthGuard } from './aitoearn-auth.guard'
 import { AitoearnAuthService } from './aitoearn-auth.service'
 
+export interface AitoearnAuthModuleAsyncOptions<TTokenInfo = unknown> {
+  imports?: ModuleMetadata['imports']
+  inject?: FactoryProvider['inject']
+  useFactory: (...args: any[]) => AitoearnAuthOptions<TTokenInfo> | Promise<AitoearnAuthOptions<TTokenInfo>>
+}
+
 @Module({})
 export class AitoearnAuthModule {
-  static forRoot(config: AitoearnAuthConfig): DynamicModule {
+  static forRootAsync<TTokenInfo = unknown>(options: AitoearnAuthModuleAsyncOptions<TTokenInfo>): DynamicModule {
     return {
       global: true,
       module: AitoearnAuthModule,
       imports: [
-        JwtModule.register({
-          secret: config.secret,
-          signOptions: { expiresIn: config.expiresIn },
-        }),
+        ...(options.imports ?? []),
+        JwtModule.register({}),
       ],
       providers: [
         {
-          provide: AitoearnAuthConfig,
-          useValue: config,
+          provide: AITOEARN_AUTH_OPTIONS,
+          useFactory: options.useFactory,
+          inject: options.inject ?? [],
         },
         AitoearnAuthService,
         {

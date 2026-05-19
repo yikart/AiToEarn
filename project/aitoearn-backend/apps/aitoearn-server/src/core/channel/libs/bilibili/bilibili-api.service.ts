@@ -67,7 +67,7 @@ export class BilibiliApiService {
     }
     catch (error) {
       const err = BilibiliError.buildFromError(error, operation)
-      this.logger.error({ path: `bilibili debug---${url}`, message: `Bilibili API Error: ${operation} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}` })
+      this.logger.error(err, `Bilibili API Error: ${operation} ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }

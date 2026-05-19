@@ -34,7 +34,7 @@ class FetchService<T = Response> {
       }
 
       let baseURL = this.baseURL
-      if (requestParams.url === 'assets/uploadSign' && process.env.NEXT_PUBLIC_OSS_TEMP_URL) {
+      if (requestParams.url.startsWith('assets/') && requestParams.url.endsWith('/uploadSign') && process.env.NEXT_PUBLIC_OSS_TEMP_URL) {
         baseURL = process.env.NEXT_PUBLIC_OSS_TEMP_URL
       }
 

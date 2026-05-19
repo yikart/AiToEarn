@@ -1,24 +1,76 @@
-import { createHash, randomBytes } from 'node:crypto'
+import { randomBytes } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
+import { generateCodeChallenge, generateCodeVerifier } from '@xdevplatform/xdk'
 import { AccountStatus, AccountType, NewAccount, PublishType } from '@yikart/aitoearn-server-client'
 import { AppException, getErrorMessage, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
-import { isAxiosError } from 'axios'
 import { v4 as uuidV4 } from 'uuid'
-import { chunkedDownloadFile, fileUrlToBlob, getFileSizeFromUrl, getFileTypeFromUrl } from '../../../../common/utils/file.util'
 import { getCurrentTimestamp } from '../../../../common/utils/time.util'
 import { config } from '../../../../config'
+import { RelayAccountException } from '../../../relay/relay-account.exception'
 import { RelayAuthException } from '../../../relay/relay-auth.exception'
 import { ChannelRedisKeys } from '../../channel.constants'
-import { XMediaCategory, XMediaType } from '../../libs/twitter/twitter.enum'
-import { TwitterOAuthCredential, XChunkedMediaUploadRequest, XCreatePostRequest, XCreatePostResponse, XLikePostResponse, XMediaUploadInitRequest, XMediaUploadResponse, XPostDetailResponse, XRePostResponse, XUserTimelineRequest } from '../../libs/twitter/twitter.interfaces'
+import { TwitterError } from '../../libs/twitter/twitter.exception'
+import {
+  TwitterOAuthCredential,
+  TwitterUserInfo,
+  XBookmarkMutationResponse,
+  XBookmarksTimelineRequest,
+  XBookmarksTimelineResponse,
+  XChunkedMediaUploadRequest,
+  XCreateMediaMetadataRequest,
+  XCreatePostRequest,
+  XCreatePostResponse,
+  XGetPostDetailResponse,
+  XHideReplyResponse,
+  XLikedPostsRequest,
+  XLikedPostsResponse,
+  XLikePostResponse,
+  XListInfo,
+  XListListResponse,
+  XListRequest,
+  XMediaUploadInitRequest,
+  XMediaUploadResponse,
+  XMentionsTimelineRequest,
+  XMentionsTimelineResponse,
+  XPostDetailResponseData,
+  XRePostResponse,
+  XSearchTweetsRequest,
+  XSearchTweetsResponse,
+  XTweetIncludeMedia,
+  XTweetListRequest,
+  XTweetListResponse,
+  XUserListRequest,
+  XUserListResponse,
+  XUserTimelineRequest,
+  XUserTimelineResponse,
+} from '../../libs/twitter/twitter.interfaces'
 import { TwitterService as TwitterApiService } from '../../libs/twitter/twitter.service'
-import { PlatformBaseService } from '../base.service'
+import { PlatformBaseService, ValidatedWorkInfo, WorkDetailInfo } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
 import { PlatformAuthExpiredException } from '../platform.exception'
 import { TWITTER_TIME_CONSTANTS } from './constants'
-import { UserTimelineDto } from './twitter.dto'
+import { TwitterBillingService, TwitterReadResource, TwitterReadResourceType, TwitterWriteChargeType } from './twitter-billing.service'
+import {
+  TwitterBookmarksDto,
+  TwitterHomeTimelineDto,
+  TwitterMentionsDto,
+  TwitterMyLikedPostsDto,
+  TwitterMyListDto,
+  TwitterMyPinnedListDto,
+  TwitterMyPostsDto,
+  TwitterMyUserListDto,
+  TwitterSearchTweetsDto,
+  TwitterTweetListDto,
+  TwitterUserByUsernameDto,
+  TwitterUserLikedPostsDto,
+  TwitterUserListDto,
+  TwitterUserPostsDto,
+  UserTimelineDto,
+} from './twitter.dto'
 import { TwitterOAuthTaskInfo } from './twitter.interfaces'
+
+const TWITTER_PINNED_LIST_LIMIT = 16
 
 @Injectable()
 export class TwitterService extends PlatformBaseService {
@@ -27,6 +79,7 @@ export class TwitterService extends PlatformBaseService {
   private readonly redisService: RedisService
   private readonly twitterApiService: TwitterApiService
   private readonly channelAccountService: ChannelAccountService
+  private readonly twitterBillingService: TwitterBillingService
   private readonly defaultScopes = [
     'tweet.read', // All the Tweets you can view, including Tweets from protected accounts.
     'tweet.write', // Tweet and Retweet for you.
@@ -37,13 +90,13 @@ export class TwitterService extends PlatformBaseService {
     'follows.write', // Follow and unfollow people for you.
     'offline.access', // Stay connected to your account until you revoke access.
     'space.read', // All the Spaces you can view.
-    'mute.read', // Accounts you’ve muted.
+    'mute.read', // Accounts you've muted.
     'mute.write', // Mute and unmute accounts for you.
-    'like.read', // Tweets you’ve liked and likes you can view.
+    'like.read', // Tweets you've liked and likes you can view.
     'like.write', // Like and un-like Tweets for you.
-    'list.read', // Lists, list members, and list followers of lists you’ve created or are a member of, including private lists.
+    'list.read', // Lists, list members, and list followers of lists you've created or are a member of, including private lists.
     'list.write', // Create and manage Lists for you.
-    'block.read', // Accounts you’ve blocked.
+    'block.read', // Accounts you've blocked.
     'block.write', // Block and unblock accounts for you.
     'bookmark.read', // Get Bookmarked Tweets from an authenticated user.
     'bookmark.write', // Bookmark and remove Bookmarks from Tweets.
@@ -54,11 +107,13 @@ export class TwitterService extends PlatformBaseService {
     redisService: RedisService,
     twitterApiService: TwitterApiService,
     channelAccountService: ChannelAccountService,
+    twitterBillingService: TwitterBillingService,
   ) {
     super()
     this.redisService = redisService
     this.twitterApiService = twitterApiService
     this.channelAccountService = channelAccountService
+    this.twitterBillingService = twitterBillingService
   }
 
   private async saveOAuthCredential(accountId: string, accessTokenInfo: TwitterOAuthCredential) {
@@ -100,10 +155,7 @@ export class TwitterService extends PlatformBaseService {
     return credential
   }
 
-  private async authorize(
-    accountId: string,
-  ): Promise<TwitterOAuthCredential> {
-    await this.ensureLocalAccount(accountId)
+  private async authorize(accountId: string): Promise<TwitterOAuthCredential> {
     const credential = await this.getOAuth2Credential(accountId)
     if (!credential) {
       throw new PlatformAuthExpiredException(this.platform, accountId)
@@ -114,11 +166,9 @@ export class TwitterService extends PlatformBaseService {
         `Access token for accountId: ${accountId} is expired, refreshing...`,
       )
       const refreshedToken = await this.refreshOAuthCredential(
+        accountId,
         credential.refresh_token,
       )
-      if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform, accountId)
-      }
       credential.access_token = refreshedToken.access_token
       credential.refresh_token = refreshedToken.refresh_token
       credential.expires_in = refreshedToken.expires_in
@@ -131,24 +181,201 @@ export class TwitterService extends PlatformBaseService {
     return credential
   }
 
-  private async refreshOAuthCredential(refresh_token: string) {
+  private async refreshOAuthCredential(
+    accountId: string,
+    refreshToken: string,
+  ): Promise<TwitterOAuthCredential> {
     try {
       const credential
-        = await this.twitterApiService.refreshOAuthCredential(refresh_token)
+        = await this.twitterApiService.refreshOAuthCredential(refreshToken)
       if (!credential) {
-        this.logger.error(`Failed to refresh access token`)
-        return null
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       return credential
     }
     catch (error) {
-      if (isAxiosError(error) && error.response) {
-        this.logger.error(`Error response: ${JSON.stringify(error.response.data)}`)
-        const errorData = error.response.data as Record<string, unknown> | undefined
-        throw new Error((errorData?.['error'] as string) || 'Failed to refresh access token')
+      if (error instanceof PlatformAuthExpiredException) {
+        throw error
+      }
+      if (error instanceof TwitterError && error.cause.httpStatus && [400, 401].includes(error.cause.httpStatus)) {
+        throw new PlatformAuthExpiredException(this.platform, accountId)
       }
       this.logger.error(`Error: ${getErrorMessage(error)}`)
-      throw new Error('Failed to refresh access token')
+      throw error
+    }
+  }
+
+  private async getTwitterAccount(userId: string, accountId: string) {
+    const account = await this.accountRepository.getByIdAndUserId(accountId, userId)
+    if (!account) {
+      throw new AppException(ResponseCode.AccountNotFound)
+    }
+    if (account.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
+    if (account.type !== AccountType.TWITTER) {
+      throw new AppException(ResponseCode.ChannelAccountNotFound)
+    }
+    return account
+  }
+
+  private async getAuthorizedTwitterAccount(userId: string, accountId: string) {
+    const account = await this.getTwitterAccount(userId, accountId)
+    const credential = await this.authorize(accountId)
+    if (!account.uid) {
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed)
+    }
+    return {
+      account,
+      credential,
+    }
+  }
+
+  private parseUsername(username: string) {
+    return username.trim().replace(/^@+/, '')
+  }
+
+  private parseMaxResults(maxResults?: string) {
+    if (!maxResults) {
+      return 10
+    }
+
+    const parsed = Number.parseInt(maxResults, 10)
+    if (Number.isNaN(parsed) || parsed <= 0) {
+      return 10
+    }
+
+    return parsed
+  }
+
+  private getCreatePostChargeType(text?: string) {
+    return this.twitterBillingService.containsUrl(text)
+      ? TwitterWriteChargeType.ContentCreateWithUrl
+      : TwitterWriteChargeType.ContentCreate
+  }
+
+  private collectPostReadResources(posts?: XPostDetailResponseData[]): TwitterReadResource[] {
+    if (!posts || posts.length === 0) {
+      return []
+    }
+
+    return posts
+      .filter(post => !!post.id)
+      .map(post => ({
+        type: TwitterReadResourceType.Post,
+        id: post.id!,
+      }))
+  }
+
+  private collectUserReadResources(users?: TwitterUserInfo[]): TwitterReadResource[] {
+    if (!users || users.length === 0) {
+      return []
+    }
+
+    return users
+      .filter(user => !!user.id)
+      .map(user => ({
+        type: TwitterReadResourceType.User,
+        id: user.id!,
+      }))
+  }
+
+  private collectMediaReadResources(media?: XTweetIncludeMedia[]): TwitterReadResource[] {
+    if (!media || media.length === 0) {
+      return []
+    }
+
+    return media
+      .filter(item => !!item.mediaKey)
+      .map(item => ({
+        type: TwitterReadResourceType.Media,
+        id: item.mediaKey!,
+      }))
+  }
+
+  private collectListReadResources(lists?: XListInfo[]): TwitterReadResource[] {
+    if (!lists || lists.length === 0) {
+      return []
+    }
+
+    return lists
+      .filter(list => !!list.id)
+      .map(list => ({
+        type: TwitterReadResourceType.List,
+        id: list.id!,
+      }))
+  }
+
+  private buildTweetUrl(tweetId: string) {
+    return `https://x.com/i/web/status/${tweetId}`
+  }
+
+  private buildTweetListQuery(queryDto: TwitterTweetListDto): XTweetListRequest {
+    return {
+      paginationToken: queryDto.paginationToken,
+      maxResults: this.parseMaxResults(queryDto.maxResults),
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+  }
+
+  private buildUserListQuery(queryDto: TwitterTweetListDto): XUserListRequest {
+    return {
+      paginationToken: queryDto.paginationToken,
+      maxResults: this.parseMaxResults(queryDto.maxResults),
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+    }
+  }
+
+  private async getPostUsers(
+    userId: string,
+    accountId: string,
+    queryDto: TwitterTweetListDto,
+    operation: 'getRepostedBy' | 'getLikingUsers',
+    endpoint: string,
+  ): Promise<XUserListResponse> {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = operation === 'getRepostedBy'
+      ? await this.twitterApiService.getRepostedBy(
+          credential.access_token,
+          queryDto.tweetId,
+          this.buildUserListQuery(queryDto),
+        )
+      : await this.twitterApiService.getLikingUsers(
+          credential.access_token,
+          queryDto.tweetId,
+          this.buildUserListQuery(queryDto),
+        )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation,
+      endpoint,
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        tweetId: queryDto.tweetId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  private buildSearchQuery(queryDto: TwitterSearchTweetsDto | TwitterMentionsDto): XSearchTweetsRequest {
+    return {
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      maxResults: this.parseMaxResults(queryDto.maxResults),
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
     }
   }
 
@@ -163,10 +390,8 @@ export class TwitterService extends PlatformBaseService {
       throw new RelayAuthException()
     }
     const taskId = uuidV4()
-    const codeVerifier = randomBytes(64).toString('hex')
-    const codeChallenge = createHash('sha256')
-      .update(codeVerifier)
-      .digest('base64url')
+    const codeVerifier = generateCodeVerifier(64)
+    const codeChallenge = await generateCodeChallenge(codeVerifier)
     const state = randomBytes(32).toString('hex')
     const authTaskInfo: TwitterOAuthTaskInfo = {
       state,
@@ -184,9 +409,10 @@ export class TwitterService extends PlatformBaseService {
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXPIRE,
     )
     const scopes = data.scopes || this.defaultScopes
-    const authorizeURL = this.twitterApiService.generateAuthorizeURL(
+    const authorizeURL = await this.twitterApiService.generateAuthorizeURL(
       scopes,
       state,
+      codeVerifier,
       codeChallenge,
     )
     return success ? { url: authorizeURL, taskId: state, state } : null
@@ -209,11 +435,11 @@ export class TwitterService extends PlatformBaseService {
       this.logger.error(`OAuth task not found for state: ${state}`)
       return {
         status: 0,
-        message: '授权任务不存在或已过期',
+        message: 'OAuth task not found or expired',
       }
     }
 
-    // 延长授权任务时间
+    // Extend the OAuth task lifetime.
     void this.redisService.expire(
       ChannelRedisKeys.authTask('twitter', state),
       TWITTER_TIME_CONSTANTS.AUTH_TASK_EXTEND,
@@ -227,7 +453,7 @@ export class TwitterService extends PlatformBaseService {
       this.logger.error(`Failed to get access token for state: ${state}`)
       return {
         status: 0,
-        message: '获取访问令牌失败',
+        message: 'Failed to get access token',
       }
     }
 
@@ -239,7 +465,7 @@ export class TwitterService extends PlatformBaseService {
       this.logger.error(`Failed to get user profile for state: ${state}`)
       return {
         status: 0,
-        message: `获取用户信息失败: ${JSON.stringify(userRes.errors)}`,
+        message: `Failed to get user info: ${JSON.stringify(userRes.errors)}`,
       }
     }
 
@@ -248,7 +474,7 @@ export class TwitterService extends PlatformBaseService {
       type: AccountType.TWITTER,
       uid: userRes.data.id,
       account: userRes.data.username,
-      avatar: userRes.data.profile_image_url,
+      avatar: userRes.data.profileImageUrl,
       nickname: userRes.data.name,
       lastStatsTime: new Date(),
       loginTime: new Date(),
@@ -269,7 +495,7 @@ export class TwitterService extends PlatformBaseService {
       )
       return {
         status: 0,
-        message: '创建账号失败',
+        message: 'Failed to create account',
       }
     }
     const tokenSaved = await this.saveOAuthCredential(
@@ -282,9 +508,10 @@ export class TwitterService extends PlatformBaseService {
       )
       return {
         status: 0,
-        message: '保存访问令牌失败',
+        message: 'Failed to save access token',
       }
     }
+    await this.syncAuthorizedAccountStatistics(accountInfo.id, userRes.data)
     const taskUpdated = await this.updateAuthTaskStatus(
       state,
       authTaskInfo,
@@ -297,18 +524,18 @@ export class TwitterService extends PlatformBaseService {
       )
       return {
         status: 0,
-        message: '更新任务状态失败',
+        message: 'Failed to update auth task status',
       }
     }
     return {
       status: 1,
-      message: '授权成功',
+      message: 'Authorization succeeded',
       accountId: accountInfo.id,
       callbackUrl: authTaskInfo.callbackUrl,
       callbackMethod: authTaskInfo.callbackMethod,
       taskId: state,
       nickname: userRes.data.name,
-      avatar: userRes.data.profile_image_url,
+      avatar: userRes.data.profileImageUrl,
       platformUid: userRes.data.id,
       accountType: AccountType.TWITTER,
     }
@@ -348,218 +575,798 @@ export class TwitterService extends PlatformBaseService {
   }
 
   public async getUserInfo(accountId: string) {
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
     const credential = await this.authorize(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
-    return await this.twitterApiService.getUserInfo(credential.access_token)
+    const response = await this.twitterApiService.getUserInfo(credential.access_token)
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserInfo',
+      endpoint: 'GET /2/users/me',
+      resources: response.data?.id
+        ? [{ type: TwitterReadResourceType.User, id: response.data.id }]
+        : [],
+    })
+    return response
   }
 
-  public async followUser(userId: string, targetXUserId: string) {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return false
+  private async syncAuthorizedAccountStatistics(accountId: string, user: TwitterUserInfo) {
+    await this.syncAccountStatisticsOnAuth(accountId, async () => ({
+      fansCount: user.publicMetrics?.followersCount,
+    }))
+  }
+
+  public async getUserInfoForUser(userId: string, accountId: string) {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getUserInfo(credential.access_token)
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserInfo',
+      endpoint: 'GET /2/users/me',
+      resources: response.data?.id
+        ? [{ type: TwitterReadResourceType.User, id: response.data.id }]
+        : [],
+    })
+    return response
+  }
+
+  public async resolveTweet(userId: string, accountId: string, tweetRef: string) {
+    await this.getAuthorizedTwitterAccount(userId, accountId)
+    const resolvedUrl = await this.normalizeTwitterWorkLink(tweetRef)
+    const tweetId = this.parseTwitterUrl(resolvedUrl)
+    if (!tweetId) {
+      throw new AppException(ResponseCode.InvalidWorkLink)
     }
-    return await this.twitterApiService.followUser(
+    return {
+      tweetId,
+      tweetUrl: this.buildTweetUrl(tweetId),
+      resolvedUrl,
+    }
+  }
+
+  public async getUserByUsername(userId: string, accountId: string, data: TwitterUserByUsernameDto) {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const username = this.parseUsername(data.username)
+    const response = await this.twitterApiService.getUserByUsername(credential.access_token, username)
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserByUsername',
+      endpoint: 'GET /2/users/by/username/:username',
+      resources: response.data?.id
+        ? [{ type: TwitterReadResourceType.User, id: response.data.id }]
+        : [],
+      metadata: {
+        username,
+      },
+    })
+    return response
+  }
+
+  public async searchTweets(userId: string, accountId: string, data: TwitterSearchTweetsDto): Promise<XSearchTweetsResponse> {
+    const maxResults = this.parseMaxResults(data.maxResults)
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const response = await this.twitterApiService.searchRecentPosts(
       credential.access_token,
-      targetXUserId,
+      data.query,
+      this.buildSearchQuery(data),
     )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'searchTweets',
+      endpoint: 'GET /2/tweets/search/recent',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        query: data.query,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
   }
 
-  public async initMediaUpload(userId: string, req: XMediaUploadInitRequest) {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
+  public async followUser(accountId: string, targetUserId: string) {
+    const account = await this.getLocalAccountById(accountId)
+    if (!account || !account.uid) {
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed)
     }
+    const credential = await this.authorize(accountId)
+    const amount = this.twitterBillingService.getWriteChargeAmount(
+      TwitterWriteChargeType.InteractionCreate,
+    )
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount,
+    })
+    const response = await this.twitterApiService.followUser(
+      credential.access_token,
+      account.uid,
+      targetUserId,
+    )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'followUser',
+      endpoint: 'POST /2/users/:id/following',
+      chargeType: TwitterWriteChargeType.InteractionCreate,
+      metadata: {
+        targetUserId,
+      },
+    })
+    return response
+  }
+
+  public async initMediaUpload(accountId: string, req: XMediaUploadInitRequest) {
+    const credential = await this.authorize(accountId)
     return await this.twitterApiService.initMediaUpload(credential.access_token, req)
   }
 
-  public async chunkedMediaUploadRequest(userId: string, req: XChunkedMediaUploadRequest) {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
+  public async chunkedMediaUploadRequest(accountId: string, req: XChunkedMediaUploadRequest) {
+    const credential = await this.authorize(accountId)
     return await this.twitterApiService.chunkedMediaUploadRequest(credential.access_token, req)
   }
 
-  public async finalizeMediaUpload(userId: string, mediaId: string) {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
+  public async finalizeMediaUpload(accountId: string, mediaId: string) {
+    const credential = await this.authorize(accountId)
     return await this.twitterApiService.finalizeMediaUpload(credential.access_token, mediaId)
   }
 
-  public async createPost(userId: string, post: XCreatePostRequest) {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.createPost(credential.access_token, post)
+  public async createMediaMetadata(accountId: string, req: XCreateMediaMetadataRequest) {
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(TwitterWriteChargeType.MediaMetadata),
+    })
+    const credential = await this.authorize(accountId)
+    const response = await this.twitterApiService.createMediaMetadata(credential.access_token, req)
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'createMediaMetadata',
+      endpoint: 'POST /2/media/metadata',
+      chargeType: TwitterWriteChargeType.MediaMetadata,
+      metadata: {
+        mediaId: req.id,
+        hasAltText: Boolean(req.metadata.altText?.text),
+      },
+    })
+    return response
   }
 
-  override async deletePost(userId: string, tweetId: string): Promise<boolean> {
-    const credential = await this.authorize(userId)
+  public async createPost(accountId: string, post: XCreatePostRequest) {
+    const chargeType = this.getCreatePostChargeType(post.text)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(chargeType),
+    })
+    const credential = await this.authorize(accountId)
+    const response = await this.twitterApiService.createPost(credential.access_token, post)
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'createPost',
+      endpoint: 'POST /2/tweets',
+      chargeType,
+      metadata: {
+        postId: response.data?.id,
+        hasMedia: Boolean(post.media?.mediaIds?.length),
+        hasPoll: Boolean(post.poll),
+        isReply: Boolean(post.reply?.inReplyToTweetId),
+        isQuote: Boolean(post.quoteTweetId),
+      },
+    })
+    return response
+  }
+
+  override async deletePost(accountId: string, tweetId: string): Promise<boolean> {
+    const amount = this.twitterBillingService.getWriteChargeAmount(
+      TwitterWriteChargeType.ContentManage,
+    )
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount,
+    })
+    const credential = await this.authorize(accountId)
     const result = await this.twitterApiService.deletePost(
       credential.access_token,
       tweetId,
     )
-    return result.data.deleted
+    if (result.data?.deleted) {
+      await this.twitterBillingService.chargeWriteOperation({
+        accountId,
+        operation: 'deletePost',
+        endpoint: 'DELETE /2/tweets/:id',
+        chargeType: TwitterWriteChargeType.ContentManage,
+        metadata: {
+          postId: tweetId,
+        },
+      })
+    }
+    return Boolean(result.data?.deleted)
   }
 
   public async getMediaUploadStatus(
-    userId: string,
+    accountId: string,
     mediaId: string,
   ): Promise<XMediaUploadResponse> {
-    const credential = await this.authorize(userId)
+    const credential = await this.authorize(accountId)
     return await this.twitterApiService.getMediaStatus(
       credential.access_token,
       mediaId,
     )
   }
 
-  async publishPost(
-    accountId: string,
-    imgUrlList: string[] | null,
-    videoUrl: string | null,
-    text: string,
-  ) {
-    this.logger.log(`dopub, ${accountId}, ${videoUrl}, ${text}`)
-    const twitterMediaIDs: string[] = []
-    if (imgUrlList) {
-      for (const imgUrl of imgUrlList) {
-        const imgBlob = await fileUrlToBlob(imgUrl)
-        if (!imgBlob) {
-          this.logger.error('图片下载失败')
-          return null
-        }
-        this.logger.log('imgBlob', imgBlob.blob.size)
-        const fileName = getFileTypeFromUrl(imgUrl)
-        const ext = fileName.split('.').pop()?.toLowerCase()
-        const mimeType = ext === 'jpg' ? 'image/jpeg' : `image/${ext}`
-        const initUploadReq: XMediaUploadInitRequest = {
-          media_type: mimeType as XMediaType,
-          total_bytes: imgBlob.blob.size,
-          media_category: XMediaCategory.TWEET_IMAGE,
-          shared: false,
-        }
-        this.logger.log('initMediaUpload', initUploadReq)
-        const initUploadRes = await this.initMediaUpload(
-          accountId,
-          initUploadReq,
-        )
-        this.logger.log(initUploadRes)
-        if (!initUploadRes || !initUploadRes.data.id) {
-          this.logger.error('图片初始化上传失败')
-          return null
-        }
-        const uploadReq: XChunkedMediaUploadRequest = {
-          media_id: initUploadRes.data.id,
-          media: await imgBlob.blob,
-          segment_index: 0,
-        }
-        this.logger.log('chunkedMediaUploadRequest', uploadReq)
-        const updateRes = await this.chunkedMediaUploadRequest(
-          accountId,
-          uploadReq,
-        )
-        this.logger.log(updateRes)
-        if (!updateRes || !updateRes.data.expires_at) {
-          this.logger.error('图片分片上传失败')
-          return null
-        }
-        const finalizeUploadRes = await this.finalizeMediaUpload(
-          accountId,
-          initUploadRes.data.id,
-        )
-        this.logger.log(finalizeUploadRes)
-        if (!finalizeUploadRes || !finalizeUploadRes.data.id) {
-          this.logger.error('确认图片上传失败')
-          return null
-        }
-        twitterMediaIDs.push(initUploadRes.data.id)
-      }
-    }
-
-    if (videoUrl) {
-      const fileName = getFileTypeFromUrl(videoUrl, true)
-      const ext = fileName.split('.').pop()?.toLowerCase()
-      const mimeType = ext === 'mp4' ? 'video/mp4' : `video/${ext}`
-
-      const contentLength = await getFileSizeFromUrl(videoUrl)
-      if (!contentLength) {
-        this.logger.error('视频信息解析失败')
-        return null
-      }
-      const initUploadReq: XMediaUploadInitRequest = {
-        media_type: mimeType as XMediaType,
-        total_bytes: contentLength,
-        media_category: XMediaCategory.TWEET_VIDEO,
-        shared: false,
-      }
-
-      const initUploadRes = await this.initMediaUpload(
-        accountId,
-        initUploadReq,
-      )
-      this.logger.log(`initMediaUpload: ${JSON.stringify(initUploadRes)}`)
-      if (!initUploadRes || !initUploadRes.data.id) {
-        this.logger.error('视频初始化上传失败')
-        return null
-      }
-      const chunkSize = 4 * 1024 * 1024 // 5MB
-
-      const totalParts = Math.ceil(contentLength / chunkSize)
-      for (let partNumber = 0; partNumber < totalParts; partNumber++) {
-        const start = partNumber * chunkSize
-        const end = Math.min(start + chunkSize - 1, contentLength - 1)
-        const range: [number, number] = [start, end]
-        const videoBlob = await chunkedDownloadFile(videoUrl, range)
-        if (!videoBlob) {
-          this.logger.error('视频分片下载失败')
-          return null
-        }
-        this.logger.log(`videoBlob ${partNumber}, ${videoBlob.length}, range: ${range}`)
-        const uploadReq: XChunkedMediaUploadRequest = {
-          media: new Blob([videoBlob]),
-          media_id: initUploadRes.data.id,
-          segment_index: partNumber,
-        }
-        this.logger.log(`chunkedMediaUploadRequest: ${JSON.stringify(uploadReq)}`)
-        const upload = await this.chunkedMediaUploadRequest(
-          accountId,
-          uploadReq,
-        )
-        this.logger.log(`chunkedMediaUploadRequest: ${JSON.stringify(upload)}`)
-        if (!upload || !upload.data.expires_at) {
-          this.logger.error('视频分片上传失败')
-          return null
-        }
-      }
-      const finalizeUploadRes = await this.finalizeMediaUpload(
-        accountId,
-        initUploadRes.data.id,
-      )
-      this.logger.log(`finalizeMediaUpload: ${JSON.stringify(finalizeUploadRes)}`)
-      if (!finalizeUploadRes || !finalizeUploadRes.data.id) {
-        this.logger.error('确认视频上传完成失败')
-        return null
-      }
-      twitterMediaIDs.push(initUploadRes.data.id)
-    }
-    this.logger.log(`twitterMediaIDs: ${twitterMediaIDs}`)
-    const status = await this.getMediaUploadStatus(
+  async getUserMentions(userId: string, accountId: string, queryDto: TwitterMentionsDto): Promise<XMentionsTimelineResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
       accountId,
-      twitterMediaIDs[0],
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XMentionsTimelineRequest = {
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getUserMentions(
+      account.uid!,
+      credential.access_token,
+      query,
     )
-    this.logger.log(`getMediaUploadStatus: ${JSON.stringify(status)}`)
-    return undefined
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserMentions',
+      endpoint: 'GET /2/users/:id/mentions',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getBookmarks(userId: string, accountId: string, queryDto: TwitterBookmarksDto): Promise<XBookmarksTimelineResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XBookmarksTimelineRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getBookmarks(
+      account.uid!,
+      credential.access_token,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getBookmarks',
+      endpoint: 'GET /2/users/:id/bookmarks',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getHomeTimelineForUser(userId: string, accountId: string, queryDto: TwitterHomeTimelineDto): Promise<XUserTimelineResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XUserTimelineRequest = {
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      exclude: queryDto.exclude,
+      maxResults,
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getHomeTimeline(
+      account.uid!,
+      credential.access_token,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getHomeTimeline',
+      endpoint: 'GET /2/users/:id/timelines/reverse_chronological',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getFollowersForUser(userId: string, accountId: string, targetUserId: string, queryDto: TwitterUserListDto): Promise<XUserListResponse> {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getFollowers(
+      credential.access_token,
+      targetUserId,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getFollowers',
+      endpoint: 'GET /2/users/:id/followers',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyFollowersForUser(userId: string, accountId: string, queryDto: TwitterMyUserListDto): Promise<XUserListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getFollowers(
+      credential.access_token,
+      account.uid!,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyFollowers',
+      endpoint: 'GET /2/users/:id/followers',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getFollowingForUser(userId: string, accountId: string, targetUserId: string, queryDto: TwitterUserListDto): Promise<XUserListResponse> {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getFollowing(
+      credential.access_token,
+      targetUserId,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getFollowing',
+      endpoint: 'GET /2/users/:id/following',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyFollowingForUser(userId: string, accountId: string, queryDto: TwitterMyUserListDto): Promise<XUserListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getFollowing(
+      credential.access_token,
+      account.uid!,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyFollowing',
+      endpoint: 'GET /2/users/:id/following',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyBlocksForUser(userId: string, accountId: string, queryDto: TwitterMyUserListDto): Promise<XUserListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getBlocking(
+      credential.access_token,
+      account.uid!,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyBlocks',
+      endpoint: 'GET /2/users/:id/blocking',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyMutesForUser(userId: string, accountId: string, queryDto: TwitterMyUserListDto): Promise<XUserListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User),
+    })
+    const response = await this.twitterApiService.getMuting(
+      credential.access_token,
+      account.uid!,
+      {
+        paginationToken: queryDto.paginationToken,
+        maxResults,
+        userFields: ['id', 'name', 'username', 'profile_image_url', 'verified', 'public_metrics'],
+      },
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyMutes',
+      endpoint: 'GET /2/users/:id/muting',
+      resources: this.collectUserReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyOwnedListsForUser(userId: string, accountId: string, queryDto: TwitterMyListDto): Promise<XListListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.List),
+    })
+    const query: XListRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+    }
+    const response = await this.twitterApiService.getOwnedLists(
+      credential.access_token,
+      account.uid!,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyOwnedLists',
+      endpoint: 'GET /2/users/:id/owned_lists',
+      resources: this.collectListReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyFollowedListsForUser(userId: string, accountId: string, queryDto: TwitterMyListDto): Promise<XListListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.List),
+    })
+    const query: XListRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+    }
+    const response = await this.twitterApiService.getFollowedLists(
+      credential.access_token,
+      account.uid!,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyFollowedLists',
+      endpoint: 'GET /2/users/:id/followed_lists',
+      resources: this.collectListReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyListMembershipsForUser(userId: string, accountId: string, queryDto: TwitterMyListDto): Promise<XListListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.List),
+    })
+    const query: XListRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+    }
+    const response = await this.twitterApiService.getListMemberships(
+      credential.access_token,
+      account.uid!,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyListMemberships',
+      endpoint: 'GET /2/users/:id/list_memberships',
+      resources: this.collectListReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyPinnedListsForUser(userId: string, accountId: string, _queryDto: TwitterMyPinnedListDto): Promise<XListListResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: TWITTER_PINNED_LIST_LIMIT * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.List),
+    })
+    const response = await this.twitterApiService.getPinnedLists(
+      credential.access_token,
+      account.uid!,
+      {},
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyPinnedLists',
+      endpoint: 'GET /2/users/:id/pinned_lists',
+      resources: this.collectListReadResources(response.data),
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: TWITTER_PINNED_LIST_LIMIT,
+      },
+    })
+    return response
+  }
+
+  async getLikedPostsForUser(userId: string, accountId: string, targetUserId: string, queryDto: TwitterUserLikedPostsDto): Promise<XLikedPostsResponse> {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XLikedPostsRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getLikedPosts(
+      credential.access_token,
+      targetUserId,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getLikedPosts',
+      endpoint: 'GET /2/users/:id/liked_tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        targetUserId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async bookmarkPost(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+  ): Promise<XBookmarkMutationResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.Bookmark,
+      ),
+    })
+    const response = await this.twitterApiService.bookmarkPost(
+      account.uid!,
+      credential.access_token,
+      tweetId,
+    )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'bookmarkPost',
+      endpoint: 'POST /2/users/:id/bookmarks',
+      chargeType: TwitterWriteChargeType.Bookmark,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
+  }
+
+  async unbookmarkPost(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+  ): Promise<XBookmarkMutationResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.Bookmark,
+      ),
+    })
+    const response = await this.twitterApiService.unbookmarkPost(
+      account.uid!,
+      credential.access_token,
+      tweetId,
+    )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'unbookmarkPost',
+      endpoint: 'DELETE /2/users/:id/bookmarks/:tweetId',
+      chargeType: TwitterWriteChargeType.Bookmark,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
+  }
+
+  async hideReply(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+  ): Promise<XHideReplyResponse> {
+    return await this.updateReplyHiddenState(userId, accountId, tweetId, true)
+  }
+
+  async unhideReply(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+  ): Promise<XHideReplyResponse> {
+    return await this.updateReplyHiddenState(userId, accountId, tweetId, false)
+  }
+
+  private async updateReplyHiddenState(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+    hidden: boolean,
+  ): Promise<XHideReplyResponse> {
+    await this.getTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.ContentManage,
+      ),
+    })
+    const credential = await this.authorize(accountId)
+    const response = await this.twitterApiService.updateReplyHiddenState(
+      credential.access_token,
+      tweetId,
+      hidden,
+    )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: hidden ? 'hideReply' : 'unhideReply',
+      endpoint: 'PUT /2/tweets/:id/hidden',
+      chargeType: TwitterWriteChargeType.ContentManage,
+      metadata: {
+        tweetId,
+        hidden,
+      },
+    })
+    return response
   }
 
   async getUserTimeline(
@@ -567,23 +1374,37 @@ export class TwitterService extends PlatformBaseService {
     userId: string,
     queryDto: UserTimelineDto,
   ) {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post),
+    })
     const credential = await this.authorize(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
     const query: XUserTimelineRequest = {
-      start_time: queryDto.startTime,
-      end_time: queryDto.endTime,
-      since_id: queryDto.sinceId,
-      until_id: queryDto.untilId,
-      max_results: queryDto.maxResults ? Number.parseInt(queryDto.maxResults) : 10,
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      exclude: queryDto.exclude,
+      maxResults,
     }
-    return await this.twitterApiService.getUserTimeline(
+    const response = await this.twitterApiService.getUserTimeline(
       userId,
       credential.access_token,
       query,
     )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserTimeline',
+      endpoint: 'GET /2/users/:id/timelines/reverse_chronological',
+      resources: this.collectPostReadResources(response.data),
+      metadata: {
+        targetUserId: userId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
   }
 
   async getUserPosts(
@@ -591,173 +1412,541 @@ export class TwitterService extends PlatformBaseService {
     userId: string,
     queryDto: UserTimelineDto,
   ) {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
     const credential = await this.authorize(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      return null
-    }
     const query: XUserTimelineRequest = {
-      'start_time': queryDto.startTime,
-      'end_time': queryDto.endTime,
-      'since_id': queryDto.sinceId,
-      'until_id': queryDto.untilId,
-      'max_results': queryDto.maxResults ? Number.parseInt(queryDto.maxResults) : 10,
-      'exclude': 'replies,retweets',
-      'media.fields': 'url,preview_image_url,variants',
-      'expansions': 'attachments.media_keys',
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      exclude: queryDto.exclude || ['replies', 'retweets'],
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys'],
     }
-    return await this.twitterApiService.getUserPosts(
+    const response = await this.twitterApiService.getUserPosts(
       userId,
       credential.access_token,
       query,
     )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserPosts',
+      endpoint: 'GET /2/users/:id/tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        targetUserId: userId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getUserPostsForUser(
+    userId: string,
+    accountId: string,
+    targetUserId: string,
+    queryDto: TwitterUserPostsDto,
+  ) {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XUserTimelineRequest = {
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      exclude: queryDto.exclude || ['replies', 'retweets'],
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getUserPosts(
+      targetUserId,
+      credential.access_token,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getUserPosts',
+      endpoint: 'GET /2/users/:id/tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        targetUserId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyLikedPostsForUser(userId: string, accountId: string, queryDto: TwitterMyLikedPostsDto): Promise<XLikedPostsResponse> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XLikedPostsRequest = {
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getLikedPosts(
+      credential.access_token,
+      account.uid!,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyLikedPosts',
+      endpoint: 'GET /2/users/:id/liked_tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getMyPostsForUser(
+    userId: string,
+    accountId: string,
+    queryDto: TwitterMyPostsDto,
+  ) {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const query: XUserTimelineRequest = {
+      startTime: queryDto.startTime,
+      endTime: queryDto.endTime,
+      sinceId: queryDto.sinceId,
+      untilId: queryDto.untilId,
+      paginationToken: queryDto.paginationToken,
+      maxResults,
+      exclude: queryDto.exclude || ['replies', 'retweets'],
+      mediaFields: ['url', 'preview_image_url', 'variants'],
+      expansions: ['attachments.media_keys', 'author_id'],
+      userFields: ['id', 'name', 'username', 'profile_image_url', 'verified'],
+    }
+    const response = await this.twitterApiService.getUserPosts(
+      account.uid!,
+      credential.access_token,
+      query,
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getMyPosts',
+      endpoint: 'GET /2/users/:id/tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        targetUserId: account.uid,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
   }
 
   async getTweetDetail(
-    userId: string,
+    accountId: string,
     tweetId: string,
-  ): Promise<XPostDetailResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.getPostDetail(
+  ): Promise<XGetPostDetailResponse | null> {
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount:
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4,
+    })
+    const credential = await this.authorize(accountId)
+    const response = await this.twitterApiService.getPostDetail(
       credential.access_token,
       tweetId,
     )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getTweetDetail',
+      endpoint: 'GET /2/tweets/:id',
+      resources: [
+        ...this.collectPostReadResources(response.data ? [response.data] : []),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        postId: tweetId,
+      },
+    })
+    return response
   }
 
-  async repost(
+  async getTweetDetailForUser(
     userId: string,
+    accountId: string,
     tweetId: string,
-  ): Promise<XRePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.repost(
-      userId,
+  ) {
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount:
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4,
+    })
+    const response = await this.twitterApiService.getPostDetail(
       credential.access_token,
       tweetId,
     )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getTweetDetail',
+      endpoint: 'GET /2/tweets/:id',
+      resources: [
+        ...this.collectPostReadResources(response.data ? [response.data] : []),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        tweetId,
+      },
+    })
+    return {
+      ...response,
+      tweetId,
+      tweetUrl: this.buildTweetUrl(tweetId),
+    }
   }
 
-  async unRepost(
+  async getTweetConversation(userId: string, accountId: string, queryDto: TwitterTweetListDto): Promise<XSearchTweetsResponse> {
+    return await this.searchTweets(userId, accountId, {
+      ...queryDto,
+      query: `conversation_id:${queryDto.tweetId}`,
+    })
+  }
+
+  async getQuotedPosts(userId: string, accountId: string, queryDto: TwitterTweetListDto): Promise<XTweetListResponse> {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const response = await this.twitterApiService.getQuotedPosts(
+      credential.access_token,
+      queryDto.tweetId,
+      this.buildTweetListQuery(queryDto),
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getQuotedPosts',
+      endpoint: 'GET /2/tweets/:id/quote_tweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        tweetId: queryDto.tweetId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getReposts(userId: string, accountId: string, queryDto: TwitterTweetListDto): Promise<XTweetListResponse> {
+    const maxResults = this.parseMaxResults(queryDto.maxResults)
+    const { credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: maxResults * (
+        this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Post)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.User)
+        + this.twitterBillingService.getReadChargeAmount(TwitterReadResourceType.Media) * 4
+      ),
+    })
+    const response = await this.twitterApiService.getReposts(
+      credential.access_token,
+      queryDto.tweetId,
+      this.buildTweetListQuery(queryDto),
+    )
+    await this.twitterBillingService.chargeReadResources({
+      accountId,
+      operation: 'getReposts',
+      endpoint: 'GET /2/tweets/:id/retweets',
+      resources: [
+        ...this.collectPostReadResources(response.data),
+        ...this.collectUserReadResources(response.includes?.users),
+        ...this.collectMediaReadResources(response.includes?.media),
+      ],
+      metadata: {
+        tweetId: queryDto.tweetId,
+        requestedMaxResults: maxResults,
+      },
+    })
+    return response
+  }
+
+  async getRepostedBy(userId: string, accountId: string, queryDto: TwitterTweetListDto): Promise<XUserListResponse> {
+    return await this.getPostUsers(userId, accountId, queryDto, 'getRepostedBy', 'GET /2/tweets/:id/retweeted_by')
+  }
+
+  async getLikingUsers(userId: string, accountId: string, queryDto: TwitterTweetListDto): Promise<XUserListResponse> {
+    return await this.getPostUsers(userId, accountId, queryDto, 'getLikingUsers', 'GET /2/tweets/:id/liking_users')
+  }
+
+  async repostPost(
     userId: string,
+    accountId: string,
     tweetId: string,
   ): Promise<XRePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.unRepost(
-      userId,
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.InteractionCreate,
+      ),
+    })
+    const response = await this.twitterApiService.repostPost(
+      account.uid!,
       credential.access_token,
       tweetId,
     )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'repostPost',
+      endpoint: 'POST /2/users/:id/retweets',
+      chargeType: TwitterWriteChargeType.InteractionCreate,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
+  }
+
+  async undoRepostPost(
+    userId: string,
+    accountId: string,
+    tweetId: string,
+  ): Promise<XRePostResponse | null> {
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.InteractionDelete,
+      ),
+    })
+    const response = await this.twitterApiService.undoRepostPost(
+      account.uid!,
+      credential.access_token,
+      tweetId,
+    )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'undoRepostPost',
+      endpoint: 'DELETE /2/users/:id/retweets/:tweetId',
+      chargeType: TwitterWriteChargeType.InteractionDelete,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
   }
 
   async likePost(
     userId: string,
+    accountId: string,
     tweetId: string,
   ): Promise<XLikePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.likePost(
-      userId,
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.InteractionCreate,
+      ),
+    })
+    const response = await this.twitterApiService.likePost(
+      account.uid,
       credential.access_token,
       tweetId,
     )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'likePost',
+      endpoint: 'POST /2/users/:id/likes',
+      chargeType: TwitterWriteChargeType.InteractionCreate,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
   }
 
   async unlikePost(
     userId: string,
+    accountId: string,
     tweetId: string,
   ): Promise<XLikePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    return await this.twitterApiService.unlikePost(
-      userId,
+    const { account, credential } = await this.getAuthorizedTwitterAccount(userId, accountId)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(
+        TwitterWriteChargeType.InteractionDelete,
+      ),
+    })
+    const response = await this.twitterApiService.unlikePost(
+      account.uid,
       credential.access_token,
       tweetId,
     )
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'unlikePost',
+      endpoint: 'DELETE /2/users/:id/likes/:tweetId',
+      chargeType: TwitterWriteChargeType.InteractionDelete,
+      metadata: {
+        tweetId,
+      },
+    })
+    return response
   }
 
-  public async replyPost(userId: string, tweetId: string, text: string):
+  public async replyPost(userId: string, accountId: string, tweetId: string, text: string):
   Promise<XCreatePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
+    await this.getTwitterAccount(userId, accountId)
+    const chargeType = this.getCreatePostChargeType(text)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(chargeType),
+    })
+    const credential = await this.authorize(accountId)
     const post: XCreatePostRequest = {
       text,
       reply: {
-        in_reply_to_tweet_id: tweetId,
+        inReplyToTweetId: tweetId,
       },
     }
-    return await this.twitterApiService.createPost(credential.access_token, post)
+    const response = await this.twitterApiService.createPost(credential.access_token, post)
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'replyPost',
+      endpoint: 'POST /2/tweets',
+      chargeType,
+      metadata: {
+        postId: response.data?.id,
+        replyToTweetId: tweetId,
+      },
+    })
+    return response
   }
 
-  public async quotePost(userId: string, tweetId: string, text: string):
+  public async quotePost(userId: string, accountId: string, tweetId: string, text: string):
   Promise<XCreatePostResponse | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
+    await this.getTwitterAccount(userId, accountId)
+    const chargeType = this.getCreatePostChargeType(text)
+    await this.twitterBillingService.ensureSufficientBalance({
+      accountId,
+      amount: this.twitterBillingService.getWriteChargeAmount(chargeType),
+    })
+    const credential = await this.authorize(accountId)
     const post: XCreatePostRequest = {
       text,
-      quote_tweet_id: tweetId,
+      quoteTweetId: tweetId,
     }
-    return await this.twitterApiService.createPost(credential.access_token, post)
+    const response = await this.twitterApiService.createPost(credential.access_token, post)
+    await this.twitterBillingService.chargeWriteOperation({
+      accountId,
+      operation: 'quotePost',
+      endpoint: 'POST /2/tweets',
+      chargeType,
+      metadata: {
+        postId: response.data?.id,
+        quoteTweetId: tweetId,
+      },
+    })
+    return response
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
-    await this.ensureLocalAccount(accountId)
-    const credential = await this.getOAuth2Credential(accountId)
-    if (!credential) {
-      this.logger.warn(`No access token found for twitter accountId: ${accountId}`)
+    await this.getLocalAccountById(accountId)
+    try {
+      await this.authorize(accountId)
+      this.updateAccountStatus(accountId, 1)
+      return 1
+    }
+    catch (error) {
+      if (!(error instanceof PlatformAuthExpiredException)) {
+        throw error
+      }
+      this.logger.warn(`Twitter authorization is expired for accountId: ${accountId}, ${getErrorMessage(error)}`)
       this.updateAccountStatus(accountId, 0)
       return 0
     }
-    this.updateAccountStatus(accountId, 1)
-    return 1
-  }
-
-  async deleteTweet(userId: string, tweetId: string): Promise<{ success: boolean } | null> {
-    const credential = await this.authorize(userId)
-    if (!credential) {
-      this.logger.warn(`No access token found for userId: ${userId}`)
-      return null
-    }
-    const resp = await this.twitterApiService.deleteTweet(credential.access_token, tweetId)
-    return { success: resp.data.deleted }
   }
 
   /**
-   * 获取作品信息
+   * Get work link metadata.
    * @param accountType
    * @param workLink
    * @param dataId
    * @returns
    */
-  async getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string): Promise<{
+  override async getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string, _accountId?: string): Promise<{
     dataId: string
     uniqueId: string
     type: PublishType
     videoType?: 'short' | 'long'
+    resolvedUrl?: string
   }> {
-    const tweetId = this.parseTwitterUrl(workLink)
+    const resolvedUrl = await this.normalizeTwitterWorkLink(workLink)
+    const tweetId = this.parseTwitterUrl(resolvedUrl)
     const resolvedDataId = tweetId || dataId || ''
     if (!resolvedDataId) {
       throw new AppException(ResponseCode.InvalidWorkLink)
@@ -768,23 +1957,108 @@ export class TwitterService extends PlatformBaseService {
       uniqueId: `${accountType}_${resolvedDataId}`,
       type: PublishType.VIDEO,
       videoType: 'short',
+      resolvedUrl,
     }
   }
 
+  override async validateOwnedWorkLink(
+    accountType: AccountType,
+    accountId: string,
+    workLink: string,
+  ): Promise<ValidatedWorkInfo> {
+    const resolvedUrl = await this.normalizeTwitterWorkLink(workLink)
+    const tweetId = this.parseTwitterUrl(resolvedUrl)
+    if (!tweetId) {
+      throw new AppException(ResponseCode.InvalidWorkLink)
+    }
+
+    const account = await this.getLocalAccountById(accountId)
+    const detail = await this.getTweetDetail(accountId, tweetId)
+    if (!detail?.data?.authorId) {
+      throw new AppException(ResponseCode.WorkDetailNotFound)
+    }
+    if (!account?.uid || detail.data.authorId !== account.uid) {
+      throw new AppException(ResponseCode.WorkNotBelongToAccount)
+    }
+
+    const workDetail = this.toWorkDetailInfo(tweetId, detail)
+    return {
+      dataId: tweetId,
+      uniqueId: `${accountType}_${tweetId}`,
+      type: workDetail.type,
+      videoType: workDetail.videoType,
+      resolvedUrl,
+      workDetail,
+    }
+  }
+
+  override async getWorkDetail(accountId: string, dataId: string): Promise<WorkDetailInfo | null> {
+    const detail = await this.getTweetDetail(accountId, dataId)
+    if (!detail?.data) {
+      return null
+    }
+
+    return this.toWorkDetailInfo(dataId, detail)
+  }
+
+  override async verifyWorkOwnership(accountId: string, dataId: string): Promise<boolean> {
+    const account = await this.getLocalAccountById(accountId)
+    try {
+      const detail = await this.getTweetDetail(accountId, dataId)
+      if (!detail) {
+        throw new AppException(ResponseCode.ChannelAccessTokenFailed)
+      }
+      if (!detail.data?.authorId) {
+        throw new AppException(ResponseCode.WorkDetailNotFound)
+      }
+      if (!account?.uid || detail.data.authorId !== account.uid) {
+        throw new AppException(ResponseCode.WorkNotBelongToAccount)
+      }
+      return true
+    }
+    catch (error) {
+      if (error instanceof TwitterError && error.cause.httpStatus === 404) {
+        throw new AppException(ResponseCode.WorkDetailNotFound)
+      }
+      throw error
+    }
+  }
+
+  private async normalizeTwitterWorkLink(workLink: string): Promise<string> {
+    let url: URL
+    try {
+      url = new URL(workLink)
+    }
+    catch {
+      return workLink
+    }
+
+    const hostname = url.hostname.replace('www.', '').replace('mobile.', '')
+    if (hostname === 't.co') {
+      return await this.resolveRedirectUrl(workLink, { throwOnFailure: true })
+    }
+    return workLink
+  }
+
   /**
-   * 解析 Twitter/X URL，提取推文 ID
-   * 支持的 URL 格式：
+   * Parse a Twitter/X URL and extract the tweet ID.
+   * Supported URL formats:
    * - https://twitter.com/username/status/TWEET_ID
    * - https://x.com/username/status/TWEET_ID
    * - https://mobile.twitter.com/username/status/TWEET_ID
    * - https://t.co/SHORT_CODE
-   * @param workLink Twitter 链接
-   * @returns tweetId 或 null
+   * @param workLink Twitter work link
+   * @returns tweetId or null
    */
   private parseTwitterUrl(workLink: string): string | null {
+    const trimmedWorkLink = workLink.trim()
+    if (/^\d+$/.test(trimmedWorkLink)) {
+      return trimmedWorkLink
+    }
+
     let url: URL
     try {
-      url = new URL(workLink)
+      url = new URL(trimmedWorkLink)
     }
     catch {
       return null
@@ -798,12 +2072,25 @@ export class TwitterService extends PlatformBaseService {
       if (statusMatch) {
         return statusMatch[1]
       }
-    }
-    else if (hostname === 't.co') {
-      // 短链接，返回短码作为 ID
-      return url.pathname.slice(1).split(/[?&#/]/)[0] || null
+
+      const webStatusMatch = url.pathname.match(/\/i\/web\/status\/(\d+)/)
+      if (webStatusMatch) {
+        return webStatusMatch[1]
+      }
     }
 
     return null
+  }
+
+  private toWorkDetailInfo(dataId: string, detail: XGetPostDetailResponse): WorkDetailInfo {
+    return {
+      dataId,
+      desc: detail.data?.text,
+      videoUrl: `https://x.com/i/web/status/${dataId}`,
+      publishTime: detail.data?.createdAt ? new Date(detail.data.createdAt) : undefined,
+      type: PublishType.VIDEO,
+      videoType: 'short',
+      rawData: detail.data as unknown as Record<string, unknown>,
+    }
   }
 }

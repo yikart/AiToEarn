@@ -7,13 +7,14 @@
 import { useSelectedLayoutSegments } from 'next/navigation'
 
 /** 需要隐藏导航的路由 */
-const HIDDEN_NAV_ROUTES = ['auth', 'websit', '(welcome)', 'promo']
+const HIDDEN_NAV_ROUTES = ['auth', 'websit']
+
+/** 需要隐藏移动端底部导航的路由 */
+const HIDDEN_BOTTOM_NAV_ROUTES: string[] = []
 
 /**
  * 导航逻辑 Hook
- * @returns currRouter - 当前路由路径
- * @returns isAuthPage - 是否为需要隐藏导航的页面（auth、websit、welcome 等）
- * @returns route - 原始路由段数组
+ * 返回当前路由、导航隐藏状态与原始路由段。
  */
 export function useNavigationLogic() {
   const route = useSelectedLayoutSegments()
@@ -29,7 +30,9 @@ export function useNavigationLogic() {
   }
 
   // 判断是否为需要隐藏导航的页面
-  const isAuthPage = HIDDEN_NAV_ROUTES.includes(route[0])
+  const rootRoute = route[0]
+  const isAuthPage = HIDDEN_NAV_ROUTES.includes(rootRoute)
+  const isBottomNavHidden = isAuthPage || HIDDEN_BOTTOM_NAV_ROUTES.includes(rootRoute)
 
-  return { currRouter, isAuthPage, route }
+  return { currRouter, isAuthPage, isBottomNavHidden, route }
 }

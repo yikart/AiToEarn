@@ -10,7 +10,6 @@ import { ChannelManager } from '@/components/ChannelManager'
 import { StructuredData } from '@/components/SEO/StructuredData'
 import { getHreflang } from '@/lib/i18n/languageConfig'
 import { Providers } from '../layout/Providers'
-import '@/app/var.css'
 import '../globals.css'
 
 export async function generateMetadata({ params }: { params: Promise<{ lng: string }> }) {
@@ -39,7 +38,7 @@ export async function generateMetadata({ params }: { params: Promise<{ lng: stri
   return {
     title: t('title'),
     description: t('content'),
-    keywords: 'aitoearn, AiToEarn, ai, earn, aitoearn.com',
+    keywords: `aitoearn, AiToEarn, ai, earn, ${new URL(baseUrl).hostname}`,
     alternates: {
       languages: Object.fromEntries(alternateRefs.map(({ href, hreflang }) => [hreflang, href])),
     },
@@ -67,6 +66,10 @@ export default async function RootLayout({
         <meta
           name="google-site-verification"
           content="tc0EuxFIXvEW3lgie3jjqopDfYHc-Cw5MyZ93F91Wrg"
+        />
+        <meta
+          name="google-site-verification"
+          content="sPyHcKp5GBej4O1pTNzZsGRGRxBLZq1_3ZV-UrgTX6U"
         />
         {/* SEO: 全局结构化数据 */}
         <StructuredData

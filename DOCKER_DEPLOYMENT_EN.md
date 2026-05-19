@@ -88,7 +88,7 @@ Visit: **[http://localhost:8080](http://localhost:8080)**
 ```yaml
 RELAY_SERVER_URL: https://aitoearn.ai/api
 RELAY_API_KEY: your-api-key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+RELAY_CALLBACK_URL: http://localhost:8080/api/plat/relay-callback
 ```
 
 3. Restart the service:
@@ -199,7 +199,7 @@ Update all three locations:
 `ASSETS_CONFIG` format (JSON), needed in both services:
 
 ```yaml
-ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 ```
 
 AWS S3 example:
@@ -271,7 +271,7 @@ All variables are in the `environment` section of each service in `docker-compos
 |----------|---------|-------------|
 | `RELAY_SERVER_URL` | aitoearn-server | Relay server URL (`https://aitoearn.ai/api`) |
 | `RELAY_API_KEY` | aitoearn-server | Your API Key |
-| `RELAY_CALLBACK_URL` | aitoearn-server | OAuth callback (`http://127.0.0.1:8080/api/plat/relay-callback`) |
+| `RELAY_CALLBACK_URL` | aitoearn-server | OAuth callback (`http://localhost:8080/api/plat/relay-callback`) |
 
 ### AI Services & Model Configuration
 

@@ -2,6 +2,7 @@ import type { ProcessorOptions } from '@nestjs/bullmq'
 import type { NestWorkerOptions } from '@nestjs/bullmq/dist/interfaces/worker-options.interface'
 import type { Job } from 'bullmq'
 
+import { inspect } from 'node:util'
 import { Processor } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
 import { PinoLogger } from 'nestjs-pino'
@@ -37,11 +38,42 @@ function wrapProcess(proto: Record<string, unknown>, name: string): void {
     const bindings = { jobId: job.id, queue: job.queueName, jobName: job.name }
     const store = ensureStore(bindings)
 
-    const run = (): Promise<unknown> => {
+    const run = async (): Promise<unknown> => {
       const attemptsMade = job.attemptsMade
+      const attempt = attemptsMade + 1
       const maxAttempts = job.opts.attempts ?? 1
-      logger.log({ data: job.data, attempt: `${attemptsMade + 1}/${maxAttempts}` }, 'Job started')
-      return originalProcess.call(this, job, token)
+      const startedAt = Date.now()
+
+      try {
+        logger.log({
+          data: job.data,
+          attempt,
+          maxAttempts,
+        }, 'Job started')
+
+        const result = await originalProcess.call(this, job, token)
+
+        logger.log({
+          attempt,
+          maxAttempts,
+          durationMs: Date.now() - startedAt,
+        }, 'Job completed')
+
+        return result
+      }
+      catch (error) {
+        const durationMs = Date.now() - startedAt
+        const details = `data=${inspect(job.data, { depth: 5, breakLength: Infinity })} attempt=${attempt} maxAttempts=${maxAttempts} durationMs=${durationMs} isLastAttempt=${attempt >= maxAttempts}`
+
+        if (attempt >= maxAttempts) {
+          logger.fatal(error, `Job failed, no more retries ${details}`)
+        }
+        else {
+          logger.error(error, `Job failed, will retry ${details}`)
+        }
+
+        throw error
+      }
     }
 
     if (storage.getStore() === store) {

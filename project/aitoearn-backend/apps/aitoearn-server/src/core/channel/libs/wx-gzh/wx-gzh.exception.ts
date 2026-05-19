@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface WxGZHRawError {
   errcode?: number
@@ -8,47 +9,22 @@ export interface WxGZHRawError {
 /**
  * WxGZH error class.
  */
-export class WxGZHError extends SocialMediaError<WxGZHRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: WxGZHRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class WxGZHError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'wxgzh'
   }
 
-  protected static override extractRawError(data: unknown): WxGZHRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as WxGZHRawError
-    return errResponse
-  }
 
-  protected static override buildMessage(
-    rawError: WxGZHRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.errmsg || 'Unknown error'}, error code: ${rawError.errcode || 'N/A'}`
+    return {
+      platformCode: errResponse.errcode,
+      platformMessage: errResponse.errmsg,
+    }
   }
 }

@@ -2,6 +2,7 @@ import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-a
 import { Injectable, Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../../ai-availability'
 import { AideoService } from '../../../ai/aideo'
 import { AideoTaskStatus } from '../../../ai/libs/volcengine'
 import { McpServerName } from '../../agent.constants'
@@ -27,6 +28,7 @@ export class AideoMcp {
 
   constructor(
     private readonly aideoService: AideoService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) { }
 
   createSubmitAideoTaskTool(userId: string, userType: UserType) {
@@ -60,6 +62,7 @@ Note: For video style transfer (comic/anime), use submitVideoStyleTransfer inste
         })
         return successResult(`Aideo task submitted successfully, taskId: ${result.taskId}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -87,26 +90,31 @@ Note: For video style transfer (comic/anime), use submitVideoStyleTransfer inste
 
           if (result.apiResponses && result.apiResponses.length > 0) {
             const apiResponse = result.apiResponses[0]
+            const aiTranslation = apiResponse['AITranslation']
+            const erase = apiResponse['Erase']
+            const highlight = apiResponse['Highlight']
+            const vCreative = apiResponse['VCreative']
+            const vision = apiResponse['Vision']
 
-            if ('AITranslation' in apiResponse && apiResponse.AITranslation?.ProjectInfo?.OutputVideo?.Url) {
-              outputInfo += `\nOutput Video URL: ${apiResponse.AITranslation.ProjectInfo.OutputVideo.Url}`
-              if (apiResponse.AITranslation.ProjectInfo.OutputVideo.Vid) {
-                outputInfo += `\nOutput VID: ${apiResponse.AITranslation.ProjectInfo.OutputVideo.Vid}`
+            if (aiTranslation?.ProjectInfo?.OutputVideo?.Url) {
+              outputInfo += `\nOutput Video URL: ${aiTranslation.ProjectInfo.OutputVideo.Url}`
+              if (aiTranslation.ProjectInfo.OutputVideo.Vid) {
+                outputInfo += `\nOutput VID: ${aiTranslation.ProjectInfo.OutputVideo.Vid}`
               }
             }
-            else if ('Erase' in apiResponse && apiResponse.Erase?.Output?.Task?.Erase?.File?.url) {
-              outputInfo += `\nOutput Video URL: ${apiResponse.Erase.Output.Task.Erase.File.url}`
+            else if (erase?.Output?.Task?.Erase?.File?.url) {
+              outputInfo += `\nOutput Video URL: ${erase.Output.Task.Erase.File.url}`
             }
-            else if ('Highlight' in apiResponse && apiResponse.Highlight?.Edits && apiResponse.Highlight.Edits.length > 0) {
+            else if (highlight?.Edits && highlight.Edits.length > 0) {
               outputInfo += `\n\nHighlight Clips:`
-              apiResponse.Highlight.Edits.forEach((edit, index) => {
+              highlight.Edits.forEach((edit: { url?: string }, index: number) => {
                 if (edit.url) {
                   outputInfo += `\n  Clip ${index + 1}: ${edit.url}`
                 }
               })
             }
-            else if ('VCreative' in apiResponse && apiResponse.VCreative?.OutputJson) {
-              const outputJson = apiResponse.VCreative.OutputJson
+            else if (vCreative?.OutputJson) {
+              const outputJson = vCreative.OutputJson
               if (typeof outputJson !== 'string') {
                 const url = outputJson.Result?.url || outputJson.url
                 if (url) {
@@ -114,8 +122,8 @@ Note: For video style transfer (comic/anime), use submitVideoStyleTransfer inste
                 }
               }
             }
-            else if ('Vision' in apiResponse && apiResponse.Vision) {
-              outputInfo += `\n\nVision Analysis Results:\n${apiResponse.Vision.Content}`
+            else if (vision) {
+              outputInfo += `\n\nVision Analysis Results:\n${vision.Content}`
             }
           }
 
@@ -124,6 +132,7 @@ Note: For video style transfer (comic/anime), use submitVideoStyleTransfer inste
 
         return successResult(`Task status: ${result.status}. Please continue polling.`)
       },
+      this.aiAvailability,
     )
   }
 

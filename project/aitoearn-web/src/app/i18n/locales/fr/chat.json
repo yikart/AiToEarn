@@ -3,7 +3,12 @@
     "placeholder": "Créez une vidéo promotionnelle verticale de 8 secondes pour notre nouveau plateau de sushi. Utilisez de la musique jazz entraînante, des gros plans de saumon frais, générez des sous-titres et terminez avec notre logo.",
     "send": "Envoyer",
     "stop": "Arrêter",
-    "uploading": "Téléchargement..."
+    "uploading": "Téléchargement...",
+    "clearSelection": "Clear Selection",
+    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
+    "noPromotionPlan": "No promotion plans",
+    "selectPromotionPlan": "Select Promotion Plan",
+    "upload": "Upload"
   },
   "message": {
     "thinking": "Réflexion en cours...",
@@ -31,7 +36,14 @@
       "failed": "Échoué"
     },
     "rate": "Évaluer",
-    "share": "Partages"
+    "share": "Partages",
+    "editTitle": "Edit Title",
+    "favorite": "Favorite",
+    "moreActions": "More",
+    "titleLabel": "Task Title",
+    "titlePlaceholder": "Enter task title",
+    "titleUpdated": "Title updated",
+    "unfavorite": "Unfavorite"
   },
   "home": {
     "title": "Comment puis-je vous aider ?",
@@ -141,7 +153,9 @@
     "image": "Image",
     "document": "Document",
     "uploadFailed": "Échec du téléchargement, veuillez réessayer",
-    "uploadCancelled": "Téléchargement annulé"
+    "uploadCancelled": "Téléchargement annulé",
+    "edit": "Modifier",
+    "remove": "Retirer"
   },
   "workflow": {
     "toolCallCompleted": "Appels d'outils terminés",
@@ -169,7 +183,9 @@
     "rechargeCredits": "Recharger les crédits",
     "action": "Action",
     "actionDesc": "Veuillez compléter l'action suivante",
-    "continue": "Continuer"
+    "continue": "Continuer",
+    "error": "Échec",
+    "errorDesc": "La génération a échoué. Veuillez réessayer plus tard."
   },
   "publishDetail": {
     "title": "Détails de la publication",
@@ -200,6 +216,19 @@
       "upload": "Envoi en cours...",
       "publish": "Publication en cours...",
       "complete": "Publié"
-    }
+    },
+    "goLogin": "Go Login",
+    "installPlugin": "Click to install plugin",
+    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
+    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
+    "retry": "Retry"
+  },
+  "toolDetail": {
+    "input": "Input Parameters",
+    "noResult": "No result yet",
+    "output": "Execution Result"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "Cette plateforme nécessite l’extension de navigateur. Veuillez d’abord l’autoriser."
   }
 }

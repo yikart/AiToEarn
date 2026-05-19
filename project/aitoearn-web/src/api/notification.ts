@@ -2,26 +2,21 @@ import http from '@/utils/request'
 
 // 通知类型枚举（与后端保持一致）
 export enum NotificationType {
-  TaskReminder = 'task_reminder',
-  UserWithdraw = 'user_withdraw',
-  TaskPunish = 'task_punish',
-  TaskDemandAdd = 'task_demand_add',
-  TaskDemandBalanceNotEnough = 'task_demand_balance_not_enough',
   AgentResult = 'agent_result',
   AppRelease = 'app_release',
-  TaskSettled = 'task_settled',
-  TaskReviewRejected = 'task_review_rejected',
-  TaskReviewApproved = 'task_review_approved',
   AiReviewSkipped = 'ai_review_skipped',
-  TaskSubmitted = 'task_submitted',
   InteractionAiReviewFailed = 'interaction_ai_review_failed',
+  DiscountCodeAssigned = 'discount_code_assigned',
+  TrustScoreDeducted = 'trust_score_deducted',
+  AgentResultRequiresAction = 'agent_result_requires_action',
+  AgentForwarded = 'agent_forwarded',
 }
 
 export interface NotificationItem {
   id: string
   title: string
   content: string
-  type: 'system' | 'user' | 'material' | 'other' | 'task_reminder' | 'app_release' | 'user_withdraw' | 'task_punish' | 'agent_result' | 'task_settled' | 'task_review_rejected' | 'task_review_approved' | 'ai_review_skipped' | 'task_submitted' | 'interaction_ai_review_failed'
+  type: NotificationType | 'system' | 'user' | 'material' | 'other'
   status: 'read' | 'unread'
   readAt?: string
   createdAt: string

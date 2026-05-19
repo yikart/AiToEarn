@@ -1,3 +1,4 @@
+import type { AiAvailabilityService } from '../../ai-availability'
 import { Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { vi } from 'vitest'
@@ -114,6 +115,7 @@ describe('mcp.utils', () => {
 
   describe('wrapTool', () => {
     let mockLogger: Logger
+    let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
 
     beforeEach(() => {
       mockLogger = {
@@ -122,9 +124,13 @@ describe('mcp.utils', () => {
         error: vi.fn(),
         fatal: vi.fn(),
       } as unknown as Logger
+
+      mockAiAvailability = {
+        execute: vi.fn().mockImplementation((_ctx, fn) => fn()),
+      }
     })
 
-    it('should wrap tool and record NORMAL status on success', async () => {
+    it('should wrap tool and have correct name/description', async () => {
       const handler = vi.fn().mockResolvedValue(successResult('success'))
       const schema = { param: z.string() }
 
@@ -134,16 +140,37 @@ describe('mcp.utils', () => {
         'Test description',
         schema,
         handler,
+        mockAiAvailability as unknown as AiAvailabilityService,
       )
 
-      // The wrapTool returns a tool definition, we need to call its execute function
-      // Since tool() from claude-agent-sdk returns a specific structure, we test the handler behavior
       expect(wrappedTool).toBeDefined()
       expect(wrappedTool.name).toBe('testTool')
       expect(wrappedTool.description).toBe('Test description')
     })
 
-    it('should record UNAVAILABLE status when handler returns error', async () => {
+    it('should delegate to aiAvailability.execute on handler call', async () => {
+      const handler = vi.fn().mockResolvedValue(successResult('success'))
+      const schema = { param: z.string() }
+
+      const wrappedTool = wrapTool(
+        mockLogger,
+        'testTool',
+        'Test description',
+        schema,
+        handler,
+        mockAiAvailability as unknown as AiAvailabilityService,
+      )
+
+      const result = await wrappedTool.handler({ param: 'test' }, {})
+
+      expect(result.isError).toBeUndefined()
+      expect(mockAiAvailability.execute).toHaveBeenCalledWith(
+        expect.objectContaining({ provider: 'mcp', operation: 'testTool' }),
+        expect.any(Function),
+      )
+    })
+
+    it('should return errorResult for handler returning error', async () => {
       const handler = vi.fn().mockResolvedValue(errorResult('failed'))
       const schema = { param: z.string() }
 
@@ -153,16 +180,18 @@ describe('mcp.utils', () => {
         'Test description',
         schema,
         handler,
+        mockAiAvailability as unknown as AiAvailabilityService,
       )
 
-      // Execute the tool's handler
       const result = await wrappedTool.handler({ param: 'test' }, {})
 
       expect(result.isError).toBe(true)
     })
 
-    it('should record NORMAL status when handler succeeds', async () => {
-      const handler = vi.fn().mockResolvedValue(successResult('success'))
+    it('should catch non-AppException errors and return errorResult with fatal log', async () => {
+      const testError = new Error('Test error')
+      const handler = vi.fn().mockRejectedValue(testError)
+      mockAiAvailability.execute.mockRejectedValue(testError)
       const schema = { param: z.string() }
 
       const wrappedTool = wrapTool(
@@ -171,23 +200,7 @@ describe('mcp.utils', () => {
         'Test description',
         schema,
         handler,
-      )
-
-      const result = await wrappedTool.handler({ param: 'test' }, {})
-
-      expect(result.isError).toBeUndefined()
-    })
-
-    it('should catch exceptions and return error result', async () => {
-      const handler = vi.fn().mockRejectedValue(new Error('Test error'))
-      const schema = { param: z.string() }
-
-      const wrappedTool = wrapTool(
-        mockLogger,
-        'testTool',
-        'Test description',
-        schema,
-        handler,
+        mockAiAvailability as unknown as AiAvailabilityService,
       )
 
       const result = await wrappedTool.handler({ param: 'test' }, {})
@@ -197,9 +210,9 @@ describe('mcp.utils', () => {
       expect(mockLogger.fatal).toHaveBeenCalled()
     })
 
-    it('should not record uptime status and not log fatal for AppException', async () => {
+    it('should catch AppException and return errorResult without fatal log', async () => {
       const handler = vi.fn().mockRejectedValue(
-        new AppException(ResponseCode.UserCreditsInsufficient),
+        new AppException(ResponseCode.AgentTaskFailed),
       )
       const schema = { param: z.string() }
 
@@ -209,6 +222,7 @@ describe('mcp.utils', () => {
         'Test description',
         schema,
         handler,
+        mockAiAvailability as unknown as AiAvailabilityService,
       )
 
       const result = await wrappedTool.handler({ param: 'test' }, {})
@@ -216,24 +230,6 @@ describe('mcp.utils', () => {
       expect(result.isError).toBe(true)
       expect(mockLogger.fatal).not.toHaveBeenCalled()
       expect(mockLogger.warn).toHaveBeenCalled()
-    })
-
-    it('should handle uptime helper errors gracefully', async () => {
-      const handler = vi.fn().mockResolvedValue(successResult('success'))
-      const schema = { param: z.string() }
-
-      const wrappedTool = wrapTool(
-        mockLogger,
-        'testTool',
-        'Test description',
-        schema,
-        handler,
-      )
-
-      // Should not throw, should handle gracefully
-      const result = await wrappedTool.handler({ param: 'test' }, {})
-
-      expect(result.isError).toBeUndefined()
     })
   })
 

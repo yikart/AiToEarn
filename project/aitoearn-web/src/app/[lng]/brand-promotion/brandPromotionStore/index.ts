@@ -16,6 +16,7 @@ import {
   apiGetMaterialGroupList,
   apiUpdateMaterialGroupInfo,
 } from '@/api/material'
+import { PubType } from '@/app/config/publishConfig'
 import { usePlanTabStore } from '../planTabStore'
 
 // 初始状态
@@ -33,8 +34,6 @@ const initialState: IBrandPromotionStoreState = {
   // 弹窗状态
   createPlanModalOpen: false,
   editingPlan: null,
-  qrCodeDialogOpen: false,
-  qrCodePlan: null,
 
   // 加载状态
   isSubmitting: false,
@@ -93,7 +92,16 @@ export const useBrandPromotionStore = create(
           // 通知 planTabStore 同步
           const resData = res?.data as Record<string, unknown> | undefined
           const newPlanId = resData?.id as string | undefined
-          usePlanTabStore.getState().onPlanCreated(newPlanId)
+          await usePlanTabStore.getState().onPlanCreated(
+            newPlanId,
+            newPlanId
+              ? {
+                  id: newPlanId,
+                  name: data.name,
+                  type: PubType.VIDEO,
+                }
+              : undefined,
+          )
           return true
         }
         catch {
@@ -165,14 +173,6 @@ export const useBrandPromotionStore = create(
 
       closePlanModal: () => {
         set({ createPlanModalOpen: false, editingPlan: null })
-      },
-
-      openQRCodeDialog: (plan: PromotionPlan) => {
-        set({ qrCodeDialogOpen: true, qrCodePlan: plan })
-      },
-
-      closeQRCodeDialog: () => {
-        set({ qrCodeDialogOpen: false, qrCodePlan: null })
       },
 
       // ==================== 重置 ====================

@@ -47,5 +47,9 @@
   "viewOnly": "仅供查看",
   "linkExpiredDesc": "此分享链接已过期，请联系分享者获取新链接。",
   "linkNotFoundDesc": "此分享链接不存在或已被删除。",
-  "backToHome": "返回首页"
+  "backToHome": "返回首页",
+  "publishShareFailed": "准备发布失败",
+  "noImagesToShare": "没有可分享的图片",
+  "uploadFailed": "上传失败",
+  "noPreview": "暂无预览"
 }

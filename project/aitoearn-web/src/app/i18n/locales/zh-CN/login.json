@@ -5,13 +5,13 @@
     "loginDescription": "登录 AiToEarn 账户，开始您的 AI 创作之旅。支持手机验证码登录和邮箱验证码登录。"
   },
   "welcomeBack": "登录",
-  "loginSubtitle": "和 AiToEarn 一起开始创作",
+  "loginSubtitle": "用AI，赚点钱",
   "emailPlaceholder": "请输入邮箱地址",
   "login": "登录",
   "or": "或者",
   "emailRequired": "请输入邮箱",
   "emailInvalid": "请输入有效的邮箱地址",
-  "emailCodeRequired": "请输入邮箱验证码",
+  "emailCodeRequired": "请输入验证码",
   "emailCodeLength": "验证码长度为6位",
   "enterCode": "请输入6位验证码",
   "sendCode": "发送验证码",
@@ -26,9 +26,12 @@
   "loginFailed": "登录失败",
   "loginError": "登录失败，请稍后重试",
   "googleLoginFailed": "Google 登录失败",
+  "switchToEmailLogin": "邮箱验证码登录",
+  "switchToPhoneLogin": "手机号验证码登录",
   "termsText": "继续即表示您同意我们的",
   "termsOfService": "服务条款",
   "and": "和",
   "privacyPolicy": "隐私政策",
-  "newUserPromotion": "新用户登录就送14天会员，免费用！"
+  "newUserPromotion": "新用户登录就送14天会员，免费用！",
+  "manualLoginDisabledNotice": "当前环境无需手动登录。若仍无法访问，请检查配置。"
 }

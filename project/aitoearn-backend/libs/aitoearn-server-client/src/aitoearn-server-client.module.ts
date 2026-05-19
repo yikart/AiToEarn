@@ -1,7 +1,7 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { AitoearnServerClientConfig } from './aitoearn-server-client.config'
 import { AitoearnServerClientService } from './aitoearn-server-client.service'
-import { AccountService, BrandLibService, ContentService, NotificationService, PlatformService, PublishingService, PublishRecordService, ShortLinkService, TaskService, UserService } from './clients'
+import { AccountService, ContentService, NotificationService, PlatformService, PublishingService, PublishRecordService, ShortLinkService, UserService } from './clients'
 
 @Module({})
 export class AitoearnServerClientModule {
@@ -17,12 +17,10 @@ export class AitoearnServerClientModule {
           useValue: options,
         },
         AccountService,
-        BrandLibService,
         ContentService,
         NotificationService,
         PlatformService,
         PublishingService,
-        TaskService,
         UserService,
         PublishRecordService,
         ShortLinkService,

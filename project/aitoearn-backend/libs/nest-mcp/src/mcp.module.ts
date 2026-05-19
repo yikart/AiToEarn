@@ -7,6 +7,7 @@ import type {
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common'
 import { DiscoveryModule } from '@nestjs/core'
 import { McpTransportType } from './interfaces'
+import { MCP_TOOL_MONITOR, McpToolMonitor } from './interfaces/mcp-tool-monitor.interface'
 import { McpExecutorService } from './services/mcp-executor.service'
 import { McpRegistryService } from './services/mcp-registry.service'
 import { McpSseService } from './services/mcp-sse.service'
@@ -15,6 +16,14 @@ import { SsePingService } from './services/sse-ping.service'
 import { createSseController } from './transport/sse.controller.factory'
 import { createStreamableHttpController } from './transport/streamable-http.controller.factory'
 import { normalizeEndpoint } from './utils/normalize-endpoint'
+
+const DEFAULT_TOOL_MONITOR_PROVIDER: Provider = {
+  provide: MCP_TOOL_MONITOR,
+  useValue: {
+    async onToolSuccess(_toolName: string) {},
+    async onToolError(_toolName: string, _error: unknown) {},
+  } satisfies McpToolMonitor,
+}
 
 let instanceIdCounter = 0
 
@@ -88,6 +97,7 @@ export class McpModule {
         provide: 'MCP_MODULE_ID',
         useValue: moduleId,
       },
+      DEFAULT_TOOL_MONITOR_PROVIDER,
       McpRegistryService,
       McpExecutorService,
       SsePingService,
@@ -239,6 +249,7 @@ export class McpModule {
         provide: 'MCP_MODULE_ID',
         useValue: moduleId,
       },
+      options.toolMonitorProvider ?? DEFAULT_TOOL_MONITOR_PROVIDER,
       McpRegistryService,
       McpExecutorService,
       SsePingService,

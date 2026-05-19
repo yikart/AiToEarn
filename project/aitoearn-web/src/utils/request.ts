@@ -14,12 +14,17 @@ interface ResponseType<T> {
 
 type RequestParamsWithSilent = RequestParams & {
   silent?: boolean // 是否静默处理错误，不显示提示
+  authToken?: string // 临时指定本次请求使用的 token
+  skipAuthLogout?: boolean // 401/用户不存在时不触发全局登出
 }
+
+export type RequestOptions = Pick<RequestParamsWithSilent, 'authToken' | 'skipAuthLogout'>
 
 const fetchService = new FetchService({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
   requestInterceptor(requestParams) {
-    const token = useUserStore.getState().token
+    const { authToken } = requestParams as RequestParamsWithSilent
+    const token = authToken ?? useUserStore.getState().token
     requestParams.headers = {
       ...(requestParams.headers || {}),
       Authorization: token ? `Bearer ${token}` : '',
@@ -41,6 +46,12 @@ const fetchService = new FetchService({
   },
 })
 
+function createApiErrorContent(message: string) {
+  const contactLabel = directTrans('common', 'contact')
+  const contactTip = directTrans('common', 'apiErrorContactTip')
+  return `${message} ${contactTip} ${contactLabel} ${CONTACT}`
+}
+
 export async function request<T>(params: RequestParamsWithSilent) {
   try {
     const res = await fetchService.request(params)
@@ -48,50 +59,36 @@ export async function request<T>(params: RequestParamsWithSilent) {
 
     // 使用项目的静态翻译方法（只使用国际化字段，不再使用硬编码回退）
     const networkBusy = directTrans('common', 'networkBusy')
-    const contactLabel = directTrans('common', 'contact')
-    const contactText = `${contactLabel} ${CONTACT}`
 
     // 未登录拦截
-    if (data.code === 401 && !useUserStore.getState().token) {
-      // 如果是 silent 模式，返回完整响应以便调用方处理
-      if (params.silent) {
-        return data
-      }
-      return null
+    if (data.code === 401 && (!useUserStore.getState().token || params.skipAuthLogout)) {
+      return data
     }
 
     // 已登录、但是登录过期
     if (data.code === 401) {
       useUserStore.getState().logout()
-      // 如果是 silent 模式，返回完整响应以便调用方处理
-      if (params.silent) {
-        return data
-      }
+      return data
     }
 
     // 用户未找到，登出
     if (data.code === 12000) {
-      useUserStore.getState().logout()
-      if (params.silent) {
-        return data
+      if (!params.skipAuthLogout) {
+        useUserStore.getState().logout()
       }
-      return null
+      return data
     }
 
-    // if (data.code !== 0) {
-    //   if (!params.silent && typeof window !== 'undefined') {
-    //     notification.warning({
-    //       content: `${data.message || networkBusy} ${contactText}`,
-    //       key: 'apiErrorMessage',
-    //       duration: 3,
-    //     })
-    //   }
-    //   // 如果是 silent 模式，返回完整响应以便调用方处理
-    //   if (params.silent) {
-    //     return data
-    //   }
-    //   return null
-    // }
+    if (data.code !== 0) {
+      if (!params.silent && typeof window !== 'undefined') {
+        notification.warning({
+          content: createApiErrorContent(data.message || networkBusy),
+          key: 'apiErrorMessage',
+          duration: 3,
+        })
+      }
+      return data
+    }
 
     return data
   }
@@ -102,9 +99,8 @@ export async function request<T>(params: RequestParamsWithSilent) {
       && typeof window !== 'undefined'
     ) {
       const errText = directTrans('common', 'networkError')
-      const contactLabelNow = directTrans('common', 'contact')
       notification.error({
-        content: `${errText} ${contactLabelNow} ${CONTACT}`,
+        content: createApiErrorContent(errText),
         key: 'apiErrorMessage',
         duration: 3,
       })
@@ -114,40 +110,45 @@ export async function request<T>(params: RequestParamsWithSilent) {
 }
 
 export default {
-  get<T>(url: string, data?: any, silent?: boolean) {
+  get<T>(url: string, data?: any, silent?: boolean, options?: RequestOptions) {
     return request<T>({
+      ...options,
       url,
       params: data,
       method: 'GET',
       silent,
     })
   },
-  post<T>(url: string, data?: any, silent?: boolean) {
+  post<T>(url: string, data?: any, silent?: boolean, options?: RequestOptions) {
     return request<T>({
+      ...options,
       url,
       data,
       method: 'POST',
       silent,
     })
   },
-  put<T>(url: string, data?: any, silent?: boolean) {
+  put<T>(url: string, data?: any, silent?: boolean, options?: RequestOptions) {
     return request<T>({
+      ...options,
       url,
       data,
       method: 'PUT',
       silent,
     })
   },
-  delete<T>(url: string, data?: any, silent?: boolean) {
+  delete<T>(url: string, data?: any, silent?: boolean, options?: RequestOptions) {
     return request<T>({
+      ...options,
       url,
       data,
       method: 'DELETE',
       silent,
     })
   },
-  patch<T>(url: string, data?: any, silent?: boolean) {
+  patch<T>(url: string, data?: any, silent?: boolean, options?: RequestOptions) {
     return request<T>({
+      ...options,
       url,
       data,
       method: 'PATCH',

@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { EarnInfoStatus, UserStatus, UserType } from '../enums'
+import { VipStatus, VipTier } from '@yikart/common'
+import { UserStatus } from '../enums'
 import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
 import { WithTimestampSchema } from './timestamp.schema'
 
@@ -66,20 +67,30 @@ export class UserBackData {
   wxUnionid?: string
 }
 
+// User VIP Info
 @Schema({
   toJSON: { virtuals: true },
   toObject: { virtuals: true },
 })
-export class UserEarnInfo {
+export class UserVipInfo {
   @Prop({
     required: true,
-    enum: EarnInfoStatus,
-    default: EarnInfoStatus.OPEN,
+    enum: VipTier,
   })
-  status: EarnInfoStatus
+  tier: VipTier
 
   @Prop({ required: true })
-  cycleInterval: number
+  expireAt: Date
+
+  @Prop({
+    required: true,
+    enum: VipStatus,
+    default: VipStatus.Active,
+  })
+  status: VipStatus
+
+  @Prop({ required: true })
+  startAt: Date
 }
 
 @Schema({ _id: false })
@@ -166,14 +177,6 @@ export class User extends WithTimestampSchema {
   })
   status: UserStatus
 
-  @Prop({
-    required: true,
-    enum: UserType,
-    default: UserType.CREATOR,
-    index: true,
-  })
-  userType: UserType
-
   // Is Deleted
   @Prop({
     required: true,
@@ -188,29 +191,20 @@ export class User extends WithTimestampSchema {
   @Prop({ required: false })
   wxUnionid?: string
 
-  @Prop({ required: false })
-  popularizeCode?: string // My Promotion Code
+  @Prop({ required: false, index: true })
+  douyinUnionid?: string // 抖音UnionID
 
-  @Prop({ required: false })
-  inviteUserId?: string // Inviter User ID
-
-  @Prop({ required: false })
-  inviteCode?: string // Invite Code Entered
+  @Prop({ required: false, index: true })
+  douyinMiniAppOpenid?: string // 抖音小程序OpenID
 
   @Prop({ type: Object, required: false, default: {} })
   backData?: UserBackData
 
-  @Prop({ type: Object, required: false, default: {} })
-  earnInfo?: UserEarnInfo
-
   @Prop({ type: Object, required: false })
   googleAccount?: Record<string, unknown> // Google Account Info
 
-  @Prop({
-    required: true,
-    default: 0,
-  })
-  score: number // Score
+  @Prop({ type: UserVipInfo, required: false })
+  vipInfo?: UserVipInfo
 
   @Prop({
     required: true,
@@ -226,12 +220,6 @@ export class User extends WithTimestampSchema {
     },
   })
   storage: UserStorage
-
-  @Prop({
-    required: false,
-    default: 0,
-  })
-  tenDayExpPoint: number
 
   @Prop({
     required: false,

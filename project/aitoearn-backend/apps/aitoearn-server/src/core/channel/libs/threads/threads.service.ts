@@ -47,7 +47,8 @@ export class ThreadsService {
     catch (error) {
       const err = ThreadsError.buildFromError(error, operation)
       this.logger.error(
-        `[THREADS:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+        err,
+        `[THREADS:${operation}] Error !! ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`,
       )
       throw err
     }
@@ -76,15 +77,8 @@ export class ThreadsService {
     const url = `${this.apiBaseUrl}${threadUserId}/threads`
     const formData = new FormData()
     Object.keys(req).forEach((key) => {
-      if (key !== 'children') {
-        formData.append(key, (req as Record<string, any>)[key])
-      }
+      formData.append(key, (req as Record<string, any>)[key])
     })
-    if (req.children) {
-      req.children.forEach((child, index) => {
-        formData.append(`children[${index}]`, child)
-      })
-    }
     const config: AxiosRequestConfig = {
       method: 'POST',
       headers: {

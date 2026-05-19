@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 
 import {
   CreateQrCodeArtImageDto,
@@ -76,7 +76,7 @@ export class ToolsController {
   @Get('/qrcode-art/images/:id')
   async getQrCodeArtImageById(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<QrCodeArtImageVo> {
     const image = await this.toolsService.getQrCodeArtImageById(id, token.id)
     return QrCodeArtImageVo.create(image)

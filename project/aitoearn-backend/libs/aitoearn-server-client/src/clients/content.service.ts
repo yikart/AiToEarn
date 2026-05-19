@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { AxiosRequestConfig } from 'axios'
-import { Material, MaterialGroup, MaterialTask, NewMaterialTask } from '../interfaces'
+import { Material, MaterialGroup } from '../interfaces'
 import { BaseService } from './base.service'
 
 @Injectable()
@@ -51,31 +51,6 @@ export class ContentService extends BaseService {
       data: { groupId, ...(type && { type }) },
     }
     return this.request<Material>(url, config)
-  }
-
-  async createMaterialTask(data: NewMaterialTask) {
-    const url = `/internal/content/material/createTask`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data,
-    }
-    return this.request<MaterialTask>(url, config)
-  }
-
-  async previewMaterialTask(id: string) {
-    const url = `/internal/content/material/preview/${id}`
-    const config: AxiosRequestConfig = {
-      method: 'GET',
-    }
-    return this.request<Material>(url, config)
-  }
-
-  async startMaterialTask(id: string) {
-    const url = `/internal/content/material/start/${id}`
-    const config: AxiosRequestConfig = {
-      method: 'GET',
-    }
-    return this.request<string>(url, config)
   }
 
   async increaseMaterialUseCount(id: string) {

@@ -8,13 +8,11 @@ import type { LogoSectionProps } from '../types'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { BRAND_TITLE, BrandWordmark } from '@/app/layout/shared'
 import logo from '@/assets/images/logo.png'
-import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
 
 export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
-  const lng = useGetClientLng()
-
   return (
     <div
       className={cn(
@@ -31,12 +29,12 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
             className="flex items-center justify-center transition-opacity group-hover:opacity-0"
             data-testid="sidebar-logo-link"
           >
-            <Image src={logo} alt="Aitoearn" width={32} height={32} />
+            <Image src={logo} alt={BRAND_TITLE} width={32} height={32} />
           </Link>
           {/* 展开按钮 - 默认隐藏，hover 时显示 */}
           <button
             onClick={onToggle}
-            className="absolute inset-0 flex items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 opacity-0 transition-opacity hover:bg-accent hover:text-muted-foreground group-hover:opacity-100"
+            className="absolute inset-0 flex items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 opacity-0 transition-opacity hover:bg-brand-cyan/10 hover:text-brand-cyan group-hover:opacity-100"
             data-testid="sidebar-toggle-btn"
           >
             <PanelLeftOpen size={18} />
@@ -46,15 +44,15 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
         <>
           <Link
             href="/"
-            className="flex items-center gap-2 text-foreground no-underline hover:opacity-85"
+            className="group/logo flex items-center gap-2 text-foreground no-underline hover:opacity-85"
             data-testid="sidebar-logo-link"
           >
-            <Image src={logo} alt="Aitoearn" width={32} height={32} />
-            <span className="text-base font-semibold tracking-tight">Aitoearn</span>
+            <Image src={logo} alt={BRAND_TITLE} width={32} height={32} />
+            <BrandWordmark as="h1" size="sidebar" />
           </Link>
           <button
             onClick={onToggle}
-            className="flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-accent hover:text-muted-foreground"
+            className="flex h-8 w-8 items-center justify-center rounded-md border-none bg-transparent text-muted-foreground/70 transition-colors hover:bg-brand-cyan/10 hover:text-brand-cyan"
             data-testid="sidebar-toggle-btn"
           >
             <PanelLeftClose size={18} />

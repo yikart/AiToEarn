@@ -12,12 +12,14 @@ export const cloudflareQueueConfigSchema = z.object({
 
 const s3AssetsConfigSchema = z.looseObject({
   ...s3ConfigSchema.shape,
+  maxSize: z.number().positive().optional(),
   provider: z.literal('s3'),
   cloudflare: cloudflareQueueConfigSchema.optional(),
 })
 
 const aliOssAssetsConfigSchema = z.looseObject({
   ...aliOssConfigSchema.shape,
+  maxSize: z.number().positive().optional(),
   provider: z.literal('ali-oss'),
   callbackUrl: z.string().optional().describe('OSS 上传完成回调 URL'),
 })

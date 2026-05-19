@@ -15,7 +15,7 @@ services:
     networks:
       - aitoearn-network
     healthcheck:
-      test: mongosh --quiet --eval "try { rs.status().ok } catch(e) { 0 }"
+      test: ["CMD-SHELL", "mongosh mongodb://admin:password@localhost:27017/?authSource=admin --quiet --eval \"try { quit(rs.status().ok === 1 ? 0 : 1) } catch(e) { quit(1) }\""]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -27,7 +27,7 @@ services:
     depends_on:
       mongodb:
         condition: service_started
-    entrypoint: ["/bin/sh", "-c", "sleep 5 && mongosh mongodb://admin:password@mongodb:27017/?authSource=admin --eval \"try { rs.initiate({_id:'rs0', members:[{_id:0, host:'mongodb:27017'}]}) } catch(e) { if (e.codeName!=='AlreadyInitialized') throw e }\""]
+    entrypoint: ["/bin/sh", "-c", "until mongosh mongodb://admin:password@mongodb:27017/?authSource=admin --quiet --eval \"db.adminCommand('ping').ok\" >/dev/null 2>&1; do sleep 2; done; mongosh mongodb://admin:password@mongodb:27017/?authSource=admin --eval \"try { rs.initiate({_id:'rs0', members:[{_id:0, host:'mongodb:27017'}]}) } catch(e) { if (e.codeName!=='AlreadyInitialized') throw e }\""]
     restart: "no"
     networks:
       - aitoearn-network
@@ -76,6 +76,7 @@ services:
   aitoearn-init:
     image: node:lts-alpine
     container_name: aitoearn-init
+    restart: "no"
     depends_on:
       mongodb:
         condition: service_healthy
@@ -142,7 +143,7 @@ services:
 
       SERVER_URL: http://aitoearn-server:3002
 
-      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 
       # AI Services
       OPENAI_API_KEY: sk-placeholder
@@ -201,7 +202,7 @@ services:
       JWT_SECRET: change-this-jwt-secret
       INTERNAL_TOKEN: change-this-secret-token
 
-      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
+      ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://localhost:9000","cdnEndpoint":"http://localhost:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 
       MAIL_USER: ""
       MAIL_PASS: ""
@@ -245,7 +246,7 @@ services:
       # Relay (optional)
       RELAY_SERVER_URL: https://aitoearn.ai/api
       RELAY_API_KEY: ""
-      RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+      RELAY_CALLBACK_URL: http://localhost:8080/api/plat/relay-callback
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
@@ -261,14 +262,22 @@ services:
     depends_on:
       aitoearn-server:
         condition: service_healthy
+      aitoearn-init:
+        condition: service_completed_successfully
     volumes:
       - init-data:/data/init:ro
     networks:
       - aitoearn-network
-    command: ["/bin/sh", "-c", "AUTO_LOGIN_TOKEN=$$(cat /data/init/token.txt 2>/dev/null || echo '') exec node server.js"]
+    command: ["/bin/sh", "-c", "AUTO_LOGIN_TOKEN=$$(cat /data/init/token.txt 2>/dev/null || true); if [ -z \"$$AUTO_LOGIN_TOKEN\" ]; then echo 'AUTO_LOGIN_TOKEN is missing. Check the aitoearn-init container logs.' >&2; exit 1; fi; export AUTO_LOGIN_TOKEN; exec node server.js"]
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: 1
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:3000', (r) => { process.exit(r.statusCode < 500 ? 0 : 1) }).on('error', () => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 30s
 
   nginx:
     image: nginx:alpine
@@ -276,7 +285,7 @@ services:
     restart: unless-stopped
     depends_on:
       aitoearn-web:
-        condition: service_started
+        condition: service_healthy
       aitoearn-server:
         condition: service_healthy
       aitoearn-ai:
@@ -289,7 +298,7 @@ services:
     networks:
       - aitoearn-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1/_nhealth"]
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/_nhealth"]
       interval: 10s
       timeout: 5s
       retries: 3

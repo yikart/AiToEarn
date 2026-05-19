@@ -2,38 +2,36 @@
  * AI 模块类型定义
  */
 
-/** 支持适配的平台 */
-export type AdaptPlatform
-  = | 'douyin'
-    | 'xhs'
-    | 'wxSph'
-    | 'KWAI'
-    | 'youtube'
-    | 'wxGzh'
-    | 'bilibili'
-    | 'twitter'
-    | 'tiktok'
-    | 'facebook'
-    | 'instagram'
-    | 'threads'
-    | 'pinterest'
-    | 'linkedin'
-
-/** 素材适配请求参数 */
-export interface AdaptMaterialDto {
-  materialId: string
-  platforms: AdaptPlatform[]
+export interface ChatModel {
+  name: string
+  description?: string
+  logo?: string
+  channel?: string
+  scenes?: string[]
+  inputModalities?: string[]
+  outputModalities?: string[]
+  pricing?: ChatModelPricing
+  fixedImagePricing?: ChatModelFixedImagePricing[]
+  tags?: string[]
+  mainTag?: boolean
 }
 
-/** 素材适配结果 */
-export interface MaterialAdaptationVo {
-  id: string
-  materialId: string
-  platform: string
-  title?: string
-  desc?: string
-  topics: string[]
-  platformOptions?: Record<string, unknown>
-  createdAt: string
-  updatedAt: string
+export interface ChatModelPricingTier {
+  maxInputTokens?: number
+  input?: Record<string, string>
+  output?: Record<string, string>
+}
+
+export interface ChatModelPricing {
+  prompt?: string
+  completion?: string
+  tiers?: ChatModelPricingTier[]
+  originPricing?: {
+    tiers?: ChatModelPricingTier[]
+  }
+}
+
+export interface ChatModelFixedImagePricing {
+  resolution: string
+  price: number
 }

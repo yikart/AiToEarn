@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
 import { VolcengineGenerationRequestDto } from './volcengine.dto'
 import { VolcengineVideoService } from './volcengine.service'
 import { VolcengineTaskStatusResponseVo, VolcengineVideoGenerationResponseVo } from './volcengine.vo'
@@ -36,7 +36,7 @@ export class VolcengineVideoController {
   @Get('/video/:taskId')
   async videoTaskStatus(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ): Promise<VolcengineTaskStatusResponseVo> {
     const response = await this.volcengineVideoService.getTask(token.id, UserType.User, taskId)
     return VolcengineTaskStatusResponseVo.create(response)

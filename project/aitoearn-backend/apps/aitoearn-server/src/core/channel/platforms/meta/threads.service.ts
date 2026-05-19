@@ -113,6 +113,15 @@ export class ThreadsService extends MetaBaseService {
   }
 
   async getAccountInsights(
+    userId: string,
+    accountId: string,
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getAccountInsightsByAccountId(accountId, query)
+  }
+
+  async getAccountInsightsByAccountId(
     accountId: string,
     query: ThreadsInsightsRequest,
   ): Promise<ThreadsInsightsResponse | null> {
@@ -129,6 +138,16 @@ export class ThreadsService extends MetaBaseService {
   }
 
   async getMediaInsights(
+    userId: string,
+    accountId: string,
+    mediaId: string,
+    query: ThreadsInsightsRequest,
+  ): Promise<ThreadsInsightsResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getMediaInsightsByAccountId(accountId, mediaId, query)
+  }
+
+  async getMediaInsightsByAccountId(
     accountId: string,
     mediaId: string,
     query: ThreadsInsightsRequest,
@@ -161,6 +180,15 @@ export class ThreadsService extends MetaBaseService {
   }
 
   async getUserPosts(
+    userId: string,
+    accountId: string,
+    query: ThreadsPostsRequest,
+  ): Promise<ThreadsPostsResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getUserPostsByAccountId(accountId, query)
+  }
+
+  async getUserPostsByAccountId(
     accountId: string,
     query: ThreadsPostsRequest,
   ): Promise<ThreadsPostsResponse | null> {
@@ -242,6 +270,15 @@ export class ThreadsService extends MetaBaseService {
   }
 
   async searchLocations(
+    userId: string,
+    accountId: string,
+    keyword: string,
+  ): Promise<MetaLocation[] | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.searchLocationsByAccountId(accountId, keyword)
+  }
+
+  async searchLocationsByAccountId(
     accountId: string,
     keyword: string,
   ): Promise<MetaLocation[] | null> {
@@ -294,6 +331,7 @@ export class ThreadsService extends MetaBaseService {
     uniqueId: string
     type: PublishType
     videoType?: 'short' | 'long'
+    resolvedUrl?: string
   }> {
     const postId = this.parseThreadsUrl(workLink)
     const resolvedDataId = postId || dataId || ''
@@ -306,13 +344,16 @@ export class ThreadsService extends MetaBaseService {
       uniqueId: `${accountType}_${resolvedDataId}`,
       type: PublishType.VIDEO,
       videoType: 'short',
+      resolvedUrl: this.normalizeThreadsUrl(workLink, resolvedDataId),
     }
   }
 
   /**
    * 解析 Threads URL，提取帖子 ID
    * 支持的 URL 格式：
+   * - https://www.threads.com/@username/post/POST_ID
    * - https://www.threads.net/@username/post/POST_ID
+   * - https://www.threads.com/t/POST_ID
    * - https://www.threads.net/t/POST_ID
    * @param workLink Threads 链接
    * @returns postId 或 null
@@ -328,14 +369,16 @@ export class ThreadsService extends MetaBaseService {
 
     const hostname = url.hostname.replace('www.', '')
 
-    if (hostname === 'threads.net') {
+    if (hostname === 'threads.net' || hostname === 'threads.com') {
       const pathname = url.pathname
 
+      // https://www.threads.com/@username/post/POST_ID
       // https://www.threads.net/@username/post/POST_ID
       const postMatch = pathname.match(/\/post\/([^/?]+)/)
       if (postMatch) {
         return postMatch[1]
       }
+      // https://www.threads.com/t/POST_ID
       // https://www.threads.net/t/POST_ID
       if (pathname.startsWith('/t/')) {
         return pathname.split('/t/')[1]?.split(/[?&#/]/)[0] || null
@@ -343,5 +386,30 @@ export class ThreadsService extends MetaBaseService {
     }
 
     return null
+  }
+
+  private normalizeThreadsUrl(workLink: string, postId: string): string {
+    try {
+      const url = new URL(workLink)
+      const hostname = url.hostname.replace('www.', '')
+      if (hostname !== 'threads.net' && hostname !== 'threads.com') {
+        return workLink
+      }
+
+      const postPathMatch = url.pathname.match(/^(\/@[^/]+\/post\/)([^/?#]+)(?:\/media)?\/?$/)
+      if (postPathMatch) {
+        return `https://www.threads.com${postPathMatch[1]}${postId}`
+      }
+
+      const shortPathMatch = url.pathname.match(/^\/t\/([^/?#]+)(?:\/media)?\/?$/)
+      if (shortPathMatch) {
+        return `https://www.threads.com/t/${postId}`
+      }
+
+      return workLink
+    }
+    catch {
+      return workLink
+    }
   }
 }

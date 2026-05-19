@@ -5,13 +5,13 @@
     "loginDescription": "Sign in to your AiToEarn account to start your AI creative journey. Supports Google login and email verification code login."
   },
   "welcomeBack": "Sign in",
-  "loginSubtitle": "Start creating with AiToEarn",
+  "loginSubtitle": "Let's use AltoEarn!",
   "emailPlaceholder": "Enter your email address",
   "login": "Sign in",
   "or": "or",
   "emailRequired": "Please enter your email",
   "emailInvalid": "Please enter a valid email address",
-  "emailCodeRequired": "Please enter email verification code",
+  "emailCodeRequired": "Please enter verification code",
   "emailCodeLength": "Verification code must be 6 digits",
   "enterCode": "Enter 6-digit code",
   "sendCode": "Send Code",
@@ -26,9 +26,12 @@
   "loginFailed": "Login failed",
   "loginError": "Login failed, please try again later",
   "googleLoginFailed": "Google login failed",
+  "switchToEmailLogin": "Sign in with email code",
+  "switchToPhoneLogin": "Sign in with phone",
   "termsText": "By continuing, you agree to our",
   "termsOfService": "Terms of Service",
   "and": "and",
   "privacyPolicy": "Privacy Policy",
-  "newUserPromotion": "New users get 14 days free membership!"
+  "newUserPromotion": "New users get 14 days free membership!",
+  "manualLoginDisabledNotice": "Manual sign-in is not required in this environment. If access still fails, please check the configuration."
 }

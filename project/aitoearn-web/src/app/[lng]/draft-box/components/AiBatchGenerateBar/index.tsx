@@ -10,36 +10,126 @@ import type { EffectiveLimitsDetailed } from './platformLimits'
 import type { DraftContentType, VideoModelType } from '@/api/draftGeneration'
 import type { ImageModelInfo, ImageModelPricing, VideoModelInfo, VideoModelPricing } from '@/api/types/draftGeneration'
 import type { PlatType } from '@/app/config/platConfig'
-import { RotateCcw, Upload, X } from 'lucide-react'
+import type { IUploadedMedia } from '@/components/Chat/MediaUpload'
+import isEqual from 'lodash/isEqual'
+import { CircleHelp, Maximize2, RotateCcw, Upload, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
-import { AccountPlatInfoMap, RegionTaskPlatInfoArr, TASK_EXCLUDED_PLATFORMS } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, TASK_EXCLUDED_PLATFORMS, TaskPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { Input } from '@/components/ui/input'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import { useAccountStore } from '@/store/account'
-import { useUserStore } from '@/store/user'
 import { getVideoMeta } from '@/utils/media'
 import { getOssUrl } from '@/utils/oss'
 import { useDraftBoxConfigStore } from '../../draftBoxConfigStore'
+import { buildDraftPromptLimitText, mergeCaptionPromptWithSystemRequirement } from '../../utils/promptLimits'
 import styles from './AiBatchGenerateBar.module.scss'
 import {
-  DEFAULT_MAX_INPUT_IMAGES,
-  getVideoModelConfigFromApi,
+  filterVideoPricingByResolution,
+  getImageModelsCommonAspectRatios,
+  getImageModelsCommonResolutions,
+  getImageModelsMaxInputImages,
+  getVideoModelDefaultResolution,
+  getVideoModelResolutions,
+  getVideoModelsCommonResolutions,
+  getVideoModelsCommonStaticConfig,
   getVideoModelStaticConfig,
-  IMAGE_TEXT_ASPECT_RATIOS,
   matchClosestRatio,
 } from './constants'
 import ImageStack from './ImageStack'
 import { checkPlatformCompatibility } from './platformCompatibility'
 import { calcEffectiveLimitsDetailed } from './platformLimits'
+import PromptEditorDialog from './PromptEditorDialog'
 import ToolBarInline from './ToolBarInline'
 import { usePricingData } from './usePricingData'
 
 const PROMPT_MAX_LENGTH = 2000
+
+function buildPersistedMediaSignature(
+  medias: Array<Pick<IPersistedMedia, 'id' | 'url' | 'type' | 'name' | 'duration'>>,
+) {
+  return JSON.stringify(
+    medias.map(media => [
+      media.id,
+      media.url,
+      media.type,
+      media.name ?? '',
+      media.duration ?? null,
+    ]),
+  )
+}
+
+function normalizeSelectedValues(selectedValues: string[], availableValues: string[], fallbackValue?: string) {
+  const normalized = selectedValues.filter((value, index, array) =>
+    availableValues.includes(value) && array.indexOf(value) === index)
+  if (normalized.length > 0)
+    return normalized
+  if (fallbackValue && availableValues.includes(fallbackValue))
+    return [fallbackValue]
+  return availableValues[0] ? [availableValues[0]] : []
+}
+
+function getOptionCompareKey(value?: string) {
+  return (value ?? '').trim().replace(/\s+/g, '').toLowerCase()
+}
+
+function includesOption(values: string[], value?: string) {
+  const compareKey = getOptionCompareKey(value)
+  return compareKey.length > 0 && values.some(item => getOptionCompareKey(item) === compareKey)
+}
+
+function getVideoDurationLimits(
+  models: VideoModelInfo[],
+  resolution: string,
+  isVideoEditMode: boolean,
+) {
+  const pricingGroups = models
+    .map(model => filterVideoPricingByResolution(model.pricing, resolution, isVideoEditMode))
+    .filter(group => group.length > 0)
+
+  if (pricingGroups.length === 0)
+    return { min: 4, max: 15 }
+
+  const min = Math.max(...pricingGroups.map(group => Math.min(...group.map(item => item.duration))))
+  const max = Math.min(...pricingGroups.map(group => Math.max(...group.map(item => item.duration))))
+  return min <= max ? { min, max } : { min: 4, max: 15 }
+}
+
+function getNearestVideoPricing(pricing: VideoModelPricing[], duration: number) {
+  const exactMatch = pricing.find(item => item.duration === duration)
+  if (exactMatch)
+    return exactMatch
+  return [...pricing].sort((a, b) => Math.abs(a.duration - duration) - Math.abs(b.duration - duration))[0]
+}
+
+function getVideoModelsCredits(
+  models: VideoModelInfo[],
+  resolution: string,
+  isVideoEditMode: boolean,
+  duration: number,
+  quantity: number,
+) {
+  const total = models.reduce((sum, model) => {
+    const pricing = filterVideoPricingByResolution(model.pricing, resolution, isVideoEditMode)
+    return sum + (getNearestVideoPricing(pricing, duration)?.price ?? 0)
+  }, 0)
+  return Math.ceil(total * quantity * 100) / 100
+}
+
+function buildAggregateImagePricing(models: ImageModelInfo[]) {
+  const commonResolutions = getImageModelsCommonResolutions(models)
+  return commonResolutions.map(resolution => ({
+    resolution,
+    pricePerImage: Math.ceil(models.reduce((sum, model) => {
+      return sum + (model.pricing.find(item => item.resolution === resolution)?.pricePerImage ?? 0)
+    }, 0) * 100) / 100,
+  }))
+}
 
 /** youmind.com URL 语言路径映射：英语等无前缀，日语/韩语使用不同代码 */
 const PROMPTS_EXPLORE_LNG_MAP: Record<string, string> = {
@@ -48,10 +138,32 @@ const PROMPTS_EXPLORE_LNG_MAP: Record<string, string> = {
   'ko': 'ko-KR',
 }
 
-/** 品牌图片类型（原 BrandImage，品牌库模块移除后本地保留） */
+const DEFAULT_PROMPTS_EXPLORE_SLUG = 'grok-imagine-prompts'
+const SEEDANCE_PROMPTS_EXPLORE_SLUG = 'seedance-2-0-prompts'
+
+function getPromptsExploreSlugByModel(modelName?: string) {
+  if (modelName && /seedance/i.test(modelName))
+    return SEEDANCE_PROMPTS_EXPLORE_SLUG
+  return DEFAULT_PROMPTS_EXPLORE_SLUG
+}
+
 export interface BrandImage {
   id: string
   url: string
+}
+
+interface BrandInfoLite {
+  id: string
+  name?: string
+  status?: string
+  contact?: {
+    address?: string
+  }
+  imageList?: BrandImage[]
+}
+
+function getOpenSourceBrandInfo(): BrandInfoLite | null {
+  return null
 }
 
 /** 模块级常量，避免 selector 每次返回新引用导致无限重渲染 */
@@ -64,40 +176,54 @@ interface AiBatchGenerateBarProps {
   onGenerated?: () => void
   /** 自定义容器类名 */
   className?: string
+  /** 是否显示品牌信息栏 */
+  showBrandInfo?: boolean
+  /** 是否强制使用草稿模式，隐藏独立图片/视频生成 */
+  forceDraftMode?: boolean
 }
 
-const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGenerateBarProps) => {
+const AiBatchGenerateBar = memo(({ groupId, onGenerated, className, forceDraftMode = false }: AiBatchGenerateBarProps) => {
   const { t } = useTransClient('brandPromotion')
   const lng = useGetClientLng()
 
-  const imageList = EMPTY_IMAGE_LIST
+  // 品牌信息（按 groupId）
+  const brandInfo = getOpenSourceBrandInfo()
+  const imageList = brandInfo?.imageList ?? EMPTY_IMAGE_LIST
 
   // 配置 key：按 groupId 隔离
   const configKey = groupId || '__default__'
 
   // Store：按草稿箱隔离的持久化配置
-  const { getConfig, updateConfig, resetConfig, _hasHydrated } = useDraftBoxConfigStore(useShallow(state => ({
+  const { configSnapshot, getConfig, updateConfig, _hasHydrated } = useDraftBoxConfigStore(useShallow(state => ({
+    configSnapshot: state.configs[configKey],
     getConfig: state.getConfig,
     updateConfig: state.updateConfig,
-    resetConfig: state.resetConfig,
     _hasHydrated: state._hasHydrated,
   })))
 
-  const config = getConfig(configKey)
+  const config = configSnapshot ?? getConfig(configKey)
 
   // Store：生成状态
   const {
     isGeneratingBatch,
-    createBatchGeneration,
-    createImageTextBatchGeneration,
+    createBatchGenerationWithModels,
+    createImageTextBatchGenerationWithModels,
   } = usePlanDetailStore(useShallow(state => ({
     isGeneratingBatch: state.isGeneratingBatch,
-    createBatchGeneration: state.createBatchGeneration,
-    createImageTextBatchGeneration: state.createImageTextBatchGeneration,
+    createBatchGenerationWithModels: state.createBatchGenerationWithModels,
+    createImageTextBatchGenerationWithModels: state.createImageTextBatchGenerationWithModels,
   })))
 
-  // 默认提示词
-  const defaultPrompt = ''
+  // 默认提示词（基于品牌名称和位置）
+  const defaultPrompt = useMemo(() => {
+    if (!brandInfo?.name)
+      return ''
+    const position = brandInfo.contact?.address
+    if (position) {
+      return t('detail.defaultPrompt', { name: brandInfo.name, position })
+    }
+    return t('detail.defaultPromptNoPosition', { name: brandInfo.name })
+  }, [brandInfo?.name, brandInfo?.contact?.address, t])
 
   // 拖拽状态
   const [isDragging, setIsDragging] = useState(false)
@@ -105,29 +231,37 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
 
   // 本地状态（从 config 初始化）
   const [promptValue, setPromptValue] = useState('')
+  const [promptEditorOpen, setPromptEditorOpen] = useState(false)
   const [aspectRatio, setAspectRatio] = useState(config.aspectRatio)
   const [duration, setDuration] = useState(config.duration)
+  const [resolution, setResolution] = useState(config.resolution)
   const [modelType, setModelType] = useState<VideoModelType>(config.modelType)
+  const [selectedVideoModels, setSelectedVideoModels] = useState<VideoModelType[]>(
+    config.selectedVideoModels.length > 0 ? config.selectedVideoModels : (config.modelType ? [config.modelType] : []),
+  )
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [contentType, setContentType] = useState<DraftContentType>(config.contentType)
   const [imageModel, setImageModel] = useState<string>(config.imageModel)
+  const [selectedImageModels, setSelectedImageModels] = useState<string[]>(
+    config.selectedImageModels.length > 0 ? config.selectedImageModels : (config.imageModel ? [config.imageModel] : []),
+  )
   const [imageCount, setImageCount] = useState(config.imageCount)
   const [imageSize, setImageSize] = useState(config.imageSize)
   const [quantity, setQuantity] = useState(config.quantity)
-  const [isDraftMode, setIsDraftMode] = useState(config.isDraftMode ?? true)
-  // 计算当前区域可用平台
+  const [isDraftMode, setIsDraftMode] = useState(forceDraftMode ? true : config.isDraftMode ?? true)
+  const [captionPrompt, setCaptionPrompt] = useState(config.captionPrompt ?? '')
+  const [captionSystemPrompt, setCaptionSystemPrompt] = useState(config.captionSystemPrompt ?? '')
+  const [captionSystemPromptDefault, setCaptionSystemPromptDefault] = useState(config.captionSystemPromptDefault ?? '')
+  const [moreOptionsOpen, setMoreOptionsOpen] = useState(config.captionPromptOpen ?? true)
+  // 计算可用平台
   const availablePlatforms = useMemo(() =>
-    RegionTaskPlatInfoArr.map(([plat]) => plat), [])
-
-  // 默认选中平台
-  const defaultPlatforms = useMemo(() => availablePlatforms, [availablePlatforms])
+    TaskPlatInfoArr.map(([plat]) => plat), [])
 
   // 初始化 selectedPlatforms：过滤不可用 + 空时默认全选
   const [selectedPlatforms, setSelectedPlatforms] = useState<PlatType[]>(() => {
     const stored = config.selectedPlatforms
     if (stored.length === 0) {
-      // 首次（无持久化数据）：默认全选（国外版排除小红书）
-      return defaultPlatforms
+      return availablePlatforms
     }
     // 有持久化数据：过滤掉不可用平台
     return stored.filter(p => AccountPlatInfoMap.has(p) && !TASK_EXCLUDED_PLATFORMS.has(p))
@@ -135,11 +269,22 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
 
   // 用 ref 追踪是否已完成初始自动选中
   const initialSelectionDone = useRef(false)
+  // 组合输入期间避免被 store 回刷打断 IME
+  const isPromptComposingRef = useRef(false)
+  const promptValueRef = useRef(promptValue)
+  const captionPromptRef = useRef(captionPrompt)
+  const captionSystemPromptRef = useRef(captionSystemPrompt)
+  const captionSystemPromptDefaultRef = useRef(captionSystemPromptDefault)
   // 追踪上一次的 configKey，用于同步 effect 检测切换
   const prevConfigKeyRef = useRef(configKey)
   const isMediaInitializedRef = useRef(false)
   // 防止同一品牌 ID 重复应用默认值
   const lastAppliedBrandIdRef = useRef<string | null>(null)
+
+  promptValueRef.current = promptValue
+  captionPromptRef.current = captionPrompt
+  captionSystemPromptRef.current = captionSystemPrompt
+  captionSystemPromptDefaultRef.current = captionSystemPromptDefault
 
   // Pricing 数据
   const { pricingData, isLoading: isPricingLoading } = usePricingData()
@@ -148,18 +293,37 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   const imageModelOptions = useMemo(() => {
     if (!pricingData?.imageModels)
       return []
-    return pricingData.imageModels.map(m => ({ value: m.model, label: m.displayName }))
+    return pricingData.imageModels.map(m => ({
+      value: m.model,
+      label: m.displayName,
+      tags: m.tags ?? [],
+    }))
   }, [pricingData])
 
-  // 派生：当前选中图文模型的信息
-  const currentImageModelInfo: ImageModelInfo | undefined = useMemo(() => {
-    return pricingData?.imageModels?.find(m => m.model === imageModel)
-  }, [pricingData, imageModel])
+  // 派生：当前选中图文模型的信息列表
+  const selectedImageModelInfos: ImageModelInfo[] = useMemo(() => {
+    if (!pricingData?.imageModels)
+      return []
+    return selectedImageModels
+      .map(model => pricingData.imageModels.find(item => item.model === model))
+      .filter((model): model is ImageModelInfo => Boolean(model))
+  }, [pricingData, selectedImageModels])
 
-  // 派生：当前模型的定价列表
+  // 派生：当前多模型公共分辨率的合计定价列表
   const imagePricing: ImageModelPricing[] = useMemo(() => {
-    return currentImageModelInfo?.pricing ?? []
-  }, [currentImageModelInfo])
+    return buildAggregateImagePricing(selectedImageModelInfos)
+  }, [selectedImageModelInfos])
+
+  // 派生：当前图文模型公共支持的比例
+  const currentImageAspectRatios = useMemo(() => {
+    return selectedImageModelInfos.length > 0
+      ? getImageModelsCommonAspectRatios(selectedImageModelInfos)
+      : []
+  }, [selectedImageModelInfos])
+
+  const currentImageMaxInputImages = useMemo(() => {
+    return getImageModelsMaxInputImages(selectedImageModelInfos)
+  }, [selectedImageModelInfos])
 
   // ==================== 视频模型派生数据（不依赖 hasVideos 的部分） ====================
 
@@ -170,50 +334,113 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     return pricingData.videoModels.map(m => ({ value: m.name, label: m.description || m.name }))
   }, [pricingData])
 
-  // 派生：当前选中视频模型的完整信息
-  const currentVideoModelInfo: VideoModelInfo | undefined = useMemo(() => {
+  // 派生：当前选中视频模型的完整信息列表
+  const selectedVideoModelInfos: VideoModelInfo[] = useMemo(() => {
     if (!pricingData?.videoModels)
-      return undefined
-    return pricingData.videoModels.find(m => m.name === modelType)
-  }, [pricingData, modelType])
+      return []
+    return selectedVideoModels
+      .map(model => pricingData.videoModels?.find(item => item.name === model))
+      .filter((model): model is VideoModelInfo => Boolean(model))
+  }, [pricingData, selectedVideoModels])
 
-  // 派生：当前视频模型的动态配置（从 API 数据计算）
+  const currentVideoModelInfo = selectedVideoModelInfos[0]
+
+  // 派生：当前视频模型公共配置（从 API 数据计算）
   const currentVideoModelConfig = useMemo(() => {
-    if (currentVideoModelInfo)
-      return getVideoModelConfigFromApi(currentVideoModelInfo)
-    return getVideoModelStaticConfig(modelType)
-  }, [currentVideoModelInfo, modelType])
+    if (selectedVideoModelInfos.length > 0)
+      return getVideoModelsCommonStaticConfig(selectedVideoModelInfos)
+    const fallbackModelType = modelType || pricingData?.videoModels?.[0]?.name || ''
+    return getVideoModelStaticConfig(fallbackModelType, pricingData?.videoModels)
+  }, [modelType, pricingData?.videoModels, selectedVideoModelInfos])
+
+  const currentVideoResolutions = useMemo(() => {
+    if (selectedVideoModelInfos.length > 0)
+      return getVideoModelsCommonResolutions(selectedVideoModelInfos)
+    return getVideoModelResolutions(currentVideoModelInfo)
+  }, [currentVideoModelInfo, selectedVideoModelInfos])
+
+  const defaultVideoResolution = useMemo(() => {
+    return currentVideoResolutions[0] ?? getVideoModelDefaultResolution(currentVideoModelInfo)
+  }, [currentVideoModelInfo, currentVideoResolutions])
 
   // pricing 加载后校验图文模型是否可用
   useEffect(() => {
     if (!pricingData?.imageModels?.length)
       return
-    const modelExists = pricingData.imageModels.some(m => m.model === imageModel)
-    if (!modelExists) {
-      const firstModel = pricingData.imageModels[0]!.model
-      setImageModel(firstModel)
-      updateConfig(configKey, { imageModel: firstModel })
+
+    const availableModels = pricingData.imageModels.map(model => model.model)
+    const nextSelectedModels = normalizeSelectedValues(selectedImageModels, availableModels, imageModel)
+    const nextPrimaryModel = nextSelectedModels[0] ?? ''
+    const nextModelInfos = nextSelectedModels
+      .map(model => pricingData.imageModels.find(item => item.model === model))
+      .filter((model): model is ImageModelInfo => Boolean(model))
+    const nextPricing = buildAggregateImagePricing(nextModelInfos)
+    const nextRatios = getImageModelsCommonAspectRatios(nextModelInfos)
+
+    if (!isEqual(nextSelectedModels, selectedImageModels)) {
+      setSelectedImageModels(nextSelectedModels)
+      updateConfig(configKey, { selectedImageModels: nextSelectedModels })
     }
+
+    if (nextPrimaryModel && nextPrimaryModel !== imageModel) {
+      setImageModel(nextPrimaryModel)
+      updateConfig(configKey, { imageModel: nextPrimaryModel })
+    }
+
     // 校验 imageSize 是否在当前模型定价中
-    const currentInfo = pricingData.imageModels.find(m => m.model === (modelExists ? imageModel : pricingData.imageModels[0]!.model))
-    if (currentInfo && !currentInfo.pricing.some(p => p.resolution === imageSize)) {
-      const firstSize = currentInfo.pricing[0]?.resolution ?? '1K'
+    if (nextPricing.length > 0 && !includesOption(nextPricing.map(p => p.resolution), imageSize)) {
+      const firstSize = nextPricing[0]?.resolution ?? '1K'
       setImageSize(firstSize)
       updateConfig(configKey, { imageSize: firstSize })
     }
-  }, [pricingData, imageModel, imageSize])
+    // 图文模式下校验比例是否在当前图片模型支持范围内
+    if (contentType === 'image_text') {
+      if (nextRatios.length > 0 && !includesOption(nextRatios, aspectRatio)) {
+        const firstRatio = nextRatios[0] ?? '1:1'
+        setAspectRatio(firstRatio)
+        updateConfig(configKey, { aspectRatio: firstRatio })
+      }
+    }
+  }, [pricingData, selectedImageModels, imageModel, imageSize, contentType, aspectRatio, configKey, updateConfig])
 
-  // pricing 加载后校验视频模型是否可用
+  // pricing 加载后校验视频模型与分辨率是否可用
   useEffect(() => {
     if (!pricingData?.videoModels?.length)
       return
-    const modelExists = pricingData.videoModels.some(m => m.name === modelType)
-    if (!modelExists) {
-      const firstName = pricingData.videoModels[0]!.name
-      setModelType(firstName)
-      updateConfig(configKey, { modelType: firstName })
+
+    const availableModels = pricingData.videoModels.map(model => model.name)
+    const nextSelectedModels = normalizeSelectedValues(selectedVideoModels, availableModels, modelType)
+    const nextPrimaryModel = nextSelectedModels[0] ?? ''
+    const nextModelInfos = nextSelectedModels
+      .map(model => pricingData.videoModels?.find(item => item.name === model))
+      .filter((model): model is VideoModelInfo => Boolean(model))
+    const nextResolutions = getVideoModelsCommonResolutions(nextModelInfos)
+    const nextConfig = getVideoModelsCommonStaticConfig(nextModelInfos)
+
+    if (!isEqual(nextSelectedModels, selectedVideoModels)) {
+      setSelectedVideoModels(nextSelectedModels)
+      updateConfig(configKey, { selectedVideoModels: nextSelectedModels })
     }
-  }, [pricingData, modelType])
+
+    if (nextPrimaryModel && nextPrimaryModel !== modelType) {
+      setModelType(nextPrimaryModel)
+      updateConfig(configKey, { modelType: nextPrimaryModel })
+    }
+
+    if (nextResolutions.length > 0 && !includesOption(nextResolutions, resolution)) {
+      const nextResolution = nextResolutions[0] ?? getVideoModelDefaultResolution(nextModelInfos[0])
+      setResolution(nextResolution)
+      updateConfig(configKey, { resolution: nextResolution })
+    }
+
+    if (contentType === 'video' && nextConfig.supportedRatios.size > 0 && !includesOption([...nextConfig.supportedRatios], aspectRatio)) {
+      const nextRatio = nextConfig.supportedRatios.has('9:16')
+        ? '9:16'
+        : ([...nextConfig.supportedRatios][0] ?? '9:16')
+      setAspectRatio(nextRatio)
+      updateConfig(configKey, { aspectRatio: nextRatio })
+    }
+  }, [pricingData, selectedVideoModels, modelType, resolution, contentType, aspectRatio, configKey, updateConfig])
 
   // 旧用户数据迁移：jimeng/grok → 第一个可用视频模型
   useEffect(() => {
@@ -221,6 +448,8 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       const fallback = pricingData?.videoModels?.[0]?.name ?? ('' as VideoModelType)
       updateConfig(configKey, { modelType: fallback })
       setModelType(fallback)
+      setSelectedVideoModels(fallback ? [fallback] : [])
+      updateConfig(configKey, { selectedVideoModels: fallback ? [fallback] : [] })
     }
   }, [pricingData, config.modelType])
 
@@ -234,11 +463,56 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     }
   }, [defaultPrompt, promptValue])
 
+  // 品牌切换后强制应用默认提示词和图片
+  const applyBrandDefaults = useCallback(() => {
+    if (!brandInfo?.id)
+      return
+    // 设置提示词
+    if (defaultPrompt) {
+      setPromptValue(defaultPrompt)
+      updateConfig(configKey, { promptValue: defaultPrompt })
+      defaultPromptFilledRef.current = true
+    }
+    // 设置默认图片
+    const currentImageList = brandInfo.imageList ?? []
+    if (currentImageList.length > 0) {
+      const maxImages = contentType === 'image_text'
+        ? currentImageMaxInputImages
+        : currentVideoModelConfig.maxImages
+      const defaultCount = Math.min(5, maxImages, currentImageList.length)
+      const defaultIds = currentImageList.slice(0, defaultCount).map(img => img.id)
+      setSelectedIds(defaultIds)
+      updateConfig(configKey, { selectedImageIds: defaultIds })
+      initialSelectionDone.current = true
+    }
+    // 更新持久化的品牌 ID
+    updateConfig(configKey, { linkedBrandId: brandInfo.id })
+    lastAppliedBrandIdRef.current = brandInfo.id
+  }, [brandInfo?.id, brandInfo?.imageList, defaultPrompt, configKey, updateConfig, contentType, currentImageMaxInputImages, currentVideoModelConfig])
+
+  // 品牌就绪后自动应用默认提示词和图片
+  useEffect(() => {
+    if (!_hasHydrated || !brandInfo?.id || brandInfo.status !== 'active')
+      return
+    if (lastAppliedBrandIdRef.current === brandInfo.id)
+      return
+
+    const storedBrandId = getConfig(configKey).linkedBrandId
+    if (storedBrandId === brandInfo.id) {
+      // 品牌未变，仅标记
+      lastAppliedBrandIdRef.current = brandInfo.id
+      return
+    }
+
+    // 品牌已变更，应用默认值
+    applyBrandDefaults()
+  }, [brandInfo?.id, brandInfo?.status, _hasHydrated, configKey, getConfig, applyBrandDefaults])
+
   // imageList 异步加载后自动选中默认图片
   useEffect(() => {
     if (!initialSelectionDone.current && imageList.length > 0) {
       const maxImages = contentType === 'image_text'
-        ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES)
+        ? currentImageMaxInputImages
         : currentVideoModelConfig.maxImages
       const defaultCount = Math.min(5, maxImages, imageList.length)
       const defaultIds = imageList.slice(0, defaultCount).map(img => img.id)
@@ -246,7 +520,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       updateConfig(configKey, { selectedImageIds: defaultIds })
       initialSelectionDone.current = true
     }
-  }, [imageList, modelType, contentType, imageModel, configKey, updateConfig, currentVideoModelConfig])
+  }, [imageList, modelType, contentType, imageModel, configKey, updateConfig, currentImageMaxInputImages, currentVideoModelConfig])
 
   // 本地上传媒体
   const {
@@ -257,6 +531,8 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     handleMediaRemove: removeLocalMedia,
     clearMedias,
   } = useMediaUpload()
+  const localMediasRef = useRef<IUploadedMedia[]>(localMedias)
+  localMediasRef.current = localMedias
 
   // 包装删除：同步清理 videoDurationMapRef
   const handleLocalMediaRemove = useCallback((index: number) => {
@@ -290,8 +566,12 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
         name: m.name,
         duration: m.type === 'video' && m.id ? videoDurationMapRef.current.get(m.id) : undefined,
       }))
+    const storedPersistedMedias = getConfig(configKey).persistedMedias ?? []
+    if (buildPersistedMediaSignature(storedPersistedMedias) === buildPersistedMediaSignature(completed)) {
+      return
+    }
     updateConfig(configKey, { persistedMedias: completed })
-  }, [localMedias, configKey, updateConfig, _hasHydrated])
+  }, [localMedias, configKey, getConfig, updateConfig, _hasHydrated])
 
   // 派生
   const localImages = useMemo(() => localMedias.filter(m => m.type === 'image'), [localMedias])
@@ -303,31 +583,30 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   // 是否为视频编辑模式（上传了视频 + 视频内容类型）
   const isVideoEditMode = hasVideos && contentType === 'video'
 
-  // 派生：当前模型的定价数组
-  const videoPricing: VideoModelPricing[] = useMemo(() => {
-    if (!currentVideoModelInfo?.pricing)
-      return []
-    return currentVideoModelInfo.pricing
-  }, [currentVideoModelInfo])
+  // 图文非草稿模式不展示数量控件，提交时固定为 1，避免与草稿模式 quantity 串用
+  const effectiveQuantity = useMemo(() => {
+    if (contentType === 'image_text' && !isDraftMode)
+      return 1
+    return quantity
+  }, [contentType, isDraftMode, quantity])
 
   // 派生：从 pricing 数据的 duration 范围派生时长限制
   const videoDurationLimits = useMemo(() => {
-    if (videoPricing.length === 0)
-      return { min: 4, max: 15 }
-    const durations = videoPricing.map(p => p.duration)
-    return { min: Math.min(...durations), max: Math.max(...durations) }
-  }, [videoPricing])
+    return getVideoDurationLimits(selectedVideoModelInfos, resolution, isVideoEditMode)
+  }, [selectedVideoModelInfos, resolution, isVideoEditMode])
 
   // 派生：按 duration 查表得到价格 × quantity
   const videoCredits = useMemo(() => {
-    if (videoPricing.length === 0)
-      return 0
-    const exactMatch = videoPricing.find(p => p.duration === duration)
-    if (exactMatch)
-      return exactMatch.price * quantity
-    const sorted = [...videoPricing].sort((a, b) => Math.abs(a.duration - duration) - Math.abs(b.duration - duration))
-    return (sorted[0]?.price ?? 0) * quantity
-  }, [videoPricing, duration, quantity])
+    return getVideoModelsCredits(selectedVideoModelInfos, resolution, isVideoEditMode, duration, effectiveQuantity)
+  }, [selectedVideoModelInfos, resolution, isVideoEditMode, duration, effectiveQuantity])
+
+  const imageTextCredits = useMemo(() => {
+    const currentPricing = imagePricing.find(p => p.resolution === imageSize)
+    const pricePerImage = currentPricing?.pricePerImage ?? 0
+    return Math.ceil(pricePerImage * imageCount * effectiveQuantity * 100) / 100
+  }, [effectiveQuantity, imageCount, imagePricing, imageSize])
+
+  const totalCredits = contentType === 'video' ? videoCredits : imageTextCredits
 
   // hasVideos 变化时自动 clamp duration（video2video 最大 duration 可能更小）
   useEffect(() => {
@@ -371,36 +650,59 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     const newConfig = getConfig(configKey)
     setAspectRatio(newConfig.aspectRatio)
     setDuration(newConfig.duration)
+    setResolution(newConfig.resolution)
     setModelType(newConfig.modelType)
+    setSelectedVideoModels(newConfig.selectedVideoModels.length > 0
+      ? newConfig.selectedVideoModels
+      : (newConfig.modelType ? [newConfig.modelType] : []))
     setContentType(newConfig.contentType)
     setImageModel(newConfig.imageModel)
+    setSelectedImageModels(newConfig.selectedImageModels.length > 0
+      ? newConfig.selectedImageModels
+      : (newConfig.imageModel ? [newConfig.imageModel] : []))
     setImageCount(newConfig.imageCount)
     setImageSize(newConfig.imageSize)
     setQuantity(newConfig.quantity)
-    setIsDraftMode(newConfig.isDraftMode ?? true)
-    // selectedPlatforms 需要区域过滤 + 空时默认全选
+    setIsDraftMode(forceDraftMode ? true : newConfig.isDraftMode ?? true)
+    setCaptionPrompt(newConfig.captionPrompt ?? '')
+    setCaptionSystemPrompt(newConfig.captionSystemPrompt ?? '')
+    setCaptionSystemPromptDefault(newConfig.captionSystemPromptDefault ?? '')
+    setMoreOptionsOpen(newConfig.captionPromptOpen ?? true)
+    // selectedPlatforms 需要过滤不可用平台 + 空时默认全选
     const storedPlatforms = newConfig.selectedPlatforms
     if (storedPlatforms.length === 0) {
-      setSelectedPlatforms(defaultPlatforms)
+      setSelectedPlatforms(availablePlatforms)
     }
     else {
       setSelectedPlatforms(storedPlatforms.filter(p => AccountPlatInfoMap.has(p) && !TASK_EXCLUDED_PLATFORMS.has(p)))
     }
-    // 从 store 恢复描述
-    const storedPrompt = newConfig.promptValue ?? ''
-    setPromptValue(storedPrompt)
-    defaultPromptFilledRef.current = !!storedPrompt
-    // 从 store 恢复图片选择
-    const storedImageIds = newConfig.selectedImageIds ?? []
-    if (storedImageIds.length > 0) {
-      setSelectedIds(storedImageIds)
-      initialSelectionDone.current = true
-    }
-    else {
+    // 品牌匹配判断：如果品牌已变更，不恢复旧的 prompt 和 imageIds
+    const brandChanged = brandInfo?.id && brandInfo.status === 'active' && newConfig.linkedBrandId !== brandInfo.id
+    if (brandChanged) {
+      // 品牌已变更，重置 ref 标志，让品牌变化 effect 处理
+      setPromptValue('')
+      defaultPromptFilledRef.current = false
       setSelectedIds([])
       initialSelectionDone.current = false
+      lastAppliedBrandIdRef.current = null
     }
-    lastAppliedBrandIdRef.current = newConfig.linkedBrandId || null
+    else {
+      // 从 store 恢复描述
+      const storedPrompt = newConfig.promptValue ?? ''
+      setPromptValue(storedPrompt)
+      defaultPromptFilledRef.current = !!storedPrompt
+      // 从 store 恢复品牌图片选择
+      const storedImageIds = newConfig.selectedImageIds ?? []
+      if (storedImageIds.length > 0) {
+        setSelectedIds(storedImageIds)
+        initialSelectionDone.current = true
+      }
+      else {
+        setSelectedIds([])
+        initialSelectionDone.current = false
+      }
+      lastAppliedBrandIdRef.current = newConfig.linkedBrandId || null
+    }
     // 从 store 恢复持久化的媒体
     const persistedMedias = newConfig.persistedMedias ?? []
     if (persistedMedias.length > 0) {
@@ -421,7 +723,207 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       videoDurationMapRef.current.clear()
     }
     isMediaInitializedRef.current = true
-  }, [configKey, _hasHydrated])
+  }, [configKey, _hasHydrated, forceDraftMode])
+
+  useEffect(() => {
+    if (!forceDraftMode || !_hasHydrated)
+      return
+    setIsDraftMode(true)
+    updateConfig(configKey, { isDraftMode: true })
+  }, [_hasHydrated, configKey, forceDraftMode, updateConfig])
+
+  // 响应外部对 persistedMedias 的追加（例如图片资源卡片一键添加到参考文件）
+  useEffect(() => {
+    if (!_hasHydrated || !isMediaInitializedRef.current) {
+      return
+    }
+
+    const persistedMedias = config.persistedMedias ?? []
+    const currentLocalMedias = localMediasRef.current
+    const uploadingMedias = currentLocalMedias.filter(media => media.progress !== undefined)
+    const completedLocalMedias = currentLocalMedias
+      .filter(media => media.url && media.progress === undefined)
+      .map(media => ({
+        id: media.id ?? '',
+        url: media.url,
+        type: media.type === 'video' ? 'video' as const : 'image' as const,
+        name: media.name,
+        duration: media.type === 'video' && media.id
+          ? videoDurationMapRef.current.get(media.id)
+          : undefined,
+      }))
+
+    if (buildPersistedMediaSignature(persistedMedias) === buildPersistedMediaSignature(completedLocalMedias)) {
+      return
+    }
+
+    setMedias([
+      ...persistedMedias.map(media => ({
+        id: media.id,
+        url: media.url,
+        type: media.type,
+        name: media.name,
+      })),
+      ...uploadingMedias,
+    ])
+
+    const nextVideoDurationMap = new Map<string, number>()
+    uploadingMedias.forEach((media) => {
+      if (media.type !== 'video' || !media.file) {
+        return
+      }
+
+      const cacheKey = media.file.name + media.file.size
+      const cachedDuration = videoDurationMapRef.current.get(cacheKey)
+      if (cachedDuration !== undefined) {
+        nextVideoDurationMap.set(cacheKey, cachedDuration)
+      }
+    })
+    persistedMedias
+      .filter(media => media.type === 'video' && media.duration)
+      .forEach(media => nextVideoDurationMap.set(media.id, media.duration!))
+
+    videoDurationMapRef.current.clear()
+    nextVideoDurationMap.forEach((duration, key) => {
+      videoDurationMapRef.current.set(key, duration)
+    })
+  }, [config.persistedMedias, setMedias, _hasHydrated])
+
+  // 响应外部对当前草稿箱配置的回填，例如历史参数的一键使用
+  useEffect(() => {
+    if (!_hasHydrated || !configSnapshot || isPromptComposingRef.current) {
+      return
+    }
+
+    const nextPromptValue = configSnapshot.promptValue ?? ''
+    if (nextPromptValue !== promptValueRef.current) {
+      setPromptValue(nextPromptValue)
+      defaultPromptFilledRef.current = !!nextPromptValue
+    }
+  }, [_hasHydrated, configSnapshot?.promptValue])
+
+  useEffect(() => {
+    if (!_hasHydrated || !configSnapshot) {
+      return
+    }
+
+    const nextCaptionPrompt = configSnapshot.captionPrompt ?? ''
+    if (nextCaptionPrompt !== captionPromptRef.current) {
+      setCaptionPrompt(nextCaptionPrompt)
+    }
+  }, [_hasHydrated, configSnapshot?.captionPrompt])
+
+  useEffect(() => {
+    if (!_hasHydrated || !configSnapshot) {
+      return
+    }
+
+    const nextCaptionSystemPrompt = configSnapshot.captionSystemPrompt ?? ''
+    if (nextCaptionSystemPrompt !== captionSystemPromptRef.current) {
+      setCaptionSystemPrompt(nextCaptionSystemPrompt)
+    }
+  }, [_hasHydrated, configSnapshot?.captionSystemPrompt])
+
+  useEffect(() => {
+    if (!_hasHydrated || !configSnapshot) {
+      return
+    }
+
+    const nextCaptionSystemPromptDefault = configSnapshot.captionSystemPromptDefault ?? ''
+    if (nextCaptionSystemPromptDefault !== captionSystemPromptDefaultRef.current) {
+      setCaptionSystemPromptDefault(nextCaptionSystemPromptDefault)
+    }
+  }, [_hasHydrated, configSnapshot?.captionSystemPromptDefault])
+
+  useEffect(() => {
+    if (!_hasHydrated || !configSnapshot) {
+      return
+    }
+
+    if (configSnapshot.aspectRatio !== aspectRatio) {
+      setAspectRatio(configSnapshot.aspectRatio)
+    }
+    if (configSnapshot.duration !== duration) {
+      setDuration(configSnapshot.duration)
+    }
+    if (configSnapshot.resolution !== resolution) {
+      setResolution(configSnapshot.resolution)
+    }
+    if (configSnapshot.modelType !== modelType) {
+      setModelType(configSnapshot.modelType)
+    }
+    const nextSelectedVideoModels = configSnapshot.selectedVideoModels.length > 0
+      ? configSnapshot.selectedVideoModels
+      : (configSnapshot.modelType ? [configSnapshot.modelType] : [])
+    if (!isEqual(nextSelectedVideoModels, selectedVideoModels)) {
+      setSelectedVideoModels(nextSelectedVideoModels)
+    }
+    if (configSnapshot.contentType !== contentType) {
+      setContentType(configSnapshot.contentType)
+    }
+    if (configSnapshot.imageModel !== imageModel) {
+      setImageModel(configSnapshot.imageModel)
+    }
+    const nextSelectedImageModels = configSnapshot.selectedImageModels.length > 0
+      ? configSnapshot.selectedImageModels
+      : (configSnapshot.imageModel ? [configSnapshot.imageModel] : [])
+    if (!isEqual(nextSelectedImageModels, selectedImageModels)) {
+      setSelectedImageModels(nextSelectedImageModels)
+    }
+    if (configSnapshot.imageCount !== imageCount) {
+      setImageCount(configSnapshot.imageCount)
+    }
+    if (configSnapshot.imageSize !== imageSize) {
+      setImageSize(configSnapshot.imageSize)
+    }
+    if (configSnapshot.quantity !== quantity) {
+      setQuantity(configSnapshot.quantity)
+    }
+
+    const nextIsDraftMode = forceDraftMode ? true : configSnapshot.isDraftMode ?? true
+    if (nextIsDraftMode !== isDraftMode) {
+      setIsDraftMode(nextIsDraftMode)
+    }
+
+    const nextCaptionPromptOpen = configSnapshot.captionPromptOpen ?? true
+    if (nextCaptionPromptOpen !== moreOptionsOpen) {
+      setMoreOptionsOpen(nextCaptionPromptOpen)
+    }
+
+    const nextSelectedPlatforms = configSnapshot.selectedPlatforms.length === 0
+      ? availablePlatforms
+      : configSnapshot.selectedPlatforms.filter(p => AccountPlatInfoMap.has(p) && !TASK_EXCLUDED_PLATFORMS.has(p))
+
+    if (!isEqual(nextSelectedPlatforms, selectedPlatforms)) {
+      setSelectedPlatforms(nextSelectedPlatforms)
+    }
+
+    const nextSelectedIds = configSnapshot.selectedImageIds ?? []
+    if (!isEqual(nextSelectedIds, selectedIds)) {
+      setSelectedIds(nextSelectedIds)
+      initialSelectionDone.current = nextSelectedIds.length > 0
+    }
+  }, [
+    _hasHydrated,
+    configSnapshot,
+    aspectRatio,
+    duration,
+    resolution,
+    modelType,
+    selectedVideoModels,
+    contentType,
+    imageModel,
+    selectedImageModels,
+    imageCount,
+    imageSize,
+    quantity,
+    isDraftMode,
+    moreOptionsOpen,
+    availablePlatforms,
+    selectedPlatforms,
+    selectedIds,
+    forceDraftMode,
+  ])
 
   // 已选图片对象
   const selectedImages = useMemo(() => {
@@ -447,11 +949,65 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     return calcEffectiveLimitsDetailed(effectiveSelectedPlatforms)
   }, [effectiveSelectedPlatforms])
 
+  const defaultCaptionSystemPrompt = useMemo(() => {
+    if (!isDraftMode)
+      return ''
+
+    const limits: string[] = []
+    if (effectiveLimitsDetailed.titleMax) {
+      limits.push(t('detail.titleLimitPrompt', { max: effectiveLimitsDetailed.titleMax.value }))
+    }
+    if (effectiveLimitsDetailed.desMax) {
+      limits.push(t('detail.descriptionLimitPrompt', { max: effectiveLimitsDetailed.desMax.value }))
+    }
+    if (effectiveLimitsDetailed.topicMax) {
+      limits.push(t('detail.topicLimitPrompt', { max: effectiveLimitsDetailed.topicMax.value }))
+    }
+    limits.push(t('detail.titleNoEmojiPrompt'))
+
+    return buildDraftPromptLimitText(limits, {
+      prefix: t('detail.systemCaptionPromptPrefix'),
+      separator: t('detail.systemCaptionPromptSeparator'),
+    })
+  }, [effectiveLimitsDetailed, isDraftMode, t])
+
+  useEffect(() => {
+    if (!_hasHydrated || !isDraftMode)
+      return
+
+    if (captionSystemPromptDefault === defaultCaptionSystemPrompt) {
+      return
+    }
+
+    setCaptionSystemPromptDefault(defaultCaptionSystemPrompt)
+    setCaptionSystemPrompt(defaultCaptionSystemPrompt)
+    updateConfig(configKey, {
+      captionSystemPrompt: defaultCaptionSystemPrompt,
+      captionSystemPromptDefault: defaultCaptionSystemPrompt,
+    })
+  }, [_hasHydrated, captionSystemPromptDefault, configKey, defaultCaptionSystemPrompt, isDraftMode, updateConfig])
+
   // 事件处理
-  const handlePromptChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setPromptValue(e.target.value)
-    updateConfig(configKey, { promptValue: e.target.value })
+  const handlePromptValueChange = useCallback((value: string, persist = true) => {
+    setPromptValue(value)
+    defaultPromptFilledRef.current = !!value
+    if (persist) {
+      updateConfig(configKey, { promptValue: value })
+    }
   }, [configKey, updateConfig])
+
+  const handlePromptChange = useCallback((e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    handlePromptValueChange(e.target.value, !isPromptComposingRef.current)
+  }, [handlePromptValueChange])
+
+  const handlePromptCompositionStart = useCallback(() => {
+    isPromptComposingRef.current = true
+  }, [])
+
+  const handlePromptCompositionEnd = useCallback((e: React.CompositionEvent<HTMLTextAreaElement>) => {
+    isPromptComposingRef.current = false
+    handlePromptValueChange(e.currentTarget.value)
+  }, [handlePromptValueChange])
 
   const handleImagesChange = useCallback((ids: string[]) => {
     setSelectedIds(ids)
@@ -466,41 +1022,70 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   const handleContentTypeChange = useCallback((ct: DraftContentType) => {
     setContentType(ct)
     updateConfig(configKey, { contentType: ct })
-    // 切换内容类型时清理已上传的媒体资源
-    clearMedias()
-    videoDurationMapRef.current.clear()
     // 切换内容类型时校验并重置比例
     if (ct === 'image_text') {
-      const supported = IMAGE_TEXT_ASPECT_RATIOS.map(r => r.label)
-      if (!supported.includes(aspectRatio)) {
-        const defaultRatio = supported.includes('9:16') ? '9:16' : (supported[0] ?? '9:16')
+      const supported = currentImageAspectRatios
+      if (!includesOption(supported, aspectRatio)) {
+        const defaultRatio = supported[0] ?? '1:1'
         setAspectRatio(defaultRatio)
         updateConfig(configKey, { aspectRatio: defaultRatio })
       }
     }
     else {
       const supported = currentVideoModelConfig.supportedRatios
-      if (!supported.has(aspectRatio)) {
+      if (!includesOption([...supported], aspectRatio)) {
         const defaultRatio = supported.has('9:16') ? '9:16' : ([...supported][0] ?? '9:16')
         setAspectRatio(defaultRatio)
         updateConfig(configKey, { aspectRatio: defaultRatio })
       }
     }
-    // 重置店铺图片选择（重新自动选中）
     const maxImages = ct === 'image_text'
-      ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES)
+      ? currentImageMaxInputImages
       : currentVideoModelConfig.maxImages
-    const defaultCount = Math.min(5, maxImages, imageList.length)
-    const newIds = imageList.slice(0, defaultCount).map(img => img.id)
-    setSelectedIds(newIds)
-    updateConfig(configKey, { selectedImageIds: newIds })
-  }, [configKey, updateConfig, clearMedias, currentVideoModelConfig, currentImageModelInfo, imageList, aspectRatio])
+    const maxVideos = ct === 'video' ? currentVideoModelConfig.maxVideos : 0
+    const nextLocalImages = localMedias.filter(m => m.type === 'image')
+    const nextLocalVideos = ct === 'video' ? localMedias.filter(m => m.type === 'video').slice(0, maxVideos) : []
+    const nextLocalMediaIds = new Set([...nextLocalImages, ...nextLocalVideos].map(media => media.id))
+    const allowedSelectedCount = Math.max(0, maxImages - nextLocalImages.length)
+    const nextSelectedIds = selectedIds.slice(0, allowedSelectedCount)
 
-  const handleImageModelChange = useCallback((im: string) => {
-    setImageModel(im)
-    updateConfig(configKey, { imageModel: im })
-    const modelInfo = pricingData?.imageModels?.find(m => m.model === im)
-    const maxImages = modelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES
+    videoDurationMapRef.current.forEach((_, key) => {
+      if (!nextLocalMediaIds.has(key))
+        videoDurationMapRef.current.delete(key)
+    })
+
+    setMedias([...nextLocalImages, ...nextLocalVideos])
+    setSelectedIds(nextSelectedIds)
+    updateConfig(configKey, { selectedImageIds: nextSelectedIds })
+
+    if (nextSelectedIds.length === 0 && nextLocalImages.length === 0 && imageList.length > 0 && maxImages > 0) {
+      const defaultCount = Math.min(5, maxImages, imageList.length)
+      const defaultIds = imageList.slice(0, defaultCount).map(img => img.id)
+      setSelectedIds(defaultIds)
+      updateConfig(configKey, { selectedImageIds: defaultIds })
+    }
+  }, [configKey, updateConfig, currentVideoModelConfig, currentImageMaxInputImages, currentImageAspectRatios, imageList, aspectRatio, localMedias, selectedIds, setMedias])
+
+  const handleImageModelsChange = useCallback((models: string[]) => {
+    if (models.length === 0)
+      return
+
+    const modelInfos = models
+      .map(model => pricingData?.imageModels?.find(item => item.model === model))
+      .filter((model): model is ImageModelInfo => Boolean(model))
+    const commonRatios = getImageModelsCommonAspectRatios(modelInfos)
+    const commonPricing = buildAggregateImagePricing(modelInfos)
+    if (modelInfos.length !== models.length || commonRatios.length === 0 || commonPricing.length === 0) {
+      toast.warning(t('detail.noCommonModelParams'))
+      return
+    }
+
+    const nextPrimaryModel = models[0]!
+    setSelectedImageModels(models)
+    setImageModel(nextPrimaryModel)
+    updateConfig(configKey, { selectedImageModels: models, imageModel: nextPrimaryModel })
+
+    const maxImages = getImageModelsMaxInputImages(modelInfos)
     if (maxImages === 0) {
       setSelectedIds([])
       updateConfig(configKey, { selectedImageIds: [] })
@@ -512,12 +1097,17 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       updateConfig(configKey, { selectedImageIds: trimmed })
     }
     // 切换模型后校验 imageSize 是否在新模型定价中
-    if (modelInfo && !modelInfo.pricing.some(p => p.resolution === imageSize)) {
-      const firstSize = modelInfo.pricing[0]?.resolution ?? '1K'
+    if (!includesOption(commonPricing.map(p => p.resolution), imageSize)) {
+      const firstSize = commonPricing[0]?.resolution ?? '1K'
       setImageSize(firstSize)
       updateConfig(configKey, { imageSize: firstSize })
     }
-  }, [selectedIds.length, configKey, updateConfig, clearMedias, pricingData, imageSize])
+    if (!includesOption(commonRatios, aspectRatio)) {
+      const firstRatio = commonRatios[0] ?? '1:1'
+      setAspectRatio(firstRatio)
+      updateConfig(configKey, { aspectRatio: firstRatio })
+    }
+  }, [selectedIds.length, configKey, updateConfig, clearMedias, pricingData, imageSize, aspectRatio, t])
 
   const handleImageSizeChange = useCallback((size: string) => {
     setImageSize(size)
@@ -534,32 +1124,67 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     updateConfig(configKey, { duration: d })
   }, [configKey, updateConfig])
 
+  const handleResolutionChange = useCallback((nextResolution: string) => {
+    setResolution(nextResolution)
+    updateConfig(configKey, { resolution: nextResolution })
+  }, [configKey, updateConfig])
+
   const handleQuantityChange = useCallback((q: number) => {
     setQuantity(q)
     updateConfig(configKey, { quantity: q })
   }, [configKey, updateConfig])
 
-  const handleModelTypeChange = useCallback((mt: VideoModelType) => {
-    setModelType(mt)
-    updateConfig(configKey, { modelType: mt })
-    const newConfig = getVideoModelStaticConfig(mt, pricingData?.videoModels)
+  const handleVideoModelsChange = useCallback((models: VideoModelType[]) => {
+    if (models.length === 0)
+      return
+
+    const modelInfos = models
+      .map(model => pricingData?.videoModels?.find(item => item.name === model))
+      .filter((model): model is VideoModelInfo => Boolean(model))
+    const newConfig = getVideoModelsCommonStaticConfig(modelInfos)
+    const newResolutions = getVideoModelsCommonResolutions(modelInfos)
+    if (modelInfos.length !== models.length || newConfig.supportedRatios.size === 0) {
+      toast.warning(t('detail.noCommonModelParams'))
+      return
+    }
+
+    if (localVideos.length > newConfig.maxVideos) {
+      toast.warning(t('detail.videoCountExceeded', { max: newConfig.maxVideos }))
+      return
+    }
+
+    const nextModelType = models[0]!
+    const preferredResolution = models.length === 1
+      ? getVideoModelDefaultResolution(modelInfos[0])
+      : (newResolutions[0] ?? getVideoModelDefaultResolution(modelInfos[0]))
+    const nextResolution = includesOption(newResolutions, preferredResolution)
+      ? preferredResolution
+      : (newResolutions[0] ?? preferredResolution)
+    setSelectedVideoModels(models)
+    setModelType(nextModelType)
+    setResolution(nextResolution)
+    updateConfig(configKey, { selectedVideoModels: models, modelType: nextModelType, resolution: nextResolution })
     const supported = newConfig.supportedRatios
     // 切换模型时默认选 9:16，不支持则选第一个可用比例
-    const defaultRatio = supported.has('9:16')
-      ? '9:16'
-      : ([...supported][0] ?? '9:16')
-    setAspectRatio(defaultRatio)
-    updateConfig(configKey, { aspectRatio: defaultRatio })
-    // 根据新模型的 maxImages 重新初始化选中的图片
+    if (!includesOption([...supported], aspectRatio)) {
+      const defaultRatio = supported.has('9:16')
+        ? '9:16'
+        : ([...supported][0] ?? '9:16')
+      setAspectRatio(defaultRatio)
+      updateConfig(configKey, { aspectRatio: defaultRatio })
+    }
+    // 根据新模型的 maxImages 裁剪选中的图片
     const maxImages = newConfig.maxImages
-    const defaultCount = Math.min(maxImages, imageList.length)
-    const newIds = imageList.slice(0, defaultCount).map(img => img.id)
-    setSelectedIds(newIds)
-    updateConfig(configKey, { selectedImageIds: newIds })
+    const allowedSelectedCount = Math.max(0, maxImages - localImages.length)
+    const nextSelectedIds = selectedIds.slice(0, allowedSelectedCount)
+    if (!isEqual(nextSelectedIds, selectedIds)) {
+      setSelectedIds(nextSelectedIds)
+      updateConfig(configKey, { selectedImageIds: nextSelectedIds })
+    }
     // 清理超出限制的本地上传图片
     const currentLocalImages = localMedias.filter(m => m.type === 'image')
-    if (currentLocalImages.length > 0 && newIds.length + currentLocalImages.length > maxImages) {
-      const allowedLocal = Math.max(0, maxImages - newIds.length)
+    if (currentLocalImages.length > 0 && nextSelectedIds.length + currentLocalImages.length > maxImages) {
+      const allowedLocal = Math.max(0, maxImages - nextSelectedIds.length)
       for (let i = currentLocalImages.length - 1; i >= allowedLocal; i--) {
         const mediaIndex = localMedias.indexOf(currentLocalImages[i]!)
         if (mediaIndex >= 0)
@@ -579,12 +1204,16 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       toast.warning(t('detail.videoCountExceeded', { max: maxVideos }))
     }
     // 切换模型后 clamp duration 到新模型范围
-    const newMaxDuration = newConfig.maxVideoDuration
-    if (duration > newMaxDuration) {
-      setDuration(newMaxDuration)
-      updateConfig(configKey, { duration: newMaxDuration })
+    const durationLimits = getVideoDurationLimits(modelInfos, nextResolution, isVideoEditMode)
+    if (duration > durationLimits.max) {
+      setDuration(durationLimits.max)
+      updateConfig(configKey, { duration: durationLimits.max })
     }
-  }, [aspectRatio, duration, configKey, updateConfig, imageList, localMedias, removeLocalMedia, t, pricingData?.videoModels])
+    else if (duration < durationLimits.min) {
+      setDuration(durationLimits.min)
+      updateConfig(configKey, { duration: durationLimits.min })
+    }
+  }, [aspectRatio, duration, configKey, updateConfig, localImages.length, localMedias, localVideos.length, removeLocalMedia, selectedIds, t, pricingData?.videoModels, isVideoEditMode])
 
   const handlePlatformsChange = useCallback((platforms: PlatType[]) => {
     setSelectedPlatforms(platforms)
@@ -592,55 +1221,96 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   }, [configKey, updateConfig])
 
   const handleDraftModeChange = useCallback((isDraft: boolean) => {
+    if (forceDraftMode) {
+      setIsDraftMode(true)
+      updateConfig(configKey, { isDraftMode: true })
+      return
+    }
     setIsDraftMode(isDraft)
     updateConfig(configKey, { isDraftMode: isDraft })
+  }, [configKey, forceDraftMode, updateConfig])
+
+  const handleCaptionPromptChange = useCallback((value: string) => {
+    setCaptionPrompt(value)
+    updateConfig(configKey, { captionPrompt: value })
+  }, [configKey, updateConfig])
+
+  const handleCaptionSystemPromptChange = useCallback((value: string) => {
+    setCaptionSystemPrompt(value)
+    updateConfig(configKey, { captionSystemPrompt: value })
+  }, [configKey, updateConfig])
+
+  const handleMoreOptionsOpenChange = useCallback((open: boolean) => {
+    setMoreOptionsOpen(open)
+    updateConfig(configKey, { captionPromptOpen: open })
   }, [configKey, updateConfig])
 
   // 重置所有配置到默认值
   const handleReset = useCallback(() => {
-    resetConfig(configKey)
-    // 重置本地状态到默认值
-    setAspectRatio('9:16')
-    setDuration(8)
+    const currentLinkedBrandId = brandInfo?.id || getConfig(configKey).linkedBrandId || ''
     const firstVideoModel = pricingData?.videoModels?.[0]?.name ?? ('' as VideoModelType)
-    setModelType(firstVideoModel)
-    setContentType('video')
-    // 图文模型：优先用 API 返回的第一个有效值，回退到默认值
+    const firstVideoModelInfo = pricingData?.videoModels?.[0]
+    const firstVideoModelConfig = getVideoModelStaticConfig(firstVideoModel, pricingData?.videoModels)
+    const firstVideoResolution = getVideoModelDefaultResolution(firstVideoModelInfo)
+    const nextAspectRatio = firstVideoModelConfig.supportedRatios.has('9:16')
+      ? '9:16'
+      : ([...firstVideoModelConfig.supportedRatios][0] ?? '9:16')
     const firstImageModel = pricingData?.imageModels?.[0]
+    const nextPromptValue = defaultPrompt || ''
+    const nextSelectedImageIds = imageList.length > 0
+      ? imageList.slice(0, Math.min(5, firstVideoModelConfig.maxImages, imageList.length)).map(img => img.id)
+      : []
+
+    clearMedias()
+    videoDurationMapRef.current.clear()
+
+    updateConfig(configKey, {
+      aspectRatio: nextAspectRatio,
+      duration: 8,
+      resolution: firstVideoResolution,
+      quantity: 1,
+      modelType: firstVideoModel,
+      selectedVideoModels: firstVideoModel ? [firstVideoModel] : [],
+      contentType: 'video',
+      imageModel: firstImageModel?.model ?? 'nb2',
+      selectedImageModels: firstImageModel?.model ? [firstImageModel.model] : [],
+      imageCount: 3,
+      imageSize: firstImageModel?.pricing?.[0]?.resolution ?? '1K',
+      selectedPlatforms: availablePlatforms,
+      persistedMedias: [],
+      selectedImageIds: nextSelectedImageIds,
+      promptValue: nextPromptValue,
+      captionPrompt: '',
+      captionPromptOpen: true,
+      captionSystemPrompt: defaultCaptionSystemPrompt,
+      captionSystemPromptDefault: defaultCaptionSystemPrompt,
+      isDraftMode: true,
+      linkedBrandId: currentLinkedBrandId,
+    })
+
+    setAspectRatio(nextAspectRatio)
+    setDuration(8)
+    setResolution(firstVideoResolution)
+    setModelType(firstVideoModel)
+    setSelectedVideoModels(firstVideoModel ? [firstVideoModel] : [])
+    setContentType('video')
     setImageModel(firstImageModel?.model ?? 'nb2')
+    setSelectedImageModels(firstImageModel?.model ? [firstImageModel.model] : [])
     setImageCount(3)
     setImageSize(firstImageModel?.pricing?.[0]?.resolution ?? '1K')
     setQuantity(1)
     setIsDraftMode(true)
     setSelectedPlatforms(availablePlatforms)
-    // 清空媒体
-    clearMedias()
-    videoDurationMapRef.current.clear()
+    setPromptValue(nextPromptValue)
+    setCaptionPrompt('')
+    setCaptionSystemPrompt(defaultCaptionSystemPrompt)
+    setCaptionSystemPromptDefault(defaultCaptionSystemPrompt)
+    setMoreOptionsOpen(true)
+    setSelectedIds(nextSelectedImageIds)
 
-    // 直接恢复默认提示词（不依赖 effect，避免多次点击时 deps 不变导致 effect 不触发）
-    if (defaultPrompt) {
-      setPromptValue(defaultPrompt)
-      updateConfig(configKey, { promptValue: defaultPrompt })
-      defaultPromptFilledRef.current = true
-    }
-    else {
-      setPromptValue('')
-      updateConfig(configKey, { promptValue: '' })
-      defaultPromptFilledRef.current = false
-    }
-
-    // 直接恢复默认图片选中（不依赖 effect）
-    if (imageList.length > 0) {
-      const maxImages = getVideoModelStaticConfig(firstVideoModel, pricingData?.videoModels).maxImages
-      const defaultCount = Math.min(5, maxImages, imageList.length)
-      setSelectedIds(imageList.slice(0, defaultCount).map(img => img.id))
-      initialSelectionDone.current = true
-    }
-    else {
-      setSelectedIds([])
-      initialSelectionDone.current = false
-    }
-  }, [configKey, resetConfig, clearMedias, defaultPlatforms, defaultPrompt, imageList, pricingData])
+    defaultPromptFilledRef.current = !!nextPromptValue
+    initialSelectionDone.current = nextSelectedImageIds.length > 0
+  }, [availablePlatforms, brandInfo?.id, clearMedias, configKey, defaultCaptionSystemPrompt, defaultPrompt, getConfig, imageList, pricingData, updateConfig])
 
   // 本地上传处理
   const handleLocalUpload = useCallback(async (files: FileList) => {
@@ -650,7 +1320,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
 
     // 验证图片数量
     const maxImages = contentType === 'image_text'
-      ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES)
+      ? currentImageMaxInputImages
       : currentVideoModelConfig.maxImages
     const currentImageCount = selectedIds.length + localImages.length
     if (imageFiles.length > 0 && currentImageCount + imageFiles.length > maxImages) {
@@ -730,7 +1400,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       validFiles.forEach(f => dt.items.add(f))
       uploadMedias(dt.files)
     }
-  }, [currentVideoModelConfig, contentType, imageModel, selectedIds.length, localImages.length, localVideos.length, uploadMedias, aspectRatio, configKey, updateConfig, t])
+  }, [currentVideoModelConfig, currentImageMaxInputImages, contentType, imageModel, selectedIds.length, localImages.length, localVideos.length, uploadMedias, aspectRatio, configKey, updateConfig, t])
 
   // 拖拽事件处理
   const handleDragEnter = useCallback((e: React.DragEvent) => {
@@ -764,6 +1434,21 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       handleLocalUpload(files)
   }, [handleLocalUpload])
 
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    const files = Array.from(e.clipboardData.items)
+      .filter(item => item.kind === 'file')
+      .map(item => item.getAsFile())
+      .filter((file): file is File => Boolean(file))
+
+    if (files.length === 0)
+      return
+
+    e.preventDefault()
+    const dataTransfer = new DataTransfer()
+    files.forEach(file => dataTransfer.items.add(file))
+    void handleLocalUpload(dataTransfer.files)
+  }, [handleLocalUpload])
+
   const handleSubmit = useCallback(async () => {
     // 上传中拦截
     if (isUploading) {
@@ -777,24 +1462,9 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       return
     }
 
-    // 将平台参数限制追加到 prompt，让 AI 感知限制（非草稿模式不需要，因为不生成文案）
-    const buildPromptWithLimits = (basePrompt: string): string => {
-      if (!isDraftMode)
-        return basePrompt
-      const limits: string[] = []
-      if (effectiveLimitsDetailed.titleMax) {
-        limits.push(`标题字数限制：${effectiveLimitsDetailed.titleMax.value}`)
-      }
-      if (effectiveLimitsDetailed.desMax) {
-        limits.push(`描述字数限制：${effectiveLimitsDetailed.desMax.value}`)
-      }
-      if (effectiveLimitsDetailed.topicMax) {
-        limits.push(`话题数量限制：${effectiveLimitsDetailed.topicMax.value}`)
-      }
-      if (limits.length === 0)
-        return basePrompt
-      return `${basePrompt}\n\n重要：${limits.join('，')}`
-    }
+    const captionPromptForSubmit = isDraftMode
+      ? mergeCaptionPromptWithSystemRequirement(captionPrompt, captionSystemPrompt)
+      : ''
 
     const imageUrls = [
       ...selectedImages.map(img => getOssUrl(img.url)),
@@ -802,21 +1472,19 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     ]
 
     if (contentType === 'image_text') {
-      // 图文模式积分验证
-      const currentPricing = imagePricing.find(p => p.resolution === imageSize)
-      const pricePerImage = currentPricing?.pricePerImage ?? 0
-      const totalCredits = Math.ceil(pricePerImage * imageCount * quantity * 100) / 100
-      const creditsBalance = useUserStore.getState().creditsBalance
-      if (creditsBalance < totalCredits) {
-        toast.error(t('detail.insufficientBalance', { total: totalCredits, balance: creditsBalance }))
-        useAccountStore.getState().setLowBalanceAlertOpen(true)
+      if (selectedImageModels.length === 0) {
+        toast.warning(t('detail.selectModelRequired'))
+        return
+      }
+      if (currentImageAspectRatios.length === 0 || imagePricing.length === 0) {
+        toast.warning(t('detail.noCommonModelParams'))
         return
       }
 
-      const success = await createImageTextBatchGeneration(
-        quantity,
-        imageModel,
-        buildPromptWithLimits(promptValue.trim()),
+      const result = await createImageTextBatchGenerationWithModels(
+        effectiveQuantity,
+        selectedImageModels,
+        promptValue.trim(),
         imageCount,
         aspectRatio,
         imageUrls.length > 0 ? imageUrls : undefined,
@@ -824,55 +1492,78 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
         imageSize,
         effectiveSelectedPlatforms.length > 0 ? effectiveSelectedPlatforms : undefined,
         isDraftMode ? 'draft' : 'image',
+        captionPromptForSubmit || undefined,
       )
-      if (success) {
-        toast.success(t('detail.imageTextGenerated'))
+      if (result.success) {
+        if (result.failedCount > 0) {
+          toast.warning(t('detail.multiModelPartialSuccess', { success: result.successCount, failed: result.failedCount }))
+        }
+        else {
+          toast.success(t('detail.imageTextGenerated'))
+        }
         onGenerated?.()
+      }
+      else {
+        toast.error(result.errorMessage || t('detail.multiModelGenerateFailed'))
       }
     }
     else {
-      // 视频模式积分验证（使用 API 驱动的查表积分）
-      const totalCredits = videoCredits
-      const creditsBalance = useUserStore.getState().creditsBalance
-      if (creditsBalance < totalCredits) {
-        toast.error(t('detail.insufficientBalance', { total: totalCredits, balance: creditsBalance }))
-        useAccountStore.getState().setLowBalanceAlertOpen(true)
+      if (selectedVideoModels.length === 0) {
+        toast.warning(t('detail.selectModelRequired'))
+        return
+      }
+      if (currentVideoModelConfig.supportedRatios.size === 0) {
+        toast.warning(t('detail.noCommonModelParams'))
         return
       }
 
       const videoUrls = localVideos.filter(v => v.url).map(v => v.url)
 
-      const success = await createBatchGeneration(
-        quantity,
-        modelType,
+      const result = await createBatchGenerationWithModels(
+        effectiveQuantity,
+        selectedVideoModels,
         duration,
+        resolution || undefined,
         aspectRatio,
-        buildPromptWithLimits(promptValue.trim()) || undefined,
+        promptValue.trim() || undefined,
         imageUrls.length > 0 ? imageUrls : undefined,
         videoUrls.length > 0 ? videoUrls : undefined,
         groupId,
         effectiveSelectedPlatforms.length > 0 ? effectiveSelectedPlatforms : undefined,
         isDraftMode ? 'draft' : 'video',
+        captionPromptForSubmit || undefined,
       )
-      if (success) {
-        toast.success(t('detail.aiBatchGenerate'))
+      if (result.success) {
+        if (result.failedCount > 0) {
+          toast.warning(t('detail.multiModelPartialSuccess', { success: result.successCount, failed: result.failedCount }))
+        }
+        else {
+          toast.success(t('detail.aiBatchGenerate'))
+        }
         onGenerated?.()
       }
+      else {
+        toast.error(result.errorMessage || t('detail.multiModelGenerateFailed'))
+      }
     }
-  }, [promptValue, aspectRatio, duration, modelType, selectedImages, localImages, localVideos, hasVideos, quantity, createBatchGeneration, createImageTextBatchGeneration, contentType, imageModel, imageCount, imageSize, imagePricing, videoCredits, isUploading, t, groupId, onGenerated, effectiveSelectedPlatforms, effectiveLimitsDetailed, isDraftMode])
+  }, [promptValue, aspectRatio, duration, resolution, selectedImages, localImages, localVideos, effectiveQuantity, createBatchGenerationWithModels, createImageTextBatchGenerationWithModels, contentType, selectedImageModels, selectedVideoModels, currentImageAspectRatios.length, imagePricing.length, currentVideoModelConfig.supportedRatios, imageCount, isUploading, t, groupId, onGenerated, effectiveSelectedPlatforms, isDraftMode, captionPrompt, captionSystemPrompt])
 
-  // Prompts 探索页 URL（不同语言对应不同路径）
+  // Prompts 探索页 URL（根据当前模型族切换 grok / seedance 提示词页）
   const promptsExploreUrl = useMemo(() => {
     const lngPath = PROMPTS_EXPLORE_LNG_MAP[lng]
+    const promptSlug = getPromptsExploreSlugByModel(currentVideoModelInfo?.name ?? modelType)
     return lngPath
-      ? `https://youmind.com/${lngPath}/grok-imagine-prompts`
-      : 'https://youmind.com/grok-imagine-prompts'
-  }, [lng])
+      ? `https://youmind.com/${lngPath}/${promptSlug}`
+      : `https://youmind.com/${promptSlug}`
+  }, [currentVideoModelInfo?.name, lng, modelType])
 
   // 动态 Placeholder
   const placeholder = useMemo(() => {
-    return t('detail.promptPlaceholder')
-  }, [t])
+    const storeName = brandInfo?.name
+    return storeName
+      ? t('detail.promptPlaceholderWithStore', { storeName })
+      : t('detail.promptPlaceholder')
+  }, [brandInfo?.name, t])
 
   // 视频提示文本（传给 ImageStack 用于 Tooltip）
   const videoHintText = useMemo(() => {
@@ -880,7 +1571,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   }, [t])
 
   // 上传能力判断
-  const maxUploadImages = contentType === 'image_text' ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES) : currentVideoModelConfig.maxImages
+  const maxUploadImages = contentType === 'image_text' ? currentImageMaxInputImages : currentVideoModelConfig.maxImages
   const canUploadImage = selectedIds.length + localImages.length < maxUploadImages
   const canUploadVideo = contentType === 'video' && currentVideoModelConfig.maxVideos > 0 && localVideos.length < currentVideoModelConfig.maxVideos
 
@@ -899,7 +1590,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
             images={selectedImages}
             allImages={imageList}
             selectedIds={selectedIds}
-            maxImages={contentType === 'image_text' ? (currentImageModelInfo?.maxInputImages ?? DEFAULT_MAX_INPUT_IMAGES) : currentVideoModelConfig.maxImages}
+            maxImages={contentType === 'image_text' ? currentImageMaxInputImages : currentVideoModelConfig.maxImages}
             onImagesChange={handleImagesChange}
             localMedias={localMedias}
             onLocalMediaRemove={handleLocalMediaRemove}
@@ -914,14 +1605,17 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
         <div className="relative w-full sm:flex-1 sm:min-w-0">
           <textarea
             data-testid="draftbox-ai-prompt-input"
-            className="w-full resize-none bg-transparent text-sm placeholder:text-muted-foreground focus-visible:outline-none min-h-[80px] max-h-[160px] md:min-h-[100px] pr-7"
+            className="w-full resize-none bg-transparent text-sm placeholder:text-muted-foreground focus-visible:outline-none min-h-[80px] max-h-[160px] md:min-h-[100px] pr-12"
             placeholder={placeholder}
             value={promptValue}
             onChange={handlePromptChange}
+            onCompositionStart={handlePromptCompositionStart}
+            onCompositionEnd={handlePromptCompositionEnd}
+            onPaste={handlePaste}
             maxLength={PROMPT_MAX_LENGTH}
             rows={3}
           />
-          <div className="absolute top-0 right-0 flex flex-col items-center gap-0.5">
+          <div className="absolute top-0 right-4 flex flex-col items-center gap-0.5">
             {/* 刷新按钮 - 始终可见 */}
             <button
               data-testid="draftbox-ai-reset-btn"
@@ -932,6 +1626,15 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
             >
               <RotateCcw className="h-4 w-4" />
             </button>
+            <button
+              data-testid="draftbox-ai-open-prompt-editor-btn"
+              type="button"
+              className="p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
+              onClick={() => setPromptEditorOpen(true)}
+              title={t('detail.openPromptEditor')}
+            >
+              <Maximize2 className="h-4 w-4" />
+            </button>
             {/* 清空按钮 - 有内容时才显示 */}
             {promptValue && (
               <button
@@ -939,11 +1642,11 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
                 type="button"
                 className="p-1 text-muted-foreground hover:text-foreground cursor-pointer transition-colors"
                 onClick={() => {
-                  setPromptValue('')
+                  handlePromptValueChange('')
                   setSelectedIds([])
                   clearMedias()
                   videoDurationMapRef.current.clear()
-                  updateConfig(configKey, { persistedMedias: [], selectedImageIds: [], promptValue: '' })
+                  updateConfig(configKey, { persistedMedias: [], selectedImageIds: [] })
                 }}
               >
                 <X className="h-4 w-4" />
@@ -957,43 +1660,96 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       <div className="px-4 pb-3 pt-0">
         <ToolBarInline
           contentType={contentType}
-          modelType={modelType}
+          selectedVideoModels={selectedVideoModels}
           aspectRatio={aspectRatio}
           duration={duration}
-          quantity={quantity}
-          imageModel={imageModel}
+          resolution={resolution || defaultVideoResolution}
+          quantity={effectiveQuantity}
+          selectedImageModels={selectedImageModels}
           imageCount={imageCount}
           imageSize={imageSize}
+          imageAspectRatios={currentImageAspectRatios}
           imageModelOptions={imageModelOptions}
           imagePricing={imagePricing}
           videoModels={pricingData?.videoModels}
+          videoAspectRatios={[...currentVideoModelConfig.supportedRatios]}
+          videoResolutions={currentVideoResolutions}
           videoModelOptions={videoModelOptions}
           videoDurationLimits={videoDurationLimits}
-          videoCredits={videoCredits}
+          totalCredits={totalCredits}
           isVideoEditMode={isVideoEditMode}
           inputVideoDuration={inputVideoDuration}
           isPricingLoading={isPricingLoading}
           isLoading={isGeneratingBatch || isUploading}
-          hasVideos={hasVideos}
           promptsExploreUrl={promptsExploreUrl}
           promptsExploreLabel={t('detail.exploreMorePrompts')}
           isDraftMode={isDraftMode}
+          hideNonDraftModes={forceDraftMode}
           selectedPlatforms={selectedPlatforms}
           effectiveLimitsDetailed={effectiveLimitsDetailed}
           disabledPlatforms={incompatiblePlatforms}
+          moreOptionsOpen={moreOptionsOpen}
           onDraftModeChange={handleDraftModeChange}
           onContentTypeChange={handleContentTypeChange}
-          onModelTypeChange={handleModelTypeChange}
+          onVideoModelsChange={handleVideoModelsChange}
+          onResolutionChange={handleResolutionChange}
           onAspectRatioChange={handleAspectRatioChange}
           onDurationChange={handleDurationChange}
           onQuantityChange={handleQuantityChange}
-          onImageModelChange={handleImageModelChange}
+          onImageModelsChange={handleImageModelsChange}
           onImageCountChange={handleImageCountChange}
           onImageSizeChange={handleImageSizeChange}
           onPlatformsChange={handlePlatformsChange}
+          onMoreOptionsChange={handleMoreOptionsOpenChange}
           onSubmit={handleSubmit}
         />
       </div>
+
+      {/* 文案要求输入框（仅草稿生成显示） */}
+      {isDraftMode && moreOptionsOpen && (
+        <div className="px-4 pb-3 space-y-1.5">
+          <textarea
+            className="w-full resize-none bg-muted/30 rounded-lg px-3 py-2 text-sm placeholder:text-muted-foreground focus-visible:outline-none min-h-[56px] max-h-[100px]"
+            placeholder={t('detail.captionPromptPlaceholder')}
+            value={captionPrompt}
+            onChange={e => handleCaptionPromptChange(e.target.value)}
+            maxLength={PROMPT_MAX_LENGTH}
+            rows={2}
+          />
+          <div className="flex flex-col gap-1 px-1 sm:flex-row sm:items-center">
+            <div className="flex shrink-0 items-center gap-1 text-xs font-normal text-muted-foreground/65 sm:w-24">
+              <span>{t('detail.systemCaptionPrompt')}</span>
+              <TooltipProvider delayDuration={120}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <CircleHelp className="h-2.5 w-2.5 cursor-help text-muted-foreground/50 hover:text-muted-foreground" />
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-64 text-xs leading-5">
+                    {t('detail.systemCaptionPromptTip')}
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            </div>
+            <Input
+              className="h-5 rounded-none border-x-0 border-t-0 border-b border-dashed border-border/35 bg-transparent px-0 py-0 text-xs leading-none text-muted-foreground/75 shadow-none md:text-xs focus-visible:border-muted-foreground/55 focus-visible:text-foreground focus-visible:ring-0"
+              placeholder={defaultCaptionSystemPrompt || t('detail.systemCaptionPromptPlaceholder')}
+              value={captionSystemPrompt}
+              onChange={e => handleCaptionSystemPromptChange(e.target.value)}
+              maxLength={PROMPT_MAX_LENGTH}
+            />
+          </div>
+        </div>
+      )}
+
+      <PromptEditorDialog
+        open={promptEditorOpen}
+        value={promptValue}
+        placeholder={placeholder}
+        maxLength={PROMPT_MAX_LENGTH}
+        onOpenChange={setPromptEditorOpen}
+        onSave={handlePromptValueChange}
+        onPaste={handlePaste}
+      />
 
       {/* 拖拽上传遮罩 */}
       {isDragging && (

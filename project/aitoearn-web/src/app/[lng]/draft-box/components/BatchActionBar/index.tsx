@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Loader2, Trash2 } from 'lucide-react'
+import { ArrowRightLeft, Loader2, Trash2 } from 'lucide-react'
 import { memo, useCallback } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
@@ -13,19 +13,38 @@ import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { confirm } from '@/lib/confirm'
 import { toast } from '@/lib/toast'
+import { useTransferDraftDialogStore } from '../../transferDraftDialogStore'
 
-const BatchActionBar = memo(() => {
+interface BatchActionBarProps {
+  allowTransfer?: boolean
+}
+
+const BatchActionBar = memo(({ allowTransfer = true }: BatchActionBarProps) => {
   const { t } = useTransClient('brandPromotion')
 
-  const { selectedMaterialIds, batchDeleting } = usePlanDetailStore(
+  const { currentPlan, selectedMaterialIds, batchDeleting, exitBatchMode, batchDeleteMaterials } = usePlanDetailStore(
     useShallow(state => ({
+      currentPlan: state.currentPlan,
       selectedMaterialIds: state.selectedMaterialIds,
       batchDeleting: state.batchDeleting,
+      exitBatchMode: state.exitBatchMode,
+      batchDeleteMaterials: state.batchDeleteMaterials,
     })),
   )
 
-  const exitBatchMode = usePlanDetailStore(state => state.exitBatchMode)
-  const batchDeleteMaterials = usePlanDetailStore(state => state.batchDeleteMaterials)
+  const openTransferDialog = useTransferDraftDialogStore(state => state.openDialog)
+
+  const handleTransfer = useCallback(() => {
+    if (!currentPlan || selectedMaterialIds.length === 0) {
+      return
+    }
+
+    openTransferDialog({
+      currentPlanId: currentPlan.id,
+      draftIds: selectedMaterialIds,
+      mediaIds: [],
+    })
+  }, [currentPlan, openTransferDialog, selectedMaterialIds])
 
   const handleDelete = useCallback(() => {
     const count = selectedMaterialIds.length
@@ -55,6 +74,18 @@ const BatchActionBar = memo(() => {
           {t('draftManage.selectedCount', { count: selectedMaterialIds.length })}
         </span>
         <div className="flex items-center gap-2">
+          {allowTransfer && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleTransfer}
+              disabled={selectedMaterialIds.length === 0 || batchDeleting}
+              className="cursor-pointer gap-1.5"
+            >
+              <ArrowRightLeft className="h-3.5 w-3.5" />
+              {t('draftManage.transfer')}
+            </Button>
+          )}
           <Button variant="ghost" size="sm" onClick={exitBatchMode} className="cursor-pointer">
             {t('draftManage.cancel')}
           </Button>

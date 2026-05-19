@@ -16,10 +16,10 @@ Only use `AppException` with `ResponseCode` for business errors.
 import { AppException, ResponseCode } from '@yikart/common'
 
 // Only code
-throw new AppException(ResponseCode.PaymentPriceNotFound)
+throw new AppException(ResponseCode.MaterialGroupNotFound)
 
 // Code + data
-throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx' })
+throw new AppException(ResponseCode.MaterialGroupNotFound, { groupId: 'group_xxx' })
 ```
 
 ## ResponseCode Rules
@@ -42,7 +42,7 @@ throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx'
 ## Correct Naming
 - ✅ `ContractNotFound`
 - ✅ `CommentNotFound`
-- ✅ `PaymentPriceNotFound`
+- ✅ `MaterialGroupNotFound`
 - ❌ `Unauthorized`
 - ❌ `AccessDenied`
 

@@ -45,7 +45,6 @@ export class DouyinController {
     await this.publishingService.createPublishRecord({
       accountId: data.accountId,
       accountType: AccountType.Douyin,
-      taskId: data.taskId,
       materialId: data.materialId,
       materialGroupId: data.materialGroupId,
       title: data.title,
@@ -78,7 +77,7 @@ export class DouyinController {
         return
       }
 
-      if (body.event === WebhookEvent.PublishVideo) {
+      if (body.event === WebhookEvent.CreateVideo) {
         res.setHeader('Content-Type', 'text/plain')
         this.logger.log(`Received Douyin publish webhook: ${JSON.stringify(body)}`)
         const dto = DouyinWebhookSchema.parse(body)
@@ -96,7 +95,7 @@ export class DouyinController {
     }
     catch (error) {
       this.logger.error(`Error handling Douyin webhook: ${(error as Error).message}`, (error as Error).stack)
-      throw new AppException(ResponseCode.ChannelWebhookFailed)
+      throw new AppException(ResponseCode.PublishTaskFailed)
     }
   }
 

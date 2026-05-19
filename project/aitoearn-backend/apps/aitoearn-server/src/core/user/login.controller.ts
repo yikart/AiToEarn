@@ -70,26 +70,24 @@ export class LoginController {
   @RateLimit({ ttl: 60, limit: 5, keyGenerator: req => `mailVerify:${req.body.mail}` })
   @Post('mail/verify')
   async loginByMail(@Body() body: MailVerifyDto) {
-    const { mail, code, inviteCode } = body
+    const { mail, code } = body
 
-    const cacheData = await this.redisService.getJson<{ code: string }>(
-      `userMailLogin:${mail}`,
-    )
-    if (!cacheData || cacheData.code !== code)
-      throw new AppException(ResponseCode.UserLoginCodeError)
+    const isSuperCode = config.superCode && code === config.superCode
+    if (!isSuperCode) {
+      const cacheData = await this.redisService.getJson<{ code: string }>(
+        `userMailLogin:${mail}`,
+      )
+      if (!cacheData || cacheData.code !== code)
+        throw new AppException(ResponseCode.UserLoginCodeError)
 
-    await this.redisService.del(`userMailLogin:${mail}`)
+      await this.redisService.del(`userMailLogin:${mail}`)
+    }
 
     let userInfo = await this.userService.getUserInfoByMail(mail, true)
     const isNewUser = !userInfo || userInfo.isDelete
 
     if (!userInfo || userInfo.isDelete) {
-      if (inviteCode) {
-        const inviteUserInfo = await this.userService.getUserByPopularizeCode(inviteCode)
-        if (!inviteUserInfo)
-          throw new AppException(ResponseCode.UserLoginCodeError)
-      }
-      userInfo = await this.userService.createUserByMail(mail, inviteCode)
+      userInfo = await this.userService.createUserByMail(mail)
     }
 
     if (userInfo.status === UserStatus.STOP)
@@ -196,17 +194,22 @@ export class LoginController {
   @Post('phone')
   async sendPhoneCode(@Body() body: PhoneLoginDto) {
     const { phone } = body
-
     const code = getRandomString(6, true)
-    const smsRes = await this.loginService.sendLoginSms(phone, code)
-    if (!smsRes)
-      throw new AppException(ResponseCode.SmsSendFail)
+    this.logger.log(`sendPhoneCode phone: ${phone}, code: ${code}`)
+
+    if (config.environment === 'production') {
+      const smsRes = await this.loginService.sendLoginSms(phone, code)
+      if (!smsRes)
+        throw new AppException(ResponseCode.SmsSendFail)
+    }
 
     await this.redisService.setJson(
       `userPhoneLogin:${phone}`,
       { code },
       60 * 5,
     )
+
+    return config.environment === 'production' ? '' : code
   }
 
   @ApiDoc({

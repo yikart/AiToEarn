@@ -129,7 +129,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
         newTaskMessages[state.currentTaskId] = state.taskMessages[state.currentTaskId]
       }
 
-      console.log('[AgentStore] Cleaned up task cache, kept:', Object.keys(newTaskMessages).length)
       return { taskMessages: newTaskMessages }
     })
   }
@@ -244,8 +243,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
         // 构建 Claude Prompt 格式
         const apiPrompt = buildPromptForAPI(prompt, medias)
 
-        console.log('[AgentStore] Creating new task with TaskInstance:', instance.instanceId)
-
         // 添加 AI 待回复消息（通过 TaskInstance）
         const assistantMessage = instance.createAssistantMessage()
         instance.addMessage(assistantMessage)
@@ -256,8 +253,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
         // 创建 SSE 回调，绑定到 TaskInstance
         const taskSSECallbacks: ITaskSSECallbacks = {
           onTaskIdReady: (realTaskId: string) => {
-            console.log('[AgentStore] TaskInstance received real taskId:', realTaskId)
-
             // 迁移 TaskInstance（从临时ID到真实ID）
             taskInstances.delete(tempTaskId)
             taskInstances.set(realTaskId, instance)
@@ -271,17 +266,12 @@ export function createStoreMethods(ctx: IMethodsContext) {
           onError: (error) => {
             console.error('[AgentStore] TaskInstance SSE Error:', error)
           },
-          onComplete: () => {
-            console.log('[AgentStore] TaskInstance SSE Complete')
-            useUserStore.getState().fetchCreditsBalance()
-          },
         }
 
         // 创建任务（SSE）- SSE 消息通过 TaskInstance 处理
         const abortFn = await agentApi.createTaskWithSSE(
           { prompt: apiPrompt, includePartialMessages: true },
           (sseMessage: ISSEMessage) => {
-            console.log('[AgentStore] SSE Message -> TaskInstance:', sseMessage.type)
             // 使用 TaskInstance 处理 SSE 消息（消息会自动写入实例的 taskId）
             instance.handleSSEMessage(sseMessage, taskSSECallbacks)
           },
@@ -297,12 +287,10 @@ export function createStoreMethods(ctx: IMethodsContext) {
             instance.setProgress(0)
           },
           async () => {
-            console.log('[AgentStore] SSE Done')
             instance.markMessageDone()
             instance.setIsGenerating(false)
             instance.clearWorkflowSteps()
             refs.sseAbort.value = null
-            useUserStore.getState().fetchCreditsBalance()
           },
         )
 
@@ -435,20 +423,13 @@ export function createStoreMethods(ctx: IMethodsContext) {
         // 同步 refs（为了兼容旧的 SSE handler）
         refs.currentAssistantMessageId.value = assistantMessage.id
 
-        console.log('[AgentStore] Continuing task with TaskInstance:', taskId)
-
         // 创建 SSE 回调，绑定到 TaskInstance
         const taskSSECallbacks: ITaskSSECallbacks = {
-          onTaskIdReady: (receivedTaskId: string) => {
+          onTaskIdReady: (_receivedTaskId: string) => {
             // continueTask 时 taskId 已知，只需确认
-            console.log('[AgentStore] continueTask received taskId:', receivedTaskId)
           },
           onError: (error) => {
             console.error('[AgentStore] TaskInstance SSE Error:', error)
-          },
-          onComplete: () => {
-            console.log('[AgentStore] TaskInstance SSE Complete')
-            useUserStore.getState().fetchCreditsBalance()
           },
         }
 
@@ -456,7 +437,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
         const abortFn = await agentApi.createTaskWithSSE(
           { prompt: apiPrompt, taskId, includePartialMessages: true },
           (sseMessage: ISSEMessage) => {
-            console.log('[AgentStore] SSE Message -> TaskInstance:', sseMessage.type)
             // 使用 TaskInstance 处理 SSE 消息
             instance!.handleSSEMessage(sseMessage, taskSSECallbacks)
           },
@@ -468,12 +448,10 @@ export function createStoreMethods(ctx: IMethodsContext) {
             instance!.setProgress(0)
           },
           async () => {
-            console.log('[AgentStore] SSE Done')
             instance!.markMessageDone()
             instance!.setIsGenerating(false)
             instance!.clearWorkflowSteps()
             refs.sseAbort.value = null
-            useUserStore.getState().fetchCreditsBalance()
           },
         )
 
@@ -497,7 +475,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
     /** 停止当前任务 */
     stopTask() {
       if (refs.sseAbort.value) {
-        console.log('[AgentStore] Aborting SSE connection')
         refs.sseAbort.value()
         refs.sseAbort.value = null
       }
@@ -558,74 +535,6 @@ export function createStoreMethods(ctx: IMethodsContext) {
     /** 获取 Action 上下文 */
     getActionContext(): IActionContext | null {
       return refs.actionContext.value
-    },
-
-    // ============ Debug 模式管理 ============
-
-    /**
-     * 设置 debug 文件列表
-     * @param files debug 文件名数组（如 ['sse1.txt', 'sse2.txt']）
-     */
-    setDebugFiles(files: string[]) {
-      set({
-        debugFiles: files,
-        debugMessageIndex: 0,
-      })
-      console.log('[AgentStore] Debug files set:', files)
-    },
-
-    /**
-     * 获取下一个 debug 文件路径并递增索引
-     * @returns 文件路径（如 '/en/debug/sse1.txt'）或 null（没有更多文件）
-     */
-    consumeDebugFile(): string | null {
-      const state = get()
-      const { debugFiles, debugMessageIndex } = state
-
-      if (debugMessageIndex >= debugFiles.length) {
-        console.log('[AgentStore] No more debug files available')
-        return null
-      }
-
-      const fileName = debugFiles[debugMessageIndex]
-      const filePath = `/en/debug/${fileName}`
-
-      // 递增索引
-      set({ debugMessageIndex: debugMessageIndex + 1 })
-
-      console.log(
-        '[AgentStore] Consuming debug file:',
-        filePath,
-        `(${debugMessageIndex + 1}/${debugFiles.length})`,
-      )
-      return filePath
-    },
-
-    /**
-     * 检查是否处于 debug 模式
-     */
-    isDebugMode(): boolean {
-      const state = get()
-      return state.debugFiles.length > 0
-    },
-
-    /**
-     * 检查是否还有更多 debug 文件可用
-     */
-    hasMoreDebugFiles(): boolean {
-      const state = get()
-      return state.debugMessageIndex < state.debugFiles.length
-    },
-
-    /**
-     * 清除 debug 模式
-     */
-    clearDebugMode() {
-      set({
-        debugFiles: [],
-        debugMessageIndex: 0,
-      })
-      console.log('[AgentStore] Debug mode cleared')
     },
   }
 }

@@ -56,11 +56,11 @@ export function ChannelManager() {
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent data-testid="channel-manager-dialog" className="flex h-[100dvh] max-h-[100dvh] w-full max-w-full flex-col overflow-hidden p-0 md:h-[700px] md:max-h-[700px] md:max-w-5xl md:rounded-lg">
+      <DialogContent data-testid="channel-manager-dialog" className="flex h-[100dvh] max-h-[100dvh] w-full max-w-full flex-col overflow-hidden border-border/70 bg-background p-0 shadow-2xl md:h-[744px] md:max-h-[calc(100dvh-32px)] md:max-w-[1160px] md:rounded-xl">
         {/* Header - 只在主页和连接列表页显示，auth-loading 时用 VisuallyHidden 保留无障碍标题 */}
         {currentView !== 'auth-loading' ? (
-          <DialogHeader className="border-b px-6 py-4">
-            <DialogTitle className="text-lg font-semibold">{getTitle()}</DialogTitle>
+          <DialogHeader className="justify-center space-y-0 border-b border-border/70 bg-background px-6 py-4 md:min-h-[68px] md:px-7">
+            <DialogTitle className="text-xl font-semibold tracking-tight text-foreground">{getTitle()}</DialogTitle>
           </DialogHeader>
         ) : (
           <VisuallyHidden>

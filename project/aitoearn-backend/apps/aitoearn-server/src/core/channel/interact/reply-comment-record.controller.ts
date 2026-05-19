@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, TableDto } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, TableDto } from '@yikart/common'
 import { AddReplyCommentRecordDto, ReplyCommentRecordListDto } from './reply-comment-record.dto'
 import { ReplyCommentRecordService } from './reply-comment-record.service'
 
@@ -45,7 +45,7 @@ export class ReplyCommentRecordController {
   @Delete('/:id')
   async del(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ) {
     return await this.replyCommentRecordService.delete(id)
   }

@@ -1,62 +1,17 @@
-import { createZodDto, UserType } from '@yikart/common'
+import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
 import { z } from 'zod'
 
-export const messageContentTextSchema = z.object({
-  type: z.literal('text'),
-  text: z.string(),
-})
-
-export const messageContentImageUrlSchema = z.object({
-  type: z.literal('image_url'),
-  image_url: z.object({
-    url: z.url(),
-    detail: z.enum(['auto', 'low', 'high']).optional(),
-  }),
-})
-
-const complexObjectSchema = z.record(z.string(), z.any()).and(z.object({
-  type: z.string(),
-}))
-
-export const messageContentComplexSchema = z.union([
-  messageContentTextSchema,
+export {
+  ChatCompletionDto,
+  chatCompletionDtoSchema,
+  ChatMessageDto,
+  chatMessageSchema,
+  ChatModelsQueryDto,
+  messageContentComplexSchema,
   messageContentImageUrlSchema,
-  complexObjectSchema,
-])
-
-const chatMessageSchema = z.object({
-  role: z.string().describe('消息角色'),
-  content: z.union([z.string(), z.array(messageContentComplexSchema)]).describe('消息内容'),
-})
-export class ChatMessageDto extends createZodDto(chatMessageSchema) {}
-
-export const chatCompletionDtoSchema = z.object({
-  messages: z.array(chatMessageSchema).min(1).describe('消息列表'),
-  model: z.string().describe('模型'),
-  temperature: z.number().min(0).max(2).optional().describe('温度参数'),
-  maxTokens: z.number().int().min(1).optional().describe('最大输出token数'),
-  maxCompletionTokens: z.number().optional(),
-  modalities: z.enum(['text', 'audio', 'image', 'video']).array().optional(),
-  topP: z.number().optional(),
-  modelKwargs: z.record(z.string(), z.any()).optional(),
-})
-
-export class ChatCompletionDto extends createZodDto(chatCompletionDtoSchema) {}
-
-const userChatCompletionDtoSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
-  ...chatCompletionDtoSchema.shape,
-})
-
-export class UserChatCompletionDto extends createZodDto(userChatCompletionDtoSchema) {}
-
-const chatModelsQuerySchema = z.object({
-  userId: z.string().optional().describe('用户ID'),
-  userType: z.enum(UserType).optional().describe('用户类型'),
-})
-
-export class ChatModelsQueryDto extends createZodDto(chatModelsQuerySchema) {}
+  messageContentTextSchema,
+  UserChatCompletionDto,
+} from '@yikart/aitoearn-ai-shared'
 
 // Claude 透传 DTO - 仅校验必要字段，其余透传
 export const claudeChatProxyDtoSchema = z.looseObject({
@@ -66,6 +21,8 @@ export const claudeChatProxyDtoSchema = z.looseObject({
   })).min(1),
   model: z.string(),
   max_tokens: z.number().int().min(1).default(32000),
+  billingGroupId: z.string().min(1).optional().describe('计费分组 ID，相同分组的连续 Chat 调用合并扣费日志'),
+  source: z.enum([CreditsConsumptionSource.AiChat, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ClaudeChatProxyDto extends createZodDto(claudeChatProxyDtoSchema, 'ClaudeChatProxyDto') {}
@@ -83,6 +40,8 @@ export const chatStreamProxyDtoSchema = z.looseObject({
     content: z.any(),
   })).min(1),
   model: z.string(),
+  billingGroupId: z.string().min(1).optional().describe('计费分组 ID，相同分组的连续 Chat 调用合并扣费日志'),
+  source: z.enum([CreditsConsumptionSource.AiChat, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ChatStreamProxyDto extends createZodDto(chatStreamProxyDtoSchema, 'ChatStreamProxyDto') {}

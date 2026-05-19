@@ -26,7 +26,8 @@
     "platforms": "Plateformes",
     "status": "Statut",
     "time": "Heure",
-    "viewDetail": "Voir les détails"
+    "viewDetail": "Voir les détails",
+    "untitled": "Sans titre"
   },
   "publishDetail": {
     "title": "Détails de la publication",
@@ -39,8 +40,16 @@
     "shareLink": "Lien de partage",
     "failReason": "Raison de l'échec",
     "close": "Fermer",
+    "minimize": "Réduire",
     "unknownAccount": "Compte inconnu",
     "creatingRecord": "Création de l'enregistrement de publication..."
+  },
+  "publishFloating": {
+    "xhsPublishing": "RedNote is publishing",
+    "pluginPublishing": "Plugin publishing in progress",
+    "openDetail": "Click to view details",
+    "completed": "Plugin publishing completed",
+    "failed": "Plugin publishing failed. View details."
   },
   "common": {
     "confirm": "Confirmer",
@@ -72,11 +81,19 @@
     "downloadButton": "Télécharger maintenant",
     "chromeWebStore": "Chrome Web Store",
     "chinaDownload": "Téléchargement Chine",
+    "chinaLatestZipDownload": "Télécharger la dernière version Chine",
+    "githubLatestDownload": "Télécharger la dernière version du canal GitHub",
     "activeDescription": "Votre plugin de navigateur est activé. Vous pouvez commencer à utiliser la fonction de publication !",
     "platformAccounts": "Comptes de plateforme",
     "notLoggedIn": "Non connecté",
-    "xhsNotLoggedInTip": "Xiaohongshu nécessite une connexion au Centre Créateur",
+    "xhsNotLoggedInTip": "La récupération des détails de note nécessite une connexion à la <homeLink>page d'accueil Xiaohongshu</homeLink>. La publication nécessite aussi le <creatorLink>Centre Créateur Xiaohongshu</creatorLink>.",
+    "xhsHomeLoggedInOnlyStatus": "Page d'accueil connectée",
+    "xhsHomeLoggedInOnlyTip": "La page d'accueil Xiaohongshu est connectée, vous pouvez donc récupérer les détails de note maintenant. Pour publier, connectez-vous aussi au Centre Créateur.",
+    "xhsCreatorLoggedInOnlyStatus": "Seul le Centre Créateur est connecté",
+    "xhsCreatorLoggedInOnlyTip": "Le Centre Créateur Xiaohongshu est connecté, mais les détails de note ne peuvent toujours pas être récupérés. Connectez-vous d'abord à la page d'accueil.",
+    "xhsNoteDetailReady": "Détails de note prêts",
     "loginNow": "Se connecter maintenant",
+    "authPolling": "Vérification de l’autorisation",
     "viewPublishList": "Voir la liste de publication",
     "permissionRequired": "Permission requise",
     "permissionDescription": "Le plugin est installé mais nécessite les permissions nécessaires pour fonctionner correctement. Veuillez accorder les permissions requises dans les paramètres d'extension de votre navigateur.",
@@ -86,15 +103,40 @@
     "syncSuccess": "Compte synchronisé avec succès",
     "syncFailed": "Échec de la synchronisation du compte",
     "xhsHome": "Accueil",
-    "xhsCreator": "Créateur",
+    "xhsCreator": "Centre Créateur",
     "xhsLoginHomeTip": "Connexion à la page d'accueil Xiaohongshu",
     "xhsLoginCreatorTip": "Connexion au Centre Créateur Xiaohongshu",
-    "viewGuide": "Des problèmes ? Besoin d'aide pour l'installation ?"
+    "xhsCreatorQuickLoginLabel": "Astuce de connexion rapide",
+    "xhsCreatorQuickLoginTip": "Après vous être connecté à la page d'accueil Xiaohongshu, vous pouvez vous connecter au Centre Créateur en un clic.",
+    "viewGuide": "Voir le guide d'autorisation",
+    "viewInstallGuide": "Voir le guide d'installation du plugin navigateur (installation manuelle)"
   },
   "mobile": {
     "title": "Bureau uniquement",
     "description": "L'extension de navigateur n'est pas disponible sur les appareils mobiles. Veuillez utiliser un navigateur de bureau pour installer et utiliser l'extension.",
     "goToPC": "Veuillez visiter sur PC",
     "introduction": "Extension de navigateur pour la plateforme AiToEarn. Fonctionne avec AiToEarn web pour automatiser les interactions sur Xiaohongshu, TikTok et d'autres plateformes — suivre, aimer, ajouter aux favoris, commenter et plus encore."
+  },
+  "version": {
+    "title": "Version du plugin",
+    "description": "La version du plugin installée est affichée ici et comparée avec la dernière version requise par le site.",
+    "current": "Version actuelle",
+    "latest": "Dernière version",
+    "updatableTag": "Mise à jour dispo",
+    "popoverTitle": "Le plugin peut être mis à jour vers v{{version}}",
+    "unknown": "Indisponible",
+    "upToDate": "À jour",
+    "updateAvailable": "Mise à jour disponible",
+    "unavailable": "Version indisponible",
+    "updateDescription": "Votre version actuelle du plugin n'est pas la plus récente. Mettez-la à jour rapidement pour éviter des écarts de fonctionnalités ou des problèmes de compatibilité.",
+    "googleStoreNotice": "Les extensions installées depuis le Chrome Web Store se mettent à jour automatiquement. Si vous n'avez pas un besoin urgent de certaines fonctionnalités, vous pouvez attendre environ une semaine pour la mise à jour automatique. Si vous en avez besoin tout de suite, mettez le plugin à jour manuellement.",
+    "googleStoreShortNotice": "Les versions du Chrome Web Store se mettent à jour automatiquement",
+    "downloadLatestZip": "Télécharger la dernière version Chine",
+    "updatableTo": "Mise à jour possible vers v{{version}}",
+    "updateButton": "Mettre à jour le plugin",
+    "updateNow": "Mettre à jour vers v{{version}}",
+    "viewUpdateGuide": "Voir le guide de mise à jour",
+    "latestDescription": "Votre plugin est déjà à jour et peut continuer à être utilisé normalement.",
+    "unavailableDescription": "Impossible de lire la version du plugin pour le moment. Rouvrez cette fenêtre plus tard et réessayez."
   }
 }

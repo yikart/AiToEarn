@@ -1,5 +1,7 @@
 {
   "home": "Accueil",
+  "header.draftBox": "Gestion du contenu",
+  "header.agentAssets": "Ressources Agent",
   "tasksHistory": "Historique des tâches",
   "accounts": "Publier",
   "publish": "Publier",
@@ -16,6 +18,11 @@
   "aiRank": "Classement IA",
   "addChannel": "Ajouter une chaîne",
   "sidebar.more": "Plus",
-  "uptime": "Statut",
-  "taskSquare": "Place de la ruée vers l'or"
+  "mobileBottom.content": "Contenu",
+  "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.publish": "Publier",
+  "mobileBottom.interaction": "Interaction",
+  "aiSocial": "AI Publish",
+  "download": "Download",
+  "xhsData": "XHS Data"
 }

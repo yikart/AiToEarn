@@ -18,12 +18,11 @@ export interface IAccountStore {
   accountGroupList: AccountGroup[]
   accountGroupMap: Map<string, AccountGroup>
   accountLoading: boolean
+  accountListInitialized: boolean
   // 当前选择的账户
   accountActive?: SocialAccount
   // 当前选择的空间ID
   activeSpaceId?: string
-  // 余额不足弹框状态
-  lowBalanceAlertOpen: boolean
 }
 
 const store: IAccountStore = {
@@ -35,9 +34,9 @@ const store: IAccountStore = {
   accountMap: new Map([]),
   accountAccountMap: new Map([]),
   accountLoading: false,
+  accountListInitialized: false,
   accountActive: undefined,
   activeSpaceId: undefined,
-  lowBalanceAlertOpen: false,
 }
 
 function getStore() {
@@ -52,12 +51,6 @@ export const useAccountStore = create(
     },
     (set, get, storeApi) => {
       const methods = {
-        setLowBalanceAlertOpen(lowBalanceAlertOpen: boolean) {
-          set({
-            lowBalanceAlertOpen,
-          })
-        },
-
         clear() {
           set({
             ...getStore(),
@@ -129,7 +122,7 @@ export const useAccountStore = create(
             methods.getAccountGroup()
           }
           finally {
-            set({ accountLoading: false })
+            set({ accountLoading: false, accountListInitialized: true })
           }
         },
 

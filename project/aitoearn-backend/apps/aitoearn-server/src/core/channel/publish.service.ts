@@ -30,7 +30,6 @@ export class PublishService {
       type: newData.type,
       title: newData.title,
       desc: newData.desc,
-      userTaskId: newData.userTaskId,
       videoUrl: newData.videoUrl,
       coverUrl: newData.coverUrl,
       imgUrlList: newData.imgUrlList,

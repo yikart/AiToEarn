@@ -20,7 +20,7 @@ export class FacebookEngagementProvider implements EngagementProvider {
       before: (pagination as KeysetPagination)?.before ?? undefined,
       after: (pagination as KeysetPagination)?.after ?? undefined,
     }
-    const resp = await this.FacebookService.getPagePosts(accountId, req)
+    const resp = await this.FacebookService.getPagePostsByAccountId(accountId, req)
     const posts = resp.data.map((item) => {
       const medias = []
       if (item.attachments?.data) {

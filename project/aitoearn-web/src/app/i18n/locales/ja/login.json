@@ -5,13 +5,13 @@
     "loginDescription": "AiToEarnアカウントにサインインして、AIクリエイティブの旅を始めましょう。Googleログインとメール認証コードに対応しています。"
   },
   "welcomeBack": "サインイン",
-  "loginSubtitle": "AiToEarnで創作を始めましょう",
+  "loginSubtitle": "AltoEarnを使いましょう！",
   "emailPlaceholder": "メールアドレスを入力",
   "login": "サインイン",
   "or": "または",
   "emailRequired": "メールアドレスを入力してください",
   "emailInvalid": "有効なメールアドレスを入力してください",
-  "emailCodeRequired": "メール認証コードを入力してください",
+  "emailCodeRequired": "認証コードを入力してください",
   "emailCodeLength": "認証コードは6桁の数字である必要があります",
   "enterCode": "6桁のコードを入力",
   "sendCode": "コードを送信",
@@ -26,9 +26,12 @@
   "loginFailed": "ログインに失敗しました",
   "loginError": "ログインに失敗しました。後でもう一度お試しください",
   "googleLoginFailed": "Googleログインに失敗しました",
+  "switchToEmailLogin": "メール認証コードでログイン",
+  "switchToPhoneLogin": "電話番号でログイン",
   "termsText": "続行することで、以下に同意したものとみなされます：",
   "termsOfService": "利用規約",
   "and": "および",
   "privacyPolicy": "プライバシーポリシー",
-  "newUserPromotion": "新規ユーザーは14日間無料でご利用いただけます！"
+  "newUserPromotion": "新規ユーザーは14日間無料でご利用いただけます！",
+  "manualLoginDisabledNotice": "この環境では手動ログインは不要です。アクセスできない場合は設定を確認してください。"
 }

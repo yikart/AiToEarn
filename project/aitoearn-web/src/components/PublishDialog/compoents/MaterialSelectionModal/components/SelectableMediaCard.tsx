@@ -24,6 +24,7 @@ export function SelectableMediaCard({
   const needAutoThumb = isVideo && !media.thumbUrl
   const autoThumbUrl = useVideoThumbnail(needAutoThumb ? media.url : null)
   const thumbUrl = getOssUrl(media.thumbUrl || autoThumbUrl || media.url)
+  const mediaAlt = media.title?.trim() || media.url.split('/').pop()?.split('?')[0] || media._id
 
   return (
     <motion.button
@@ -34,6 +35,7 @@ export function SelectableMediaCard({
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.2 }}
       onClick={() => onClick(media)}
+      aria-label={mediaAlt}
       className={cn(
         'relative w-full text-left rounded-xl border-2 bg-card overflow-hidden cursor-pointer group',
         'transition-all duration-200',
@@ -49,7 +51,7 @@ export function SelectableMediaCard({
         {/* 缩略图 */}
         <Image
           src={thumbUrl}
-          alt={media.title}
+          alt={mediaAlt}
           fill
           className={cn('object-cover transition-transform duration-300', 'group-hover:scale-105')}
           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 20vw"
@@ -76,7 +78,7 @@ export function SelectableMediaCard({
               'absolute top-2 right-2 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all shadow-sm',
               selected
                 ? 'bg-primary border-primary scale-110'
-                : 'bg-white/90 border-gray-300 hover:border-primary hover:scale-105',
+                : 'bg-white/90 border-border hover:border-primary hover:scale-105',
             )}
           >
             {selected && <Check className="w-4 h-4 text-white" />}

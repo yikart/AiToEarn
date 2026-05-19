@@ -1,57 +1,53 @@
-import { createHash } from 'node:crypto'
 import {
   CanActivate,
   ExecutionContext,
+  Inject,
   Injectable,
   Logger,
   UnauthorizedException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
 import { JwtService } from '@nestjs/jwt'
-import { ApiKeyRepository, UserRepository, UserStatus } from '@yikart/mongodb'
-import { AitoearnAuthConfig } from './aitoearn-auth.config'
-import { IS_PUBLIC_KEY } from './aitoearn-auth.constants'
+import { AITOEARN_AUTH_OPTIONS, AitoearnAuthOptions, TokenPayload } from './aitoearn-auth.config'
+import { IS_INTERNAL_KEY, IS_PUBLIC_KEY } from './aitoearn-auth.constants'
 
 @Injectable()
 export class AitoearnAuthGuard implements CanActivate {
   private readonly logger = new Logger(AitoearnAuthGuard.name)
   private readonly reflector = new Reflector()
-  private readonly secret: string
   constructor(
     private readonly jwtService: JwtService,
-    private readonly config: AitoearnAuthConfig,
-    private readonly apiKeyRepository: ApiKeyRepository,
-    private readonly userRepository: UserRepository,
-  ) {
-    this.secret = config.secret
-  }
+    @Inject(AITOEARN_AUTH_OPTIONS)
+    private readonly options: AitoearnAuthOptions,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
       context.getHandler(),
       context.getClass(),
     ])
+    const isInternal = this.reflector.getAllAndOverride<boolean>(IS_INTERNAL_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ])
 
     const request = context.switchToHttp().getRequest()
+
+    if (isInternal) {
+      const token = this.extractTokenFromHeader(request)
+      if (token === this.options.internalToken) {
+        return true
+      }
+      throw new UnauthorizedException()
+    }
 
     // 1. API Key 认证
     const apiKey = request.headers['x-api-key'] as string | undefined
     if (apiKey) {
-      const keyHash = createHash('sha1').update(apiKey).digest('hex')
-      const record = await this.apiKeyRepository.getByKeyHash(keyHash)
-      if (!record) {
+      if (!this.options.getTokenInfoByApiKey) {
         throw new UnauthorizedException()
       }
-      await this.apiKeyRepository.updateLastUsedAt(record.id)
-      const user = await this.userRepository.getById(record.userId)
-      if (!user || user.isDelete || user.status !== UserStatus.OPEN) {
-        throw new UnauthorizedException()
-      }
-      request['user'] = {
-        id: record.userId,
-        mail: user.mail,
-        name: user.name,
-      }
+      request['user'] = await this.options.getTokenInfoByApiKey(apiKey)
       return true
     }
 
@@ -64,15 +60,15 @@ export class AitoearnAuthGuard implements CanActivate {
       throw new UnauthorizedException()
     }
 
-    if (token === this.config.internalToken) {
+    if (token === this.options.internalToken) {
       return true
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: this.secret,
+      const payload = await this.jwtService.verifyAsync<TokenPayload>(token, {
+        secret: this.options.secret,
       })
-      request['user'] = payload
+      request['user'] = await this.options.getTokenInfo(payload)
     }
     catch (error) {
       this.logger.debug({

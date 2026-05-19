@@ -1,0 +1,80 @@
+{
+  "seo": {
+    "title": "Guide de mise à jour du plugin - Mettre à jour l'extension AiToEarn",
+    "description": "Suivez ce guide illustré pour télécharger le dernier package .crx et mettre à jour l'extension AiToEarn depuis la page de gestion des extensions.",
+    "keywords": "plugin update, browser extension upgrade, AiToEarn extension, manual update, Chrome extension"
+  },
+  "hero": {
+    "eyebrow": "Flux de mise à jour manuelle",
+    "title": "Guide de mise à jour du plugin",
+    "description": "Si AiToEarn indique que la version actuelle de votre extension est obsolète, mettez-la à jour avec le dernier package .crx.",
+    "noticeTitle": "Les installations depuis le Chrome Web Store n'ont généralement pas besoin de mise à jour manuelle",
+    "noticeContent": "Si vous avez installé l'extension depuis le Chrome Web Store, il suffit généralement d'attendre la validation du store et le déploiement automatique.",
+    "summaryLabel": "Informations rapides"
+  },
+  "facts": {
+    "time": "Temps estimé",
+    "timeValue": "Environ 1-3 minutes",
+    "scenario": "Cas d'usage",
+    "scenarioValue": "Utilisateurs en Chine qui ne peuvent pas installer l'extension depuis le Chrome Web Store, ou utilisateurs qui ont besoin immédiatement de la dernière version."
+  },
+  "actions": {
+    "downloadChina": "Télécharger la dernière version Chine",
+    "downloadGithub": "Téléchargement GitHub",
+    "viewInstallGuide": "Voir le guide d'installation"
+  },
+  "tableOfContents": "Étapes de mise à jour",
+  "sections": {
+    "beforeUpdate": "Avant de commencer",
+    "beforeUpdateDesc": "Consultez les notes de sauvegarde et confirmez votre méthode d'installation actuelle avant la mise à jour avec le package .crx.",
+    "steps": "Étapes de mise à jour",
+    "stepsDesc": "Suivez ces 7 étapes pour terminer la mise à jour du package d'extension."
+  },
+  "backupNotice": {
+    "title": "Remarque importante",
+    "content1": "Si vous aviez installé l'extension auparavant à partir d'un fichier .zip extrait, sauvegardez manuellement vos données existantes comme les agents et les configurations de tâches.",
+    "content2": "L'ancienne méthode d'installation en .zip n'est pas compatible avec la méthode actuelle. Après l'installation via .crx, vous devez supprimer manuellement l'ancienne extension installée depuis le .zip."
+  },
+  "checklist": {
+    "title": "Liste de vérification avant mise à jour",
+    "item1": "Fermez la fenêtre de l'extension, la page de détails et les panneaux liés avant de commencer.",
+    "item2": "Si vous voulez plus de sécurité, sauvegardez d'abord vos données d'extension comme les agents et les configurations de tâches."
+  },
+  "steps": {
+    "step1": {
+      "title": "Télécharger le dernier package de l'extension",
+      "content": "Utilisez la zone de téléchargement en haut de la page pour obtenir le dernier package .crx.",
+      "caption": "Télécharger le dernier package de l'extension"
+    },
+    "step2": {
+      "title": "Ouvrir le dossier de téléchargement",
+      "content": "Ouvrez le dossier qui contient le package d'extension que vous venez de télécharger.",
+      "caption": "Ouvrir le dossier de téléchargement"
+    },
+    "step3": {
+      "title": "Ouvrir Gérer les extensions",
+      "content": "Accédez à la page de gestion des extensions de Chrome pour commencer la mise à jour manuelle.",
+      "caption": "Ouvrir Gérer les extensions"
+    },
+    "step4": {
+      "title": "Activer le mode développeur",
+      "content": "Activez le mode développeur en haut à droite de la page de gestion des extensions.",
+      "caption": "Activer le mode développeur"
+    },
+    "step5": {
+      "title": "Glisser le package dans la zone des extensions",
+      "content": "Glissez le fichier .crx téléchargé directement dans la page de gestion des extensions.",
+      "caption": "Glisser le package dans la zone des extensions"
+    },
+    "step6": {
+      "title": "Cliquer sur Re-enable pour confirmer",
+      "content": "Lorsque Chrome affiche la boîte de confirmation, cliquez sur « Re-enable » pour terminer la mise à jour.",
+      "caption": "Cliquer sur Re-enable pour confirmer"
+    },
+    "step7": {
+      "title": "Désactiver le mode développeur",
+      "content": "Une fois la mise à jour terminée, vous pouvez désactiver le mode développeur.",
+      "caption": "Désactiver le mode développeur"
+    }
+  }
+}

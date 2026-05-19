@@ -5,13 +5,14 @@
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
 
-import { ArrowRight, ChevronDown, FolderOpen, Layers, X } from 'lucide-react'
+import { ArrowRight, ChevronDown, FolderOpen, Layers, Plus, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, isPlatformAvailable, PlatType } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import AvatarPlat from '@/components/AvatarPlat'
+import { useChannelManagerStore } from '@/components/ChannelManager/channelManagerStore'
 import { DouyinLaunchModal } from '@/components/PublishDialog/compoents/DouyinLaunchModal'
 import ErrorSummary from '@/components/PublishDialog/compoents/ErrorSummary'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
@@ -20,10 +21,12 @@ import { usePublishManageUpload } from '@/components/PublishDialog/compoents/Pub
 import FacebookPagesModal from '@/components/PublishDialog/compoents/PublishModals/FacebookPagesModal'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
+import { useAutoPublishOnReady } from '@/components/PublishDialog/hooks/useAutoPublishOnReady'
 import { useCloseDialog } from '@/components/PublishDialog/hooks/useCloseDialog'
 import { usePlatformAuth } from '@/components/PublishDialog/hooks/usePlatformAuth'
 import { usePublishActions } from '@/components/PublishDialog/hooks/usePublishActions'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
+import { useValidatedPublishTrigger } from '@/components/PublishDialog/hooks/useValidatedPublishTrigger'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -41,26 +44,32 @@ import { useAccountStore } from '@/store/account'
 import { parseTopicString } from '@/utils'
 
 export interface IMobilePublishContentProps {
+  open: boolean
   accounts: SocialAccount[]
   onClose: () => void
   onPubSuccess?: () => void
   defaultAccountIds?: string[]
   suppressAutoPublish?: boolean
   taskIdForPublish?: string
-  onPublishConfirmed?: (taskId?: string) => void
+  materialIdForPublish?: string
+  onPublishConfirmed?: (taskId?: string, publishRecordId?: string) => void
   onPublishStart?: () => void
+  autoPublishOnReady?: boolean
 }
 
 // 移动端发布内容组件
 const MobilePublishContent = memo(
   ({
+    open,
     accounts,
     onClose,
     onPubSuccess,
     suppressAutoPublish,
     taskIdForPublish,
+    materialIdForPublish,
     onPublishConfirmed,
     onPublishStart,
+    autoPublishOnReady,
   }: IMobilePublishContentProps) => {
     const { t } = useTransClient('publish')
 
@@ -80,6 +89,7 @@ const MobilePublishContent = memo(
       setErrParamsMap,
       pubTime,
       setWarningParamsMap,
+      prefillLoading,
     } = usePublishDialog(
       useShallow(state => ({
         pubListChoosed: state.pubListChoosed,
@@ -94,6 +104,7 @@ const MobilePublishContent = memo(
         setErrParamsMap: state.setErrParamsMap,
         setWarningParamsMap: state.setWarningParamsMap,
         pubTime: state.pubTime,
+        prefillLoading: state.prefillLoading,
       })),
     )
 
@@ -134,6 +145,7 @@ const MobilePublishContent = memo(
 
     // 追踪是否是用户主动切换频道
     const isUserSwitchingSpace = useRef(false)
+    const appliedAccountActiveIdRef = useRef<string | undefined>(undefined)
 
     // 获取当前选中的频道信息
     const selectedSpace = useMemo(() => {
@@ -148,12 +160,7 @@ const MobilePublishContent = memo(
     const { closeDialog } = useCloseDialog({ onClose, t })
 
     // 平台授权
-    const { handleOfflineAvatarClick } = usePlatformAuth({
-      accountGroupList,
-      getAccountList,
-      onFacebookAuthSuccess: () => setShowFacebookPagesModal(true),
-      t,
-    })
+    const { handleOfflineAvatarClick } = usePlatformAuth()
 
     // 账户点击处理
     const { handleAccountClick } = useAccountClickHandler({
@@ -171,6 +178,7 @@ const MobilePublishContent = memo(
       isMobile: true,
       suppressAutoPublish,
       taskIdForPublish,
+      materialIdForPublish,
       onPublishConfirmed,
       onPublishStart,
       onClose,
@@ -182,13 +190,17 @@ const MobilePublishContent = memo(
       setPublishDetailVisible,
       t,
     })
+    const { triggerPublish } = useValidatedPublishTrigger(pubClick)
+
+    useAutoPublishOnReady({
+      enabled: autoPublishOnReady,
+      open,
+      ready: !prefillLoading && !createLoading,
+      selectedCount: pubListChoosed.length,
+      triggerPublish,
+    })
 
     // ============ Callbacks ============
-
-    // 处理 PC 不支持平台点击
-    const handlePcNotSupportedClick = useCallback((_platformName: string) => {
-      // DownloadAppModal has been removed; no-op for now
-    }, [])
 
     // 处理图生图（移动端暂不支持）
     const handleImageToImage = useCallback(
@@ -205,12 +217,11 @@ const MobilePublishContent = memo(
           return
         }
         if (isPcNotSupported) {
-          handlePcNotSupportedClick(platConfig?.name || '')
           return
         }
         handleAccountClick(pubItem)
       },
-      [handleAccountClick, handlePcNotSupportedClick],
+      [handleAccountClick],
     )
 
     // ============ Effects ============
@@ -218,6 +229,16 @@ const MobilePublishContent = memo(
     // 当选择单个账号时，自动选中该账号
     useEffect(() => {
       if (!accountActive) {
+        appliedAccountActiveIdRef.current = undefined
+        return
+      }
+
+      if (pubList.length === 0) {
+        appliedAccountActiveIdRef.current = undefined
+        return
+      }
+
+      if (appliedAccountActiveIdRef.current === accountActive.id) {
         return
       }
 
@@ -225,6 +246,7 @@ const MobilePublishContent = memo(
       const targetPubItem = pubList.find(pubItem => pubItem.account.id === accountActive.id)
       if (targetPubItem) {
         setPubListChoosed([targetPubItem])
+        appliedAccountActiveIdRef.current = accountActive.id
       }
     }, [accountActive, pubList, setPubListChoosed])
 
@@ -354,7 +376,6 @@ const MobilePublishContent = memo(
               const isChoosed = pubListChoosed.find(v => v.account.id === pubItem.account.id)
               const isOffline = pubItem.account.status === 0
               const isPcNotSupported = platConfig && platConfig.pcNoThis === true
-              const isRegionRestricted = !isPlatformAvailable(pubItem.account.type)
 
               return (
                 <TooltipProvider key={pubItem.account.id}>
@@ -375,24 +396,20 @@ const MobilePublishContent = memo(
                         <div className="relative">
                           <AvatarPlat
                             className={`cursor-pointer transition-all duration-300 p-[1px] ${
-                              isChoosed && !isOffline && !isPcNotSupported && !isRegionRestricted
+                              isChoosed && !isOffline && !isPcNotSupported
                                 ? '[&>img]:grayscale-0'
                                 : '[&>img]:grayscale hover:[&>img]:grayscale-0'
                             }`}
                             account={pubItem.account}
                             size="large"
                             disabled={
-                              isOffline || !isChoosed || isPcNotSupported || isRegionRestricted
+                              isOffline || !isChoosed || isPcNotSupported
                             }
                           />
-                          {isOffline && !isRegionRestricted && (
+                          {isOffline && (
                             <div
                               onClick={(e) => {
                                 e.stopPropagation()
-                                if (pubItem.account.type === PlatType.Xhs) {
-                                  handlePcNotSupportedClick(t('rednote'))
-                                  return
-                                }
                                 handleOfflineAvatarClick(pubItem.account)
                               }}
                               className="absolute inset-0 bg-black/45 rounded-full flex items-center justify-center text-white text-xs font-semibold cursor-pointer"
@@ -400,12 +417,7 @@ const MobilePublishContent = memo(
                               {t('badges.offline')}
                             </div>
                           )}
-                          {isRegionRestricted && (
-                            <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-auto cursor-pointer text-center leading-tight">
-                              🌐
-                            </div>
-                          )}
-                          {isPcNotSupported && !isOffline && !isRegionRestricted && (
+                          {isPcNotSupported && !isOffline && (
                             <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-none text-center leading-tight">
                               APP
                             </div>
@@ -413,13 +425,9 @@ const MobilePublishContent = memo(
                         </div>
                       </div>
                     </TooltipTrigger>
-                    {(isPcNotSupported || isOffline || isRegionRestricted) && (
+                    {(isPcNotSupported || isOffline) && (
                       <TooltipContent>
-                        {isRegionRestricted
-                          ? t('tips.regionRestricted')
-                          : isPcNotSupported
-                            ? t('tips.pcNotSupported')
-                            : t('tips.accountOffline')}
+                        {isPcNotSupported ? t('tips.pcNotSupported') : t('tips.accountOffline')}
                       </TooltipContent>
                     )}
                   </Tooltip>
@@ -491,7 +499,20 @@ const MobilePublishContent = memo(
               </>
             )}
 
-            {pubListChoosed.length === 0
+            {pubList.length === 0 ? (
+              <div className="flex flex-col items-center justify-center text-center py-10 gap-3">
+                <p className="text-muted-foreground text-sm">{t('tips.noAccount')}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="cursor-pointer"
+                  onClick={() => useChannelManagerStore.getState().openConnectList()}
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  {t('tips.addChannel')}
+                </Button>
+              </div>
+            ) : pubListChoosed.length === 0
               && pubList.some(
                 v =>
                   v.params.des || v.params.video || (v.params.images && v.params.images.length > 0),
@@ -531,19 +552,7 @@ const MobilePublishContent = memo(
               <div className="flex-1">
                 <PublishDatePicker
                   loading={createLoading}
-                  onClick={() => {
-                    for (const [key, errVideoItem] of errParamsMap) {
-                      if (errVideoItem) {
-                        const pubItem = pubListChoosed.find(v => v.account.id === key)!
-                        if (step === 1) {
-                          setExpandedPubItem(pubItem)
-                        }
-                        toast.warning(errVideoItem.parErrMsg)
-                        return
-                      }
-                    }
-                    pubClick()
-                  }}
+                  onClick={triggerPublish}
                   isMobile
                 />
               </div>

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
 import { ImageEditDto, ImageGenerationDto } from './image.dto'
 import { ImageService } from './image.service'
 import { AsyncTaskResponseVo, ImageEditModelParamsVo, ImageGenerationModelParamsVo, ImageResponseVo, TaskStatusResponseVo } from './image.vo'
@@ -117,7 +117,7 @@ export class ImageController {
   @Get('/image/task/:logId')
   async getImageTaskStatus(
     @GetToken() token: TokenInfo,
-    @Param('logId') logId: string,
+    @Param('logId', ParseObjectIdPipe) logId: string,
   ): Promise<TaskStatusResponseVo> {
     const response = await this.imageService.getTaskStatus(logId)
     return TaskStatusResponseVo.create(response)

@@ -7,7 +7,7 @@
 
 import type { MaterialListFilters } from '@/api/material'
 import lodash from 'lodash'
-import { Search, Trash2 } from 'lucide-react'
+import { ArrowRightLeft, Search, Trash2 } from 'lucide-react'
 import { memo, useCallback, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
@@ -15,30 +15,44 @@ import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
+import { useTransferDraftDialogStore } from '../../transferDraftDialogStore'
 
-const DraftListToolbar = memo(() => {
+interface DraftListToolbarProps {
+  allowTransfer?: boolean
+}
+
+const DraftListToolbar = memo(({ allowTransfer = true }: DraftListToolbarProps) => {
   const { t } = useTransClient('brandPromotion')
 
   const {
+    currentPlan,
     batchMode,
     selectedMaterialIds,
     materials,
     materialsFilter,
+    setMaterialsFilter,
+    enterBatchMode,
+    exitBatchMode,
+    selectAllLoadedMaterials,
+    deselectAllMaterials,
+    openConditionalDeleteDialog,
   } = usePlanDetailStore(
     useShallow(state => ({
+      currentPlan: state.currentPlan,
       batchMode: state.batchMode,
       selectedMaterialIds: state.selectedMaterialIds,
       materials: state.materials,
       materialsFilter: state.materialsFilter,
+      setMaterialsFilter: state.setMaterialsFilter,
+      enterBatchMode: state.enterBatchMode,
+      exitBatchMode: state.exitBatchMode,
+      selectAllLoadedMaterials: state.selectAllLoadedMaterials,
+      deselectAllMaterials: state.deselectAllMaterials,
+      openConditionalDeleteDialog: state.openConditionalDeleteDialog,
     })),
   )
 
-  const setMaterialsFilter = usePlanDetailStore(state => state.setMaterialsFilter)
-  const enterBatchMode = usePlanDetailStore(state => state.enterBatchMode)
-  const exitBatchMode = usePlanDetailStore(state => state.exitBatchMode)
-  const selectAllLoadedMaterials = usePlanDetailStore(state => state.selectAllLoadedMaterials)
-  const deselectAllMaterials = usePlanDetailStore(state => state.deselectAllMaterials)
-  const openConditionalDeleteDialog = usePlanDetailStore(state => state.openConditionalDeleteDialog)
+  const openTransferDialog = useTransferDraftDialogStore(state => state.openDialog)
 
   const [searchValue, setSearchValue] = useState(materialsFilter.title || '')
 
@@ -74,6 +88,18 @@ const DraftListToolbar = memo(() => {
     }
   }, [allSelected, deselectAllMaterials, selectAllLoadedMaterials])
 
+  const handleTransfer = useCallback(() => {
+    if (!currentPlan || selectedMaterialIds.length === 0) {
+      return
+    }
+
+    openTransferDialog({
+      currentPlanId: currentPlan.id,
+      draftIds: selectedMaterialIds,
+      mediaIds: [],
+    })
+  }, [currentPlan, openTransferDialog, selectedMaterialIds])
+
   if (batchMode) {
     return (
       <div className="flex items-center gap-3 mb-4">
@@ -85,6 +111,18 @@ const DraftListToolbar = memo(() => {
           {t('draftManage.selectedCount', { count: selectedMaterialIds.length })}
         </span>
         <div className="flex-1" />
+        {allowTransfer && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleTransfer}
+            disabled={selectedMaterialIds.length === 0}
+            className="cursor-pointer gap-1.5"
+          >
+            <ArrowRightLeft className="h-3.5 w-3.5" />
+            {t('draftManage.transfer')}
+          </Button>
+        )}
         <Button data-testid="draftbox-batch-cancel-btn" variant="ghost" size="sm" onClick={exitBatchMode} className="cursor-pointer">
           {t('draftManage.cancel')}
         </Button>
@@ -107,6 +145,17 @@ const DraftListToolbar = memo(() => {
       </div>
       {/* 第二行：按钮组 */}
       <div className="flex items-center gap-3 flex-wrap sm:ml-auto">
+        {allowTransfer && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={enterBatchMode}
+            className="cursor-pointer gap-1.5"
+          >
+            <ArrowRightLeft className="h-3.5 w-3.5" />
+            {t('draftManage.batchTransfer')}
+          </Button>
+        )}
         <Button
           data-testid="draftbox-batch-mode-btn"
           variant="outline"

@@ -29,7 +29,7 @@ export class InstagramDataService extends DataCubeBase {
     const query = {
       fields: 'media_count,followers_count,follows_count',
     }
-    const res = await this.instagramService.getAccountInfo(accountId, query)
+    const res = await this.instagramService.getAccountInfoByAccountId(accountId, query)
     return {
       fensNum: res?.followers_count,
       arcNum: res?.media_count,
@@ -42,7 +42,7 @@ export class InstagramDataService extends DataCubeBase {
       metric: 'comments,likes,replies,shares,views,reach,follows_and_unfollows',
       period: 'day',
     }
-    await this.instagramService.getAccountInsights(accountId, query)
+    await this.instagramService.getAccountInsightsByAccountId(accountId, query)
     return {
       list: [],
     }
@@ -53,7 +53,7 @@ export class InstagramDataService extends DataCubeBase {
       metric: 'comments,likes,shares,views',
       period: 'lifetime',
     }
-    const res = await this.instagramService.getMediaInsights(accountId, dataId, query)
+    const res = await this.instagramService.getMediaInsightsByAccountId(accountId, dataId, query)
     return {
       commentNum: res?.data?.filter(item => item.name === 'comments')[0]?.values[0]?.value || 0,
       likeNum: res?.data?.filter(item => item.name === 'likes')[0]?.values[0]?.value || 0,

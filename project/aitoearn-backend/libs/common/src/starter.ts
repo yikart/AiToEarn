@@ -3,6 +3,7 @@ import type { NestApplication } from '@nestjs/core'
 import type { NestExpressApplication } from '@nestjs/platform-express'
 import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
 import type { Request, Response } from 'express'
+import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { StreamEntry } from 'pino'
 import type { BaseConfig } from './config'
 import { HttpStatus, Logger, Module } from '@nestjs/common'
@@ -15,8 +16,8 @@ import pino from 'pino'
 import client from 'prom-client'
 import { z } from 'zod'
 import { GlobalExceptionFilter } from './filters'
-import { PropagationInterceptor, RequestContextInterceptor, ResponseInterceptor } from './interceptors'
-import { CloudWatchLogger, ConsoleLogger, FeishuLogger, MongoDBLogger } from './loggers'
+import { HttpMetricsInterceptor, PropagationInterceptor, RequestContextInterceptor, ResponseInterceptor } from './interceptors'
+import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
 
@@ -78,13 +79,6 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     })
   }
 
-  if (config.logger?.mongodb?.enable) {
-    loggers.push({
-      level: config.logger.mongodb.level,
-      stream: new MongoDBLogger(config.logger.mongodb),
-    })
-  }
-
   const reqIdGenerator = customAlphabet('0123456789abcdefghijklmnopqrstuvwxyz', 21)
 
   const imports: DynamicModule[] = [
@@ -92,8 +86,13 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
       pinoHttp: [
         {
           level: 'trace',
-          genReqId: (req, res) => {
-            const requestId = req.headers['x-request-id'] || reqIdGenerator()
+          genReqId: (req: IncomingMessage, res: ServerResponse) => {
+            const incomingRequestId = req.headers['x-request-id']
+            const requestId = typeof incomingRequestId === 'string'
+              ? incomingRequestId
+              : Array.isArray(incomingRequestId)
+                ? incomingRequestId[0]
+                : reqIdGenerator()
             req.headers['x-request-id'] = requestId
             if (!res.headersSent) {
               res.setHeader('x-request-id', requestId)
@@ -106,6 +105,10 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     }),
   ]
   const providers: Provider[] = [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: HttpMetricsInterceptor,
+    },
     {
       provide: APP_INTERCEPTOR,
       useClass: RequestContextInterceptor,
@@ -217,6 +220,9 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
 
   process.on('uncaughtException', (reason) => {
     logger.error(reason)
+  })
+  process.on('unhandledRejection', (reason) => {
+    logger.error(reason, 'Unhandled Rejection')
   })
   process.on('exit', (code) => {
     logger.log(`app exiting with code ${code}`)

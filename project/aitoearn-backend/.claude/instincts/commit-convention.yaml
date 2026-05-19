@@ -21,7 +21,6 @@ Use scope in parentheses for module-specific changes: `feat(content):`, `fix(tik
 ```
 
 ## Examples
-- `feat: 品牌资料库文档标签`
 - `feat(login): 更新登录控制器中的注释和文档为中文`
 - `refactor(mongodb): 移除materialGroup.repository中多余的type参数`
 - `fix: 草稿箱创建缺失平台字段`

@@ -4,6 +4,7 @@ import { FileUtil, UserType } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import dayjs from 'dayjs'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../ai-availability'
 import { ImageService } from '../../ai/image'
 import { geminiVeoVideoCreateRequestSchema, GeminiVideoService, GrokVideoService, OpenAIVideoService } from '../../ai/video'
 import { McpServerName } from '../agent.constants'
@@ -80,6 +81,7 @@ export class MediaMcp {
   constructor(
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly imageService: ImageService,
+    private readonly aiAvailability: AiAvailabilityService,
     private readonly geminiVideoService: GeminiVideoService,
     private readonly grokVideoService: GrokVideoService,
   ) { }
@@ -131,6 +133,7 @@ Returns the generated image URL(s).`,
           ],
         }
       },
+      this.aiAvailability,
     )
   }
 
@@ -205,6 +208,7 @@ Returns task ID for status tracking.`,
 
         return successResult(`Video is generating with OpenAI ${model}, task id: ${id}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -238,6 +242,7 @@ Returns task ID for status tracking.`,
         }
         return successResult(`Video is ${result.status}, progress: ${result.progress}%, task id: ${taskId}${timeInfo}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -276,6 +281,7 @@ Example: "@character1 walks through a garden"`,
 
         return successResult(`Character is creating, character id: ${response.id}, use @${response.username} to reference in prompts`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -296,6 +302,7 @@ Example: "@character1 walks through a garden"`,
         }
         return successResult(`Character is ${result.status}, character id: ${result.id}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -344,6 +351,7 @@ Returns task ID for status tracking.`,
 
         return successResult(`Video is generating with Veo ${params.model}, task id: ${id}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -375,6 +383,7 @@ Returns task ID for status tracking.`,
         }
         return successResult(`Video is ${result.status}, task id: ${taskId}${timeInfo}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -411,11 +420,12 @@ Returns task ID for status tracking.`,
           aspectRatio,
           resolution,
           duration,
-          imageUrl,
+          image: imageUrl,
         })
 
         return successResult(`Video is generating with Grok ${model}, task id: ${response.id}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -436,6 +446,7 @@ Returns task ID for status tracking.`,
         }
         return successResult(`Video is ${result.status}, task id: ${taskId}`)
       },
+      this.aiAvailability,
     )
   }
 

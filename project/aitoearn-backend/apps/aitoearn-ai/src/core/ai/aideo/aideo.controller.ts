@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType, ZodValidationPipe } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType, ZodValidationPipe } from '@yikart/common'
 import {
   ListAideoTasksQueryDto,
   SubmitAideoTaskRequest,
@@ -44,7 +44,7 @@ export class AideoController {
   @Get('/tasks/:taskId')
   async getAideoTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ): Promise<AideoTaskStatusResponseVo> {
     const response = await this.aideoService.getAideoTask({
       userId: token.id,

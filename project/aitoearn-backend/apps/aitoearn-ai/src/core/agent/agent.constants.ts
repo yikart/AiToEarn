@@ -5,7 +5,6 @@ export enum McpServerName {
   Database = 'database',
   Util = 'util',
   Aideo = 'aideo',
-  Statistics = 'statistics',
   Account = 'account',
   Publish = 'publish',
   Content = 'content',
@@ -16,7 +15,6 @@ export enum McpServerName {
   StyleTransfer = 'styleTransfer',
   ImageEdit = 'imageEdit',
   Subtitle = 'subtitle',
-  BrandStore = 'brandStore',
 }
 
 export const SYSTEM_PROMPT = `You are a social media content generation assistant helping users create text, images, videos, and publish content.

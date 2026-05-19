@@ -4,7 +4,7 @@
 
 - Type safety with input/output separation: Use DTOs only for request validation and transformation; use VOs only for response encapsulation.
 - Clear layer responsibilities: Controller handles routing/parameter binding/response transformation only; Service handles business orchestration and permission filtering; Repository handles data access only, without business logic or permission checks.
-- Unified exceptions: Throw business errors only via AppException + ResponseCode; global filter ensures unified 200 response format.
+- Unified exceptions: Business errors use AppException + ResponseCode; protocol-level errors (for example rate limit/auth transport semantics) may use standard HttpException; global filter ensures unified response format.
 
 ## Naming & Files
 
@@ -24,7 +24,7 @@
 - Methods returning counts must start with `count`, format: `countByXxx`
 - Pagination methods must end with `WithPagination`, e.g., `listWithPagination`
 - Non-standard prefixes are prohibited: `find` / `del` / `add` / `set` / `check` etc.
-- Business verbs as prefixes are prohibited: `recharge` / `deduct` / `withdraw` / `verify` / `mark` etc.
+- Business verbs as prefixes are prohibited: `verify` / `mark` / `publish` etc.
 
 ### Examples
 
@@ -38,7 +38,7 @@
 - ❌ `findList` → `listWithPagination`
 - ❌ `delOne` → `deleteById`
 - ❌ `addUseCount` → `updateUseCountById`
-- ❌ `recharge` → `updateRechargeById`
+- ❌ `verify` → `updateVerifyById`
 - ❌ `markAsRead` → `updateAsReadByIds`
 
 ## DTO (Input)
@@ -125,12 +125,12 @@ export const OrderDetailVoSchema = z.object({
 
 ## Exceptions & Error Codes
 
-- Only allowed: `new AppException(code)` or `new AppException(code, data)`; messages are generated from code→message mapping, custom overrides are prohibited.
+- Business exceptions use `new AppException(code)` or `new AppException(code, data)`; messages are generated from code→message mapping, custom overrides are prohibited.
 
 ```ts
 import { AppException, ResponseCode } from '@yikart/common';
 
-throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx' });
+throw new AppException(ResponseCode.MaterialGroupNotFound, { groupId: 'group_xxx' });
 ```
 
 ## ResponseCode Standards
@@ -147,6 +147,25 @@ throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx'
 - Permissions are filtered through query conditions; prefer specific resource NotFound over generic permission exceptions; permission logic belongs in Service layer.
 - Repository only accesses its own data model; cross-model operations, permission checks, and extra existence queries are prohibited (existence checks are done by Service first).
 
+## Data Filtering & Aggregation
+
+- All filtering, counting, and aggregation MUST be done at database layer (Repository), not in application code.
+- Prohibited: fetching a list from DB then using `.filter()` / `.some()` / `.find()` / `.reduce()` to narrow results in memory.
+- Use Repository methods with proper query conditions instead.
+
+```typescript
+// WRONG — filtering in memory
+const records = await this.repo.listByUserId(userId)
+const pending = records.filter(r => r.status === 'pending')
+const total = pending.reduce((sum, r) => sum + r.amount, 0)
+
+// CORRECT — filtering at database layer
+const pending = await this.repo.listByUserIdAndStatus(userId, 'pending')
+const total = await this.repo.sumAmountByUserIdAndStatus(userId, 'pending')
+```
+
+- Exception: filtering on external API responses is acceptable since the data is not from our DB.
+
 ## Logging & Lint
 
 - Using console is prohibited; use dependency-injected Logger instance (e.g., `this.logger.log()`).
@@ -156,9 +175,11 @@ throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx'
 
 - Controller handles routing/parameter binding/response transformation only; Service handles business orchestration and permission filtering; Repository handles data access only.
 - Controller output must use VOs uniformly (regular VO uses `VoClass.create(data)`; pagination VO uses `new`); Service returns entity data, Controller converts to VO, not the reverse.
+- Pagination Service methods must return `[list, total]` tuple directly from Repository (transparent pass-through); `new ListVo()` is only called in Controller; field mapping, default value filling, and field renaming are done inside `new ListVo(list.map(...), total, pagination)` in Controller; if no mapping is needed, pass `list` directly.
+- VO schema optional fields must use `.optional()`; `.nullable()` is only for fields that can be explicitly set to `null` in business logic; DB `required: false` / `field?: Type` must map to `.optional()`, not `.nullable()`.
 - DTO/VO must be defined with zod schema and generated using `createZodDto` / `createPaginationVo`.
 - Pagination: input uses `PaginationDtoSchema`; output fields are fixed as page, pageSize, totalPages, total, list.
-- AppException is constructed only with code or code+data, messages come from mapping.
+- AppException is constructed only with code or code+data, messages come from mapping; standard HttpException is reserved for protocol-layer errors.
 - Permissions are filtered through query conditions; unmatched results are represented as specific resource NotFound; permission logic is in Service layer.
 - Prefer soft delete (`deletedAt`); state transitions are handled in Service layer; avoid complex state enums.
 - Statistics/counts are implemented at database layer, application-layer iteration aggregation is prohibited.
@@ -172,8 +193,8 @@ throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx'
 - Injecting Repository in Controller; data must be accessed through Service layer; Controller must not contain complex logic.
 - Performing permission checks, cross-model operations, or extra existence queries in Repository; Repository methods containing unnecessary parameters.
 - Using generic permission exception names (Unauthorized/PermissionDenied/AccessDenied) instead of specific resource NotFound.
-- Overriding AppException default messages or creating custom business exception types; customizing HTTP status codes in business code.
-- Using `throw new Error()` instead of `AppException + ResponseCode`; must use the project's unified error handling mechanism.
+- Overriding AppException default messages or creating custom business exception types; customizing HTTP status codes to represent business errors.
+- Using `throw new Error()` instead of `AppException + ResponseCode` for business errors; unexpected infrastructure exceptions may be propagated to the global filter directly.
 - Using Logger static methods or `console`; reading environment variables directly (must go through config module).
 - Using `as any` or explicitly bypassing type checking; disabling/ignoring Lint during development.
 - Using `z.nativeEnum`; must use `z.enum` and explicitly list enum values.
@@ -186,6 +207,8 @@ throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx'
 - Creating Controller methods without `@ApiDoc` decorator; creating DTO/VO schema fields without `.describe()`.
 - Writing data migration logic as NestJS Service/Controller; migrations must be pure MongoDB shell scripts placed in `migrations/` directory, executed via `mongosh`.
 - Using `@InjectModel` or `@InjectConnection` in Service files; data access must go through Repository layer.
+- Pagination Service methods doing `list.map(item => ({...}))` entity mapping for response fields; Service method return values containing `pageNo`/`pageSize` pagination parameters (Controller already has these).
+- Using `.nullable()` for DB optional fields (`required: false` / `field?: Type`) instead of `.optional()`; this causes type mismatch and forces Controller to add `?? null` conversions.
 
 ## Build Verification
 

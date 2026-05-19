@@ -254,12 +254,6 @@ export interface IAgentState {
   currentCost: number
   /** 待处理的任务（从首页跳转时设置） */
   pendingTask: IPendingTask | null
-
-  // === Debug 模式状态 ===
-  /** Debug 模式文件列表（按顺序对应第 N 次消息） */
-  debugFiles: string[]
-  /** Debug 模式当前消息索引 */
-  debugMessageIndex: number
 }
 
 // ============ Action Handler 相关类型 ============

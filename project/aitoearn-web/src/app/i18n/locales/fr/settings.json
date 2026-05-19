@@ -2,19 +2,14 @@
   "title": "Paramètres",
   "tabs": {
     "profile": "Profil",
-    "agent": "Agent",
-    "income": "Revenus",
-    "balance": "Solde",
-    "subscription": "Crédits",
-    "membership": "Factures",
-    "brandInfo": "Info de marque",
-    "general": "Général"
+    "general": "Général",
+    "agent": "Agent"
   },
   "profile": {
-    "totalIncome": "Solde",
-    "currentBalance": "Crédits actuels",
     "logout": "Déconnexion",
     "edit": "Modifier",
+    "editName": "Modifier le pseudo",
+    "changeAvatar": "Changer l'avatar",
     "save": "Enregistrer",
     "saving": "Enregistrement...",
     "cancel": "Annuler",
@@ -37,122 +32,6 @@
     "processing": "Traitement...",
     "githubStars": "Étoiles GitHub"
   },
-  "income": {
-    "balance": "Solde",
-    "incomeRecords": "Historique des revenus",
-    "balanceRecords": "Historique du solde",
-    "withdrawRecords": "Historique des retraits",
-    "incomeId": "ID de revenu",
-    "withdrawId": "ID de retrait",
-    "amount": "Montant",
-    "type": "Type",
-    "statusLabel": "Statut",
-    "description": "Description",
-    "createTime": "Date de création",
-    "updateTime": "Date de mise à jour",
-    "all": "Tous",
-    "incomeDetail": "Détails du revenu",
-    "noBalanceRecords": "Aucun historique de solde",
-    "balanceAfter": "Solde après",
-    "currencyFilter": "Devise",
-    "typeFilter": "Type",
-    "balanceTypes": {
-      "task_creation": "Création de tâche",
-      "manual_deduct": "Déduction manuelle",
-      "refund": "Remboursement",
-      "recharge": "Rechargement",
-      "manual_add": "Ajout manuel",
-      "task_refund": "Remboursement de tâche",
-      "task_stopped": "Tâche arrêtée",
-      "withdraw": "Retrait",
-      "withdraw_refund": "Remboursement de retrait",
-      "task": "Revenu de tâche",
-      "commission": "Commission"
-    },
-    "types": {
-      "task": "Revenu de tâche",
-      "task_back": "Remboursement de tâche",
-      "reward_back": "Remboursement de récompense",
-      "task_withdraw": "Retrait de tâche"
-    },
-    "status": {
-      "pending": "En attente",
-      "withdrawn": "Retiré"
-    },
-    "noWallet": "Aucun portefeuille ajouté",
-    "noWalletTip": "Veuillez d'abord ajouter un portefeuille dans l'onglet Portefeuille",
-    "manageWallets": "Gérer les portefeuilles",
-    "addWallet": "Ajouter un portefeuille",
-    "withdrawButton": "Retirer",
-    "rechargeButton": "Recharger",
-    "noIncomeRecords": "Aucun revenu",
-    "noWithdrawRecords": "Aucun retrait",
-    "withdraw": {
-      "cancel": "Annuler",
-      "cancelConfirmTitle": "Annuler le retrait",
-      "cancelConfirmDesc": "Êtes-vous sûr de vouloir annuler cette demande de retrait ?",
-      "type": {
-        "task": "Tâche",
-        "reward": "Récompense"
-      },
-      "walletAccount": "Portefeuille",
-      "adminNote": "Note",
-      "paidAt": "Payé le",
-      "screenshots": "Captures d'écran",
-      "status": {
-        "pending": "En attente",
-        "approved": "Approuvé",
-        "paid": "Payé",
-        "failed": "Échoué",
-        "rejected": "Rejeté"
-      }
-    },
-    "withdrawStatus": {
-      "wait": "En cours",
-      "success": "Réussi",
-      "fail": "Échoué",
-      "task_withdraw": "Retrait de tâche",
-      "unknown": "Inconnu"
-    },
-    "messages": {
-      "cancelWithdrawSuccess": "Retrait annulé avec succès",
-      "cancelWithdrawFailed": "Échec de l'annulation du retrait",
-      "getIncomeRecordsFailed": "Échec de la récupération des revenus",
-      "getBalanceRecordsFailed": "Échec de la récupération de l'historique du solde",
-      "getIncomeDetailFailed": "Échec de la récupération des détails",
-      "getWithdrawRecordsFailed": "Échec de la récupération des retraits",
-      "noIncomeRecords": "Aucun revenu",
-      "noWithdrawRecords": "Aucun retrait",
-      "noIncomeDetail": "Aucun détail de revenu",
-      "loading": "Chargement...",
-      "totalRecords": "Total {{total}} enregistrements"
-    }
-  },
-  "subscription": {
-    "currentPlan": "Forfait actuel",
-    "upgrade": "Recharger",
-    "manage": "Gérer l'abonnement",
-    "balance": "Crédits",
-    "usageRecords": "Historique d'utilisation",
-    "detail": "Détail",
-    "date": "Date",
-    "amount": "Montant",
-    "amountChange": "Changement de montant",
-    "noRecords": "Aucun historique d'utilisation",
-    "loading": "Chargement...",
-    "loadMore": "Charger plus",
-    "types": {
-      "register_bonus": "Bonus d'inscription",
-      "purchase": "Achat",
-      "vip_monthly": "VIP mensuel",
-      "ai_service": "Service IA",
-      "video_style_transfer": "Transfert de style vidéo",
-      "publish": "Publication",
-      "expired": "Expiré",
-      "manual": "Ajustement manuel"
-    },
-    "viewAgentPricing": "Voir les prix spécifiques de chaque modèle de l'agent"
-  },
   "general": {
     "language": "Langue du site",
     "languageDesc": "Ce changement n'affecte pas la langue utilisée pour la génération de contenu",
@@ -163,7 +42,8 @@
     "themeSystem": "Système",
     "notifications": "Notifications par e-mail",
     "notificationsDesc": "Gérez vos préférences de notification par e-mail",
-    "editNotifications": "Modifier les paramètres de notification"
+    "editNotifications": "Modifier les paramètres de notification",
+    "changingLanguage": "Switching..."
   },
   "agent": {
     "title": "Agent",

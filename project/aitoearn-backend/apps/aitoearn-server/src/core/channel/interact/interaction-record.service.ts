@@ -14,6 +14,10 @@ export class InteractionRecordService {
     return this.interactionRecordRepository.add(data)
   }
 
+  async getById(id: string): Promise<InteractionRecord | null> {
+    return this.interactionRecordRepository.getById(id)
+  }
+
   async getList(
     filters: {
       userId: string

@@ -17,15 +17,28 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, FileUtil, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, FileUtil, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
 import { Media } from '@yikart/mongodb'
-import { AddUseCountOfListDto, CreateMediaDto, MediaFilterDto, MediaFilterSchema, MediaIdsDto } from './media.dto'
+import { MaterialGroupService } from './material-group.service'
+import { MediaGroupService } from './media-group.service'
+import {
+  AddUseCountOfListDto,
+  CreateMediaDto,
+  MediaFilterDto,
+  MediaFilterSchema,
+  MediaIdsDto,
+  TransferMediaDto,
+} from './media.dto'
 import { MediaService } from './media.service'
 
 @ApiTags('Me/Media')
 @Controller('media')
 export class MediaController {
-  constructor(private readonly mediaService: MediaService) { }
+  constructor(
+    private readonly mediaService: MediaService,
+    private readonly mediaGroupService: MediaGroupService,
+    private readonly materialGroupService: MaterialGroupService,
+  ) { }
 
   private processMediaFiles(mediaList: Media[]) {
     mediaList.forEach((media) => {
@@ -49,6 +62,30 @@ export class MediaController {
     const res = await this.mediaService.create(token.id, body)
     this.processMediaFiles([res])
     return res
+  }
+
+  @ApiDoc({
+    summary: '媒体资源转移到其他分组',
+    description: '将媒体资源移动或复制到目标媒体分组。move 模式直接移动，copy 模式复制并重置使用次数。',
+    body: TransferMediaDto.schema,
+  })
+  @Post('/transfer')
+  async transferToGroup(
+    @GetToken() token: TokenInfo,
+    @Body() body: TransferMediaDto,
+  ) {
+    const targetGroup = await this.materialGroupService.getGroupInfo(body.targetGroupId)
+    if (!targetGroup || targetGroup.userId !== token.id) {
+      throw new AppException(ResponseCode.MediaGroupNotFound)
+    }
+
+    const count = await this.mediaService.transferToGroup(
+      token.id,
+      body.ids,
+      body.targetGroupId,
+      body.mode,
+    )
+    return { count }
   }
 
   @ApiDoc({
@@ -78,7 +115,7 @@ export class MediaController {
     description: '根据ID删除媒体资源。',
   })
   @Delete(':id')
-  async del(@GetToken() token: TokenInfo, @Param('id') id: string) {
+  async del(@GetToken() token: TokenInfo, @Param('id', ParseObjectIdPipe) id: string) {
     const media = await this.mediaService.getInfo(id)
     if (!media || media.userId !== token.id) {
       throw new AppException(ResponseCode.MediaNotFound, 'Media Group not found')
@@ -92,7 +129,7 @@ export class MediaController {
     description: '根据ID获取媒体资源详情。',
   })
   @Get('info/:id')
-  async getInfo(@Param('id') id: string) {
+  async getInfo(@Param('id', ParseObjectIdPipe) id: string) {
     const res = await this.mediaService.getInfo(id)
     return res
   }

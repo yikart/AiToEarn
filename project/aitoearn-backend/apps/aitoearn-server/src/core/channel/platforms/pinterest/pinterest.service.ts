@@ -109,7 +109,7 @@ export class PinterestService extends PlatformBaseService {
       return refreshed
     }
     catch (error) {
-      this.logger.error('----- pinterest Error refreshOAuthCredential: ----', getErrorMessage(error))
+      this.logger.error(error, '----- pinterest Error refreshOAuthCredential: ----')
       return null
     }
   }
@@ -149,7 +149,12 @@ export class PinterestService extends PlatformBaseService {
    * @param body
    * @returns
    */
-  async createBoard(body: CreateBoardBody) {
+  async createBoard(userId: string, body: CreateBoardBody) {
+    await this.getLocalAccount(userId, _.get(body, 'accountId') || '')
+    return this.createBoardByAccountId(body)
+  }
+
+  async createBoardByAccountId(body: CreateBoardBody) {
     this.logger.log(JSON.stringify(body))
     const accountId: string = _.get(body, 'accountId') || ''
     _.unset(body, 'accountId')
@@ -163,7 +168,12 @@ export class PinterestService extends PlatformBaseService {
    * 获取board列表信息
    * @returns
    */
-  async getBoardList(accountId: string) {
+  async getBoardList(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getBoardListByAccountId(accountId)
+  }
+
+  async getBoardListByAccountId(accountId: string) {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
     return this.pinterestApiService.getBoards(accessToken)
@@ -175,7 +185,12 @@ export class PinterestService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async getBoardById(id: string, accountId: string) {
+  async getBoardById(userId: string, id: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getBoardByIdByAccountId(id, accountId)
+  }
+
+  async getBoardByIdByAccountId(id: string, accountId: string) {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
     return this.pinterestApiService.getBoardById(id, accessToken)
@@ -187,7 +202,12 @@ export class PinterestService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async delBoardById(id: string, accountId: string) {
+  async delBoardById(userId: string, id: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.delBoardByIdByAccountId(id, accountId)
+  }
+
+  async delBoardByIdByAccountId(id: string, accountId: string) {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
     return this.pinterestApiService.deleteBoard(id, accessToken)
@@ -198,7 +218,12 @@ export class PinterestService extends PlatformBaseService {
    * @param body
    * @returns
    */
-  async createPin(data: CreatePinBody) {
+  async createPin(userId: string, data: CreatePinBody) {
+    await this.getLocalAccount(userId, data.accountId || '')
+    return this.createPinByAccountId(data)
+  }
+
+  async createPinByAccountId(data: CreatePinBody) {
     this.logger.debug({
       path: '--- pinterest createPin --- 1 入参',
       data: {
@@ -273,7 +298,12 @@ export class PinterestService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async getPinById(id: string, accountId: string) {
+  async getPinById(userId: string, id: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPinByIdByAccountId(id, accountId)
+  }
+
+  async getPinByIdByAccountId(id: string, accountId: string) {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
     return this.pinterestApiService.getPinById(id, accessToken)
@@ -284,7 +314,12 @@ export class PinterestService extends PlatformBaseService {
    * @param accountId 签名
    * @returns
    */
-  async getPinList(accountId: string) {
+  async getPinList(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPinListByAccountId(accountId)
+  }
+
+  async getPinListByAccountId(accountId: string) {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
     return this.pinterestApiService.getPins(accessToken)
@@ -296,6 +331,11 @@ export class PinterestService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
+  async deletePostForUser(userId: string, accountId: string, postId: string): Promise<boolean> {
+    await this.getLocalAccount(userId, accountId)
+    return this.deletePost(accountId, postId)
+  }
+
   override async deletePost(accountId: string, postId: string): Promise<boolean> {
     const tokenInfo = await this.getUserStat(accountId)
     const accessToken = tokenInfo.access_token as string
@@ -390,6 +430,9 @@ export class PinterestService extends PlatformBaseService {
         }
       }
       // 更新任务信息
+      await this.syncAccountStatisticsOnAuth(accountInfo.id, async () => ({
+        fansCount: userInfo.follower_count,
+      }))
       const authDataCache = { taskId: state, status: ILoginStatus.success }
       await this.redisService.setJson(redisKeyByTaskId, authDataCache, 5 * 60)
       return {
@@ -406,7 +449,7 @@ export class PinterestService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error('----- pinterest Error authWebhook: ----', (error as Error).message)
+      this.logger.error(error, '----- pinterest Error authWebhook: ----')
       return {
         status: 0,
         message: `获取授权失败: ${(error as Error).message}`,
@@ -634,13 +677,13 @@ export class PinterestService extends PlatformBaseService {
       return userInfo
     }
     catch (error) {
-      this.logger.error('----- pinterest Error getUserInfo: ----', getErrorMessage(error))
+      this.logger.error(error, '----- pinterest Error getUserInfo: ----')
       throw new AppException(ResponseCode.ChannelAuthorizationExpired)
     }
   }
 
   async getAccessTokenStatus(accountId: string) {
-    await this.ensureLocalAccount(accountId)
+    await this.getLocalAccountById(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (_.isEmpty(tokenInfo) || !tokenInfo?.expires_in) {
       this.updateAccountStatus(accountId, 0)

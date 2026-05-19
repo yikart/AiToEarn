@@ -1,9 +1,10 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
-import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType, Transactional, UserRepository } from '@yikart/mongodb'
+import { AiLogChannel, AiLogImageResult, AiLogRepository, AiLogStatus, AiLogType, AssetType, ImageAiLogResponse, Transactional, UserRepository } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
 import QRCode from 'qrcode'
@@ -13,6 +14,7 @@ import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
 import { calculatePricingPoints, ChatPricing } from '../pricing/pricing-calculator'
+import { AsyncSettlementService } from '../settlement'
 import {
   GeminiImageGenerationDto,
   ImageEditDto,
@@ -41,7 +43,16 @@ export class ImageService {
     private readonly modelsConfigService: ModelsConfigService,
     private readonly queueService: QueueService,
     private readonly userRepo: UserRepository,
+    private readonly asyncSettlementService: AsyncSettlementService,
   ) { }
+
+  private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
+    const modelConfig = kind === 'generation'
+      ? this.modelsConfigService.config.image.generation.find(item => item.name === model)
+      : this.modelsConfigService.config.image.edit.find(item => item.name === model)
+
+    return modelConfig?.runtimeModel ?? model
+  }
 
   /**
    * 将 data uri 转换为 Uploadable
@@ -53,7 +64,7 @@ export class ImageService {
     }
     const ext = getExtByMimeType(file.mimeType.essence as ImageType)
 
-    return new File([file.body], `${filename}.${ext}`, { type: file.mimeType.essence })
+    return new File([file.body as Uint8Array<ArrayBuffer>], `${filename}.${ext}`, { type: file.mimeType.essence })
   }
 
   /**
@@ -100,18 +111,20 @@ export class ImageService {
    */
   async generation(request: ImageGenerationDto) {
     const { user, ...params } = request
+    const runtimeModel = this.resolveRuntimeImageModel(params.model, 'generation')
 
     if (!user) {
       throw new BadRequestException('userId is required')
     }
 
-    if (params.model === 'gpt-image-1') {
+    if (runtimeModel === 'gpt-image-1') {
       delete params.response_format
       delete params.style
     }
 
     const result = await this.openaiService.createImageGeneration({
       ...params,
+      model: runtimeModel,
     } as Omit<OpenAI.Images.ImageGenerateParams, 'user'> & { apiKey?: string })
 
     for (const image of result.data || []) {
@@ -141,6 +154,7 @@ export class ImageService {
    */
   async edit(request: ImageEditDto) {
     const { image, mask, user, ...params } = request
+    const runtimeModel = this.resolveRuntimeImageModel(params.model, 'edit')
 
     let imageFile: Uploadable | Uploadable[]
     if (Array.isArray(image)) {
@@ -154,11 +168,12 @@ export class ImageService {
 
     const maskFile = mask ? await this.getUploadableByUrlOrDataUri(mask, 'mask') : undefined
 
-    if (params.model === 'gpt-image-1') {
+    if (runtimeModel === 'gpt-image-1') {
       delete params.response_format
     }
     const imageResult = await this.openaiService.createImageEdit({
       ...params,
+      model: runtimeModel,
       image: imageFile,
       mask: maskFile,
       size: params.size as 'auto',
@@ -219,7 +234,7 @@ export class ImageService {
    * 用户 Gemini 图片生成（基于 token 计费）
    */
   async userGeminiGeneration(request: UserGeminiImageGenerationDto) {
-    const { userId, userType, model: requestedModel, ...params } = request
+    const { userId, userType, model: requestedModel, source = CreditsConsumptionSource.AiImage, ...params } = request
     const model = requestedModel || 'gemini-3.1-flash-image-preview'
 
     const modelConfig = await this.getGeminiImageModelConfig(userId, userType, model)
@@ -227,30 +242,32 @@ export class ImageService {
       throw new AppException(ResponseCode.InvalidModel)
     }
 
-    // 检查余额
-    if (userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < 0) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-    }
-
     const startedAt = new Date()
     const result = await this.geminiGeneration(userId, { ...params, model })
 
     const usage = result.usage || { promptTokenCount: 0, candidatesTokenCount: 0, totalTokenCount: 0 }
-    const pricing = modelConfig.pricing as ChatPricing
-    const points = calculatePricingPoints(pricing, {
-      input_tokens: usage.promptTokenCount,
-      output_tokens: usage.candidatesTokenCount,
-      input_token_details: usage.inputTokenDetails,
-      output_token_details: usage.outputTokenDetails,
-    })
 
-    this.logger.debug({ points, usage, pricing }, 'Gemini image generation pricing')
+    let points: number
+    if (modelConfig.fixedImagePricing && result.images.length > 0) {
+      const imageSize = params.imageSize || '1K'
+      const pricingEntry = modelConfig.fixedImagePricing.find(p => p.resolution === imageSize)
+      const pricePerImage = pricingEntry?.price ?? modelConfig.fixedImagePricing[0].price
+      points = pricePerImage * result.images.length
+    }
+    else {
+      const pricing = modelConfig.pricing as ChatPricing
+      points = calculatePricingPoints(pricing, {
+        input_tokens: usage.promptTokenCount,
+        output_tokens: usage.candidatesTokenCount,
+        input_token_details: usage.inputTokenDetails,
+        output_token_details: usage.outputTokenDetails,
+      })
+    }
+
+    this.logger.debug({ points, usage, imageSize: params.imageSize }, 'Gemini image generation pricing')
 
     if (points > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, points, model, usage as unknown as Record<string, unknown>)
+      await this.deductUserCredits(userId, points, model, { ...usage }, source)
     }
 
     const duration = Date.now() - startedAt.getTime()
@@ -307,11 +324,13 @@ export class ImageService {
     amount: number,
     description: string,
     metadata?: Record<string, unknown>,
+    source = CreditsConsumptionSource.AiImage,
   ): Promise<void> {
     await this.creditsHelper.deductCredits({
       userId,
       amount,
       type: CreditsType.AiService,
+      source,
       description,
       metadata,
     })
@@ -359,9 +378,10 @@ export class ImageService {
     type: AiLogType
     pricing: number
     request: Record<string, unknown>
+    source?: CreditsConsumptionSource
     run: () => Promise<T>
   }): Promise<T> {
-    const { userId, userType, model, channel, type, pricing, request, run } = opts
+    const { userId, userType, model, channel, type, pricing, request, source = CreditsConsumptionSource.AiImage, run } = opts
     const startedAt = new Date()
 
     const log = await this.aiLogRepo.create({
@@ -377,11 +397,7 @@ export class ImageService {
     })
 
     if (pricing > 0 && userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < pricing) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-      await this.deductUserCredits(userId, pricing, model)
+      await this.deductUserCredits(userId, pricing, model, undefined, source)
     }
 
     const result = await run().catch(async (e) => {
@@ -412,7 +428,7 @@ export class ImageService {
    * 用户图片生成
    */
   async userGeneration(request: UserImageGenerationDto) {
-    const { userId, userType, ...params } = request
+    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
 
     const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
 
@@ -423,6 +439,7 @@ export class ImageService {
       type: AiLogType.Image,
       pricing,
       request: params,
+      source,
       run: () => this.generation({ ...params, user: userId }),
     })
   }
@@ -431,7 +448,7 @@ export class ImageService {
    * 用户图片编辑
    */
   async userEdit(request: UserImageEditDto) {
-    const { userId, userType, ...params } = request
+    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
 
     const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
 
@@ -442,6 +459,7 @@ export class ImageService {
       type: AiLogType.Image,
       pricing,
       request: params,
+      source,
       run: () => this.edit({ ...params, user: userId }),
     })
   }
@@ -467,15 +485,11 @@ export class ImageService {
    */
   @Transactional()
   async userGenerationAsync(request: UserImageGenerationDto) {
-    const { userId, userType, ...params } = request
+    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
     const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
 
     if (pricing > 0 && userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < pricing) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-      await this.deductUserCredits(userId, pricing, params.model)
+      await this.deductUserCredits(userId, pricing, params.model, undefined, source)
     }
 
     // 创建 AiLog 记录
@@ -486,6 +500,10 @@ export class ImageService {
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
       points: pricing,
+      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
+        taskType: AiLogSettlementTaskType.Generation,
+        source,
+      }),
       request: params,
       status: AiLogStatus.Generating,
       startedAt: new Date(),
@@ -501,7 +519,7 @@ export class ImageService {
       type: AiLogType.Image,
       pricing,
       request: { ...params, user: userId },
-      taskType: 'generation',
+      taskType: AiLogSettlementTaskType.Generation,
     })
 
     return {
@@ -515,15 +533,11 @@ export class ImageService {
    */
   @Transactional()
   async userEditAsync(request: UserImageEditDto) {
-    const { userId, userType, ...params } = request
+    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
     const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
 
     if (pricing > 0 && userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < pricing) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-      await this.deductUserCredits(userId, pricing, params.model)
+      await this.deductUserCredits(userId, pricing, params.model, undefined, source)
     }
 
     // 创建 AiLog 记录
@@ -534,6 +548,10 @@ export class ImageService {
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
       points: pricing,
+      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
+        taskType: AiLogSettlementTaskType.Edit,
+        source,
+      }),
       request: params,
       status: AiLogStatus.Generating,
       startedAt: new Date(),
@@ -549,7 +567,7 @@ export class ImageService {
       type: AiLogType.Image,
       pricing,
       request: { ...params, user: userId },
-      taskType: 'edit',
+      taskType: AiLogSettlementTaskType.Edit,
     })
 
     return {
@@ -669,10 +687,6 @@ export class ImageService {
     const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
 
     if (pricing > 0 && userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < pricing) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
       await this.deductUserCredits(userId, pricing, params.model)
     }
 
@@ -683,6 +697,10 @@ export class ImageService {
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
       points: pricing,
+      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
+        taskType: AiLogSettlementTaskType.QrCodeArt,
+        source: CreditsConsumptionSource.AiImage,
+      }),
       request: params,
       status: AiLogStatus.Generating,
       startedAt: new Date(),
@@ -697,7 +715,7 @@ export class ImageService {
       type: AiLogType.Image,
       pricing,
       request: params,
-      taskType: 'qrCodeArt',
+      taskType: AiLogSettlementTaskType.QrCodeArt,
     })
 
     return {
@@ -711,30 +729,24 @@ export class ImageService {
    */
   async getTaskStatus(logId: string) {
     const log = await this.aiLogRepo.getById(logId)
-    if (!log) {
+    if (!log || log.type !== AiLogType.Image) {
       throw new NotFoundException('任务不存在')
     }
+    const response = log.response as ImageAiLogResponse | undefined
 
     // 提取图片信息
-    let images: Array<{ url?: string, b64_json?: string, revised_prompt?: string }> | undefined
-    if (log.response) {
-      // 处理不同的响应格式
-      if (log.response['list'] && Array.isArray(log.response['list'])) {
-        // 图片生成和编辑的响应格式
-        images = log.response['list'] as Array<{ url?: string, b64_json?: string, revised_prompt?: string }>
-      }
-      else if (log.response['images'] && Array.isArray(log.response['images'])) {
-        // MD2Card 的响应格式
-        images = log.response['images'] as Array<{ url?: string, b64_json?: string, revised_prompt?: string }>
-      }
-      else if (log.response['image']) {
-        // FireflyCard 的响应格式
-        images = [{ url: log.response['image'] as string }]
-      }
-      else if (log.response['imageUrl']) {
-        // QrCodeArt 的响应格式
-        images = [{ url: log.response['imageUrl'] as string }]
-      }
+    let images: AiLogImageResult[] | undefined
+    if (response?.list?.length) {
+      images = response.list
+    }
+    else if (response?.images?.length) {
+      images = response.images
+    }
+    else if (response?.image) {
+      images = [{ url: response.image }]
+    }
+    else if (response?.imageUrl) {
+      images = [{ url: response.imageUrl }]
     }
 
     return {
@@ -744,7 +756,7 @@ export class ImageService {
       duration: log.duration,
       points: log.points,
       request: log.request,
-      response: log.response,
+      response,
       images,
       errorMessage: log.errorMessage,
       createdAt: log.createdAt,

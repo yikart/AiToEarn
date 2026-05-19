@@ -8,6 +8,7 @@ import { UserType } from '@yikart/common'
 import { AssetType } from '@yikart/mongodb'
 import { execa } from 'execa'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../ai-availability'
 import { ChatService } from '../../ai/chat'
 import { McpServerName } from '../agent.constants'
 import { successResult, wrapTool } from './mcp.utils'
@@ -35,6 +36,7 @@ export class SubtitleMcp {
   constructor(
     private readonly chatService: ChatService,
     private readonly assetsService: AssetsService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) {}
 
   /**
@@ -201,6 +203,7 @@ Use this tool when user wants to:
 
 You can use this SRT URL in video editing to add subtitles.`)
       },
+      this.aiAvailability,
     )
   }
 

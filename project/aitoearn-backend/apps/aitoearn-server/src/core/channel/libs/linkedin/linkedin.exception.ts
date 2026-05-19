@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface LinkedInRawError {
   message?: string
@@ -9,47 +10,22 @@ export interface LinkedInRawError {
 /**
  * LinkedIn error class.
  */
-export class LinkedInError extends SocialMediaError<LinkedInRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: LinkedInRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class LinkedInError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'linkedin'
   }
 
-  protected static override extractRawError(data: unknown): LinkedInRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as LinkedInRawError
-    return errResponse
-  }
 
-  protected static override buildMessage(
-    rawError: LinkedInRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.message || 'Unknown error'}, error code: ${rawError.serviceErrorCode || 'N/A'}`
+    return {
+      platformCode: errResponse.serviceErrorCode,
+      platformMessage: errResponse.message,
+    }
   }
 }

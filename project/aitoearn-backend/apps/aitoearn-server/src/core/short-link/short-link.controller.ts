@@ -21,7 +21,7 @@ export class ShortLinkController {
   @Get('/:code')
   async redirect(
     @Param('code') code: string,
-    @Res({ passthrough: true }) res: Response,
+    @Res() res: Response,
   ) {
     this.logger.log(`Redirecting short link: ${code}`)
     const originalUrl = await this.shortLinkService.getByCode(code)

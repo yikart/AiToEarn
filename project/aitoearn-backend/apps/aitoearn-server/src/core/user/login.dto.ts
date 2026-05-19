@@ -17,7 +17,6 @@ export class MailLoginDto extends createZodDto(MailLoginSchema, 'MailLoginDto') 
 export const MailVerifySchema = z.object({
   mail: z.string().email().describe('邮箱'),
   code: z.string().length(6, { message: '验证码为6位' }).describe('邮箱验证码'),
-  inviteCode: z.string().describe('邀请码').optional(),
 })
 
 export class MailVerifyDto extends createZodDto(MailVerifySchema, 'MailVerifyDto') {}

@@ -347,7 +347,6 @@ const SimpleAccountChoose = memo(
               {renderGroupContent()}
             </>
           )}
-
         </div>
       )
     },

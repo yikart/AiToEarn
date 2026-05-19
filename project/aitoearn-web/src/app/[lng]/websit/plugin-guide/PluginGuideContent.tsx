@@ -4,7 +4,6 @@
  */
 'use client'
 
-import type { StaticImageData } from 'next/image'
 import {
   CheckCircle2,
   ChevronRight,
@@ -16,44 +15,75 @@ import {
   ZoomIn,
 } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useCallback, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { MediaPreview } from '@/components/common/MediaPreview'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Card } from '@/components/ui/card'
 import { cn } from '@/lib/utils'
-// 导入图片资源
-import pluginGuideImg1 from './images/pluginGuideImg1.png'
-import pluginGuideImg2 from './images/pluginGuideImg2.png'
-import pluginGuideImg3 from './images/pluginGuideImg3.png'
-import pluginGuideImg4 from './images/pluginGuideImg4.png'
-import pluginGuideImg5 from './images/pluginGuideImg5.png'
-import pluginGuideImg6 from './images/pluginGuideImg6.png'
-import pluginGuideImg7 from './images/pluginGuideImg7.png'
-import pluginGuideImg8 from './images/pluginGuideImg8.png'
-import pluginGuideImg9 from './images/pluginGuideImg9.png'
-import pluginGuideImg10 from './images/pluginGuideImg10.png'
-import pluginGuideImg11 from './images/pluginGuideImg11.png'
-import pluginGuideImg12 from './images/pluginGuideImg12.png'
-import pluginGuideImg13 from './images/pluginGuideImg13.png'
-import pluginGuideImg14 from './images/pluginGuideImg14.png'
-import pluginGuideImg15 from './images/pluginGuideImg15.png'
-import pluginGuideImg16 from './images/pluginGuideImg16.png'
-import pluginGuideImg17 from './images/pluginGuideImg17.png'
-import pluginGuideImg18 from './images/pluginGuideImg18.png'
-import pluginGuideImg19 from './images/pluginGuideImg19.png'
+
+interface PublicImageAsset {
+  src: string
+  width: number
+  height: number
+}
+
+const pluginGuideImages = {
+  pluginGuideImg1: { src: '/assets/plugin-guide-images/pluginGuideImg1.png', width: 1917, height: 941 },
+  pluginGuideImg3: { src: '/assets/plugin-guide-images/pluginGuideImg3.png', width: 1912, height: 1026 },
+  pluginGuideImg4: { src: '/assets/plugin-guide-images/pluginGuideImg4.png', width: 1912, height: 1032 },
+  pluginGuideImg8: { src: '/assets/plugin-guide-images/pluginGuideImg8.png', width: 1912, height: 976 },
+  pluginGuideImg10: { src: '/assets/plugin-guide-images/pluginGuideImg10.png', width: 398, height: 885 },
+  pluginGuideImg11: { src: '/assets/plugin-guide-images/pluginGuideImg11.png', width: 1908, height: 1024 },
+  pluginGuideImg12: { src: '/assets/plugin-guide-images/pluginGuideImg12.png', width: 1910, height: 926 },
+  pluginGuideImg13: { src: '/assets/plugin-guide-images/pluginGuideImg13.png', width: 1908, height: 939 },
+  pluginGuideImg14: { src: '/assets/plugin-guide-images/pluginGuideImg14.png', width: 1905, height: 937 },
+  pluginGuideImg15: { src: '/assets/plugin-guide-images/pluginGuideImg15.png', width: 1896, height: 936 },
+  pluginGuideImg16: { src: '/assets/plugin-guide-images/pluginGuideImg16.png', width: 1915, height: 922 },
+  pluginGuideImg17: { src: '/assets/plugin-guide-images/pluginGuideImg17.png', width: 1897, height: 896 },
+  pluginGuideImg18: { src: '/assets/plugin-guide-images/pluginGuideImg18.png', width: 407, height: 905 },
+  pluginGuideImg19: { src: '/assets/plugin-guide-images/pluginGuideImg19.png', width: 411, height: 904 },
+  pluginGuideImg1_1: { src: '/assets/plugin-guide-images/pluginGuideImg1-1.png', width: 1618, height: 827 },
+  pluginGuideImg1_2: { src: '/assets/plugin-guide-images/pluginGuideImg1-2.png', width: 1878, height: 1015 },
+  pluginGuideImg1_3: { src: '/assets/plugin-guide-images/pluginGuideImg1-3.png', width: 1893, height: 935 },
+  pluginGuideImg1_4: { src: '/assets/plugin-guide-images/pluginGuideImg1-4.png', width: 1789, height: 975 },
+  pluginGuideImg1_5: { src: '/assets/plugin-guide-images/pluginGuideImg1-5.png', width: 1850, height: 940 },
+} satisfies Record<string, PublicImageAsset>
+
+const {
+  pluginGuideImg1,
+  pluginGuideImg3,
+  pluginGuideImg4,
+  pluginGuideImg8,
+  pluginGuideImg10,
+  pluginGuideImg11,
+  pluginGuideImg12,
+  pluginGuideImg13,
+  pluginGuideImg14,
+  pluginGuideImg15,
+  pluginGuideImg16,
+  pluginGuideImg17,
+  pluginGuideImg18,
+  pluginGuideImg19,
+  pluginGuideImg1_1,
+  pluginGuideImg1_2,
+  pluginGuideImg1_3,
+  pluginGuideImg1_4,
+  pluginGuideImg1_5,
+} = pluginGuideImages
 
 // 所有图片列表，用于 MediaPreview
 const ALL_IMAGES = [
   pluginGuideImg1,
-  pluginGuideImg2,
   pluginGuideImg3,
   pluginGuideImg4,
-  pluginGuideImg5,
-  pluginGuideImg6,
-  pluginGuideImg7,
+  pluginGuideImg1_1,
+  pluginGuideImg1_2,
+  pluginGuideImg1_3,
+  pluginGuideImg1_4,
+  pluginGuideImg1_5,
   pluginGuideImg8,
-  pluginGuideImg9,
   pluginGuideImg18,
   pluginGuideImg19,
   pluginGuideImg10,
@@ -105,7 +135,7 @@ function StepCard({ stepNumber, title, children, icon }: StepCardProps) {
  * 图片展示组件
  */
 interface GuideImageProps {
-  src: StaticImageData
+  src: PublicImageAsset
   alt: string
   caption?: string
   className?: string
@@ -120,11 +150,12 @@ function GuideImage({ src, alt, caption, className, onClick }: GuideImageProps) 
         onClick={onClick}
       >
         <Image
-          src={src}
+          src={src.src}
           alt={alt}
           className="w-full h-auto max-h-[500px] object-contain rounded-md"
+          width={src.width}
+          height={src.height}
           priority={false}
-          placeholder="blur"
           quality={100}
         />
         {/* 点击放大提示 */}
@@ -157,7 +188,7 @@ function TableOfContents({ t }: { t: (key: string) => string }) {
   ]
 
   return (
-    <Card className="sticky top-20 p-4 relative overflow-hidden border-border/50">
+    <Card className="relative h-fit overflow-hidden border-border/50 p-4 shadow-sm">
       <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-[#c565ef] to-[#55D9ED]" />
       <h4 className="font-semibold mb-3 text-sm text-muted-foreground uppercase tracking-wide">
         {t('tableOfContents')}
@@ -236,6 +267,13 @@ export default function PluginGuideContent() {
               </span>
             </h1>
             <p className="text-lg text-muted-foreground">{t('introduction')}</p>
+            <Alert className="mx-auto mt-6 max-w-2xl border-border/60 bg-background/85 text-left shadow-sm backdrop-blur-sm">
+              <HelpCircle className="h-4 w-4 text-primary" />
+              <div className="min-w-0 flex-1">
+                <AlertTitle>{t('recommendedBrowser.title')}</AlertTitle>
+                <AlertDescription>{t('recommendedBrowser.content')}</AlertDescription>
+              </div>
+            </Alert>
           </div>
         </div>
         {/* 渐变分隔线 */}
@@ -246,7 +284,7 @@ export default function PluginGuideContent() {
       <div className="container mx-auto px-4 py-8 md:py-12">
         <div className="flex flex-col lg:flex-row gap-8">
           {/* 目录 - 桌面端侧边栏 */}
-          <aside className="hidden lg:block w-64 shrink-0">
+          <aside className="hidden w-64 shrink-0 self-start lg:sticky lg:top-0 lg:block">
             <TableOfContents t={t} />
           </aside>
 
@@ -278,23 +316,45 @@ export default function PluginGuideContent() {
               <StepCard stepNumber={2} title={t('steps.step2.title')}>
                 <p className="text-muted-foreground">{t('steps.step2.content')}</p>
                 <GuideImage
-                  src={pluginGuideImg2}
+                  src={pluginGuideImg1_1}
                   alt={t('steps.step2.caption')}
                   caption={t('steps.step2.caption')}
-                  onClick={() => openPreview(1)}
+                  onClick={() => openPreview(3)}
                 />
 
                 <Alert className="bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
                   <HelpCircle className="h-4 w-4 text-blue-600" />
-                  <AlertTitle className="text-blue-800 dark:text-blue-300">
-                    {t('steps.step2.note')}
-                  </AlertTitle>
-                  <AlertDescription className="text-blue-700 dark:text-blue-400">
-                    <ul className="list-disc list-inside space-y-1 mt-2">
-                      <li>{t('steps.step2.noteItem1')}</li>
-                      <li>{t('steps.step2.noteItem2')}</li>
-                    </ul>
-                  </AlertDescription>
+                  <div className="min-w-0 flex-1">
+                    <AlertTitle className="mb-2 leading-snug text-blue-800 dark:text-blue-300">
+                      {t('steps.step2.note')}
+                    </AlertTitle>
+                    <AlertDescription className="text-blue-700 dark:text-blue-400">
+                      <ul className="mt-0 list-disc space-y-3 pl-5">
+                        <li>
+                          <span className="font-medium">{t('steps.step2.channels.chrome.title')}</span>
+                          {t('steps.step2.channels.chrome.content')}
+                        </li>
+                        <li>
+                          <span className="font-medium">{t('steps.step2.channels.github.title')}</span>
+                          {t('steps.step2.channels.github.content')}
+                        </li>
+                        <li>
+                          <span className="font-medium">{t('steps.step2.channels.china.title')}</span>
+                          {t('steps.step2.channels.china.content')}
+                        </li>
+                      </ul>
+                      <p className="mt-3">
+                        {t('steps.step2.updateNote.prefix')}
+                        <Link
+                          href="/websit/plugin-update-docs"
+                          className="mx-1 font-medium text-blue-800 underline underline-offset-4 dark:text-blue-300"
+                        >
+                          {t('steps.step2.updateNote.linkText')}
+                        </Link>
+                        {t('steps.step2.updateNote.suffix')}
+                      </p>
+                    </AlertDescription>
+                  </div>
                 </Alert>
               </StepCard>
             </section>
@@ -313,12 +373,21 @@ export default function PluginGuideContent() {
 
               <Alert className="mb-6 bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
                 <HelpCircle className="h-4 w-4 text-amber-600" />
-                <AlertTitle className="text-amber-800 dark:text-amber-300">
-                  {t('manualInstall.tip')}
-                </AlertTitle>
-                <AlertDescription className="text-amber-700 dark:text-amber-400">
-                  {t('manualInstall.tipContent')}
-                </AlertDescription>
+                <div className="min-w-0 flex-1">
+                  <AlertTitle className="mb-2 leading-snug text-amber-800 dark:text-amber-300">
+                    {t('manualInstall.tip')}
+                  </AlertTitle>
+                  <AlertDescription className="text-amber-700 dark:text-amber-400">
+                    {t('manualInstall.tipPrefix')}
+                    <a
+                      href="#authorize"
+                      className="mx-1 font-medium text-amber-800 underline underline-offset-4 dark:text-amber-300"
+                    >
+                      {t('manualInstall.tipLinkText')}
+                    </a>
+                    {t('manualInstall.tipSuffix')}
+                  </AlertDescription>
+                </div>
               </Alert>
 
               <div className="space-y-6">
@@ -333,7 +402,7 @@ export default function PluginGuideContent() {
                   <GuideImage
                     src={pluginGuideImg3}
                     alt={t('manualInstall.step1.title')}
-                    onClick={() => openPreview(2)}
+                    onClick={() => openPreview(1)}
                   />
                 </Card>
 
@@ -348,7 +417,7 @@ export default function PluginGuideContent() {
                   <GuideImage
                     src={pluginGuideImg4}
                     alt={t('manualInstall.step2.title')}
-                    onClick={() => openPreview(3)}
+                    onClick={() => openPreview(2)}
                   />
                 </Card>
 
@@ -361,7 +430,7 @@ export default function PluginGuideContent() {
                   </h4>
                   <p className="text-muted-foreground mb-4">{t('manualInstall.step3.content')}</p>
                   <GuideImage
-                    src={pluginGuideImg5}
+                    src={pluginGuideImg1_2}
                     alt={t('manualInstall.step3.title')}
                     onClick={() => openPreview(4)}
                   />
@@ -376,7 +445,7 @@ export default function PluginGuideContent() {
                   </h4>
                   <p className="text-muted-foreground mb-4">{t('manualInstall.step4.content')}</p>
                   <GuideImage
-                    src={pluginGuideImg6}
+                    src={pluginGuideImg1_3}
                     alt={t('manualInstall.step4.title')}
                     onClick={() => openPreview(5)}
                   />
@@ -391,9 +460,24 @@ export default function PluginGuideContent() {
                   </h4>
                   <p className="text-muted-foreground mb-4">{t('manualInstall.step5.content')}</p>
                   <GuideImage
-                    src={pluginGuideImg7}
+                    src={pluginGuideImg1_4}
                     alt={t('manualInstall.step5.title')}
                     onClick={() => openPreview(6)}
+                  />
+                </Card>
+
+                <Card className="p-6 border-l-4 border-l-[#c565ef]/30 hover:border-l-[#c565ef]/60 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+                  <h4 className="font-semibold mb-3 flex items-center gap-2">
+                    <span className="w-6 h-6 rounded-full bg-gradient-to-br from-[#c565ef]/20 to-[#55D9ED]/20 flex items-center justify-center text-xs font-semibold text-foreground">
+                      6
+                    </span>
+                    {t('manualInstall.step6.title')}
+                  </h4>
+                  <p className="text-muted-foreground mb-4">{t('manualInstall.step6.content')}</p>
+                  <GuideImage
+                    src={pluginGuideImg1_5}
+                    alt={t('manualInstall.step6.title')}
+                    onClick={() => openPreview(7)}
                   />
                 </Card>
               </div>
@@ -414,7 +498,7 @@ export default function PluginGuideContent() {
                   src={pluginGuideImg8}
                   alt={t('steps.step3.caption')}
                   caption={t('steps.step3.caption')}
-                  onClick={() => openPreview(7)}
+                  onClick={() => openPreview(8)}
                 />
               </StepCard>
 
@@ -482,12 +566,14 @@ export default function PluginGuideContent() {
 
                 <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
                   <HelpCircle className="h-4 w-4 text-amber-600" />
-                  <AlertTitle className="text-amber-800 dark:text-amber-300">
-                    {t('steps.step7b.importantNote')}
-                  </AlertTitle>
-                  <AlertDescription className="text-amber-700 dark:text-amber-400">
-                    {t('steps.step7b.importantNoteContent')}
-                  </AlertDescription>
+                  <div className="min-w-0 flex-1">
+                    <AlertTitle className="mb-2 leading-snug text-amber-800 dark:text-amber-300">
+                      {t('steps.step7b.importantNote')}
+                    </AlertTitle>
+                    <AlertDescription className="text-amber-700 dark:text-amber-400">
+                      {t('steps.step7b.importantNoteContent')}
+                    </AlertDescription>
+                  </div>
                 </Alert>
 
                 <GuideImage

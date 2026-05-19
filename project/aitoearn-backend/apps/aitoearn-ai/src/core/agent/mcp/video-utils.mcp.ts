@@ -9,6 +9,7 @@ import { AssetType } from '@yikart/mongodb'
 import { execa } from 'execa'
 import * as subtitle from 'subtitle'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../ai-availability'
 import { ChatService } from '../../ai/chat'
 import { GeminiService } from '../../ai/libs/gemini'
 import { VolcengineService } from '../../ai/libs/volcengine'
@@ -75,6 +76,7 @@ export class VideoUtilsMcp {
   constructor(
     private readonly volcengineService: VolcengineService,
     private readonly assetsService: AssetsService,
+    private readonly aiAvailability: AiAvailabilityService,
     private readonly videoMetadataService: VideoMetadataService,
     private readonly chatService: ChatService,
     private readonly geminiService: GeminiService,
@@ -165,6 +167,7 @@ Returns: Array of { vid, duration, width, height, format, ... }`,
 
         return successResult(message)
       },
+      this.aiAvailability,
     )
   }
 
@@ -216,6 +219,7 @@ Returns: { vid, duration, width, height, ... }`,
 - Video dimensions: ${sourceInfo?.Width || 0}x${sourceInfo?.Height || 0} (Canvas will be auto-detected if omitted in submitDirectEditTask)
 - Full video TargetTime: [0, ${durationMs}]`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -248,6 +252,7 @@ Returns: { width, height, duration, bitrate, frameRate }`,
 
 Note: This video has NOT been uploaded to Volcengine. Use uploadAndGetVid if you need to edit it.`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -276,6 +281,7 @@ Note: This video has NOT been uploaded to Volcengine. Use uploadAndGetVid if you
 
         return successResult(`Thumbnail extracted and uploaded successfully. URL: ${result.url}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -433,6 +439,7 @@ Use this tool when user wants to:
 **SRT File URL:** ${uploadResult.url}
 You can use this SRT URL in video editing to add subtitles.`)
       },
+      this.aiAvailability,
     )
   }
 

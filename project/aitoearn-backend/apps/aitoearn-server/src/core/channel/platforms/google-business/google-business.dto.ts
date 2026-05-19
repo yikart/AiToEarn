@@ -16,6 +16,14 @@ export class GoogleBusinessAuthCallbackDto extends createZodDto(
   'GoogleBusinessAuthCallbackDto',
 ) {}
 
+export const GoogleBusinessAuthStatusDtoSchema = z.object({
+  state: z.string().describe('授权状态码'),
+})
+export class GoogleBusinessAuthStatusDto extends createZodDto(
+  GoogleBusinessAuthStatusDtoSchema,
+  'GoogleBusinessAuthStatusDto',
+) {}
+
 export const GoogleBusinessCredentialSchema = z.object({
   accessToken: z.string().describe('访问令牌'),
   refreshToken: z.string().describe('刷新令牌'),

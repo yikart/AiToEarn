@@ -229,14 +229,14 @@ export function MainPage() {
   }, [accountGroupList, selectedPlatform])
 
   return (
-    <div data-testid="cm-main-page" className="flex h-full flex-col md:flex-row">
+    <div data-testid="cm-main-page" className="flex h-full flex-col bg-background md:flex-row md:gap-5 md:p-5">
       {/* 左侧侧边栏 - 移动端隐藏 */}
-      <div className="hidden md:block">
+      <div className="hidden w-[226px] shrink-0 md:block">
         <ChannelSidebar />
       </div>
 
       {/* 移动端顶部操作栏 */}
-      <div className="flex items-center justify-between border-b px-4 py-2 md:hidden">
+      <div className="flex items-center justify-between border-b border-border/70 bg-card/80 px-4 py-3 md:hidden">
         <span data-testid="cm-channel-count" className="text-sm text-muted-foreground">
           {t('channelManager.channelCount', { count: accountList.length })}
         </span>
@@ -244,7 +244,7 @@ export function MainPage() {
           data-testid="cm-add-channel-btn"
           variant="default"
           size="sm"
-          className="cursor-pointer"
+          className="cursor-pointer rounded-full"
           onClick={() => setCurrentView('connect-list')}
         >
           <Plus className="mr-1.5 h-4 w-4" />
@@ -253,19 +253,19 @@ export function MainPage() {
       </div>
 
       {/* 右侧主内容区 */}
-      <div className="flex flex-1 flex-col overflow-hidden min-w-0">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         {accountLoading ? (
-          <div className="flex-1 p-4">
+          <div className="flex-1 p-4 md:p-0">
             <SpaceListSkeleton />
           </div>
         ) : (
-          <div className="flex flex-1 flex-col gap-4 overflow-hidden p-4">
+          <div className="flex flex-1 flex-col gap-4 overflow-hidden p-4 md:p-0">
             {/* 添加新空间 */}
             <CreateSpaceSection onSpaceCreated={getAccountGroup} />
 
             {/* 空间和频道列表 */}
             <ScrollArea className="h-full flex-1">
-              <div className="space-y-2">
+              <div className="space-y-3 pr-1">
                 {filteredAccountGroupList.map((space, index) => {
                   const channels = getChannelsInSpace(space.id)
                   const isEditing = editingSpace === space.id

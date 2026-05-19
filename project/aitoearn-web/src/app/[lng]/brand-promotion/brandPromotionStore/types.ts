@@ -3,6 +3,7 @@
  * 包含推广计划、素材、统计数据相关类型
  */
 
+import type { DraftGenerationRequest, ImageTextDraftType, VideoDraftType } from '@/api/draftGeneration'
 import type { PlatType } from '@/app/config/platConfig'
 import type { PubType } from '@/app/config/publishConfig'
 
@@ -57,6 +58,13 @@ export interface MaterialMedia {
   content?: string
 }
 
+/** AI 生成参数 */
+export interface MaterialGenerationParams extends DraftGenerationRequest {
+  platforms?: PlatType[]
+  draftType?: VideoDraftType | ImageTextDraftType
+  videoUrls?: string[]
+}
+
 /** 推广素材（原草稿） */
 export interface PromotionMaterial {
   id: string
@@ -76,6 +84,8 @@ export interface PromotionMaterial {
   topics?: string[]
   /** AI 生成模型 */
   model?: string
+  /** AI 生成参数 */
+  generationParams?: MaterialGenerationParams
   /** 适用的频道类型 */
   accountTypes?: string[]
 }
@@ -164,8 +174,6 @@ export interface IBrandPromotionStoreState {
   // 弹窗状态
   createPlanModalOpen: boolean
   editingPlan: PromotionPlan | null
-  qrCodeDialogOpen: boolean
-  qrCodePlan: PromotionPlan | null
 
   // 加载状态
   isSubmitting: boolean
@@ -183,8 +191,6 @@ export interface IBrandPromotionStoreMethods {
   openCreatePlanModal: () => void
   openEditPlanModal: (plan: PromotionPlan) => void
   closePlanModal: () => void
-  openQRCodeDialog: (plan: PromotionPlan) => void
-  closeQRCodeDialog: () => void
 
   // 重置
   reset: () => void

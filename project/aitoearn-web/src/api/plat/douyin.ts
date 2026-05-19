@@ -39,7 +39,11 @@ export interface DouyinPublishCreateParams {
   desc?: string
   accountId?: string
   taskId?: string
+  userTaskId?: string
   taskMaterialId?: string
+  materialGroupId?: string
+  materialId?: string
+  source?: 'publish' | 'task_link' | 'offline_qr'
   videoUrl?: string
   coverUrl?: string
   imgUrlList?: string[]
@@ -52,5 +56,5 @@ export interface DouyinPublishCreateParams {
  * @returns
  */
 export function apiDouyinPublishCreate(params: DouyinPublishCreateParams) {
-  return http.post<string>('plat/douyin/publish/create', params)
+  return http.post<{ shortLink: string, permalink: string, publishRecordId: string }>('plat/douyin/publish/create', params)
 }

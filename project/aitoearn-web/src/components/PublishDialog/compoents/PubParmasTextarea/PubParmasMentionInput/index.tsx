@@ -6,9 +6,11 @@
  */
 import type { InitialConfigType } from '@lexical/react/LexicalComposer'
 import type { EditorState, LexicalEditor } from 'lexical'
+import type { BeautifulMentionsCssClassNames } from 'lexical-beautiful-mentions'
 import type { ForwardedRef } from 'react'
 import { AutoFocusPlugin } from '@lexical/react/LexicalAutoFocusPlugin'
 import { LexicalComposer } from '@lexical/react/LexicalComposer'
+import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext'
 import { ContentEditable } from '@lexical/react/LexicalContentEditable'
 import { LexicalErrorBoundary } from '@lexical/react/LexicalErrorBoundary'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
@@ -17,10 +19,11 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { $getRoot } from 'lexical'
 import {
   BeautifulMentionNode,
+
   BeautifulMentionsPlugin,
   PlaceholderNode,
 } from 'lexical-beautiful-mentions'
-import React, { forwardRef, memo, useCallback, useRef } from 'react'
+import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react'
 
 import {
   Menu,
@@ -45,9 +48,12 @@ const mentionItems = {
   '#': [],
 }
 
-// 提及标签样式类名 - 使用 Tailwind 的 arbitrary variant
-const mentionStyleClass
-  = 'inline-block bg-primary text-primary-foreground rounded-md px-2 py-0.5 text-sm font-medium mx-0.5 align-middle shadow-sm transition-colors'
+const topicMentionClassNames: BeautifulMentionsCssClassNames = {
+  container: 'publish-topic-mention',
+  containerFocused: 'publish-topic-mention publish-topic-mention-focused',
+  trigger: 'publish-topic-mention_trigger',
+  value: 'publish-topic-mention_value',
+}
 
 const editorConfig: InitialConfigType = {
   nodes: [BeautifulMentionNode, PlaceholderNode],
@@ -57,9 +63,42 @@ const editorConfig: InitialConfigType = {
   },
   theme: {
     beautifulMentions: {
-      '#': mentionStyleClass,
+      '#': topicMentionClassNames,
     },
   },
+}
+
+/**
+ * CompositionSyncPlugin - IME 组合结束后同步文本到父组件
+ * 因为 OnChangePlugin 在组合期间被跳过，需要在 compositionend 后补发一次 onChange
+ */
+function CompositionSyncPlugin({
+  onChange,
+  lastOutputValueRef,
+}: {
+  onChange: (value: string) => void
+  lastOutputValueRef: React.MutableRefObject<string>
+}) {
+  const [editor] = useLexicalComposerContext()
+
+  useEffect(() => {
+    const rootElement = editor.getRootElement()
+    if (!rootElement)
+      return
+
+    const handleCompositionEnd = () => {
+      const text = editor.getEditorState().read(() => $getRoot().getTextContent())
+      if (text !== lastOutputValueRef.current) {
+        lastOutputValueRef.current = text
+        onChange(text)
+      }
+    }
+
+    rootElement.addEventListener('compositionend', handleCompositionEnd)
+    return () => rootElement.removeEventListener('compositionend', handleCompositionEnd)
+  }, [editor, onChange, lastOutputValueRef])
+
+  return null
 }
 
 const PubParmasMentionInput = memo(
@@ -69,21 +108,20 @@ const PubParmasMentionInput = memo(
       ref: ForwardedRef<IPubParmasMentionInputRef>,
     ) => {
       const comboboxAnchor = useRef<HTMLDivElement>(null)
-      // 用于防止循环更新：当编辑器内容变化时，记录最新值
-      const isInternalChangeRef = useRef(false)
+      // 记录编辑器最近一次通过 onChange 输出的值，用于 InitialValuePlugin 判断回传
+      const lastOutputValueRef = useRef<string>('')
 
       const handleChange = useCallback(
         (editorState: EditorState, editor: LexicalEditor) => {
+          // IME 组合期间跳过 onChange，防止重渲染打断输入法
+          if (editor.isComposing())
+            return
+
           editorState.read(() => {
             const root = $getRoot()
             const text = root.getTextContent()
-            // 标记这是内部变化，避免触发外部value同步回来
-            isInternalChangeRef.current = true
+            lastOutputValueRef.current = text
             onChange(text)
-            // 使用 setTimeout 确保外部状态更新后再重置标记
-            setTimeout(() => {
-              isInternalChangeRef.current = false
-            }, 0)
           })
         },
         [onChange],
@@ -133,7 +171,8 @@ const PubParmasMentionInput = memo(
             <HistoryPlugin />
             <AutoFocusPlugin defaultSelection="rootStart" />
 
-            <InitialValuePlugin value={value} isInternalChangeRef={isInternalChangeRef} />
+            <InitialValuePlugin value={value} lastOutputValueRef={lastOutputValueRef} />
+            <CompositionSyncPlugin onChange={onChange} lastOutputValueRef={lastOutputValueRef} />
 
             <PasteTopicsPlugin />
 

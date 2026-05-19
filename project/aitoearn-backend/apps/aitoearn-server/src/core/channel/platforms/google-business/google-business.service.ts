@@ -213,7 +213,7 @@ export class GoogleBusinessService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error('Google Business OAuth 回调处理失败', error)
+      this.logger.error(error, 'Google Business OAuth 回调处理失败')
       return { status: 0, message: `授权失败: ${getErrorMessage(error)}` }
     }
   }
@@ -285,7 +285,7 @@ export class GoogleBusinessService extends PlatformBaseService {
       return data.accounts?.[0] || null
     }
     catch (error) {
-      this.logger.error('获取 Google 账户信息异常', error)
+      this.logger.error(error, '获取 Google 账户信息异常')
       return null
     }
   }
@@ -312,7 +312,7 @@ export class GoogleBusinessService extends PlatformBaseService {
       return data.locations?.[0] || null
     }
     catch (error) {
-      this.logger.error('获取店铺信息异常', error)
+      this.logger.error(error, '获取店铺信息异常')
       return null
     }
   }
@@ -328,7 +328,7 @@ export class GoogleBusinessService extends PlatformBaseService {
    * 获取 Access Token 状态
    */
   async getAccessTokenStatus(accountId: string): Promise<number> {
-    await this.ensureLocalAccount(accountId)
+    await this.getLocalAccountById(accountId)
     const credential = await this.getCredential(accountId)
     if (!credential || !credential.accessToken) {
       this.updateAccountStatus(accountId, 0)

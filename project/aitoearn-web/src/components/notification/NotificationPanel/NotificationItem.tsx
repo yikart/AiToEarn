@@ -9,18 +9,19 @@ import {
   Bell,
   Bot,
   Check,
-  CheckCircle,
-  Clock,
+  Forward,
   Image,
   Info,
   MoreHorizontal,
   Rocket,
+  ShieldAlert,
+  Tag,
   Trash2,
   User,
-  Wallet,
   XCircle,
 } from 'lucide-react'
 import { memo, useState } from 'react'
+import { NotificationType } from '@/api/notification'
 import { useTransClient } from '@/app/i18n/client'
 import {
   AlertDialog,
@@ -49,17 +50,14 @@ const NOTIFICATION_TYPE_CONFIG: Record<string, {
   system: { icon: Bell, iconClass: 'text-foreground' },
   user: { icon: User, iconClass: 'text-info' },
   material: { icon: Image, iconClass: 'text-warning' },
-  task_reminder: { icon: Clock, iconClass: 'text-warning' },
-  app_release: { icon: Rocket, iconClass: 'text-success' },
-  user_withdraw: { icon: Wallet, iconClass: 'text-success' },
-  task_punish: { icon: AlertTriangle, iconClass: 'text-destructive' },
-  agent_result: { icon: Bot, iconClass: 'text-info' },
-  task_settled: { icon: CheckCircle, iconClass: 'text-success' },
-  task_review_rejected: { icon: XCircle, iconClass: 'text-destructive' },
-  task_review_approved: { icon: CheckCircle, iconClass: 'text-success' },
-  ai_review_skipped: { icon: AlertTriangle, iconClass: 'text-warning' },
-  task_submitted: { icon: CheckCircle, iconClass: 'text-info' },
-  interaction_ai_review_failed: { icon: XCircle, iconClass: 'text-destructive' },
+  [NotificationType.AppRelease]: { icon: Rocket, iconClass: 'text-success' },
+  [NotificationType.AgentResult]: { icon: Bot, iconClass: 'text-info' },
+  [NotificationType.AiReviewSkipped]: { icon: AlertTriangle, iconClass: 'text-warning' },
+  [NotificationType.InteractionAiReviewFailed]: { icon: XCircle, iconClass: 'text-destructive' },
+  [NotificationType.DiscountCodeAssigned]: { icon: Tag, iconClass: 'text-success' },
+  [NotificationType.TrustScoreDeducted]: { icon: ShieldAlert, iconClass: 'text-destructive' },
+  [NotificationType.AgentResultRequiresAction]: { icon: Bot, iconClass: 'text-warning' },
+  [NotificationType.AgentForwarded]: { icon: Forward, iconClass: 'text-info' },
   other: { icon: Info, iconClass: 'text-muted-foreground' },
 }
 

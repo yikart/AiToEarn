@@ -16,7 +16,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, FileUtil, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, FileUtil, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
 import { MediaGroup } from '@yikart/mongodb'
 import {
   CreateMediaGroupDto,
@@ -57,7 +57,7 @@ export class MediaGroupController {
     description: '根据ID删除媒体分组。',
   })
   @Delete(':id')
-  async delGroup(@GetToken() token: TokenInfo, @Param('id') id: string) {
+  async delGroup(@GetToken() token: TokenInfo, @Param('id', ParseObjectIdPipe) id: string) {
     const mediaGroup = await this.mediaGroupService.getInfo(id)
     if (!mediaGroup || mediaGroup.userId !== token.id) {
       throw new AppException(ResponseCode.MediaGroupNotFound, 'Media Group not found')
@@ -79,7 +79,7 @@ export class MediaGroupController {
   @Post('info/:id')
   async updateGroupInfo(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateMediaGroupDto,
   ) {
     const dataInfo = await this.mediaGroupService.getInfo(id)
@@ -95,7 +95,7 @@ export class MediaGroupController {
     description: '根据ID获取媒体分组详情。',
   })
   @Get('info/:id')
-  async getGroupInfo(@Param('id') id: string) {
+  async getGroupInfo(@Param('id', ParseObjectIdPipe) id: string) {
     const res = await this.mediaGroupService.getInfo(id)
     return res
   }

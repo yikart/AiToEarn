@@ -35,7 +35,7 @@ export class EnqueuePublishingTaskScheduler {
       this.logger.log(`Pushing scheduled publish tasks completed: ${tasks.length} tasks found before ${cutoffTime.toISOString()}`)
     }
     catch (error) {
-      this.logger.error(`Error pushing scheduled publish tasks: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, 'Error pushing scheduled publish tasks')
     }
   }
 }

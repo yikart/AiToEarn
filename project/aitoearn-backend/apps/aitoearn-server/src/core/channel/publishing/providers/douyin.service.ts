@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
+import { AccountType } from '@yikart/common'
 import {
   PublishRecord,
   PublishStatus,
 } from '@yikart/mongodb'
 import { ShortLinkService } from '../../../short-link/short-link.service'
 import { DouyinDownloadType, DouyinPrivateStatus, DouyinShareSchemaOptions } from '../../libs/douyin/common'
-import { WebhookEvent } from '../../platforms/douyin/common'
 import { DouyinService } from '../../platforms/douyin/douyin.service'
 import { DouyinWebhookDto } from '../douyin-webhook.dto'
 import { PublishingTaskResult, VerifyPublishResult } from '../publishing.interface'
@@ -25,7 +25,7 @@ export class DouyinPubService extends PublishService {
   }
 
   async doPublish(
-    publishTask: { desc?: string, title?: string, topics: string[], videoUrl?: string, imgUrlList?: string[] },
+    publishTask: { desc?: string, title?: string, topics: string[], videoUrl?: string, coverUrl?: string, imgUrlList?: string[] },
     option?: {
       downloadType: DouyinDownloadType
       privateStatus: DouyinPrivateStatus
@@ -33,10 +33,9 @@ export class DouyinPubService extends PublishService {
     },
   ): Promise<{
     permalink: string
-    // , shareId: string
+    shareId: string
   }> {
     const { title, desc, topics, videoUrl, imgUrlList } = publishTask
-    // const shareId = option?.shareId || await this.douyinService.getShareid()
     const processedImgUrlList = imgUrlList?.map(url => this.assetsService.buildUrl(url))
     const processedVideoUrl = videoUrl ? this.assetsService.buildUrl(videoUrl) : undefined
     const titleText = title || desc || ''
@@ -44,8 +43,9 @@ export class DouyinPubService extends PublishService {
       name: topic,
       start: titleText.length,
     }))
+    const shareId = await this.douyinService.getShareid()
     const options: DouyinShareSchemaOptions = {
-      // shareId,
+      shareId,
       title: titleText,
       title_hashtag_list,
       downloadType: option?.downloadType || DouyinDownloadType.Allow,
@@ -57,7 +57,7 @@ export class DouyinPubService extends PublishService {
     const permalink = await this.douyinService.generateShareSchema(options)
     return {
       permalink,
-      // shareId,
+      shareId,
     }
   }
 
@@ -68,7 +68,7 @@ export class DouyinPubService extends PublishService {
       privateStatus: option?.douyin?.privateStatus || DouyinPrivateStatus.All,
     }
 
-    const { permalink } = await this.doPublish({
+    const { permalink, shareId } = await this.doPublish({
       desc,
       title,
       topics,
@@ -82,10 +82,10 @@ export class DouyinPubService extends PublishService {
     })
 
     return {
-      postId: '',
+      postId: shareId,
       permalink,
       shortLink,
-      status: PublishStatus.PUBLISHED,
+      status: PublishStatus.PUBLISHING,
     }
   }
 
@@ -103,37 +103,57 @@ export class DouyinPubService extends PublishService {
     }
   }
 
+  /**
+   * 处理抖音发布成功的 webhook 回调，更新发布记录状态和作品链接
+   * @param dto
+   * @returns
+   */
   async handleDouyinPublishWebhook(dto: DouyinWebhookDto): Promise<void> {
     try {
-      if (dto.event !== WebhookEvent.PublishVideo) {
-        this.logger.error(`未知抖音事件类型: ${dto.event}`)
-        return
-      }
+      // 测试数据
+      // const content = {
+      //   "share_id": "1861446241666108",
+      //   "item_id": "@9VwI1aLBStkzKWbyYdo+Us7902ftOfCGO5V1rgqmKFYUavX560zdRmYqig357zEBoMWS3ArmmwPxgMcrFLx92g==",
+      //   "has_default_hashtag": false,
+      //   "video_id": "7624484004700777445"
+      // }
 
-      const { share_id, item_id } = dto.content
+      const { share_id, video_id } = dto.content
       if (!share_id) {
-        this.logger.error(`invalid share_id in webhook: ${JSON.stringify(dto.content)}`)
+        this.logger.error({
+          tag: 'douyin-webhooks-error-no-share-id',
+          data: dto.content,
+        })
         return
       }
 
-      const publishTask = await this.publishRecordService.getOneByData(share_id, dto.from_user_id)
+      const publishTask = await this.publishRecordService.getOneByDataId(share_id, AccountType.Douyin)
       if (!publishTask) {
-        this.logger.error(`未找到发布记录: share_id=${share_id}, from_user_id=${dto.from_user_id}`)
+        this.logger.error({
+          tag: 'douyin-webhooks-error-no-publishTask',
+          data: {
+            share_id,
+            from_user_id: dto.from_user_id,
+          },
+        })
         return
       }
 
-      const workLink = `https://www.douyin.com/video/${item_id}`
-      this.logger.log(`抖音发布成功: share_id=${share_id}, item_id=${item_id}`)
-
+      this.logger.log({
+        tag: 'douyin-webhooks-publishTask',
+        data: {
+          publishTask,
+        },
+      })
+      const workLink = `https://www.douyin.com/video/${video_id}`
       if (publishTask.status === PublishStatus.PUBLISHED) {
-        this.logger.log(`抖音发布记录已完成，仅更新 dataId 和 workLink: ${publishTask.id}`)
-        await this.publishRecordService.updateById(publishTask.id, { $set: { dataId: item_id, workLink } })
+        await this.publishRecordService.updateById(publishTask.id, { $set: { dataId: video_id, workLink } })
         return
       }
-      await this.completePublishTask(publishTask, item_id, { workLink })
+      await this.completePublishTask(publishTask, video_id, { workLink })
     }
     catch (error) {
-      this.logger.error(`处理抖音 webhook 失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '处理抖音 webhook 失败')
     }
   }
 }

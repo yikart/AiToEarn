@@ -67,23 +67,12 @@ export class NotificationService {
       status: NotificationStatus.Unread,
     })
 
-    const emailTypes: NotificationType[] = [
-      NotificationType.AgentResult,
-      NotificationType.AiReviewSkipped,
-      NotificationType.TaskSubmitted,
-      NotificationType.TaskReviewRejected,
-      NotificationType.TaskReviewApproved,
-      NotificationType.TaskSettled,
-    ]
-
-    if (emailTypes.includes(type)) {
+    if (inData.type === NotificationType.AgentResult) {
       const control = await this.userNotificationControlRepository.findByUserId(userId)
       const shouldSendEmail = (control?.controls as Record<string, any>)?.[type]?.email ?? true
 
       if (shouldSendEmail) {
-        const result = type === NotificationType.AgentResult
-          ? await this.emailService.sendAgentResultEmail(user.mail, data.taskId, data.status, data.description, userLocale)
-          : await this.emailService.sendTaskNotificationEmail(user.mail, title, content, type, userLocale)
+        const result = await this.emailService.sendAgentResultEmail(user.mail, inData.data.taskId, inData.data.status, inData.data.description, userLocale)
         if (!result) {
           this.notificationRepository.updateChannelResult(saved.id, 'mail', false, 'send error')
         }

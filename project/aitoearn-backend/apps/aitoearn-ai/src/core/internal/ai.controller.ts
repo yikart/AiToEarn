@@ -6,11 +6,12 @@ import {
 import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
 import { ApiDoc, UserType } from '@yikart/common'
+import { AiLogChannel } from '@yikart/mongodb'
 import { ChatCompletionVo, ChatService, UserChatCompletionDto } from '../ai/chat'
 import { AsyncTaskResponseVo, ImageResponseVo, ImageService, TaskStatusResponseVo } from '../ai/image'
 import { ModelsConfigService, ModelsConfigVo } from '../ai/models-config'
 import { ListVideoTasksResponseVo, VideoGenerationResponseVo, VideoService, VideoTaskStatusResponseVo } from '../ai/video'
-import { AdminImageEditDto, AdminImageGenerationDto, AdminQrCodeArtDto, AdminUserListVideoTasksQueryDto, AdminVideoGenerationRequestDto, AdminVideoGenerationStatusSchemaDto } from './ai.dto'
+import { UserImageEditDto, UserImageGenerationDto, UserListVideoTasksQueryDto, UserQrCodeArtDto, UserVideoGenerationRequestDto, UserVideoTaskQueryDto } from './ai.dto'
 
 @ApiTags('Internal/Ai')
 @Controller('internal')
@@ -51,12 +52,12 @@ export class AiController {
 
   @ApiDoc({
     summary: 'Generate Image via AI',
-    body: AdminImageGenerationDto.schema,
+    body: UserImageGenerationDto.schema,
     response: ImageResponseVo,
   })
   @Post('ai/image/generate')
   async generateImage(
-    @Body() body: AdminImageGenerationDto,
+    @Body() body: UserImageGenerationDto,
   ): Promise<ImageResponseVo> {
     const response = await this.imageService.userGeneration(body)
     return ImageResponseVo.create(response)
@@ -64,12 +65,12 @@ export class AiController {
 
   @ApiDoc({
     summary: 'Generate AI Image Asynchronously',
-    body: AdminImageGenerationDto.schema,
+    body: UserImageGenerationDto.schema,
     response: AsyncTaskResponseVo,
   })
   @Post('ai/image/generate/async')
   async generateImageAsync(
-    @Body() body: AdminImageGenerationDto,
+    @Body() body: UserImageGenerationDto,
   ): Promise<AsyncTaskResponseVo> {
     const response = await this.imageService.userGenerationAsync(body)
     return AsyncTaskResponseVo.create(response)
@@ -89,11 +90,11 @@ export class AiController {
 
   @ApiDoc({
     summary: 'Edit AI Image Asynchronously',
-    body: AdminImageEditDto.schema,
+    body: UserImageEditDto.schema,
     response: AsyncTaskResponseVo,
   })
   @Post('ai/image/edit/async')
-  async editImageAsync(@Body() body: AdminImageEditDto): Promise<AsyncTaskResponseVo> {
+  async editImageAsync(@Body() body: UserImageEditDto): Promise<AsyncTaskResponseVo> {
     const response = await this.imageService.userEditAsync(body)
     return AsyncTaskResponseVo.create(response)
   }
@@ -112,12 +113,12 @@ export class AiController {
 
   @ApiDoc({
     summary: 'Generate Video via AI',
-    body: AdminVideoGenerationRequestDto.schema,
+    body: UserVideoGenerationRequestDto.schema,
     response: VideoGenerationResponseVo,
   })
   @Post('ai/video/generations')
   async videoGeneration(
-    @Body() body: AdminVideoGenerationRequestDto,
+    @Body() body: UserVideoGenerationRequestDto,
   ): Promise<VideoGenerationResponseVo> {
     const response = await this.videoService.userVideoGeneration(body)
     return VideoGenerationResponseVo.create(response)
@@ -125,11 +126,11 @@ export class AiController {
 
   @ApiDoc({
     summary: 'Get Video Task Status',
-    body: AdminVideoGenerationStatusSchemaDto.schema,
+    body: UserVideoTaskQueryDto.schema,
     response: VideoTaskStatusResponseVo,
   })
   @Post('ai/video/status')
-  async getVideoTaskStatus(@Body() body: AdminVideoGenerationStatusSchemaDto): Promise<VideoTaskStatusResponseVo> {
+  async getVideoTaskStatus(@Body() body: UserVideoTaskQueryDto): Promise<VideoTaskStatusResponseVo> {
     const response = await this.videoService.getVideoTaskStatus({
       userId: body.userId,
       userType: body.userType,
@@ -140,11 +141,11 @@ export class AiController {
 
   @ApiDoc({
     summary: 'List Video Tasks',
-    body: AdminUserListVideoTasksQueryDto.schema,
+    body: UserListVideoTasksQueryDto.schema,
     response: ListVideoTasksResponseVo,
   })
   @Post('ai/video/list')
-  async listVideoTasks(@Body() body: AdminUserListVideoTasksQueryDto): Promise<ListVideoTasksResponseVo> {
+  async listVideoTasks(@Body() body: UserListVideoTasksQueryDto): Promise<ListVideoTasksResponseVo> {
     const [list, total] = await this.videoService.listVideoTasks(body)
     return new ListVideoTasksResponseVo(list, total, body)
   }
@@ -152,12 +153,12 @@ export class AiController {
   @ApiDoc({
     summary: 'Generate QR Code Art Image Asynchronously',
     description: '根据二维码内容、参考样式图和提示词，异步生成美观的二维码艺术图',
-    body: AdminQrCodeArtDto.schema,
+    body: UserQrCodeArtDto.schema,
     response: AsyncTaskResponseVo,
   })
   @Post('ai/image/qrcode-art')
   async generateQrCodeArt(
-    @Body() body: AdminQrCodeArtDto,
+    @Body() body: UserQrCodeArtDto,
   ): Promise<AsyncTaskResponseVo> {
     const response = await this.imageService.userQrCodeArtAsync(body)
     return AsyncTaskResponseVo.create(response)
@@ -192,6 +193,8 @@ export class AiController {
   async getChatModels(@Body() body: {
     userId?: string
     userType?: UserType
+    channel?: AiLogChannel
+    scene?: string
   }) {
     const response = await this.chatService.getChatModelConfig(body)
     return response

@@ -12,7 +12,7 @@ All API responses are wrapped by `ResponseInterceptor` into:
 }
 ```
 
-Do not define custom response wrappers. Use `AppException + ResponseCode` to trigger error responses.
+Do not define custom response wrappers. Use `AppException + ResponseCode` for business errors, and standard `HttpException` only for protocol-level errors.
 
 ## Repository Pattern
 

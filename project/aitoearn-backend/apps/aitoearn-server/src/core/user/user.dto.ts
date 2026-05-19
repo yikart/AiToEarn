@@ -1,5 +1,5 @@
 import { createZodDto } from '@yikart/common'
-import { GenderEnum, UserType } from '@yikart/mongodb'
+import { GenderEnum } from '@yikart/mongodb'
 /*
  * @Author: nevin
  * @Date: 2024-06-17 20:12:31
@@ -73,14 +73,4 @@ export const UpdateLocaleDtoSchema = z.object({
 export class UpdateLocaleDto extends createZodDto(
   UpdateLocaleDtoSchema,
   'UpdateLocaleDto',
-) {}
-
-export const SwitchUserTypeDtoSchema = z.object({
-  userType: z
-    .enum([UserType.CREATOR, UserType.BUSINESS_OWNER])
-    .describe('目标用户类型'),
-})
-export class SwitchUserTypeDto extends createZodDto(
-  SwitchUserTypeDtoSchema,
-  'SwitchUserTypeDto',
 ) {}

@@ -104,7 +104,7 @@ export class YoutubePubService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error('error publishing video', error)
+      this.logger.error(error, 'error publishing video')
       throw PublishingException.nonRetryable('error publishing video', error as Record<string, unknown>)
     }
   }
@@ -131,7 +131,7 @@ export class YoutubePubService extends PublishService {
         license: publishTask.option?.youtube?.license,
       },
     }
-    await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
+    await this.youtubeService.updateVideoByAccountId(publishTask.accountId, videoSchema)
     return {
       status: PublishStatus.PUBLISHED,
     }
@@ -190,7 +190,7 @@ export class YoutubePubService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error(`验证 YouTube 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 YouTube 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,

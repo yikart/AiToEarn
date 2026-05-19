@@ -9,26 +9,32 @@ import type { PlatType } from '@/app/config/platConfig'
 import Image from 'next/image'
 import { memo, useCallback, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RegionTaskPlatInfoArr } from '@/app/config/platConfig'
+import { TaskPlatInfoArr } from '@/app/config/platConfig'
 import { cn } from '@/lib/utils'
 
 interface InlinePlatformSelectorProps {
   selectedPlatforms: PlatType[]
   onPlatformsChange: (platforms: PlatType[]) => void
+  availablePlatforms?: PlatType[]
 }
 
-const InlinePlatformSelector = memo(({ selectedPlatforms, onPlatformsChange }: InlinePlatformSelectorProps) => {
+const InlinePlatformSelector = memo(({ selectedPlatforms, onPlatformsChange, availablePlatforms }: InlinePlatformSelectorProps) => {
   const { t } = useTranslation('brandPromotion')
 
-  const availablePlatforms = useMemo(() =>
-    RegionTaskPlatInfoArr.map(([plat, info]) => ({
-      plat,
-      icon: info.icon,
-      name: info.name,
-      themeColor: info.themeColor,
-    })), [])
+  const platformOptions = useMemo(() => {
+    const visiblePlatforms = availablePlatforms ?? TaskPlatInfoArr.map(([plat]) => plat)
 
-  const isAllSelected = selectedPlatforms.length === availablePlatforms.length
+    return TaskPlatInfoArr
+      .filter(([plat]) => visiblePlatforms.includes(plat))
+      .map(([plat, info]) => ({
+        plat,
+        icon: info.icon,
+        name: info.name,
+        themeColor: info.themeColor,
+      }))
+  }, [availablePlatforms])
+
+  const isAllSelected = platformOptions.length > 0 && selectedPlatforms.length === platformOptions.length
 
   const handleToggle = useCallback((plat: PlatType) => {
     if (selectedPlatforms.includes(plat)) {
@@ -44,15 +50,15 @@ const InlinePlatformSelector = memo(({ selectedPlatforms, onPlatformsChange }: I
       onPlatformsChange([])
     }
     else {
-      onPlatformsChange(availablePlatforms.map(p => p.plat))
+      onPlatformsChange(platformOptions.map(p => p.plat))
     }
-  }, [isAllSelected, availablePlatforms, onPlatformsChange])
+  }, [isAllSelected, platformOptions, onPlatformsChange])
 
   return (
     <div className="flex items-center gap-2">
       <span className="text-xs text-muted-foreground shrink-0">{t('createMaterial.targetPlatforms')}</span>
       <div className="flex flex-wrap items-center gap-2.5 flex-1">
-        {availablePlatforms.map(({ plat, icon, name, themeColor }) => {
+        {platformOptions.map(({ plat, icon, name, themeColor }) => {
           const isSelected = selectedPlatforms.includes(plat)
           return (
             <button

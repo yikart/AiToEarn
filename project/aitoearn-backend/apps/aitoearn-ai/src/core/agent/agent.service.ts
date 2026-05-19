@@ -267,8 +267,8 @@ export class AgentService implements OnModuleInit, OnModuleDestroy {
     await this.serverClient.notification.createForUser({
       userId: targetUserId,
       userType: UserType.User,
-      messageKey: NotificationMessageKey.AgentForwarded,
-      vars: { taskId: newTask.id },
+      messageKey: NotificationMessageKey.AgentResult,
+      vars: { taskId: newTask.id, status: 'forwarded' },
       type: NotificationType.AgentResult,
       relatedId: newTask.id,
     })

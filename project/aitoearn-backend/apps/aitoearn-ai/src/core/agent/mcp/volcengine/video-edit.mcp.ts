@@ -1,10 +1,11 @@
 import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-ai/claude-agent-sdk'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { CreditsType, UserType } from '@yikart/common'
+import { CreditsConsumptionSource, CreditsType, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../../ai-availability'
 import { VolcengineService } from '../../../ai/libs/volcengine'
 import { DirectEditApplicationType, DirectEditParam } from '../../../ai/libs/volcengine/volcengine.interface'
 import { McpServerName } from '../../agent.constants'
@@ -35,6 +36,7 @@ export class VideoEditMcp {
     private readonly volcengineService: VolcengineService,
     private readonly assetsService: AssetsService,
     private readonly creditsHelper: CreditsHelperService,
+    private readonly aiAvailability: AiAvailabilityService,
     private readonly aiLogRepo: AiLogRepository,
   ) {}
 
@@ -185,6 +187,7 @@ export class VideoEditMcp {
           userId,
           amount: price,
           type: CreditsType.AiService,
+          source: CreditsConsumptionSource.AiVideoEdit,
           description: `Video Edit - ${result.ReqId}`,
           metadata: {
             taskId: result.ReqId,
@@ -208,6 +211,7 @@ export class VideoEditMcp {
 
         return successResult(`Video edit task submitted. Task ID: ${aiLog.id}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -309,6 +313,7 @@ Returns detailed error information on failure.`,
           return errorResult(errorMessage)
         }
       },
+      this.aiAvailability,
     )
   }
 

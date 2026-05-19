@@ -32,7 +32,7 @@ export class BilibiliDataService extends DataCubeBase {
   }
 
   async getAccountDataCube(accountId: string) {
-    const res = await this.bilibiliService.getUserStat(accountId)
+    const res = await this.bilibiliService.getUserStatByAccountId(accountId)
     return {
       fensNum: res.follower,
       arcNum: res.arc_passed_total,
@@ -47,7 +47,7 @@ export class BilibiliDataService extends DataCubeBase {
   }
 
   async getArcDataCube(accountId: string, dataId: string) {
-    const res = await this.bilibiliService.getArcStat(accountId, dataId)
+    const res = await this.bilibiliService.getArcStatByAccountId(accountId, dataId)
 
     return {
       fensNum: res.favorite,

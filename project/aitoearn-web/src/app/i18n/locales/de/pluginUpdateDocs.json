@@ -1,0 +1,80 @@
+{
+  "seo": {
+    "title": "Plugin-Update-Anleitung - AiToEarn Browser-Erweiterung aktualisieren",
+    "description": "Folgen Sie dieser bebilderten Anleitung, um das neueste .crx-Paket herunterzuladen und die AiToEarn-Erweiterung über die Erweiterungsverwaltung zu aktualisieren.",
+    "keywords": "plugin update, browser extension upgrade, AiToEarn extension, manual update, Chrome extension"
+  },
+  "hero": {
+    "eyebrow": "Manueller Update-Ablauf",
+    "title": "Plugin-Update-Anleitung",
+    "description": "Wenn AiToEarn meldet, dass Ihre aktuelle Erweiterungsversion veraltet ist, aktualisieren Sie sie mit dem neuesten .crx-Paket.",
+    "noticeTitle": "Installationen aus dem Chrome Web Store brauchen meist kein manuelles Update",
+    "noticeContent": "Wenn Sie die Erweiterung aus dem Chrome Web Store installiert haben, müssen Sie normalerweise nur auf die Store-Prüfung und die automatische Auslieferung warten.",
+    "summaryLabel": "Kurzinformationen"
+  },
+  "facts": {
+    "time": "Geschätzte Zeit",
+    "timeValue": "Etwa 1-3 Minuten",
+    "scenario": "Geeignet für",
+    "scenarioValue": "Nutzer in China, die die Erweiterung nicht über den Chrome Web Store installieren können, oder Nutzer, die sofort die neueste Version benötigen."
+  },
+  "actions": {
+    "downloadChina": "Neueste China-Version herunterladen",
+    "downloadGithub": "GitHub-Download",
+    "viewInstallGuide": "Installationsanleitung ansehen"
+  },
+  "tableOfContents": "Update-Schritte",
+  "sections": {
+    "beforeUpdate": "Vor dem Start",
+    "beforeUpdateDesc": "Prüfen Sie vor dem Update mit dem .crx-Paket die Hinweise zur Datensicherung und Ihre aktuelle Installationsmethode.",
+    "steps": "Update-Schritte",
+    "stepsDesc": "Führen Sie diese 7 Schritte aus, um das Erweiterungspaket zu aktualisieren."
+  },
+  "backupNotice": {
+    "title": "Wichtiger Hinweis",
+    "content1": "Wenn Sie die Erweiterung zuvor per entpackter .zip-Datei installiert haben, sichern Sie Ihre bisherigen Daten wie Agenten und Aufgabenkonfigurationen manuell.",
+    "content2": "Die alte .zip-Installationsmethode ist mit der aktuellen Methode nicht kompatibel. Nach der Installation per .crx müssen Sie die alte .zip-Erweiterung manuell entfernen."
+  },
+  "checklist": {
+    "title": "Checkliste vor dem Update",
+    "item1": "Schließen Sie vor dem Start das Erweiterungs-Popup, die Detailseite und andere verbundene Fenster.",
+    "item2": "Wenn Sie auf Nummer sicher gehen wollen, sichern Sie zuerst Ihre Erweiterungsdaten wie Agenten und Aufgabenkonfigurationen."
+  },
+  "steps": {
+    "step1": {
+      "title": "Neuestes Erweiterungspaket herunterladen",
+      "content": "Laden Sie das neueste .crx-Paket über den Downloadbereich oben auf der Seite herunter.",
+      "caption": "Neuestes Erweiterungspaket herunterladen"
+    },
+    "step2": {
+      "title": "Download-Ordner öffnen",
+      "content": "Öffnen Sie den Ordner, in dem sich das gerade heruntergeladene Erweiterungspaket befindet.",
+      "caption": "Download-Ordner öffnen"
+    },
+    "step3": {
+      "title": "Erweiterungsverwaltung öffnen",
+      "content": "Öffnen Sie die Chrome-Erweiterungsverwaltung, um das manuelle Update zu starten.",
+      "caption": "Erweiterungsverwaltung öffnen"
+    },
+    "step4": {
+      "title": "Entwicklermodus aktivieren",
+      "content": "Aktivieren Sie oben rechts auf der Erweiterungsseite den Entwicklermodus.",
+      "caption": "Entwicklermodus aktivieren"
+    },
+    "step5": {
+      "title": "Paket in den Erweiterungsbereich ziehen",
+      "content": "Ziehen Sie die heruntergeladene .crx-Datei direkt auf die Seite der Erweiterungsverwaltung.",
+      "caption": "Paket in den Erweiterungsbereich ziehen"
+    },
+    "step6": {
+      "title": "Zum Bestätigen auf Re-enable klicken",
+      "content": "Wenn Chrome den Bestätigungsdialog anzeigt, klicken Sie auf „Re-enable“, um das Update abzuschließen.",
+      "caption": "Zum Bestätigen auf Re-enable klicken"
+    },
+    "step7": {
+      "title": "Entwicklermodus ausschalten",
+      "content": "Nach dem abgeschlossenen Update können Sie den Entwicklermodus wieder ausschalten.",
+      "caption": "Entwicklermodus ausschalten"
+    }
+  }
+}

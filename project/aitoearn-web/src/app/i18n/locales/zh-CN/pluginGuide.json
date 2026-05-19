@@ -7,11 +7,15 @@
   "title": "浏览器插件使用教程",
   "lastUpdated": "最后更新",
   "introduction": "本教程将指导您如何安装和使用 AiToEarn 浏览器插件，让您能够更便捷地管理社交媒体账号和发布内容。",
+  "recommendedBrowser": {
+    "title": "推荐浏览器",
+    "content": "Edge、Google Chrome，下面教程将使用 Google Chrome 操作。"
+  },
   "tableOfContents": "目录",
   "sections": {
     "installation": "安装插件",
     "manualInstall": "手动安装方式",
-    "manualInstallDesc": "适用于 GitHub 或 中国地区下载渠道",
+    "manualInstallDesc": "适用于 Latest GitHub Channel Download 和 Latest China Download 下载渠道",
     "authorize": "授权插件",
     "loginAccount": "登录社交媒体账号",
     "syncAccount": "同步账号"
@@ -25,10 +29,29 @@
     "step2": {
       "title": "第二步：下载插件",
       "content": "在弹框中选择下载方式，点击下载插件。",
-      "caption": "选择合适的下载渠道",
-      "note": "Chrome Web Store 和 GitHub Release 安装区别：",
-      "noteItem1": "GitHub Release 下载的插件您需要浏览器打开开发者模式安装，但是此处安装的资源是最新的插件。",
-      "noteItem2": "Chrome Web Store 下载的插件您可以直接安装。"
+      "caption": "在插件管理弹框中选择下载渠道",
+      "note": "下载渠道说明：",
+      "channels": {
+        "chrome": {
+          "title": "Chrome Web Store：",
+          "content": " 我们推荐您在 Chrome Web Store 安装插件，但是 Chrome Web Store 需要审核，审核时间不定。我们推出一些新功能时，可能会提前上线，这时从 Chrome Web Store 安装的插件可能还是旧版本。如果您不急需使用最新功能，可以等待 Chrome Web Store 审核完成；Chrome Web Store 有自动更新插件的机制。如果您需要最新插件资源，请使用 Latest China Download 或 Latest GitHub Channel Download 渠道下载插件。"
+        },
+        "github": {
+          "title": "Latest GitHub Channel Download：",
+          "content": " 从 GitHub 渠道下载的版本是最新资源，我们对浏览器插件的更新会先在这个渠道发布，再更新到 Chrome Web Store（通常需要 4-5 天审核）。"
+        },
+        "china": {
+          "title": "Latest China Download：",
+          "content": " 中国地区用户无法使用 Chrome Web Store 下载方式时，可以通过这个渠道获取最新插件资源。"
+        }
+      },
+      "updateNote": {
+        "prefix": "注：从 Latest China Download 和 Latest GitHub Channel Download 渠道下载的用户，不需要担心更新问题，它会遵循 Chrome Web Store 的自动更新机制。如果您等不及审核，也可以手动更新，手动更新文档见",
+        "linkText": "插件更新文档",
+        "suffix": "。"
+      },
+      "noteItem1": "推荐通过 Chrome 应用商店安装插件。",
+      "noteItem2": "如果你在中国无法访问 Chrome 应用商店，可以通过 Latest China Download (zip) 下载插件。新功能发布后，Chrome 应用商店审核可能需要一些时间，因此该渠道的插件有时会比 Chrome 应用商店版本更新。"
     },
     "step3": {
       "title": "第三步：检查安装状态",
@@ -84,7 +107,9 @@
   },
   "manualInstall": {
     "tip": "提示",
-    "tipContent": "如果您已通过 Chrome Web Store 成功安装插件，可以跳过此部分，直接前往「授权插件」章节。",
+    "tipPrefix": "如果您已通过 Chrome Web Store 成功安装插件，可以跳过此部分，直接前往",
+    "tipLinkText": "授权插件",
+    "tipSuffix": "章节。",
     "step1": {
       "title": "进入扩展程序管理页面",
       "content": "点击浏览器右上角的三点菜单，依次点击进入 \"Manage Extensions\" 管理页面。"
@@ -94,17 +119,22 @@
       "content": "在扩展程序页面右上角，开启 \"Developer mode\" 开发者模式。"
     },
     "step3": {
-      "title": "找到下载的插件文件",
+      "title": "找到下载的插件包",
       "content": "打开浏览器的下载文件夹，找到下载的 .crx 插件包。"
     },
     "step4": {
-      "title": "拖放安装插件",
-      "content": "将 .crx 插件包拖放到扩展程序页面中。"
+      "title": "拖拽安装插件",
+      "content": "将 .crx 插件包拖拽到浏览器扩展区域。"
     },
     "step5": {
-      "title": "确认安装",
-      "content": "在弹出的对话框中，点击 \"Add extension\" 确认安装。"
-    }
+      "title": "确认添加扩展程序",
+      "content": "在弹出的对话框中，点击 “Add extension” 安装插件。"
+    },
+    "step6": {
+      "title": "关闭开发者模式",
+      "content": "安装完成后可以关闭开发者模式。"
+    },
+    "tipContent": "如果你已从 Chrome 应用商店成功安装插件，可以跳过本节，直接前往授权插件章节。"
   },
   "faq": {
     "title": "常见问题",

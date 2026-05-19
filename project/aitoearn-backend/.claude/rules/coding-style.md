@@ -30,7 +30,7 @@ MANY SMALL FILES > FEW LARGE FILES:
 
 ## Error Handling
 
-Business errors use `AppException + ResponseCode`, handled by the global exception filter. Do NOT wrap business logic with try-catch.
+Business errors use `AppException + ResponseCode`, while protocol-layer errors may use standard `HttpException`. Do NOT wrap business logic with try-catch.
 
 ```typescript
 // WRONG: try-catch + console + throw new Error
@@ -63,6 +63,34 @@ const schema = z.object({
 })
 
 const validated = schema.parse(input)
+```
+
+## Logger Error Format
+
+Error must be the first argument, message the second as a plain string:
+
+```typescript
+// CORRECT
+this.logger.error(error, `Failed to process order ${orderId}`)
+this.logger.warn(error, `Inventory check failed for product ${productId}`)
+
+// WRONG — error nested in object
+this.logger.error({ path: 'xxx', message: 'yyy', error: err })
+
+// WRONG — error interpolated into string template
+this.logger.error(`Failed to process: ${error}`)
+
+// WRONG — message as object
+this.logger.error(error, { context: 'xxx' })
+```
+
+Promise catch follows the same rule:
+```typescript
+// CORRECT
+promise.catch((err: Error) => this.logger.error(err, 'Failed to send notification'))
+
+// WRONG
+promise.catch((err: unknown) => this.logger.error({ message: 'xxx', error: err }))
 ```
 
 ## Code Quality Checklist

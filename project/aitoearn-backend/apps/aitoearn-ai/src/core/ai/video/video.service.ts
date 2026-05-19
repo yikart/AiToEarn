@@ -1,20 +1,24 @@
-import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { StorageProvider } from '@yikart/assets'
-import { AppException, ResponseCode, UserType } from '@yikart/common'
-import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, UserRepository } from '@yikart/mongodb'
-import { TaskStatus } from '../../../common'
+import { Injectable, Logger } from '@nestjs/common'
+import { AssetsService, VideoMetadataService } from '@yikart/assets'
+import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
 import {
-  Content,
-  ContentType,
-  GetVideoGenerationTaskResponse,
-  ImageRole,
-  parseModelTextCommand,
-  serializeModelTextCommand,
-} from '../libs/volcengine'
+  AiLogChannel,
+  AiLogRepository,
+  AiLogStatus,
+  AiLogType,
+  AssetType,
+  MaterialGroupRepository,
+  MediaRepository,
+  MediaType,
+  UserRepository,
+} from '@yikart/mongodb'
+import { TaskStatus } from '../../../common'
 import { ModelsConfigService } from '../models-config'
-import { GeminiVeoVideoCallbackDto, GeminiVideoService } from './gemini'
-import { GrokVideoCallbackDto, GrokVideoService } from './grok'
-import { OpenAIVideoCallbackDto, OpenAIVideoService } from './openai'
+import { DashscopeVideoService } from './dashscope'
+import { GeminiVideoService } from './gemini'
+import { GrokVideoService } from './grok'
+import { OpenAIVideoService } from './openai'
+import { VideoAiLog } from './video-ai-log.interface'
 import {
   UserListVideoTasksQueryDto,
   UserVideoGenerationRequestDto,
@@ -32,26 +36,16 @@ export class VideoService {
     private readonly userRepo: UserRepository,
     private readonly aiLogRepo: AiLogRepository,
     private readonly modelsConfigService: ModelsConfigService,
-    private readonly storageProvider: StorageProvider,
+    private readonly assetsService: AssetsService,
+    private readonly videoMetadataService: VideoMetadataService,
+    private readonly materialGroupRepository: MaterialGroupRepository,
+    private readonly mediaRepository: MediaRepository,
     private readonly volcengineVideoService: VolcengineVideoService,
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly grokVideoService: GrokVideoService,
     private readonly geminiVideoService: GeminiVideoService,
+    private readonly dashscopeVideoService: DashscopeVideoService,
   ) {}
-
-  /**
-   * 将图片 URL 转为 R2 预签名 URL，绕过 CDN robots.txt 限制
-   */
-  private async toPresignedUrl(url: string | undefined): Promise<string | undefined> {
-    if (!url) {
-      return undefined
-    }
-    return this.storageProvider.toPresignedUrl(url)
-  }
-
-  private async toPresignedUrls(urls: string[]): Promise<string[]> {
-    return Promise.all(urls.map(url => this.storageProvider.toPresignedUrl(url)))
-  }
 
   async calculateVideoGenerationPrice(params: {
     model: string
@@ -62,201 +56,111 @@ export class VideoService {
     mode?: string
     duration?: number
   }): Promise<number> {
-    const { model, userId, userType } = params
-
-    const modelConfig = (await this.getVideoGenerationModelParams({ userId, userType })).find(m => m.name === model)
+    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
 
-    const { resolution, aspectRatio, mode, duration } = {
-      ...modelConfig.defaults,
-      ...params,
-    }
-
-    const pricingConfig = modelConfig.pricing.find((pricing) => {
-      const resolutionMatch = !pricing.resolution || !resolution || pricing.resolution === resolution
-      const aspectRatioMatch = !pricing.aspectRatio || !aspectRatio || pricing.aspectRatio === aspectRatio
-      const modeMatch = !pricing.mode || !mode || pricing.mode === mode
-      const durationMatch = !pricing.duration || !duration || pricing.duration === duration
-
-      return resolutionMatch && aspectRatioMatch && modeMatch && durationMatch
-    })
-
-    if (!pricingConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    this.logger.debug({
-      params,
-      modelConfig,
-      pricingConfig,
-    }, '模型价格计算')
-
-    return pricingConfig.price
-  }
-
-  /**
-   * 用户视频生成（通用接口）
-   */
-  async userVideoGeneration(request: UserVideoGenerationRequestDto) {
-    const { model } = request
-
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    const channel = modelConfig.channel
-
-    const createTaskResponse = (taskId: string, points: number) => ({
-      id: taskId,
-      status: TaskStatus.Submitted,
-      points,
-    })
-
-    switch (channel) {
+    switch (modelConfig.channel) {
       case AiLogChannel.Volcengine:
-        return this.handleVolcengineGeneration(request, createTaskResponse)
+        return this.volcengineVideoService.calculatePrice(params)
       case AiLogChannel.OpenAI:
-        return this.handleOpenAIGeneration(request, createTaskResponse)
+        return this.openaiVideoService.calculatePrice(params)
       case AiLogChannel.Grok:
-        return this.handleGrokGeneration(request, createTaskResponse)
+        return this.grokVideoService.calculatePrice(params)
+      case AiLogChannel.Gemini:
+        return this.geminiVideoService.calculatePrice(params)
+      case AiLogChannel.Dashscope:
+        return this.dashscopeVideoService.calculatePrice(params)
       default:
         throw new AppException(ResponseCode.InvalidModel)
     }
   }
 
   /**
-   * 处理Volcengine渠道的视频生成
+   * 用户视频生成（通用接口）
    */
-  private async handleVolcengineGeneration<T>(
-    request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string, points: number) => T,
-  ) {
-    const { userId, userType, model, prompt, duration, size, image, image_tail } = request
+  async userVideoGeneration(request: UserVideoGenerationRequestDto) {
+    const { model, groupId, userId } = request
 
-    if (Array.isArray(image)) {
-      throw new BadRequestException()
+    if (groupId) {
+      const group = await this.materialGroupRepository.getInfo(groupId)
+      if (!group || group.userId !== userId) {
+        throw new AppException(ResponseCode.MaterialGroupNotFound)
+      }
     }
 
-    const textCommand = parseModelTextCommand(prompt)
-    const content: Content[] = []
+    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
+    if (!modelConfig) {
+      throw new AppException(ResponseCode.InvalidModel)
+    }
 
-    if (image) {
-      content.push({
-        type: ContentType.ImageUrl,
-        image_url: { url: await this.toPresignedUrl(image) || image },
-        role: ImageRole.FirstFrame,
+    let response: { id: string, points: number }
+
+    switch (modelConfig.channel) {
+      case AiLogChannel.Volcengine:
+        response = await this.volcengineVideoService.createFromRequest(request)
+        break
+      case AiLogChannel.OpenAI:
+        response = await this.openaiVideoService.createFromRequest(request)
+        break
+      case AiLogChannel.Grok:
+        response = await this.grokVideoService.createFromRequest(request)
+        break
+      case AiLogChannel.Dashscope:
+        response = await this.dashscopeVideoService.createFromRequest(request)
+        break
+      default:
+        throw new AppException(ResponseCode.InvalidModel)
+    }
+
+    if (groupId) {
+      await this.aiLogRepo.updateById(response.id, {
+        $set: {
+          'request.groupId': groupId,
+        },
       })
     }
 
-    if (image_tail) {
-      content.push({
-        type: ContentType.ImageUrl,
-        image_url: { url: await this.toPresignedUrl(image_tail) || image_tail },
-        role: ImageRole.LastFrame,
-      })
+    return {
+      id: response.id,
+      status: TaskStatus.Submitted,
+      points: response.points,
     }
-
-    content.push({
-      type: ContentType.Text,
-      text: `${textCommand.prompt} ${serializeModelTextCommand({
-        ...textCommand.params,
-        duration,
-        resolution: size,
-      })}`,
-    })
-
-    const result = await this.volcengineVideoService.create({
-      userId,
-      userType,
-      model,
-      content,
-    })
-    return createTaskResponse(result.id, result.points)
   }
 
-  /**
-   * 处理OpenAI渠道的视频生成
-   */
-  private async handleOpenAIGeneration<T>(
-    request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string, points: number) => T,
-  ) {
-    const { userId, userType, model, prompt, image } = request
-
-    if (Array.isArray(image)) {
-      throw new BadRequestException('OpenAI does not support multiple images')
-    }
-
-    const result = await this.openaiVideoService.createVideo({
-      userId,
-      userType,
-      prompt,
-      input_reference: await this.toPresignedUrl(image),
-      model: model as 'sora-2' | 'sora-2-pro',
-      seconds: request.duration ? request.duration.toString() as '10' | '15' | '25' : undefined,
-      size: request.size as '720x1280' | '1280x720' | '1024x1792' | '1792x1024' | undefined,
-    })
-    return createTaskResponse(result.id, result.points)
-  }
-
-  /**
-   * 处理Grok渠道的视频生成
-   */
-  private async handleGrokGeneration<T>(
-    request: UserVideoGenerationRequestDto,
-    createTaskResponse: (taskId: string, points: number) => T,
-  ) {
-    const { userId, userType, model, prompt, video_url } = request
-
-    if (video_url) {
-      const parsed = this.storageProvider.parsePathFromUrl(video_url)
-      const videoUrl = parsed.startsWith('http') ? video_url : await this.storageProvider.toPresignedUrl(video_url)
-      const result = await this.grokVideoService.createVideo({
-        userId,
-        userType,
-        model,
-        prompt,
-        videoUrl,
-      })
-      return createTaskResponse(result.id, result.points)
-    }
-
-    const imageUrl = Array.isArray(request.image) ? request.image[0] : request.image
-    const result = await this.grokVideoService.createVideo({
-      userId,
-      userType,
-      model,
-      prompt,
-      duration: request.duration,
-      aspectRatio: request.metadata?.['aspectRatio'] as string,
-      resolution: request.metadata?.['resolution'] as string,
-      imageUrl: imageUrl ? await this.toPresignedUrl(imageUrl) : undefined,
-    })
-    return createTaskResponse(result.id, result.points)
-  }
-
-  private extractInput(aiLog: AiLog): VideoTaskInput {
-    const request = (aiLog.request || {}) as Record<string, unknown>
-
+  private extractInput(aiLog: VideoAiLog): VideoTaskInput {
+    let input: VideoTaskInput
     switch (aiLog.channel) {
       case AiLogChannel.Volcengine:
-        return this.volcengineVideoService.extractInput(request)
+        input = this.volcengineVideoService.extractInput(aiLog.request)
+        break
       case AiLogChannel.OpenAI:
-        return this.openaiVideoService.extractInput(request)
+        input = this.openaiVideoService.extractInput(aiLog.request)
+        break
       case AiLogChannel.Grok:
-        return this.grokVideoService.extractInput(request)
+        input = this.grokVideoService.extractInput(aiLog.request)
+        break
       case AiLogChannel.Gemini:
-        return this.geminiVideoService.extractInput(request)
+        input = this.geminiVideoService.extractInput(aiLog.request)
+        break
+      case AiLogChannel.Dashscope:
+        input = this.dashscopeVideoService.extractInput(aiLog.request)
+        break
       default:
-        return { prompt: '' }
+        input = { prompt: '' }
+        break
+    }
+
+    return {
+      ...input,
+      groupId: aiLog.request.groupId,
     }
   }
 
-  async transformToCommonResponse(aiLog: AiLog) {
+  async transformToCommonResponse(aiLog: VideoAiLog) {
     const input = this.extractInput(aiLog)
+    const savedMedia = await this.ensureSavedVideoMedia(aiLog)
 
     const base = {
       id: aiLog.id,
@@ -270,9 +174,12 @@ export class VideoService {
       return {
         ...base,
         status: TaskStatus.InProgress,
-        videoUrl: undefined as string | undefined,
-        error: undefined as { message: string } | undefined,
-        finishedAt: undefined as Date | undefined,
+        videoUrl: undefined,
+        coverUrl: savedMedia.coverUrl ? FileUtil.buildUrl(savedMedia.coverUrl) : undefined,
+        mediaId: savedMedia.mediaId,
+        groupId: savedMedia.groupId,
+        error: undefined,
+        finishedAt: undefined,
       }
     }
 
@@ -289,20 +196,45 @@ export class VideoService {
     return {
       ...base,
       ...channelResult,
+      coverUrl: savedMedia.coverUrl ? FileUtil.buildUrl(savedMedia.coverUrl) : undefined,
+      mediaId: savedMedia.mediaId,
+      groupId: savedMedia.groupId,
       finishedAt,
     }
   }
 
-  private getChannelTaskResult(aiLog: AiLog) {
+  async ensureSavedMediaByAiLogId(aiLogId: string): Promise<void> {
+    const aiLog = await this.aiLogRepo.getById(aiLogId)
+    if (!aiLog || aiLog.type !== AiLogType.Video) {
+      return
+    }
+
     switch (aiLog.channel) {
       case AiLogChannel.Volcengine:
-        return this.volcengineVideoService.getTaskResult(aiLog.response as unknown as GetVideoGenerationTaskResponse)
       case AiLogChannel.OpenAI:
-        return this.openaiVideoService.getTaskResult(aiLog.response as unknown as OpenAIVideoCallbackDto)
       case AiLogChannel.Grok:
-        return this.grokVideoService.getTaskResult(aiLog.response as unknown as GrokVideoCallbackDto)
       case AiLogChannel.Gemini:
-        return this.geminiVideoService.getTaskResult(aiLog.response as unknown as GeminiVeoVideoCallbackDto)
+      case AiLogChannel.Dashscope:
+        await this.ensureSavedVideoMedia(aiLog as VideoAiLog)
+    }
+  }
+
+  private getChannelTaskResult(aiLog: VideoAiLog) {
+    if (!aiLog.response) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
+
+    switch (aiLog.channel) {
+      case AiLogChannel.Volcengine:
+        return this.volcengineVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.OpenAI:
+        return this.openaiVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.Grok:
+        return this.grokVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.Gemini:
+        return this.geminiVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.Dashscope:
+        return this.dashscopeVideoService.getTaskResult(aiLog.response)
       default:
         throw new AppException(ResponseCode.InvalidAiTaskId)
     }
@@ -319,7 +251,17 @@ export class VideoService {
     if (aiLog == null || aiLog.type !== AiLogType.Video) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
-    return this.transformToCommonResponse(aiLog)
+
+    switch (aiLog.channel) {
+      case AiLogChannel.Volcengine:
+      case AiLogChannel.OpenAI:
+      case AiLogChannel.Grok:
+      case AiLogChannel.Gemini:
+      case AiLogChannel.Dashscope:
+        return this.transformToCommonResponse(aiLog as VideoAiLog)
+      default:
+        throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
   }
 
   async listVideoTasks(request: UserListVideoTasksQueryDto) {
@@ -328,7 +270,21 @@ export class VideoService {
       type: AiLogType.Video,
     })
 
-    return [await Promise.all(aiLogs.map(log => this.transformToCommonResponse(log))), count] as const
+    return [
+      await Promise.all(aiLogs.map((log) => {
+        switch (log.channel) {
+          case AiLogChannel.Volcengine:
+          case AiLogChannel.OpenAI:
+          case AiLogChannel.Grok:
+          case AiLogChannel.Gemini:
+          case AiLogChannel.Dashscope:
+            return this.transformToCommonResponse(log as VideoAiLog)
+          default:
+            throw new AppException(ResponseCode.InvalidAiTaskId)
+        }
+      })),
+      count,
+    ] as const
   }
 
   /**
@@ -336,5 +292,84 @@ export class VideoService {
    */
   async getVideoGenerationModelParams(_data: VideoGenerationModelsQueryDto) {
     return this.modelsConfigService.config.video.generation
+  }
+
+  private async ensureSavedVideoMedia(aiLog: VideoAiLog): Promise<{ mediaId?: string, coverUrl?: string, groupId?: string }> {
+    const response = aiLog.response
+    const request = aiLog.request
+    const existingMediaId = response?.mediaId
+    const existingCoverUrl = response?.coverUrl
+
+    if (existingMediaId) {
+      return {
+        mediaId: existingMediaId,
+        coverUrl: existingCoverUrl,
+        groupId: response?.groupId ?? request.groupId,
+      }
+    }
+
+    if (aiLog.status !== AiLogStatus.Success || !response) {
+      return {}
+    }
+
+    const targetGroupId = response.groupId ?? request.groupId
+    if (!targetGroupId) {
+      return {}
+    }
+
+    try {
+      const commonResult = this.getChannelTaskResult(aiLog)
+      if (!commonResult.videoUrl) {
+        this.logger.warn({ aiLogId: aiLog.id, channel: aiLog.channel }, 'Video task succeeded but video path is missing')
+        return {}
+      }
+      const videoPath = FileUtil.trimHost(commonResult.videoUrl)
+
+      let coverPath = existingCoverUrl
+      if (!coverPath) {
+        try {
+          const thumbnailBuffer = await this.videoMetadataService.extractThumbnailFromUrl(commonResult.videoUrl, 2)
+          const uploadResult = await this.assetsService.uploadFromBuffer(aiLog.userId, thumbnailBuffer, {
+            type: AssetType.VideoThumbnail,
+            mimeType: 'image/png',
+            filename: 'thumbnail.png',
+          })
+          coverPath = uploadResult.asset.path
+        }
+        catch (error) {
+          this.logger.warn({ error, aiLogId: aiLog.id }, 'Failed to generate thumbnail for saved video media')
+        }
+      }
+
+      const media = await this.mediaRepository.create({
+        userId: aiLog.userId,
+        userType: aiLog.userType,
+        materialGroupId: targetGroupId,
+        type: MediaType.VIDEO,
+        url: videoPath,
+        thumbUrl: coverPath,
+      })
+
+      await this.aiLogRepo.updateById(aiLog.id, {
+        $set: {
+          response: {
+            ...response,
+            mediaId: media.id,
+            groupId: targetGroupId,
+            ...(coverPath ? { coverUrl: coverPath } : {}),
+          },
+        },
+      })
+
+      return {
+        mediaId: media.id,
+        coverUrl: coverPath,
+        groupId: targetGroupId,
+      }
+    }
+    catch (error) {
+      this.logger.warn({ error, aiLogId: aiLog.id, groupId: targetGroupId }, 'Failed to save generated video to material')
+      return {}
+    }
   }
 }

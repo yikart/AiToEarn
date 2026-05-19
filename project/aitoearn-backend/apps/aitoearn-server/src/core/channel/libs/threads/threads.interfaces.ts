@@ -13,7 +13,7 @@ export interface ThreadsContainerRequest {
   image_url?: string
   video_url?: string
   text?: string
-  children?: string[]
+  children?: string
   topic_tag?: string
   reply_to_id?: string
   location_id?: string

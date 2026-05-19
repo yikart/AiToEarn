@@ -25,7 +25,8 @@
 }
 
 .hoverMenuPortal {
-  z-index: 50;
+  position: fixed;
+  z-index: 1000;
   background: var(--popover);
   border: 1px solid var(--border);
   border-radius: 8px;

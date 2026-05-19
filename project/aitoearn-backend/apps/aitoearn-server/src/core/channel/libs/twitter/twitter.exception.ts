@@ -1,8 +1,7 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { IErrorContext, SocialMediaErrorCause } from '../exception'
+import { ApiError } from '@xdevplatform/xdk'
+import { SocialMediaError } from '../exception'
 
-/**
- * Twitter API 原始错误格式
- */
 export interface TwitterRawError {
   title?: string
   detail?: string
@@ -10,50 +9,69 @@ export interface TwitterRawError {
   status?: number
 }
 
-/**
- * Twitter error class.
- */
-export class TwitterError extends SocialMediaError<TwitterRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: TwitterRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
+export class TwitterError extends SocialMediaError {
+  static buildFromApiError(
+    error: ApiError,
+    operation?: string,
+    context?: IErrorContext,
+  ): TwitterError {
+    if (error.status === 0) {
+      return this.buildFromNetworkError(
+        error,
+        operation || this.resolveOperation(error, context),
+        context,
+      )
+    }
+
+    const extractedCause = this.extractPlatformCause(error.data)
+    const cause: SocialMediaErrorCause = {
+      type: 'http',
+      httpStatus: error.status,
+      platformCode: extractedCause.platformCode,
+      platformMessage: extractedCause.platformMessage || error.message || 'Unknown error',
+      raw: error,
+    }
+
+    return new this({
+      platform: this.getPlatformName(),
+      operation: operation || this.resolveOperation(error, context),
+      kind: this.resolveKindFromCause(cause),
       context,
-    )
+      cause,
+    })
   }
 
   protected static override getPlatformName(): string {
     return 'twitter'
   }
 
-  protected static override extractRawError(data: unknown): TwitterRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
-    const errResponse = data as { errors?: TwitterRawError[] }
-    return errResponse.errors ? errResponse.errors[0] : undefined
-  }
 
-  protected static override buildMessage(
-    rawError: TwitterRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.title || rawError.detail || 'Unknown error'}, error code: ${rawError.type || 'N/A'}`
+    const errResponse = data as {
+      errors?: TwitterRawError[]
+      error?: string
+      error_description?: string
+      message?: string
+      type?: string
+      title?: string
+      detail?: string
+    }
+
+    return {
+      platformCode: errResponse.errors?.[0]?.type || errResponse.type || errResponse.error,
+      platformMessage:
+        errResponse.errors?.[0]?.title
+        || errResponse.errors?.[0]?.detail
+        || errResponse.title
+        || errResponse.detail
+        || errResponse.error_description
+        || errResponse.message
+        || errResponse.error,
+    }
   }
 }

@@ -260,7 +260,7 @@ Choose `RELAY_SERVER_URL` based on where `RELAY_API_KEY` was created: use `https
 ```yaml
 RELAY_SERVER_URL: https://aitoearn.ai/api
 RELAY_API_KEY: your-api-key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+RELAY_CALLBACK_URL: http://localhost:8080/api/plat/relay-callback
 ```
 
 Then restart: `docker compose restart aitoearn-server`

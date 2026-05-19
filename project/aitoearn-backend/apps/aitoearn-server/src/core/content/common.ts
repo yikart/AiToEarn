@@ -51,6 +51,8 @@ export interface Material {
   topics: string[]
   status: MaterialStatus
   option: Record<string, any>
+  model?: string
+  generationParams?: Record<string, any>
   createAt: Date
   updatedAt: Date
 }

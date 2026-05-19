@@ -4,273 +4,321 @@ export interface TwitterOAuthCredential {
   access_token: string
   refresh_token: string
   expires_in: number
+  token_type?: string
+  scope?: string
+}
+
+export interface TwitterAPIError {
+  title?: string
+  detail?: string
+  type?: string
+  status?: number
+}
+
+interface TwitterResponse<TData, TIncludes = undefined, TMeta = undefined> {
+  data?: TData
+  errors?: TwitterAPIError[]
+  includes?: TIncludes
+  meta?: TMeta
+}
+
+export interface TwitterUserPublicMetrics {
+  followersCount?: number
+  followingCount?: number
+  tweetCount?: number
+  listedCount?: number
+  likeCount?: number
+  mediaCount?: number
+}
+
+export interface TwitterWithheld {
+  copyright?: boolean
+  countryCodes?: string[]
+  scope?: string
 }
 
 export interface TwitterUserInfo {
   id: string
   name: string
-  profile_image_url: string
+  profileImageUrl?: string
   username: string
-  verified: boolean
-  created_at: string
-  protected: boolean
+  verified?: boolean
+  createdAt?: string
+  protected?: boolean
+  publicMetrics?: TwitterUserPublicMetrics
+  withheld?: TwitterWithheld
 }
 
-interface TwitterAPIError {
-  title: string
-  detail: string
-  type: string
-  status: number
-}
-
-export interface TwitterUserInfoResponse {
-  data: TwitterUserInfo
-  errors?: TwitterAPIError[]
-}
+export type TwitterUserInfoResponse = TwitterResponse<TwitterUserInfo>
 
 export interface TwitterRevokeAccessResponse {
   revoked: boolean
-  errors?: TwitterAPIError[]
 }
 
 interface TwitterFollowingData {
-  following: boolean
-  pending_follow: boolean
-}
-export interface TwitterFollowingResponse {
-  data: TwitterFollowingData
-  errors?: TwitterAPIError[]
+  following?: boolean
+  pendingFollow?: boolean
 }
 
+export type TwitterFollowingResponse = TwitterResponse<TwitterFollowingData>
+
 export interface XMediaUploadInitRequest {
-  // command: 'INIT' | 'APPEND' | 'FINALIZE'
-  media_type: XMediaType
-  total_bytes: number
-  media_category: XMediaCategory
+  mediaType: XMediaType
+  totalBytes: number
+  mediaCategory: XMediaCategory
   shared: boolean
 }
 
 export interface XMediaUploadProcessingInfo {
-  state: 'succeeded' | 'in_progress' | 'pending' | 'failed'
-  progress_percent?: number
-  check_after_secs?: number
+  state?: 'succeeded' | 'in_progress' | 'pending' | 'failed'
+  progressPercent?: number
+  checkAfterSecs?: number
 }
 
 export interface XMediaUploadResponseData {
-  id: string
-  media_key: string
-  expires_after_secs: number
-  size: number
-  processing_info: XMediaUploadProcessingInfo
-  expires_at?: string // ISO 8601 format
-  state?: string // e.g., "succeeded", "failed"
+  id?: string
+  mediaKey?: string
+  expiresAfterSecs?: number
+  size?: number
+  processingInfo?: XMediaUploadProcessingInfo
+  expiresAt?: string
+  state?: string
 }
 
-export interface XMediaUploadResponse {
-  data: XMediaUploadResponseData
-  errors?: TwitterAPIError[]
-}
+export type XMediaUploadResponse = TwitterResponse<XMediaUploadResponseData>
 
 export interface XChunkedMediaUploadRequest {
-  media: Blob
+  media: Blob | Buffer | Uint8Array | ArrayBuffer
   media_id: string
   segment_index: number
 }
 
-export interface Geo {
-  place_id: string
-}
-
 export interface PostMedia {
-  media_ids: string[]
-  tagged_users?: string[]
+  mediaIds: string[]
+  taggedUserIds?: string[]
 }
 
-enum PostPollReplySettings {
-  // following, mentionedUsers, subscribers, verified
-  FOLLOWING = 'following',
-  MENTIONED_USERS = 'mentionedUsers',
-  SUBSCRIBERS = 'subscribers',
-  VERIFIED = 'verified',
+export interface PostReply {
+  inReplyToTweetId: string
+  excludeReplyUserIds?: string[]
 }
 
-export interface PostPoll {
+export type XReplySettings = 'following' | 'mentionedUsers' | 'subscribers' | 'verified'
+
+export interface XPostPoll {
   options: string[]
-  duration_minutes: number
-  reply_settings?: PostPollReplySettings
+  durationMinutes: number
 }
 
-export interface postReply {
-  in_reply_to_tweet_id: string
-  exclude_reply_user_ids?: string[]
-}
 export interface XCreatePostRequest {
-  card_uri?: string
-  community_id?: string
-  direct_message_deep_link?: string
-  for_super_followers_only?: boolean
-  geo?: Geo
-  media?: PostMedia
-  nullcast?: boolean
-  poll?: PostPoll
-  quote_tweet_id?: string
-  reply?: postReply
-  reply_settings?: PostPollReplySettings
   text?: string
-}
-
-export interface XGetPostDetailRequest {
-  'tweet.fields'?: string[]
-  'expansions'?: string[]
-  'media.fields'?: string[]
-  'poll.fields'?: string[]
-  'user.fields'?: string[]
-  'place.fields'?: string[]
-}
-
-export interface XPostAttachment {
-  'attachments.media_keys'?: string[]
-  'media_source_tweet_id'?: string
-  'poll_ids'?: string[]
-}
-
-export interface XPostPublicMetric {
-  bookmark_count: number
-  impression_count: number
-  like_count: number
-  reply_count: number
-  retweet_count: number
-  quote_count: number
-}
-
-export interface XGetPostDetailResponseData {
-  id: string
-  text: string
-  username: string
-  author_id: string
-  attachments?: XPostAttachment
-  community_id?: string
-  conversation_id: string
-  created_at: string
-  display_text_range: number[]
-  edit_history_tweet_ids?: string[]
-  geo?: Geo
-  in_reply_to_user_id?: string
-  public_metrics: XPostPublicMetric
-}
-
-export interface XGetPostDetailResponse {
-  data: XGetPostDetailResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface RePostResponseData {
-  id: string
-  retweeted: boolean
-}
-
-export interface LikePostResponseData {
-  liked: boolean
+  media?: PostMedia
+  reply?: PostReply
+  quoteTweetId?: string
+  replySettings?: XReplySettings
+  poll?: XPostPoll
+  madeWithAi?: boolean
 }
 
 export interface CreatePostResponseData {
-  id: string
-  text: string
+  id?: string
+  text?: string
 }
 
 export interface DeletePostResponseData {
-  deleted: boolean
+  deleted?: boolean
 }
 
-export interface PublicMetrics {
-  retweet_count: number
-  reply_count: number
-  like_count: number
-  quote_count: number
-  impression_count: number
-  bookmark_count: number
+export interface LikePostResponseData {
+  liked?: boolean
 }
 
-export interface PostAttachment {
-  media_keys?: string[]
+export interface RePostResponseData {
+  retweeted?: boolean
+}
+
+export type XCreatePostResponse = TwitterResponse<CreatePostResponseData>
+export type XDeletePostResponse = TwitterResponse<DeletePostResponseData>
+export type XLikePostResponse = TwitterResponse<LikePostResponseData>
+export type XRePostResponse = TwitterResponse<RePostResponseData>
+export type XBookmarkMutationResponse = TwitterResponse<Record<string, boolean>>
+export type XHideReplyResponse = TwitterResponse<Record<string, boolean>>
+
+export interface XPostPublicMetric {
+  bookmarkCount?: number
+  impressionCount?: number
+  likeCount?: number
+  replyCount?: number
+  retweetCount?: number
+  quoteCount?: number
+}
+
+export interface XPostAttachment {
+  mediaKeys?: string[]
+  mediaSourceTweetId?: string[]
+  pollIds?: string[]
+}
+
+export interface XPostMediaMetadata {
+  altText?: string
+  durationMs?: number
+  height?: number
+  mediaKey?: string
+  previewImageUrl?: string
+  type?: string
+  url?: string
+  variants?: XTweetMediaVariant[]
+  width?: number
 }
 
 export interface XPostDetailResponseData {
-  public_metrics: PublicMetrics
-  id: string
-  text: string
-  author_id: string
-  created_at: string
+  id?: string
+  text?: string
+  authorId?: string
+  attachments?: XPostAttachment
+  communityId?: string
+  conversationId?: string
+  createdAt?: string
+  displayTextRange?: number[]
+  editHistoryTweetIds?: string[]
+  inReplyToUserId?: string
+  mediaMetadata?: XPostMediaMetadata[]
+  publicMetrics?: XPostPublicMetric
+  referencedTweets?: Array<{
+    type?: 'retweeted' | 'quoted' | 'replied_to'
+    id?: string
+  }>
 }
 
-export interface XCreatePostResponse {
-  data: CreatePostResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface XDeletePostResponse {
-  data: DeletePostResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface XLikePostResponse {
-  data: LikePostResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface XRePostResponse {
-  data: RePostResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface XPostDetailResponse {
-  data: XPostDetailResponseData
-  errors?: TwitterAPIError[]
-}
-
-export interface XUserTimelineRequest {
-  'since_id'?: string
-  'until_id'?: string
-  'max_results'?: number
-  'pagination_token'?: string
-  'exclude'?: string
-  'start_time'?: string // ISO 8601 format
-  'end_time'?: string // ISO 8601 format
-  'expansions'?: string
-  'tweet.fields'?: string
-  'media.fields'?: string
-  'poll.fields'?: string
-  'user.fields'?: string
-  'place.fields'?: string
-}
-
-export interface XUserTimelineResponseMeta {
-  newest_id: string
-  oldest_id: string
-  result_count: number
-  next_token?: string
-  previous_token?: string
+export interface XTweetMediaVariant {
+  bitRate?: number
+  contentType?: string
+  url?: string
 }
 
 export interface XTweetIncludeMedia {
-  url: string
-  preview_image_url: string
+  mediaKey?: string
+  type?: string
+  url?: string
+  previewImageUrl?: string
+  variants?: XTweetMediaVariant[]
 }
 
-export interface XUserTimelineResponse {
-  data: XPostDetailResponseData[]
-  meta: XUserTimelineResponseMeta
-  errors?: TwitterAPIError[]
-  includes: {
-    media?: XTweetIncludeMedia[]
-  }
+export interface XIncludes {
+  media?: XTweetIncludeMedia[]
+  users?: TwitterUserInfo[]
 }
 
-export interface XDeleteTweetData {
-  deleted: boolean
+export type XGetPostDetailResponse = TwitterResponse<XPostDetailResponseData, XIncludes>
+
+export interface XUserTimelineRequest {
+  sinceId?: string
+  untilId?: string
+  maxResults?: number
+  paginationToken?: string
+  exclude?: string[]
+  startTime?: string
+  endTime?: string
+  expansions?: string[]
+  tweetFields?: string[]
+  mediaFields?: string[]
+  pollFields?: string[]
+  userFields?: string[]
+  placeFields?: string[]
 }
 
-export interface XDeleteTweetResponse {
-  data: XDeleteTweetData
-  errors?: TwitterAPIError[]
+export interface XUserTimelineResponseMeta {
+  newestId?: string
+  oldestId?: string
+  resultCount?: number
+  nextToken?: string
+  previousToken?: string
 }
+
+export type XUserTimelineResponse = TwitterResponse<
+  XPostDetailResponseData[],
+  XIncludes,
+  XUserTimelineResponseMeta
+>
+
+export type XMentionsTimelineRequest = Omit<XUserTimelineRequest, 'exclude'>
+export type XMentionsTimelineResponse = XUserTimelineResponse
+export type XSearchTweetsRequest = Omit<XUserTimelineRequest, 'exclude'>
+export type XSearchTweetsResponse = XUserTimelineResponse
+export type XTweetListRequest = Pick<
+  XUserTimelineRequest,
+  'maxResults' | 'paginationToken' | 'expansions' | 'tweetFields' | 'mediaFields' | 'pollFields' | 'userFields' | 'placeFields'
+>
+export type XTweetListResponse = XUserTimelineResponse
+export type XUserListRequest = Pick<
+  XUserTimelineRequest,
+  'maxResults' | 'paginationToken' | 'userFields' | 'tweetFields' | 'expansions'
+>
+export type XUserListResponse = TwitterResponse<
+  TwitterUserInfo[],
+  undefined,
+  XUserTimelineResponseMeta
+>
+
+export interface XListInfo {
+  id: string
+  name: string
+  description?: string
+  followerCount?: number
+  memberCount?: number
+  ownerId?: string
+  private?: boolean
+  createdAt?: string
+}
+
+export interface XListRequest {
+  maxResults?: number
+  paginationToken?: string
+  listFields?: string[]
+  expansions?: string[]
+  userFields?: string[]
+}
+
+export type XListListResponse = TwitterResponse<
+  XListInfo[],
+  XIncludes,
+  XUserTimelineResponseMeta
+>
+
+export type XLikedPostsRequest = Pick<
+  XUserTimelineRequest,
+  'maxResults' | 'paginationToken' | 'expansions' | 'tweetFields' | 'mediaFields' | 'pollFields' | 'userFields' | 'placeFields'
+>
+export type XLikedPostsResponse = XUserTimelineResponse
+
+export interface XBookmarksTimelineRequest {
+  maxResults?: number
+  paginationToken?: string
+  expansions?: string[]
+  tweetFields?: string[]
+  mediaFields?: string[]
+  pollFields?: string[]
+  userFields?: string[]
+  placeFields?: string[]
+}
+
+export type XBookmarksTimelineResponse = TwitterResponse<
+  XPostDetailResponseData[],
+  XIncludes,
+  XUserTimelineResponseMeta
+>
+
+export interface XMediaMetadataAltText {
+  text: string
+}
+
+export interface XMediaMetadata {
+  altText?: XMediaMetadataAltText
+}
+
+export interface XCreateMediaMetadataRequest {
+  id: string
+  metadata: XMediaMetadata
+}
+
+export type XCreateMediaMetadataResponse = TwitterResponse<Record<string, unknown>>

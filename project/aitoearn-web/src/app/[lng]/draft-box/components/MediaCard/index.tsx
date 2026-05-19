@@ -1,15 +1,18 @@
 /**
- * MediaCard - 只读媒体卡片
+ * MediaCard - 媒体卡片
  * 展示视频/图片缩略图，点击打开预览
  * 视频：缩略图 + 播放图标 + 时长
  * 图片：缩略图，保持原始比例
+ * 支持批量模式：显示勾选指示器，点击切换选中
  */
 
 'use client'
 
+import type { ReactNode } from 'react'
 import type { MediaItem } from '@/api/types/media'
-import { Play } from 'lucide-react'
+import { Check, Play } from 'lucide-react'
 import { memo, useCallback } from 'react'
+import { cn } from '@/lib/utils'
 import { getOssUrl } from '@/utils/oss'
 import { LazyImage } from '../LazyImage'
 
@@ -18,6 +21,14 @@ interface MediaCardProps {
   media: MediaItem
   /** 点击回调 */
   onClick: (media: MediaItem) => void
+  /** 是否为批量模式 */
+  batchMode?: boolean
+  /** 是否选中 */
+  selected?: boolean
+  /** 切换选中回调 */
+  onToggleSelect?: () => void
+  /** 右上角操作区 */
+  actions?: ReactNode
 }
 
 /**
@@ -31,20 +42,58 @@ function formatDuration(seconds?: number): string {
   return `${mins}:${secs.toString().padStart(2, '0')}`
 }
 
-export const MediaCard = memo(({ media, onClick }: MediaCardProps) => {
+export const MediaCard = memo(({ media, onClick, batchMode, selected, onToggleSelect, actions }: MediaCardProps) => {
   const isVideo = media.type === 'video'
   const thumbUrl = media.thumbUrl ? getOssUrl(media.thumbUrl) : media.url ? getOssUrl(media.url) : '/images/placeholder.png'
-  const duration = (media.metadata as any)?.duration
+  const duration = media.metadata?.duration
 
   const handleClick = useCallback(() => {
-    onClick(media)
-  }, [media, onClick])
+    if (batchMode) {
+      onToggleSelect?.()
+    }
+    else {
+      onClick(media)
+    }
+  }, [media, onClick, batchMode, onToggleSelect])
 
   return (
     <div
-      className="mb-4 cursor-pointer group relative"
+      className={cn(
+        'mb-4 cursor-pointer group relative',
+        batchMode && selected && 'rounded-xl shadow-lg',
+      )}
       onClick={handleClick}
     >
+      {/* 批量模式圆形勾选指示器 */}
+      {batchMode && (
+        <div
+          className={cn(
+            'absolute top-2 right-2 z-10 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 shadow-sm',
+            selected
+              ? 'bg-primary border-primary scale-110'
+              : 'bg-background/90 border-muted-foreground/30 group-hover:border-primary group-hover:scale-105',
+          )}
+          onClick={(e) => { e.stopPropagation(); onToggleSelect?.() }}
+        >
+          {selected && <Check className="w-3.5 h-3.5 text-primary-foreground" />}
+        </div>
+      )}
+
+      {!batchMode && actions && (
+        <div
+          className={cn(
+            'absolute top-3 right-3 z-10 transition-all duration-200',
+            'opacity-100 pointer-events-auto',
+            'md:translate-y-1 md:opacity-0 md:pointer-events-none',
+            'md:group-hover:translate-y-0 md:group-hover:opacity-100 md:group-hover:pointer-events-auto',
+            'md:group-focus-within:translate-y-0 md:group-focus-within:opacity-100 md:group-focus-within:pointer-events-auto',
+          )}
+          onClick={e => e.stopPropagation()}
+        >
+          {actions}
+        </div>
+      )}
+
       <div className="relative w-full overflow-hidden rounded-xl">
         <LazyImage
           src={thumbUrl}
@@ -75,7 +124,14 @@ export const MediaCard = memo(({ media, onClick }: MediaCardProps) => {
         )}
 
         {/* 悬浮遮罩 */}
-        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl" />
+        {!batchMode && (
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-xl" />
+        )}
+
+        {/* 选中遮罩 */}
+        {batchMode && selected && (
+          <div className="absolute inset-0 bg-primary/15 pointer-events-none rounded-xl" />
+        )}
       </div>
 
       {/* 标题 */}

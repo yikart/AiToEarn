@@ -3,9 +3,20 @@
  * pricing API 响应类型
  */
 
+export interface CreateDraftFromVideoUrlDto {
+  videoUrl: string
+  groupId?: string
+  platforms?: string[]
+}
+
+export interface CreateDraftFromVideoUrlVo {
+  materialId: string
+}
+
 export interface ImageModelPricing {
   resolution: string
   pricePerImage: number
+  originPrice?: number
 }
 
 export interface ImageModelInfo {
@@ -14,11 +25,13 @@ export interface ImageModelInfo {
   pricing: ImageModelPricing[]
   supportedAspectRatios?: string[]
   maxInputImages?: number
+  tags?: string[]
 }
 
 export interface VideoModelPricing {
   duration: number
   price: number
+  mode?: string
   resolution?: string
   aspectRatio?: string
   discount?: string
@@ -28,6 +41,8 @@ export interface VideoModelPricing {
 export interface VideoModelInfo {
   name: string
   description: string
+  channel: string
+  modes: string[]
   resolutions: string[]
   durations: number[]
   maxInputImages: number

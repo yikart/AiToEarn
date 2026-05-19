@@ -16,7 +16,6 @@ import logo from '@/assets/images/logo.png'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
-import { useSettingsModalStore } from './store'
 import {
   GeneralTab,
   ProfileTab,
@@ -51,8 +50,7 @@ export interface SettingsModalProps {
  */
 export function SettingsModal({ open, onClose, defaultTab }: SettingsModalProps) {
   // 预加载所有子组件需要的 namespace，避免切换 tab 时闪烁
-  const { t } = useTransClient(['settings', 'profile', 'wallet'])
-  const settingsSubTab = useSettingsModalStore(state => state.settingsSubTab)
+  const { t } = useTransClient(['settings', 'profile'])
   const token = useUserStore(state => state.token)
   const isLoggedIn = !!token
   const [activeTab, setActiveTab] = useState<SettingsTab>(isLoggedIn ? 'profile' : 'general')

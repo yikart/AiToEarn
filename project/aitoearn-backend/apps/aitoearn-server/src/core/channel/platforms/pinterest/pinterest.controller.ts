@@ -9,7 +9,7 @@ import {
   Res,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Internal, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
 import { Response } from 'express'
 import {
@@ -31,7 +31,7 @@ export class PinterestController {
   })
   @Post('/board/')
   async createBoard(@GetToken() token: TokenInfo, @Body() body: CreateBoardBodyDto) {
-    return await this.pinterestService.createBoard(body)
+    return await this.pinterestService.createBoard(token.id, body)
   }
 
   @ApiDoc({
@@ -39,11 +39,8 @@ export class PinterestController {
     query: ListBodyDto.schema,
   })
   @Get('/board/')
-  async getBoardList(
-    @GetToken() token: TokenInfo,
-    @Query() query: ListBodyDto,
-  ) {
-    return await this.pinterestService.getBoardList(query.accountId || '')
+  async getBoardList(@GetToken() token: TokenInfo, @Query() query: ListBodyDto) {
+    return await this.pinterestService.getBoardList(token.id, query.accountId || '')
   }
 
   @ApiDoc({
@@ -55,7 +52,7 @@ export class PinterestController {
     @Param('id') id: string,
     @Query('accountId') accountId: string,
   ) {
-    return await this.pinterestService.getBoardById(id, accountId)
+    return await this.pinterestService.getBoardById(token.id, id, accountId)
   }
 
   @ApiDoc({
@@ -67,7 +64,7 @@ export class PinterestController {
     @Param('id') id: string,
     @Body('accountId') accountId: string,
   ) {
-    return this.pinterestService.delBoardById(id, accountId)
+    return this.pinterestService.delBoardById(token.id, id, accountId)
   }
 
   @ApiDoc({
@@ -76,7 +73,7 @@ export class PinterestController {
   })
   @Post('/pin/')
   async createPin(@GetToken() token: TokenInfo, @Body() body: CreatePinBodyDto) {
-    return await this.pinterestService.createPin(body)
+    return await this.pinterestService.createPin(token.id, body)
   }
 
   @ApiDoc({
@@ -84,11 +81,8 @@ export class PinterestController {
     query: ListBodyDto.schema,
   })
   @Get('/pin/')
-  async getPinList(
-    @GetToken() token: TokenInfo,
-    @Query() query: ListBodyDto,
-  ) {
-    return await this.pinterestService.getPinList(query.accountId || '')
+  async getPinList(@GetToken() token: TokenInfo, @Query() query: ListBodyDto) {
+    return await this.pinterestService.getPinList(token.id, query.accountId || '')
   }
 
   @ApiDoc({
@@ -100,7 +94,7 @@ export class PinterestController {
     @Param('id') id: string,
     @Query('accountId') accountId: string,
   ) {
-    return await this.pinterestService.getPinById(id, accountId)
+    return await this.pinterestService.getPinById(token.id, id, accountId)
   }
 
   @ApiDoc({
@@ -112,7 +106,7 @@ export class PinterestController {
     @Param('id') id: string,
     @Body('accountId') accountId: string,
   ) {
-    return await this.pinterestService.deletePost(accountId, id)
+    return await this.pinterestService.deletePostForUser(token.id, accountId, id)
   }
 
   @ApiDoc({
@@ -152,27 +146,27 @@ export class PinterestController {
     return res.render('auth/back', result)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Pin List (Crawler)',
     body: ListBodyDto.schema,
   })
   @Post('/getPinList')
   async getCrawlerPinList(@Body() data: ListBodyDto) {
-    return await this.pinterestService.getPinList(data.accountId || '')
+    return await this.pinterestService.getPinListByAccountId(data.accountId || '')
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Pin By Id (Crawler)',
     body: GetPinByIdBodyDto.schema,
   })
   @Post('/getPinById')
   async getCrawlerPinById(@Body() data: GetPinByIdBodyDto) {
-    return await this.pinterestService.getPinById(data.id, data.accountId)
+    return await this.pinterestService.getPinByIdByAccountId(data.id, data.accountId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get User Info (Crawler)',
     body: ListBodyDto.schema,

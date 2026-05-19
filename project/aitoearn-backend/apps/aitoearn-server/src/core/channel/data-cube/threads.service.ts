@@ -31,7 +31,7 @@ export class ThreadsDataService extends DataCubeBase {
     const query = {
       metric: 'likes,replies,followers_count,reposts,views,quotes',
     }
-    const res = await this.threadsService.getAccountInsights(accountId, query)
+    const res = await this.threadsService.getAccountInsightsByAccountId(accountId, query)
     return {
       likeNum: res?.data?.filter(item => item.name === 'likes')?.[0]?.total_value?.value || 0,
       commentNum: res?.data?.filter(item => item.name === 'replies')?.[0]?.total_value?.value || 0,
@@ -53,7 +53,7 @@ export class ThreadsDataService extends DataCubeBase {
     const query = {
       metric: 'likes,views,replies,shares',
     }
-    const res = await this.threadsService.getMediaInsights(accountId, dataId, query)
+    const res = await this.threadsService.getMediaInsightsByAccountId(accountId, dataId, query)
     return {
       commentNum: res?.data?.filter(item => item.name === 'replies')?.[0]?.values?.[0]?.value || 0,
       likeNum: res?.data?.filter(item => item.name === 'likes')?.[0]?.values?.[0]?.value || 0,

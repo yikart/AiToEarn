@@ -122,6 +122,16 @@ export class InstagramService extends MetaBaseService {
   }
 
   async getAccountInsights(
+    userId: string,
+    accountId: string,
+    query: InstagramInsightsRequest,
+    requestURL?: string,
+  ): Promise<InstagramInsightsResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getAccountInsightsByAccountId(accountId, query, requestURL)
+  }
+
+  async getAccountInsightsByAccountId(
     accountId: string,
     query: InstagramInsightsRequest,
     requestURL?: string,
@@ -136,6 +146,15 @@ export class InstagramService extends MetaBaseService {
   }
 
   async getAccountInfo(
+    userId: string,
+    accountId: string,
+    query: InstagramUserInfoRequest,
+  ): Promise<InstagramUserInfoResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getAccountInfoByAccountId(accountId, query)
+  }
+
+  async getAccountInfoByAccountId(
     accountId: string,
     query: InstagramUserInfoRequest,
   ): Promise<InstagramUserInfoResponse> {
@@ -148,6 +167,16 @@ export class InstagramService extends MetaBaseService {
   }
 
   async getMediaInsights(
+    userId: string,
+    accountId: string,
+    mediaId: string,
+    query: InstagramMediaInsightsRequest,
+  ): Promise<InstagramInsightsResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getMediaInsightsByAccountId(accountId, mediaId, query)
+  }
+
+  async getMediaInsightsByAccountId(
     accountId: string,
     mediaId: string,
     query: InstagramMediaInsightsRequest,
@@ -161,6 +190,15 @@ export class InstagramService extends MetaBaseService {
   }
 
   async getUserPosts(
+    userId: string,
+    accountId: string,
+    query: InstagramUserPostRequest,
+  ): Promise<InstagramUserPostResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getUserPostsByAccountId(accountId, query)
+  }
+
+  async getUserPostsByAccountId(
     accountId: string,
     query: InstagramUserPostRequest,
   ): Promise<InstagramUserPostResponse> {

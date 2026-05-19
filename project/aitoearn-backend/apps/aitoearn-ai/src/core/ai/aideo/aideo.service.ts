@@ -1,14 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import {
+  AideoAiLogResponse,
   AiLog,
   AiLogChannel,
   AiLogRepository,
   AiLogStatus,
   AiLogType,
   AssetType,
+  StyleTransferAiLogResponse,
 } from '@yikart/mongodb'
 import { config } from '../../../config'
 import { VolcengineVideoUtils } from '../../agent/mcp/volcengine/volcengine.utils'
@@ -511,6 +513,7 @@ export class AideoService {
           userId: task.userId,
           amount: price,
           type: CreditsType.AiService,
+          source: CreditsConsumptionSource.AiAideo,
           description: `Aideo ${billingInfo.skillType}`,
         })
       }
@@ -725,7 +728,7 @@ export class AideoService {
   private transformToResponseVo(aiLog: AiLog) {
     // 处理视频风格转换任务
     if (aiLog.model === 'video-style-transfer') {
-      const response = aiLog.response
+      const response = aiLog.response as StyleTransferAiLogResponse | undefined
 
       return {
         taskId: aiLog.id,
@@ -735,8 +738,8 @@ export class AideoService {
           : aiLog.status === AiLogStatus.Failed
             ? AideoTaskStatus.Failed
             : AideoTaskStatus.Processing,
-        outputVid: response?.['outputVid'],
-        outputUrl: response?.['outputUrl'],
+        outputVid: response?.outputVid,
+        outputUrl: response?.outputUrl,
         errorMessage: aiLog.errorMessage,
         createdAt: aiLog.startedAt,
         updatedAt: aiLog.updatedAt || aiLog.startedAt,
@@ -744,19 +747,25 @@ export class AideoService {
     }
 
     // 处理通用 Aideo 任务
-    const response = aiLog.response as GetAideoTaskResultResponse | undefined
+    const response = aiLog.response as AideoAiLogResponse | undefined
     const error = response?.ApiResponses?.[0]?.Error
+    const status = response?.Status && Object.values(AideoTaskStatus).includes(response.Status as AideoTaskStatus)
+      ? response.Status as AideoTaskStatus
+      : aiLog.status === AiLogStatus.Success
+        ? AideoTaskStatus.Completed
+        : aiLog.status === AiLogStatus.Failed
+          ? AideoTaskStatus.Failed
+          : AideoTaskStatus.Processing
+    const skillType = response?.SkillType && Object.values(SkillType).includes(response.SkillType as SkillType)
+      ? response.SkillType as SkillType
+      : undefined
 
     return {
       taskId: aiLog.id,
       model: aiLog.model,
-      status: response?.Status || (aiLog.status === AiLogStatus.Success
-        ? AideoTaskStatus.Completed
-        : aiLog.status === AiLogStatus.Failed
-          ? AideoTaskStatus.Failed
-          : AideoTaskStatus.Processing),
-      skillType: response?.SkillType,
-      skillParams: response?.SkillParams,
+      status,
+      skillType,
+      skillParams: response?.SkillParams ? JSON.stringify(response.SkillParams) : undefined,
       apiResponses: response?.ApiResponses,
       error: error ? { code: error.Code, message: error.Message } : undefined,
       errorMessage: aiLog.errorMessage,

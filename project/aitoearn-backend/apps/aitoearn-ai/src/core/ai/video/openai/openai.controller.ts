@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
 import { OpenAIVideoCreateRequestDto, OpenAIVideoRemixRequestDto } from './openai.dto'
 import { OpenAIVideoService } from './openai.service'
 import { OpenAIVideoResponseVo } from './openai.vo'
@@ -36,7 +36,7 @@ export class OpenAIVideoController {
   @Get('/videos/:videoId')
   async getVideoStatus(
     @GetToken() token: TokenInfo,
-    @Param('videoId') videoId: string,
+    @Param('videoId', ParseObjectIdPipe) videoId: string,
   ): Promise<OpenAIVideoResponseVo> {
     const response = await this.openaiVideoService.getVideo(token.id, UserType.User, videoId)
     return OpenAIVideoResponseVo.create(response)
@@ -50,7 +50,7 @@ export class OpenAIVideoController {
   @Post('/videos/:videoId/remix')
   async remixVideo(
     @GetToken() token: TokenInfo,
-    @Param('videoId') videoId: string,
+    @Param('videoId', ParseObjectIdPipe) videoId: string,
     @Body() body: OpenAIVideoRemixRequestDto,
   ): Promise<OpenAIVideoResponseVo> {
     const response = await this.openaiVideoService.remixVideo({

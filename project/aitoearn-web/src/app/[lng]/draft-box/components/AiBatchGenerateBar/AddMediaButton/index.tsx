@@ -6,12 +6,23 @@
 'use client'
 
 import type { BrandImage } from '../index'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ImageIcon, Upload } from 'lucide-react'
-import { memo, useCallback, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useTransClient } from '@/app/i18n/client'
 import { cn } from '@/lib/utils'
 import ImageSelectorPopover from '../ImageSelectorPopover'
 import styles from './AddMediaButton.module.scss'
+
+const MENU_OFFSET = 4
+const VIEWPORT_PADDING = 8
+const MENU_TRANSITION = { duration: 0.16, ease: 'easeOut' } as const
+
+interface MenuPosition {
+  top: number
+  left: number
+}
 
 interface AddMediaButtonProps {
   allImages: BrandImage[]
@@ -50,8 +61,16 @@ const AddMediaButton = memo(({
   const { t } = useTransClient('brandPromotion')
   const [hoverMenuVisible, setHoverMenuVisible] = useState(false)
   const [popoverOpen, setPopoverOpen] = useState(false)
+  const [isMounted, setIsMounted] = useState(false)
+  const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null)
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const wrapperRef = useRef<HTMLDivElement>(null)
+  const menuRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    setIsMounted(true)
+  }, [])
 
   const clearHoverTimer = useCallback(() => {
     if (hoverTimerRef.current) {
@@ -59,6 +78,57 @@ const AddMediaButton = memo(({
       hoverTimerRef.current = null
     }
   }, [])
+
+  const updateMenuPosition = useCallback(() => {
+    const wrapper = wrapperRef.current
+    const menu = menuRef.current
+
+    if (!wrapper || !menu) {
+      return
+    }
+
+    const wrapperRect = wrapper.getBoundingClientRect()
+    const menuRect = menu.getBoundingClientRect()
+    const viewportWidth = window.innerWidth
+    const viewportHeight = window.innerHeight
+
+    const left = Math.min(
+      Math.max(VIEWPORT_PADDING, wrapperRect.left),
+      Math.max(VIEWPORT_PADDING, viewportWidth - menuRect.width - VIEWPORT_PADDING),
+    )
+
+    const topAbove = wrapperRect.top - menuRect.height - MENU_OFFSET
+    const topBelow = wrapperRect.bottom + MENU_OFFSET
+    const canOpenBelow = topBelow + menuRect.height <= viewportHeight - VIEWPORT_PADDING
+
+    const top = Math.min(
+      Math.max(
+        VIEWPORT_PADDING,
+        topAbove >= VIEWPORT_PADDING || !canOpenBelow ? topAbove : topBelow,
+      ),
+      Math.max(VIEWPORT_PADDING, viewportHeight - menuRect.height - VIEWPORT_PADDING),
+    )
+
+    setMenuPosition({ top, left })
+  }, [])
+
+  useEffect(() => {
+    if (!hoverMenuVisible || !isMounted) {
+      return
+    }
+
+    updateMenuPosition()
+
+    const handleReposition = () => updateMenuPosition()
+
+    window.addEventListener('resize', handleReposition)
+    window.addEventListener('scroll', handleReposition, true)
+
+    return () => {
+      window.removeEventListener('resize', handleReposition)
+      window.removeEventListener('scroll', handleReposition, true)
+    }
+  }, [hoverMenuVisible, isMounted, updateMenuPosition])
 
   const handleMouseEnter = useCallback(() => {
     if (popoverOpen)
@@ -125,8 +195,66 @@ const AddMediaButton = memo(({
     acceptTypes.push('video/*')
   const accept = acceptTypes.join(',')
 
+  const hoverMenuNode = isMounted
+    ? createPortal(
+        <AnimatePresence onExitComplete={() => setMenuPosition(null)}>
+          {hoverMenuVisible && (
+            <>
+              {isMobile && (
+                <motion.div
+                  className="fixed inset-0 z-[999]"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={MENU_TRANSITION}
+                  onClick={() => setHoverMenuVisible(false)}
+                />
+              )}
+
+              <motion.div
+                ref={menuRef}
+                className={styles.hoverMenuPortal}
+                style={{
+                  top: menuPosition?.top ?? 0,
+                  left: menuPosition?.left ?? 0,
+                  visibility: menuPosition ? 'visible' : 'hidden',
+                }}
+                initial={{ opacity: 0, y: 6, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: 4, scale: 0.98 }}
+                transition={MENU_TRANSITION}
+                onMouseEnter={isMobile ? undefined : handleMouseEnter}
+                onMouseLeave={isMobile ? undefined : handleMouseLeave}
+              >
+                <button
+                  type="button"
+                  className={styles.menuItem}
+                  onClick={handleSelectStoreImages}
+                >
+                  <ImageIcon className="h-3.5 w-3.5" />
+                  {t('detail.selectStoreImages')}
+                </button>
+                {(canUploadImage || canUploadVideo) && (
+                  <button
+                    type="button"
+                    className={styles.menuItem}
+                    onClick={handleLocalUploadClick}
+                  >
+                    <Upload className="h-3.5 w-3.5" />
+                    {t('detail.localUpload')}
+                  </button>
+                )}
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body,
+      )
+    : null
+
   return (
     <div
+      ref={wrapperRef}
       className={cn(wrapperAbsolute ? styles.wrapperAbsolute : styles.wrapper, className)}
       {...mouseHandlers}
     >
@@ -145,37 +273,8 @@ const AddMediaButton = memo(({
         </div>
       </ImageSelectorPopover>
 
-      {/* 移动端：菜单显示时渲染透明遮罩，点击关闭菜单 */}
-      {isMobile && hoverMenuVisible && (
-        <div
-          className="fixed inset-0 z-[29]"
-          onClick={() => setHoverMenuVisible(false)}
-        />
-      )}
-
-      {/* hover 浮层菜单（桌面端 hover 显示，移动端点击显示） */}
-      {hoverMenuVisible && (
-        <div className={styles.hoverMenu}>
-          <button
-            type="button"
-            className={styles.menuItem}
-            onClick={handleSelectStoreImages}
-          >
-            <ImageIcon className="h-3.5 w-3.5" />
-            {t('detail.selectStoreImages')}
-          </button>
-          {(canUploadImage || canUploadVideo) && (
-            <button
-              type="button"
-              className={styles.menuItem}
-              onClick={handleLocalUploadClick}
-            >
-              <Upload className="h-3.5 w-3.5" />
-              {t('detail.localUpload')}
-            </button>
-          )}
-        </div>
-      )}
+      {/* hover 浮层菜单通过 portal 挂到 body，避免被父容器裁剪 */}
+      {hoverMenuNode}
 
       {/* 隐藏的文件上传 input */}
       <input

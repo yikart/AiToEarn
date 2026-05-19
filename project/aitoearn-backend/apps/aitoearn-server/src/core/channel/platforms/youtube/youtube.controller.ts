@@ -9,8 +9,9 @@ import {
   Res,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Internal, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
+import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
 import { Response } from 'express'
 import {
   AccountIdDto,
@@ -48,6 +49,7 @@ export class YoutubeController {
 
   constructor(
     private readonly youtubeService: YoutubeService,
+    private readonly metricEventHelperService: MetricEventHelperService,
   ) {}
 
   @ApiDoc({
@@ -63,7 +65,7 @@ export class YoutubeController {
     if (!token.mail) {
       throw new Error('缺少邮箱')
     }
-    return await this.youtubeService.getAuthUrl(
+    const result = await this.youtubeService.getAuthUrl(
       token.id,
       token.mail,
       undefined,
@@ -71,6 +73,15 @@ export class YoutubeController {
       callbackUrl,
       callbackMethod,
     )
+
+    if (result?.taskId) {
+      await this.metricEventHelperService.record(token.id, MetricEventName.aiPublishAddChannels, {
+        bizKey: result.taskId,
+        properties: { platform: 'youtube' },
+      })
+    }
+
+    return result
   }
 
   @ApiDoc({
@@ -116,7 +127,7 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return await this.youtubeService.isAuthorized(accountId)
+    return await this.youtubeService.isAuthorized(token.id, accountId)
   }
 
   @ApiDoc({
@@ -127,7 +138,7 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return await this.youtubeService.getUserAccessToken(accountId)
+    return await this.youtubeService.getUserAccessToken(token.id, accountId)
   }
 
   @ApiDoc({
@@ -140,6 +151,7 @@ export class YoutubeController {
     @Query() query: VideoCategoriesDto,
   ) {
     return await this.youtubeService.getVideoCategoriesList(
+      token.id,
       query.accountId,
       query.id,
       query.regionCode,
@@ -156,6 +168,7 @@ export class YoutubeController {
     @Query() query: VideosListDto,
   ) {
     return await this.youtubeService.getVideosList(
+      token.id,
       query.accountId,
       query.chart,
       query.id?.split(','),
@@ -175,6 +188,7 @@ export class YoutubeController {
     @Body() body: UpdateVideoDto,
   ) {
     return await this.youtubeService.updateVideo(
+      token.id,
       body.accountId,
       {
         id: body.id,
@@ -205,7 +219,7 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Body() body: DeleteVideoDto,
   ) {
-    return await this.youtubeService.deletePost(body.accountId, body.id)
+    return await this.youtubeService.deletePostForUser(token.id, body.accountId, body.id)
   }
 
   @ApiDoc({
@@ -218,6 +232,7 @@ export class YoutubeController {
     @Body() body: VideoRateDto,
   ) {
     return await this.youtubeService.setVideosRate(
+      token.id,
       body.accountId,
       body.id,
       body.rating,
@@ -234,6 +249,7 @@ export class YoutubeController {
     @Query() query: GetVideoRateDto,
   ) {
     return await this.youtubeService.getVideosRating(
+      token.id,
       query.accountId,
       query.id.split(','),
     )
@@ -249,6 +265,7 @@ export class YoutubeController {
     @Body() body: InsertCommentThreadsDto,
   ) {
     return await this.youtubeService.insertCommentThreads(
+      token.id,
       body.accountId,
       body.channelId,
       body.videoId,
@@ -266,6 +283,7 @@ export class YoutubeController {
     @Query() query: GetCommentThreadsListDto,
   ) {
     return await this.youtubeService.getCommentThreadsList(
+      token.id,
       query.accountId,
       query.allThreadsRelatedToChannelId,
       query.id?.split(','),
@@ -287,6 +305,7 @@ export class YoutubeController {
     @Body() body: SetCommentThreadsModerationStatusDto,
   ) {
     return await this.youtubeService.setModerationStatusComments(
+      token.id,
       body.accountId,
       body.id.split(','),
       body.moderationStatus,
@@ -304,6 +323,7 @@ export class YoutubeController {
     @Body() body: InsertCommentDto,
   ) {
     return await this.youtubeService.insertComment(
+      token.id,
       body.accountId,
       body.parentId || '',
       body.textOriginal || '',
@@ -320,6 +340,7 @@ export class YoutubeController {
     @Query() query: GetCommentsListDto,
   ) {
     return await this.youtubeService.getCommentsList(
+      token.id,
       query.accountId,
       query.parentId,
       query.id?.split(','),
@@ -338,6 +359,7 @@ export class YoutubeController {
     @Body() body: UpdateCommentDto,
   ) {
     return await this.youtubeService.updateComment(
+      token.id,
       body.accountId,
       body.id || '',
       body.textOriginal || '',
@@ -353,7 +375,7 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Body() body: DeleteCommentDto,
   ) {
-    return await this.youtubeService.deleteComment(body.accountId, body.id)
+    return await this.youtubeService.deleteComment(token.id, body.accountId, body.id)
   }
 
   @ApiDoc({
@@ -373,6 +395,7 @@ export class YoutubeController {
       privacyStatus: body.privacyStatus,
     }
     return await this.youtubeService.insertPlayList(
+      token.id,
       body.accountId,
       snippet,
       status,
@@ -389,6 +412,7 @@ export class YoutubeController {
     @Body() body: UpdatePlayListDto,
   ) {
     return await this.youtubeService.updatePlayList(
+      token.id,
       body.accountId,
       body.id,
       body.title || '',
@@ -407,7 +431,7 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Body() body: DeletePlayListDto,
   ) {
-    return await this.youtubeService.deletePlaylist(body.accountId, body.id)
+    return await this.youtubeService.deletePlaylist(token.id, body.accountId, body.id)
   }
 
   @ApiDoc({
@@ -420,6 +444,7 @@ export class YoutubeController {
     @Body() body: GetPlayListDto,
   ) {
     return await this.youtubeService.getPlayList(
+      token.id,
       body.accountId,
       body.channelId,
       body.id,
@@ -449,6 +474,7 @@ export class YoutubeController {
       endAt: body.endAt,
     }
     return await this.youtubeService.addVideoToPlaylist(
+      token.id,
       body.accountId,
       snippet,
       contentDetails,
@@ -475,6 +501,7 @@ export class YoutubeController {
       endAt: body.endAt,
     }
     return await this.youtubeService.updatePlayItems(
+      token.id,
       body.accountId,
       body.id,
       snippet,
@@ -492,6 +519,7 @@ export class YoutubeController {
     @Body() body: DeletePlayItemsDto,
   ) {
     return await this.youtubeService.deletePlayItems(
+      token.id,
       body.accountId,
       body.id,
     )
@@ -507,6 +535,7 @@ export class YoutubeController {
     @Body() body: GetPlayItemsDto,
   ) {
     return await this.youtubeService.getPlayItemsList(
+      token.id,
       body.accountId,
       body.id,
       body.playlistId,
@@ -526,6 +555,7 @@ export class YoutubeController {
     @Query() query: GetChannelsListDto,
   ) {
     return await this.youtubeService.getChannelsList(
+      token.id,
       query.accountId,
       query.forHandle,
       query.forUsername,
@@ -546,6 +576,7 @@ export class YoutubeController {
     @Body() body: ChannelsSectionsListDto,
   ) {
     return await this.youtubeService.getChannelSectionsList(
+      token.id,
       body.accountId,
       body.channelId,
       body.id?.split(','),
@@ -571,10 +602,10 @@ export class YoutubeController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return await this.youtubeService.updateChannelId(accountId)
+    return await this.youtubeService.updateChannelId(token.id, accountId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Search Content',
     body: SearchDto.schema,
@@ -604,14 +635,14 @@ export class YoutubeController {
     )
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Channels List (Crawler)',
     body: GetChannelsListDto.schema,
   })
   @Post('/getChannelsList')
   async getCrawlerChannelsList(@Body() body: GetChannelsListDto) {
-    return await this.youtubeService.getChannelsList(
+    return await this.youtubeService.getChannelsListByAccountId(
       body.accountId,
       body.forHandle,
       body.forUsername,
@@ -622,14 +653,14 @@ export class YoutubeController {
     )
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Videos List (Crawler)',
     body: VideosListDto.schema,
   })
   @Post('/getVideosList')
   async getCrawlerVideosList(@Body() body: VideosListDto) {
-    return await this.youtubeService.getVideosList(
+    return await this.youtubeService.getVideosListByAccountId(
       body.accountId,
       body.chart,
       body.id?.split(','),
@@ -639,13 +670,13 @@ export class YoutubeController {
     )
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Refresh Token (Crawler)',
     body: AccountIdDto.schema,
   })
   @Post('/refreshToken')
   async crawlerRefreshToken(@Body() body: AccountIdDto) {
-    return await this.youtubeService.getUserAccessToken(body.accountId)
+    return await this.youtubeService.getUserAccessTokenByAccountId(body.accountId)
   }
 }

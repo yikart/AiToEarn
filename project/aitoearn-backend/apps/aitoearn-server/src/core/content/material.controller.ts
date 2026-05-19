@@ -17,7 +17,7 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { AccountType, ApiDoc, AppException, FileUtil, ResponseCode, TableDto, UserType } from '@yikart/common'
+import { AccountType, ApiDoc, AppException, FileUtil, ParseObjectIdPipe, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
 import { MaterialGroupService } from './material-group.service'
 import {
@@ -27,6 +27,7 @@ import {
   MaterialFilterDto,
   MaterialFilterSchema,
   MaterialIdsDto,
+  TransferMaterialDto,
   UpdateMaterialDto,
 } from './material.dto'
 import { MaterialService } from './material.service'
@@ -85,6 +86,30 @@ export class MaterialController {
   }
 
   @ApiDoc({
+    summary: '草稿转移到其他草稿箱',
+    description: '将草稿移动或复制到目标草稿箱。move 模式直接移动，copy 模式复制并重置使用次数。',
+    body: TransferMaterialDto.schema,
+  })
+  @Post('/transfer')
+  async transferToGroup(
+    @GetToken() token: TokenInfo,
+    @Body() body: TransferMaterialDto,
+  ) {
+    const targetGroup = await this.materialGroupService.getGroupInfo(body.targetGroupId)
+    if (!targetGroup) {
+      throw new AppException(ResponseCode.MaterialGroupNotFound)
+    }
+
+    const count = await this.materialService.transferToGroup(
+      token.id,
+      body.ids,
+      body.targetGroupId,
+      body.mode,
+    )
+    return { count }
+  }
+
+  @ApiDoc({
     summary: '按条件删除草稿',
     description: '删除符合筛选条件的草稿。',
     body: MaterialFilterDto.schema,
@@ -132,7 +157,7 @@ export class MaterialController {
   @Delete(':id')
   async del(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ) {
     const material = await this.materialService.getInfo(id)
     if (!material || material.userId !== token.id) {
@@ -150,7 +175,7 @@ export class MaterialController {
   @Put('info/:id')
   async upMaterialInfo(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateMaterialDto,
   ) {
     const material = await this.materialService.getInfo(id)
@@ -165,8 +190,9 @@ export class MaterialController {
     summary: '获取草稿详情',
     description: '根据ID获取草稿详情。',
   })
+  @Public()
   @Get('info/:id')
-  async getInfo(@Param('id') id: string) {
+  async getInfo(@Param('id', ParseObjectIdPipe) id: string) {
     const res = await this.materialService.getInfo(id)
     return res
   }

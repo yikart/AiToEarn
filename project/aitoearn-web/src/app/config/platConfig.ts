@@ -3,6 +3,7 @@ import { directTrans } from '@/app/i18n/client'
 import bilibiliSvg from '@/assets/svgs/plat/bilibili.svg'
 import douyinSvg from '@/assets/svgs/plat/douyin.svg'
 import facebookSvg from '@/assets/svgs/plat/facebook.png'
+import gzhSvg from '@/assets/svgs/plat/gzh.svg'
 import instagramSvg from '@/assets/svgs/plat/instagram.png'
 import ksSvg from '@/assets/svgs/plat/ks.svg'
 import linkedinSvg from '@/assets/svgs/plat/linkedin.png'
@@ -10,8 +11,10 @@ import pinterestSvg from '@/assets/svgs/plat/pinterest.png'
 import threadsSvg from '@/assets/svgs/plat/threads.png'
 import tiktokSvg from '@/assets/svgs/plat/tiktok.svg'
 import twitterSvg from '@/assets/svgs/plat/twitter.png'
+import wxSphSvg from '@/assets/svgs/plat/wx-sph.svg'
 import xhsSvg from '@/assets/svgs/plat/xhs.svg'
 import youtubeSvg from '@/assets/svgs/plat/youtube.png'
+
 // 平台类型
 export enum PlatType {
   Tiktok = 'tiktok', // tiktok
@@ -221,7 +224,7 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       name: 'Threads',
       icon: threadsSvg.src,
       url: 'https://www.threads.net/',
-      pubTypes: new Set([PubType.VIDEO, PubType.ImageText, PubType.Article]),
+      pubTypes: new Set([PubType.VIDEO, PubType.ImageText]),
       commonPubParamsConfig: {
         topicMax: 100,
         desMax: 500,
@@ -265,27 +268,48 @@ export const AccountPlatInfoMap = new Map<PlatType, IAccountPlatInfo>([
       jiancha: false,
     },
   ],
+  [
+    PlatType.WxSph,
+    {
+      name: 'wxSph',
+      icon: wxSphSvg,
+      url: 'https://channels.weixin.qq.com/',
+      pubTypes: new Set([PubType.VIDEO]),
+      commonPubParamsConfig: {
+        topicMax: 10,
+        titleMax: 16,
+        desMax: 1000,
+      },
+      themeColor: '#07C160',
+      jiancha: true,
+    },
+  ],
+  [
+    PlatType.WxGzh,
+    {
+      name: 'wxgzh',
+      icon: gzhSvg,
+      url: 'https://mp.weixin.qq.com/',
+      pubTypes: new Set([PubType.ImageText]),
+      commonPubParamsConfig: {
+        titleMax: 64,
+        topicMax: 0,
+        desMax: 20000,
+        imagesMax: 10,
+      },
+      themeColor: '#07C160',
+      jiancha: true,
+    },
+  ],
 ])
 export const AccountPlatInfoArr = Array.from(AccountPlatInfoMap)
-
-// ========== 区域平台配置 ==========
-
-/** 判断平台是否可用（所有平台均可用） */
-export function isPlatformAvailable(_platType: PlatType): boolean {
-  return true
-}
-
-/** 隐藏的平台（向后兼容，空集合） */
-export const ABROAD_HIDDEN_PLATFORMS = new Set<PlatType>()
-
-/** 所有平台列表（无区域排序） */
-export const RegionSortedPlatInfoArr = AccountPlatInfoArr
 
 // ========== 任务推广相关配置 ==========
 
 /** 不支持任务推广的平台 */
 export const TASK_EXCLUDED_PLATFORMS = new Set<PlatType>([
-  PlatType.Threads,
+  PlatType.WxSph,
+  PlatType.WxGzh,
   PlatType.Pinterest,
   PlatType.LinkedIn,
 ])
@@ -297,23 +321,25 @@ const COLLECT_UNSUPPORTED_PLATFORMS = new Set<PlatType>([
   PlatType.Twitter,
 ])
 
-/** 支持任务推广的平台列表（过滤 Threads、Pinterest） */
+/** 支持任务推广的平台列表 */
 export const TaskPlatInfoArr = AccountPlatInfoArr.filter(
-  ([platType]) => !TASK_EXCLUDED_PLATFORMS.has(platType),
+  ([platType]) => isTaskPlatformSupported(platType),
 )
 
-/** 当前区域可用的任务推广平台列表 */
-export const RegionTaskPlatInfoArr = AccountPlatInfoArr.filter(
-  ([platType]) => !TASK_EXCLUDED_PLATFORMS.has(platType),
-)
+/** 判断平台是否支持任务推广 */
+export function isTaskPlatformSupported(platType: PlatType): boolean {
+  return !TASK_EXCLUDED_PLATFORMS.has(platType)
+}
 
 /** 判断平台是否支持收藏互动 */
 export function isPlatCollectSupported(platType: PlatType): boolean {
   return !COLLECT_UNSUPPORTED_PLATFORMS.has(platType)
 }
 
-/** 不支持"播放量"数据的平台 */
-const VIEW_UNSUPPORTED_PLATFORMS = new Set<PlatType>([PlatType.Xhs])
+/** 不支持播放量数据的平台 */
+const VIEW_UNSUPPORTED_PLATFORMS = new Set<PlatType>([
+  PlatType.Xhs,
+])
 
 /** 判断平台是否支持播放量数据 */
 export function isPlatViewSupported(platType: PlatType): boolean {

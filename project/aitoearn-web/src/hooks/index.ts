@@ -3,6 +3,7 @@
  */
 
 export * from './useDocumentTitle'
+export * from './useDraftGenerationPricing'
 export * from './useGeolocation'
 export * from './useIsMobile'
 export * from './useKeepTimeCountdown'

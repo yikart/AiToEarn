@@ -32,16 +32,17 @@ export abstract class StorageProvider {
   }
 
   parsePathFromUrl(url: string): string {
-    if (!url.startsWith('http'))
-      return url.replace(/^\/+/, '')
-    let path = url
-    if (this.cdnEndpoint && url.startsWith(this.cdnEndpoint)) {
-      path = url.replace(this.cdnEndpoint, '')
+    const normalizedUrl = String(url ?? '').trim()
+    if (!normalizedUrl.startsWith('http'))
+      return normalizedUrl.replace(/^\/+/, '')
+    let path = normalizedUrl
+    if (this.cdnEndpoint && normalizedUrl.startsWith(this.cdnEndpoint)) {
+      path = normalizedUrl.replace(this.cdnEndpoint, '')
     }
-    else if (url.startsWith(this.endpoint)) {
-      path = url.replace(this.endpoint, '')
+    else if (normalizedUrl.startsWith(this.endpoint)) {
+      path = normalizedUrl.replace(this.endpoint, '')
     }
-    return decodeURIComponent(path.replace(/^\/+/, ''))
+    return decodeURIComponent(path.split(/[?#]/)[0].replace(/^\/+/, ''))
   }
 
   abstract putObject(objectPath: string, file: Buffer | Readable, contentType?: string): Promise<{ path: string }>
@@ -54,7 +55,15 @@ export abstract class StorageProvider {
   abstract getReadSignUrl(objectPath: string, expiresIn?: number): Promise<string>
 
   async toPresignedUrl(urlOrPath: string, expiresIn = 3600): Promise<string> {
-    const objectPath = this.parsePathFromUrl(urlOrPath)
+    const normalizedUrlOrPath = String(urlOrPath ?? '').trim()
+    if (
+      (normalizedUrlOrPath.startsWith('http://') || normalizedUrlOrPath.startsWith('https://'))
+      && !(this.cdnEndpoint && normalizedUrlOrPath.startsWith(this.cdnEndpoint))
+      && !normalizedUrlOrPath.startsWith(this.endpoint)
+    ) {
+      return normalizedUrlOrPath
+    }
+    const objectPath = this.parsePathFromUrl(normalizedUrlOrPath)
     return this.getReadSignUrl(objectPath, expiresIn)
   }
 }

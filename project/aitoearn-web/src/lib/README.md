@@ -9,7 +9,7 @@
 | `toast.ts`               | Toast 消息提示工具，替代 antd message       |
 | `confirm.tsx`            | 命令式确认弹窗工具，替代 antd Modal.confirm |
 | `utils.ts`               | 通用工具函数                                |
-| `vip.ts`                 | VIP 状态判断工具函数                        |
+| `brandCommentAi.ts`      | 品牌评论 AI 生成与提示词优化封装            |
 | `i18n/languageConfig.ts` | 语言配置中心，统一管理语言相关配置          |
 
 ---
@@ -251,106 +251,43 @@ formatRelativeTime(new Date('2024-01-01'))
 
 ---
 
-## vip.ts - VIP 状态判断工具
+## brandCommentAi.ts - 品牌评论 AI 工具
 
-用于解析 VIP 状态字符串，返回详细的状态信息和会员等级。
+封装品牌评论任务中复用的 AI 评论生成与提示词优化逻辑，供创建任务调试面板和执行任务页共用。
 
 ### 导入方式
 
 ```typescript
-import { getVipStatusInfo, getVipTier, canUpgrade } from '@/lib/vip'
-import type { VipStatusInfo, VipTier } from '@/lib/vip'
-```
-
-### 类型定义
-
-```typescript
-// 会员等级
-type VipTier = 'free' | 'go' | 'plus' | 'ultra'
-
-// VIP 状态信息
-interface VipStatusInfo {
-  isVip: boolean // 是否为 VIP
-  isMonthly: boolean // 是否为月度会员
-  isYearly: boolean // 是否为年度会员
-  isAutoRenew: boolean // 是否自动续费
-  isOnce: boolean // 是否为一次性购买
-}
+import {
+  extractBrandCommentTopics,
+  generateBrandCommentSamples,
+  optimizeBrandCommentPrompt,
+} from '@/lib/brandCommentAi'
 ```
 
 ### API
 
-#### getVipStatusInfo(status: string): VipStatusInfo
-
-根据 VIP 状态字符串获取详细状态信息。
-
-##### 状态映射
-
-| 状态值               | isVip | isMonthly | isYearly | isAutoRenew | isOnce |
-| -------------------- | ----- | --------- | -------- | ----------- | ------ |
-| `none`               | false | false     | false    | false       | false  |
-| `trialing`           | true  | false     | false    | false       | false  |
-| `monthly_once`       | true  | true      | false    | false       | true   |
-| `yearly_once`        | true  | false     | true     | false       | true   |
-| `active_go`          | true  | false     | false    | true        | false  |
-| `active_monthly`     | true  | true      | false    | true        | false  |
-| `active_yearly`      | true  | false     | true     | true        | false  |
-| `active_ultra`       | true  | false     | false    | true        | false  |
-| `active_nonrenewing` | true  | false     | false    | false       | false  |
-| `expired`            | false | false     | false    | false       | false  |
-
-#### getVipTier(status: string): VipTier
-
-根据 VIP 状态获取会员等级。
-
-##### 等级映射
-
-| 状态值                                                           | 返回等级                        |
-| ---------------------------------------------------------------- | ------------------------------- |
-| `active_go`                                                      | `'go'`                          |
-| `active_monthly`, `monthly_once`, `active_yearly`, `yearly_once` | `'plus'`                        |
-| `active_ultra`                                                   | `'ultra'`                       |
-| `trialing`                                                       | `'plus'` (试用期默认 Plus 体验) |
-| 其他                                                             | `'free'`                        |
-
-#### canUpgrade(tier: VipTier): boolean
-
-判断当前会员等级是否可以升级。
-
-| 等级    | 可升级                     |
-| ------- | -------------------------- |
-| `free`  | false                      |
-| `go`    | true (可升级到 Plus/Ultra) |
-| `plus`  | true (可升级到 Ultra)      |
-| `ultra` | false (已是最高级别)       |
+| 导出                                     | 说明                     |
+| ---------------------------------------- | ------------------------ |
+| `extractBrandCommentTopics(description)` | 从作品描述中提取 `#话题` |
+| `generateBrandCommentSamples(params)`    | 生成评论候选列表         |
+| `optimizeBrandCommentPrompt(params)`     | 优化评论提示词           |
+| `SYSTEM_PROMPT_GENERATE`                 | 评论生成系统提示词       |
+| `SYSTEM_PROMPT_OPTIMIZE`                 | 评论提示词优化系统提示词 |
 
 ### 使用示例
 
 ```typescript
-import { getVipStatusInfo, getVipTier, canUpgrade } from '@/lib/vip'
-
-// 获取详细状态信息
-const statusInfo = getVipStatusInfo(userInfo.vipInfo.status)
-
-if (statusInfo.isVip) {
-  // 用户是 VIP
-}
-
-if (statusInfo.isMonthly && statusInfo.isAutoRenew) {
-  // 用户是连续包月会员
-}
-
-// 获取会员等级
-const tier = getVipTier(userInfo.vipInfo.status)
-// => 'go' | 'plus' | 'ultra' | 'free'
-
-// 判断是否可以升级
-if (canUpgrade(tier)) {
-  // 显示升级按钮
-}
+const comments = await generateBrandCommentSamples({
+  prompt: '请用真实用户口吻发表评论',
+  model: 'gpt-5.1-all',
+  sampleCount: 3,
+  workDetails: {
+    title: '作品标题',
+    description: '作品描述 #话题',
+  },
+})
 ```
-
----
 
 ## i18n/languageConfig.ts - 语言配置中心
 
@@ -428,5 +365,5 @@ export const LANGUAGE_METADATA: Record<string, LanguageMetadata> = {
 
 ### 注意事项
 
-- ⚠️ **禁止硬编码语言判断**，统一使用此工具的函数
+- 禁止硬编码语言判断，统一使用此工具的函数
 - 添加新语言时，还需在 `src/app/i18n/settings.ts` 的 `languages` 数组中添加语言代码

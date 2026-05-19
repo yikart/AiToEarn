@@ -1,3 +1,4 @@
+import type { AiAvailabilityService } from '../../ai-availability'
 import { Logger } from '@nestjs/common'
 import { ContentGenerationTaskRepository } from '@yikart/mongodb'
 import { vi } from 'vitest'
@@ -7,6 +8,7 @@ describe('utilMcp', () => {
   let utilMcp: UtilMcp
   let mockLogger: Logger
   let mockContentGenerateRepository: vi.Mocked<ContentGenerationTaskRepository>
+  let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
 
   beforeEach(() => {
     mockLogger = {
@@ -19,7 +21,11 @@ describe('utilMcp', () => {
       updateById: vi.fn().mockResolvedValue(undefined),
     } as unknown as vi.Mocked<ContentGenerationTaskRepository>
 
-    utilMcp = new UtilMcp(mockContentGenerateRepository)
+    mockAiAvailability = {
+      execute: vi.fn().mockImplementation((_ctx: unknown, fn: () => unknown) => (fn as () => Promise<unknown>)()),
+    } as unknown as vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
+
+    utilMcp = new UtilMcp(mockContentGenerateRepository, mockAiAvailability as unknown as AiAvailabilityService)
     // Override the logger for testing
     Object.defineProperty(utilMcp, 'logger', { value: mockLogger })
   })

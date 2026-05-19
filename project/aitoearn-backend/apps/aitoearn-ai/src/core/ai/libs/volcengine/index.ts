@@ -1,5 +1,6 @@
 export * from './services'
 export * from './volcengine.config'
+export * from './volcengine.exception'
 export * from './volcengine.interface'
 export * from './volcengine.module'
 export * from './volcengine.service'

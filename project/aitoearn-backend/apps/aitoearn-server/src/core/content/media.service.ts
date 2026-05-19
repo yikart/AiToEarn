@@ -139,6 +139,30 @@ export class MediaService {
     return res
   }
 
+  async transferToGroup(
+    userId: string,
+    ids: string[],
+    targetGroupId: string,
+    mode: 'move' | 'copy',
+  ): Promise<number> {
+    if (mode === 'move') {
+      return this.mediaRepository.updateMaterialGroupByIds(ids, targetGroupId, userId)
+    }
+
+    const mediaList = await this.mediaRepository.listByIdsAndUserId(ids, userId)
+    if (mediaList.length === 0) {
+      return 0
+    }
+
+    const copies = mediaList.map(({ id: _id, ...media }) => ({
+      ...media,
+      materialGroupId: targetGroupId,
+      useCount: 0,
+    }))
+    const created = await this.mediaRepository.createMany(copies)
+    return created.length
+  }
+
   async addUseCountOfList(userId: string, ids: string[]): Promise<boolean> {
     const res = await this.mediaRepository.updateManyUseCountByIds(ids, {
       userId,

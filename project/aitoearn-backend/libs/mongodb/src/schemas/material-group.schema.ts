@@ -3,7 +3,7 @@
  * @Date: 2024-09-02 14:45:57
  * @LastEditTime: 2025-02-22 12:37:22
  * @LastEditors: nevin
- * @Description: 素材库
+ * @Description: 草稿箱
  */
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType, UserType } from '@yikart/common'
@@ -58,13 +58,6 @@ export class MaterialGroup extends WithTimestampSchema {
 
   @Prop({ required: false, index: true })
   libraryId?: string
-
-  // 是否开启推广
-  @Prop({
-    required: true,
-    default: true,
-  })
-  openAffiliate: boolean
 }
 
 export const MaterialGroupSchema = SchemaFactory.createForClass(MaterialGroup)

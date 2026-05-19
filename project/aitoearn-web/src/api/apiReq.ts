@@ -1,4 +1,5 @@
 import type { UserInfo } from '@/store/user'
+import type { RequestOptions } from '@/utils/request'
 import http from '@/utils/request'
 
 export interface LoginResponse {
@@ -7,8 +8,9 @@ export interface LoginResponse {
 }
 
 // 获取用户信息
-export function getUserInfoApi() {
-  return http.get<UserInfo>('user/mine')
+export function getUserInfoApi(options?: RequestOptions & { silent?: boolean }) {
+  const { silent, ...requestOptions } = options ?? {}
+  return http.get<UserInfo>('user/mine', undefined, silent, requestOptions)
 }
 
 // 更新用户信息

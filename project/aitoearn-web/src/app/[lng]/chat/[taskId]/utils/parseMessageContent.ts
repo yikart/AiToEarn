@@ -11,7 +11,7 @@ import type { IParsedUserContent, IPromptContentItem, IUploadedMedia } from '@/s
  * Markdown 引用格式正则
  * 匹配：[image]: url, [video]: url, [document]: url
  */
-const MARKDOWN_REFERENCE_REGEX = /^\[(image|video|document)\]:\s*(.+)$/gim
+const MARKDOWN_REFERENCE_REGEX = /^\[(image|video|document)\]: *(\S+)$/gim
 
 /**
  * 判断文本是否为 JSON 格式的 Claude Prompt

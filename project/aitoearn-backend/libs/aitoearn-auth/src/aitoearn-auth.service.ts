@@ -1,24 +1,32 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { TokenInfo } from './aitoearn-auth.interface'
+import { AITOEARN_AUTH_OPTIONS, AitoearnAuthOptions, TokenPayload } from './aitoearn-auth.config'
 
 @Injectable()
 export class AitoearnAuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    @Inject(AITOEARN_AUTH_OPTIONS)
+    private readonly options: AitoearnAuthOptions,
+  ) {}
 
   /**
    * 生成Token
    * @param tokenInfo
    * @returns
    */
-  generateToken(tokenInfo: TokenInfo): string {
-    const payload: TokenInfo = {
+  generateToken(tokenInfo: TokenPayload): string {
+    const payload: TokenPayload = {
       mail: tokenInfo.mail,
       id: tokenInfo.id,
       name: tokenInfo.name,
+      shopDomain: tokenInfo.shopDomain,
     }
 
-    return this.jwtService.sign(payload)
+    return this.jwtService.sign(payload, {
+      secret: this.options.secret,
+      expiresIn: this.options.expiresIn,
+    })
   }
 
   /**
@@ -26,16 +34,20 @@ export class AitoearnAuthService {
    * @param tokenInfo
    * @returns
    */
-  resetToken(tokenInfo: TokenInfo): string {
-    const payload: TokenInfo = {
+  resetToken(tokenInfo: TokenPayload): string {
+    const payload: TokenPayload = {
       mail: tokenInfo.mail,
       id: tokenInfo.id,
       name: tokenInfo.name,
+      shopDomain: tokenInfo.shopDomain,
     }
-    return this.jwtService.sign(payload)
+    return this.jwtService.sign(payload, {
+      secret: this.options.secret,
+      expiresIn: this.options.expiresIn,
+    })
   }
 
-  decodeToken(token: string): TokenInfo {
+  decodeToken(token: string): TokenPayload {
     token = token.replace('Bearer ', '')
     try {
       return this.jwtService.decode(token)

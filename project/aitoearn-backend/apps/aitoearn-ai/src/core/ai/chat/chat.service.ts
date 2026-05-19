@@ -5,17 +5,18 @@ import { BaseMessage, ChatMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, getErrorMessage, getErrorStack, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, getErrorMessage, getErrorStack, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType, UserRepository } from '@yikart/mongodb'
 import OpenAI from 'openai'
 import { from, merge, Observable } from 'rxjs'
 import { catchError, concatMap, ignoreElements, last, share } from 'rxjs/operators'
 import { config } from '../../../config'
+import { AiAvailabilityService } from '../../ai-availability'
 import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
-import { calculatePricingPoints, ChatPricing, isFlatPricing, TokenUsageDetails } from '../pricing/pricing-calculator'
+import { calculatePricingPoints, ChatPricing, TokenUsageDetails } from '../pricing/pricing-calculator'
 import {
   ChatCompletionDto,
   ChatModelsQueryDto,
@@ -42,6 +43,7 @@ export class ChatService {
     private readonly modelsConfigService: ModelsConfigService,
     private readonly assetsService: AssetsService,
     private readonly geminiService: GeminiService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) {}
 
   /**
@@ -111,6 +113,8 @@ export class ChatService {
 
   async chatCompletion(request: ChatCompletionDto, userId: string) {
     const { messages, model, ...params } = request
+    delete (params as { billingGroupId?: string }).billingGroupId
+    delete (params as { source?: CreditsConsumptionSource }).source
 
     const langchainMessages: BaseMessage[] = messages.map((message) => {
       return new ChatMessage(message)
@@ -150,13 +154,18 @@ export class ChatService {
     amount: number,
     description: string,
     metadata?: Record<string, unknown>,
+    billingGroupId?: string,
+    source = CreditsConsumptionSource.AiChat,
   ): Promise<void> {
     await this.creditsHelper.deductCredits({
       userId,
       amount,
       type: CreditsType.AiService,
+      source,
       description,
-      metadata,
+      metadata: billingGroupId
+        ? { ...metadata, billingGroupId }
+        : metadata,
     })
   }
 
@@ -166,19 +175,8 @@ export class ChatService {
    * @param userType 用户类型
    * @param pricing 价格配置
    */
-  private async checkUserBalance(userId: string, userType: UserType, pricing: ChatPricing): Promise<void> {
-    if (userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < 0) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-      if (isFlatPricing(pricing)) {
-        const price = Number(pricing.price)
-        if (balance < price) {
-          throw new AppException(ResponseCode.UserCreditsInsufficient)
-        }
-      }
-    }
+  private async checkUserBalance(_userId: string, _userType: UserType, _pricing: ChatPricing): Promise<void> {
+    return undefined
   }
 
   /**
@@ -196,10 +194,12 @@ export class ChatService {
     params: ChatCompletionDto,
     userId: string,
     userType: UserType,
-    modelConfig: { name: string, pricing: ChatPricing },
+    modelConfig: { name: string, channel: AiLogChannel, pricing: ChatPricing },
     startedAt: Date,
     usage: { input_tokens?: number, output_tokens?: number, total_tokens?: number, input_token_details?: TokenUsageDetails, output_token_details?: TokenUsageDetails },
     result: { model: string, usage: typeof usage },
+    billingGroupId?: string,
+    source = CreditsConsumptionSource.AiChat,
   ): Promise<number> {
     const points = calculatePricingPoints(modelConfig.pricing, usage)
 
@@ -215,6 +215,8 @@ export class ChatService {
         points,
         modelConfig.name,
         usage,
+        billingGroupId,
+        source,
       )
     }
 
@@ -224,7 +226,7 @@ export class ChatService {
       userId,
       userType,
       model: params.model,
-      channel: AiLogChannel.NewApi,
+      channel: modelConfig.channel,
       startedAt,
       duration,
       type: AiLogType.Chat,
@@ -237,7 +239,7 @@ export class ChatService {
     return points
   }
 
-  async userChatCompletion({ userId, userType, ...params }: UserChatCompletionDto) {
+  async userChatCompletion({ userId, userType, billingGroupId, source = CreditsConsumptionSource.AiChat, ...params }: UserChatCompletionDto) {
     const modelConfig = (await this.getChatModelConfig({ userId, userType })).find((m: { name: string }) => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
@@ -259,6 +261,8 @@ export class ChatService {
       startedAt,
       usage,
       result,
+      billingGroupId,
+      source,
     )
 
     return {
@@ -272,10 +276,20 @@ export class ChatService {
 
   /**
    * 获取聊天模型参数
-   * @param _data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
+   * @param data 查询参数，包含可选的 userId 和 userType，可用于后续个性化模型推荐
    */
-  async getChatModelConfig(_data: ChatModelsQueryDto) {
-    return this.modelsConfigService.config.chat
+  async getChatModelConfig(data: ChatModelsQueryDto) {
+    let models = this.modelsConfigService.config.chat
+
+    if (data.channel) {
+      models = models.filter(m => m.channel === data.channel)
+    }
+
+    if (data.scene) {
+      models = models.filter(m => m.scenes?.includes(data.scene!))
+    }
+
+    return models
   }
 
   private async processChunkContent(
@@ -308,7 +322,7 @@ export class ChatService {
   async proxyChatStream(
     params: ChatStreamProxyDto & { userId: string, userType: UserType },
   ): Promise<Observable<OpenAI.Chat.ChatCompletionChunk>> {
-    const { userId, userType, model, ...body } = params
+    const { userId, userType, model, billingGroupId, source = CreditsConsumptionSource.AiChat, ...body } = params
 
     const modelConfig = (await this.getChatModelConfig({ userId, userType }))
       .find(m => m.name === model)
@@ -351,14 +365,26 @@ export class ChatService {
             startedAt,
             finalUsage,
             { model, usage: finalUsage },
+            billingGroupId,
+            source,
           )
         }
+
+        await this.aiAvailability.recordSuccess(
+          { provider: 'openai', operation: 'proxyChatStream', model },
+          Date.now() - startedAt.getTime(),
+        )
       }),
       ignoreElements(),
     )
 
     return merge(contentStream$, billingStream$).pipe(
       catchError((error) => {
+        void this.aiAvailability.recordFailure(
+          { provider: 'openai', operation: 'proxyChatStream', model },
+          error,
+          Date.now() - startedAt.getTime(),
+        )
         this.logger.error(`Proxy stream error: ${getErrorMessage(error)}`)
         throw error
       }),
@@ -370,6 +396,7 @@ export class ChatService {
    * 返回 Observable<RawMessageStreamEvent> 原始事件流
    */
   async proxyClaudeChatStream({ userId, userType, ...params }: UserClaudeChatProxyDto): Promise<Observable<RawMessageStreamEvent>> {
+    const { billingGroupId, source = CreditsConsumptionSource.AiChat, ...body } = params
     const modelConfig = (await this.getChatModelConfig({ userId, userType })).find((m: { name: string }) => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
@@ -379,7 +406,7 @@ export class ChatService {
 
     const startedAt = new Date()
 
-    const stream = this.anthropic.messages.stream(params as Anthropic.MessageStreamParams)
+    const stream = this.anthropic.messages.stream(body as Anthropic.MessageStreamParams)
 
     const stream$ = from(stream).pipe(
       share(),
@@ -401,6 +428,13 @@ export class ChatService {
           startedAt,
           usage,
           { model: params.model, usage },
+          billingGroupId,
+          source,
+        )
+
+        await this.aiAvailability.recordSuccess(
+          { provider: 'anthropic', operation: 'proxyClaudeChatStream', model: params.model },
+          Date.now() - startedAt.getTime(),
         )
       }),
       ignoreElements(),
@@ -408,6 +442,11 @@ export class ChatService {
 
     return merge(contentStream$, completeStream$).pipe(
       catchError((error) => {
+        void this.aiAvailability.recordFailure(
+          { provider: 'anthropic', operation: 'proxyClaudeChatStream', model: params.model },
+          error,
+          Date.now() - startedAt.getTime(),
+        )
         this.logger.error(`Error in proxyClaudeChatStream: ${getErrorMessage(error)}`, getErrorStack(error))
         throw error
       }),
@@ -436,28 +475,43 @@ export class ChatService {
     let result: GenerateContentResponse | undefined
     let usage: GenerateContentResponseUsageMetadata | undefined
 
-    // 调用 Gemini generateContent
-    const responses = await this.geminiService.generateContentStream({
-      model,
-      contents: params.contents,
-      config: params.config,
-    })
+    try {
+      // 调用 Gemini generateContent
+      const responses = await this.geminiService.generateContentStream({
+        model,
+        contents: params.contents,
+        config: params.config,
+      })
 
-    for await (const chunk of responses) {
-      this.logger.debug({ chunk }, 'Received chunk from Gemini')
-      usage = chunk.usageMetadata
+      for await (const chunk of responses) {
+        this.logger.debug({ chunk }, 'Received chunk from Gemini')
+        usage = chunk.usageMetadata
 
-      if (!result) {
-        result = chunk
-      }
-      else {
-        const existingParts = result.candidates?.[0]?.content?.parts || []
-        const newParts = chunk.candidates?.[0]?.content?.parts || []
-        if (result.candidates?.[0]?.content) {
-          result.candidates[0].content.parts = [...existingParts, ...newParts]
+        if (!result) {
+          result = chunk
         }
-        result.usageMetadata = chunk.usageMetadata
+        else {
+          const existingParts = result.candidates?.[0]?.content?.parts || []
+          const newParts = chunk.candidates?.[0]?.content?.parts || []
+          if (result.candidates?.[0]?.content) {
+            result.candidates[0].content.parts = [...existingParts, ...newParts]
+          }
+          result.usageMetadata = chunk.usageMetadata
+        }
       }
+
+      await this.aiAvailability.recordSuccess(
+        { provider: 'gemini', operation: 'generateContentStream', model },
+        Date.now() - startedAt.getTime(),
+      )
+    }
+    catch (error) {
+      await this.aiAvailability.recordFailure(
+        { provider: 'gemini', operation: 'generateContentStream', model },
+        error,
+        Date.now() - startedAt.getTime(),
+      )
+      throw error
     }
 
     this.logger.debug({ result }, 'Received result from Gemini')

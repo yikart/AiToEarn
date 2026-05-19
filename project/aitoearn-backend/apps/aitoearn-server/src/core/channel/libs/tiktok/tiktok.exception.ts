@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface TiktokRawError {
   code?: number | string
@@ -8,47 +9,22 @@ export interface TiktokRawError {
 /**
  * Tiktok error class.
  */
-export class TiktokError extends SocialMediaError<TiktokRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: TiktokRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class TiktokError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'tiktok'
   }
 
-  protected static override extractRawError(data: unknown): TiktokRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as { error?: TiktokRawError }
-    return errResponse.error
-  }
 
-  protected static override buildMessage(
-    rawError: TiktokRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.message || 'Unknown error'}, error code: ${rawError.code || 'N/A'}`
+    return {
+      platformCode: errResponse.error?.code,
+      platformMessage: errResponse.error?.message,
+    }
   }
 }

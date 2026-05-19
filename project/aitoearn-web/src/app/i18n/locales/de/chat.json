@@ -3,7 +3,12 @@
     "placeholder": "Erstellen Sie ein 8-Sekunden-Hochformat-Werbevideo für unsere neue Sushi-Platte. Verwenden Sie fröhliche Jazzmusik, Nahaufnahmen von frischem Lachs, generieren Sie Untertitel und enden Sie mit unserem Logo.",
     "send": "Senden",
     "stop": "Stoppen",
-    "uploading": "Wird hochgeladen..."
+    "uploading": "Wird hochgeladen...",
+    "clearSelection": "Clear Selection",
+    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
+    "noPromotionPlan": "No promotion plans",
+    "selectPromotionPlan": "Select Promotion Plan",
+    "upload": "Upload"
   },
   "message": {
     "thinking": "Denke nach...",
@@ -31,7 +36,14 @@
       "failed": "Fehlgeschlagen"
     },
     "rate": "Bewerten",
-    "share": "Teilen"
+    "share": "Teilen",
+    "editTitle": "Edit Title",
+    "favorite": "Favorite",
+    "moreActions": "More",
+    "titleLabel": "Task Title",
+    "titlePlaceholder": "Enter task title",
+    "titleUpdated": "Title updated",
+    "unfavorite": "Unfavorite"
   },
   "home": {
     "title": "Wie kann ich Ihnen helfen?",
@@ -141,7 +153,9 @@
     "image": "Bild",
     "document": "Dokument",
     "uploadFailed": "Upload fehlgeschlagen, bitte erneut versuchen",
-    "uploadCancelled": "Upload abgebrochen"
+    "uploadCancelled": "Upload abgebrochen",
+    "edit": "Bearbeiten",
+    "remove": "Entfernen"
   },
   "workflow": {
     "toolCallCompleted": "Tool-Aufrufe abgeschlossen",
@@ -169,7 +183,9 @@
     "rechargeCredits": "Guthaben aufladen",
     "action": "Aktion",
     "actionDesc": "Bitte führen Sie die folgende Aktion aus",
-    "continue": "Fortfahren"
+    "continue": "Fortfahren",
+    "error": "Fehlgeschlagen",
+    "errorDesc": "Generierung fehlgeschlagen. Bitte versuchen Sie es später erneut."
   },
   "publishDetail": {
     "title": "Veröffentlichungsdetails",
@@ -200,6 +216,19 @@
       "upload": "Wird hochgeladen...",
       "publish": "Wird veröffentlicht...",
       "complete": "Veröffentlicht"
-    }
+    },
+    "goLogin": "Go Login",
+    "installPlugin": "Click to install plugin",
+    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
+    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
+    "retry": "Retry"
+  },
+  "toolDetail": {
+    "input": "Input Parameters",
+    "noResult": "No result yet",
+    "output": "Execution Result"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "Diese Plattform benötigt die Browsererweiterung. Bitte autorisieren Sie zuerst die Erweiterung."
   }
 }

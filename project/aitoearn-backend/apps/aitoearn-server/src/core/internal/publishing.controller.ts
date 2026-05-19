@@ -7,7 +7,7 @@ import {
   Post,
 } from '@nestjs/common'
 import { Internal } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 import { PublishRecord } from '@yikart/mongodb'
 import { PublishingInternalService } from './provider/publishing.service'
 
@@ -33,7 +33,7 @@ export class PublishingController {
   })
   @Get('internal/publishing/records/:recordId')
   async getPublishRecordInfo(
-    @Param('recordId') recordId: string,
+    @Param('recordId', ParseObjectIdPipe) recordId: string,
   ) {
     return await this.publishingInternalService.getPublishRecordInfo(
       recordId,

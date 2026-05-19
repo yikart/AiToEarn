@@ -18,6 +18,9 @@ export interface GrokCreateVideoRequest {
   image?: {
     url: string
   }
+  reference_images?: Array<{
+    url: string
+  }>
 }
 
 export interface GrokEditVideoRequest {

@@ -1,7 +1,7 @@
 /**
  * useNewWork Hook
  *
- * 功能描述: 统一处理"新建作品"逻辑，包括账户检查、默认账号选择、发布弹窗打开
+ * 功能描述: 统一处理"新建作品"逻辑，包括默认账号选择、发布弹窗打开
  */
 
 import type { RefObject } from 'react'
@@ -10,9 +10,6 @@ import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useCallback, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { AccountStatus } from '@/app/config/accountConfig'
-import { useTransClient } from '@/app/i18n/client'
-import { useChannelManagerStore } from '@/components/ChannelManager'
-import { confirm } from '@/lib/confirm'
 import { useAccountStore } from '@/store/account'
 
 export interface UseNewWorkOptions {
@@ -27,8 +24,6 @@ export interface UseNewWorkOptions {
 export interface OpenNewWorkOptions {
   /** 指定发布日期（ISO 格式字符串） */
   date?: string
-  /** 跳过账户检查，直接打开弹窗 */
-  skipAccountCheck?: boolean
 }
 
 /**
@@ -55,31 +50,24 @@ export interface OpenNewWorkOptions {
 export function useNewWork(options: UseNewWorkOptions) {
   const { publishDialogRef, setPublishDialogOpen, setDefaultAccountIds } = options
 
-  const { t } = useTransClient('account')
-  const { t: tCommon } = useTransClient('common')
-
   // 账户相关状态
-  const { accountActive, accountGroupList, activeSpaceId } = useAccountStore(
+  const { accountActive, accountGroupList, activeSpaceId, accountList } = useAccountStore(
     useShallow(state => ({
       accountActive: state.accountActive,
       accountGroupList: state.accountGroupList,
       activeSpaceId: state.activeSpaceId,
-    })),
-  )
-
-  // 频道管理器
-  const { openConnectList } = useChannelManagerStore(
-    useShallow(state => ({
-      openConnectList: state.openConnectList,
+      accountList: state.accountList,
     })),
   )
 
   // 获取所有账号列表（扁平化）
   const allAccounts = useMemo(() => {
-    return accountGroupList.reduce<SocialAccount[]>((acc, group) => {
+    const groupedAccounts = accountGroupList.reduce<SocialAccount[]>((acc, group) => {
       return [...acc, ...group.children]
     }, [])
-  }, [accountGroupList])
+
+    return groupedAccounts.length > 0 ? groupedAccounts : accountList
+  }, [accountGroupList, accountList])
 
   // 是否有可用账户
   const hasUsableAccounts = useMemo(() => {
@@ -131,28 +119,11 @@ export function useNewWork(options: UseNewWorkOptions) {
 
   /**
    * 打开新建作品弹窗
-   * 会自动检查账户状态，设置默认账号，并打开弹窗
+   * 会自动设置默认账号，并打开弹窗
    */
   const openNewWork = useCallback(
     (workOptions?: OpenNewWorkOptions) => {
-      const { date, skipAccountCheck = false } = workOptions || {}
-
-      // 检查是否有可用账户
-      if (!skipAccountCheck && !hasUsableAccounts) {
-        // 使用 confirm 弹窗提示用户先添加账号
-        confirm({
-          title: t('noAccountWarning.title'),
-          content: t('noAccountWarning.content'),
-          okText: t('noAccountWarning.addAccount'),
-          cancelText: tCommon('actions.cancel'),
-          okType: 'default',
-          onOk: async () => {
-            // 打开频道管理器连接频道列表
-            openConnectList()
-          },
-        })
-        return
-      }
+      const { date } = workOptions || {}
 
       // 设置默认选中的账号
       if (setDefaultAccountIds) {
@@ -169,10 +140,6 @@ export function useNewWork(options: UseNewWorkOptions) {
       setPublishDialogOpen(true)
     },
     [
-      hasUsableAccounts,
-      t,
-      tCommon,
-      openConnectList,
       setDefaultAccountIds,
       getDefaultAccountIds,
       publishDialogRef,

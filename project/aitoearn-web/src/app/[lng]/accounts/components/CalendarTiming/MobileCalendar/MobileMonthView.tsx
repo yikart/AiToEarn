@@ -3,7 +3,6 @@
  *
  * 功能描述: 移动端日历月视图
  * - 紧凑型月历网格
- * - 有数据的日期显示小圆点
  * - 选中日期高亮
  * - 点击日期切换选中
  */
@@ -12,15 +11,19 @@
 
 import type { IMobileMonthViewProps } from './mobileCalendar.types'
 import dayjs from 'dayjs'
-import { memo, useCallback, useMemo } from 'react'
+import { memo, useMemo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
+import { getChinaCalendarLunarInfo } from '../calendarFestival.utils'
+import CalendarLunarText from '../CalendarLunarText'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 
 const MobileMonthView = memo<IMobileMonthViewProps>(
-  ({ currentDate, selectedDate, onDateSelect, recordMap }) => {
+  ({ currentDate, selectedDate, recordMap, onDateSelect }) => {
     const { t } = useTransClient('common')
+    const lng = useGetClientLng()
 
     // 星期标题 - 使用 i18n 翻译
     const weekDays = t('calendar.weekDaysShort', { returnObjects: true }) as string[]
@@ -79,15 +82,6 @@ const MobileMonthView = memo<IMobileMonthViewProps>(
     // 选中日期字符串
     const selectedStr = dayjs(selectedDate).format('YYYY-MM-DD')
 
-    // 检查日期是否有数据
-    const hasData = useCallback(
-      (dateStr: string) => {
-        const records = recordMap.get(dateStr)
-        return records && records.length > 0
-      },
-      [recordMap],
-    )
-
     return (
       <div className="px-4 py-3 bg-background">
         {/* 星期标题行 */}
@@ -113,23 +107,24 @@ const MobileMonthView = memo<IMobileMonthViewProps>(
             const isToday = dateStr === todayStr
             const isSelected = dateStr === selectedStr
             const isPast = date.isBefore(dayjs(), 'day')
-            const hasRecords = hasData(dateStr)
+            const hasRecords = (recordMap.get(dateStr)?.length ?? 0) > 0
+            const lunar = getChinaCalendarLunarInfo(date.toDate(), lng)
 
             return (
               <button
                 key={dateStr}
                 type="button"
                 className={cn(
-                  'flex flex-col items-center justify-center py-1.5 rounded-lg cursor-pointer transition-colors',
+                  'relative flex min-h-14 flex-col items-center justify-center rounded-xl py-1.5 cursor-pointer transition-colors',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   // 非当月日期
                   !isCurrentMonth && 'text-muted-foreground/40',
                   // 当月日期样式
                   isCurrentMonth
                   && (isSelected
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-gradient-back text-gradient-foreground shadow-md shadow-primary/20'
                     : isToday
-                      ? 'text-foreground font-bold'
+                      ? 'bg-primary/10 text-primary font-bold'
                       : isPast
                         ? 'text-muted-foreground'
                         : 'text-foreground'),
@@ -137,24 +132,22 @@ const MobileMonthView = memo<IMobileMonthViewProps>(
                 )}
                 onClick={() => onDateSelect(date.toDate())}
               >
+                {hasRecords && (
+                  <span
+                    className={cn(
+                      'pointer-events-none absolute right-2 top-2 size-1.5 rounded-full shadow-sm',
+                      isSelected ? 'bg-gradient-foreground/90' : 'bg-brand-cyan',
+                    )}
+                  />
+                )}
                 {/* 日期数字 */}
-                <span className="text-sm font-medium">{date.date()}</span>
-
-                {/* 小圆点指示器 - 所有有数据的日期都显示 */}
-                <div className="h-1 mt-0.5">
-                  {hasRecords && (
-                    <div
-                      className={cn(
-                        'w-1 h-1 rounded-full',
-                        isSelected
-                          ? 'bg-primary-foreground'
-                          : isCurrentMonth
-                            ? 'bg-primary'
-                            : 'bg-primary/40',
-                      )}
-                    />
-                  )}
-                </div>
+                <span className="text-sm font-semibold tabular-nums">{date.date()}</span>
+                <CalendarLunarText
+                  lunar={lunar}
+                  selected={isSelected}
+                  compact
+                  className={cn('mt-1 max-w-full px-1', isSelected && 'text-gradient-foreground/85')}
+                />
               </button>
             )
           })}

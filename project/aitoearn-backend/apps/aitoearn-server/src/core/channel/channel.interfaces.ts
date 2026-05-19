@@ -131,6 +131,18 @@ export enum FeedbackType {
   feedback = 'feedback', // 反馈
   msgReport = 'msgReport', // 消息举报
   msgFeedback = 'msgFeedback', // 消息反馈
+  dataAbnormal = 'dataAbnormal', // 数据异常
+}
+
+export enum FeedbackRelType {
+  workData = 'workData', // 作品数据
+  taskData = 'taskData', // 任务数据
+}
+
+export interface FeedbackRelData {
+  relId: string
+  relType: FeedbackRelType
+  desc?: string
 }
 
 export interface Feedback {
@@ -139,6 +151,7 @@ export interface Feedback {
   userName: string
   content: string
   type: FeedbackType
+  relData?: FeedbackRelData[]
   tagList: string[]
   fileUrlList: string[]
   createAt: Date
@@ -150,6 +163,7 @@ export interface CreateFeedback {
   userName: string
   content: string
   type?: FeedbackType
+  relData?: FeedbackRelData[]
   tagList?: string[]
   fileUrlList?: string[]
 }

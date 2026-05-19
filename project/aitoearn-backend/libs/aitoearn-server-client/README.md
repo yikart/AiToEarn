@@ -1,7 +1,7 @@
-# one-signal
+# aitoearn-server-client
 
 This library was generated with [Nx](https://nx.dev).
 
 ## Building
 
-Run `nx build one-signal` to build the library.
+Run `nx build aitoearn-server-client` to build the library.

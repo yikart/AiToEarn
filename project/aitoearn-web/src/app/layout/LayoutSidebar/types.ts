@@ -35,9 +35,10 @@ export interface LogoSectionProps extends SidebarCommonProps {
 
 /** 导航项数据类型 */
 export interface NavItemData {
-  path: string
+  path?: string
   translationKey: string
   icon?: React.ReactNode
+  children?: NavItemData[]
 }
 
 /** 导航区域 Props */

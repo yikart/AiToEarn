@@ -13,28 +13,38 @@
     "trialing": "체험판",
     "go": "Go",
     "plus": "Plus",
-    "ultra": "Ultra"
+    "ultra": "Ultra",
+    "fortune": "Fortune 회원",
+    "treasure": "Treasure 회원"
   },
   "subscribe": "업그레이드",
   "balance": "크레딧",
   "recharge": "충전",
-  "adBalance": "잔액",
+  "adBalance": "광고주 잔액",
+  "creatorBalance": "크리에이터 잔액",
   "plugin": "확장 프로그램",
   "affiliates": "제휴",
   "goToWebsite": "공식 웹사이트로 이동",
+  "filing": {
+    "policeRecord": "京公网安备11010502060417号"
+  },
   "pluginStatus": {
     "notInstalled": "설치",
     "noPermission": "권한 없음",
     "ready": "준비됨",
-    "checking": "확인 중"
+    "checking": "확인 중",
+    "updateAvailable": "업데이트 가능"
   },
   "contactUs": "문의하기",
+  "apiErrorContactTip": "궁금한 점이 있으시면 ",
+  "wechat": "WeChat",
+  "scanToAdd": "QR코드를 스캔하여 추가",
   "documents": "문서",
   "helpDocs": "도움말 문서",
-  "pluginGuide": "플러그인 가이드",
+  "pluginGuide": "플러그인 설치 및 사용 가이드",
+  "pluginUpdateGuide": "플러그인 업데이트 가이드",
   "privacyPolicy": "개인정보 처리방침",
   "termsOfService": "서비스 이용약관",
-  "downloadAppButton": "앱 다운로드",
   "noNotifications": "알림 없음",
   "markAllAsRead": "모두 읽음으로 표시",
   "markAsRead": "읽음으로 표시",
@@ -42,12 +52,21 @@
   "viewAll": "전체 보기",
   "cancel": "취소",
   "confirm": "확인",
+  "save": "저장",
   "expand": "펼치기",
   "collapse": "접기",
   "yes": "예",
   "no": "아니오",
   "calendar": {
-    "weekDaysShort": ["일", "월", "화", "수", "목", "금", "토"],
+    "weekDaysShort": [
+      "일",
+      "월",
+      "화",
+      "수",
+      "목",
+      "금",
+      "토"
+    ],
     "monthSuffix": "월"
   },
   "actions": {
@@ -83,14 +102,12 @@
   },
   "header": {
     "messages": "메시지",
-    "income": "수익 기록",
-    "wallet": "내 지갑",
     "materialLibrary": "라이브러리",
     "draftBox": "콘텐츠 관리",
     "draftBoxSeoTitle": "콘텐츠 관리 - AI 일괄 생성 및 초안 편집기",
     "draftBoxSeoDescription": "모든 콘텐츠 초안을 한 곳에서 관리하세요. AI로 소셜 미디어 게시물을 일괄 생성하고, 게시 전 초안을 편집하고, AiToEarn으로 멀티 플랫폼 배포를 정리하세요.",
     "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn",
-    "agentAssets": "Agent 자산"
+    "brandPromotion": "AI Check-in"
   },
   "tasks": "마켓플레이스",
   "signIn": {
@@ -128,35 +145,6 @@
   "networkBusy": "네트워크가 혼잡합니다. 나중에 다시 시도해 주세요!",
   "networkError": "네트워크 오류, 나중에 다시 시도해 주세요!",
   "contact": "도움이 필요하세요? 지원팀에 문의하세요:",
-  "uptime": {
-    "seoTitle": "AI 모델 상태 - 실시간 모델 가용성 모니터링",
-    "pageKeywords": "AI 모델 상태, 모델 가용성, 가동률 추적, AI 서비스 상태, 모델 모니터링, AiToEarn 상태",
-    "pageTitle": "AI 모델 상태",
-    "pageDescription": "AI 모델의 실시간 가용성과 가동 시간을 모니터링합니다. 각 모델과 제공업체의 작동 상태를 확인합니다.",
-    "loading": "로딩 중...",
-    "noData": "데이터 없음",
-    "uptimePercentage": "가동률:",
-    "normal": "정상",
-    "timeout": "시간 초과",
-    "unavailable": "사용 불가",
-    "provider": "제공업체",
-    "operation": "작업",
-    "latency": "지연 시간",
-    "errorType": "오류",
-    "filter": {
-      "title": "필터",
-      "model": "모델",
-      "timeRange": "기간",
-      "all": "전체",
-      "last7Days": "최근 7일",
-      "last30Days": "최근 30일",
-      "last90Days": "최근 90일",
-      "reset": "초기화",
-      "apply": "적용"
-    },
-    "copy": "복사",
-    "copied": "복사됨"
-  },
   "websit": {
     "termsOfService": {
       "title": "서비스 이용약관",
@@ -217,14 +205,10 @@
       "importantNoteContent": "삭제 후 데이터는 복구할 수 없습니다. 신중하게 진행해 주세요. 법률에 의해 요구되는 일부 데이터는 삭제되지 않을 수 있습니다."
     }
   },
-  "lowBalanceAlert": {
-    "title": "잔액 부족 알림",
-    "content": "크레딧 잔액이 부족합니다. 계속 이용하시려면 충전해 주세요.",
-    "neverRemind": "다시 알리지 않기"
-  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 최저 $0.03/초",
-    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+    "videoPromo": "gpt-image-2 이미지 1장당 최저 0.007위안",
+    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
   },
   "chinaDomainPrompt": {
     "title": "중국 리전으로 전환",
@@ -256,16 +240,40 @@
     "cropFree": "자유",
     "cropConfirm": "자르기 적용",
     "cropCancel": "자르기 취소",
-    "cropRatio": "비율"
+    "cropRatio": "비율",
+    "outputFormat": "내보내기 형식",
+    "convertToFormat": "{{format}}로 변환",
+    "compressionQuality": "압축 품질",
+    "pngLossless": "PNG 무손실 내보내기",
+    "compressImage": "이미지 압축",
+    "compressShort": "압축",
+    "convertFormat": "형식 변환",
+    "convertShort": "변환",
+    "compressHint": "저장 전에 품질을 조정합니다. 이미지는 압축 JPG로 내보냅니다.",
+    "convertHint": "저장할 때 사용할 이미지 형식을 선택합니다.",
+    "compressJpgTip": "압축하면 출력 형식이 자동으로 JPG로 전환됩니다.",
+    "pngLosslessShort": "무손실"
   },
   "switchToInternational": "\"국제판\"으로",
   "switchToChina": "\"중국판\"으로",
-  "platformRegionPrompt": {
-    "title": "플랫폼 지역 제한",
-    "chinaContent": "{{platform}}은(는) 중국 사이트에서만 이용 가능합니다. 중국 사이트로 이동하시겠습니까?",
-    "abroadContent": "{{platform}}은(는) 국제 사이트에서만 이용 가능합니다. 국제 사이트로 이동하시겠습니까?",
-    "ok": "이동",
-    "cancel": "취소"
+  "noMore": "더 이상 데이터가 없습니다",
+  "comingSoon": "개발 중입니다, 기대해 주세요",
+  "enterpriseSurvey": {
+    "description": "필요한 기업 기능을 설문으로 알려주세요.",
+    "action": "설문 작성"
   },
-  "noMore": "더 이상 데이터가 없습니다"
+  "wechatBrowserMask": {
+    "cornerHint": "오른쪽 상단 메뉴",
+    "bubbleLine1": "오른쪽 상단 메뉴에서",
+    "bubbleLine2": "\"브라우저에서 열기\" 선택",
+    "openInBrowser": "브라우저에서 열기",
+    "description": "WeChat 웹뷰에서는 게시와 리디렉션이 제한될 수 있습니다. 브라우저에서 계속 진행해 주세요."
+  },
+  "advertiser": "AI Check-in",
+  "datePicker": {
+    "clear": "Clear",
+    "confirm": "Confirm",
+    "selectDate": "Select date",
+    "selectDateRange": "Select date range"
+  }
 }

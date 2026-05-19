@@ -1,6 +1,6 @@
 /**
  * LoginContent - 登录页面内容组件
- * 邮箱验证码登录
+ * 中国区支持手机号 / 邮箱验证码登录切换，海外默认邮箱登录
  */
 
 'use client'
@@ -9,13 +9,16 @@ import { motion } from 'framer-motion'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
 import logo from '@/assets/images/logo.png'
+import { Button } from '@/components/ui/button'
+import { isChina } from '@/constant'
 import { useUserStore } from '@/store/user'
 
 import { EmailLoginForm } from './EmailLoginForm'
+import { PhoneLoginForm } from './PhoneLoginForm'
 
 const fadeInUp = {
   initial: { opacity: 0, y: 10 },
@@ -27,6 +30,7 @@ export default function LoginContent() {
   const router = useRouter()
   const { token, _hasHydrated } = useUserStore()
   const { t } = useTransClient('login')
+  const [loginMethod, setLoginMethod] = useState<'phone' | 'email'>(isChina ? 'phone' : 'email')
 
   // 已登录用户重定向
   useEffect(() => {
@@ -39,6 +43,8 @@ export default function LoginContent() {
   if (!_hasHydrated || token) {
     return null
   }
+
+  const isPhoneLogin = loginMethod === 'phone'
 
   return (
     <div className="relative min-h-screen w-full overflow-hidden bg-muted">
@@ -85,12 +91,28 @@ export default function LoginContent() {
                 className="drop-shadow-md"
               />
             </Link>
-            <h1 className="text-2xl font-semibold text-foreground">{t('welcomeBack')}</h1>
             <p className="mt-2 text-muted-foreground">{t('loginSubtitle')}</p>
           </div>
 
-          {/* 登录表单 */}
-          <EmailLoginForm />
+          {/* 根据环境切换表单 */}
+          {isChina
+            ? isPhoneLogin
+              ? <PhoneLoginForm />
+              : <EmailLoginForm showGoogleLogin={false} />
+            : <EmailLoginForm />}
+
+          {isChina && (
+            <div className="mt-3 flex justify-end">
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => setLoginMethod(isPhoneLogin ? 'email' : 'phone')}
+                className="h-auto cursor-pointer px-0 text-sm text-muted-foreground hover:text-foreground"
+              >
+                {isPhoneLogin ? t('switchToEmailLogin') : t('switchToPhoneLogin')}
+              </Button>
+            </div>
+          )}
         </motion.div>
 
         {/* 底部条款 */}

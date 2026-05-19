@@ -5,15 +5,17 @@
 
 'use client'
 
-import { ArrowLeft, Sparkles } from 'lucide-react'
+import { ArrowLeft, Info, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
-import { isPlatformAvailable, PlatType, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
+import { AccountPlatInfoArr, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/hooks/useIsMobile'
+import { confirm } from '@/lib/confirm'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 import { navigateToLogin } from '@/utils/auth'
@@ -53,7 +55,7 @@ export function ConnectChannelList() {
   }
 
   // 处理平台点击
-  const handlePlatformClick = (platform: PlatType) => {
+  const handlePlatformClick = async (platform: PlatType) => {
     // 移动端点击小红书时显示提示
     if (isMobile && platform === PlatType.Xhs) {
       toast.warning(t('channelManager.xhsMobileNotSupported'))
@@ -65,6 +67,18 @@ export function ConnectChannelList() {
       closeModal()
       navigateToLogin()
       return
+    }
+
+    if (platform === PlatType.WxGzh) {
+      const confirmed = await confirm({
+        title: t('channelManager.wxGzhAuthNoticeTitle'),
+        content: t('channelManager.wxGzhAuthNoticeContent'),
+        okText: t('channelManager.continueAuth'),
+      })
+
+      if (!confirmed) {
+        return
+      }
     }
 
     // 如果没有设置目标空间，使用默认空间
@@ -99,6 +113,17 @@ export function ConnectChannelList() {
         </div>
       )}
 
+      <Alert
+        data-testid="cm-connect-multi-account-tip"
+        role="note"
+        className="mx-4 mt-4 w-auto border-border bg-muted/30 text-muted-foreground [&>svg]:text-muted-foreground"
+      >
+        <Info className="h-4 w-4" />
+        <AlertDescription className="text-xs leading-relaxed sm:text-sm">
+          {t('channelManager.connectNewChannelTip')}
+        </AlertDescription>
+      </Alert>
+
       {/* 平台网格 */}
       <ScrollArea className="flex-1 p-4">
         <div
@@ -113,8 +138,7 @@ export function ConnectChannelList() {
           "
         >
           <TooltipProvider>
-            {RegionSortedPlatInfoArr.map(([key, value]) => {
-              const isRegionRestricted = !isPlatformAvailable(key)
+            {AccountPlatInfoArr.map(([key, value]) => {
               return (
                 <Tooltip key={key}>
                   <TooltipTrigger asChild>
@@ -132,7 +156,6 @@ export function ConnectChannelList() {
                         active:translate-y-0 active:scale-[0.98]
                         sm:h-[100px] sm:rounded-xl sm:p-3
                         md:h-[110px]
-                        ${isRegionRestricted ? 'opacity-50 grayscale' : ''}
                       `}
                       onClick={() => handlePlatformClick(key as PlatType)}
                     >

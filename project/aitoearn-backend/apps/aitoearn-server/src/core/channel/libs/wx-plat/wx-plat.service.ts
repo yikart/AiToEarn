@@ -9,7 +9,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios'
 import { config } from '../../../../config'
 import { WxGZHError } from '../wx-gzh/wx-gzh.exception'
-import { WechatApiResponse, WxPlatAuthorizerInfo } from './comment'
+import { WechatApiResponse } from './comment'
 
 @Injectable()
 export class WxPlatApiService {
@@ -41,7 +41,7 @@ export class WxPlatApiService {
     }
     catch (error: unknown) {
       const err = WxGZHError.buildFromError(error, operation)
-      this.logger.error(`[myWxPlat:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      this.logger.error(err, `[myWxPlat:${operation}] Error !! ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }
@@ -104,29 +104,9 @@ export class WxPlatApiService {
   }
 
   /**
-   * 使用授权码获取授权信息
-   * @param componentAccessToken
-   * @param authorizationCode
-   * @returns
-   */
-  async getQueryAuth(componentAccessToken: string, authorizationCode: string) {
-    const url = `https://api.weixin.qq.com/cgi-bin/component/api_query_auth?component_access_token=${componentAccessToken}`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: {
-        component_appid: this.id,
-        authorization_code: authorizationCode,
-      },
-    }
-    return this.request<{
-      authorization_info: WxPlatAuthorizerInfo
-    }>(url, config, { operation: 'getQueryAuth' })
-  }
-
-  /**
    * 刷新用户的authorizer_access_token
    * @param componentAccessToken
-   * @param appId 用的应用的appid
+   * @param authorizerAppId 用的应用的appid
    * @param authorizerRefreshToken 刷新token
    * @returns
    */
@@ -149,55 +129,5 @@ export class WxPlatApiService {
       authorizer_refresh_token: string
       expires_in: number // 有效期，单位：秒 2小时
     }>(url, config, { operation: 'getAuthorizerAccessToken' })
-  }
-
-  /**
-   * 获取用户的授权信息
-   * @param userId
-   * @param authorizationCode
-   * @returns
-   */
-  async setUserAppAccessTokenInfo(
-    componentAccessToken: string,
-    authorizationCode: string,
-  ) {
-    const url = `https://api.weixin.qq.com/cgi-bin/component/api_query_auth?access_token==${componentAccessToken}`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: {
-        component_appid: this.id,
-        authorization_code: authorizationCode,
-      },
-    }
-    return this.request<{
-      authorization_info: WxPlatAuthorizerInfo
-    }>(url, config, { operation: 'setUserAppAccessTokenInfo' })
-  }
-
-  /**
-   * 获取授权账号的详情
-   * @param componentAccessToken
-   * @param authorizerAppid
-   * @returns
-   */
-  async getAuthorizerInfo(
-    componentAccessToken: string,
-    authorizerAppid: string,
-  ) {
-    const url = `https://api.weixin.qq.com/cgi-bin/component/api_get_authorizer_info?access_token=${componentAccessToken}`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: {
-        component_appid: this.id,
-        authorizer_appid: authorizerAppid,
-      },
-    }
-    return this.request<{
-      authorizer_info: {
-        nick_name: string
-        user_name: string
-        head_img: string
-      }
-    }>(url, config, { operation: 'getAuthorizerInfo' })
   }
 }

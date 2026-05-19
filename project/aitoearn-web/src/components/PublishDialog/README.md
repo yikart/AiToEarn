@@ -41,7 +41,6 @@ PublishDialog/
 │
 ├── hooks/                             # 业务逻辑 hooks
 │   ├── usePublishState.ts             # 弹窗状态管理（loading、modal显示状态）
-│   ├── useContentModeration.ts        # 内容安全检测逻辑
 │   ├── usePlatformAuth.ts             # 平台授权跳转逻辑
 │   ├── usePublishActions.ts           # 发布操作核心逻辑
 │   ├── useAISync.ts                   # AI内容同步到编辑器
@@ -56,13 +55,16 @@ PublishDialog/
 │   │   └── index.tsx
 │   ├── AccountSelector/               # 账户选择器组件
 │   │   └── index.tsx
-│   ├── PublishFooter/                 # 底部操作栏（发布按钮、内容检测等）
+│   ├── PublishFooter/                 # 底部操作栏（发布按钮等）
 │   │   └── index.tsx
-│   ├── PublishModals/                 # 弹窗组件集合（下载App、Facebook页面等）
+│   ├── PublishDialogSkeleton/         # 发布弹窗骨架屏（双端共用）
+│   │   └── index.tsx
+│   ├── PublishModals/                 # 弹窗组件集合（Facebook页面等）
 │   │   └── index.tsx
 │   │
 │   ├── ErrorSummary/                  # 错误汇总组件（双端共用）
 │   ├── PlatParamsSetting/             # 平台参数设置（双端共用）
+│   │   └── plats/TwitterParams/       # Twitter 发布参数（基础设置、投票、媒体增强）
 │   ├── PublishDatePicker/             # 发布时间选择器（双端共用）
 │   ├── PubParmasTextarea/             # 发布内容编辑器（双端共用）
 │   │
@@ -81,15 +83,25 @@ PublishDialog/
 
 ## Hooks 职责说明
 
-| Hook                   | 职责                                              |
-| ---------------------- | ------------------------------------------------- |
-| `usePublishState`      | 管理弹窗内各种临时状态（loading、modal显隐）      |
-| `useContentModeration` | 内容安全检测功能，返回检测结果和状态              |
-| `usePlatformAuth`      | 处理离线账户点击时的平台授权跳转                  |
-| `usePublishActions`    | 发布操作核心逻辑，包含 API 发布和插件发布         |
-| `useAISync`            | AI 生成内容同步到编辑器（划词、图生图、内容填充） |
-| `useUploadSync`        | 监听上传完成，同步 ossUrl 到发布参数              |
-| `usePubParamsVerify`   | 校验发布参数，返回错误和警告信息                  |
+| Hook                 | 职责                                              |
+| -------------------- | ------------------------------------------------- |
+| `usePublishState`    | 管理弹窗内各种临时状态（loading、modal显隐）      |
+| `usePlatformAuth`    | 处理离线账户点击时的平台授权跳转                  |
+| `usePublishActions`  | 发布操作核心逻辑，包含 API 发布和插件发布         |
+| `useAISync`          | AI 生成内容同步到编辑器（划词、图生图、内容填充） |
+| `useUploadSync`      | 监听上传完成，同步 ossUrl 到发布参数              |
+| `usePubParamsVerify` | 校验发布参数，返回错误和警告信息                  |
+
+## Twitter 发布参数
+
+Twitter 参数组件位于 `compoents/PlatParamsSetting/plats/TwitterParams/`，PC 与移动端共用同一套模块：
+
+- `TwitterBaseSection`：回复权限、AI 内容标记
+- `TwitterPollSection`：投票选项、持续时间、投票回复权限
+- `TwitterMediaSection`：图片标记用户、图片/视频替代文本
+- `validation.ts`：Twitter 专属发布校验，由 `usePubParamsVerify` 调用
+
+投票与媒体互斥；图片标记用户仅在图片帖展示；替代文本按当前媒体顺序写入 `mediaMetadata`。
 
 ## 双端功能对照表
 
@@ -149,15 +161,18 @@ router.push(`/accounts?${params.toString()}`)
 
 ```tsx
 import PublishDialog from '@/components/PublishDialog'
-
 ;<PublishDialog
   open={isOpen}
   onClose={() => setIsOpen(false)}
   accounts={accountList}
   defaultAccountIds={['account-1', 'account-2']}
+  accountListInitialLoading={accountLoading && !accountListInitialized}
+  autoPublishOnReady={false}
   onPubSuccess={() => console.log('发布成功')}
 />
 ```
+
+`accountListInitialLoading` 仅用于账号列表首轮加载遮罩，后续刷新账号列表不应传入 loading。
 
 ### 方式三：通过 Store 预设数据
 
@@ -308,7 +323,6 @@ usePubParamsVerify(pubListChoosed)
 | `usePublishDialogStorageStore.tsx` | 发布数据的持久化存储（IndexedDB）                   |
 | `publishDialog.type.ts`            | 类型定义，包括 PubItem、发布参数等                  |
 | `hooks/usePublishActions.ts`       | 发布操作核心逻辑（API发布 + 插件发布）              |
-| `hooks/useContentModeration.ts`    | 内容安全检测逻辑                                    |
 | `hooks/useAISync.ts`               | AI 内容同步（划词、图生图、内容填充）               |
 | `compoents/DesktopPublishContent/` | PC 端主内容渲染组件                                 |
 | `compoents/AccountSelector/`       | 账户选择器 UI 组件                                  |

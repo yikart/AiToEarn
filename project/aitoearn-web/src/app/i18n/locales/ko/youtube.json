@@ -13,5 +13,6 @@
   "uploadFailed": "업로드 실패",
   "uploadSuccess": "업로드 성공",
   "checkFailed": "확인 실패",
-  "alreadyAuthorized": "이미 인증됨"
+  "alreadyAuthorized": "이미 인증됨",
+  "notAuthorized": "Not authorized"
 }

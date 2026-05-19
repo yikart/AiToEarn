@@ -23,11 +23,19 @@ interface StepsProps {
   items: StepItem[]
   /** 方向，vertical 或 horizontal */
   direction?: 'vertical' | 'horizontal'
+  /** 当前步骤图标样式 */
+  processIcon?: 'spinner' | 'number'
   /** 自定义类名 */
   className?: string
 }
 
-export function Steps({ current = 0, items, direction = 'horizontal', className }: StepsProps) {
+export function Steps({
+  current = 0,
+  items,
+  direction = 'horizontal',
+  processIcon = 'spinner',
+  className,
+}: StepsProps) {
   const isVertical = direction === 'vertical'
 
   const getStepStatus = (index: number, itemStatus?: StepStatus): StepStatus => {
@@ -45,6 +53,8 @@ export function Steps({ current = 0, items, direction = 'horizontal', className 
       return <Check className="w-5 h-5 text-white" />
     }
     if (status === 'process') {
+      if (processIcon === 'number')
+        return <span className="text-sm font-medium">{index + 1}</span>
       return <Loader2 className="w-5 h-5 text-white animate-spin" />
     }
     if (status === 'error') {

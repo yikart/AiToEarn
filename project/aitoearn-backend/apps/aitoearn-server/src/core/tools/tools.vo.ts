@@ -39,7 +39,7 @@ export const QrCodeArtTaskStatusVoSchema = z.object({
   status: z.string().describe('任务状态'),
   startedAt: z.coerce.date().describe('开始时间'),
   duration: z.number().optional().describe('持续时间（毫秒）'),
-  points: z.number().describe('消耗 Credits'),
+  points: z.number().describe('用量点数'),
   images: z.array(imageObjectSchema).optional().describe('生成的图片列表'),
   errorMessage: z.string().optional().describe('错误信息'),
   createdAt: z.coerce.date().describe('创建时间'),

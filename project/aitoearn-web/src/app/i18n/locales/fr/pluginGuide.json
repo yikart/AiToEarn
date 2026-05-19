@@ -11,7 +11,7 @@
   "sections": {
     "installation": "Installer le plugin",
     "manualInstall": "Installation manuelle",
-    "manualInstallDesc": "Pour les canaux GitHub ou Téléchargement Chine",
+    "manualInstallDesc": "For Latest GitHub Channel Download and Latest China Download",
     "authorize": "Autoriser le plugin",
     "loginAccount": "Connexion au compte de réseau social",
     "syncAccount": "Synchroniser le compte"
@@ -25,10 +25,29 @@
     "step2": {
       "title": "Étape 2 : Télécharger le plugin",
       "content": "Sélectionnez la méthode de téléchargement dans la boîte de dialogue et cliquez pour télécharger le plugin.",
-      "caption": "Choisissez le canal de téléchargement approprié",
-      "note": "Différence entre l'installation Chrome Web Store et GitHub Release :",
-      "noteItem1": "Les plugins téléchargés depuis GitHub Release nécessitent d'activer le mode développeur dans votre navigateur pour l'installation, mais les ressources installées ici sont les plugins les plus récents.",
-      "noteItem2": "Les plugins téléchargés depuis Chrome Web Store peuvent être installés directement."
+      "caption": "Choose a download channel in the plugin dialog",
+      "note": "Download channel notes:",
+      "noteItem1": "Nous recommandons d'installer le plugin depuis le Chrome Web Store.",
+      "noteItem2": "Si vous ne pouvez pas accéder au Chrome Web Store en Chine, vous pouvez télécharger le plugin via \"Latest China Download (zip)\". Lorsque nous publions de nouvelles fonctionnalités, la validation du Chrome Web Store peut prendre du temps, donc la version de ce canal peut parfois être plus récente que celle du Chrome Web Store.",
+      "channels": {
+        "chrome": {
+          "title": "Chrome Web Store:",
+          "content": " We recommend installing from the Chrome Web Store, but store reviews can take time. When new features are released early, the Chrome Web Store version may still be an older build. If you do not need the latest features immediately, you can wait for the review to finish. Chrome Web Store also updates plugins automatically. If you need the latest plugin package, use Latest China Download or Latest GitHub Channel Download."
+        },
+        "github": {
+          "title": "Latest GitHub Channel Download:",
+          "content": " This channel provides the newest plugin package. New browser-plugin updates are published here first, then submitted to the Chrome Web Store, which usually takes another 4-5 days for review."
+        },
+        "china": {
+          "title": "Latest China Download:",
+          "content": " Users in mainland China who cannot use the Chrome Web Store can download the latest plugin package from this channel."
+        }
+      },
+      "updateNote": {
+        "prefix": "Note: users who install from Latest China Download or Latest GitHub Channel Download will still receive Chrome Web Store auto-updates after review. If you need the update sooner, please see",
+        "linkText": "the manual update guide",
+        "suffix": "."
+      }
     },
     "step3": {
       "title": "Étape 3 : Vérifier le statut d'installation",
@@ -94,17 +113,24 @@
       "content": "Dans le coin supérieur droit de la page des extensions, activez le \"Mode développeur\"."
     },
     "step3": {
-      "title": "Trouver le fichier du plugin téléchargé",
-      "content": "Ouvrez le dossier de téléchargement de votre navigateur et trouvez le package du plugin .crx téléchargé."
+      "title": "Locate the Downloaded Package",
+      "content": "Open your browser's download folder and find the downloaded .crx plugin package."
     },
     "step4": {
-      "title": "Glisser-déposer pour installer le plugin",
-      "content": "Glissez-déposez le package du plugin .crx sur la page des extensions."
+      "title": "Drag the Package into Extensions",
+      "content": "Drag the .crx plugin package into the browser extensions area."
     },
     "step5": {
-      "title": "Confirmer l'installation",
-      "content": "Dans la boîte de dialogue qui apparaît, cliquez sur \"Ajouter l'extension\" pour confirmer l'installation."
-    }
+      "title": "Confirm Extension Installation",
+      "content": "Click \"Add extension\" in the confirmation dialog to install the plugin."
+    },
+    "step6": {
+      "title": "Turn Off Developer Mode",
+      "content": "After the installation is complete, you can turn off Developer mode."
+    },
+    "tipPrefix": "If you have already installed the plugin from the Chrome Web Store, you can skip this section and go directly to the",
+    "tipLinkText": "Authorize Plugin",
+    "tipSuffix": "section."
   },
   "faq": {
     "title": "FAQ",
@@ -113,5 +139,9 @@
       "answer": "Vous ne vous êtes peut-être pas connecté au Centre Créateur Xiaohongshu. Sur la page d'accueil Xiaohongshu, cliquez sur le bouton dans le coin supérieur droit pour vous connecter rapidement au Centre Créateur Xiaohongshu."
     }
   },
-  "viewGuide": "Voir le guide"
+  "viewGuide": "Voir le guide",
+  "recommendedBrowser": {
+    "title": "Recommended Browsers",
+    "content": "Edge and Google Chrome. The tutorial below uses Google Chrome for all examples."
+  }
 }

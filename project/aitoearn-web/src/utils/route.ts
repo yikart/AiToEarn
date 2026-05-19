@@ -10,7 +10,8 @@ const PUBLIC_PATHS = [
   '/websit', // 网站公共页面（条款、隐私政策等）
   '/blog', // 博客页面
   '/chat', // 分享页面
-  '/welcome', // 欢迎页面
+  '/ai-social', // AI 社媒首页
+  '/agent-assets', // Agent 作品素材
 ]
 
 /**

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 import { CreateApiKeyDto } from './api-key.dto'
 import { ApiKeyService } from './api-key.service'
 import { ApiKeyCreatedVo, ApiKeyItemVo } from './api-key.vo'
@@ -49,7 +49,7 @@ export class ApiKeyController {
   @Delete('/:id')
   async delete(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<void> {
     await this.apiKeyService.deleteByIdAndUserId(id, token.id)
   }

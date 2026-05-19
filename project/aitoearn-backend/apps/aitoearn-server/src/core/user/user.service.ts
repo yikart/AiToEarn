@@ -2,7 +2,7 @@ import type { Locale } from '@yikart/common'
 import { Injectable, Logger } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AppException, getLocale, ResponseCode } from '@yikart/common'
-import { MaterialGroupRepository, MediaGroupRepository, User, UserAiInfo, UserRepository, UserStatus, UserType } from '@yikart/mongodb'
+import { MaterialGroupRepository, MediaGroupRepository, User, UserAiInfo, UserRepository, UserStatus } from '@yikart/mongodb'
 import { PsChannel, RedisPubSubService, RedisService } from '@yikart/redis'
 import axios from 'axios'
 import { google } from 'googleapis'
@@ -46,7 +46,7 @@ export class UserService {
     }
     catch (error) {
       this.logger.error(error)
-      throw new AppException(ResponseCode.TooManyRequests)
+      throw new AppException(ResponseCode.ValidationFailed)
     }
   }
 
@@ -61,16 +61,6 @@ export class UserService {
     if (!res)
       throw new AppException(ResponseCode.UserNotFound)
 
-    return res
-  }
-
-  /**
-   * Get user by invite code
-   * @param inviteCode
-   * @returns
-   */
-  async getUserByPopularizeCode(inviteCode: string): Promise<User | null> {
-    const res = await this.userRepository.getByPopularizeCode(inviteCode)
     return res
   }
 
@@ -94,15 +84,12 @@ export class UserService {
    * @param mail
    * @param password
    * @param salt
-   * @param inviteCode
    * @returns
    */
   async createUserByMail(
     mail: string,
-    inviteCode?: string,
   ): Promise<User> {
     const newData = new NewUser(UserCreateType.mail, mail)
-    newData.inviteCode = inviteCode
     newData.locale = getLocale()
 
     const userInfo = await this.userRepository.create(
@@ -181,20 +168,6 @@ export class UserService {
   }
 
   /**
-   * Generate user invite code
-   * @param id
-   * @returns
-   */
-  async generateUsePopularizeCode(id: string) {
-    const user = await this.getUserInfoById(id)
-    if (!user)
-      throw new AppException(ResponseCode.UserNotFound)
-    const res = await this.userRepository.updatePopularizeCodeById(user)
-    this.redisService.del(`UserInfo:${id}`)
-    return res
-  }
-
-  /**
    * Get or create user by Google authentication
    * @param clientId
    * @param credential
@@ -229,7 +202,7 @@ export class UserService {
     }
     catch (error) {
       this.logger.error(error)
-      throw new AppException(ResponseCode.TooManyRequests)
+      throw new AppException(ResponseCode.ValidationFailed)
     }
 
     const googleAccount = {
@@ -288,15 +261,13 @@ export class UserService {
    * @param user
    * @returns
    */
-  private async afterCreate(
+  private afterCreate(
     user: User,
   ) {
     // Create default material/media groups
     this.materialGroupRepository.createDefault(user.id)
     this.mediaGroupRepository.createDefault(user.id)
 
-    // Generate invite code
-    await this.generateUsePopularizeCode(user.id)
     this.redisPubSubService.emit(PsChannel.USER_CREATE, user)
   }
 
@@ -328,23 +299,9 @@ export class UserService {
     return this.userRepository.listByIds(userIds)
   }
 
-  /**
-   * 切换用户身份类型
-   * @param userId 用户ID
-   * @param userType 目标用户类型
-   * @returns 是否切换成功
-   */
   async updateLocale(userId: string, locale: Locale): Promise<boolean> {
     const res = await this.userRepository.updateById(userId, { $set: { locale } })
     this.redisService.del(`UserInfo:${userId}`)
     return res !== null
-  }
-
-  async switchUserType(userId: string, userType: UserType): Promise<boolean> {
-    const result = await this.userRepository.updateUserTypeById(userId, userType)
-    if (result) {
-      this.redisService.del(`UserInfo:${userId}`)
-    }
-    return result
   }
 }

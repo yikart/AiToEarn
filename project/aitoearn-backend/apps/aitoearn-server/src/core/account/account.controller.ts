@@ -17,7 +17,7 @@ import {
   UpdateAccountStatusDto,
 } from './account.dto'
 import { AccountService } from './account.service'
-import { BatchAccountStatusVo } from './account.vo'
+import { AccountStatisticsRefreshVo, AggregatedAccountStatisticsVo, BatchAccountStatusVo, TotalFansCountVo } from './account.vo'
 
 @ApiTags('Home/Account')
 @Controller('account')
@@ -82,6 +82,30 @@ export class AccountController {
       throw new AppException(ResponseCode.AccountNotFound, 'The account does not exist.')
     }
     return this.accountService.updateAccountStatus(body.id, body.status)
+  }
+
+  @ApiDoc({
+    summary: '获取用户所有账号聚合统计',
+    query: AccountStatisticsDto.schema,
+    response: AggregatedAccountStatisticsVo,
+  })
+  @Get('/aggregated-statistics')
+  async getAggregatedStatistics(
+    @GetToken() token: TokenInfo,
+    @Query() query: AccountStatisticsDto,
+  ): Promise<AggregatedAccountStatisticsVo> {
+    const result = await this.accountService.getAggregatedStatistics(token.id, query.type)
+    return AggregatedAccountStatisticsVo.create(result)
+  }
+
+  @ApiDoc({
+    summary: '获取用户在线账号总粉丝数',
+    response: TotalFansCountVo,
+  })
+  @Get('total-fans-count')
+  async getUserTotalFansCount(@GetToken() token: TokenInfo): Promise<TotalFansCountVo> {
+    const totalFansCount = await this.accountService.getUserTotalFansCount(token.id)
+    return TotalFansCountVo.create({ totalFansCount })
   }
 
   @ApiDoc({
@@ -262,5 +286,18 @@ export class AccountController {
       }
     }
     return BatchAccountStatusVo.create({ statuses })
+  }
+
+  @ApiDoc({
+    summary: '手动刷新账号统计数据（粉丝数等）',
+    response: AccountStatisticsRefreshVo,
+  })
+  @Post('/refresh-statistics/:id')
+  async refreshAccountStatistics(
+    @GetToken() token: TokenInfo,
+    @Param() param: AccountIdDto,
+  ): Promise<AccountStatisticsRefreshVo> {
+    const result = await this.accountService.refreshAccountStatistics(token.id, param.id)
+    return AccountStatisticsRefreshVo.create(result)
   }
 }

@@ -160,7 +160,7 @@ function LoggedInMenuContent({
         <MenuItem
           icon={Globe}
           label={t('common:goToWebsite')}
-          href="/welcome"
+          href="/ai-social"
         />
         <MenuItem
           icon={GitHubIcon}

@@ -4,8 +4,9 @@ import type {
   GetVideoGenerationTaskResponse,
 } from '../volcengine.interface'
 import { Injectable } from '@nestjs/common'
-import axios, { AxiosInstance, AxiosResponse } from 'axios'
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { VolcengineConfig } from '../volcengine.config'
+import { VolcengineException } from '../volcengine.exception'
 import { BaseService } from './base.service'
 
 /**
@@ -25,7 +26,7 @@ export class VideoGenService extends BaseService {
    * 创建HTTP客户端
    */
   private createHttpClient(): AxiosInstance {
-    return axios.create({
+    const httpClient = axios.create({
       baseURL: this.config.baseUrl,
       timeout: 30000,
       headers: {
@@ -33,6 +34,17 @@ export class VideoGenService extends BaseService {
         'Authorization': `Bearer ${this.config.apiKey}`,
       },
     })
+
+    httpClient.interceptors.response.use(
+      response => response,
+      (error: AxiosError) => {
+        const method = error.config?.method?.toUpperCase() || 'UNKNOWN'
+        const url = error.config?.url || 'unknown'
+        return Promise.reject(VolcengineException.buildFromError(error, `${method} ${url}`))
+      },
+    )
+
+    return httpClient
   }
 
   /**

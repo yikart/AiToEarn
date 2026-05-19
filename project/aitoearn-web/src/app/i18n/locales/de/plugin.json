@@ -26,7 +26,8 @@
     "platforms": "Plattformen",
     "status": "Status",
     "time": "Zeit",
-    "viewDetail": "Details anzeigen"
+    "viewDetail": "Details anzeigen",
+    "untitled": "Unbenannt"
   },
   "publishDetail": {
     "title": "Veröffentlichungsdetails",
@@ -39,8 +40,16 @@
     "shareLink": "Link teilen",
     "failReason": "Fehlergrund",
     "close": "Schließen",
+    "minimize": "Minimieren",
     "unknownAccount": "Unbekanntes Konto",
     "creatingRecord": "Veröffentlichungsdatensatz wird erstellt..."
+  },
+  "publishFloating": {
+    "xhsPublishing": "RedNote is publishing",
+    "pluginPublishing": "Plugin publishing in progress",
+    "openDetail": "Click to view details",
+    "completed": "Plugin publishing completed",
+    "failed": "Plugin publishing failed. View details."
   },
   "common": {
     "confirm": "Bestätigen",
@@ -72,11 +81,19 @@
     "downloadButton": "Jetzt herunterladen",
     "chromeWebStore": "Chrome Web Store",
     "chinaDownload": "China-Download",
+    "chinaLatestZipDownload": "Neueste China-Version herunterladen",
+    "githubLatestDownload": "Neueste GitHub-Kanal-Version herunterladen",
     "activeDescription": "Ihr Browser-Plugin ist aktiviert. Sie können jetzt die Veröffentlichungsfunktion nutzen!",
     "platformAccounts": "Plattform-Konten",
     "notLoggedIn": "Nicht angemeldet",
-    "xhsNotLoggedInTip": "Xiaohongshu erfordert Anmeldung im Creator Center",
+    "xhsNotLoggedInTip": "Zum Abrufen von Notizdetails ist die Anmeldung auf der <homeLink>Xiaohongshu-Startseite</homeLink> erforderlich. Zum Veröffentlichen wird zusätzlich das <creatorLink>Xiaohongshu Creator Center</creatorLink> benötigt.",
+    "xhsHomeLoggedInOnlyStatus": "Startseite angemeldet",
+    "xhsHomeLoggedInOnlyTip": "Die Xiaohongshu-Startseite ist angemeldet, daher können Notizdetails jetzt abgerufen werden. Zum Veröffentlichen melden Sie sich bitte zusätzlich im Creator Center an.",
+    "xhsCreatorLoggedInOnlyStatus": "Nur Creator Center angemeldet",
+    "xhsCreatorLoggedInOnlyTip": "Das Xiaohongshu Creator Center ist angemeldet, aber Notizdetails können noch nicht abgerufen werden. Bitte melden Sie sich zuerst auf der Startseite an.",
+    "xhsNoteDetailReady": "Notizdetails bereit",
     "loginNow": "Jetzt anmelden",
+    "authPolling": "Autorisierung wird geprüft",
     "viewPublishList": "Veröffentlichungsliste anzeigen",
     "permissionRequired": "Berechtigung erforderlich",
     "permissionDescription": "Plugin ist installiert, benötigt aber die erforderlichen Berechtigungen, um ordnungsgemäß zu funktionieren. Bitte erteilen Sie die erforderlichen Berechtigungen in Ihren Browser-Erweiterungseinstellungen.",
@@ -86,15 +103,40 @@
     "syncSuccess": "Konto erfolgreich synchronisiert",
     "syncFailed": "Kontosynchronisierung fehlgeschlagen",
     "xhsHome": "Startseite",
-    "xhsCreator": "Creator",
+    "xhsCreator": "Creator Center",
     "xhsLoginHomeTip": "Bei Xiaohongshu-Startseite anmelden",
     "xhsLoginCreatorTip": "Bei Xiaohongshu Creator Center anmelden",
-    "viewGuide": "Probleme? Hilfe bei der Installation benötigt?"
+    "xhsCreatorQuickLoginLabel": "Hinweis zum Schnelllogin",
+    "xhsCreatorQuickLoginTip": "Nachdem Sie sich auf der Xiaohongshu-Startseite angemeldet haben, können Sie sich mit einem Klick im Creator Center anmelden.",
+    "viewGuide": "Autorisierungsanleitung ansehen",
+    "viewInstallGuide": "Anleitung zur Installation des Browser-Plugins ansehen (manuelle Installation)"
   },
   "mobile": {
     "title": "Nur für Desktop",
     "description": "Die Browser-Erweiterung ist auf mobilen Geräten nicht verfügbar. Bitte verwenden Sie einen Desktop-Browser, um die Erweiterung zu installieren und zu nutzen.",
     "goToPC": "Bitte am PC besuchen",
     "introduction": "AiToEarn-Plattform Browser-Erweiterung. Arbeitet mit AiToEarn Web zusammen, um Interaktionen auf Xiaohongshu, TikTok und anderen Plattformen zu automatisieren — Folgen, Liken, Lesezeichen, Kommentieren und mehr."
+  },
+  "version": {
+    "title": "Plugin-Version",
+    "description": "Hier wird Ihre installierte Plugin-Version angezeigt und mit der neuesten von der Website geforderten Version verglichen.",
+    "current": "Aktuelle Version",
+    "latest": "Neueste Version",
+    "updatableTag": "Aktualisierbar",
+    "popoverTitle": "Plugin kann auf v{{version}} aktualisiert werden",
+    "unknown": "Nicht verfügbar",
+    "upToDate": "Aktuell",
+    "updateAvailable": "Update verfügbar",
+    "unavailable": "Versionsinfo nicht verfügbar",
+    "updateDescription": "Ihre aktuelle Plugin-Version ist nicht die neueste. Bitte aktualisieren Sie sie zeitnah, um Funktionsunterschiede oder Kompatibilitätsprobleme zu vermeiden.",
+    "googleStoreNotice": "Erweiterungen aus dem Chrome Web Store werden automatisch aktualisiert. Wenn Sie bestimmte Funktionen nicht dringend benötigen, können Sie etwa eine Woche warten, bis das Update automatisch verteilt wird. Wenn Sie Funktionen sofort brauchen, aktualisieren Sie das Plugin manuell.",
+    "googleStoreShortNotice": "Chrome-Web-Store-Versionen aktualisieren sich automatisch",
+    "downloadLatestZip": "Neueste China-Version herunterladen",
+    "updatableTo": "Aktualisierbar auf v{{version}}",
+    "updateButton": "Plugin aktualisieren",
+    "updateNow": "Auf v{{version}} aktualisieren",
+    "viewUpdateGuide": "Update-Anleitung ansehen",
+    "latestDescription": "Ihr Plugin ist bereits auf dem neuesten Stand und kann normal weiterverwendet werden.",
+    "unavailableDescription": "Die Plugin-Version konnte derzeit nicht ausgelesen werden. Öffnen Sie diesen Dialog später erneut."
   }
 }

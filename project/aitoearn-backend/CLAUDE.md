@@ -12,3 +12,17 @@
 - For Nx plugin best practices, check `node_modules/@nx/<plugin>/PLUGIN.md`. Not all plugins have this file - proceed without it if unavailable.
 
 <!-- nx configuration end-->
+
+## Agent skills
+
+### Issue tracker
+
+Issues and PRDs are tracked as local markdown files under `.scratch/`, not GitHub Issues. See `docs/agents/issue-tracker.md`.
+
+### Triage labels
+
+Triage uses Chinese status strings for the local markdown tracker. See `docs/agents/triage-labels.md`.
+
+### Domain docs
+
+This repo uses a multi-context domain documentation layout. See `docs/agents/domain.md`.

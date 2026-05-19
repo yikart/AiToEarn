@@ -3,7 +3,12 @@
     "placeholder": "新しい寿司盛り合わせの8秒縦型プロモーション動画を作成してください。アップテンポなジャズ音楽、新鮮なサーモンのクローズアップ、字幕を生成、最後にロゴを表示。",
     "send": "送信",
     "stop": "停止",
-    "uploading": "アップロード中..."
+    "uploading": "アップロード中...",
+    "clearSelection": "Clear Selection",
+    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
+    "noPromotionPlan": "No promotion plans",
+    "selectPromotionPlan": "Select Promotion Plan",
+    "upload": "Upload"
   },
   "message": {
     "thinking": "考え中...",
@@ -31,7 +36,14 @@
       "failed": "失敗"
     },
     "rate": "評価",
-    "share": "シェア"
+    "share": "シェア",
+    "editTitle": "Edit Title",
+    "favorite": "Favorite",
+    "moreActions": "More",
+    "titleLabel": "Task Title",
+    "titlePlaceholder": "Enter task title",
+    "titleUpdated": "Title updated",
+    "unfavorite": "Unfavorite"
   },
   "home": {
     "title": "何かお手伝いできますか？",
@@ -141,7 +153,9 @@
     "image": "画像",
     "document": "ドキュメント",
     "uploadFailed": "アップロードに失敗しました。もう一度お試しください",
-    "uploadCancelled": "アップロードがキャンセルされました"
+    "uploadCancelled": "アップロードがキャンセルされました",
+    "edit": "編集",
+    "remove": "削除"
   },
   "workflow": {
     "toolCallCompleted": "ツール呼び出し完了",
@@ -169,7 +183,9 @@
     "rechargeCredits": "クレジットをチャージ",
     "action": "アクション",
     "actionDesc": "以下のアクションを完了してください",
-    "continue": "続ける"
+    "continue": "続ける",
+    "error": "失敗",
+    "errorDesc": "生成に失敗しました。後でもう一度お試しください。"
   },
   "publishDetail": {
     "title": "公開詳細",
@@ -200,6 +216,19 @@
       "upload": "アップロード中...",
       "publish": "公開中...",
       "complete": "公開完了"
-    }
+    },
+    "goLogin": "Go Login",
+    "installPlugin": "Click to install plugin",
+    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
+    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
+    "retry": "Retry"
+  },
+  "toolDetail": {
+    "input": "Input Parameters",
+    "noResult": "No result yet",
+    "output": "Execution Result"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "このプラットフォームではブラウザ拡張機能が必要です。先に拡張機能を認証してください。"
   }
 }

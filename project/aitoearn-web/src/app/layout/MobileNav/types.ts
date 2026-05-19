@@ -8,6 +8,13 @@ export interface MobileCloseProps {
 /** 顶部栏 Props */
 export interface MobileTopBarProps {
   onOpen: () => void
+  unreadCount: number
+}
+
+/** 底部导航栏 Props */
+export interface MobileBottomBarProps {
+  currentRoute: string
+  hidden?: boolean
 }
 
 /** 导航项 Props */
@@ -16,6 +23,7 @@ export interface MobileNavItemProps extends MobileCloseProps {
   translationKey: string
   icon?: React.ReactNode
   isActive: boolean
+  className?: string
 }
 
 /** 我的频道按钮 Props */
@@ -29,12 +37,7 @@ export interface MobileNavListProps extends MobileCloseProps {
   onOpenMyChannels: () => void
 }
 
-/** 用户区域 Props */
+/** 用户信息区域 Props */
 export interface MobileUserSectionProps extends MobileCloseProps {
-  onOpenSettings: (tab?: SettingsTab) => void
-}
-
-/** 底部功能区 Props */
-export interface MobileBottomSectionProps extends MobileCloseProps {
   onOpenSettings: (tab?: SettingsTab) => void
 }

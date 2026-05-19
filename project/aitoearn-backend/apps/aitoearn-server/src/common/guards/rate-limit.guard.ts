@@ -3,11 +3,12 @@ import type {
   ExecutionContext,
 } from '@nestjs/common'
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { AppException, ResponseCode } from '@yikart/common'
 import { RedisService } from '@yikart/redis'
 
 export const RATE_LIMIT_KEY = 'rate_limit'
@@ -95,9 +96,13 @@ export class RateLimitGuard implements CanActivate {
       if (count > limit) {
         response.setHeader('X-RateLimit-Remaining', '0')
         this.logger.warn(`Rate limit exceeded for key: ${key}, count: ${count}, limit: ${limit}`)
-        throw new AppException(
-          ResponseCode.TooManyRequests,
-          { ttl },
+        throw new HttpException(
+          {
+            code: HttpStatus.TOO_MANY_REQUESTS,
+            message: 'Too many requests',
+            data: { ttl },
+          },
+          HttpStatus.TOO_MANY_REQUESTS,
         )
       }
 
@@ -106,10 +111,10 @@ export class RateLimitGuard implements CanActivate {
       return true
     }
     catch (error) {
-      if (error instanceof AppException) {
+      if (error instanceof HttpException) {
         throw error
       }
-      this.logger.error(`Rate limit check failed: ${error}`)
+      this.logger.fatal(error, `Rate limit check failed`)
       // 如果Redis出错，允许请求通过（优雅降级）
       return true
     }

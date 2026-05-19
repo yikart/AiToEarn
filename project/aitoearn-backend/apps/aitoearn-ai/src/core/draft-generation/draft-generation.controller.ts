@@ -1,20 +1,30 @@
-import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
+import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
+import { DraftGenerationMemoryService } from './draft-generation-memory.service'
 import {
+  CreateDraftFromVideoUrlDto,
+  CreateDraftFromVideoUrlDtoSchema,
   CreateDraftGenerationV2Dto,
   CreateDraftGenerationV2DtoSchema,
   CreateImageTextDraftDto,
   CreateImageTextDraftDtoSchema,
+  ListDraftGenerationMemoryDto,
+  ListDraftGenerationMemoryDtoSchema,
   ListDraftGenerationTasksDto,
   ListDraftGenerationTasksDtoSchema,
   QueryDraftGenerationTasksDto,
   QueryDraftGenerationTasksDtoSchema,
+  RegenerateDraftGenerationMemoryDto,
+  RegenerateDraftGenerationMemoryDtoSchema,
 } from './draft-generation.dto'
 import { DraftGenerationService } from './draft-generation.service'
 import {
+  CreateDraftFromVideoUrlVo,
   CreateDraftGenerationVo,
+  DraftGenerationMemoryVo,
   DraftGenerationPricingVo,
   DraftGenerationStatsVo,
   DraftGenerationTaskListVo,
@@ -26,6 +36,8 @@ import {
 export class DraftGenerationController {
   constructor(
     private readonly draftGenerationService: DraftGenerationService,
+    private readonly draftGenerationMemoryService: DraftGenerationMemoryService,
+    private readonly metricEventHelperService: MetricEventHelperService,
   ) { }
 
   @ApiDoc({
@@ -84,6 +96,47 @@ export class DraftGenerationController {
   }
 
   @ApiDoc({
+    summary: '查询草稿生成 Memory',
+    query: ListDraftGenerationMemoryDtoSchema,
+    response: [DraftGenerationMemoryVo],
+  })
+  @Get('/memory')
+  async listMemory(
+    @GetToken() token: TokenInfo,
+    @Query() query: ListDraftGenerationMemoryDto,
+  ): Promise<DraftGenerationMemoryVo[]> {
+    const memories = await this.draftGenerationMemoryService.listMemories(token.id, query.contentType)
+    return memories.map(memory => DraftGenerationMemoryVo.create(memory))
+  }
+
+  @ApiDoc({
+    summary: '删除草稿生成 Memory 条目',
+    response: DraftGenerationMemoryVo,
+  })
+  @Delete('/memory/items/:itemId')
+  async deleteMemoryItem(
+    @GetToken() token: TokenInfo,
+    @Param('itemId') itemId: string,
+  ): Promise<DraftGenerationMemoryVo> {
+    const memory = await this.draftGenerationMemoryService.deleteItem(token.id, itemId)
+    return DraftGenerationMemoryVo.create(memory)
+  }
+
+  @ApiDoc({
+    summary: '重新生成草稿生成 Memory',
+    body: RegenerateDraftGenerationMemoryDtoSchema,
+    response: DraftGenerationMemoryVo,
+  })
+  @Post('/memory/regenerate')
+  async regenerateMemory(
+    @GetToken() token: TokenInfo,
+    @Body() body: RegenerateDraftGenerationMemoryDto,
+  ): Promise<DraftGenerationMemoryVo> {
+    const memory = await this.draftGenerationMemoryService.regenerateMemory(token.id, body.contentType, body.plannerModel)
+    return DraftGenerationMemoryVo.create(memory)
+  }
+
+  @ApiDoc({
     summary: '查询单个草稿生成任务',
     description: '根据任务 ID 查询草稿生成任务详情',
     response: DraftGenerationTaskVo,
@@ -91,7 +144,7 @@ export class DraftGenerationController {
   @Get('/:id')
   async getTask(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ): Promise<DraftGenerationTaskVo> {
     const task = await this.draftGenerationService.getTask(id, token.id, UserType.User)
     return DraftGenerationTaskVo.create(task)
@@ -117,12 +170,13 @@ export class DraftGenerationController {
     @Body() body: CreateDraftGenerationV2Dto,
   ): Promise<CreateDraftGenerationVo> {
     const taskIds = await this.draftGenerationService.createDraftsV2(token.id, UserType.User, body)
+    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
     return CreateDraftGenerationVo.create({ taskIds })
   }
 
   @ApiDoc({
     summary: '生成图文内容草稿',
-    description: '使用 AI 生成图文内容草稿。支持选择图片模型：nb2（Nano Banana 2）或 nb-pro（Nano Banana Pro）。返回 taskIds 可用于查询进度。',
+    description: '使用 AI 生成图文内容草稿。支持选择草稿价格接口返回且当前服务已接入的图片模型；非 Gemini 模型收到参考图时，会优先尝试编辑能力，否则忽略参考图继续生成。返回 taskIds 可用于查询进度。',
     body: CreateImageTextDraftDtoSchema,
     response: CreateDraftGenerationVo,
   })
@@ -132,6 +186,23 @@ export class DraftGenerationController {
     @Body() body: CreateImageTextDraftDto,
   ): Promise<CreateDraftGenerationVo> {
     const taskIds = await this.draftGenerationService.createImageTextDrafts(token.id, UserType.User, body)
+    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
     return CreateDraftGenerationVo.create({ taskIds })
+  }
+
+  @ApiDoc({
+    summary: '视频 URL 生成草稿文案',
+    description: '传入纯视频 URL，使用 Gemini 多模态模型分析视频内容，自动生成标题、描述、话题并保存为草稿。同步返回草稿 ID。',
+    body: CreateDraftFromVideoUrlDtoSchema,
+    response: CreateDraftFromVideoUrlVo,
+  })
+  @Post('/from-video-url')
+  async createDraftFromVideoUrl(
+    @GetToken() token: TokenInfo,
+    @Body() body: CreateDraftFromVideoUrlDto,
+  ): Promise<CreateDraftFromVideoUrlVo> {
+    const result = await this.draftGenerationService.generateDraftFromVideoUrl(token.id, UserType.User, body)
+    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
+    return CreateDraftFromVideoUrlVo.create(result)
   }
 }

@@ -6,7 +6,7 @@ export interface DouyinAuthInfo {
 
 export enum WebhookEvent {
   VerifyWebhook = 'verify_webhook',
-  PublishVideo = 'publish_video',
+  CreateVideo = 'create_video',
 }
 export interface ArchiveTypeChild {
   description: string

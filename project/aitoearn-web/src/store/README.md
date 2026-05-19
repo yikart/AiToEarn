@@ -10,9 +10,9 @@ src/store/
 ├── account.ts               # 社交账户管理
 ├── user.ts                  # 用户登录态
 ├── system.ts                # 系统配置
-├── brandInfo.ts             # 品牌信息
-├── taskSquare.ts             # 任务广场
+├── notification.ts          # 通知管理
 ├── publishDetailCache.ts    # 发布详情缓存
+├── thumbnailCache.ts        # 视频封面缓存
 ├── agent/                   # AI Agent 任务管理
 │   ├── index.ts             # 主入口 & 导出
 │   ├── agent.types.ts       # 类型定义
@@ -36,12 +36,11 @@ src/store/
 
 | 文件                    | Hook                    | 功能                                         | 持久化          |
 | ----------------------- | ----------------------- | -------------------------------------------- | --------------- |
-| `account.ts`            | `useAccountStore`       | 社交账户管理、账户分组、余额不足弹框         | 否              |
-| `user.ts`               | `useUserStore`          | 用户登录态、Credits 余额、语言、侧边栏       | 是              |
-| `system.ts`             | `useSystemStore`        | 系统配置（余额提示、日历视图）               | 是（IndexedDB） |
-| `brandInfo.ts`          | `useBrandInfoStore`     | 品牌信息（按草稿箱独立，多实例缓存）         | 否              |
+| `account.ts`            | `useAccountStore`       | 社交账户管理、账户分组                       | 否              |
+| `user.ts`               | `useUserStore`          | 用户登录态、语言、侧边栏                     | 是              |
+| `system.ts`             | `useSystemStore`        | 系统配置（日历视图、日历节日过滤等）         | 是（IndexedDB） |
 | `publishDetailCache.ts` | `usePublishDetailCache` | 发布详情缓存（5 分钟过期）                   | 是（IndexedDB） |
-| `taskSquare.ts`         | `useTaskSquareStore`    | 任务广场列表、分页、平台筛选、国家筛选       | 否              |
+| `thumbnailCache.ts`     | `useThumbnailCache`     | 视频封面缓存                                 | 是（IndexedDB） |
 | `notification.ts`       | `useNotificationStore`  | 通知列表、未读数、无限滚动、乐观更新         | 否              |
 | `agent/`                | `useAgentStore`         | AI Agent 任务管理（多任务隔离、SSE、工作流） | 否              |
 | `plugin/`               | `usePluginStore`        | 浏览器插件（安装检测、账号同步、发布）       | 否              |
@@ -53,10 +52,10 @@ src/store/
 **主要状态：**
 
 - `accountList` / `accountMap` / `accountAccountMap` — 账户列表及多种索引
+- `accountLoading` / `accountListInitialized` — 账户列表加载状态与首轮加载完成标记
 - `accountGroupList` / `accountGroupMap` — 账户分组
 - `accountActive` — 当前选中的账户
 - `activeSpaceId` — 当前空间 ID
-- `lowBalanceAlertOpen` — 余额不足弹框开关
 
 **主要方法：**
 
@@ -68,26 +67,20 @@ src/store/
 
 ### `useUserStore` — 用户登录态
 
-**持久化：** `createPersistStore`（localStorage），其中 `creditsInitialized` 和 `creditsLoading` 通过 `partialize` 排除持久化，每次页面加载从默认值 `false` 开始，避免水合旧值导致误判
+**持久化：** `createPersistStore`（localStorage），其中 URL query token 登录状态通过 `partialize` 排除持久化。
 
 **主要状态：**
 
 - `token` — 登录令牌
-- `userInfo` — 用户信息（VIP 状态、身份类型等）
-- `creditsBalance` / `creditsLoading` / `creditsInitialized` — Credits 余额相关
+- `userInfo` — 用户信息
 - `lang` — 当前语言
 - `sidebarCollapsed` — 侧边栏收起状态
-- `defaultPlanId` — 默认品牌推广计划 ID 缓存
 - `hasEverLoggedIn` — 是否曾登录过
-- `ipLocation` / `ipLocationUpdatedAt` — IP 地理位置信息及更新时间（24 小时缓存）
-- `countryCode` — ISO alpha-2 国家代码（如 `"SG"`、`"US"`），由免费 IP API 获取，兜底中文名映射
 
 **主要方法：**
 
-- `appInit()` — 应用初始化（获取用户信息 + 余额 + 账户 + IP 地理位置）
-- `setToken()` — 设置令牌并立即获取余额
-- `fetchCreditsBalance()` — 获取 Credits 余额
-- `fetchIpLocation()` — 获取 IP 地理位置 + 国家代码（24 小时缓存，静默失败）
+- `appInit()` — 应用初始化（获取用户信息 + 账户）
+- `setToken()` — 设置令牌
 - `logout()` — 登出并跳转首页
 
 ---
@@ -98,43 +91,25 @@ src/store/
 
 **主要状态：**
 
-- `disableLowBalanceAlert` — 是否永久禁用余额不足提示
 - `calendarViewType` — 日历视图类型（`'month'` | `'week'`）
+- `calendarShowSolarFestivals` — 月视图是否显示公历节日
+- `calendarShowSolarTerms` — 月视图是否显示二十四节气
 - `dismissSeedanceBanner` — 是否已关闭 Seedance 公告横幅
-- `myTasksTab` — 我的任务当前选中的 Tab（`'accepted'` | `'published'`，默认 `'accepted'`）
+- `githubStars` / `githubStarsUpdatedAt` — GitHub Stars 缓存值及更新时间
+- `mobileNavExpanded` — 移动端导航区域是否展开
+- `skipTwitterExploreConfirm` — 是否跳过 Twitter 探索积分确认
 
 **主要方法：**
 
-- `setDisableLowBalanceAlert()` — 设置余额提示开关
 - `setCalendarViewType()` — 设置日历视图类型
+- `setCalendarShowSolarFestivals()` — 设置月视图公历节日显示状态
+- `setCalendarShowSolarTerms()` — 设置月视图二十四节气显示状态
 - `setDismissSeedanceBanner()` — 设置 Seedance 公告横幅关闭状态
-- `setMyTasksTab()` — 设置我的任务当前选中的 Tab
+- `setGitHubStars()` — 设置 GitHub Stars 缓存
+- `setMobileNavExpanded()` — 设置移动端导航区域展开状态
+- `setSkipTwitterExploreConfirm()` — 设置 Twitter 探索积分确认跳过状态
 
 > **注意：** AI 批量生成配置（比例、时长、数量、模型等）已迁移到 `useDraftBoxConfigStore`（`src/app/[lng]/draft-box/draftBoxConfigStore.ts`），按草稿箱 groupId 隔离持久化。
-
----
-
-### `useBrandInfoStore` — 品牌信息
-
-**主要状态：**
-
-- `brandInfoMap` — `groupId → BrandLibraryVo | null` 品牌信息映射
-- `loadingMap` / `updatingMap` / `switchingMap` — 各操作按 groupId 隔离的加载状态
-- `initializedMap` — 按 groupId 隔离的初始化状态
-
-**主要方法：**
-
-- `fetchBrandInfo(groupId)` — 获取草稿箱关联的品牌信息
-- `updateBrandInfo(groupId, data)` — 更新品牌基本信息
-- `addImage(groupId, url)` / `deleteImage(groupId, imageId)` — 品牌图片增删
-- `linkBrandLib(groupId, placeId)` — 关联品牌到草稿箱
-- `switchBrandLib(groupId, placeId)` — 切换关联品牌
-
-**便捷 Hook：**
-
-- `useBrandInfoByGroup(groupId)` — 获取指定草稿箱的品牌信息及状态
-
----
 
 ### `usePublishDetailCache` — 发布详情缓存
 
@@ -151,6 +126,20 @@ src/store/
 - `getDetail()` / `setDetail()` — 读写缓存
 - `isExpired()` — 检查缓存是否过期
 - `clearCache()` / `clearAllCache()` — 清除缓存
+
+---
+
+### `useThumbnailCache` — 视频封面缓存
+
+**持久化：** `createPersistStore`（IndexedDB）
+
+**主要状态：**
+
+- `cache` — `videoUrl → thumbnailUrl` 映射
+
+**主要方法：**
+
+- `fetchThumbnail(videoUrl)` — 获取并缓存视频封面，内置并发控制与请求去重
 
 ---
 
@@ -182,7 +171,6 @@ src/store/
 - `taskMessages` — 按 taskId 隔离的消息存储（消息列表、Markdown、工作流步骤、流式文本、进度）
 - `currentCost` — 当前花费
 - `pendingTask` — 待处理任务
-- `debugFiles` / `debugMessageIndex` — Debug 模式状态
 
 **外部管理（store 外部 Map）：**
 
@@ -205,15 +193,20 @@ src/store/
 - `publishTasks` — 发布任务列表
 - `platformAccounts` — 各平台账号信息
 - `pluginModalVisible` — 插件弹框可见性
+- `publishDetailModalOpenCount` — 当前打开中的发布详情弹框数量，用于控制全局悬浮入口显示
+- `pluginVersion` / `pluginVersionStatus` — 当前插件版本及版本获取状态
+- `pluginNeedsUpdate` — 当前插件是否需要更新
 
 **主要方法：**
 
 - `init()` — 初始化（检测插件 → 检查权限 → 刷新账号）
 - `checkPlugin()` / `checkPermission()` — 插件检测 & 权限检查
+- `fetchPluginVersion()` / `clearPluginVersion()` — 获取/重置插件版本状态
 - `startPolling()` / `stopPolling()` — 状态轮询
 - `login()` — 登录指定平台
 - `publish()` — 发布到指定平台
 - `executePluginPublish()` — 批量发布（并行执行，支持定时发布）
+- `registerPublishDetailModalOpen()` / `unregisterPublishDetailModalOpen()` — 同步发布详情弹框可见状态
 - `syncAccountToDatabase()` — 同步插件账号到数据库
 - `refreshAllPlatformAccounts()` — 刷新所有平台账号在线状态
 

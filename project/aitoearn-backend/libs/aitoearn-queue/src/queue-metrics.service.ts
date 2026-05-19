@@ -197,7 +197,7 @@ export class QueueMetricsService implements OnModuleInit, OnModuleDestroy {
       const node = redis.nodes[0]
       return {
         host: node?.host ?? 'localhost',
-        port: Number(node?.post ?? 6379),
+        port: Number(node?.port ?? 6379),
         ...redis.options?.redisOptions,
       }
     }

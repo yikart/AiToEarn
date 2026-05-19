@@ -1,5 +1,7 @@
 {
   "home": "Startseite",
+  "header.draftBox": "Content Management",
+  "header.agentAssets": "Agent-Assets",
   "tasksHistory": "Aufgabenverlauf",
   "accounts": "Veröffentlichen",
   "publish": "Veröffentlichen",
@@ -16,6 +18,11 @@
   "aiRank": "KI-Rang",
   "addChannel": "Kanal hinzufügen",
   "sidebar.more": "Mehr",
-  "uptime": "Status",
-  "taskSquare": "Goldrausch-Markt"
+  "mobileBottom.content": "Inhalt",
+  "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.publish": "Publizieren",
+  "mobileBottom.interaction": "Interaktion",
+  "aiSocial": "AI Publish",
+  "download": "Download",
+  "xhsData": "XHS Data"
 }

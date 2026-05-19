@@ -66,6 +66,22 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
     this.checkPlugin()
 
+    if (window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'douyin',
+        action: 'like',
+        workLink: `https://www.douyin.com/video/${workId}`,
+        targetState: isLike,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        rawData: response,
+      }
+    }
+
     const response = (await window.AIToEarnPlugin!.douyinInteraction({
       action: 'like',
       workId,
@@ -96,6 +112,25 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       }
     }
 
+    if (window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'douyin',
+        action: 'comment',
+        workLink: `https://www.douyin.com/video/${params.workId}`,
+        targetState: true,
+        content: params.content,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        needHumanAssist: response.needHumanAssist,
+        verificationReason: response.verificationReason,
+        rawData: response,
+      }
+    }
+
     const response = (await window.AIToEarnPlugin!.douyinInteraction({
       action: 'comment',
       workId: params.workId,
@@ -118,6 +153,22 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    */
   async favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult> {
     this.checkPlugin()
+
+    if (window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'douyin',
+        action: 'favorite',
+        workLink: `https://www.douyin.com/video/${workId}`,
+        targetState: isFavorite,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        rawData: response,
+      }
+    }
 
     const response = (await window.AIToEarnPlugin!.douyinInteraction({
       action: 'favorite',

@@ -13,29 +13,39 @@
     "trialing": "试用会员",
     "go": "Go 会员",
     "plus": "Plus 会员",
-    "ultra": "Ultra 会员"
+    "ultra": "Ultra 会员",
+    "fortune": "招财会员",
+    "treasure": "聚宝会员"
   },
   "subscribe": "升级会员",
   "balance": "积分",
   "recharge": "充值",
-  "adBalance": "余额",
+  "adBalance": "广告主余额",
+  "creatorBalance": "创作者余额",
   "plugin": "浏览器插件",
   "affiliates": "推广赚钱",
   "advertiser": "AI打卡",
   "goToWebsite": "前往官网",
+  "filing": {
+    "policeRecord": "京公网安备11010502060417号"
+  },
   "pluginStatus": {
     "notInstalled": "未安装",
     "noPermission": "未授权",
     "ready": "已就绪",
-    "checking": "检测中"
+    "checking": "检测中",
+    "updateAvailable": "可更新"
   },
   "contactUs": "联系我们",
+  "apiErrorContactTip": "您有任何问题请",
+  "wechat": "微信",
+  "scanToAdd": "扫码添加",
   "documents": "文档",
   "helpDocs": "帮助文档",
-  "pluginGuide": "插件指南",
+  "pluginGuide": "插件安装和使用教程",
+  "pluginUpdateGuide": "插件更新教程",
   "privacyPolicy": "隐私政策",
   "termsOfService": "服务条款",
-  "downloadAppButton": "下载手机APP",
   "noNotifications": "暂无消息",
   "markAllAsRead": "全部标记为已读",
   "markAsRead": "标记为已读",
@@ -43,12 +53,21 @@
   "viewAll": "查看全部",
   "cancel": "取消",
   "confirm": "确认",
+  "save": "保存",
   "expand": "展开",
   "collapse": "收起",
   "yes": "是",
   "no": "否",
   "calendar": {
-    "weekDaysShort": ["日", "一", "二", "三", "四", "五", "六"],
+    "weekDaysShort": [
+      "日",
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六"
+    ],
     "monthSuffix": "月"
   },
   "actions": {
@@ -84,15 +103,12 @@
   },
   "header": {
     "messages": "消息通知",
-    "income": "收入记录",
-    "wallet": "钱包账户",
     "materialLibrary": "素材库",
     "draftBox": "内容管理",
     "draftBoxSeoTitle": "内容管理 - AI批量创作与草稿编辑",
     "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用AiToEarn组织多平台分发内容。",
     "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, AiToEarn",
-    "brandPromotion": "AI打卡",
-    "agentAssets": "Agent素材"
+    "brandPromotion": "AI打卡"
   },
   "tasks": "内容市场",
   "signIn": {
@@ -126,35 +142,6 @@
     "close": "关闭",
     "downloadNow": "立即下载",
     "tip": "💡 提示：安装完成后，请在App中登录您的账号，然后重新尝试相关操作"
-  },
-  "uptime": {
-    "seoTitle": "AI 模型状态 - 实时模型可用性监控",
-    "pageKeywords": "AI模型状态, 模型可用性, 在线率追踪, AI服务健康, 模型监控, AiToEarn状态",
-    "pageTitle": "AI 模型状态",
-    "pageDescription": "实时监控 AI 模型的可用性和运行状态。查看各模型和服务商的运行状况。",
-    "loading": "加载中...",
-    "noData": "暂无数据",
-    "uptimePercentage": "正常运行时间：",
-    "normal": "正常",
-    "timeout": "超时",
-    "unavailable": "中断",
-    "provider": "服务商",
-    "operation": "操作",
-    "latency": "延迟",
-    "errorType": "错误",
-    "filter": {
-      "title": "筛选条件",
-      "model": "模型",
-      "timeRange": "时间范围",
-      "all": "全部",
-      "last7Days": "最近7天",
-      "last30Days": "最近30天",
-      "last90Days": "最近90天",
-      "reset": "重置",
-      "apply": "应用"
-    },
-    "copy": "复制",
-    "copied": "已复制"
   },
   "websit": {
     "termsOfService": {
@@ -216,14 +203,10 @@
       "importantNoteContent": "数据删除后无法恢复，请谨慎操作。某些法律要求保留的数据可能无法删除。"
     }
   },
-  "lowBalanceAlert": {
-    "title": "余额不足提醒",
-    "content": "您的积分余额不足，请及时充值以继续使用",
-    "neverRemind": "不再提示"
-  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 低至0.03美元/秒",
-    "videoPromo": "Grok、Veo 等视频生成模型限时促销，价格低至 {{price}}/秒"
+    "videoPromo": "gpt-image-2 价格低至0.007元每张图",
+    "videoPromoFallback": "gpt-image-2 价格低至0.007元每张图"
   },
   "chinaDomainPrompt": {
     "title": "切换到中国区域",
@@ -255,16 +238,42 @@
     "cropFree": "自由",
     "cropConfirm": "确认裁剪",
     "cropCancel": "取消裁剪",
-    "cropRatio": "比例"
+    "cropRatio": "比例",
+    "outputFormat": "导出格式",
+    "convertToFormat": "转换为 {{format}}",
+    "compressionQuality": "压缩质量",
+    "pngLossless": "PNG 无损导出",
+    "compressImage": "图片压缩",
+    "compressShort": "压缩",
+    "convertFormat": "格式转换",
+    "convertShort": "转换",
+    "compressHint": "调整质量后保存，图片会按 JPG 压缩导出。",
+    "convertHint": "选择保存时导出的图片格式。",
+    "compressJpgTip": "压缩会自动切换为 JPG 格式。",
+    "pngLosslessShort": "无损"
   },
   "switchToInternational": "前往「国际版」",
   "switchToChina": "前往「中国版」",
-  "platformRegionPrompt": {
-    "title": "平台区域限制",
-    "chinaContent": "{{platform}} 仅在国内站支持，是否跳转到国内站？",
-    "abroadContent": "{{platform}} 仅在国际站支持，是否跳转到国际站？",
-    "ok": "前往",
-    "cancel": "取消"
+  "noMore": "没有更多了",
+  "comingSoon": "开发中，敬请期待",
+  "datePicker": {
+    "selectDate": "选择日期",
+    "selectDateRange": "选择日期范围",
+    "clear": "清除",
+    "confirm": "确认"
   },
-  "noMore": "没有更多了"
+  "enterpriseSurvey": {
+    "description": "想要更多企业功能？欢迎填写企业用户问卷。",
+    "action": "填写问卷"
+  },
+  "wechatBrowserMask": {
+    "cornerHint": "右上角",
+    "bubbleLine1": "点击右上角选择",
+    "bubbleLine2": "在浏览器中打开",
+    "openInBrowser": "在浏览器中打开",
+    "description": "微信内打开可能影响发布和跳转，请切换到系统浏览器继续。"
+  },
+  "contact": "需要帮助？请联系支持：",
+  "networkBusy": "网络繁忙，请稍后再试！",
+  "networkError": "网络错误，请稍后再试！"
 }

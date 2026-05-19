@@ -38,7 +38,8 @@ export class WxGzhApiService {
     catch (error) {
       const err = WxGZHError.buildFromError(error, options.operation || 'wx-gzh request')
       this.logger.error(
-        `[WXGZH:${operation}] Error !! message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+        err,
+        `[WXGZH:${operation}] Error !! kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`,
       )
       throw err
     }
@@ -203,27 +204,6 @@ export class WxGzhApiService {
       `https://api.weixin.qq.com/cgi-bin/draft/add?access_token=${accessToken}`,
       config,
       { operation: 'draftAdd' },
-    )
-  }
-
-  /**
-   * 发布
-   * @param accessToken
-   * @param mediaId
-   * @returns
-   */
-  async freePublish(accessToken: string, mediaId: string) {
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: { media_id: mediaId },
-    }
-    return await this.request<{
-      publish_id: string
-      msg_data_id: string
-    }>(
-      `https://api.weixin.qq.com/cgi-bin/freepublish/submit?access_token=${accessToken}`,
-      config,
-      { operation: 'freePublish' },
     )
   }
 
@@ -398,23 +378,6 @@ export class WxGzhApiService {
       `https://api.weixin.qq.com/datacube/getuserread?access_token=${accessToken}`,
       config,
       { operation: 'getuserread' },
-    )
-  }
-
-  async deleteArticle(
-    accessToken: string,
-    article_id: string,
-  ) {
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: {
-        article_id,
-      },
-    }
-    return await this.request(
-      `https://api.weixin.qq.com/cgi-bin/freepublish/delete?access_token=${accessToken}`,
-      config,
-      { operation: 'deleteArticle' },
     )
   }
 }

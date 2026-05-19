@@ -7,7 +7,6 @@ import type { ForwardedRef } from 'react'
 import type { SocialAccount } from '@/api/types/account.type'
 import type { IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
 
-import { Loader2 } from 'lucide-react'
 import {
   forwardRef,
   memo,
@@ -23,11 +22,12 @@ import { getChatModels } from '@/api/ai'
 import { useTransClient } from '@/app/i18n/client'
 import DesktopPublishContent from '@/components/PublishDialog/compoents/DesktopPublishContent'
 import MobilePublishContent from '@/components/PublishDialog/compoents/mobile/MobilePublishContent'
+import { PublishDialogSkeleton } from '@/components/PublishDialog/compoents/PublishDialogSkeleton'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import PublishModals from '@/components/PublishDialog/compoents/PublishModals'
 import { useAISync } from '@/components/PublishDialog/hooks/useAISync'
+import { useAutoPublishOnReady } from '@/components/PublishDialog/hooks/useAutoPublishOnReady'
 import { useCloseDialog } from '@/components/PublishDialog/hooks/useCloseDialog'
-import { useContentModeration } from '@/components/PublishDialog/hooks/useContentModeration'
 import { usePublishActions } from '@/components/PublishDialog/hooks/usePublishActions'
 import {
   usePublishDetailModalActions,
@@ -35,6 +35,8 @@ import {
 } from '@/components/PublishDialog/hooks/usePublishState'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { useUploadSync } from '@/components/PublishDialog/hooks/useUploadSync'
+import { useValidatedPublishTrigger } from '@/components/PublishDialog/hooks/useValidatedPublishTrigger'
+import { debugPublishDialog } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { Modal } from '@/components/ui/modal'
@@ -61,12 +63,18 @@ export interface IPublishDialogProps {
   suppressAutoPublish?: boolean
   // 关联的任务ID（如果是从任务流程打开）
   taskIdForPublish?: string
+  // 关联的草稿素材 ID（如果是从任务流程打开且存在推荐草稿）
+  materialIdForPublish?: string
   // 发布确认回调（发布完成时触发，并携带 taskIdForPublish）
-  onPublishConfirmed?: (taskId?: string, publishRecordId?: string, workLink?: string) => void
+  onPublishConfirmed?: (taskId?: string, publishRecordId?: string) => void
   // 发布开始回调（pubClick 开头触发，用于提前设置外部 loading）
   onPublishStart?: () => void
   // 发布完成后是否自动关闭详情弹框（默认 false）
   autoCloseOnComplete?: boolean
+  // 弹框内容就绪后自动触发一次发布
+  autoPublishOnReady?: boolean
+  // 账号列表首次加载中
+  accountListInitialLoading?: boolean
 }
 
 // ============ 主组件 ============
@@ -82,9 +90,12 @@ const PublishDialog = memo(
         defaultAccountIds,
         suppressAutoPublish,
         taskIdForPublish,
+        materialIdForPublish,
         onPublishConfirmed,
         onPublishStart,
         autoCloseOnComplete,
+        autoPublishOnReady,
+        accountListInitialLoading = false,
       }: IPublishDialogProps,
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
@@ -109,6 +120,7 @@ const PublishDialog = memo(
         pubListChoosed,
         setPubListChoosed,
         init,
+        syncAccounts,
         clear,
         pubList,
         setStep,
@@ -130,6 +142,7 @@ const PublishDialog = memo(
           pubListChoosed: state.pubListChoosed,
           setPubListChoosed: state.setPubListChoosed,
           init: state.init,
+          syncAccounts: state.syncAccounts,
           clear: state.clear,
           pubList: state.pubList,
           setStep: state.setStep,
@@ -180,17 +193,10 @@ const PublishDialog = memo(
       const isClear = useRef(true)
       const isInit = useRef(false)
       const hasInitRef = useRef(false)
+      const previousOpenRef = useRef(open)
+      const dialogLoading = accountListInitialLoading || prefillLoading
 
       // ============ Custom Hooks ============
-
-      // 内容安全检测
-      const contentModeration = useContentModeration({
-        step,
-        pubListChoosed,
-        commonPubParams,
-        expandedPubItem,
-        t,
-      })
 
       // 发布操作
       const { pubClick } = usePublishActions({
@@ -199,6 +205,7 @@ const PublishDialog = memo(
         isMobile,
         suppressAutoPublish,
         taskIdForPublish,
+        materialIdForPublish,
         onPublishConfirmed,
         onPublishStart,
         onClose,
@@ -209,6 +216,15 @@ const PublishDialog = memo(
         setCurrentPublishTaskId: modalState.setCurrentPublishTaskId,
         setPublishDetailVisible: modalState.setPublishDetailVisible,
         t,
+      })
+      const { triggerPublish } = useValidatedPublishTrigger(pubClick)
+
+      useAutoPublishOnReady({
+        enabled: autoPublishOnReady && !isMobile,
+        open,
+        ready: !dialogLoading && !modalState.createLoading,
+        selectedCount: pubListChoosed.length,
+        triggerPublish,
       })
 
       // AI 同步
@@ -286,11 +302,34 @@ const PublishDialog = memo(
 
       // 弹窗打开/关闭逻辑
       useEffect(() => {
+        const wasOpen = previousOpenRef.current
+        debugPublishDialog('publishDialog:openEffect', {
+          accountsCount: accounts.length,
+          defaultAccountIds,
+          hasInit: hasInitRef.current,
+          open,
+          storePubListCount: usePublishDialog.getState().pubList.length,
+          storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
+          wasOpen,
+        })
+
         if (open) {
-          if (hasInitRef.current)
+          previousOpenRef.current = true
+          if (hasInitRef.current) {
+            debugPublishDialog('publishDialog:syncOnOpenEffect', {
+              accountsCount: accounts.length,
+              storePubListCount: usePublishDialog.getState().pubList.length,
+              storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
+            })
+            syncAccounts(accounts)
             return // 已初始化，跳过重复 init
+          }
           hasInitRef.current = true
           isInit.current = true
+          debugPublishDialog('publishDialog:initOnOpenEffect', {
+            accountsCount: accounts.length,
+            defaultAccountIds,
+          })
           init(accounts, defaultAccountIds)
 
           // 获取聊天模型列表（使用 sessionStorage 缓存）
@@ -305,7 +344,7 @@ const PublishDialog = memo(
           }
           else {
             getChatModels()
-              .then((res: any) => {
+              .then((res) => {
                 if (res?.code === 0 && res.data && Array.isArray(res.data)) {
                   setChatModels(res.data)
                   sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
@@ -317,6 +356,18 @@ const PublishDialog = memo(
           }
         }
         else {
+          previousOpenRef.current = false
+          if (!wasOpen) {
+            debugPublishDialog('publishDialog:skipClearBecauseAlreadyClosed', {
+              storePubListCount: usePublishDialog.getState().pubList.length,
+              storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
+            })
+            return
+          }
+          debugPublishDialog('publishDialog:clearOnCloseEffect', {
+            storePubListCount: usePublishDialog.getState().pubList.length,
+            storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
+          })
           hasInitRef.current = false // 关闭时重置，下次打开可重新 init
           isClear.current = true
           setPubListChoosed([])
@@ -329,20 +380,13 @@ const PublishDialog = memo(
         accounts,
         defaultAccountIds,
         init,
+        syncAccounts,
         clear,
         setPubListChoosed,
         setStep,
         setExpandedPubItem,
         t,
       ])
-
-      // 离线账号不可参与发布
-      useEffect(() => {
-        const filtered = pubListChoosed.filter(item => item.account.status !== 0)
-        if (filtered.length !== pubListChoosed.length) {
-          setPubListChoosed(filtered)
-        }
-      }, [pubListChoosed, setPubListChoosed])
 
       // ============ Callbacks ============
 
@@ -352,19 +396,6 @@ const PublishDialog = memo(
       // Facebook 页面选择成功
       const handleFacebookPagesSuccess = useCallback(() => {
         modalState.setShowFacebookPagesModal(false)
-      }, [modalState])
-
-      // PC 不支持平台点击
-      const handlePcNotSupportedClick = useCallback(
-        (_platformName: string) => {
-          // DownloadAppModal has been removed; no-op for now
-        },
-        [],
-      )
-
-      // Facebook 授权成功
-      const handleFacebookAuthSuccess = useCallback(() => {
-        modalState.setShowFacebookPagesModal(true)
       }, [modalState])
 
       // 处理下一步
@@ -396,20 +427,19 @@ const PublishDialog = memo(
             >
               <div className="relative h-full">
                 <MobilePublishContent
+                  open={open}
                   accounts={accounts}
                   onClose={onClose}
                   onPubSuccess={onPubSuccess}
                   defaultAccountIds={defaultAccountIds}
                   suppressAutoPublish={suppressAutoPublish}
                   taskIdForPublish={taskIdForPublish}
+                  materialIdForPublish={materialIdForPublish}
                   onPublishConfirmed={onPublishConfirmed}
                   onPublishStart={onPublishStart}
+                  autoPublishOnReady={autoPublishOnReady}
                 />
-                {prefillLoading && (
-                  <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-lg">
-                    <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                  </div>
-                )}
+                {dialogLoading && <PublishDialogSkeleton isMobile />}
               </div>
             </Modal>
 
@@ -450,22 +480,9 @@ const PublishDialog = memo(
                 onTextSelection={handleTextSelection}
                 onImageToImage={handleImageToImage}
                 createLoading={modalState.createLoading}
-                hasDescription={contentModeration.hasDescription}
-                needsContentModeration={contentModeration.needsContentModeration}
-                moderationLoading={contentModeration.moderationLoading}
-                moderationResult={contentModeration.moderationResult}
-                moderationDesc={contentModeration.moderationDesc}
-                moderationLevel={contentModeration.moderationLevel}
-                onContentModeration={contentModeration.handleContentModeration}
                 onPublish={pubClick}
-                onPcNotSupportedClick={handlePcNotSupportedClick}
-                onFacebookAuthSuccess={handleFacebookAuthSuccess}
               />
-              {prefillLoading && (
-                <div className="absolute inset-0 z-50 flex items-center justify-center bg-white/60 backdrop-blur-sm rounded-lg">
-                  <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
-                </div>
-              )}
+              {dialogLoading && <PublishDialogSkeleton isMobile={false} />}
             </div>
           </Modal>
 

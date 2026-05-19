@@ -1,3 +1,4 @@
+import type { CreateMaterialGroupParams, MaterialGroupListFilters } from '@/api/types/material'
 import type { PromotionMaterial, PromotionPlan } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
 import type { PubType } from '@/app/config/publishConfig'
 import http from '@/utils/request'
@@ -28,7 +29,7 @@ export interface NewMaterialTask {
 }
 
 // 创建素材草稿组
-export function apiCreateMaterialGroup(data: { name: string }) {
+export function apiCreateMaterialGroup(data: CreateMaterialGroupParams) {
   return http.post<{ id: string }>('material/group', {
     ...data,
     type: 'video',
@@ -51,8 +52,8 @@ export function apiUpdateMaterialGroupInfo(
 }
 
 // 获取草稿素材组列表
-export function apiGetMaterialGroupList(pageNo: number, pageSize: number) {
-  return http.get<{ list: PromotionPlan[], total: number }>(`material/group/list/${pageNo}/${pageSize}`)
+export function apiGetMaterialGroupList(pageNo: number, pageSize: number, filters?: MaterialGroupListFilters) {
+  return http.get<{ list: PromotionPlan[], total: number }>(`material/group/list/${pageNo}/${pageSize}`, filters)
 }
 
 // 获取草稿素材组详情
@@ -114,9 +115,20 @@ export interface MaterialFilterDeleteParams {
   useCount?: number
 }
 
+export interface TransferMaterialParams {
+  ids: string[]
+  targetGroupId: string
+  mode: 'move' | 'copy'
+}
+
 // 批量删除草稿素材
 export function apiBatchDeleteMaterials(ids: string[]) {
   return http.delete('material/list', { ids })
+}
+
+// 批量转移草稿
+export function apiTransferMaterials(data: TransferMaterialParams) {
+  return http.post<{ count: number }>('material/transfer', data)
 }
 
 // 按条件删除草稿素材
@@ -144,15 +156,9 @@ export async function apiGetMaterialList(groupId: string, pageNo: number, pageSi
   return res
 }
 
-// 更新草稿素材信息
-export function apiUpdateMaterialInfo(
-  id: string,
-  data: {
-    title?: string
-    desc?: string
-  },
-) {
-  return http.put(`material/info/${id}`, data)
+// 获取草稿详情
+export function apiGetDraftInfo(id: string) {
+  return http.get<PromotionMaterial>(`material/info/${id}`)
 }
 
 // 更新草稿素材完整信息

@@ -1,5 +1,7 @@
 {
   "home": "首页",
+  "header.draftBox": "内容管理",
+  "header.agentAssets": "Agent 素材",
   "tasksHistory": "任务记录",
   "accounts": "发布",
   "publish": "发布",
@@ -17,9 +19,10 @@
   "aiRank": "AI热榜",
   "addChannel": "添加频道",
   "sidebar.more": "更多",
-  "uptime": "服务状态",
+  "mobileBottom.content": "内容",
+  "mobileBottom.checkIn": "打卡",
+  "mobileBottom.publish": "发布",
+  "mobileBottom.interaction": "互动",
   "aiSocial": "AI发布",
-  "taskSquare": "淘金广场",
-  "myTasks": "我的任务",
-  "createTask": "创建任务"
+  "xhsData": "小红书数据"
 }

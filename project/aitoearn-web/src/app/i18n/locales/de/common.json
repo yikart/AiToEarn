@@ -13,28 +13,38 @@
     "trialing": "Testversion",
     "go": "Go",
     "plus": "Plus",
-    "ultra": "Ultra"
+    "ultra": "Ultra",
+    "fortune": "Fortune Mitglied",
+    "treasure": "Treasure Mitglied"
   },
   "subscribe": "Upgraden",
   "balance": "Guthaben",
   "recharge": "Aufladen",
-  "adBalance": "Kontostand",
+  "adBalance": "Werbetreibenden-Guthaben",
+  "creatorBalance": "Creator-Guthaben",
   "plugin": "Erweiterung",
   "affiliates": "Partner",
   "goToWebsite": "Zur Website",
+  "filing": {
+    "policeRecord": "京公网安备11010502060417号"
+  },
   "pluginStatus": {
     "notInstalled": "Installieren",
     "noPermission": "Nicht autorisiert",
     "ready": "Bereit",
-    "checking": "Wird geprüft"
+    "checking": "Wird geprüft",
+    "updateAvailable": "Aktualisierbar"
   },
   "contactUs": "Kontaktieren Sie uns",
+  "apiErrorContactTip": "Wenn Sie Fragen haben, bitte ",
+  "wechat": "WeChat",
+  "scanToAdd": "QR-Code scannen zum Hinzufügen",
   "documents": "Dokumente",
   "helpDocs": "Hilfedokumentation",
-  "pluginGuide": "Plugin-Anleitung",
+  "pluginGuide": "Anleitung zur Plugin-Installation und Nutzung",
+  "pluginUpdateGuide": "Plugin-Update-Anleitung",
   "privacyPolicy": "Datenschutzrichtlinie",
   "termsOfService": "Nutzungsbedingungen",
-  "downloadAppButton": "App herunterladen",
   "noNotifications": "Keine Benachrichtigungen",
   "markAllAsRead": "Alle als gelesen markieren",
   "markAsRead": "Als gelesen markieren",
@@ -42,12 +52,21 @@
   "viewAll": "Alle anzeigen",
   "cancel": "Abbrechen",
   "confirm": "Bestätigen",
+  "save": "Speichern",
   "expand": "Erweitern",
   "collapse": "Reduzieren",
   "yes": "Ja",
   "no": "Nein",
   "calendar": {
-    "weekDaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
+    "weekDaysShort": [
+      "So",
+      "Mo",
+      "Di",
+      "Mi",
+      "Do",
+      "Fr",
+      "Sa"
+    ],
     "monthSuffix": ""
   },
   "actions": {
@@ -83,14 +102,12 @@
   },
   "header": {
     "messages": "Nachrichten",
-    "income": "Einnahmenübersicht",
-    "wallet": "Meine Wallet",
     "materialLibrary": "Bibliothek",
     "draftBox": "Inhaltsverwaltung",
     "draftBoxSeoTitle": "Content-Management - KI-Batch-Erstellung & Entwurfseditor",
     "draftBoxSeoDescription": "Alle Ihre Content-Entwürfe an einem Ort verwalten. Mit KI Social-Media-Posts generieren, Entwürfe vor der Veröffentlichung bearbeiten.",
     "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn",
-    "agentAssets": "Agent-Materialien"
+    "brandPromotion": "AI Check-in"
   },
   "tasks": "Marktplatz",
   "signIn": {
@@ -128,35 +145,6 @@
   "networkBusy": "Netzwerk ausgelastet, bitte später erneut versuchen!",
   "networkError": "Netzwerkfehler, bitte später erneut versuchen!",
   "contact": "Brauchen Sie Hilfe? Kontaktieren Sie den Support:",
-  "uptime": {
-    "seoTitle": "KI-Modellstatus - Echtzeit-Verfügbarkeitsüberwachung",
-    "pageKeywords": "KI-Modellstatus, Modellverfügbarkeit, Verfügbarkeits-Tracker, KI-Service-Status, Modellüberwachung, AiToEarn-Status",
-    "pageTitle": "KI-Modellstatus",
-    "pageDescription": "Überwachen Sie die Echtzeit-Verfügbarkeit und Betriebszeit der KI-Modelle. Prüfen Sie den Betriebsstatus jedes Modells und Anbieters.",
-    "loading": "Laden...",
-    "noData": "Keine Daten",
-    "uptimePercentage": "Verfügbarkeit:",
-    "normal": "Normal",
-    "timeout": "Zeitüberschreitung",
-    "unavailable": "Nicht verfügbar",
-    "provider": "Anbieter",
-    "operation": "Vorgang",
-    "latency": "Latenz",
-    "errorType": "Fehler",
-    "filter": {
-      "title": "Filter",
-      "model": "Modell",
-      "timeRange": "Zeitraum",
-      "all": "Alle",
-      "last7Days": "Letzte 7 Tage",
-      "last30Days": "Letzte 30 Tage",
-      "last90Days": "Letzte 90 Tage",
-      "reset": "Zurücksetzen",
-      "apply": "Anwenden"
-    },
-    "copy": "Kopieren",
-    "copied": "Kopiert"
-  },
   "websit": {
     "termsOfService": {
       "title": "Nutzungsbedingungen",
@@ -217,14 +205,10 @@
       "importantNoteContent": "Daten können nach der Löschung nicht wiederhergestellt werden. Bitte gehen Sie vorsichtig vor. Einige gesetzlich vorgeschriebene Daten können möglicherweise nicht gelöscht werden."
     }
   },
-  "lowBalanceAlert": {
-    "title": "Warnung: Niedriges Guthaben",
-    "content": "Ihr Guthaben ist niedrig. Bitte laden Sie auf, um unsere Dienste weiter nutzen zu können.",
-    "neverRemind": "Nicht mehr erinnern"
-  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 ab nur $0,03/Sek.",
-    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+    "videoPromo": "gpt-image-2 ab 0,007 Yuan pro Bild",
+    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
   },
   "chinaDomainPrompt": {
     "title": "Zur China-Region wechseln",
@@ -256,16 +240,40 @@
     "cropFree": "Frei",
     "cropConfirm": "Zuschnitt anwenden",
     "cropCancel": "Zuschnitt abbrechen",
-    "cropRatio": "Verhältnis"
+    "cropRatio": "Verhältnis",
+    "outputFormat": "Exportformat",
+    "convertToFormat": "In {{format}} konvertieren",
+    "compressionQuality": "Komprimierungsqualität",
+    "pngLossless": "PNG verlustfrei exportieren",
+    "compressImage": "Bild komprimieren",
+    "compressShort": "Komprimieren",
+    "convertFormat": "Format konvertieren",
+    "convertShort": "Konvertieren",
+    "compressHint": "Passen Sie vor dem Speichern die Qualität an. Das Bild wird als komprimiertes JPG exportiert.",
+    "convertHint": "Wählen Sie das Bildformat für das Speichern aus.",
+    "compressJpgTip": "Komprimierung stellt die Ausgabe automatisch auf JPG um.",
+    "pngLosslessShort": "Verlustfrei"
   },
   "switchToInternational": "Zu \"International\"",
   "switchToChina": "Zu \"China\"",
-  "platformRegionPrompt": {
-    "title": "Plattform-Regionsbeschränkung",
-    "chinaContent": "{{platform}} ist nur auf der China-Seite verfügbar. Zur China-Seite weiterleiten?",
-    "abroadContent": "{{platform}} ist nur auf der internationalen Seite verfügbar. Zur internationalen Seite weiterleiten?",
-    "ok": "Weiter",
-    "cancel": "Abbrechen"
+  "noMore": "Keine weiteren Daten",
+  "comingSoon": "In Entwicklung, bleiben Sie dran",
+  "enterpriseSurvey": {
+    "description": "Benötigen Sie weitere Enterprise-Funktionen? Sagen Sie es uns in der Umfrage.",
+    "action": "Umfrage ausfüllen"
   },
-  "noMore": "Keine weiteren Daten"
+  "wechatBrowserMask": {
+    "cornerHint": "Menü oben rechts",
+    "bubbleLine1": "Tippen Sie oben rechts",
+    "bubbleLine2": "auf \"Im Browser öffnen\"",
+    "openInBrowser": "Im Browser öffnen",
+    "description": "Das WeChat-WebView kann Veröffentlichungen und Weiterleitungen einschränken. Bitte im Browser fortfahren."
+  },
+  "advertiser": "AI Check-in",
+  "datePicker": {
+    "clear": "Clear",
+    "confirm": "Confirm",
+    "selectDate": "Select date",
+    "selectDateRange": "Select date range"
+  }
 }

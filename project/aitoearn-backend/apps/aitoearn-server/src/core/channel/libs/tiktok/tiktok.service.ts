@@ -71,8 +71,9 @@ export class TiktokService {
     }
     catch (error) {
       const err = TiktokError.buildFromError(error, operation)
-      this.logger.error(
-        `[TIKTOK:${operation || 'apiRequest'}] Error !! ${method} ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`,
+      this.logger.fatal(
+        err,
+        `[TIKTOK:${operation || 'apiRequest'}] Error !! ${method} ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`,
       )
       throw err
     }

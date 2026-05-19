@@ -5,10 +5,11 @@
  */
 'use client'
 
+import type { IRouterDataItem } from '../routerData'
+import type { NavItemData } from './types'
 import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import { routerData } from '@/app/layout/routerData'
-import { useNavigationLogic } from '@/app/layout/shared'
+import { useNavigationLogic, useVisibleRouterData } from '@/app/layout/shared'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
 import { useNotification } from '@/hooks/useNotification'
@@ -22,6 +23,7 @@ import { MyChannelsEntry } from './components/BottomSection/MyChannelsEntry'
  */
 function LayoutSidebar() {
   const { currRouter, isAuthPage } = useNavigationLogic()
+  const visibleRoutes = useVisibleRouterData()
   const { unreadCount } = useNotification()
 
   // 获取侧边栏状态和设置方法
@@ -36,17 +38,20 @@ function LayoutSidebar() {
   const [notificationVisible, setNotificationVisible] = useState(false)
   const { openSettings } = useSettingsModalStore()
 
-  // 首页、auth、websit、welcome 页面不显示侧边栏
+  const mapNavItem = (item: IRouterDataItem): NavItemData => ({
+    path: item.path,
+    translationKey: item.translationKey,
+    icon: item.icon,
+    children: item.children?.map(mapNavItem),
+  })
+
+  // 首页、auth、websit 页面不显示侧边栏
   if (isAuthPage) {
     return null
   }
 
   // 转换路由数据为 NavSection 所需格式
-  const navItems = routerData.map(item => ({
-    path: item.path || '/',
-    translationKey: item.translationKey,
-    icon: item.icon,
-  }))
+  const navItems = visibleRoutes.map(mapNavItem)
 
   return (
     <>

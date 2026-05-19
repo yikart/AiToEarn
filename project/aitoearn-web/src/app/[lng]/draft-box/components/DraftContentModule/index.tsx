@@ -6,17 +6,18 @@
 
 'use client'
 
+import type { DraftListSectionTab } from '../DraftListSection'
 import type { IPubParams } from '@/components/PublishDialog/publishDialog.type'
+import { Loader2 } from 'lucide-react'
 import { useCallback, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
-import { AccountPlatInfoMap, isPlatformAvailable } from '@/app/config/platConfig'
+import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import PublishDialog from '@/components/PublishDialog'
 import { VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useAccountStore } from '@/store/account'
-import { useUserStore } from '@/store/user'
 import { generateUUID } from '@/utils'
 import { useGenerationPolling } from '../../hooks/useGenerationPolling'
 import AiBatchGenerateBar from '../AiBatchGenerateBar'
@@ -25,32 +26,68 @@ import { CreateMaterialModal } from '../CreateMaterialModal'
 import { DraftDetailDialog } from '../DraftDetailDialog'
 import { DraftListSection } from '../DraftListSection'
 import { GenerationDetailDialog } from '../GenerationDetailDialog'
+import { TransferDraftDialog } from '../TransferDraftDialog'
+import { VideoCreateDraftTaskWidget } from '../VideoCreateDraftTaskWidget'
 
-function DraftContentModule() {
+interface DraftContentModuleProps {
+  /** 外部指定草稿箱 ID，不依赖当前推广计划 */
+  groupId?: string
+  /** 草稿列表可见 Tab */
+  draftListTabs?: DraftListSectionTab[]
+  /** 草稿列表默认 Tab */
+  draftListDefaultTab?: DraftListSectionTab
+  /** 是否强制使用草稿生成模式 */
+  forceDraftMode?: boolean
+  /** 是否允许转移草稿 */
+  allowTransfer?: boolean
+  /** 是否显示视频生成草稿长任务悬浮窗 */
+  showVideoCreateDraftTaskWidget?: boolean
+  /** 内容区域外层样式 */
+  contentClassName?: string
+}
+
+function DraftContentModule({
+  groupId,
+  draftListTabs,
+  draftListDefaultTab,
+  forceDraftMode = false,
+  allowTransfer = true,
+  showVideoCreateDraftTaskWidget = true,
+  contentClassName = 'space-y-6 p-4 md:p-6',
+}: DraftContentModuleProps) {
   const {
     currentPlan,
     createMaterialModalOpen,
     editingMaterial,
-    generatingCount,
+    generationTasks,
     publishDialogOpen,
     publishingDraft,
+    closeMaterialModal,
+    fetchMaterials,
+    closePublishDialog,
+    syncGenerationTasks,
+    updateGeneratingCount,
   } = usePlanDetailStore(
     useShallow(state => ({
       currentPlan: state.currentPlan,
       createMaterialModalOpen: state.createMaterialModalOpen,
       editingMaterial: state.editingMaterial,
-      generatingCount: state.generatingCount,
+      generationTasks: state.generationTasks,
       publishDialogOpen: state.publishDialogOpen,
       publishingDraft: state.publishingDraft,
+      closeMaterialModal: state.closeMaterialModal,
+      fetchMaterials: state.fetchMaterials,
+      closePublishDialog: state.closePublishDialog,
+      syncGenerationTasks: state.syncGenerationTasks,
+      updateGeneratingCount: state.updateGeneratingCount,
     })),
   )
 
-  const selectedPlanId = currentPlan?.id || null
-  const closeMaterialModal = usePlanDetailStore(state => state.closeMaterialModal)
-  const fetchMaterials = usePlanDetailStore(state => state.fetchMaterials)
-  const closePublishDialog = usePlanDetailStore(state => state.closePublishDialog)
-  const silentRefreshMaterials = usePlanDetailStore(state => state.silentRefreshMaterials)
-  const updateGeneratingCount = usePlanDetailStore(state => state.updateGeneratingCount)
+  const selectedPlanId = groupId || currentPlan?.id || null
+  const pollingTaskIds = useMemo(
+    () => generationTasks.filter(task => task.status === 'generating').map(task => task.id),
+    [generationTasks],
+  )
 
   const accountList = useAccountStore(state => state.accountList)
 
@@ -61,14 +98,16 @@ function DraftContentModule() {
 
   // AI 批量生成轮询
   useGenerationPolling({
-    enabled: generatingCount > 0,
-    interval: 5000,
+    enabled: pollingTaskIds.length > 0,
+    taskIds: pollingTaskIds,
+    interval: 2000,
+    onTasksUpdate: syncGenerationTasks,
     onTaskCompleted: () => {
       if (selectedPlanId) {
-        silentRefreshMaterials(selectedPlanId)
+        // silentRefreshAll 内部已同步草稿数据到 planDetailStore，无需单独调用 silentRefreshMaterials
         useMediaTabStore.getState().silentRefresh(selectedPlanId)
+        useMediaTabStore.getState().silentRefreshAll(selectedPlanId, selectedPlanId)
       }
-      useUserStore.getState().fetchCreditsBalance()
     },
     onCountUpdate: updateGeneratingCount,
   })
@@ -83,7 +122,7 @@ function DraftContentModule() {
     return accountList
       .filter((acc) => {
         const platConfig = AccountPlatInfoMap.get(acc.type)
-        return platConfig?.pubTypes.has(targetPubType) && acc.status !== 0 && isPlatformAvailable(acc.type)
+        return platConfig?.pubTypes.has(targetPubType) && acc.status !== 0
       })
       .map(acc => acc.id)
   }, [publishingDraft, accountList])
@@ -194,32 +233,47 @@ function DraftContentModule() {
 
   // 创建草稿成功回调
   const handleMaterialSuccess = useCallback(() => {
-    if (currentPlan) {
-      fetchMaterials(currentPlan.id, 1)
+    if (selectedPlanId) {
+      fetchMaterials(selectedPlanId, 1)
     }
-    useUserStore.getState().fetchCreditsBalance()
-  }, [currentPlan, fetchMaterials])
+  }, [fetchMaterials, selectedPlanId])
 
   return (
     <>
-      <div className="space-y-6 p-4 md:p-6">
+      <div className={contentClassName}>
         {/* AI 批量生成输入栏 */}
-        <AiBatchGenerateBar groupId={selectedPlanId || undefined} />
+        <AiBatchGenerateBar groupId={selectedPlanId || undefined} forceDraftMode={forceDraftMode} />
         {/* 内容 Tabs：草稿箱 / 视频 / 图片 */}
-        <DraftListSection materialGroupId={selectedPlanId || undefined} />
+        {selectedPlanId
+          ? (
+              <DraftListSection
+                materialGroupId={selectedPlanId}
+                tabs={draftListTabs}
+                defaultTab={draftListDefaultTab}
+                allowTransfer={allowTransfer}
+              />
+            )
+          : (
+              <div className="flex items-center justify-center py-12">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            )}
       </div>
 
       {/* 创建草稿弹窗 */}
       <CreateMaterialModal
         open={createMaterialModalOpen}
-        groupId={currentPlan?.id || null}
+        groupId={selectedPlanId}
         editingMaterial={editingMaterial}
         onClose={closeMaterialModal}
         onSuccess={handleMaterialSuccess}
       />
 
       {/* 草稿详情弹窗 */}
-      <DraftDetailDialog />
+      <DraftDetailDialog allowTransfer={allowTransfer} />
+
+      {/* 移动到草稿箱弹窗 */}
+      {allowTransfer && <TransferDraftDialog />}
 
       {/* 生成任务详情弹框 */}
       <GenerationDetailDialog />
@@ -233,6 +287,8 @@ function DraftContentModule() {
         onPubSuccess={closePublishDialog}
       />
 
+      {/* 视频生成草稿长任务悬浮窗 */}
+      {showVideoCreateDraftTaskWidget && <VideoCreateDraftTaskWidget />}
     </>
   )
 }

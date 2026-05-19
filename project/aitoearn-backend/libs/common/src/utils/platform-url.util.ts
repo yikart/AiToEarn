@@ -29,6 +29,7 @@ const DOMAIN_TO_ACCOUNT_TYPE: Record<string, AccountType> = {
   'facebook.com': AccountType.FACEBOOK,
   'm.facebook.com': AccountType.FACEBOOK,
   'fb.watch': AccountType.FACEBOOK,
+  'threads.com': AccountType.THREADS,
   'threads.net': AccountType.THREADS,
   'linkedin.com': AccountType.LINKEDIN,
   'channels.weixin.qq.com': AccountType.WxSph,

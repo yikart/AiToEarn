@@ -13,6 +13,72 @@ export type PublishType = 'video' | 'image'
 export type VisibilityType = 'public' | 'private' | 'friends'
 
 /**
+ * 小红书用户声明来源
+ * 1=虚拟演绎，仅供娱乐、2=笔记含AI合成内容、3=内容包含营销广告
+ */
+export type XhsUserDeclarationOrigin = 1 | 2 | 3
+
+/**
+ * 小红书用户声明绑定
+ */
+export interface XhsUserDeclarationBind {
+  origin: XhsUserDeclarationOrigin
+}
+
+/**
+ * 视频号视频元信息
+ */
+export interface WxSphVideoMetadata {
+  width: number
+  height: number
+  duration: number
+  size: number
+}
+
+/**
+ * 视频号地理位置
+ */
+export interface WxSphPoiInfo {
+  latitude?: number
+  longitude?: number
+  poiCity?: string
+  poiName?: string
+  poiAddress?: string
+  poiId?: string
+  province?: string
+  region?: string
+  fullAddress?: string
+  poiCheckSum?: string
+}
+
+export interface WxSphEventInfo {
+  eventTopicId: string
+  eventName: string
+  eventCreatorNickname?: string
+  eventAttendCount?: number
+}
+
+/**
+ * 视频号平台配置
+ */
+export interface WxSphPlatformConfig {
+  videoMetadata?: WxSphVideoMetadata
+  poiInfo?: WxSphPoiInfo
+  event?: WxSphEventInfo
+  extLink?: string
+  postFlag?: 0 | 1
+}
+
+/**
+ * 平台特定配置
+ */
+export interface PlatformConfigOptions {
+  userDeclarationBind?: XhsUserDeclarationBind
+  wxSph?: WxSphPlatformConfig
+  [key: string]: unknown
+}
+
+/**
  * 位置信息
  */
 export interface LocationInfo {
@@ -86,7 +152,7 @@ export interface PublishParams {
   scheduledTime?: number
 
   /** 平台特定配置 */
-  platformConfig?: Record<string, any>
+  platformConfig?: PlatformConfigOptions
 }
 
 /**

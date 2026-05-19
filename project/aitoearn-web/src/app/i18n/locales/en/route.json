@@ -1,5 +1,7 @@
 {
   "home": "Home",
+  "header.draftBox": "Content Management",
+  "header.agentAssets": "Agent Assets",
   "tasksHistory": "Task History",
   "accounts": "Publish",
   "publish": "Publish",
@@ -16,9 +18,11 @@
   "aiRank": "AI Rank",
   "addChannel": "Add Channel",
   "sidebar.more": "More",
-  "uptime": "Status",
+  "mobileBottom.content": "Content",
+  "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.publish": "Publish",
+  "mobileBottom.interaction": "Interact",
   "aiSocial": "AI Publish",
-  "taskSquare": "Gold Rush Square",
-  "myTasks": "My Tasks",
-  "createTask": "Create Task"
+  "xhsData": "XHS Data",
+  "download": "Download"
 }

@@ -17,6 +17,6 @@ import { WxGzhInteractService } from './wx-gzh-interact.service'
   ],
   controllers: [InteracteController, InteractionRecordController, ReplyCommentRecordController],
   providers: [WxGzhInteractService, InteractionRecordService, ReplyCommentRecordService],
-  exports: [WxGzhInteractService],
+  exports: [WxGzhInteractService, InteractionRecordService],
 })
 export class InteracteModule {}

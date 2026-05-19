@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto } from '../../account/account.dto'
+import { CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDataDto } from '../../account/account.dto'
 import { AccountService } from '../../account/account.service'
 
 @Injectable()
@@ -33,9 +33,8 @@ export class AccountInternalService {
     return res
   }
 
-  async updateAccountStatistics(userId: string, body: UpdateAccountStatisticsDto) {
+  async updateAccountStatistics(accountId: string, body: UpdateAccountStatisticsDataDto) {
     const {
-      id,
       fansCount,
       readCount,
       likeCount,
@@ -45,7 +44,7 @@ export class AccountInternalService {
       workCount,
     } = body
     return this.accountService.updateAccountStatistics(
-      id,
+      accountId,
       {
         fansCount,
         readCount,

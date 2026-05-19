@@ -2,15 +2,25 @@ import { Injectable } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { AxiosRequestConfig } from 'axios'
 import {
+  AiLogChannel,
   AsyncTaskResponseVo,
   ChatCompletionVo,
   ChatModelConfigVo,
+  CreateDraftGenerationResponse,
+  CreateDraftV2Request,
+  CreateImageTextDraftRequest,
+  DraftGenerationPricingResponse,
+  DraftGenerationTaskListResponse,
+  DraftGenerationTaskResponse,
+  GetDraftTaskRequest,
   ImageEditModelParamsVo,
   ImageGenerationModelParamsVo,
   ImageResponseVo,
+  ListDraftTasksRequest,
   ListVideoTasksResponseVo,
   ModelsConfigDto,
   ModelsConfigVo,
+  QueryDraftTasksRequest,
 
   TaskStatusResponseVo,
   UserChatCompletionDto,
@@ -188,6 +198,8 @@ export class AiService extends BaseService {
   async getChatModels(data: {
     userId?: string
     userType?: UserType
+    channel?: AiLogChannel
+    scene?: string
   }): Promise<ChatModelConfigVo[]> {
     const url = `/internal/ai/models/chat`
     const config: AxiosRequestConfig = {
@@ -242,5 +254,58 @@ export class AiService extends BaseService {
       config,
     )
     return res
+  }
+
+  async createDraftV2(data: CreateDraftV2Request): Promise<CreateDraftGenerationResponse> {
+    const url = `/internal/ai/draft-generation/v2`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    return this.request<CreateDraftGenerationResponse>(url, config)
+  }
+
+  async createImageTextDraft(data: CreateImageTextDraftRequest): Promise<CreateDraftGenerationResponse> {
+    const url = `/internal/ai/draft-generation/image-text`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    return this.request<CreateDraftGenerationResponse>(url, config)
+  }
+
+  async getDraftTask(data: GetDraftTaskRequest): Promise<DraftGenerationTaskResponse> {
+    const url = `/internal/ai/draft-generation/task`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    return this.request<DraftGenerationTaskResponse>(url, config)
+  }
+
+  async listDraftTasks(data: ListDraftTasksRequest): Promise<DraftGenerationTaskListResponse> {
+    const url = `/internal/ai/draft-generation/tasks`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    return this.request<DraftGenerationTaskListResponse>(url, config)
+  }
+
+  async queryDraftTasks(data: QueryDraftTasksRequest): Promise<DraftGenerationTaskResponse[]> {
+    const url = `/internal/ai/draft-generation/query`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data,
+    }
+    return this.request<DraftGenerationTaskResponse[]>(url, config)
+  }
+
+  async getDraftPricing(): Promise<DraftGenerationPricingResponse> {
+    const url = `/internal/ai/draft-generation/pricing`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+    }
+    return this.request<DraftGenerationPricingResponse>(url, config)
   }
 }

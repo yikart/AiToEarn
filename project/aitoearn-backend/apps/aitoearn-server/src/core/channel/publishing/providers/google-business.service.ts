@@ -144,7 +144,7 @@ export class GoogleBusinessPubService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error('验证发布状态失败', error)
+      this.logger.error(error, '验证发布状态失败')
       return { success: false, errorMsg: '验证失败' }
     }
   }

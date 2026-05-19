@@ -42,6 +42,31 @@ export interface IVideoFile {
   }
 }
 
+export interface IWxSphPoiInfo {
+  latitude?: number
+  longitude?: number
+  poiCity?: string
+  poiName?: string
+  poiAddress?: string
+  poiId?: string
+  province?: string
+  region?: string
+  fullAddress?: string
+  poiCheckSum?: string
+}
+
+export interface IWxSphEventInfo {
+  eventTopicId: string
+  eventName: string
+  eventCreatorNickname?: string
+  eventAttendCount?: number
+}
+export type IXhsUserDeclarationOrigin = 1 | 2 | 3
+
+export interface IXhsUserDeclarationBind {
+  origin: IXhsUserDeclarationOrigin
+}
+
 // 发布 每个平台的独有参数
 export interface IPlatOption {
   bilibili?: {
@@ -84,6 +109,20 @@ export interface IPlatOption {
     // Board ID，由获取Pinterest Board信息接口得到
     boardId?: string
   }
+  xhs?: {
+    // 小红书用户声明绑定：1=虚拟演绎，仅供娱乐、2=笔记含AI合成内容、3=内容包含营销广告
+    userDeclarationBind?: IXhsUserDeclarationBind | null
+  }
+  wxSph?: {
+    // WeChat Channels location
+    poiInfo?: IWxSphPoiInfo
+    // WeChat Channels activity
+    activity?: IWxSphEventInfo
+    // WeChat Channels extension link
+    extLink?: string
+    // Declare original content
+    isOriginal?: boolean
+  }
   tiktok?: {
     // 隐私级别：PUBLIC_TO_EVERYONE、MUTUAL_FOLLOW_FRIENDS、SELF_ONLY
     privacy_level?: string
@@ -103,6 +142,24 @@ export interface IPlatOption {
   threads?: {
     // 位置信息
     location_id?: string | null
+  }
+  twitter?: {
+    // 回复权限
+    replySettings?: 'following' | 'mentionedUsers' | 'subscribers' | 'verified'
+    // 是否包含 AI 生成媒体
+    madeWithAi?: boolean
+    // 投票配置
+    poll?: {
+      options: string[]
+      durationMinutes: number
+      replySettings?: 'following' | 'mentionedUsers' | 'subscribers' | 'verified'
+    }
+    // 媒体标记用户 ID（仅图片帖，最多 10 个）
+    mediaTaggedUserIds?: string[]
+    // 媒体无障碍描述（顺序需与媒体上传顺序一致）
+    mediaMetadata?: {
+      altText?: string
+    }[]
   }
 }
 

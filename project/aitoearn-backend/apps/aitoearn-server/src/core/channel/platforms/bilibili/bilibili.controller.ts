@@ -1,7 +1,8 @@
 import { Body, Controller, Get, Logger, Param, Post, Query, Res } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, ResponseCode, SkipResponseInterceptor, TableDto } from '@yikart/common'
+import { GetToken, Internal, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { ApiDoc, SkipResponseInterceptor, TableDto } from '@yikart/common'
+import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
 import { Response } from 'express'
 import { BilibiliWebhookSchema } from '../../publishing/bilibili-webhook.dto'
 import { PublishingService } from '../../publishing/publishing.service'
@@ -15,6 +16,7 @@ export class BilibiliController {
   constructor(
     private readonly bilibiliService: BilibiliService,
     private readonly publishingService: PublishingService,
+    private readonly metricEventHelperService: MetricEventHelperService,
   ) {}
 
   @Public()
@@ -25,15 +27,9 @@ export class BilibiliController {
   @Post('webhooks')
   async webhooks(@Body() body: unknown) {
     this.logger.log({ path: 'bilibili webhooks received', body })
-    try {
-      const dto = BilibiliWebhookSchema.parse(body)
-      await this.publishingService.handleBilibiliPublishWebhook(dto)
-      return { status: 'success', message: 'Webhook processed' }
-    }
-    catch (error) {
-      this.logger.error(`Error handling Bilibili webhook: ${(error as Error).message}`, (error as Error).stack)
-      throw new AppException(ResponseCode.ChannelWebhookFailed)
-    }
+    const dto = BilibiliWebhookSchema.parse(body)
+    await this.publishingService.handleBilibiliPublishWebhook(dto)
+    return { status: 'success', message: 'Webhook processed' }
   }
 
   @Public()
@@ -72,13 +68,22 @@ export class BilibiliController {
     @Query('callbackUrl') callbackUrl?: string,
     @Query('callbackMethod') callbackMethod?: 'GET' | 'POST',
   ) {
-    return this.bilibiliService.createAuthTask({
+    const result = await this.bilibiliService.createAuthTask({
       userId: token.id,
       type,
       spaceId: spaceId || '',
       callbackUrl,
       callbackMethod,
     })
+
+    if (result?.taskId) {
+      await this.metricEventHelperService.record(token.id, MetricEventName.aiPublishAddChannels, {
+        bizKey: result.taskId,
+        properties: { platform: 'bilibili' },
+      })
+    }
+
+    return result
   }
 
   @ApiDoc({
@@ -100,7 +105,7 @@ export class BilibiliController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return await this.bilibiliService.getAccountAuthInfo(accountId)
+    return await this.bilibiliService.getAccountAuthInfo(token.id, accountId)
   }
 
   @ApiDoc({
@@ -111,7 +116,7 @@ export class BilibiliController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return this.bilibiliService.archiveTypeList(accountId)
+    return this.bilibiliService.archiveTypeList(token.id, accountId)
   }
 
   @ApiDoc({
@@ -124,7 +129,7 @@ export class BilibiliController {
     @Param() page: TableDto,
     @Query() query: GetArchiveListDto,
   ) {
-    return this.bilibiliService.getArchiveList(query.accountId, {
+    return this.bilibiliService.getArchiveList(token.id, query.accountId, {
       ps: page.pageSize,
       pn: page.pageNo!,
       status: query.status,
@@ -139,7 +144,7 @@ export class BilibiliController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return this.bilibiliService.getUserStat(accountId)
+    return this.bilibiliService.getUserStat(token.id, accountId)
   }
 
   @ApiDoc({
@@ -152,6 +157,7 @@ export class BilibiliController {
     @Query() query: GetArcStatDto,
   ) {
     return this.bilibiliService.getArcStat(
+      token.id,
       query.accountId,
       query.resourceId,
     )
@@ -165,37 +171,37 @@ export class BilibiliController {
     @GetToken() token: TokenInfo,
     @Param('accountId') accountId: string,
   ) {
-    return this.bilibiliService.getArcIncStat(accountId)
+    return this.bilibiliService.getArcIncStat(token.id, accountId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get User Statistics (Crawler)',
     body: AccountIdDto.schema,
   })
   @Post('/userStat')
   async getCrawlerUserStat(@Body() data: AccountIdDto) {
-    return this.bilibiliService.getUserStat(data.accountId)
+    return this.bilibiliService.getUserStatByAccountId(data.accountId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Archive Statistics (Crawler)',
     body: GetArcStatDto.schema,
   })
   @Post('/arcStat')
   async getCrawlerArcStat(@Body() data: GetArcStatDto) {
-    return this.bilibiliService.getArcStat(data.accountId, data.resourceId)
+    return this.bilibiliService.getArcStatByAccountId(data.accountId, data.resourceId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Archive List (Crawler)',
     body: ArchiveListDto.schema,
   })
   @Post('/archiveList')
   async getCrawlerArchiveList(@Body() data: ArchiveListDto) {
-    return this.bilibiliService.getArchiveList(data.accountId, {
+    return this.bilibiliService.getArchiveListByAccountId(data.accountId, {
       ps: data.page.pageSize,
       pn: data.page.pageNo!,
       status: data.filter?.status,

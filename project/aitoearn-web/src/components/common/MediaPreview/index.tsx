@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { getOssProxyPath } from '@/utils/oss'
 import { BrushEditor } from './BrushEditor'
 
 export interface MediaPreviewItem {
@@ -108,26 +109,36 @@ export function MediaPreview({
     const handleKeyDown = (e: KeyboardEvent) => {
       switch (e.key) {
         case 'Escape':
+          e.preventDefault()
+          e.stopPropagation()
           onClose()
           break
         case 'ArrowLeft':
+          e.preventDefault()
+          e.stopPropagation()
           handlePrev()
           break
         case 'ArrowRight':
+          e.preventDefault()
+          e.stopPropagation()
           handleNext()
           break
         case '+':
         case '=':
+          e.preventDefault()
+          e.stopPropagation()
           handleZoomIn()
           break
         case '-':
+          e.preventDefault()
+          e.stopPropagation()
           handleZoomOut()
           break
       }
     }
 
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('keydown', handleKeyDown, true)
+    return () => window.removeEventListener('keydown', handleKeyDown, true)
   }, [open, onClose, handlePrev, handleNext, handleZoomIn, handleZoomOut])
 
   const handleRotate = () => setRotate(r => r + 90)
@@ -149,9 +160,10 @@ export function MediaPreview({
   const handleDownload = () => {
     if (!current?.src)
       return
+    const url = getOssProxyPath(current.src)
     const link = document.createElement('a')
-    link.href = current.src
-    link.download = current.src.split('/').pop() || 'media'
+    link.href = url
+    link.download = url.split('/').pop() || 'media'
     link.target = '_blank'
     document.body.appendChild(link)
     link.click()
@@ -204,6 +216,7 @@ export function MediaPreview({
   }
 
   const handleBackdropClick = (e: React.MouseEvent) => {
+    e.stopPropagation()
     if (e.target === e.currentTarget) {
       onClose()
     }
@@ -302,7 +315,10 @@ export function MediaPreview({
 
             <button
               type="button"
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation()
+                onClose()
+              }}
               className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 text-white/80 hover:text-white transition-colors cursor-pointer"
               title="关闭"
             >

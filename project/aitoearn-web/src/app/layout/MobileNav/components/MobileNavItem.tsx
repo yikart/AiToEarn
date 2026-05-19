@@ -14,6 +14,7 @@ export function MobileNavItem({
   icon,
   isActive,
   onClose,
+  className,
 }: MobileNavItemProps) {
   const { t } = useTransClient('route')
   const lng = useGetClientLng()
@@ -26,14 +27,15 @@ export function MobileNavItem({
       data-testid={`mobile-nav-item-${translationKey}`}
       className={cn(
         'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all',
-        'text-muted-foreground hover:bg-muted hover:text-foreground',
-        isActive && 'bg-primary/10 text-primary',
+        'text-muted-foreground hover:bg-brand-cyan/10 hover:text-brand-cyan',
+        isActive && 'bg-brand-cyan/10 text-brand-cyan',
+        className,
       )}
     >
-      <span className={cn('flex items-center justify-center', isActive && 'text-primary')}>
+      <span className={cn('flex items-center justify-center', isActive && 'text-brand-cyan')}>
         {icon || <FileText size={20} />}
       </span>
-      <span>{t(translationKey as any)}</span>
+      <span>{t(translationKey)}</span>
     </Link>
   )
 }

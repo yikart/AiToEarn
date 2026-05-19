@@ -11,8 +11,8 @@ import { useVirtualizer } from '@tanstack/react-virtual'
 import { Bell, Loader2, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
+import { NotificationType } from '@/api/notification'
 import { useTransClient } from '@/app/i18n/client'
-import { useSettingsModalStore } from '@/components/SettingsModal/store'
 import { toast } from '@/lib/toast'
 import { useNotificationStore } from '@/store/notification'
 import NotificationItem from './NotificationItem'
@@ -96,66 +96,24 @@ export default function NotificationList({ onClose }: NotificationListProps) {
       markAsRead(item.id)
     }
 
-    // 任务提醒跳转
-    if (item.type === 'task_reminder' && item.relatedId) {
-      onClose()
-      router.push(`/tasks?taskId=${item.relatedId}`)
-      return
-    }
-
-    // 任务结算完成 → 已接任务详情
-    if (item.type === 'task_settled' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/accepted/${item.relatedId}`)
-      return
-    }
-
-    // 任务审核拒绝 → 已接任务详情
-    if (item.type === 'task_review_rejected' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/accepted/${item.relatedId}`)
-      return
-    }
-
-    // 任务审核通过 → 已接任务详情
-    if (item.type === 'task_review_approved' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/accepted/${item.relatedId}`)
-      return
-    }
-
-    // AI审核跳过 → 已发布任务详情
-    if (item.type === 'ai_review_skipped' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/published/${item.relatedId}`)
-      return
-    }
-
-    // 新任务提交 → 已发布任务详情
-    if (item.type === 'task_submitted' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/published/${item.relatedId}`)
-      return
-    }
-
-    // 互动任务AI审核失败 → 已发布任务详情
-    if (item.type === 'interaction_ai_review_failed' && item.relatedId) {
-      onClose()
-      router.push(`/my-tasks/published/${item.relatedId}`)
-      return
-    }
-
     // Agent结果 → 聊天页
-    if (item.type === 'agent_result' && item.relatedId) {
+    if (item.type === NotificationType.AgentResult && item.relatedId) {
       onClose()
       router.push(`/chat/${item.relatedId}`)
       return
     }
 
-    // 提现通知 → 设置-个人资料Tab
-    if (item.type === 'user_withdraw') {
+    // Agent需要操作 → 聊天页
+    if (item.type === NotificationType.AgentResultRequiresAction && item.relatedId) {
       onClose()
-      useSettingsModalStore.getState().openSettings('profile')
+      router.push(`/chat/${item.relatedId}`)
+      return
+    }
+
+    // Agent转发 → 聊天页
+    if (item.type === NotificationType.AgentForwarded && item.relatedId) {
+      onClose()
+      router.push(`/chat/${item.relatedId}`)
     }
   }, [markAsRead, onClose, router])
 

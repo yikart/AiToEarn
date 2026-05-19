@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface KwaiRawError {
   result?: number
@@ -8,47 +9,22 @@ export interface KwaiRawError {
 /**
  * Kwai error class.
  */
-export class KwaiError extends SocialMediaError<KwaiRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: KwaiRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class KwaiError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'kwai'
   }
 
-  protected static override extractRawError(data: unknown): KwaiRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as KwaiRawError
-    return errResponse
-  }
 
-  protected static override buildMessage(
-    rawError: KwaiRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.error_msg || 'Unknown error'}, error code: ${rawError.result || 'N/A'}`
+    return {
+      platformCode: errResponse.result,
+      platformMessage: errResponse.error_msg,
+    }
   }
 }

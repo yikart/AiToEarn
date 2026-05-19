@@ -22,9 +22,6 @@ origin: custom
 |---------|-------------|---------|---------|
 | `ai` | `openapi/aitoearn-ai.yaml` | `apps/aitoearn-ai/src/core/` | `docs/ai-service/` |
 | `server` | `openapi/aitoearn-server.yaml` | `apps/aitoearn-server/src/` | `docs/server/` |
-| `payment` | `openapi/aitoearn-payment.yaml` | `apps/aitoearn-payment/src/` | `docs/payment/` |
-| `task` | `openapi/aitoearn-task.yaml` | `apps/aitoearn-task/src/` | `docs/task/` |
-| `admin` | `openapi/aitoearn-admin-server.yaml` | `apps/aitoearn-admin-server/src/` | `docs/admin/` |
 
 ---
 
@@ -64,7 +61,7 @@ Controller → Service → Helper/Util → Consumer/Processor → Repository
 **每个接口都要读完整调用链路中的所有方法**，按代码实际执行顺序记录每一步做了什么，包括但不限于：
 - 参数校验、权限检查、资源存在性检查
 - 数据查询、数据构建、数据转换
-- 积分/计费操作（预扣/后扣、价格计算、退款机制）
+- 价格/用量计算与日志记录（如存在）
 - 异步队列投递与消费逻辑
 - 日志记录（AiLog 创建/更新）
 - 外部 API 调用
@@ -204,33 +201,29 @@ git diff <doc_hash>..HEAD -- <openapi_file> <source_path>
 2. 查询资源/计算价格
    └── 不存在 → ResourceNotFound
 
-3. 预扣积分（deductCredits, points=<价格>）
-   └── 余额不足 → UserCreditsInsufficient
+3. 创建 AiLog（status=generating，记录预估用量/价格）
 
-4. 创建 AiLog（status=generating）
+4. 投入异步队列（QueueName.Xxx）
 
-5. 投入异步队列（QueueName.Xxx）
-
-6. 返回 { logId } 供前端轮询
+5. 返回 { logId } 供前端轮询
 
 ── 异步阶段（Consumer） ──────────────────
 
-7. 消费任务 → 调用外部 API
+6. 消费任务 → 调用外部 API
 
-8a. 成功：
+7a. 成功：
     - 上传结果到 S3
     - 更新 AiLog（status=success, response=...）
 
-8b. 失败：
-    - 退还积分（addCredits, expiredAt=null）
+7b. 失败：
     - 更新 AiLog（status=failed, errorMessage=...）
 ```
 ```
 
 **关于业务流程的说明：**
-- 上方模板仅为**预扣+异步队列**模式的示例，实际流程根据源码如实描述
-- 同步后扣模式：先调用 API → 从响应提取用量 → 计算积分 → deductCredits → 写 AiLog
-- 纯同步无计费：无积分相关步骤，直接描述业务操作
+- 上方模板仅为**异步队列**模式的示例，实际流程根据源码如实描述
+- 同步模式：先调用 API → 从响应提取用量 → 写 AiLog
+- 纯同步无用量记录：直接描述业务操作
 - 流程中的每一步都应来自源码，按实际执行顺序排列
 - 错误分支写在对应步骤的 `└──` 子行中，不单独设"错误码"节
 
@@ -260,8 +253,8 @@ git diff <doc_hash>..HEAD -- <openapi_file> <source_path>
 ```
 `code=0` 表示成功，非 0 为业务错误码（定义在 `libs/common/src/enums/response-code.enum.ts`）。
 
-### 积分（Credits）
-<根据该服务的实际计费模式描述，如预扣/后扣、VIP 免费等>
+### 用量记录
+<根据该服务的实际实现描述 AiLog、价格或 token 用量记录；没有则写“无”。>
 ```
 
 ---
@@ -272,11 +265,11 @@ git diff <doc_hash>..HEAD -- <openapi_file> <source_path>
 
 1. **请求/响应结构来自 OpenAPI** — 字段名、类型、必填状态以 OpenAPI schema 为准
 2. **业务流程来自源码逐行追踪** — 沿 Controller → Service → Helper → Consumer 完整追踪，不省略任何步骤
-3. **libs/ 共享库方法也要跟进阅读** — 当 Service 调用了 `libs/` 中的方法（如 creditsHelper、queueService），必须读取其实现
-4. **通用约定写在 README.md** — 认证、响应格式、积分说明等跨模块通用内容只在 README 中写一次
+3. **libs/ 共享库方法也要跟进阅读** — 当 Service 调用了 `libs/` 中的方法（如 queueService），必须读取其实现
+4. **通用约定写在 README.md** — 认证、响应格式、用量记录等跨模块通用内容只在 README 中写一次
 5. **更新模式先看 git diff** — 只更新有实际代码变化的章节，未变化章节保持原文不动
 6. **所有文档统一使用当前 HEAD hash** — 不混用不同 hash
-7. **中文描述，代码标识符保持英文** — 如 `deductCredits`、`AiLog`、`status=generating`
+7. **中文描述，代码标识符保持英文** — 如 `AiLog`、`status=generating`
 8. **大代码库使用子代理并行处理** — 模块多或代码量大时拆分给子代理，提高效率
 
 ### 禁止做

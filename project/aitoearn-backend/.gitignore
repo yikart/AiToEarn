@@ -54,3 +54,15 @@ local.config.js
 docker-compose.yml
 nginx/
 vitest.config.*.timestamp*
+/.claude/settings.local.json
+.claude/scheduled_tasks.lock
+
+# Shopify GraphQL codegen generated files
+**/admin.generated.d.ts
+**/admin.types.d.ts
+**/admin-*.schema.json
+
+.nx-workspace-data
+.tmp
+
+/gzq

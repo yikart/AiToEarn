@@ -33,10 +33,6 @@ export const initialState: IAgentState = {
   // 全局状态
   currentCost: 0,
   pendingTask: null,
-
-  // Debug 模式状态
-  debugFiles: [],
-  debugMessageIndex: 0,
 }
 
 /**

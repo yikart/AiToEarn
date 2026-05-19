@@ -1,0 +1,27 @@
+{
+  "name": "aitoearn-ai-shared",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/aitoearn-ai-shared/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/aitoearn-ai-shared",
+        "tsConfig": "libs/aitoearn-ai-shared/tsconfig.lib.json",
+        "packageJson": "libs/aitoearn-ai-shared/package.json",
+        "main": "libs/aitoearn-ai-shared/src/index.ts",
+        "assets": ["libs/aitoearn-ai-shared/*.md"]
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "fix": true
+      }
+    }
+  }
+}

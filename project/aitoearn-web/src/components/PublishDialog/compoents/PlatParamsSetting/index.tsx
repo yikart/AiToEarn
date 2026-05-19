@@ -21,6 +21,8 @@ import YouTubeParams from '@/components/PublishDialog/compoents/PlatParamsSettin
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { cn } from '@/lib/utils'
 import DouyinParams from './plats/DouyinParams'
+import TwitterParams from './plats/TwitterParams'
+import WxSphParams from './plats/WxSphParams'
 import XhsParams from './plats/XhsParams'
 
 export interface IPlatParamsSettingRef {}
@@ -117,6 +119,14 @@ const PlatParamsSetting = memo(
           case PlatType.Xhs:
             return (
               <XhsParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+            )
+          case PlatType.WxSph:
+            return (
+              <WxSphParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+            )
+          case PlatType.Twitter:
+            return (
+              <TwitterParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
             )
           default:
             return (

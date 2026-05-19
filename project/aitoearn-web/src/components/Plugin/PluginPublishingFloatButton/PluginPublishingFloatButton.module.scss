@@ -1,0 +1,287 @@
+.floatButton {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: 900;
+  isolation: isolate;
+  width: 3.75rem;
+  min-width: 3.75rem;
+  border-radius: 9999px;
+  color: var(--gradient-foreground);
+  transform: translateZ(0);
+  transition:
+    width 220ms ease,
+    min-width 220ms ease,
+    transform 180ms ease,
+    filter 180ms ease;
+
+  &:hover,
+  &:focus-visible {
+    width: 12.75rem;
+    min-width: 12.75rem;
+    transform: translateY(-2px);
+    filter: saturate(1.1);
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.99);
+  }
+}
+
+.floatButton_surface {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: 100%;
+  height: 3.5rem;
+  overflow: hidden;
+  border-radius: inherit;
+  padding: 0.375rem;
+  color: var(--gradient-foreground);
+  border: 1px solid color-mix(in oklch, var(--gradient-foreground) 28%, transparent);
+  background:
+    radial-gradient(
+      circle at 16% 12%,
+      color-mix(in oklch, var(--gradient-foreground) 34%, transparent),
+      transparent 28%
+    ),
+    var(--gradientBackColor);
+  background-size: 220% 220%;
+  box-shadow:
+    0 14px 34px color-mix(in oklch, var(--brand-purple) 34%, transparent),
+    inset 0 1px 0 color-mix(in oklch, var(--gradient-foreground) 30%, transparent);
+  animation: floatButtonGradient 5s ease-in-out infinite;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -42% -16%;
+    z-index: -1;
+    background:
+      radial-gradient(
+        circle at 20% 45%,
+        color-mix(in oklch, var(--gradient-foreground) 28%, transparent),
+        transparent 18%
+      ),
+      radial-gradient(
+        circle at 58% 58%,
+        color-mix(in oklch, var(--gradient-foreground) 20%, transparent),
+        transparent 16%
+      ),
+      radial-gradient(
+        circle at 82% 38%,
+        color-mix(in oklch, var(--gradient-foreground) 24%, transparent),
+        transparent 14%
+      );
+    opacity: 0.72;
+    animation: floatButtonLiquid 4.6s ease-in-out infinite alternate;
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    border-radius: inherit;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      color-mix(in oklch, var(--gradient-foreground) 32%, transparent) 45%,
+      transparent 72%
+    );
+    transform: translateX(-120%);
+    animation: floatButtonShine 3.2s ease-in-out infinite;
+  }
+}
+
+.floatButton_glow,
+.floatButton_wave {
+  position: absolute;
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.floatButton_glow {
+  inset: -0.4rem;
+  z-index: 0;
+  background: linear-gradient(
+    115deg,
+    color-mix(in srgb, var(--brand-cyan) 46%, transparent),
+    color-mix(in srgb, var(--brand-purple) 54%, transparent),
+    color-mix(in oklch, var(--brand-cyan) 34%, transparent)
+  );
+  filter: blur(14px);
+  opacity: 0.78;
+  animation: floatButtonGlow 2.8s ease-in-out infinite;
+}
+
+.floatButton_wave {
+  inset: -0.35rem;
+  z-index: 1;
+  border: 1px solid color-mix(in srgb, var(--brand-purple) 46%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand-cyan) 24%, transparent);
+  animation: floatButtonWave 2.4s ease-out infinite;
+}
+
+.floatButton_waveDelay {
+  animation-delay: 1.2s;
+}
+
+.floatButton_iconWrap {
+  position: relative;
+  display: flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  background: color-mix(in oklch, var(--background) 92%, var(--gradient-foreground));
+  color: var(--brand-purple);
+  z-index: 2;
+  box-shadow:
+    0 8px 20px color-mix(in oklch, var(--foreground) 18%, transparent),
+    inset 0 0 0 1px color-mix(in oklch, var(--gradient-foreground) 55%, transparent);
+}
+
+.floatButton_spinnerBadge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  width: 1.125rem;
+  height: 1.125rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  color: var(--gradient-foreground);
+  background: var(--gradientBackColor);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--background) 72%, transparent);
+  transform: translate(20%, -20%);
+  z-index: 3;
+
+  svg {
+    width: 0.75rem !important;
+    height: 0.75rem !important;
+  }
+}
+
+.floatButton_textWrap {
+  display: flex;
+  min-width: 0;
+  max-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  overflow: hidden;
+  z-index: 2;
+  white-space: nowrap;
+  line-height: 1.1;
+  opacity: 0;
+  transform: translateX(-0.35rem);
+  transition:
+    max-width 220ms ease,
+    opacity 160ms ease,
+    transform 180ms ease,
+    margin-left 220ms ease;
+}
+
+.floatButton:hover .floatButton_textWrap,
+.floatButton:focus-visible .floatButton_textWrap {
+  max-width: 9rem;
+  margin-left: 0.625rem;
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.floatButton_title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 8px color-mix(in srgb, var(--foreground) 22%, transparent);
+}
+
+.floatButton_subtitle {
+  margin-top: 0.1875rem;
+  font-size: 0.6875rem;
+  color: color-mix(in oklch, var(--gradient-foreground) 82%, transparent);
+}
+
+@keyframes floatButtonGradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes floatButtonLiquid {
+  from {
+    transform: translate3d(-3%, -2%, 0) rotate(0deg) scale(1);
+  }
+
+  to {
+    transform: translate3d(5%, 3%, 0) rotate(10deg) scale(1.08);
+  }
+}
+
+@keyframes floatButtonShine {
+  0%,
+  36% {
+    transform: translateX(-120%);
+  }
+
+  70%,
+  100% {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes floatButtonWave {
+  0% {
+    opacity: 0.72;
+    transform: scale(0.94);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+
+@keyframes floatButtonGlow {
+  0%,
+  100% {
+    opacity: 0.58;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 0.94;
+    transform: scale(1.04);
+  }
+}
+
+@media (min-width: 768px) {
+  .floatButton {
+    right: 1.5rem;
+    bottom: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .floatButton,
+  .floatButton_surface,
+  .floatButton_surface::before,
+  .floatButton_surface::after,
+  .floatButton_glow,
+  .floatButton_wave,
+  .floatButton_textWrap {
+    animation: none;
+    transition: none;
+  }
+}

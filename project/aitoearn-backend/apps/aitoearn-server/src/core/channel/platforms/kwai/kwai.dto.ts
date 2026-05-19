@@ -43,3 +43,8 @@ const GetPohotListSchema = AccountIdSchema.extend({
   count: z.coerce.number().min(1).max(200).optional().describe('数量，默认20，最大200'),
 })
 export class GetPohotListDto extends createZodDto(GetPohotListSchema) {}
+
+const GetVideoInfoSchema = AccountIdSchema.extend({
+  photoId: z.string().describe('视频ID'),
+})
+export class GetVideoInfoDto extends createZodDto(GetVideoInfoSchema) {}

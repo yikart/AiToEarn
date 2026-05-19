@@ -21,6 +21,13 @@ export interface DouyRefreshTokenInfo {
   refresh_token: string
 }
 
+export interface DouyinMiniAppCode2SessionInfo {
+  session_key: string
+  openid: string
+  anonymous_openid?: string
+  unionid?: string
+}
+
 export interface DouyinUserInfo {
   open_id: string
   nickname: string
@@ -31,6 +38,66 @@ export interface DouyinUserInfo {
   client_key: string
   log_id: string
   union_id: string
+}
+
+export interface DouyinUserVideoListItem {
+  item_id?: string
+  video_id?: string
+  share_url?: string
+  title?: string
+}
+
+export interface DouyinUserVideoListResponse {
+  list?: DouyinUserVideoListItem[]
+  cursor?: number
+  has_more?: boolean
+  error_code?: number
+  description?: string
+}
+
+export interface DouyinMiniAppVideoStatistics {
+  share_count: number
+  forward_count: number
+  comment_count: number
+  digg_count: number
+  download_count: number
+  play_count: number
+}
+
+export interface DouyinMiniAppVideoAnchor {
+  anchor_type?: number
+  anchor_id?: string
+}
+
+export interface DouyinMiniAppVideoItem {
+  video_id?: string
+  video_status: number
+  media_type?: number
+  share_url: string
+  video_anchor?: DouyinMiniAppVideoAnchor
+  title: string
+  item_id: string
+  is_top: boolean
+  create_time: string
+  is_reviewed: boolean
+  statistics?: DouyinMiniAppVideoStatistics
+  cover: string
+}
+
+export interface DouyinMiniAppVideoQueryExtra {
+  now: string
+  error_code: number
+  description: string
+  sub_error_code: number
+  sub_description: string
+  logid: string
+}
+
+export interface DouyinMiniAppVideoQueryData {
+  extra?: DouyinMiniAppVideoQueryExtra
+  data?: {
+    list: DouyinMiniAppVideoItem[]
+  }
 }
 
 export interface DouyinClientTokenInfo {
@@ -71,16 +138,4 @@ export interface DouyinShareSchemaOptions {
   privateStatus?: DouyinPrivateStatus // 0：全部人可见，1：自己可见，2：好友可见
   image_list_path?: string[]
   video_path?: string
-}
-
-/**
- * 获取中文文件的URL
- * @param url
- * @returns
- */
-export function getZhFileUrl(url: string): string {
-  if (!url)
-    return url
-  const urlObj = new URL(url)
-  return `https://assets.aitoearn.cn${urlObj.pathname}${urlObj.search}`
 }

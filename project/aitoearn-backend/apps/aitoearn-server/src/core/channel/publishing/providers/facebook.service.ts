@@ -550,7 +550,7 @@ export class FacebookPublishService
       }
     }
     catch (error) {
-      this.logger.error(`验证 Facebook 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 Facebook 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,

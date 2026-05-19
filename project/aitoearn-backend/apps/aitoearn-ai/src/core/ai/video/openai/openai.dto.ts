@@ -1,4 +1,4 @@
-import { createZodDto, UserType } from '@yikart/common'
+import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 // OpenAI 视频创建请求DTO
@@ -8,6 +8,7 @@ const openAIVideoCreateBaseSchema = z.object({
   model: z.string().optional().describe('模型名称'),
   seconds: z.string().optional().describe('视频时长（秒）'),
   size: z.enum(['720x1280', '1280x720', '1024x1792', '1792x1024']).optional().describe('视频尺寸'),
+  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class OpenAIVideoCreateRequestDto extends createZodDto(openAIVideoCreateBaseSchema) {}
@@ -23,6 +24,7 @@ export class UserOpenAIVideoCreateRequestDto extends createZodDto(userOpenAIVide
 // OpenAI Remix 请求DTO
 const openAIVideoRemixBaseSchema = z.object({
   prompt: z.string().min(1).describe('新的提示词'),
+  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class OpenAIVideoRemixRequestDto extends createZodDto(openAIVideoRemixBaseSchema) {}

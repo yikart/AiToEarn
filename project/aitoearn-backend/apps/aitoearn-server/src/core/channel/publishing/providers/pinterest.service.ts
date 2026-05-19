@@ -2,7 +2,6 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
 import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { CreatePinBody, SourceType } from '../../libs/pinterest/common'
-import { PinterestPin } from '../../libs/pinterest/pinterest.interfaces'
 import { PinterestService } from '../../platforms/pinterest/pinterest.service'
 import { PublishingException } from '../publishing.exception'
 import { PublishingTaskResult, VerifyPublishResult } from '../publishing.interface'
@@ -49,30 +48,14 @@ export class PinterestPubService extends PublishService {
       },
     })
 
-    let resp: PinterestPin
-    try {
-      resp = await this.pinterestService.createPin(data)
-      this.logger.debug({
-        path: '--- pinterest publishImagePost --- 3 createPin 成功',
-        data: {
-          pinId: resp.id,
-          resp,
-        },
-      })
-    }
-    catch (error: any) {
-      this.logger.error({
-        path: '--- pinterest publishImagePost --- 3 createPin 失败',
-        data: {
-          errorMessage: error?.message,
-          errorName: error?.name,
-          errorStatus: error?.status,
-          rawError: error?.rawError,
-          fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        },
-      })
-      throw error
-    }
+    const resp = await this.pinterestService.createPinByAccountId(data)
+    this.logger.debug({
+      path: '--- pinterest publishImagePost --- 3 createPin 成功',
+      data: {
+        pinId: resp.id,
+        resp,
+      },
+    })
 
     return {
       postId: resp.id,
@@ -96,30 +79,14 @@ export class PinterestPubService extends PublishService {
       },
     })
 
-    let result: { data: { media_id: string }, code: number }
-    try {
-      result = await this.pinterestService.uploadVideo(publishTask.videoUrl || '', publishTask.accountId)
-      this.logger.debug({
-        path: '--- pinterest publishVideoPost --- 2 uploadVideo 成功',
-        data: {
-          mediaId: result?.data?.media_id,
-          result,
-        },
-      })
-    }
-    catch (error: any) {
-      this.logger.error({
-        path: '--- pinterest publishVideoPost --- 2 uploadVideo 失败',
-        data: {
-          errorMessage: error?.message,
-          errorName: error?.name,
-          errorStatus: error?.status,
-          rawError: error?.rawError,
-          fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        },
-      })
-      throw error
-    }
+    const result = await this.pinterestService.uploadVideo(publishTask.videoUrl || '', publishTask.accountId)
+    this.logger.debug({
+      path: '--- pinterest publishVideoPost --- 2 uploadVideo 成功',
+      data: {
+        mediaId: result?.data?.media_id,
+        result,
+      },
+    })
 
     const body: CreatePinBody = {
       accountId: publishTask.accountId,
@@ -140,30 +107,14 @@ export class PinterestPubService extends PublishService {
       },
     })
 
-    let resp: PinterestPin
-    try {
-      resp = await this.pinterestService.createPin(body)
-      this.logger.debug({
-        path: '--- pinterest publishVideoPost --- 4 createPin 成功',
-        data: {
-          pinId: resp.id,
-          resp,
-        },
-      })
-    }
-    catch (error: any) {
-      this.logger.error({
-        path: '--- pinterest publishVideoPost --- 4 createPin 失败',
-        data: {
-          errorMessage: error?.message,
-          errorName: error?.name,
-          errorStatus: error?.status,
-          rawError: error?.rawError,
-          fullError: JSON.stringify(error, Object.getOwnPropertyNames(error)),
-        },
-      })
-      throw error
-    }
+    const resp = await this.pinterestService.createPinByAccountId(body)
+    this.logger.debug({
+      path: '--- pinterest publishVideoPost --- 4 createPin 成功',
+      data: {
+        pinId: resp.id,
+        resp,
+      },
+    })
 
     this.logger.debug({
       path: '--- pinterest publishVideoPost --- 5 完成',
@@ -248,7 +199,7 @@ export class PinterestPubService extends PublishService {
     }
     try {
       // Pinterest 通过 API 获取 Pin 信息验证发布状态
-      const pinInfo = await this.pinterestService.getPinById(
+      const pinInfo = await this.pinterestService.getPinByIdByAccountId(
         publishRecord.dataId || '',
         publishRecord.accountId,
       )
@@ -267,7 +218,7 @@ export class PinterestPubService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error(`验证 Pinterest 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 Pinterest 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,

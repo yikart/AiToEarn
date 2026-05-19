@@ -1,5 +1,7 @@
 {
   "home": "ホーム",
+  "header.draftBox": "コンテンツ管理",
+  "header.agentAssets": "Agent素材",
   "tasksHistory": "タスク履歴",
   "accounts": "投稿",
   "publish": "投稿",
@@ -16,6 +18,11 @@
   "aiRank": "AIランキング",
   "addChannel": "チャンネル追加",
   "sidebar.more": "もっと見る",
-  "uptime": "稼働状況",
-  "taskSquare": "ゴールドラッシュ広場"
+  "mobileBottom.content": "コンテンツ",
+  "mobileBottom.checkIn": "チェックイン",
+  "mobileBottom.publish": "投稿",
+  "mobileBottom.interaction": "交流",
+  "aiSocial": "AI Publish",
+  "download": "Download",
+  "xhsData": "XHS Data"
 }

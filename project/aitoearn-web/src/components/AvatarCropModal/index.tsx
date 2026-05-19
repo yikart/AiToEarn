@@ -26,6 +26,26 @@ export interface AvatarCropModalProps {
   onCropComplete: (blob: Blob) => void
   /** 是否正在上传 */
   isUploading?: boolean
+  /** 弹窗标题 */
+  title?: string
+  /** 裁剪比例 */
+  aspect?: number
+  /** 裁剪形状 */
+  cropShape?: 'rect' | 'round'
+  /** 是否显示裁剪网格 */
+  showGrid?: boolean
+  /** 输出尺寸，传 null 时使用实际裁剪尺寸 */
+  outputSize?: { width: number, height: number } | null
+  /** 图片加载中文案 */
+  imageLoadingText?: string
+  /** 取消按钮文案 */
+  cancelText?: string
+  /** 确认按钮文案 */
+  confirmText?: string
+  /** 处理中按钮文案 */
+  processingText?: string
+  /** 上传中按钮文案 */
+  uploadingText?: string
 }
 
 /**
@@ -35,6 +55,7 @@ async function getCroppedImg(
   imageSrc: string,
   pixelCrop: Area,
   rotation: number = 0,
+  outputSize?: { width: number, height: number } | null,
 ): Promise<Blob> {
   const image = await createImage(imageSrc)
   const canvas = document.createElement('canvas')
@@ -72,10 +93,10 @@ async function getCroppedImg(
     throw new Error('No 2d context')
   }
 
-  // 设置输出尺寸为 400x400
-  const outputSize = 400
-  croppedCanvas.width = outputSize
-  croppedCanvas.height = outputSize
+  const targetWidth = outputSize === null ? Math.round(pixelCrop.width) : outputSize?.width ?? 400
+  const targetHeight = outputSize === null ? Math.round(pixelCrop.height) : outputSize?.height ?? 400
+  croppedCanvas.width = targetWidth
+  croppedCanvas.height = targetHeight
 
   // 绘制裁剪后的图像
   croppedCtx.drawImage(
@@ -86,8 +107,8 @@ async function getCroppedImg(
     pixelCrop.height,
     0,
     0,
-    outputSize,
-    outputSize,
+    targetWidth,
+    targetHeight,
   )
 
   return new Promise((resolve, reject) => {
@@ -143,8 +164,19 @@ export function AvatarCropModal({
   imageFile,
   onCropComplete,
   isUploading = false,
+  title,
+  aspect = 1,
+  cropShape = 'round',
+  showGrid = false,
+  outputSize,
+  imageLoadingText,
+  cancelText,
+  confirmText,
+  processingText,
+  uploadingText,
 }: AvatarCropModalProps) {
   const { t } = useTransClient('settings')
+  const dialogTitle = title || t('profile.cropAvatar')
 
   // 图片 URL
   const [imageUrl, setImageUrl] = useState<string>('')
@@ -168,6 +200,7 @@ export function AvatarCropModal({
       setCrop({ x: 0, y: 0 })
       setZoom(1)
       setRotation(0)
+      setCroppedAreaPixels(null)
       return () => {
         URL.revokeObjectURL(url)
       }
@@ -175,6 +208,7 @@ export function AvatarCropModal({
     else {
       setImageUrl('')
       setIsImageLoading(false)
+      setCroppedAreaPixels(null)
     }
   }, [imageFile])
 
@@ -205,7 +239,7 @@ export function AvatarCropModal({
 
     setIsProcessing(true)
     try {
-      const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels, rotation)
+      const croppedBlob = await getCroppedImg(imageUrl, croppedAreaPixels, rotation, outputSize)
       onCropComplete(croppedBlob)
     }
     catch (error) {
@@ -226,21 +260,21 @@ export function AvatarCropModal({
         aria-describedby={undefined}
       >
         {/* 无障碍标题 */}
-        <DialogTitle className="sr-only">{t('profile.cropAvatar')}</DialogTitle>
+        <DialogTitle className="sr-only">{dialogTitle}</DialogTitle>
 
         {/* 顶部标题栏 */}
-        <div className="flex items-center px-6 py-4 border-b border-gray-100">
-          <h2 className="text-lg font-medium text-gray-900">{t('profile.cropAvatar')}</h2>
+        <div className="flex items-center px-6 py-4 border-b border-border">
+          <h2 className="text-lg font-medium text-foreground">{dialogTitle}</h2>
         </div>
 
         {/* 裁剪区域 */}
-        <div className={cn(styles.cropContainer, 'relative bg-gray-900')}>
+        <div className={cn(styles.cropContainer, 'relative bg-foreground')}>
           {/* 图片加载中状态 */}
           {isImageLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-gray-900 z-10">
+            <div className="absolute inset-0 flex items-center justify-center bg-foreground z-10">
               <div className="flex flex-col items-center gap-3">
                 <Loader2 size={32} className="animate-spin text-white/60" />
-                <span className="text-sm text-white/60">{t('profile.imageLoading')}</span>
+                <span className="text-sm text-white/60">{imageLoadingText || t('profile.imageLoading')}</span>
               </div>
             </div>
           )}
@@ -251,9 +285,9 @@ export function AvatarCropModal({
               crop={crop}
               zoom={zoom}
               rotation={rotation}
-              aspect={1}
-              cropShape="round"
-              showGrid={false}
+              aspect={aspect}
+              cropShape={cropShape}
+              showGrid={showGrid}
               onCropChange={setCrop}
               onZoomChange={setZoom}
               onCropComplete={onCropCompleteCallback}
@@ -267,7 +301,7 @@ export function AvatarCropModal({
         </div>
 
         {/* 工具栏 */}
-        <div className="flex items-center justify-center gap-2 py-3 border-t border-gray-100 bg-gray-50">
+        <div className="flex items-center justify-center gap-2 py-3 border-t border-border bg-muted">
           <Button
             variant="ghost"
             size="sm"
@@ -288,7 +322,7 @@ export function AvatarCropModal({
           >
             <RotateCw size={18} />
           </Button>
-          <div className="w-px h-5 bg-gray-200 mx-2" />
+          <div className="w-px h-5 bg-border mx-2" />
           <Button
             variant="ghost"
             size="sm"
@@ -312,18 +346,18 @@ export function AvatarCropModal({
         </div>
 
         {/* 底部按钮 */}
-        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-gray-100">
+        <div className="flex items-center justify-end gap-3 px-6 py-4 border-t border-border">
           <Button variant="outline" onClick={onClose} disabled={isDisabled}>
-            {t('profile.cancel')}
+            {cancelText || t('profile.cancel')}
           </Button>
           <Button onClick={handleConfirm} disabled={isDisabled || isImageLoading}>
             {isDisabled ? (
               <>
                 <Loader2 size={16} className="mr-2 animate-spin" />
-                {isProcessing ? t('profile.processing') : t('profile.uploading')}
+                {isProcessing ? (processingText || t('profile.processing')) : (uploadingText || t('profile.uploading'))}
               </>
             ) : (
-              t('profile.confirm')
+              confirmText || t('profile.confirm')
             )}
           </Button>
         </div>

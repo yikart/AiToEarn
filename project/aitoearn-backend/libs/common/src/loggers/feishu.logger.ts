@@ -19,7 +19,14 @@ export class FeishuLogger implements DestinationStream {
       .digest()
       .toString('base64')
 
-    const content = JSON.parse(msg)
+    let content: unknown
+    try {
+      content = JSON.parse(msg)
+    }
+    catch {
+      content = { raw: msg }
+    }
+
     await fetch(this.options.url, {
       method: 'POST',
       body: JSON.stringify({
@@ -34,9 +41,9 @@ export class FeishuLogger implements DestinationStream {
       .then(r => r.json() as Promise<{ code: number }>)
       .then((r) => {
         if (r.code !== 0) {
-          this.logger.error(r)
+          this.logger.error(r, 'Feishu send failed')
         }
       })
-      .catch(e => this.logger.error(121232, e))
+      .catch(e => this.logger.error(e, 'Feishu request failed'))
   }
 }

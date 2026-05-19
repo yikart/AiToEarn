@@ -2,7 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { AccountType } from '@yikart/aitoearn-server-client'
-import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
 import { PublishRecordService } from '../../publish-record/publish-record.service'
 import { RelayAccountException } from '../../relay/relay-account.exception'
 import { ChannelAccountService } from '../platforms/channel-account.service'
@@ -59,7 +59,7 @@ export class InteracteController {
   @Get('/getArcCommentList/:pageNo/:pageSize')
   async getArcCommentList(
     @GetToken() token: TokenInfo,
-    @Query('recordId') recordId: string,
+    @Query('recordId', ParseObjectIdPipe) recordId: string,
     @Param() query: TableDto,
   ) {
     const record = await this.publishRecordService.getPublishRecordInfo(recordId)

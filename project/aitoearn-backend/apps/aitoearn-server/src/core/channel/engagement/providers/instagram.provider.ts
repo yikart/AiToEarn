@@ -19,7 +19,7 @@ export class InstagramEngagementProvider implements EngagementProvider {
       before: (pagination as KeysetPagination)?.before ?? undefined,
       after: (pagination as KeysetPagination)?.after ?? undefined,
     }
-    const resp = await this.instagramService.getUserPosts(accountId, req)
+    const resp = await this.instagramService.getUserPostsByAccountId(accountId, req)
     const posts = resp.data.map((item) => {
       const medias = []
       if (item.media_type === InstagramMediaType.CAROUSEL_ALBUM && item.children?.data) {

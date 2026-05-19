@@ -141,7 +141,7 @@ export function StructuredData({
     })
   }
 
-  // Product Schema (for pricing page)
+  // Product Schema
   if (products && products.length > 0) {
     products.forEach((product) => {
       schemas.push({

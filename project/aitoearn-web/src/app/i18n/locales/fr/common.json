@@ -13,28 +13,38 @@
     "trialing": "Essai",
     "go": "Go",
     "plus": "Plus",
-    "ultra": "Ultra"
+    "ultra": "Ultra",
+    "fortune": "Membre Fortune",
+    "treasure": "Membre Treasure"
   },
   "subscribe": "Mettre à niveau",
   "balance": "Crédits",
   "recharge": "Recharger",
-  "adBalance": "Solde",
+  "adBalance": "Solde annonceur",
+  "creatorBalance": "Solde créateur",
   "plugin": "Extension",
   "affiliates": "Affiliés",
   "goToWebsite": "Aller au site",
+  "filing": {
+    "policeRecord": "京公网安备11010502060417号"
+  },
   "pluginStatus": {
     "notInstalled": "Installer",
     "noPermission": "Non autorisé",
     "ready": "Prêt",
-    "checking": "Vérification"
+    "checking": "Vérification",
+    "updateAvailable": "Mise à jour"
   },
   "contactUs": "Contactez-nous",
+  "apiErrorContactTip": "Si vous avez des questions, veuillez ",
+  "wechat": "WeChat",
+  "scanToAdd": "Scanner pour ajouter",
   "documents": "Documents",
   "helpDocs": "Documentation",
-  "pluginGuide": "Guide du plugin",
+  "pluginGuide": "Guide d'installation et d'utilisation du plugin",
+  "pluginUpdateGuide": "Guide de mise a jour du plugin",
   "privacyPolicy": "Politique de confidentialité",
   "termsOfService": "Conditions d'utilisation",
-  "downloadAppButton": "Télécharger l'application",
   "noNotifications": "Aucune notification",
   "markAllAsRead": "Tout marquer comme lu",
   "markAsRead": "Marquer comme lu",
@@ -42,12 +52,21 @@
   "viewAll": "Voir tout",
   "cancel": "Annuler",
   "confirm": "Confirmer",
+  "save": "Enregistrer",
   "expand": "Développer",
   "collapse": "Réduire",
   "yes": "Oui",
   "no": "Non",
   "calendar": {
-    "weekDaysShort": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "weekDaysShort": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
     "monthSuffix": ""
   },
   "actions": {
@@ -83,14 +102,12 @@
   },
   "header": {
     "messages": "Messages",
-    "income": "Historique des revenus",
-    "wallet": "Mon portefeuille",
     "materialLibrary": "Bibliothèque",
     "draftBox": "Gestion de contenu",
     "draftBoxSeoTitle": "Gestion de contenu - Création par lots IA et éditeur de brouillons",
     "draftBoxSeoDescription": "Gérez tous vos brouillons de contenu en un seul endroit. Utilisez l'IA pour générer des publications par lots et organisez la distribution multi-plateformes avec AiToEarn.",
     "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, AiToEarn",
-    "agentAssets": "Ressources Agent"
+    "brandPromotion": "AI Check-in"
   },
   "tasks": "Marché",
   "signIn": {
@@ -128,35 +145,6 @@
   "networkBusy": "Réseau occupé, veuillez réessayer plus tard !",
   "networkError": "Erreur réseau, veuillez réessayer plus tard !",
   "contact": "Besoin d'aide ? Contactez le support :",
-  "uptime": {
-    "seoTitle": "Statut des modèles IA - Surveillance de disponibilité en temps réel",
-    "pageKeywords": "statut modèle IA, disponibilité modèle, suivi disponibilité, santé service IA, surveillance modèle, AiToEarn statut",
-    "pageTitle": "Statut des modèles IA",
-    "pageDescription": "Surveillez la disponibilité en temps réel et le temps de fonctionnement des modèles IA. Vérifiez le statut opérationnel de chaque modèle et fournisseur.",
-    "loading": "Chargement...",
-    "noData": "Aucune donnée",
-    "uptimePercentage": "Disponibilité :",
-    "normal": "Normal",
-    "timeout": "Délai dépassé",
-    "unavailable": "Indisponible",
-    "provider": "Fournisseur",
-    "operation": "Opération",
-    "latency": "Latence",
-    "errorType": "Erreur",
-    "filter": {
-      "title": "Filtres",
-      "model": "Modèle",
-      "timeRange": "Période",
-      "all": "Tout",
-      "last7Days": "7 derniers jours",
-      "last30Days": "30 derniers jours",
-      "last90Days": "90 derniers jours",
-      "reset": "Réinitialiser",
-      "apply": "Appliquer"
-    },
-    "copy": "Copier",
-    "copied": "Copié"
-  },
   "websit": {
     "termsOfService": {
       "title": "Conditions d'utilisation",
@@ -217,14 +205,10 @@
       "importantNoteContent": "Les données ne peuvent pas être récupérées après la suppression. Veuillez procéder avec prudence. Certaines données requises par la loi peuvent ne pas être supprimables."
     }
   },
-  "lowBalanceAlert": {
-    "title": "Alerte de solde bas",
-    "content": "Votre solde de crédits est faible. Veuillez recharger pour continuer à utiliser nos services.",
-    "neverRemind": "Ne plus me rappeler"
-  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 à partir de 0,03$/sec",
-    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+    "videoPromo": "gpt-image-2 à partir de 0,007 yuan par image",
+    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
   },
   "chinaDomainPrompt": {
     "title": "Passer à la région Chine",
@@ -256,16 +240,40 @@
     "cropFree": "Libre",
     "cropConfirm": "Appliquer le recadrage",
     "cropCancel": "Annuler le recadrage",
-    "cropRatio": "Ratio"
+    "cropRatio": "Ratio",
+    "outputFormat": "Format d'export",
+    "convertToFormat": "Convertir en {{format}}",
+    "compressionQuality": "Qualité de compression",
+    "pngLossless": "Export PNG sans perte",
+    "compressImage": "Compresser l'image",
+    "compressShort": "Compresser",
+    "convertFormat": "Convertir le format",
+    "convertShort": "Convertir",
+    "compressHint": "Ajustez la qualité avant l'enregistrement. L'image sera exportée en JPG compressé.",
+    "convertHint": "Choisissez le format d'image utilisé à l'enregistrement.",
+    "compressJpgTip": "La compression bascule automatiquement la sortie en JPG.",
+    "pngLosslessShort": "Sans perte"
   },
   "switchToInternational": "Vers \"International\"",
   "switchToChina": "Vers \"Chine\"",
-  "platformRegionPrompt": {
-    "title": "Restriction régionale de la plateforme",
-    "chinaContent": "{{platform}} n'est disponible que sur le site chinois. Rediriger vers le site chinois ?",
-    "abroadContent": "{{platform}} n'est disponible que sur le site international. Rediriger vers le site international ?",
-    "ok": "Aller",
-    "cancel": "Annuler"
+  "noMore": "Plus de données",
+  "comingSoon": "En cours de développement, restez à l'écoute",
+  "enterpriseSurvey": {
+    "description": "Besoin de plus de fonctionnalités entreprise ? Dites-le-nous via le questionnaire.",
+    "action": "Répondre au questionnaire"
   },
-  "noMore": "Plus de données"
+  "wechatBrowserMask": {
+    "cornerHint": "Menu en haut à droite",
+    "bubbleLine1": "Touchez le menu",
+    "bubbleLine2": "puis \"Ouvrir dans le navigateur\"",
+    "openInBrowser": "Ouvrir dans le navigateur",
+    "description": "Le webview WeChat peut limiter la publication et les redirections. Continuez dans votre navigateur."
+  },
+  "advertiser": "AI Check-in",
+  "datePicker": {
+    "clear": "Clear",
+    "confirm": "Confirm",
+    "selectDate": "Select date",
+    "selectDateRange": "Select date range"
+  }
 }

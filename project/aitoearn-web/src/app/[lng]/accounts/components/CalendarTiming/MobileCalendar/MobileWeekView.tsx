@@ -6,24 +6,27 @@
  * - 显示当前周的 7 天
  * - 支持左右滑动切换周
  * - 选中日期高亮
- * - 有数据的日期显示小圆点
  */
 
 'use client'
 
+import type { TouchEvent } from 'react'
 import type { IMobileWeekViewProps } from './mobileCalendar.types'
 import dayjs from 'dayjs'
-import { memo, useCallback, useMemo, useRef } from 'react'
+import { memo, useMemo, useRef } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { cn } from '@/lib/utils'
+import { getChinaCalendarLunarInfo } from '../calendarFestival.utils'
+import CalendarLunarText from '../CalendarLunarText'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 
 const MobileWeekView = memo<IMobileWeekViewProps>(
-  ({ currentDate, selectedDate, onDateSelect, onWeekChange, recordMap }) => {
+  ({ currentDate, selectedDate, recordMap, onDateSelect, onWeekChange }) => {
     const { t } = useTransClient('common')
-    const touchStartX = useRef<number>(0)
-    const touchEndX = useRef<number>(0)
+    const lng = useGetClientLng()
+    const touchStartRef = useRef<{ clientX: number, clientY: number } | null>(null)
 
     // 星期标题 - 使用 i18n 翻译
     const weekDays = t('calendar.weekDaysShort', { returnObjects: true }) as string[]
@@ -45,30 +48,39 @@ const MobileWeekView = memo<IMobileWeekViewProps>(
     // 选中日期字符串
     const selectedStr = dayjs(selectedDate).format('YYYY-MM-DD')
 
-    // 检查日期是否有数据
-    const hasData = useCallback(
-      (dateStr: string) => {
-        const records = recordMap.get(dateStr)
-        return records && records.length > 0
-      },
-      [recordMap],
-    )
-
     // 触摸事件处理 - 实现左右滑动切换周
-    const handleTouchStart = (e: React.TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX
+    const handleTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+      const touch = event.touches[0]
+      touchStartRef.current = {
+        clientX: touch.clientX,
+        clientY: touch.clientY,
+      }
     }
 
-    const handleTouchEnd = (e: React.TouchEvent) => {
-      touchEndX.current = e.changedTouches[0].clientX
-      const diff = touchStartX.current - touchEndX.current
-      const threshold = 50 // 滑动阈值
+    const handleTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+      const start = touchStartRef.current
+      touchStartRef.current = null
 
-      if (diff > threshold) {
+      if (!start) {
+        return
+      }
+
+      const touch = event.changedTouches[0]
+      const deltaX = touch.clientX - start.clientX
+      const deltaY = touch.clientY - start.clientY
+      const absDeltaX = Math.abs(deltaX)
+      const absDeltaY = Math.abs(deltaY)
+      const threshold = 50
+
+      if (absDeltaX < threshold || absDeltaX < absDeltaY) {
+        return
+      }
+
+      if (deltaX < 0) {
         // 左滑 - 下一周
         onWeekChange('next')
       }
-      else if (diff < -threshold) {
+      else {
         // 右滑 - 上一周
         onWeekChange('prev')
       }
@@ -103,19 +115,20 @@ const MobileWeekView = memo<IMobileWeekViewProps>(
             const isToday = dateStr === todayStr
             const isSelected = dateStr === selectedStr
             const isPast = date.isBefore(dayjs(), 'day')
-            const hasRecords = hasData(dateStr)
+            const hasRecords = (recordMap.get(dateStr)?.length ?? 0) > 0
+            const lunar = getChinaCalendarLunarInfo(date.toDate(), lng)
 
             return (
               <button
                 key={dateStr}
                 type="button"
                 className={cn(
-                  'flex flex-col items-center justify-center py-2 rounded-lg cursor-pointer transition-colors',
+                  'relative flex min-h-16 flex-col items-center justify-center rounded-xl py-2 cursor-pointer transition-colors',
                   'focus:outline-none focus-visible:ring-2 focus-visible:ring-ring',
                   isSelected
-                    ? 'bg-primary text-primary-foreground'
+                    ? 'bg-gradient-back text-gradient-foreground shadow-md shadow-primary/20'
                     : isToday
-                      ? 'text-foreground font-bold'
+                      ? 'bg-primary/10 text-primary font-bold'
                       : isPast
                         ? 'text-muted-foreground'
                         : 'text-foreground',
@@ -123,20 +136,22 @@ const MobileWeekView = memo<IMobileWeekViewProps>(
                 )}
                 onClick={() => onDateSelect(date.toDate())}
               >
+                {hasRecords && (
+                  <span
+                    className={cn(
+                      'pointer-events-none absolute right-2 top-2 size-1.5 rounded-full shadow-sm',
+                      isSelected ? 'bg-gradient-foreground/90' : 'bg-brand-cyan',
+                    )}
+                  />
+                )}
                 {/* 日期数字 */}
-                <span className="text-base font-medium">{date.date()}</span>
-
-                {/* 小圆点指示器 */}
-                <div className="h-1.5 mt-0.5">
-                  {hasRecords && (
-                    <div
-                      className={cn(
-                        'w-1.5 h-1.5 rounded-full',
-                        isSelected ? 'bg-primary-foreground' : 'bg-primary',
-                      )}
-                    />
-                  )}
-                </div>
+                <span className="text-base font-semibold tabular-nums">{date.date()}</span>
+                <CalendarLunarText
+                  lunar={lunar}
+                  selected={isSelected}
+                  compact
+                  className={cn('mt-1 max-w-full px-1', isSelected && 'text-gradient-foreground/85')}
+                />
               </button>
             )
           })}

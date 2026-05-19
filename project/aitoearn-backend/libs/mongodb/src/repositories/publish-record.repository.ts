@@ -7,11 +7,28 @@
  */
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
-import { AccountType } from '@yikart/common'
+import { AccountType, POST_DATA_UNAVAILABLE_WORK_STATUSES, WorkStatus } from '@yikart/common'
 import { Model, RootFilterQuery } from 'mongoose'
 import { PublishRecordSource, PublishStatus, PublishType } from '../enums'
 import { PublishDayInfo, PublishInfo, PublishRecord } from '../schemas'
 import { BaseRepository } from './base.repository'
+
+export interface PublishRecordPostDataCrawlerMonitorItem {
+  publishRecordId: string
+  materialGroupId?: string
+  dataId: string
+  accountType: AccountType
+  accountId?: string
+  uid?: string
+  workLink?: string
+  originalWorkLink?: string
+  publishTime?: Date
+  status: PublishStatus
+  workStatus?: WorkStatus
+  errorMessage?: string
+  createdAt?: Date
+  updatedAt?: Date
+}
 
 @Injectable()
 export class PublishRecordRepository extends BaseRepository<PublishRecord> {
@@ -54,7 +71,6 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   ): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       userId: query.userId,
-      source: { $ne: PublishRecordSource.TASK_LINK },
       ...(query.accountId !== undefined && { accountId: query.accountId }),
       ...(query.accountType !== undefined && {
         accountType: query.accountType,
@@ -87,7 +103,6 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     const filters: RootFilterQuery<PublishRecord> = {
       status: { $ne: PublishStatus.PUBLISHED },
       userId: query.userId,
-      source: { $ne: PublishRecordSource.TASK_LINK },
     }
     if (query.accountId) {
       filters.accountId = query.accountId
@@ -101,6 +116,40 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return this.publishRecordModel.find(filters).sort({
       createdAt: -1,
     }).lean({ virtuals: true })
+  }
+
+  async countPublishRecords(filter: RootFilterQuery<PublishRecord>) {
+    return this.publishRecordModel.countDocuments(filter).exec()
+  }
+
+  async groupPublishRecords(
+    filter: RootFilterQuery<PublishRecord>,
+    field: keyof PublishRecord,
+  ) {
+    return this.publishRecordModel.aggregate<{ _id: string | number | null, count: number }>([
+      { $match: filter },
+      { $group: { _id: `$${String(field)}`, count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+    ]).exec()
+  }
+
+  async getPublishRecordTrend(filter: RootFilterQuery<PublishRecord>) {
+    return this.publishRecordModel.aggregate<{ _id: string, count: number }>([
+      { $match: filter },
+      {
+        $group: {
+          _id: {
+            $dateToString: {
+              format: '%Y-%m-%d',
+              date: '$publishTime',
+              timezone: 'Asia/Shanghai',
+            },
+          },
+          count: { $sum: 1 },
+        },
+      },
+      { $sort: { _id: 1 } },
+    ]).exec()
   }
 
   // 获取发布记录信息
@@ -246,87 +295,71 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return publishRecord
   }
 
-  async getPublishRecordByTaskId(taskId: string, userId: string) {
-    const res = await this.publishRecordModel
-      .findOne({ taskId, userId })
-      .sort({ createdAt: -1 })
-      .lean({ virtuals: true })
-    return res
-  }
-
-  /**
-   * 根据广告主推广任务ID获取发布记录列表（广告主用，不需要userId）
-   * @param advertiserTaskId 广告主推广任务ID
-   * @param query 查询条件
-   * @returns 发布记录列表和总数
-   */
-  async getPublishRecordListByAdvertiserTaskId(
-    advertiserTaskId: string,
-    query?: {
-      status?: PublishStatus
-      accountType?: AccountType
-      pageNo?: number
-      pageSize?: number
-    },
-  ): Promise<{ records: PublishRecord[], total: number }> {
-    const filters: RootFilterQuery<PublishRecord> = {
-      taskId: advertiserTaskId,
-      ...(query?.status !== undefined && { status: query.status }),
-      ...(query?.accountType !== undefined && { accountType: query.accountType }),
-    }
-
-    const pageNo = query?.pageNo || 1
-    const pageSize = query?.pageSize || 20
-
-    const total = await this.publishRecordModel.countDocuments(filters)
-    const records = await this.publishRecordModel
-      .find(filters)
-      .sort({ createdAt: -1 })
-      .skip((pageNo - 1) * pageSize)
-      .limit(pageSize)
-      .lean({ virtuals: true })
-      .exec()
-
-    return { records, total }
-  }
-
-  /**
-   * 根据广告主推广任务ID获取发布统计数据（广告主用）
-   * @param advertiserTaskId 广告主推广任务ID
-   * @returns 统计数据
-   */
-  async getPublishStatisticsByAdvertiserTaskId(advertiserTaskId: string): Promise<{
-    total: number
-    published: number
-    publishing: number
-    failed: number
-  }> {
-    const [total, published, publishing, failed] = await Promise.all([
-      this.publishRecordModel.countDocuments({ taskId: advertiserTaskId }),
-      this.publishRecordModel.countDocuments({ taskId: advertiserTaskId, status: PublishStatus.PUBLISHED }),
-      this.publishRecordModel.countDocuments({ taskId: advertiserTaskId, status: PublishStatus.PUBLISHING }),
-      this.publishRecordModel.countDocuments({ taskId: advertiserTaskId, status: PublishStatus.FAILED }),
-    ])
-
-    return { total, published, publishing, failed }
+  async listPublishedByPublishTimeRangeForCrawlerMonitor(
+    startDate: Date,
+    endDate: Date,
+    accountType?: string,
+  ): Promise<PublishRecordPostDataCrawlerMonitorItem[]> {
+    return this.publishRecordModel.aggregate<PublishRecordPostDataCrawlerMonitorItem>([
+      {
+        $match: {
+          status: PublishStatus.PUBLISHED,
+          publishTime: { $gte: startDate, $lt: endDate },
+          dataId: { $exists: true, $nin: [null, ''] },
+          workStatus: { $nin: POST_DATA_UNAVAILABLE_WORK_STATUSES },
+          workLink: { $exists: true, $nin: [null, ''] },
+          ...(accountType && { accountType }),
+        },
+      },
+      { $sort: { publishTime: -1, createdAt: -1 } },
+      {
+        $group: {
+          _id: {
+            accountType: '$accountType',
+            dataId: '$dataId',
+          },
+          publishRecordId: { $first: { $toString: '$_id' } },
+          materialGroupId: { $first: '$materialGroupId' },
+          dataId: { $first: '$dataId' },
+          accountType: { $first: '$accountType' },
+          accountId: { $first: '$accountId' },
+          uid: { $first: '$uid' },
+          workLink: { $first: '$workLink' },
+          originalWorkLink: { $first: '$originalWorkLink' },
+          publishTime: { $first: '$publishTime' },
+          status: { $first: '$status' },
+          workStatus: { $first: '$workStatus' },
+          errorMessage: { $first: '$errorMsg' },
+          createdAt: { $first: '$createdAt' },
+          updatedAt: { $first: '$updatedAt' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          publishRecordId: 1,
+          materialGroupId: 1,
+          dataId: 1,
+          accountType: 1,
+          accountId: 1,
+          uid: 1,
+          workLink: 1,
+          originalWorkLink: 1,
+          publishTime: 1,
+          status: 1,
+          workStatus: 1,
+          errorMessage: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+      { $sort: { publishTime: -1 } },
+    ]).exec()
   }
 
   async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
     const res = await this.publishRecordModel
       .findOne({ uid, dataId })
-      .sort({ createdAt: -1 })
-      .lean({ virtuals: true })
-    return res
-  }
-
-  /**
-   * 根据用户任务ID获取发布记录
-   * @param userTaskId
-   * @returns
-   */
-  async getPublishRecordToUserTask(userTaskId: string) {
-    const res = await this.publishRecordModel
-      .findOne({ userTaskId })
       .sort({ createdAt: -1 })
       .lean({ virtuals: true })
     return res
@@ -340,7 +373,28 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       dataOption?: unknown
     },
   ) {
-    const res = await this.publishRecordModel.findOneAndUpdate(filter, { $set: data }).lean({ virtuals: true })
+    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.PUBLISHING }, {
+      $set: {
+        status: PublishStatus.PUBLISHED,
+        ...data,
+      },
+    }).lean({ virtuals: true })
+    return res
+  }
+
+  // 发布失败
+  async failPublishRecordByData(
+    filter: { dataId: string, uid: string },
+    errorMsg: string,
+  ) {
+    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.PUBLISHING }, {
+      $set: {
+        status: PublishStatus.FAILED,
+        errorMsg,
+        queued: false,
+        inQueue: false,
+      },
+    }).lean({ virtuals: true })
     return res
   }
 
@@ -398,6 +452,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     materialGroupId: string,
     query?: {
       accountType?: AccountType
+      source?: PublishRecordSource
       pageNo?: number
       pageSize?: number
     },
@@ -406,6 +461,8 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       materialGroupId,
       status: PublishStatus.PUBLISHED,
       dataId: { $exists: true, $ne: '' },
+      workLink: { $exists: true, $nin: ['', null] },
+      ...(query?.source !== undefined && { source: query.source }),
       ...(query?.accountType !== undefined && { accountType: query.accountType }),
     }
 
@@ -422,6 +479,29 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       .exec()
 
     return { records, total }
+  }
+
+  async listPublishedByMaterialGroupId(
+    materialGroupId: string,
+    query?: {
+      accountType?: AccountType
+      source?: PublishRecordSource
+    },
+  ): Promise<PublishRecord[]> {
+    const filters: RootFilterQuery<PublishRecord> = {
+      materialGroupId,
+      status: PublishStatus.PUBLISHED,
+      dataId: { $exists: true, $ne: '' },
+      workLink: { $exists: true, $nin: ['', null] },
+      ...(query?.source !== undefined && { source: query.source }),
+      ...(query?.accountType !== undefined && { accountType: query.accountType }),
+    }
+
+    return this.publishRecordModel
+      .find(filters)
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true })
+      .exec()
   }
 
   // ----- 迁移 ----
@@ -443,6 +523,10 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
 
   async findOneByData(dataId: string, uid: string) {
     return await this.publishRecordModel.findOne({ dataId, uid }).lean({ virtuals: true }).exec()
+  }
+
+  async findOneByDataId(dataId: string, accountType: AccountType) {
+    return await this.publishRecordModel.findOne({ dataId, accountType }).lean({ virtuals: true }).exec()
   }
 
   async complete(id: string, dataId: string, data?: {
@@ -489,10 +573,22 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return list
   }
 
+  async getStalePublishingTasks(cutoffTime: Date, limit: number): Promise<PublishRecord[]> {
+    const filters: RootFilterQuery<PublishRecord> = {
+      status: PublishStatus.PUBLISHING,
+      updatedAt: { $lte: cutoffTime },
+    }
+    return await this.publishRecordModel
+      .find(filters)
+      .sort({ updatedAt: 1 })
+      .limit(limit)
+      .lean({ virtuals: true })
+      .exec()
+  }
+
   async getPublishTasks(query: any): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       userId: query.userId,
-      source: { $ne: PublishRecordSource.TASK_LINK },
       ...(query.flowId !== undefined && { flowId: query.flowId }),
       ...(query.accountId !== undefined && { accountId: query.accountId }),
       ...(query.accountType !== undefined && {
@@ -525,7 +621,6 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     const filters: RootFilterQuery<PublishRecord> = {
       status: PublishStatus.WaitingForPublish,
       userId: query.userId,
-      source: { $ne: PublishRecordSource.TASK_LINK },
     }
     if (query.accountId) {
       filters.accountId = query.accountId
@@ -550,7 +645,6 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     const filters: RootFilterQuery<PublishRecord> = {
       status: PublishStatus.PUBLISHED,
       userId: query.userId,
-      source: { $ne: PublishRecordSource.TASK_LINK },
     }
     if (query.accountId) {
       filters.accountId = query.accountId

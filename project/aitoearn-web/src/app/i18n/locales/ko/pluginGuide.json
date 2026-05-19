@@ -11,7 +11,7 @@
   "sections": {
     "installation": "플러그인 설치",
     "manualInstall": "수동 설치",
-    "manualInstallDesc": "GitHub 또는 중국 다운로드 채널용",
+    "manualInstallDesc": "For Latest GitHub Channel Download and Latest China Download",
     "authorize": "플러그인 인증",
     "loginAccount": "소셜 미디어 계정 로그인",
     "syncAccount": "계정 동기화"
@@ -25,10 +25,29 @@
     "step2": {
       "title": "2단계: 플러그인 다운로드",
       "content": "대화상자에서 다운로드 방법을 선택하고 클릭하여 플러그인을 다운로드합니다.",
-      "caption": "적절한 다운로드 채널 선택",
-      "note": "Chrome 웹 스토어와 GitHub 릴리스 설치의 차이점:",
-      "noteItem1": "GitHub 릴리스에서 다운로드한 플러그인은 브라우저에서 개발자 모드를 활성화해야 설치할 수 있지만, 여기서 설치한 리소스가 최신 플러그인입니다.",
-      "noteItem2": "Chrome 웹 스토어에서 다운로드한 플러그인은 바로 설치할 수 있습니다."
+      "caption": "Choose a download channel in the plugin dialog",
+      "note": "Download channel notes:",
+      "noteItem1": "플러그인은 Chrome 웹 스토어에서 설치하는 것을 권장합니다.",
+      "noteItem2": "중국 지역에서 Chrome 웹 스토어에 접속할 수 없는 경우 \"Latest China Download (zip)\" 채널로 다운로드할 수 있습니다. 새 기능을 먼저 배포하는 경우 Chrome 웹 스토어 심사에 시간이 걸릴 수 있어 이 채널의 플러그인이 Chrome 웹 스토어 버전보다 더 최신일 때가 있습니다.",
+      "channels": {
+        "chrome": {
+          "title": "Chrome Web Store:",
+          "content": " We recommend installing from the Chrome Web Store, but store reviews can take time. When new features are released early, the Chrome Web Store version may still be an older build. If you do not need the latest features immediately, you can wait for the review to finish. Chrome Web Store also updates plugins automatically. If you need the latest plugin package, use Latest China Download or Latest GitHub Channel Download."
+        },
+        "github": {
+          "title": "Latest GitHub Channel Download:",
+          "content": " This channel provides the newest plugin package. New browser-plugin updates are published here first, then submitted to the Chrome Web Store, which usually takes another 4-5 days for review."
+        },
+        "china": {
+          "title": "Latest China Download:",
+          "content": " Users in mainland China who cannot use the Chrome Web Store can download the latest plugin package from this channel."
+        }
+      },
+      "updateNote": {
+        "prefix": "Note: users who install from Latest China Download or Latest GitHub Channel Download will still receive Chrome Web Store auto-updates after review. If you need the update sooner, please see",
+        "linkText": "the manual update guide",
+        "suffix": "."
+      }
     },
     "step3": {
       "title": "3단계: 설치 상태 확인",
@@ -94,17 +113,24 @@
       "content": "확장 프로그램 페이지의 오른쪽 상단에서 \"개발자 모드\"를 활성화합니다."
     },
     "step3": {
-      "title": "다운로드한 플러그인 파일 찾기",
-      "content": "브라우저의 다운로드 폴더를 열고 다운로드한 .crx 플러그인 패키지를 찾습니다."
+      "title": "Locate the Downloaded Package",
+      "content": "Open your browser's download folder and find the downloaded .crx plugin package."
     },
     "step4": {
-      "title": "드래그 앤 드롭으로 플러그인 설치",
-      "content": ".crx 플러그인 패키지를 확장 프로그램 페이지로 드래그 앤 드롭합니다."
+      "title": "Drag the Package into Extensions",
+      "content": "Drag the .crx plugin package into the browser extensions area."
     },
     "step5": {
-      "title": "설치 확인",
-      "content": "팝업 대화상자에서 \"확장 프로그램 추가\"를 클릭하여 설치를 확인합니다."
-    }
+      "title": "Confirm Extension Installation",
+      "content": "Click \"Add extension\" in the confirmation dialog to install the plugin."
+    },
+    "step6": {
+      "title": "Turn Off Developer Mode",
+      "content": "After the installation is complete, you can turn off Developer mode."
+    },
+    "tipPrefix": "If you have already installed the plugin from the Chrome Web Store, you can skip this section and go directly to the",
+    "tipLinkText": "Authorize Plugin",
+    "tipSuffix": "section."
   },
   "faq": {
     "title": "자주 묻는 질문",
@@ -113,5 +139,9 @@
       "answer": "샤오홍슈 크리에이터 센터에 로그인하지 않았을 수 있습니다. 샤오홍슈 홈페이지에서 오른쪽 상단의 버튼을 클릭하여 샤오홍슈 크리에이터 센터에 빠르게 로그인하세요."
     }
   },
-  "viewGuide": "가이드 보기"
+  "viewGuide": "가이드 보기",
+  "recommendedBrowser": {
+    "title": "Recommended Browsers",
+    "content": "Edge and Google Chrome. The tutorial below uses Google Chrome for all examples."
+  }
 }

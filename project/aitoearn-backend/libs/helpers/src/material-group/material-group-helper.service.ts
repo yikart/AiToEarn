@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
-import { MaterialGroupRepository } from '@yikart/mongodb'
+import { MaterialGroupRepository, MaterialRepository } from '@yikart/mongodb'
 
 @Injectable()
 export class MaterialGroupHelperService {
   constructor(
     private readonly materialGroupRepository: MaterialGroupRepository,
+    private readonly materialRepository: MaterialRepository,
   ) {}
 
   /**
@@ -27,6 +28,18 @@ export class MaterialGroupHelperService {
         throw new AppException(ResponseCode.MaterialGroupPlatformMismatch)
       }
     }
+  }
+
+  async validateNotEmpty(materialGroupId: string): Promise<void> {
+    const count = await this.materialRepository.countByGroupId(materialGroupId)
+    if (count < 1) {
+      throw new AppException(ResponseCode.MaterialGroupEmpty, 'Material group must contain at least one material')
+    }
+  }
+
+  async validateBindable(materialGroupId: string, accountTypes?: string[]): Promise<void> {
+    await this.validatePlatform(materialGroupId, accountTypes)
+    await this.validateNotEmpty(materialGroupId)
   }
 
   /**

@@ -1,0 +1,80 @@
+{
+  "seo": {
+    "title": "플러그인 업데이트 가이드 - AiToEarn 브라우저 확장 업데이트",
+    "description": "이 가이드를 따라 최신 .crx 패키지를 다운로드하고 확장 관리 페이지에서 AiToEarn 확장을 업데이트하세요.",
+    "keywords": "plugin update, browser extension upgrade, AiToEarn extension, manual update, Chrome extension"
+  },
+  "hero": {
+    "eyebrow": "수동 업데이트 흐름",
+    "title": "플러그인 업데이트 가이드",
+    "description": "AiToEarn에서 현재 확장 프로그램 버전이 오래되었다고 표시되면 최신 .crx 패키지로 업데이트하세요.",
+    "noticeTitle": "Chrome 웹 스토어 설치본은 보통 수동 업데이트가 필요하지 않습니다",
+    "noticeContent": "Chrome 웹 스토어에서 확장 프로그램을 설치했다면 일반적으로 스토어 심사와 자동 배포를 기다리면 됩니다.",
+    "summaryLabel": "빠른 정보"
+  },
+  "facts": {
+    "time": "예상 시간",
+    "timeValue": "약 1-3분",
+    "scenario": "적용 대상",
+    "scenarioValue": "Chrome 웹 스토어에서 확장을 설치할 수 없는 중국 지역 사용자 또는 최신 버전이 즉시 필요한 사용자."
+  },
+  "actions": {
+    "downloadChina": "중국 지역 최신 버전 다운로드",
+    "downloadGithub": "GitHub 다운로드",
+    "viewInstallGuide": "설치 가이드 보기"
+  },
+  "tableOfContents": "업데이트 단계",
+  "sections": {
+    "beforeUpdate": "시작 전 확인",
+    "beforeUpdateDesc": ".crx 패키지로 업데이트하기 전에 백업 안내와 현재 설치 방식을 확인하세요.",
+    "steps": "업데이트 단계",
+    "stepsDesc": "아래 7단계를 따라 최신 확장 패키지 업데이트를 완료하세요."
+  },
+  "backupNotice": {
+    "title": "중요 안내",
+    "content1": "이전에 압축 해제한 .zip 방식으로 확장을 설치했다면, 에이전트나 작업 설정 같은 기존 데이터를 먼저 수동으로 백업하세요.",
+    "content2": "기존 .zip 설치 방식은 현재 방식과 호환되지 않습니다. .crx 방식으로 설치한 뒤에는 이전 .zip 기반 확장을 수동으로 삭제해야 합니다."
+  },
+  "checklist": {
+    "title": "업데이트 전 체크리스트",
+    "item1": "시작하기 전에 확장 팝업, 상세 페이지, 관련 패널을 모두 닫아 주세요.",
+    "item2": "안전을 위해 에이전트, 작업 설정 등 확장 데이터를 먼저 백업해 두세요."
+  },
+  "steps": {
+    "step1": {
+      "title": "최신 확장 패키지 다운로드",
+      "content": "페이지 상단의 다운로드 버튼에서 최신 .crx 패키지를 받아 주세요.",
+      "caption": "최신 확장 패키지 다운로드"
+    },
+    "step2": {
+      "title": "다운로드 폴더 열기",
+      "content": "방금 다운로드한 확장 패키지가 저장된 폴더를 엽니다.",
+      "caption": "다운로드 폴더 열기"
+    },
+    "step3": {
+      "title": "확장 프로그램 관리 열기",
+      "content": "Chrome의 확장 프로그램 관리 페이지로 이동해 수동 업데이트를 시작합니다.",
+      "caption": "확장 프로그램 관리 열기"
+    },
+    "step4": {
+      "title": "개발자 모드 켜기",
+      "content": "확장 프로그램 관리 페이지 오른쪽 위에서 개발자 모드를 켭니다.",
+      "caption": "개발자 모드 켜기"
+    },
+    "step5": {
+      "title": "패키지를 확장 영역으로 드래그하기",
+      "content": "다운로드한 .crx 파일을 확장 프로그램 관리 페이지로 직접 드래그합니다.",
+      "caption": "패키지를 확장 영역으로 드래그하기"
+    },
+    "step6": {
+      "title": "Re-enable을 눌러 업데이트 확인",
+      "content": "Chrome 확인 창이 나타나면 “Re-enable”을 눌러 업데이트를 완료합니다.",
+      "caption": "Re-enable을 눌러 업데이트 확인"
+    },
+    "step7": {
+      "title": "개발자 모드 끄기",
+      "content": "업데이트가 완료되면 개발자 모드를 꺼도 됩니다.",
+      "caption": "개발자 모드 끄기"
+    }
+  }
+}

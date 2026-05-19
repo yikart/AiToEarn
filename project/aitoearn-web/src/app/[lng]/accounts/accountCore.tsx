@@ -40,9 +40,11 @@ interface AccountPageCoreProps {
 }
 
 export default function AccountPageCore({ searchParams }: AccountPageCoreProps) {
-  const { accountInit } = useAccountStore(
+  const { accountInit, accountLoading, accountListInitialized } = useAccountStore(
     useShallow(state => ({
       accountInit: state.accountInit,
+      accountLoading: state.accountLoading,
+      accountListInitialized: state.accountListInitialized,
     })),
   )
 
@@ -63,6 +65,7 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
   const [defaultAccountIds, setDefaultAccountIds] = useState<string[]>()
   const [aiGeneratedData, setAiGeneratedData] = useState<any>(null)
   const publishDialogRef = useRef<IPublishDialogRef>(null)
+  const accountListInitialLoading = accountLoading && !accountListInitialized
 
   // 使用新建作品 hook
   const { openNewWork, allAccounts } = useNewWork({
@@ -580,25 +583,24 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
         )}
 
         {/* 发布作品弹窗 */}
-        {allAccounts.length > 0 && (
-          <PublishDialog
-            ref={publishDialogRef}
-            open={publishDialogOpen}
-            onClose={() => {
-              setPublishDialogOpen(false)
-              setAiGeneratedData(null)
-              setDefaultAccountIds(undefined)
-            }}
-            accounts={allAccounts}
-            defaultAccountIds={defaultAccountIds}
-            onPubSuccess={() => {
-              setPublishDialogOpen(false)
-              setAiGeneratedData(null)
-              setDefaultAccountIds(undefined)
-              useCalendarTiming.getState().getPubRecord()
-            }}
-          />
-        )}
+        <PublishDialog
+          ref={publishDialogRef}
+          open={publishDialogOpen}
+          onClose={() => {
+            setPublishDialogOpen(false)
+            setAiGeneratedData(null)
+            setDefaultAccountIds(undefined)
+          }}
+          accounts={allAccounts}
+          defaultAccountIds={defaultAccountIds}
+          accountListInitialLoading={accountListInitialLoading}
+          onPubSuccess={() => {
+            setPublishDialogOpen(false)
+            setAiGeneratedData(null)
+            setDefaultAccountIds(undefined)
+            useCalendarTiming.getState().getPubRecord()
+          }}
+        />
       </div>
     </NoSSR>
   )

@@ -26,7 +26,6 @@ Use parentheses for module scope: `feat(content):`, `fix(tiktok):`, `refactor(mo
 
 ### Examples from Repository
 ```
-feat: 品牌资料库文档标签
 feat(login): 更新登录控制器中的注释和文档为中文
 refactor(mongodb): 移除materialGroup.repository中多余的type参数
 fix: 草稿箱创建缺失平台字段
@@ -39,20 +38,12 @@ chore: add vitest setup and MCP unit tests
 ```
 aitoearn-monorepo/
 ├── apps/                          # Application services
-│   ├── aitoearn-admin-server/     # Admin backend
 │   ├── aitoearn-ai/               # AI service (MCP, agents)
-│   ├── aitoearn-channel/          # Channel integrations
-│   ├── aitoearn-payment/          # Payment processing
-│   ├── aitoearn-server/           # Main API server
-│   ├── aitoearn-task/             # Task management
-│   └── browser-automation-worker/ # Browser automation
+│   └── aitoearn-server/           # Main API server
 ├── libs/                          # Shared libraries
 │   ├── common/                    # Common utilities, DTOs, enums
 │   ├── mongodb/                   # MongoDB schemas & repositories
-│   ├── task-db/                   # Task database layer
 │   ├── channel-db/                # Channel database layer
-│   ├── statistics-db/             # Statistics database
-│   ├── payment-db/                # Payment database
 │   ├── helpers/                   # Business helpers
 │   └── aitoearn-*-client/         # Inter-service clients
 └── CLAUDE.md                      # Development standards
@@ -154,9 +145,18 @@ Must end with `WithPagination`: `listWithPagination`
 import { AppException, ResponseCode } from '@yikart/common'
 
 // Only use code or code + data
-throw new AppException(ResponseCode.PaymentPriceNotFound)
-throw new AppException(ResponseCode.PaymentPriceNotFound, { priceId: 'price_xxx' })
+throw new AppException(ResponseCode.MaterialGroupNotFound)
+throw new AppException(ResponseCode.MaterialGroupNotFound, { groupId: 'group_xxx' })
 ```
+
+### HttpException Pattern
+```typescript
+import { HttpException, HttpStatus } from '@nestjs/common'
+
+throw new HttpException('Too many requests', HttpStatus.TOO_MANY_REQUESTS)
+```
+
+- Use this only for protocol-level errors such as rate limiting.
 
 ### ResponseCode Rules
 - Success: `Success = 0`
@@ -203,9 +203,8 @@ pnpm lint -w
 Based on git history, these files change most often:
 1. `libs/common/src/i18n/messages.ts` - i18n messages
 2. `libs/common/src/enums/response-code.enum.ts` - Response codes
-3. `libs/aitoearn-channel-client/src/interfaces/publishing.interface.ts`
-4. `libs/task-db/src/schemas/user-task.schema.ts`
-5. `libs/mongodb/src/schemas/publishRecord.schema.ts`
+3. `apps/aitoearn-server/src/core/channel/publishing/publish.dto.ts`
+4. `libs/mongodb/src/schemas/publish-record.schema.ts`
 
 ## Co-Change Patterns
 

@@ -9,7 +9,7 @@ import type { SidebarCommonProps } from '../../types'
 import { Puzzle } from 'lucide-react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
-import { PluginModal } from '@/components/Plugin'
+import { PluginModal, PluginUpdatePopover } from '@/components/Plugin'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { usePluginStore } from '@/store/plugin'
@@ -18,9 +18,11 @@ import { PluginStatus } from '@/store/plugin/types/baseTypes'
 export function PluginEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
 
-  const { pluginStatus, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
+  const { pluginNeedsUpdate, pluginStatus, pluginVersion, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
     useShallow(state => ({
+      pluginNeedsUpdate: state.pluginNeedsUpdate,
       pluginStatus: state.status,
+      pluginVersion: state.pluginVersion,
       pluginModalVisible: state.pluginModalVisible,
       openPluginModal: state.openPluginModal,
       closePluginModal: state.closePluginModal,
@@ -29,6 +31,15 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
 
   // 根据插件状态返回对应的颜色和状态文本
   const getStatusInfo = () => {
+    if (pluginStatus === PluginStatus.READY && pluginNeedsUpdate) {
+      return {
+        iconColor: 'text-warning',
+        dotColor: 'bg-warning',
+        statusText: t('pluginStatus.updateAvailable'),
+        statusColor: 'text-warning',
+      }
+    }
+
     switch (pluginStatus) {
       case PluginStatus.READY:
         return {
@@ -64,13 +75,36 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
   }
 
   const { iconColor, dotColor, statusText, statusColor } = getStatusInfo()
+  const statusNode = (() => {
+    if (collapsed)
+      return null
+
+    if (pluginNeedsUpdate && pluginVersion) {
+      return (
+        <PluginUpdatePopover currentVersion={pluginVersion} side="right" align="end">
+          <span
+            className={cn('text-xs', statusColor)}
+            data-testid="sidebar-plugin-status"
+          >
+            {statusText}
+          </span>
+        </PluginUpdatePopover>
+      )
+    }
+
+    return (
+      <span className={cn('text-xs', statusColor)} data-testid="sidebar-plugin-status">
+        {statusText}
+      </span>
+    )
+  })()
 
   const content = (
     <button
       onClick={openPluginModal}
       data-testid="sidebar-plugin"
       className={cn(
-        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-muted-foreground transition-colors hover:bg-accent hover:text-foreground',
+        'flex w-full cursor-pointer items-center rounded-lg border-none bg-transparent text-muted-foreground transition-colors hover:bg-brand-cyan/10 hover:text-brand-cyan',
         collapsed ? 'h-9 w-9 justify-center' : 'justify-between px-3 py-2',
       )}
     >
@@ -87,7 +121,7 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
         </div>
         {!collapsed && <span className="text-sm">{t('plugin')}</span>}
       </div>
-      {!collapsed && <span className={cn('text-xs', statusColor)} data-testid="sidebar-plugin-status">{statusText}</span>}
+      {statusNode}
     </button>
   )
 

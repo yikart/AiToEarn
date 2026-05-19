@@ -120,7 +120,7 @@ export class BilibiliPubService extends PublishService {
       }
     }
     catch (error) {
-      this.logger.error(`验证 B站 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 B站 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,
@@ -163,7 +163,7 @@ export class BilibiliPubService extends PublishService {
       await this.completePublishTask(publishTask, video_id, { workLink })
     }
     catch (error) {
-      this.logger.error(`处理 Bilibili webhook 失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '处理 Bilibili webhook 失败')
     }
   }
 }

@@ -3,7 +3,12 @@
  * 包含创建批量生成任务、查询生成状态统计、获取生成任务列表
  */
 
-import type { DraftGenerationPricingVo } from '@/api/types/draftGeneration'
+import type {
+  CreateDraftFromVideoUrlDto,
+  CreateDraftFromVideoUrlVo,
+  DraftGenerationPricingVo,
+} from '@/api/types/draftGeneration'
+import type { PlatType } from '@/app/config/platConfig'
 import http from '@/utils/request'
 
 // ==================== 类型定义 ====================
@@ -13,25 +18,37 @@ export type DraftTaskStatus = 'generating' | 'success' | 'failed'
 
 /** 生成任务 response 数据 */
 export interface DraftGenerationResponse {
-  materialId: string
-  title: string
-  description: string
-  topics: string[]
+  materialId?: string
+  mediaId?: string
+  mediaIds?: string[]
+  title?: string
+  description?: string
+  topics?: string[]
   videoUrl?: string
   coverUrl?: string
   imageUrls?: string[]
+  requestedImageCount?: number
+  generatedImageCount?: number
+  imageGenerationErrors?: Array<Record<string, unknown>>
+  plan?: Record<string, unknown>
 }
 
 /** 生成任务请求参数 */
 export interface DraftGenerationRequest {
+  groupId?: string
   model?: string
   imageModel?: string
   duration?: number
+  resolution?: string
   aspectRatio?: string
   prompt?: string
+  captionPrompt?: string
   imageUrls?: string[]
+  videoUrls?: string[]
   imageCount?: number
   imageSize?: string
+  platforms?: PlatType[]
+  draftType?: VideoDraftType | ImageTextDraftType
 }
 
 /** 生成任务详情 */
@@ -41,7 +58,7 @@ export interface DraftGenerationTask {
   points: number
   errorMessage?: string
   request?: DraftGenerationRequest
-  response?: DraftGenerationResponse
+  response?: DraftGenerationResponse | string
   createdAt: string
   updatedAt: string
 }
@@ -88,11 +105,13 @@ export function apiCreateDraftGeneration(data: {
   groupId: string
   model: VideoModelType
   prompt?: string
+  captionPrompt?: string
   imageUrls?: string[]
   videoUrls?: string[]
   duration?: number
+  resolution?: string
   aspectRatio?: string
-  platforms?: string[]
+  platforms?: PlatType[]
   draftType?: VideoDraftType
 }) {
   return http.post<CreateDraftGenerationVo>('ai/draft-generation/v2', data)
@@ -103,12 +122,13 @@ export function apiCreateImageTextDraft(data: {
   quantity: number
   groupId: string
   prompt: string
+  captionPrompt?: string
   imageModel: ImageModelType
   imageCount?: number
   imageUrls?: string[]
   aspectRatio?: string
   imageSize?: string
-  platforms?: string[]
+  platforms?: PlatType[]
   draftType?: ImageTextDraftType
 }) {
   return http.post<CreateDraftGenerationVo>('ai/draft-generation/image-text', data)
@@ -119,11 +139,23 @@ export function apiGetDraftGenerationPricing() {
   return http.get<DraftGenerationPricingVo>('ai/draft-generation/pricing')
 }
 
+/** 根据视频 URL 生成草稿 */
+export function apiCreateDraftFromVideoUrl(data: CreateDraftFromVideoUrlDto) {
+  return http.post<CreateDraftFromVideoUrlVo>('ai/draft-generation/from-video-url', data)
+}
+
 /**
  * 获取生成中任务数量统计（轮询用，静默模式不弹错误提示）
  */
 export function apiGetDraftGenerationStats() {
   return http.get<DraftGenerationStats>('ai/draft-generation/stats', undefined, true)
+}
+
+/**
+ * 根据任务 ID 批量查询生成任务状态（轮询用，静默模式不弹错误提示）
+ */
+export function apiQueryDraftGenerationTasks(taskIds: string[]) {
+  return http.post<DraftGenerationTask[]>('ai/draft-generation/query', { taskIds }, true)
 }
 
 /**

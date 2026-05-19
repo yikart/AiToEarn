@@ -46,7 +46,7 @@ export class InstagramPublishService
       return postInfo.permalink
     }
     catch (error) {
-      this.logger.error(`Failed to get post permalink for accountId: ${accountId}, postId: ${postId}, error: ${error}`)
+      this.logger.error(error, `Failed to get post permalink for accountId: ${accountId}, postId: ${postId}`)
       return ''
     }
   }
@@ -278,7 +278,7 @@ export class InstagramPublishService
       }
     }
     catch (error) {
-      this.logger.error(`验证 Instagram 发布状态失败: ${(error as Error).message}`, (error as Error).stack)
+      this.logger.error(error, '验证 Instagram 发布状态失败')
       return {
         success: false,
         errorMsg: `验证发布状态失败: ${(error as Error).message}`,

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { AccountGroup } from '@yikart/mongodb'
 import { AxiosRequestConfig } from 'axios'
-import { Account, UpdateAccountStatisticsData } from '../interfaces'
+import { Account, TotalFansCountVo, UpdateAccountStatisticsData } from '../interfaces'
 import { BaseService } from './base.service'
 
 @Injectable()
@@ -67,6 +67,16 @@ export class AccountService extends BaseService {
       data: { id },
     }
     return this.request<Account>(url, config)
+  }
+
+  async getTotalFansCount(userId: string): Promise<number> {
+    const url = `/internal/account/total-fans-count`
+    const config: AxiosRequestConfig = {
+      method: 'POST',
+      data: { userId },
+    }
+    const res = await this.request<TotalFansCountVo>(url, config)
+    return res.totalFansCount
   }
 
   async getAccountListByIds(ids: string[]) {

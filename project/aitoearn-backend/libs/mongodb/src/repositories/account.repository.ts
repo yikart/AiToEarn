@@ -130,6 +130,10 @@ export class AccountRepository extends BaseRepository<Account> {
     return this.accountModel.findOne({ _id: id }).lean({ virtuals: true }).exec()
   }
 
+  async getByIdAndUserId(id: string, userId: string) {
+    return this.accountModel.findOne({ _id: id, userId }).lean({ virtuals: true }).exec()
+  }
+
   /**
    * Get account by user uid
    */
@@ -235,6 +239,28 @@ export class AccountRepository extends BaseRepository<Account> {
 
   async getUserAccountCount(userId: string) {
     return await this.accountModel.countDocuments({ userId })
+  }
+
+  async getByUserIdTotalFansCount(userId: string): Promise<number> {
+    const result = await this.accountModel.aggregate([
+      { $match: { userId, status: AccountStatus.NORMAL } },
+      {
+        $group: {
+          _id: '$type',
+          fansCount: { $max: { $ifNull: ['$fansCount', 0] } },
+        },
+      },
+      { $group: { _id: null, total: { $sum: '$fansCount' } } },
+    ]).exec()
+    return result[0]?.total ?? 0
+  }
+
+  async sumFansCountByUserId(userId: string): Promise<number> {
+    const result = await this.accountModel.aggregate([
+      { $match: { userId } },
+      { $group: { _id: null, total: { $sum: '$fansCount' } } },
+    ]).exec()
+    return result[0]?.total ?? 0
   }
 
   /**
@@ -370,6 +396,34 @@ export class AccountRepository extends BaseRepository<Account> {
 
   async listByUserIdAndGroupId(userId: string, groupId: string) {
     return this.accountModel.find({ userId, groupId }).lean({ virtuals: true })
+  }
+
+  async listByFilterWithPagination(
+    pageInfo: { pageNo: number, pageSize: number },
+    filter: {
+      userId?: string
+      status?: AccountStatus
+      types?: AccountType[]
+      groupIds?: string[]
+    },
+  ) {
+    const { pageNo, pageSize } = pageInfo
+    const queryFilter: RootFilterQuery<Account> = {
+      ...(filter.userId && { userId: filter.userId }),
+      ...(filter.status !== undefined && { status: filter.status }),
+      ...(filter.types && { type: { $in: filter.types } }),
+      ...(filter.groupIds && { groupId: { $in: filter.groupIds } }),
+    }
+    const [total, list] = await Promise.all([
+      this.accountModel.countDocuments(queryFilter),
+      this.accountModel
+        .find(queryFilter)
+        .sort({ createdAt: -1 })
+        .skip((pageNo - 1) * pageSize)
+        .limit(pageSize)
+        .lean({ virtuals: true }),
+    ])
+    return { total, list }
   }
 
   /**

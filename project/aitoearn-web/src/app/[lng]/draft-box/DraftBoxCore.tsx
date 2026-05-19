@@ -6,8 +6,8 @@
 'use client'
 
 import { Loader2, Plus, Sparkles } from 'lucide-react'
-import { useSearchParams } from 'next/navigation'
-import { useCallback, useEffect } from 'react'
+import { usePathname, useSearchParams } from 'next/navigation'
+import { useCallback, useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useBrandPromotionStore } from '@/app/[lng]/brand-promotion/brandPromotionStore'
 import CreatePlanModal from '@/app/[lng]/brand-promotion/components/CreatePlanModal'
@@ -20,7 +20,9 @@ import DraftContentModule from './components/DraftContentModule'
 
 export default function DraftBoxCore() {
   const { t } = useTransClient('brandPromotion')
+  const pathname = usePathname()
   const searchParams = useSearchParams()
+  const searchParamsString = searchParams.toString()
   const urlPlanId = searchParams.get('planId')
 
   const {
@@ -44,29 +46,74 @@ export default function DraftBoxCore() {
   )
 
   const initContentData = usePlanDetailStore(state => state.initContentData)
+  const urlPlanExists = !!urlPlanId && tabPlans.some(plan => plan.id === urlPlanId)
+  const prevSelectedPlanIdRef = useRef<string | null>(selectedPlanId)
+  const prevUrlPlanIdRef = useRef<string | null>(urlPlanId)
+  const selectedPlanChanged = prevSelectedPlanIdRef.current !== selectedPlanId
+  const urlPlanChanged = prevUrlPlanIdRef.current !== urlPlanId
+  const shouldApplyUrlPlan = !!(
+    initialized
+    && urlPlanId
+    && urlPlanExists
+    && selectedPlanId !== urlPlanId
+    && urlPlanChanged
+  )
+  const shouldSyncSelectedToUrl = !!(
+    initialized
+    && selectedPlanId
+    && (
+      !urlPlanId
+      || !urlPlanExists
+      || (selectedPlanId !== urlPlanId && selectedPlanChanged && !urlPlanChanged)
+    )
+  )
+
+  const buildPlanUrl = useCallback((planId: string) => {
+    const params = new URLSearchParams(searchParamsString)
+    params.set('planId', planId)
+    const query = params.toString()
+    return query ? `${pathname}?${query}` : pathname
+  }, [pathname, searchParamsString])
 
   // 初始化 Tab 列表
   useEffect(() => {
-    initTabs()
-  }, [initTabs])
+    initTabs(urlPlanId)
+  }, [initTabs, urlPlanId])
 
   // URL 参数激活对应 Tab
   useEffect(() => {
-    if (initialized && urlPlanId) {
+    if (shouldApplyUrlPlan && urlPlanId) {
       usePlanTabStore.getState().selectPlan(urlPlanId)
     }
-  }, [initialized, urlPlanId])
+  }, [shouldApplyUrlPlan, urlPlanId])
 
-  // 初始化数据
+  // 仅在当前选中由 store 驱动变化时回写 URL；URL 驱动切换时不反向覆盖，避免互相打架
   useEffect(() => {
-    if (selectedPlanId) {
-      initContentData(selectedPlanId)
+    if (!selectedPlanId || !shouldSyncSelectedToUrl) {
+      return
     }
-  }, [selectedPlanId, initContentData])
+    const nextUrl = buildPlanUrl(selectedPlanId)
+    const currentUrl = `${window.location.pathname}${window.location.search}`
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, '', nextUrl)
+    }
+  }, [buildPlanUrl, selectedPlanId, shouldSyncSelectedToUrl])
+
+  // 仅在 URL 已经完成应用，或当前就是 store 主导的切换时初始化，避免首屏默认计划与 URL 计划双请求
+  useEffect(() => {
+    if (selectedPlanId && !shouldApplyUrlPlan) {
+      initContentData(selectedPlanId, false, { skipMaterials: true })
+    }
+  }, [initContentData, selectedPlanId, shouldApplyUrlPlan])
+
+  useEffect(() => {
+    prevSelectedPlanIdRef.current = selectedPlanId
+    prevUrlPlanIdRef.current = urlPlanId
+  }, [selectedPlanId, urlPlanId])
 
   // Tab 切换回调
   const handlePlanChange = useCallback((planId: string) => {
-    initContentData(planId, true)
+    initContentData(planId, true, { skipMaterials: true })
   }, [initContentData])
 
   const loading = !initialized
@@ -129,12 +176,11 @@ export default function DraftBoxCore() {
       </div>
       <div className="flex-1 min-h-0">
         <div className="flex flex-col h-full bg-background">
-          <div className="flex-1 overflow-auto">
+          <div id="draft-box-scroll-content" className="flex-1 overflow-auto">
             <DraftContentModule />
           </div>
         </div>
       </div>
-
       {/* 创建/编辑推广计划弹窗 */}
       <CreatePlanModal />
     </div>

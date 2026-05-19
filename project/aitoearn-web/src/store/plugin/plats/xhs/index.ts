@@ -26,7 +26,6 @@ import type { XhsBaseResponse, XhsCommentResponse } from './types'
 import { PlatType } from '@/app/config/platConfig'
 import { getCommentList, getSubCommentList } from './comment'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
-import { getWorkDetail } from './workDetail'
 
 /**
  * 小红书平台交互类
@@ -57,6 +56,22 @@ class XhsPlatformInteraction implements IPlatformInteraction {
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
     this.checkPlugin()
 
+    if (window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'xhs',
+        action: 'like',
+        workLink: `https://www.xiaohongshu.com/explore/${workId}`,
+        targetState: isLike,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        rawData: response,
+      }
+    }
+
     const path = isLike ? '/api/sns/web/v1/note/like' : '/api/sns/web/v1/note/dislike'
 
     const response = await window.AIToEarnPlugin!.xhsRequest<XhsBaseResponse>({
@@ -74,10 +89,30 @@ class XhsPlatformInteraction implements IPlatformInteraction {
 
   /**
    * 评论作品
+   * 一级评论使用自动化方案；二级评论保留 API 方案
    */
   async commentWork(params: CommentParams): Promise<CommentResult> {
     this.checkPlugin()
 
+    // 一级评论使用 unifiedInteraction（自动化）
+    if (!params.replyToCommentId && window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'xhs',
+        action: 'comment',
+        workLink: `https://www.xiaohongshu.com/explore/${params.workId}`,
+        targetState: true,
+        content: params.content,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        rawData: response,
+      }
+    }
+
+    // 二级评论或老插件回退到 API 方案
     const data: {
       note_id: string
       content: string
@@ -113,6 +148,22 @@ class XhsPlatformInteraction implements IPlatformInteraction {
   async favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult> {
     this.checkPlugin()
 
+    if (window.AIToEarnPlugin!.unifiedInteraction) {
+      const response = await window.AIToEarnPlugin!.unifiedInteraction({
+        platform: 'xhs',
+        action: 'favorite',
+        workLink: `https://www.xiaohongshu.com/explore/${workId}`,
+        targetState: isFavorite,
+        needScreenshot: true,
+      })
+      return {
+        success: response.success,
+        message: response.message || response.error,
+        screenshot: response.screenshot,
+        rawData: response,
+      }
+    }
+
     const path = isFavorite ? '/api/sns/web/v1/note/collect' : '/api/sns/web/v1/note/uncollect'
 
     const data = isFavorite ? { note_id: workId } : { note_ids: workId }
@@ -142,8 +193,11 @@ class XhsPlatformInteraction implements IPlatformInteraction {
    * 获取作品详情
    * @param params 详情请求参数
    */
-  async getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
-    return getWorkDetail(params)
+  async getWorkDetail(_params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
+    return {
+      success: false,
+      message: '小红书作品详情抓取能力已移除',
+    }
   }
 
   /**

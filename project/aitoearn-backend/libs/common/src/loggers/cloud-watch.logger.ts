@@ -86,6 +86,8 @@ export class CloudWatchLogger implements DestinationStream {
 
       await this.client.send(command)
       log(`put logs`)
+    }).catch((e) => {
+      log(`failed to put logs: ${e}`)
     })
 
     return this.writeQueue

@@ -6,6 +6,7 @@ import { AssetType } from '@yikart/mongodb'
 import axios from 'axios'
 import sharp, { Blend, FitEnum, Gravity } from 'sharp'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../ai-availability'
 import { McpServerName } from '../agent.constants'
 import { successResult, wrapTool } from './mcp.utils'
 
@@ -189,6 +190,7 @@ export class ImageEditMcp {
 
   constructor(
     private readonly assetsService: AssetsService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) {}
 
   private createCompositeImagesTool(userId: string, _userType: UserType) {
@@ -309,6 +311,7 @@ Do NOT mix gravity with top/left - if both provided, gravity is ignored by Sharp
           ],
         }
       },
+      this.aiAvailability,
     )
   }
 
@@ -369,6 +372,7 @@ Do NOT mix gravity with top/left - if both provided, gravity is ignored by Sharp
         this.logger.debug({ url: result.url }, '[resizeImage] Completed')
         return successResult(`Image resized successfully. URL: ${result.url}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -426,6 +430,7 @@ Do NOT mix gravity with top/left - if both provided, gravity is ignored by Sharp
           ],
         }
       },
+      this.aiAvailability,
     )
   }
 
@@ -494,6 +499,7 @@ Do NOT mix gravity with top/left - if both provided, gravity is ignored by Sharp
           ],
         }
       },
+      this.aiAvailability,
     )
   }
 
@@ -540,6 +546,7 @@ Do NOT mix gravity with top/left - if both provided, gravity is ignored by Sharp
 - Color Space: ${result.space || 'unknown'}
 - Density: ${result.density || 'unknown'} DPI`)
       },
+      this.aiAvailability,
     )
   }
 

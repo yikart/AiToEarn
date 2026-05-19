@@ -41,7 +41,6 @@ export function handleSSEMessage(
 ): void {
   // 处理 init 消息 - 迁移到真实 taskId
   if (msg.type === 'init' && msg.taskId) {
-    console.log(`[SSEHandler] Received init with taskId: ${msg.taskId}`)
     ctx.migrateToRealTaskId(msg.taskId)
     ctx.setStreamingText('')
     callbacks?.onTaskIdReady?.(msg.taskId)
@@ -117,8 +116,6 @@ function handleStreamEvent(ctx: ISSEHandlerContext, msg: ISSEMessage): void {
   // 每个新的"消息"（包含文本或工具调用）都会有一个 message_start 事件
   // 只有当有文字内容时才开始新步骤，连续的MCP调用（没有文字消息间隔）应该属于同一个步骤
   if (event.type === 'message_start') {
-    console.log('[SSEHandler] message_start received')
-
     // 只有当有文字内容时才开始新步骤
     // 连续的MCP调用（没有文字消息间隔）应该属于同一个步骤
     const streamingText = ctx.getStreamingText()

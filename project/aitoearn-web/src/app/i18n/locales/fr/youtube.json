@@ -13,5 +13,6 @@
   "uploadFailed": "Échec du téléchargement",
   "uploadSuccess": "Téléchargement réussi",
   "checkFailed": "Échec de la vérification",
-  "alreadyAuthorized": "Déjà autorisé"
+  "alreadyAuthorized": "Déjà autorisé",
+  "notAuthorized": "Not authorized"
 }

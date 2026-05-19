@@ -16,7 +16,6 @@ import { useChannelManagerStore } from '@/components/ChannelManager'
 import { Button } from '@/components/ui/button'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import { useAccountStore } from '@/store'
 import { useAgentStore } from '@/store/agent'
 import { ActionRegistry } from '@/store/agent/handlers/action.handlers'
 import { PluginStatus, usePluginStore } from '@/store/plugin'
@@ -97,8 +96,8 @@ export function ActionCard({ action, className }: IActionCardProps) {
         return {
           icon: <CreditCard className="w-5 h-5" />,
           title: t('action.insufficientCredits') || '积分不足',
-          description: t('action.insufficientCreditsDesc') || '任务已暂停，请充值积分后继续。',
-          buttonText: t('action.rechargeCredits') || '充值积分',
+          description: t('action.insufficientCreditsDesc') || '当前操作需要更多积分。',
+          buttonText: '',
           bgClass:
             'bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-950/30 dark:to-yellow-950/30',
           borderClass: 'border-amber-200 dark:border-amber-800',
@@ -226,7 +225,7 @@ export function ActionCard({ action, className }: IActionCardProps) {
 
     switch (action.type) {
       case 'insufficientCredits':
-        useAccountStore.getState().setLowBalanceAlertOpen(true)
+        toast.error(action.description || t('action.insufficientCreditsDesc') || 'Insufficient credits')
         return
       case 'createChannel':
         // 未登录时跳转登录页
@@ -319,8 +318,8 @@ export function ActionCard({ action, className }: IActionCardProps) {
             {/* 描述 */}
             <p className="text-sm text-muted-foreground mb-4 leading-relaxed">{config.description}</p>
 
-            {/* 操作按钮：errorOnly 不显示按钮 */}
-            {action.type !== 'errorOnly' && (
+            {/* 操作按钮：errorOnly 与只读提示不显示按钮 */}
+            {action.type !== 'errorOnly' && config.buttonText && (
               <Button onClick={handleClick} className="w-full group" variant="default">
                 {config.buttonText}
                 <ArrowRight className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />

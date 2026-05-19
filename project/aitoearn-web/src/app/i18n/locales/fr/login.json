@@ -5,13 +5,13 @@
     "loginKeywords": "connexion, se connecter, compte AiToEarn, connexion plateforme IA, connexion créateur, gestion réseaux sociaux"
   },
   "welcomeBack": "Se connecter",
-  "loginSubtitle": "Commencez à créer avec AiToEarn",
+  "loginSubtitle": "Utilisons AltoEarn !",
   "emailPlaceholder": "Entrez votre adresse e-mail",
   "login": "Se connecter",
   "or": "ou",
   "emailRequired": "Veuillez entrer votre e-mail",
   "emailInvalid": "Veuillez entrer une adresse e-mail valide",
-  "emailCodeRequired": "Veuillez entrer le code de vérification par e-mail",
+  "emailCodeRequired": "Veuillez entrer le code de vérification",
   "emailCodeLength": "Le code de vérification doit être de 6 chiffres",
   "enterCode": "Entrez le code à 6 chiffres",
   "sendCode": "Envoyer le code",
@@ -26,9 +26,12 @@
   "loginFailed": "Échec de la connexion",
   "loginError": "Échec de la connexion, veuillez réessayer plus tard",
   "googleLoginFailed": "Échec de la connexion Google",
+  "switchToEmailLogin": "Se connecter par code e-mail",
+  "switchToPhoneLogin": "Se connecter par téléphone",
   "termsText": "En continuant, vous acceptez nos",
   "termsOfService": "Conditions d'utilisation",
   "and": "et",
   "privacyPolicy": "Politique de confidentialité",
-  "newUserPromotion": "Les nouveaux utilisateurs bénéficient de 14 jours d'abonnement gratuit !"
+  "newUserPromotion": "Les nouveaux utilisateurs bénéficient de 14 jours d'abonnement gratuit !",
+  "manualLoginDisabledNotice": "La connexion manuelle n'est pas requise dans cet environnement. Si l'accès échoue toujours, vérifiez la configuration."
 }

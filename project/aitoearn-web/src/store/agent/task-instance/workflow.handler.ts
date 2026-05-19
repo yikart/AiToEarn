@@ -24,10 +24,6 @@ export function startNewStep(ctx: IWorkflowHandlerContext): void {
   ctx.setStreamingText('')
   ctx.setCurrentStepWorkflow([])
   ctx.incrementCurrentStepIndex()
-
-  console.log(
-    `[WorkflowHandler] Started new step: ${ctx.getCurrentStepIndex()} for task: ${ctx.getTaskId()}`,
-  )
 }
 
 /**

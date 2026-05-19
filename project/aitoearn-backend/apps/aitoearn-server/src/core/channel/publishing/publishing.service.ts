@@ -12,7 +12,7 @@ import { ChannelAccountService } from '../platforms/channel-account.service'
 import { FacebookService } from '../platforms/meta/facebook.service'
 import { YoutubeService } from '../platforms/youtube/youtube.service'
 import { BilibiliWebhookDto } from './bilibili-webhook.dto'
-import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS } from './constant'
+import { IMMEDIATE_PUBLISH_TOLERANCE_SECONDS, PUBLISHING_CALLBACK_TIMEOUT_MS, PUBLISHING_STATUS_WATCHDOG_BATCH_SIZE } from './constant'
 import { DouyinWebhookDto } from './douyin-webhook.dto'
 import { PublishService } from './providers/base.service'
 import { BilibiliPubService } from './providers/bilibili.service'
@@ -191,7 +191,7 @@ export class PublishingService {
         license: publishTask.option?.youtube?.license,
       },
     }
-    return await this.youtubeService.updateVideo(publishTask.accountId, videoSchema)
+    return await this.youtubeService.updateVideo(publishTask.userId, publishTask.accountId, videoSchema)
   }
 
   /**
@@ -326,6 +326,77 @@ export class PublishingService {
    */
   async getPublishTaskListByTime(end: Date): Promise<PublishRecord[]> {
     return this.publishRecordService.listByTime(end)
+  }
+
+  async reconcileStalePublishingTasks() {
+    const cutoffTime = new Date(Date.now() - PUBLISHING_CALLBACK_TIMEOUT_MS)
+    const tasks = await this.publishRecordService.listStalePublishingTasks(cutoffTime, PUBLISHING_STATUS_WATCHDOG_BATCH_SIZE)
+    if (tasks.length === 0) {
+      this.logger.log(`Publishing status watchdog completed: no stale publishing tasks before ${cutoffTime.toISOString()}`)
+      return 0
+    }
+
+    let handledCount = 0
+    for (const task of tasks) {
+      try {
+        await this.reconcileStalePublishingTask(task)
+        handledCount += 1
+      }
+      catch (error) {
+        this.logger.error(error, `Publishing status watchdog failed for task ${task.id}`)
+      }
+    }
+    this.logger.log(`Publishing status watchdog completed: handled ${handledCount}/${tasks.length} stale publishing tasks before ${cutoffTime.toISOString()}`)
+    return handledCount
+  }
+
+  private async reconcileStalePublishingTask(task: PublishRecord) {
+    const publishingProvider = this.publishingProviders[task.accountType]
+    if (!publishingProvider) {
+      await this.updatePublishTaskStatus(task.id, {
+        status: PublishStatus.FAILED,
+        errorMsg: `发布回调超时，且未找到 ${task.accountType} 的发布验证服务`,
+        inQueue: false,
+        queued: false,
+      })
+      return
+    }
+
+    try {
+      const result = await publishingProvider.verifyAndCompletePublish(task)
+      if (result.success) {
+        const dataId = task.dataId || ''
+        if (!dataId) {
+          await this.updatePublishTaskStatus(task.id, {
+            status: PublishStatus.FAILED,
+            errorMsg: '发布回调超时，主动验证成功但发布记录缺少平台作品ID',
+            inQueue: false,
+            queued: false,
+          })
+          return
+        }
+
+        await publishingProvider.completePublishTask(task, dataId, {
+          workLink: result.workLink || task.workLink || '',
+        })
+        return
+      }
+
+      await this.updatePublishTaskStatus(task.id, {
+        status: PublishStatus.FAILED,
+        errorMsg: result.errorMsg || '发布回调超时，且主动验证发布状态失败',
+        inQueue: false,
+        queued: false,
+      })
+    }
+    catch (error) {
+      await this.updatePublishTaskStatus(task.id, {
+        status: PublishStatus.FAILED,
+        errorMsg: error instanceof Error ? error.message : String(error),
+        inQueue: false,
+        queued: false,
+      })
+    }
   }
 
   /**

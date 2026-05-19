@@ -26,7 +26,8 @@
     "platforms": "Platforms",
     "status": "Status",
     "time": "Time",
-    "viewDetail": "View Detail"
+    "viewDetail": "View Detail",
+    "untitled": "Untitled"
   },
   "publishDetail": {
     "title": "Publish Detail",
@@ -39,8 +40,16 @@
     "shareLink": "Share Link",
     "failReason": "Fail Reason",
     "close": "Close",
+    "minimize": "Minimize",
     "unknownAccount": "Unknown Account",
     "creatingRecord": "Creating publish record..."
+  },
+  "publishFloating": {
+    "xhsPublishing": "RedNote is publishing",
+    "pluginPublishing": "Plugin publishing in progress",
+    "openDetail": "Click to view details",
+    "completed": "Plugin publishing completed",
+    "failed": "Plugin publishing failed. View details."
   },
   "common": {
     "confirm": "Confirm",
@@ -72,11 +81,19 @@
     "downloadButton": "Download Now",
     "chromeWebStore": "Chrome Web Store",
     "chinaDownload": "China Download",
+    "chinaLatestZipDownload": "Latest China Download",
+    "githubLatestDownload": "Latest GitHub Channel Download",
     "activeDescription": "Your browser plugin is activated. You can start using the publish feature!",
     "platformAccounts": "Platform Accounts",
     "notLoggedIn": "Not Logged In",
-    "xhsNotLoggedInTip": "Xiaohongshu requires login to Creator Center",
+    "xhsNotLoggedInTip": "Fetching note details requires logging in to the <homeLink>Xiaohongshu homepage</homeLink>. Publishing also requires the <creatorLink>Xiaohongshu Creator Center</creatorLink>.",
+    "xhsHomeLoggedInOnlyStatus": "Homepage logged in",
+    "xhsHomeLoggedInOnlyTip": "The Xiaohongshu homepage is logged in, so note details can be fetched now. To publish, please also log in to the Creator Center.",
+    "xhsCreatorLoggedInOnlyStatus": "Only Creator Center logged in",
+    "xhsCreatorLoggedInOnlyTip": "The Xiaohongshu Creator Center is logged in, but note details still cannot be fetched. Please log in to the homepage first.",
+    "xhsNoteDetailReady": "Note details ready",
     "loginNow": "Login Now",
+    "authPolling": "Checking authorization status",
     "viewPublishList": "View Publish List",
     "permissionRequired": "Permission Required",
     "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
@@ -86,15 +103,40 @@
     "syncSuccess": "Account synced successfully",
     "syncFailed": "Account sync failed",
     "xhsHome": "Home",
-    "xhsCreator": "Creator",
+    "xhsCreator": "Creator Center",
     "xhsLoginHomeTip": "Login to Xiaohongshu Homepage",
     "xhsLoginCreatorTip": "Login to Xiaohongshu Creator Center",
-    "viewGuide": "Having trouble? Need help installing?"
+    "xhsCreatorQuickLoginLabel": "Quick login tip",
+    "xhsCreatorQuickLoginTip": "After logging in on the Xiaohongshu homepage, the Creator Center can be logged in with one click.",
+    "viewGuide": "View Authorization Guide",
+    "viewInstallGuide": "View Browser Plugin Installation Guide (Manual Install)"
   },
   "mobile": {
     "title": "Desktop Only",
     "description": "The browser extension is not available on mobile devices. Please use a desktop browser to install and use the extension.",
     "goToPC": "Please visit on PC",
     "introduction": "AiToEarn platform browser extension. Works with AiToEarn web to automate interactions on Xiaohongshu, TikTok and other platforms — follow, like, bookmark, comment and more."
+  },
+  "version": {
+    "title": "Plugin Version",
+    "description": "Your installed plugin version is shown here and compared with the latest version required by the site.",
+    "current": "Current Version",
+    "latest": "Latest Version",
+    "updatableTag": "Update Available",
+    "popoverTitle": "Plugin can be updated to v{{version}}",
+    "unknown": "Unavailable",
+    "upToDate": "Up to date",
+    "updateAvailable": "Update available",
+    "unavailable": "Version unavailable",
+    "updateDescription": "Your current plugin version is not the latest. Update soon to avoid feature gaps or compatibility issues.",
+    "googleStoreNotice": "Extensions installed from the Chrome Web Store update automatically. If you do not urgently need specific features, you can wait about a week for the store update. If you need certain features right away, update the plugin manually.",
+    "googleStoreShortNotice": "Chrome Web Store installs update automatically",
+    "downloadLatestZip": "Latest China Download",
+    "updatableTo": "Updatable to v{{version}}",
+    "updateButton": "Update Plugin",
+    "updateNow": "Update to v{{version}}",
+    "viewUpdateGuide": "View Update Guide",
+    "latestDescription": "Your plugin is already on the latest version and can continue to be used normally.",
+    "unavailableDescription": "The plugin version could not be read right now. Please reopen this dialog and try again later."
   }
 }

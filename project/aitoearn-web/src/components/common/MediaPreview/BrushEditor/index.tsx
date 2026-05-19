@@ -5,6 +5,7 @@
 
 'use client'
 
+import type { ImageExportFormat } from './imageExport'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Loader2, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useState } from 'react'
@@ -16,6 +17,8 @@ import { toast } from '@/lib/toast'
 import { getOssUrl } from '@/utils/oss'
 import { BrushCanvas } from './BrushCanvas'
 import { BrushToolbar } from './BrushToolbar'
+import { createEditedImageFileName, DEFAULT_IMAGE_EXPORT_FORMAT, IMAGE_EXPORT_QUALITY } from './imageExport'
+import { ImageExportControls } from './ImageExportControls'
 import { useBrushEditor } from './useBrushEditor'
 import { useCropEditor } from './useCropEditor'
 
@@ -26,14 +29,25 @@ export interface BrushEditorProps {
   imageUrl: string
   /** 关闭编辑器 */
   onClose: () => void
-  /** 保存完成回调，返回新的图片 URL 和 Blob */
-  onSave: (newUrl: string, blob: Blob) => void
+  /** 保存完成回调，返回新的图片 URL、Blob 和导出信息 */
+  onSave: (newUrl: string, blob: Blob, meta: BrushEditorSaveMeta) => void
+}
+
+export interface BrushEditorSaveMeta {
+  /** 导出的文件名 */
+  fileName: string
+  /** 导出的图片格式 */
+  format: ImageExportFormat
+  /** JPEG 导出质量 */
+  quality: number
 }
 
 /** 内部组件：编辑器内容 */
 const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditorProps, 'open'>) => {
   const { t } = useTransClient('common')
   const [isSaving, setIsSaving] = useState(false)
+  const [exportFormat, setExportFormat] = useState<ImageExportFormat>(DEFAULT_IMAGE_EXPORT_FORMAT)
+  const [exportQuality, setExportQuality] = useState<number>(IMAGE_EXPORT_QUALITY.default)
 
   const editor = useBrushEditor(imageUrl)
 
@@ -74,11 +88,15 @@ const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditor
       setIsSaving(true)
 
       // 导出合成后的图片
-      const blob = await exportImage()
+      const blob = await exportImage({
+        format: exportFormat,
+        quality: exportQuality,
+      })
 
       // 创建 File 对象用于上传
-      const file = new File([blob], `edited_${Date.now()}.png`, {
-        type: 'image/png',
+      const fileName = createEditedImageFileName(exportFormat)
+      const file = new File([blob], fileName, {
+        type: exportFormat,
       })
 
       // 上传到 OSS
@@ -88,7 +106,11 @@ const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditor
       const fullUrl = getOssUrl(ossUrl as string)
 
       toast.success({ content: t('brushEditor.saveSuccess') })
-      onSave(fullUrl, blob)
+      onSave(fullUrl, blob, {
+        fileName,
+        format: exportFormat,
+        quality: exportQuality,
+      })
       onClose()
     }
     catch (error) {
@@ -98,7 +120,7 @@ const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditor
     finally {
       setIsSaving(false)
     }
-  }, [exportImage, onSave, onClose, t])
+  }, [exportFormat, exportImage, exportQuality, onSave, onClose, t])
 
   /** 键盘快捷键：Ctrl+Z / Cmd+Z 撤销 */
   useEffect(() => {
@@ -137,15 +159,25 @@ const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditor
     >
       {/* 顶部栏 */}
       <div
-        className="absolute top-0 left-0 right-0 h-10 sm:h-14 flex items-center justify-between px-3 sm:px-4 z-10"
+        className="absolute top-0 left-0 right-0 min-h-12 sm:min-h-14 flex items-center justify-between gap-2 px-3 py-2 sm:px-4 z-10"
         style={{ backgroundColor: 'rgba(0, 0, 0, 0.5)' }}
       >
-        <h2 className="text-white font-medium text-sm sm:text-base">{t('brushEditor.title')}</h2>
+        <h2 className="text-white font-medium text-sm sm:text-base flex-shrink-0">{t('brushEditor.title')}</h2>
+        <div className="flex min-w-0 flex-1 justify-center">
+          <ImageExportControls
+            format={exportFormat}
+            onFormatChange={setExportFormat}
+            quality={exportQuality}
+            onQualityChange={setExportQuality}
+            disabled={isSaving}
+            className="max-w-full"
+          />
+        </div>
         <button
           type="button"
           onClick={onClose}
           disabled={isSaving}
-          className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 text-white/80 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
+          className="flex flex-shrink-0 items-center justify-center w-8 h-8 sm:w-10 sm:h-10 text-white/80 hover:text-white transition-colors cursor-pointer disabled:opacity-50"
           aria-label={t('brushEditor.cancel')}
         >
           <X className="w-5 h-5 sm:w-6 sm:h-6" />
@@ -153,7 +185,7 @@ const BrushEditorContent = memo(({ imageUrl, onClose, onSave }: Omit<BrushEditor
       </div>
 
       {/* Canvas 区域 */}
-      <div className="flex-1 flex items-center justify-center w-full pt-10 pb-24 px-2 sm:pt-14 sm:pb-32 sm:px-4 overflow-hidden">
+      <div className="flex-1 flex items-center justify-center w-full pt-14 pb-24 px-2 sm:pt-16 sm:pb-32 sm:px-4 overflow-hidden">
         <BrushCanvas
           editor={editor}
           cropEditor={cropEditor}

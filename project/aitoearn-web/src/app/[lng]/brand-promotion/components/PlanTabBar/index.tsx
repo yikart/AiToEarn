@@ -7,7 +7,7 @@
 'use client'
 
 import { Ellipsis, Plus } from 'lucide-react'
-import { usePathname } from 'next/navigation'
+import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
@@ -29,6 +29,8 @@ interface PlanTabBarProps {
 function PlanTabBar({ onPlanChange, syncUrlQuery }: PlanTabBarProps) {
   const { t } = useTransClient('brandPromotion')
   const pathname = usePathname()
+  const searchParams = useSearchParams()
+  const searchParamsString = searchParams.toString()
   const isMobile = useIsMobile()
   const scrollRef = useRef<HTMLDivElement>(null)
   const activeTabRef = useRef<HTMLButtonElement>(null)
@@ -76,10 +78,19 @@ function PlanTabBar({ onPlanChange, syncUrlQuery }: PlanTabBarProps) {
   }, [selectedPlanId])
 
   const syncPlanIdToUrl = useCallback((planId: string) => {
-    if (syncUrlQuery) {
-      window.history.replaceState(null, '', `${pathname}?planId=${planId}`)
+    if (!syncUrlQuery) {
+      return
     }
-  }, [syncUrlQuery, pathname])
+    const params = new URLSearchParams(searchParamsString)
+    params.set('planId', planId)
+    const query = params.toString()
+    const nextUrl = query ? `${pathname}?${query}` : pathname
+    const currentUrl = `${window.location.pathname}${window.location.search}`
+
+    if (nextUrl !== currentUrl) {
+      window.history.replaceState(null, '', nextUrl)
+    }
+  }, [pathname, searchParamsString, syncUrlQuery])
 
   const handleTabClick = (planId: string) => {
     selectPlan(planId)

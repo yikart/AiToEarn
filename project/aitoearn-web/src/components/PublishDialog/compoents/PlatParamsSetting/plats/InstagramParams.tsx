@@ -27,29 +27,32 @@ const InstagramParams = memo(
         onImageToImage,
         isMobile,
       )
+      const defaultContentCategory = pubItem.params.video ? 'reel' : 'post'
 
       // 初始化Instagram参数
       useEffect(() => {
         const option = pubItem.params.option
-        console.log('InstagramParams - Current option:', option)
-        console.log('InstagramParams - Current instagram:', option.instagram)
+        const currentCategory = option.instagram?.content_category
+        const nextCategory
+          = pubItem.params.video
+            ? (currentCategory === 'reel' ? undefined : 'reel')
+            : (!currentCategory ? 'post' : undefined)
 
-        if (!option.instagram?.content_category) {
-          console.log('InstagramParams - Setting default instagram option')
+        if (nextCategory) {
           setOnePubParams(
             {
               option: {
                 ...option,
                 instagram: {
                   ...option.instagram,
-                  content_category: 'post',
+                  content_category: nextCategory,
                 },
               },
             },
             pubItem.account.id,
           )
         }
-      }, [pubItem.account.id, setOnePubParams])
+      }, [pubItem.account.id, pubItem.params.option, pubItem.params.video, setOnePubParams])
 
       return (
         <>
@@ -66,10 +69,9 @@ const InstagramParams = memo(
                     {t('form.type')}
                   </div>
                   <RadioGroup
-                    value={pubItem.params.option.instagram?.content_category || 'video'}
+                    value={pubItem.params.option.instagram?.content_category || defaultContentCategory}
                     onValueChange={(value) => {
                       const option = pubItem.params.option
-                      console.log('InstagramParams - onChange:', value)
                       setOnePubParams(
                         {
                           option: {

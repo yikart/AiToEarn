@@ -3,7 +3,7 @@ import { z } from 'zod'
 export const redisConfigSchema = z.object({
   nodes: z.object({
     host: z.string().optional(),
-    post: z.string().optional(),
+    port: z.number().optional(),
   }).array(),
   options: z.object({
     enableOfflineQueue: z.boolean().optional(),

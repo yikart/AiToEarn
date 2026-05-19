@@ -164,3 +164,31 @@ export async function getRemoteFileSize(url: string): Promise<number> {
     throw new Error(`Failed to get remote file metadata: ${error}, URL: ${url}`)
   }
 }
+
+export async function probeRemoteFile(url: string): Promise<{
+  finalUrl: string
+  contentType?: string
+  contentLength?: string
+  status: number
+}> {
+  try {
+    const response = await axios.get<ArrayBuffer>(url, {
+      responseType: 'arraybuffer',
+      maxRedirects: 5,
+      headers: {
+        Range: 'bytes=0-0',
+      },
+      validateStatus: () => true,
+    })
+
+    return {
+      finalUrl: response.request?.res?.responseUrl || url,
+      contentType: response.headers['content-type'],
+      contentLength: response.headers['content-length'],
+      status: response.status,
+    }
+  }
+  catch (error) {
+    throw new Error(`Failed to probe remote file: ${error}, URL: ${url}`)
+  }
+}

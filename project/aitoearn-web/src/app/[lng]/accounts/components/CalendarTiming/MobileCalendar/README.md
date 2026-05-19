@@ -60,33 +60,33 @@ MobileCalendar/
 - 显示当前周的 7 天
 - 支持左右滑动切换周
 - 选中日期高亮
-- 有数据的日期显示小圆点
+- 有发布记录的日期在右上角显示不占位圆点
 
 **Props:**
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | currentDate | `Date` | 当前周的基准日期 |
 | selectedDate | `Date` | 选中的日期 |
+| recordMap | `Map<string, PublishRecordItem[]>` | 发布记录数据 |
 | onDateSelect | `(date: Date) => void` | 选择日期回调 |
 | onWeekChange | `(direction: 'prev' \| 'next') => void` | 周切换回调 |
-| recordMap | `Map<string, PublishRecordItem[]>` | 发布记录数据 |
 
 ### MobileMonthView
 
 月视图组件，功能：
 
 - 紧凑型月历网格
-- 有数据的日期显示小圆点
 - 选中日期高亮
 - 点击日期切换选中
+- 有发布记录的日期在右上角显示不占位圆点
 
 **Props:**
 | 属性 | 类型 | 说明 |
 |------|------|------|
 | currentDate | `Date` | 当前月的基准日期 |
 | selectedDate | `Date` | 选中的日期 |
-| onDateSelect | `(date: Date) => void` | 选择日期回调 |
 | recordMap | `Map<string, PublishRecordItem[]>` | 发布记录数据 |
+| onDateSelect | `(date: Date) => void` | 选择日期回调 |
 
 ### MobileDayRecords
 
@@ -111,13 +111,10 @@ MobileCalendar/
 ```
 useCalendarTiming.recordMap (现有 store)
        ↓
-MobileCalendar (获取整月数据用于显示圆点)
+MobileCalendar
        ↓
-  ┌────┴────────┐
-  ↓             ↓
-周/月视图       MobileDayRecords
-(根据 recordMap  (根据 selectedDate
- 显示有数据的圆点) 过滤显示任务列表)
+MobileDayRecords
+(根据 selectedDate 过滤显示任务列表)
 ```
 
 **recordMap 结构：**
@@ -127,6 +124,12 @@ Map<string, PublishRecordItem[]>
 // key: 日期字符串，格式 'YYYY-MM-DD'
 // value: 该日期的发布记录数组
 ```
+
+**移动端请求范围：**
+
+- 周视图和月视图统一按“月视图可见范围”获取数据（包含月初/月末补齐的跨月周）
+- 周/月视图切换不重新请求列表接口
+- 当前已加载范围覆盖目标范围时，直接复用 `recordMap`
 
 ## 复用的组件/工具
 
@@ -145,7 +148,6 @@ Map<string, PublishRecordItem[]>
 - 遵循 shadcn/ui 语义化变量
 - 选中日期: `bg-(--primary-color) text-white`
 - 今天日期: `text-blue-500`（未选中时）
-- 小圆点: `bg-blue-500 w-1.5 h-1.5 rounded-full`
 - 过去日期: `text-muted-foreground`
 - 非当月日期: `text-muted-foreground/40`
 
@@ -191,11 +193,10 @@ Map<string, PublishRecordItem[]>
 
 ## 注意事项
 
-1. **数据获取**: 切换月份时需要调用 `getPubRecord()` 获取新月份数据
-2. **小圆点显示**: 只在有数据时显示，空数据不显示
-3. **拖拽功能**: 移动端禁用拖拽功能（已在 RecordCore 中处理）
-4. **数据同步**: 保持与 PC 端数据同步，共用 `useCalendarTiming` store
-5. **设备判断**: 使用 `useIsMobile` hook，断点为 768px
+1. **数据获取**: 切换月份时按月视图可见范围调用 `getPubRecord()`，周/月视图切换复用已有数据
+2. **拖拽功能**: 移动端禁用拖拽功能（已在 RecordCore 中处理）
+3. **数据同步**: 保持与 PC 端数据同步，共用 `useCalendarTiming` store
+4. **设备判断**: 使用 `useIsMobile` hook，断点为 768px
 
 ## 修改记录
 

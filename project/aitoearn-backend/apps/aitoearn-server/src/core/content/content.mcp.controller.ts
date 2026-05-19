@@ -1,5 +1,5 @@
-import { Controller, Injectable, Logger } from '@nestjs/common'
-import { getUser, UserType } from '@yikart/common'
+import { Controller, Injectable } from '@nestjs/common'
+import { getUser, toTextResult, toYamlTextResult, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
 import { Tool } from '@yikart/nest-mcp'
 import { z } from 'zod'
@@ -9,44 +9,68 @@ import { MediaGroupService } from './media-group.service'
 import { MediaService } from './media.service'
 
 const GetGroupInfoByNameSchema = z.object({
-  title: z.string().describe('分组标题'),
+  title: z.string().describe('Group title'),
 })
 
 const CreateMediaSchema = z.object({
-  groupId: z.string().describe('媒体分组ID'),
-  draftId: z.string().optional().describe('草稿ID'),
-  type: z.enum(MediaType).describe('媒体类型'),
-  url: z.string().describe('媒体URL'),
-  thumbUrl: z.string().optional().describe('媒体缩略图URL'),
-  title: z.string().optional().describe('媒体标题'),
-  desc: z.string().optional().describe('媒体描述'),
+  groupId: z.string().describe('Media group ID'),
+  draftId: z.string().optional().describe('Draft ID'),
+  type: z.enum(MediaType).describe('Media type'),
+  url: z.string().describe('Media URL'),
+  thumbUrl: z.string().optional().describe('Media thumbnail URL'),
+  title: z.string().optional().describe('Media title'),
+  desc: z.string().optional().describe('Media description'),
 })
 
 const MaterialMediaSchema = z.object({
-  id: z.string().optional().describe('媒体ID'),
+  id: z.string().optional().describe('Media ID'),
   url: z.string(),
-  type: z.enum(MediaType).describe('媒体类型'),
-  thumbUrl: z.string().optional().describe('媒体缩略图URL'),
-  content: z.string().optional().describe('媒体内容'),
-  mediaId: z.string().optional().describe('媒体ID'),
+  type: z.enum(MediaType).describe('Media type'),
+  thumbUrl: z.string().optional().describe('Media thumbnail URL'),
+  content: z.string().optional().describe('Media content'),
+  mediaId: z.string().optional().describe('Media ID'),
 })
 
 const CreateMaterialSchema = z.object({
-  groupId: z.string().describe('分组ID'),
-  coverUrl: z.string().optional().describe('素材封面URL'),
-  mediaList: z.array(MaterialMediaSchema).describe('素材媒体列表'),
-  title: z.string().describe('素材标题'),
-  desc: z.string().optional().describe('素材描述'),
-  topics: z.array(z.string()).optional().default([]).describe('素材话题'),
-  option: z.any().optional().describe('素材选项'),
-  type: z.enum(MaterialType).describe('素材类型'),
+  groupId: z.string().describe('Group ID'),
+  coverUrl: z.string().optional().describe('Cover URL'),
+  mediaList: z.array(MaterialMediaSchema).describe('Media list'),
+  title: z.string().describe('Draft title'),
+  desc: z.string().optional().describe('Draft description'),
+  topics: z.array(z.string()).optional().default([]).describe('Draft topics'),
+  option: z.any().optional().describe('Draft options'),
+  type: z.enum(MaterialType).describe('Draft type'),
+})
+
+const ListDraftsSchema = z.object({
+  pageNo: z.number().int().min(1).default(1).describe('Page number'),
+  pageSize: z.number().int().min(1).max(100).default(20).describe('Page size'),
+  groupId: z.string().optional().describe('Draft group ID'),
+  title: z.string().optional().describe('Search by title'),
+})
+
+const GetDraftDetailSchema = z.object({
+  draftId: z.string().describe('Draft ID'),
+})
+
+const DeleteDraftSchema = z.object({
+  draftId: z.string().describe('Draft ID'),
+})
+
+const ListMediaSchema = z.object({
+  pageNo: z.number().int().min(1).default(1).describe('Page number'),
+  pageSize: z.number().int().min(1).max(100).default(20).describe('Page size'),
+  groupId: z.string().optional().describe('Media group ID'),
+})
+
+const ListGroupsSchema = z.object({
+  pageNo: z.number().int().min(1).default(1).describe('Page number'),
+  pageSize: z.number().int().min(1).max(100).default(100).describe('Page size'),
 })
 
 @Injectable()
 @Controller()
 export class ContentMcpController {
-  private readonly logger = new Logger(ContentMcpController.name)
-
   constructor(
     private readonly mediaService: MediaService,
     private readonly mediaGroupService: MediaGroupService,
@@ -56,53 +80,30 @@ export class ContentMcpController {
 
   @Tool({
     name: 'getMediaGroupInfoByName',
-    description: '根据标题获取当前用户的媒体分组信息。提供分组标题，返回匹配的媒体分组详情，如果未找到则返回默认分组。',
+    description: 'Get the authenticated user\'s media group by title. Returns matching group details, or default group if not found.',
     parameters: GetGroupInfoByNameSchema,
   })
   async getMediaGroupByName(params: z.infer<typeof GetGroupInfoByNameSchema>) {
     const user = getUser()
-    const { title } = params
-    const result = await this.mediaGroupService.getInfoByName(user.id, title)
+    const result = await this.mediaGroupService.getInfoByName(user.id, params.title)
     if (result) {
-      const lines = [`ID: ${result.id}`, `Name: ${result.title}`, `Type: ${result.type}`]
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Media Group:\n${lines.join('\n')}`,
-          },
-        ],
-      }
+      return toYamlTextResult(result)
     }
 
-    // find default
     const defaultGroup = await this.mediaGroupService.getDefaultGroup(user.id)
     if (defaultGroup) {
-      const lines = [`ID: ${defaultGroup.id}`, `Name: ${defaultGroup.title}`, `Type: ${defaultGroup.type}`, `Is Default: Yes`]
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Media Group (Default):\n${lines.join('\n')}`,
-          },
-        ],
-      }
+      return toYamlTextResult({
+        ...defaultGroup,
+        isDefault: true,
+      })
     }
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: 'Failed to get media group by title',
-        },
-      ],
-      isError: true,
-    }
+    return toTextResult('Failed to get media group by title', true)
   }
 
   @Tool({
     name: 'createMedia',
-    description: '为当前用户创建新的媒体资源。提供分组ID、类型、媒体URL、可选的缩略图URL、标题和描述。返回创建的媒体详情。',
+    description: 'Create a new media resource for the authenticated user. Provide group ID, type, media URL, and optional thumbnail, title, and description.',
     parameters: CreateMediaSchema,
   })
   async createMedia(params: z.infer<typeof CreateMediaSchema>) {
@@ -116,65 +117,35 @@ export class ContentMcpController {
       title: params.title,
       desc: params.desc,
     })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Media created successfully, ID: ${result.id}`,
-        },
-      ],
-    }
+    return toTextResult(`Media created successfully, ID: ${result.id}`)
   }
 
   @Tool({
     name: 'getDraftGroupInfoByName',
-    description: '根据标题获取当前用户的草稿（素材）分组信息。提供分组标题，返回匹配的草稿分组详情，如果未找到则返回默认分组。',
+    description: 'Get the authenticated user\'s draft group by title. Returns matching group details, or default group if not found.',
     parameters: GetGroupInfoByNameSchema,
   })
   async getMaterialGroupByName(params: z.infer<typeof GetGroupInfoByNameSchema>) {
     const user = getUser()
-    const { title } = params
-    const result = await this.materialGroupService.getInfoByName(user.id, title)
+    const result = await this.materialGroupService.getInfoByName(user.id, params.title)
     if (result) {
-      const lines = [`ID: ${result.id}`, `Name: ${result.name}`]
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Draft Group:\n${lines.join('\n')}`,
-          },
-        ],
-      }
+      return toYamlTextResult(result)
     }
 
-    // find default
     const defaultGroup = await this.materialGroupService.getDefaultGroup(user.id)
     if (defaultGroup) {
-      const lines = [`ID: ${defaultGroup.id}`, `Name: ${defaultGroup.name}`, `Is Default: Yes`]
-      return {
-        content: [
-          {
-            type: 'text',
-            text: `Draft Group (Default):\n${lines.join('\n')}`,
-          },
-        ],
-      }
+      return toYamlTextResult({
+        ...defaultGroup,
+        isDefault: true,
+      })
     }
 
-    return {
-      content: [
-        {
-          type: 'text',
-          text: 'Failed to get Draft group by title',
-        },
-      ],
-      isError: true,
-    }
+    return toTextResult('Failed to get Draft group by title', true)
   }
 
   @Tool({
     name: 'createDraft',
-    description: '为当前用户创建新的草稿（素材）。提供分组ID、标题、描述、封面URL、媒体列表、类型和选项。返回创建的草稿详情及成功状态。',
+    description: 'Create a new draft for the authenticated user. Provide group ID, title, description, cover URL, media list, type, and options.',
     parameters: CreateMaterialSchema,
   })
   async createMaterial(params: z.infer<typeof CreateMaterialSchema>) {
@@ -193,13 +164,111 @@ export class ContentMcpController {
       autoDeleteMedia: false,
       status: MaterialStatus.SUCCESS,
     })
-    return {
-      content: [
-        {
-          type: 'text',
-          text: `Draft created successfully, ID: ${result.id}`,
-        },
-      ],
+    return toTextResult(`Draft created successfully, ID: ${result.id}`)
+  }
+
+  @Tool({
+    name: 'listDrafts',
+    description: 'List the authenticated user\'s drafts with pagination. Supports filtering by group ID and title.',
+    parameters: ListDraftsSchema,
+  })
+  async listDrafts(params: z.infer<typeof ListDraftsSchema>) {
+    const user = getUser()
+    const { list, total } = await this.materialService.getList(
+      { pageNo: params.pageNo, pageSize: params.pageSize },
+      { userId: user.id, userType: UserType.User, groupId: params.groupId, title: params.title },
+    )
+    return toYamlTextResult({
+      pageNo: params.pageNo,
+      pageSize: params.pageSize,
+      total,
+      list,
+    })
+  }
+
+  @Tool({
+    name: 'getDraftDetail',
+    description: 'Get detailed information of a single draft, including title, description, topics, and media list.',
+    parameters: GetDraftDetailSchema,
+  })
+  async getDraftDetail(params: z.infer<typeof GetDraftDetailSchema>) {
+    const user = getUser()
+    const material = await this.materialService.getInfo(params.draftId)
+    if (!material || material.userId !== user.id) {
+      return toTextResult('Draft not found.', true)
     }
+    return toYamlTextResult(material)
+  }
+
+  @Tool({
+    name: 'deleteDraft',
+    description: 'Delete a single draft for the authenticated user.',
+    parameters: DeleteDraftSchema,
+  })
+  async deleteDraft(params: z.infer<typeof DeleteDraftSchema>) {
+    const user = getUser()
+    const material = await this.materialService.getInfo(params.draftId)
+    if (!material || material.userId !== user.id) {
+      return toTextResult('Draft not found.', true)
+    }
+    await this.materialService.del(params.draftId)
+    return toTextResult(`Draft deleted successfully, ID: ${params.draftId}`)
+  }
+
+  @Tool({
+    name: 'listMedia',
+    description: 'List the authenticated user\'s media resources with pagination. Supports filtering by group ID.',
+    parameters: ListMediaSchema,
+  })
+  async listMedia(params: z.infer<typeof ListMediaSchema>) {
+    const user = getUser()
+    const { list, total } = await this.mediaService.getList(
+      { pageNo: params.pageNo, pageSize: params.pageSize },
+      { userId: user.id, groupId: params.groupId },
+    )
+    return toYamlTextResult({
+      pageNo: params.pageNo,
+      pageSize: params.pageSize,
+      total,
+      list,
+    })
+  }
+
+  @Tool({
+    name: 'listDraftGroups',
+    description: 'List all draft groups for the authenticated user.',
+    parameters: ListGroupsSchema,
+  })
+  async listDraftGroups(params: z.infer<typeof ListGroupsSchema>) {
+    const user = getUser()
+    const { list, total } = await this.materialGroupService.getGroupList(
+      { pageNo: params.pageNo, pageSize: params.pageSize },
+      { userId: user.id },
+    )
+    return toYamlTextResult({
+      pageNo: params.pageNo,
+      pageSize: params.pageSize,
+      total,
+      list,
+    })
+  }
+
+  @Tool({
+    name: 'listMediaGroups',
+    description: 'List all media groups for the authenticated user.',
+    parameters: ListGroupsSchema,
+  })
+  async listMediaGroups(params: z.infer<typeof ListGroupsSchema>) {
+    const user = getUser()
+    const { list, total } = await this.mediaGroupService.getList(
+      { pageNo: params.pageNo, pageSize: params.pageSize },
+      { userId: user.id },
+    )
+    return toYamlTextResult({
+      pageNo: params.pageNo,
+      pageSize: params.pageSize,
+      total,
+      list,
+    })
   }
 }

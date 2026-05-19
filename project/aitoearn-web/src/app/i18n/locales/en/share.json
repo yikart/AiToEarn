@@ -47,5 +47,9 @@
   "viewOnly": "View only",
   "linkExpiredDesc": "This share link has expired. Please contact the sharer for a new link.",
   "linkNotFoundDesc": "This share link does not exist or has been deleted.",
-  "backToHome": "Back to Home"
+  "backToHome": "Back to Home",
+  "publishShareFailed": "Failed to prepare publish",
+  "noImagesToShare": "No images to share",
+  "uploadFailed": "Upload failed",
+  "noPreview": "No preview available"
 }

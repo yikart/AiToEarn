@@ -8,6 +8,7 @@ import {
   DouyinOpenTicketInfo,
   DouyinShareSchemaOptions,
   DouyinUserInfo,
+  DouyinUserVideoListResponse,
   DouyRefreshTokenInfo,
 } from './common'
 
@@ -29,7 +30,8 @@ export class DouyinApiService {
    * @returns
    */
   getAuthPage(redirectURL: string, taskId: string) {
-    const url = `https://open.douyin.com/platform/oauth/connect?client_key=${this.appId}&response_type=code&scope=user_info&redirect_uri=${redirectURL}&state=${taskId}`
+    const scopes = ['user_info', 'data.external.user'].join(',')
+    const url = `https://open.douyin.com/platform/oauth/connect?client_key=${this.appId}&response_type=code&scope=${scopes}&redirect_uri=${redirectURL}&state=${taskId}`
     return {
       url,
       taskId,
@@ -218,6 +220,63 @@ client_token 的有效时间为 2 个小时，重复获取 client_token 后会�
 禁止频繁调用 access-token 接口（频控规则：5 分钟内超过 500 次接口调用，接口报错，错误码 10020）。
    * @returns
    */
+  async getUserVideoList(
+    accessToken: string,
+    params: { openId: string, cursor?: number, count?: number },
+  ): Promise<DouyinUserVideoListResponse> {
+    try {
+      const messageRes = await axios.get<{
+        data: DouyinUserVideoListResponse
+        extra?: {
+          error_code?: number
+          description?: string
+          sub_error_code?: number
+          sub_description?: string
+          logid?: string
+          now?: number
+        }
+      }>('https://open.douyin.com/video/list/', {
+        params: {
+          open_id: params.openId,
+          cursor: params.cursor ?? 0,
+          count: params.count ?? 5,
+        },
+        headers: {
+          'Content-Type': 'application/json',
+          'access-token': accessToken,
+        },
+      })
+      const responseData = messageRes.data.data
+      const errorCode = messageRes.data.extra?.error_code ?? responseData?.error_code ?? 0
+      if (errorCode !== 0) {
+        const description = messageRes.data.extra?.description
+          || messageRes.data.extra?.sub_description
+          || responseData?.description
+          || 'get user video list failed'
+        this.logger.error({
+          path: 'douyin getUserVideoList error',
+          data: messageRes.data,
+        })
+        throw new Error(description)
+      }
+      if (!responseData) {
+        this.logger.error({
+          path: 'douyin getUserVideoList empty response',
+          data: messageRes.data,
+        })
+        throw new Error('get user video list empty response')
+      }
+      return responseData
+    }
+    catch (error) {
+      this.logger.error({
+        path: 'douyin getUserVideoList error',
+        data: error,
+      })
+      throw new Error(String(error))
+    }
+  }
+
   async getClientToken(): Promise<DouyinClientTokenInfo> {
     try {
       const messageRes = await axios.post<{
@@ -363,14 +422,6 @@ client_token 的有效时间为 2 个小时，重复获取 client_token 后会�
       query.append('timestamp', timestamp)
       query.append('signature', signature)
       query.append('share_type', 'h5')
-
-      // if (video_path) {
-      //   query.append('video_path', getZhFileUrl(video_path))
-      //   query.append('share_to_publish', '1')
-      // }
-      // if (image_list_path) {
-      //   query.append('image_list_path', JSON.stringify(image_list_path.map(getZhFileUrl)))
-      // }
 
       if (video_path) {
         query.append('video_path', video_path)

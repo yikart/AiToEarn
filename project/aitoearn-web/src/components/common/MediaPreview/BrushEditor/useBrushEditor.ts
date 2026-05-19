@@ -3,9 +3,11 @@
  * 处理画笔绑制、颜色、大小、撤销等功能
  */
 
-import { useCallback, useRef, useState } from 'react'
+import type { ImageExportOptions } from './imageExport'
 
+import { useCallback, useRef, useState } from 'react'
 import { getOssUrl } from '@/utils/oss'
+import { DEFAULT_IMAGE_EXPORT_FORMAT, exportCanvasLayers, IMAGE_EXPORT_QUALITY } from './imageExport'
 
 /** 预设颜色 */
 export const PRESET_COLORS = [
@@ -308,44 +310,16 @@ export function useBrushEditor(imageUrl: string, options?: UseBrushEditorOptions
   }, [saveToHistory])
 
   /** 合并两层 Canvas 并导出为 Blob */
-  const exportImage = useCallback(async (): Promise<Blob> => {
-    return new Promise((resolve, reject) => {
-      const imageCanvas = imageCanvasRef.current
-      const drawCanvas = drawCanvasRef.current
-      if (!imageCanvas || !drawCanvas) {
-        reject(new Error('Canvas not ready'))
-        return
-      }
+  const exportImage = useCallback(async (options?: Partial<ImageExportOptions>): Promise<Blob> => {
+    const imageCanvas = imageCanvasRef.current
+    const drawCanvas = drawCanvasRef.current
+    if (!imageCanvas || !drawCanvas) {
+      throw new Error('Canvas not ready')
+    }
 
-      // 创建合成 Canvas
-      const mergeCanvas = document.createElement('canvas')
-      mergeCanvas.width = imageCanvas.width
-      mergeCanvas.height = imageCanvas.height
-
-      const ctx = mergeCanvas.getContext('2d')
-      if (!ctx) {
-        reject(new Error('Failed to get canvas context'))
-        return
-      }
-
-      // 先绘制原图
-      ctx.drawImage(imageCanvas, 0, 0)
-      // 再绘制标注层
-      ctx.drawImage(drawCanvas, 0, 0)
-
-      // 导出为 Blob
-      mergeCanvas.toBlob(
-        (blob) => {
-          if (blob) {
-            resolve(blob)
-          }
-          else {
-            reject(new Error('Failed to export image'))
-          }
-        },
-        'image/png',
-        1,
-      )
+    return exportCanvasLayers(imageCanvas, drawCanvas, {
+      format: options?.format ?? DEFAULT_IMAGE_EXPORT_FORMAT,
+      quality: options?.quality ?? IMAGE_EXPORT_QUALITY.default,
     })
   }, [])
 

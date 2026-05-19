@@ -16,7 +16,7 @@ import {
 import { SSE_METADATA } from '@nestjs/common/constants'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, ResponseCode, UserType } from '@yikart/common'
+import { ApiDoc, AppException, ParseObjectIdPipe, ResponseCode, UserType } from '@yikart/common'
 import { ContentGenerationTaskStatus } from '@yikart/mongodb'
 import { RedisPubSubService } from '@yikart/redis'
 import { Request, Response } from 'express'
@@ -102,7 +102,7 @@ export class AgentController {
   @Get('tasks/:taskId')
   async getContentGenerationTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ) {
     const task = await this.agentService.getTask(token.id, taskId)
     return ContentGenerationTaskVo.create(task)
@@ -117,7 +117,7 @@ export class AgentController {
   @Get('/tasks/:taskId/messages')
   async getTaskMessages(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
     @Query() query: GetTaskMessagesQueryDto,
   ) {
     const result = await this.agentService.getTaskMessages(token.id, taskId, query.lastMessageId)
@@ -131,7 +131,7 @@ export class AgentController {
   @Delete('tasks/:taskId')
   async deleteTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ) {
     await this.agentService.deleteTask(token.id, taskId)
   }
@@ -144,7 +144,7 @@ export class AgentController {
   @Patch('tasks/:taskId')
   async updateTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
     @Body() body: UpdateContentGenerationTaskTitleDto,
   ) {
     await this.agentService.updateTask(token.id, taskId, body)
@@ -158,7 +158,7 @@ export class AgentController {
   @Post('tasks/:taskId/rating')
   async createRating(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
     @Body() body: CreateContentGenerationTaskRatingDto,
   ) {
     await this.agentService.createRating(token.id, taskId, body)
@@ -173,7 +173,7 @@ export class AgentController {
   @Post('tasks/:taskId/share')
   async createPublicShare(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
     @Body() body: CreatePublicShareDto,
   ) {
     const ttlSeconds = body.ttlSeconds
@@ -202,7 +202,7 @@ export class AgentController {
   @Post('/tasks/:taskId/abort')
   async abortTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ) {
     const task = await this.agentService.getTask(token.id, taskId)
     if (task.status !== ContentGenerationTaskStatus.Running)
@@ -218,7 +218,7 @@ export class AgentController {
   @Post('/tasks/:taskId/favorite')
   async favoriteTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ) {
     await this.agentService.favoriteTask(token.id, taskId)
   }
@@ -230,7 +230,7 @@ export class AgentController {
   @Delete('/tasks/:taskId/favorite')
   async unfavoriteTask(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ) {
     await this.agentService.unfavoriteTask(token.id, taskId)
   }

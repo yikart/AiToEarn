@@ -18,8 +18,6 @@ export const jobOptionsSchema = z.object({
   removeOnComplete: removeOnJobSchema.default({ age: 30, count: 1000 }),
   /** 失败后移除 */
   removeOnFail: removeOnJobSchema.default({ age: 60, count: 1000 }),
-  /** 任务超时时间（毫秒），默认 5 分钟 */
-  timeout: z.number().default(5 * 60000),
 })
 
 /**

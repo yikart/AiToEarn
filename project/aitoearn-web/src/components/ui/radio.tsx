@@ -35,7 +35,7 @@ const RadioComponent = React.forwardRef<HTMLInputElement, RadioProps>(
           value={value}
           checked={checked}
           disabled={disabled}
-          className="w-4 h-4 text-primary border-gray-300 focus:ring-primary"
+          className="w-4 h-4 text-primary border-border focus:ring-primary"
           {...props}
         />
         {children && <span>{children}</span>}

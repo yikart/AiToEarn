@@ -125,4 +125,11 @@ export class AccountGroupRepository extends BaseRepository<AccountGroup> {
 
     return accountGroupList
   }
+
+  async listIdsByIp(ip: string): Promise<string[]> {
+    const groups = await this.accountGroupModel
+      .find({ ip: { $regex: ip, $options: 'i' } }, { _id: 1 })
+      .lean({ virtuals: true })
+    return groups.map(g => g._id.toString())
+  }
 }

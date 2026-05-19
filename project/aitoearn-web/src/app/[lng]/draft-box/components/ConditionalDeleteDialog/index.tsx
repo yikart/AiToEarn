@@ -9,6 +9,7 @@ import type { MaterialListFilters } from '@/api/material'
 import lodash from 'lodash'
 import { Loader2 } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { apiGetMaterialList } from '@/api/material'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
 import { useTransClient } from '@/app/i18n/client'
@@ -27,8 +28,12 @@ import { toast } from '@/lib/toast'
 
 // 外层：控制渲染时机
 const ConditionalDeleteDialog = memo(() => {
-  const open = usePlanDetailStore(state => state.conditionalDeleteDialogOpen)
-  const closeDialog = usePlanDetailStore(state => state.closeConditionalDeleteDialog)
+  const { open, closeDialog } = usePlanDetailStore(
+    useShallow(state => ({
+      open: state.conditionalDeleteDialogOpen,
+      closeDialog: state.closeConditionalDeleteDialog,
+    })),
+  )
 
   if (!open)
     return null
@@ -48,8 +53,12 @@ ConditionalDeleteDialog.displayName = 'ConditionalDeleteDialog'
 const ConditionalDeleteDialogContent = memo(({ onOpenChange }: { onOpenChange: (open: boolean) => void }) => {
   const { t } = useTransClient('brandPromotion')
 
-  const currentPlan = usePlanDetailStore(state => state.currentPlan)
-  const filterDeleteMaterials = usePlanDetailStore(state => state.filterDeleteMaterials)
+  const { currentPlan, filterDeleteMaterials } = usePlanDetailStore(
+    useShallow(state => ({
+      currentPlan: state.currentPlan,
+      filterDeleteMaterials: state.filterDeleteMaterials,
+    })),
+  )
 
   const [title, setTitle] = useState('')
   const [useCount, setUseCount] = useState<number | undefined>()

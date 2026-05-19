@@ -480,7 +480,7 @@
         && (data === null || data === void 0 ? void 0 : data.type) === XHS_SIGN_MESSAGE_TYPE.REQUEST) {
         const { requestId, payload } = data
         const { url, data: bodyData, a1 } = payload
-        console.log('[XhsSign Inject] 收到签名请求:', url)
+        console.log('[XhsSign Inject] 收到签名请求:', url, bodyData, a1)
         try {
           const signResult = getXhsSign(url, bodyData, a1)
           if (signResult) {

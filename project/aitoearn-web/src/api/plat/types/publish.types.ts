@@ -32,6 +32,7 @@ export interface PublishParams {
   materialGroupId?: string
   /** 素材ID */
   materialId?: string
+  source?: 'publish' | 'task_link' | 'offline_qr'
 }
 
 // 查询发布列表入参
@@ -68,6 +69,10 @@ export interface PublishRecordItem {
   inQueue: boolean
   dataId: string
   workLink: string
+  linkStatus?: 'pending' | 'ready' | 'failed'
+  linkError?: string
+  linkMeta?: Record<string, unknown>
+  platformWorkId?: string
   createdAt: string
   updatedAt: string
   id: string
@@ -83,4 +88,14 @@ export interface PublishRecordEngagement {
   clickCount: number
   impressionCount: number
   favoriteCount: number
+}
+
+export interface UpdatePublishRecordLinkParams {
+  id: string
+  workLink?: string
+  dataId?: string
+  platformWorkId?: string
+  linkStatus: 'pending' | 'ready' | 'failed'
+  linkError?: string
+  linkMeta?: Record<string, unknown>
 }

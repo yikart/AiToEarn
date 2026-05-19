@@ -5,13 +5,13 @@
     "loginKeywords": "로그인, 사인인, AiToEarn 계정, AI 플랫폼 로그인, 크리에이터 로그인, 소셜 미디어 관리"
   },
   "welcomeBack": "로그인",
-  "loginSubtitle": "AiToEarn으로 창작 시작하기",
+  "loginSubtitle": "AltoEarn을 사용해 보세요!",
   "emailPlaceholder": "이메일 주소 입력",
   "login": "로그인",
   "or": "또는",
   "emailRequired": "이메일을 입력해 주세요",
   "emailInvalid": "유효한 이메일 주소를 입력해 주세요",
-  "emailCodeRequired": "이메일 인증 코드를 입력해 주세요",
+  "emailCodeRequired": "인증 코드를 입력해 주세요",
   "emailCodeLength": "인증 코드는 6자리여야 합니다",
   "enterCode": "6자리 코드 입력",
   "sendCode": "코드 전송",
@@ -26,9 +26,12 @@
   "loginFailed": "로그인 실패",
   "loginError": "로그인 실패, 나중에 다시 시도해 주세요",
   "googleLoginFailed": "Google 로그인 실패",
+  "switchToEmailLogin": "이메일 인증코드로 로그인",
+  "switchToPhoneLogin": "전화번호로 로그인",
   "termsText": "계속함으로써 다음에 동의합니다",
   "termsOfService": "서비스 이용약관",
   "and": "및",
   "privacyPolicy": "개인정보 처리방침",
-  "newUserPromotion": "신규 사용자는 14일 무료 멤버십을 받으세요!"
+  "newUserPromotion": "신규 사용자는 14일 무료 멤버십을 받으세요!",
+  "manualLoginDisabledNotice": "현재 환경에서는 수동 로그인이 필요하지 않습니다. 계속 접근할 수 없다면 설정을 확인해 주세요."
 }

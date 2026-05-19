@@ -1,5 +1,5 @@
 import { AccountType } from '@yikart/common'
-import { AccountStatus, PublishType } from '@yikart/mongodb'
+import { AccountStatus, PublishRecordSource, PublishType } from '@yikart/mongodb'
 import {
   BilibiliPublishOption,
   FacebookPostOptions,
@@ -38,7 +38,9 @@ export interface PlatOptions {
 export interface NewPublishData<T extends PlatOptions> {
   readonly flowId?: string
   readonly accountId: string
-  readonly userTaskId?: string
+  readonly materialGroupId?: string
+  readonly materialId?: string
+  readonly source?: PublishRecordSource
   readonly accountType: AccountType
   readonly type: PublishType
   readonly title?: string

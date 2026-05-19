@@ -1,6 +1,6 @@
-import { createZodDto, UserType } from '@yikart/common'
+import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
 import { z } from 'zod'
-import { ContentType, ImageRole, TaskStatus } from '../../libs/volcengine'
+import { AudioRole, ContentType, ImageRole, TaskStatus, ToolType, VideoRole } from '../../libs/volcengine'
 
 // Volcengine视频生成请求
 const volcengineGenerationRequestSchema = z.object({
@@ -17,8 +17,31 @@ const volcengineGenerationRequestSchema = z.object({
       }),
       role: z.enum(ImageRole).optional(),
     }),
+    z.object({
+      type: z.literal(ContentType.VideoUrl),
+      video_url: z.object({
+        url: z.string(),
+      }),
+      role: z.literal(VideoRole.ReferenceVideo),
+    }),
+    z.object({
+      type: z.literal(ContentType.AudioUrl),
+      audio_url: z.object({
+        url: z.string(),
+      }),
+      role: z.literal(AudioRole.ReferenceAudio),
+    }),
   ])).describe('输入内容'),
   return_last_frame: z.boolean().optional().describe('是否返回尾帧图像'),
+  tools: z.array(z.object({
+    type: z.literal(ToolType.WebSearch),
+  })).optional().describe('模型工具配置'),
+  resolution: z.string().optional().describe('分辨率'),
+  ratio: z.string().optional().describe('宽高比'),
+  duration: z.number().int().optional().describe('时长（秒）'),
+  seed: z.number().int().optional().describe('随机种子'),
+  watermark: z.boolean().optional().describe('是否带水印'),
+  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class VolcengineGenerationRequestDto extends createZodDto(volcengineGenerationRequestSchema) {}
@@ -54,6 +77,9 @@ const volcengineCallbackSchema = z.object({
   usage: z.object({
     completion_tokens: z.number(),
     total_tokens: z.number(),
+    tool_usage: z.object({
+      web_search: z.number().optional(),
+    }).optional(),
   }).optional(),
 })
 

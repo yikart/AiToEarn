@@ -13,13 +13,16 @@ import { config } from '../../../../config'
 import { RelayAuthException } from '../../../relay/relay-auth.exception'
 import { ChannelRedisKeys } from '../../channel.constants'
 import { BilibiliApiService } from '../../libs/bilibili/bilibili-api.service'
+import { BilibiliError } from '../../libs/bilibili/bilibili.exception'
 import {
   AccessToken,
   AddArchiveData,
   ArchiveStatus,
+  ArcStatData,
   VideoUTypes,
 } from '../../libs/bilibili/common'
-import { PlatformBaseService } from '../base.service'
+import { SocialMediaErrorKind } from '../../libs/exception'
+import { PlatformBaseService, ValidatedWorkInfo, WorkDetailInfo } from '../base.service'
 import { ChannelAccountService } from '../channel-account.service'
 import { AuthCallbackResult, AuthTaskInfo } from '../common'
 import { PlatformAuthExpiredException } from '../platform.exception'
@@ -117,16 +120,19 @@ export class BilibiliService extends PlatformBaseService {
   }
 
   async getAccessTokenStatus(accountId: string): Promise<number> {
-    await this.ensureLocalAccount(accountId)
-    const tokenInfo = await this.getOAuth2Credential(accountId)
-    if (!tokenInfo) {
+    await this.getLocalAccountById(accountId)
+    try {
+      await this.getAccountAccessToken(accountId)
+      this.updateAccountStatus(accountId, 1)
+      return 1
+    }
+    catch (error) {
+      if (!(error instanceof PlatformAuthExpiredException)) {
+        throw error
+      }
       this.updateAccountStatus(accountId, 0)
       return 0
     }
-    const now = getCurrentTimestamp()
-    const status = tokenInfo.expires_in > now ? 1 : 0
-    this.updateAccountStatus(accountId, status)
-    return status
   }
 
   /**
@@ -134,7 +140,12 @@ export class BilibiliService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async getAccountAuthInfo(accountId: string) {
+  async getAccountAuthInfo(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getAccountAuthInfoByAccountId(accountId)
+  }
+
+  async getAccountAuthInfoByAccountId(accountId: string) {
     const data = await this.redisService.getJson<AccessToken>(
       ChannelRedisKeys.accessToken('bilibili', accountId),
     )
@@ -296,6 +307,10 @@ export class BilibiliService extends PlatformBaseService {
     }
 
     // 更新任务信息
+    await this.syncAccountStatisticsOnAuth(accountInfo.id, async () => {
+      const stat = await this.bilibiliApiService.getUserStat(accessTokenInfo.access_token)
+      return { fansCount: stat.follower }
+    })
     taskInfo.status = 1
     taskInfo.data.accountId = accountInfo.id
     res = await this.redisService.setJson(
@@ -531,7 +546,12 @@ export class BilibiliService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async archiveTypeList(accountId: string) {
+  async archiveTypeList(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.archiveTypeListByAccountId(accountId)
+  }
+
+  async archiveTypeListByAccountId(accountId: string) {
     const accessToken = await this.getAccountAccessToken(accountId)
     return await this.bilibiliApiService.archiveTypeList(accessToken)
   }
@@ -542,6 +562,19 @@ export class BilibiliService extends PlatformBaseService {
    * @returns
    */
   async getArchiveList(
+    userId: string,
+    accountId: string,
+    params: {
+      ps: number
+      pn: number
+      status?: ArchiveStatus
+    },
+  ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getArchiveListByAccountId(accountId, params)
+  }
+
+  async getArchiveListByAccountId(
     accountId: string,
     params: {
       ps: number
@@ -558,7 +591,12 @@ export class BilibiliService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async getUserStat(accountId: string) {
+  async getUserStat(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getUserStatByAccountId(accountId)
+  }
+
+  async getUserStatByAccountId(accountId: string) {
     const accessToken = await this.getAccountAccessToken(accountId)
     return await this.bilibiliApiService.getUserStat(accessToken)
   }
@@ -569,7 +607,12 @@ export class BilibiliService extends PlatformBaseService {
    * @param resourceId
    * @returns
    */
-  async getArcStat(accountId: string, resourceId: string) {
+  async getArcStat(userId: string, accountId: string, resourceId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getArcStatByAccountId(accountId, resourceId)
+  }
+
+  async getArcStatByAccountId(accountId: string, resourceId: string) {
     const accessToken = await this.getAccountAccessToken(accountId)
     return await this.bilibiliApiService.getArcStat(accessToken, resourceId)
   }
@@ -579,7 +622,12 @@ export class BilibiliService extends PlatformBaseService {
    * @param accountId
    * @returns
    */
-  async getArcIncStat(accountId: string) {
+  async getArcIncStat(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getArcIncStatByAccountId(accountId)
+  }
+
+  async getArcIncStatByAccountId(accountId: string) {
     const accessToken = await this.getAccountAccessToken(accountId)
     return await this.bilibiliApiService.getArcIncStat(accessToken)
   }
@@ -603,13 +651,15 @@ export class BilibiliService extends PlatformBaseService {
    * @param dataId
    * @returns
    */
-  async getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string): Promise<{
+  override async getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string, _accountId?: string): Promise<{
     dataId: string
     uniqueId: string
     type: PublishType
     videoType?: 'short' | 'long'
+    resolvedUrl?: string
   }> {
-    const videoId = this.parseBilibiliUrl(workLink)
+    const resolvedUrl = await this.normalizeBilibiliWorkLink(workLink)
+    const videoId = this.parseBilibiliUrl(resolvedUrl)
     const resolvedDataId = videoId || dataId || ''
     if (!resolvedDataId) {
       throw new AppException(ResponseCode.InvalidWorkLink)
@@ -620,6 +670,34 @@ export class BilibiliService extends PlatformBaseService {
       uniqueId: `${accountType}_${resolvedDataId}`,
       type: PublishType.VIDEO,
       videoType: 'long',
+      resolvedUrl,
+    }
+  }
+
+  override async validateOwnedWorkLink(
+    accountType: AccountType,
+    accountId: string,
+    workLink: string,
+  ): Promise<ValidatedWorkInfo> {
+    const resolvedUrl = await this.normalizeBilibiliWorkLink(workLink)
+    const identifier = this.parseBilibiliUrl(resolvedUrl)
+    if (!identifier) {
+      throw new AppException(ResponseCode.InvalidWorkLink)
+    }
+
+    const arcStat = await this.getOwnedArcStat(accountId, identifier)
+    if (!arcStat) {
+      throw new AppException(ResponseCode.WorkNotBelongToAccount)
+    }
+
+    const workDetail = this.toWorkDetailInfo(identifier, arcStat)
+    return {
+      dataId: identifier,
+      uniqueId: `${accountType}_${identifier}`,
+      type: workDetail.type,
+      videoType: workDetail.videoType,
+      resolvedUrl,
+      workDetail,
     }
   }
 
@@ -633,6 +711,23 @@ export class BilibiliService extends PlatformBaseService {
    * @param workLink Bilibili 链接
    * @returns videoId 或 null
    */
+  override async getWorkDetail(accountId: string, dataId: string): Promise<WorkDetailInfo | null> {
+    const arcStat = await this.getOwnedArcStat(accountId, dataId)
+    if (!arcStat) {
+      return null
+    }
+
+    return this.toWorkDetailInfo(dataId, arcStat)
+  }
+
+  override async verifyWorkOwnership(accountId: string, dataId: string): Promise<boolean> {
+    const arcStat = await this.getOwnedArcStat(accountId, dataId)
+    if (!arcStat) {
+      throw new AppException(ResponseCode.WorkNotBelongToAccount)
+    }
+    return true
+  }
+
   private parseBilibiliUrl(workLink: string): string | null {
     let url: URL
     try {
@@ -659,5 +754,54 @@ export class BilibiliService extends PlatformBaseService {
     }
 
     return null
+  }
+
+  private async normalizeBilibiliWorkLink(workLink: string): Promise<string> {
+    let url: URL
+    try {
+      url = new URL(workLink)
+    }
+    catch {
+      return workLink
+    }
+
+    const hostname = url.hostname.replace('www.', '')
+    if (hostname === 'b23.tv') {
+      return await this.resolveRedirectUrl(workLink, { throwOnFailure: true })
+    }
+    if ((hostname === 'bilibili.com' || hostname === 'm.bilibili.com')
+      && /\/video\/av\d+/i.test(url.pathname)) {
+      return await this.resolveRedirectUrl(workLink, { throwOnFailure: true })
+    }
+    return workLink
+  }
+
+  private async getOwnedArcStat(accountId: string, dataId: string): Promise<ArcStatData | null> {
+    const normalizedDataId = dataId.trim()
+    if (!normalizedDataId) {
+      return null
+    }
+
+    try {
+      return await this.getArcStatByAccountId(accountId, normalizedDataId)
+    }
+    catch (error) {
+      if (error instanceof BilibiliError && error.kind === SocialMediaErrorKind.Client) {
+        return null
+      }
+      throw error
+    }
+  }
+
+  private toWorkDetailInfo(dataId: string, arcStat: ArcStatData): WorkDetailInfo {
+    return {
+      dataId,
+      title: arcStat.title,
+      videoUrl: `https://www.bilibili.com/video/${dataId}`,
+      publishTime: arcStat.ptime ? new Date(arcStat.ptime * 1000) : undefined,
+      type: PublishType.VIDEO,
+      videoType: 'long',
+      rawData: arcStat as unknown as Record<string, unknown>,
+    }
   }
 }

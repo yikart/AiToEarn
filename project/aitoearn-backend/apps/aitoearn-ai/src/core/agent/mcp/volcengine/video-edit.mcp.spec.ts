@@ -1,12 +1,14 @@
+import type { AiAvailabilityService } from '../../../ai-availability'
 import { Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { CreditsType, UserType } from '@yikart/common'
+import { CreditsConsumptionSource, CreditsType, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { vi } from 'vitest'
+import { z } from 'zod'
 import { VolcengineService } from '../../../ai/libs/volcengine'
+import { submitDirectEditTaskSchema } from './common'
 import { VideoEditMcp, VideoEditToolName } from './video-edit.mcp'
-
 import { VolcengineVideoUtils } from './volcengine.utils'
 
 // Mock VolcengineVideoUtils
@@ -22,6 +24,7 @@ describe('videoEditMcp', () => {
   let mockVolcengineService: vi.Mocked<VolcengineService>
   let mockAssetsService: vi.Mocked<AssetsService>
   let mockCreditsHelper: vi.Mocked<CreditsHelperService>
+  let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
   let mockAiLogRepo: vi.Mocked<AiLogRepository>
 
   const userId = 'test-user-id'
@@ -53,6 +56,10 @@ describe('videoEditMcp', () => {
       addCredits: vi.fn().mockResolvedValue(undefined),
     } as unknown as vi.Mocked<CreditsHelperService>
 
+    mockAiAvailability = {
+      execute: vi.fn().mockImplementation((_ctx: unknown, fn: () => unknown) => (fn as () => Promise<unknown>)()),
+    } as unknown as vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
+
     mockAiLogRepo = {
       create: vi.fn(),
       getById: vi.fn(),
@@ -63,6 +70,7 @@ describe('videoEditMcp', () => {
       mockVolcengineService,
       mockAssetsService,
       mockCreditsHelper,
+      mockAiAvailability as unknown as AiAvailabilityService,
       mockAiLogRepo,
     )
     // Override the logger for testing
@@ -100,6 +108,49 @@ describe('videoEditMcp', () => {
     it('should have correct tool name', () => {
       const tool = videoEditMcp.createSubmitDirectEditTaskTool(userId, userType)
       expect(tool.name).toBe(VideoEditToolName.SubmitDirectEditTask)
+    })
+
+    it('should parse fixed-length TargetTime arrays', () => {
+      const result = submitDirectEditTaskSchema.safeParse({
+        Track: [
+          [
+            {
+              Type: 'video',
+              Source: 'vid://test-video-id',
+              TargetTime: [0, 10000],
+            },
+          ],
+        ],
+      })
+
+      expect(result.success).toBe(true)
+      if (!result.success) {
+        return
+      }
+
+      expect(result.data.Track[0][0].TargetTime).toEqual([0, 10000])
+    })
+
+    it('should reject TargetTime arrays without exactly two values', () => {
+      const result = submitDirectEditTaskSchema.safeParse({
+        Track: [
+          [
+            {
+              Type: 'video',
+              Source: 'vid://test-video-id',
+              TargetTime: [0],
+            },
+          ],
+        ],
+      })
+
+      expect(result.success).toBe(false)
+    })
+
+    it('should export TargetTime as fixed-length arrays instead of tuple items', () => {
+      const jsonSchema = z.toJSONSchema(submitDirectEditTaskSchema, { io: 'input' })
+
+      expect(JSON.stringify(jsonSchema)).not.toContain('"items":[')
     })
 
     it('should call volcengineService.submitDirectEditTaskAsync with correct params', async () => {
@@ -154,6 +205,7 @@ describe('videoEditMcp', () => {
         userId,
         amount: expect.any(Number),
         type: CreditsType.AiService,
+        source: CreditsConsumptionSource.AiVideoEdit,
         description: expect.stringContaining('Video Edit'),
         metadata: expect.objectContaining({
           taskId: 'req-123',

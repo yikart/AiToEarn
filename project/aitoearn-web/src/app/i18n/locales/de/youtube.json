@@ -13,5 +13,6 @@
   "uploadFailed": "Upload fehlgeschlagen",
   "uploadSuccess": "Upload erfolgreich",
   "checkFailed": "Prüfung fehlgeschlagen",
-  "alreadyAuthorized": "Bereits autorisiert"
+  "alreadyAuthorized": "Bereits autorisiert",
+  "notAuthorized": "Not authorized"
 }

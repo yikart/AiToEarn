@@ -68,7 +68,6 @@ const ThreadsParams = memo(
           try {
             setLoading(true)
             const response: any = await apiGetThreadsLocations(pubItem.account.id, keyword || '')
-            console.log('response', response)
             if (response && response.code === 0) {
               setLocations(response.data)
             }

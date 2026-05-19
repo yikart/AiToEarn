@@ -18,7 +18,7 @@ export class ThreadsEngagementProvider implements EngagementProvider {
       before: (pagination as KeysetPagination)?.before ?? undefined,
       after: (pagination as KeysetPagination)?.after ?? undefined,
     }
-    const resp = await this.threadsService.getUserPosts(accountId, req)
+    const resp = await this.threadsService.getUserPostsByAccountId(accountId, req)
     if (!resp) {
       return {
         posts: [],

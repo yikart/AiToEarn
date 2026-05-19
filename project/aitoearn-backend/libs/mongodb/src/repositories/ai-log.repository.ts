@@ -149,4 +149,32 @@ export class AiLogRepository extends BaseRepository<AiLog> {
     ])
     return result[0]?.total ?? 0
   }
+
+  async listByUserIdAndTypeAndStatusAndRequestVersionAndCreatedAt(
+    userId: string,
+    type: AiLogType,
+    status: AiLogStatus,
+    requestVersion: string,
+    startAt: Date,
+    limit: number,
+  ) {
+    return await this.find(
+      {
+        userId,
+        type,
+        status,
+        'request.version': requestVersion,
+        'createdAt': { $gte: startAt },
+      },
+      { sort: { createdAt: -1 }, limit },
+    )
+  }
+
+  async listUserIdsByTypeAndStatusAndUpdatedAt(type: AiLogType, status: AiLogStatus, startAt: Date): Promise<string[]> {
+    return await this.model.distinct('userId', {
+      type,
+      status,
+      updatedAt: { $gte: startAt },
+    }).exec()
+  }
 }

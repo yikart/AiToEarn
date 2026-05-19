@@ -199,7 +199,7 @@ export class KwaiService extends PlatformBaseService {
       }
     }
     catch (error) {
-      this.logger.error('createAccountAndSetAccessToken error:', error)
+      this.logger.error(error, 'createAccountAndSetAccessToken error')
       return { status: 0, message: `添加账号失败: ${(error as Error).message}` }
     }
   }
@@ -251,16 +251,21 @@ export class KwaiService extends PlatformBaseService {
     if (!kwaiUserInfo)
       throw new Error('快手用户信息获取失败')
 
+    const existingAccount = await this.channelAccountService.getAccountByTypeAndUid(
+      AccountType.KWAI,
+      accountTokenInfo.open_id,
+    )
+
     // 创建本平台的平台账号
     const newData = new NewAccount({
-      userId,
+      userId: userId || existingAccount?.userId || '',
       type: AccountType.KWAI,
       uid: accountTokenInfo.open_id,
       account: accountTokenInfo.open_id,
       avatar: kwaiUserInfo.bigHead,
       nickname: kwaiUserInfo.name,
       status: AccountStatus.NORMAL,
-      groupId: spaceId,
+      groupId: spaceId || existingAccount?.groupId || '',
     })
 
     const accountInfo = await this.channelAccountService.createAccount(
@@ -277,6 +282,10 @@ export class KwaiService extends PlatformBaseService {
 
     if (!res)
       throw new Error('设置redis失败')
+
+    await this.syncAccountStatisticsOnAuth(accountInfo.id, async () => ({
+      fansCount: kwaiUserInfo.fan,
+    }))
 
     return accountInfo
   }
@@ -327,7 +336,12 @@ export class KwaiService extends PlatformBaseService {
   }
 
   // 获取用户公开信息
-  async getAuthorInfo(accountId: string) {
+  async getAuthorInfo(userId: string, accountId: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getAuthorInfoByAccountId(accountId)
+  }
+
+  async getAuthorInfoByAccountId(accountId: string) {
     const accountToken = await this.getAccessTokenAndRefresh(accountId)
     if (accountToken === null) {
       this.logger.warn(`Kwai account ${accountId} access_token is expired or invalid`)
@@ -346,8 +360,18 @@ export class KwaiService extends PlatformBaseService {
     return await this.kwaiApiService.fetchVideoList(accountToken, cursor, count)
   }
 
+  // 获取单个视频详情
+  async getVideoInfo(accountId: string, photoId: string) {
+    const accountToken = await this.getAccessTokenAndRefresh(accountId)
+    if (accountToken === null) {
+      this.logger.warn(`Kwai account ${accountId} access_token is expired or invalid`)
+      throw new Error('kwai account access_token is expired or invalid')
+    }
+    return await this.kwaiApiService.getVideoInfo(accountToken, photoId)
+  }
+
   async getAccessTokenStatus(accountId: string) {
-    await this.ensureLocalAccount(accountId)
+    await this.getLocalAccountById(accountId)
     const tokenInfo = await this.getOAuth2Credential(accountId)
     if (!tokenInfo) {
       this.updateAccountStatus(accountId, 0)
@@ -381,7 +405,8 @@ export class KwaiService extends PlatformBaseService {
     type: PublishType
     videoType?: 'short' | 'long'
   }> {
-    const videoId = this.parseKwaiUrl(workLink)
+    const resolvedWorkLink = await this.normalizeKwaiWorkLink(workLink)
+    const videoId = this.parseKwaiUrl(resolvedWorkLink)
     const resolvedDataId = videoId || dataId || ''
     if (!resolvedDataId) {
       throw new AppException(ResponseCode.InvalidWorkLink)
@@ -393,6 +418,21 @@ export class KwaiService extends PlatformBaseService {
       type: PublishType.VIDEO,
       videoType: 'short',
     }
+  }
+
+  private async normalizeKwaiWorkLink(workLink: string): Promise<string> {
+    try {
+      const url = new URL(workLink)
+      const hostname = url.hostname.replace('www.', '')
+      if (hostname === 'v.kuaishou.com' || (hostname === 'kuaishou.com' && url.pathname.startsWith('/f/'))) {
+        return await this.resolveRedirectUrl(workLink)
+      }
+    }
+    catch {
+      return workLink
+    }
+
+    return workLink
   }
 
   /**
@@ -415,6 +455,10 @@ export class KwaiService extends PlatformBaseService {
     }
 
     const hostname = url.hostname.replace('www.', '')
+
+    if (hostname === 'v.kuaishou.com') {
+      return null
+    }
 
     if (hostname === 'kuaishou.com') {
       const pathname = url.pathname

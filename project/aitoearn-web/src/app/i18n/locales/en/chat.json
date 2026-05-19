@@ -153,7 +153,9 @@
     "image": "Image",
     "document": "Document",
     "uploadFailed": "Upload failed, please try again",
-    "uploadCancelled": "Upload cancelled"
+    "uploadCancelled": "Upload cancelled",
+    "edit": "Edit",
+    "remove": "Remove"
   },
   "workflow": {
     "toolCallCompleted": "Tool Calls Completed",
@@ -186,7 +188,9 @@
     "rechargeCredits": "Recharge Credits",
     "action": "Action",
     "actionDesc": "Please complete the following action",
-    "continue": "Continue"
+    "continue": "Continue",
+    "error": "Failed",
+    "errorDesc": "Generation failed. Please try again later."
   },
   "publishDetail": {
     "title": "Publish Details",
@@ -223,5 +227,8 @@
       "publish": "Publishing...",
       "complete": "Published"
     }
+  },
+  "plugin": {
+    "platformNeedsPlugin": "This platform requires the browser extension. Please authorize the extension first."
   }
 }

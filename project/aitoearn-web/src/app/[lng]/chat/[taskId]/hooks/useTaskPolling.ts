@@ -7,7 +7,6 @@ import type { IDisplayMessage } from '@/store/agent'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { agentApi, TaskStatus } from '@/api/agent'
 
-import { useUserStore } from '@/store/user'
 import { convertMessages, isTaskCompleted } from '../utils'
 
 export interface ITaskPollingOptions {
@@ -52,9 +51,6 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
   const [isPolling, setIsPolling] = useState(false)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
-
-  // 获取 Credits 余额
-  const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
   /** 开始轮询 */
   const startPolling = useCallback(() => {
@@ -173,8 +169,6 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
             if (isTaskCompleted(mergedMessages)) {
               // [TaskPolling] Task completed, stopping polling')
               setIsPolling(false)
-              // 任务完成时刷新 Credits 余额
-              fetchCreditsBalance()
             }
           }
 
@@ -216,8 +210,6 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           if (isTaskCompleted(mergedMessages)) {
             // [TaskPolling] Task completed, stopping polling')
             setIsPolling(false)
-            // 任务完成时刷新 Credits 余额
-            fetchCreditsBalance()
           }
         }
       }
@@ -247,7 +239,6 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
     isActiveTask,
     pollingInterval,
     onMessagesUpdate,
-    fetchCreditsBalance,
     getCurrentRawMessages,
   ])
 

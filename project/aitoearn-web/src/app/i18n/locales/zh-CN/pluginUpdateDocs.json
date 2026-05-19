@@ -1,0 +1,80 @@
+{
+  "seo": {
+    "title": "插件更新教程 - AiToEarn 浏览器扩展升级指南",
+    "description": "按照图文步骤下载最新 .crx 插件包，并在扩展程序管理页完成 AiToEarn 插件更新。",
+    "keywords": "插件更新, 浏览器插件升级, AiToEarn 扩展, 手动更新, Chrome 扩展"
+  },
+  "hero": {
+    "eyebrow": "手动更新流程",
+    "title": "插件更新教程",
+    "description": "当 AiToEarn 提示当前插件版本过旧时，可按照本教程使用最新 .crx 插件包完成手动更新。",
+    "noticeTitle": "Chrome Web Store 安装通常无需手动更新",
+    "noticeContent": "如果您是通过 Chrome Web Store 安装的插件，一般只需要等待商店审核和自动推送，无需手动覆盖安装。",
+    "summaryLabel": "快速信息"
+  },
+  "facts": {
+    "time": "预计耗时",
+    "timeValue": "约 1-3 分钟",
+    "scenario": "适用场景",
+    "scenarioValue": "中国地区无法通过 Chrome Web Store 安装插件的用户，或需要立即获取最新插件版本的用户。"
+  },
+  "actions": {
+    "downloadChina": "中国地区最新版本下载",
+    "downloadGithub": "GitHub 渠道下载",
+    "viewInstallGuide": "查看安装教程"
+  },
+  "tableOfContents": "更新步骤",
+  "sections": {
+    "beforeUpdate": "更新前准备",
+    "beforeUpdateDesc": "先确认备份事项和当前安装方式，再开始使用 .crx 包更新插件。",
+    "steps": "更新步骤",
+    "stepsDesc": "按下面 7 个步骤操作，即可完成最新插件包更新。"
+  },
+  "backupNotice": {
+    "title": "重要提示",
+    "content1": "注意，如果您之前是从 .zip 解压安装的插件，需要将之前的插件数据手动备份，如智能体、任务配置等信息。",
+    "content2": "因为 .zip 的安装方式和现有的安装方式不兼容，用 .crx 的方式安装后，需要将之前 .zip 安装的插件手动删除。"
+  },
+  "checklist": {
+    "title": "开始前请确认",
+    "item1": "先关闭插件弹窗、插件详情页等相关页面，避免安装过程中出现占用或状态未刷新的问题。",
+    "item2": "如果担心误操作，建议先备份插件数据，如智能体、任务配置等信息。"
+  },
+  "steps": {
+    "step1": {
+      "title": "下载最新的插件包",
+      "content": "从页面顶部下载入口获取最新的 .crx 插件包。",
+      "caption": "下载最新的插件包"
+    },
+    "step2": {
+      "title": "打开插件包下载目录",
+      "content": "在浏览器或系统下载记录中打开刚下载完成的插件包所在目录。",
+      "caption": "打开插件包下载目录"
+    },
+    "step3": {
+      "title": "打开管理扩展",
+      "content": "进入 Chrome 的扩展程序管理页面，准备执行手动更新。",
+      "caption": "打开管理扩展"
+    },
+    "step4": {
+      "title": "打开开发者模式",
+      "content": "在扩展程序管理页右上角开启开发者模式。",
+      "caption": "打开开发者模式"
+    },
+    "step5": {
+      "title": "将最新的插件包拖拽到管理扩展区域",
+      "content": "把刚下载好的 .crx 文件直接拖拽到扩展程序管理页面中。",
+      "caption": "将最新的插件包拖拽到管理扩展区域"
+    },
+    "step6": {
+      "title": "点击 Re-enable 确认更新插件",
+      "content": "浏览器弹出确认后，点击“Re-enable”完成插件更新。",
+      "caption": "点击 Re-enable 确认更新插件"
+    },
+    "step7": {
+      "title": "关闭开发者模式",
+      "content": "更新完成后可以关闭开发者模式。",
+      "caption": "关闭开发者模式"
+    }
+  }
+}

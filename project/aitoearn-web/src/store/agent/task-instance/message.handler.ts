@@ -30,10 +30,6 @@ export function createUserMessage(content: string, medias?: IUploadedMedia[]): I
 export function createAssistantMessage(ctx: IMessageHandlerContext): IDisplayMessage {
   const messageId = `assistant-${Date.now()}`
   ctx.setCurrentAssistantMessageId(messageId)
-  console.log(
-    `[MessageHandler] Created assistant message: ${messageId} for task: ${ctx.getTaskId()}`,
-  )
-
   return {
     id: messageId,
     role: 'assistant',

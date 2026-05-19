@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, UserType } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
 import { ListVideoTasksQueryDto, VideoGenerationRequestDto } from './video.dto'
 import { VideoService } from './video.service'
 import {
@@ -55,7 +55,7 @@ export class VideoController {
   @Get('/video/generations/:taskId')
   async getVideoTaskStatus(
     @GetToken() token: TokenInfo,
-    @Param('taskId') taskId: string,
+    @Param('taskId', ParseObjectIdPipe) taskId: string,
   ): Promise<VideoTaskStatusResponseVo> {
     const response = await this.videoService.getVideoTaskStatus({
       userId: token.id,

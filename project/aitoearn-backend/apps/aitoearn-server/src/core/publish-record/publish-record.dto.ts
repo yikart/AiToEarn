@@ -1,5 +1,5 @@
 import { AccountType, createZodDto } from '@yikart/common'
-import { PublishStatus, PublishType } from '@yikart/mongodb'
+import { PublishRecordLinkStatus, PublishStatus, PublishType } from '@yikart/mongodb'
 import { z } from 'zod'
 
 /**
@@ -9,6 +9,17 @@ export const publishRecordIdSchema = z.object({
   id: z.string({ message: 'id' }),
 })
 export class PublishRecordIdDto extends createZodDto(publishRecordIdSchema) {}
+
+export const UpdatePublishRecordWorkLinkSchema = z.object({
+  id: z.string({ message: '发布记录ID' }).describe('发布记录ID'),
+  workLink: z.string({ message: '作品链接' }).min(1, { message: '作品链接不能为空' }).optional().describe('作品链接'),
+  dataId: z.string().min(1).optional().describe('作品数据ID'),
+  platformWorkId: z.string().min(1).optional().describe('平台作品ID'),
+  linkStatus: z.enum(PublishRecordLinkStatus).default(PublishRecordLinkStatus.READY).describe('作品链接状态'),
+  linkError: z.string().optional().describe('作品链接获取错误'),
+  linkMeta: z.record(z.string(), z.any()).optional().describe('作品链接扩展信息'),
+})
+export class UpdatePublishRecordWorkLinkDto extends createZodDto(UpdatePublishRecordWorkLinkSchema) {}
 
 export enum BilibiliNoReprint {
   No = 1,
@@ -33,9 +44,7 @@ export const CreatePublishRecordSchema = z.object({
   status: z.enum(PublishStatus, { message: '状态' }),
   title: z.string().optional(),
   desc: z.string().optional(),
-  userTaskId: z.string({ message: '用户任务ID' }).optional(), // 用户任务ID
-  taskId: z.string({ message: '任务ID' }).optional(), // 任务ID
-  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID (广告主线下任务)
+  materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID
   materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID (替换原 taskMaterialId)
   videoUrl: z.string().optional(),
   coverUrl: z.string().optional(),

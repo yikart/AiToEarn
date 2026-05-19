@@ -15,10 +15,6 @@ const UserInfoSchema = z.object({
   phone: z.string().min(1).max(20).optional().describe('手机号'),
   status: z.number().describe('用户状态，0-禁用，1-启用'),
   isDelete: z.boolean().describe('是否删除'),
-  popularizeCode: z.string().min(1).max(20).optional().describe('我的推广码'),
-  inviteUserId: z.string().min(1).max(50).optional().describe('邀请人用户ID'),
-  inviteCode: z.string().min(1).max(20).optional().describe('我填写的邀请码'),
-  score: z.number().describe('积分字段'),
   googleAccount: z
     .object({
       googleId: z.string().min(1).max(50).describe('谷歌ID'),
@@ -26,14 +22,5 @@ const UserInfoSchema = z.object({
     })
     .optional()
     .describe('谷歌账号信息'),
-  earnInfo: z
-    .object({
-      totalEarn: z.number().describe('总收益'),
-      todayEarn: z.number().describe('今日收益'),
-      yesterdayEarn: z.number().describe('昨日收益'),
-    })
-    .optional()
-    .describe('收益信息'),
-
 })
 export class UserInfoVO extends createZodDto(UserInfoSchema) { }

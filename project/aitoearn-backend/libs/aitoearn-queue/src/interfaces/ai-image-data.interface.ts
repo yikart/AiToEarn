@@ -1,3 +1,4 @@
+import type { AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import type { UserType } from '@yikart/common'
 import type { AiLogChannel, AiLogType } from '@yikart/mongodb'
 
@@ -22,5 +23,5 @@ export interface AiImageData {
   /** 请求参数 */
   request: unknown
   /** 任务类型 */
-  taskType: 'generation' | 'edit' | 'qrCodeArt'
+  taskType: AiLogSettlementTaskType
 }

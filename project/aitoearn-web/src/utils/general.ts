@@ -2,7 +2,17 @@ import type { Metadata } from 'next'
 import { getHreflang, languages } from '@/lib/i18n/languageConfig'
 
 export async function getPageTitle(name: string, lng: string) {
-  return `${name} —— AiToEarn`
+  return `AiToEarn - ${name}`
+}
+
+const BRAND_KEYWORDS = ['AiToEarn', 'aitoearn', 'Ai To Earn', 'ai to earn', 'AITOEARN', 'earn']
+
+/** 确保品牌关键词变体在 keywords 最前面，避免重复 */
+function prependBrandKeyword(keywords: Metadata['keywords']): string {
+  const raw = Array.isArray(keywords) ? keywords.join(', ') : (keywords || '')
+  const brandSet = new Set(BRAND_KEYWORDS.map(k => k.toLowerCase().replace(/\s+/g, '')))
+  const filtered = raw.split(',').map(k => k.trim()).filter(k => !brandSet.has(k.toLowerCase().replace(/\s+/g, '')))
+  return [...BRAND_KEYWORDS, ...filtered].join(', ')
 }
 
 /**
@@ -42,7 +52,7 @@ export async function getMetadata(props: Metadata, lng: string, path?: string): 
     ...props,
     title,
     description,
-    keywords: props.keywords,
+    keywords: prependBrandKeyword(props.keywords),
     referrer: 'no-referrer',
     // Canonical URL 和 alternate links
     alternates: {

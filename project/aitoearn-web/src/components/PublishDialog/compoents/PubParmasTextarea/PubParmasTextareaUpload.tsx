@@ -20,7 +20,7 @@ import {
 } from '@/components/PublishDialog/PublishDialog.util'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
-import { getOssUrl } from '@/utils/oss'
+import { getOssProxyPath, getOssUrl } from '@/utils/oss'
 
 export interface IPubParmasTextareaUploadRef {}
 
@@ -350,7 +350,7 @@ const PubParmasTextareaUpload = memo(
       // 处理图片素材导入
       const processImageMedia = useCallback(async (media: MediaItem): Promise<IImgFile> => {
         const ossUrl = getOssUrl(media.url)
-        const req = await fetch(ossUrl)
+        const req = await fetch(getOssProxyPath(ossUrl))
         const blob = await req.blob()
         const imagefile = await formatImg({
           blob,
@@ -366,7 +366,7 @@ const PubParmasTextareaUpload = memo(
         const coverOss = getOssUrl(media.thumbUrl)
 
         // 下载封面
-        const req = await fetch(coverOss)
+        const req = await fetch(getOssProxyPath(coverOss))
         const blob = await req.blob()
         const imagefile = await formatImg({
           blob,
@@ -375,7 +375,7 @@ const PubParmasTextareaUpload = memo(
         imagefile.ossUrl = media.thumbUrl
 
         // 获取视频信息
-        const videoInfo = await VideoGrabFrame(ossUrl, 0)
+        const videoInfo = await VideoGrabFrame(getOssProxyPath(ossUrl), 0)
 
         // 从素材库导入的视频已上传到OSS，创建空占位文件
         const filename = media.title || `video_${Date.now()}.mp4`

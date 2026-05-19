@@ -1,6 +1,56 @@
+import type { SocialAccount } from '@/api/types/account.type'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { generateUUID, getFilePathName } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
+
+type AccountIdentityFields = Pick<SocialAccount, 'account' | 'id' | 'type' | 'uid'>
+
+export function getSocialAccountIdentityKeys(account: AccountIdentityFields) {
+  const keys = [`id:${account.id}`]
+
+  if (account.uid) {
+    keys.push(`uid:${account.type}:${account.uid}`)
+  }
+
+  if (account.account) {
+    keys.push(`account:${account.type}:${account.account}`)
+  }
+
+  return keys
+}
+
+export function isSameSocialAccount(
+  prevAccount: AccountIdentityFields,
+  nextAccount: AccountIdentityFields,
+) {
+  if (prevAccount.id === nextAccount.id)
+    return true
+
+  if (prevAccount.type !== nextAccount.type)
+    return false
+
+  if (prevAccount.uid && nextAccount.uid && prevAccount.uid === nextAccount.uid)
+    return true
+
+  return !!prevAccount.account && !!nextAccount.account && prevAccount.account === nextAccount.account
+}
+
+export function debugPublishDialog(message: string, payload?: unknown) {
+  if (payload === undefined) {
+    console.info(`[PublishDialog] ${message}`)
+    return
+  }
+
+  let payloadText: string
+  try {
+    payloadText = JSON.stringify(payload)
+  }
+  catch {
+    payloadText = String(payload)
+  }
+
+  console.info(`[PublishDialog] ${message} ${payloadText}`)
+}
 
 export async function formatVideo(file: File): Promise<IVideoFile> {
   const videoUrl = URL.createObjectURL(file)

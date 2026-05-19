@@ -1,9 +1,15 @@
 import { Injectable, Logger } from '@nestjs/common'
-import { QueueService } from '@yikart/aitoearn-queue'
 import { AccountType, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { Account, AccountGroup, AccountGroupRepository, AccountRepository, AccountStatus } from '@yikart/mongodb'
 import { AccountPortraitReportData } from '../channel/common'
+import { AccountStatsData, PlatformService } from '../channel/platforms/platforms.service'
 import { AccountFilterDto, CreateAccountDto } from './account.dto'
+
+const REFRESH_COOLDOWN_MS = 10 * 60 * 1000
+
+type AccountStatisticsUpdateData = AccountStatsData & {
+  income?: number
+}
 
 @Injectable()
 export class AccountService {
@@ -12,7 +18,7 @@ export class AccountService {
   constructor(
     private readonly accountRepository: AccountRepository,
     private readonly accountGroupRepository: AccountGroupRepository,
-    private readonly queueService: QueueService,
+    private readonly platformService: PlatformService,
   ) { }
 
   /**
@@ -242,6 +248,10 @@ export class AccountService {
     return await this.accountRepository.getUserAccountCount(userId)
   }
 
+  async getUserTotalFansCount(userId: string) {
+    return this.accountRepository.getByUserIdTotalFansCount(userId)
+  }
+
   /**
    * Get account information by multiple account IDs
    * @param ids
@@ -279,33 +289,48 @@ export class AccountService {
 
   async updateAccountStatistics(
     id: string,
-    data: {
-      fansCount?: number
-      readCount?: number
-      likeCount?: number
-      collectCount?: number
-      commentCount?: number
-      income?: number
-      workCount?: number
-    },
+    data: AccountStatisticsUpdateData,
   ) {
-    const res = await this.accountRepository.updateAccountStatistics(id, data)
+    const validData = this.pickValidAccountStatistics(data)
+    if (Object.keys(validData).length === 0) {
+      return false
+    }
+
+    const res = await this.accountRepository.updateAccountStatistics(id, validData)
     if (res) {
       const accountInfo = await this.accountRepository.getAccountById(id)
       if (!accountInfo)
         return false
+
+      const group = accountInfo.groupId
+        ? await this.accountGroupRepository.getById(accountInfo.groupId)
+        : null
       this.accountPortraitReport({
-        type: AccountType.BILIBILI,
+        accountId: accountInfo.id,
+        userId: accountInfo.userId,
+        type: accountInfo.type as AccountType,
         uid: accountInfo.uid,
-        totalFollowers: data.fansCount,
-        totalWorks: data.workCount,
-        totalViews: data.readCount,
-        totalLikes: data.likeCount,
-        totalCollects: data.collectCount,
+        avatar: accountInfo.avatar,
+        nickname: accountInfo.nickname,
+        status: accountInfo.status,
+        totalFollowers: accountInfo.fansCount,
+        totalWorks: accountInfo.workCount,
+        totalViews: accountInfo.readCount,
+        totalLikes: accountInfo.likeCount,
+        totalCollects: accountInfo.collectCount,
+        countryCode: group?.countryCode,
       })
     }
 
     return res
+  }
+
+  private pickValidAccountStatistics(data: AccountStatisticsUpdateData): AccountStatisticsUpdateData {
+    return Object.fromEntries(
+      Object.entries(data).filter(([, value]) => (
+        typeof value === 'number' && Number.isFinite(value)
+      )),
+    ) as AccountStatisticsUpdateData
   }
 
   /**
@@ -363,6 +388,77 @@ export class AccountService {
         totalLikes: account.likeCount,
         totalCollects: account.collectCount,
       })
+    }
+  }
+
+  async getAggregatedStatistics(
+    userId: string,
+    type?: AccountType,
+  ) {
+    const accounts = await this.accountRepository.getUserAccounts(userId)
+    const filtered = type
+      ? accounts.filter(a => a.type === type)
+      : accounts
+
+    const stats = {
+      accountTotal: filtered.length,
+      fansCount: 0,
+      readCount: 0,
+      likeCount: 0,
+      collectCount: 0,
+      commentCount: 0,
+      forwardCount: 0,
+      workCount: 0,
+    }
+
+    for (const account of filtered) {
+      if (account.status === AccountStatus.NORMAL) {
+        stats.fansCount += Number(account.fansCount ?? 0)
+      }
+      stats.readCount += Number(account.readCount ?? 0)
+      stats.likeCount += Number(account.likeCount ?? 0)
+      stats.collectCount += Number(account.collectCount ?? 0)
+      stats.commentCount += Number(account.commentCount ?? 0)
+      stats.forwardCount += Number(account.forwardCount ?? 0)
+      stats.workCount += Number(account.workCount ?? 0)
+    }
+
+    return stats
+  }
+
+  async refreshAccountStatistics(
+    userId: string,
+    accountId: string,
+  ): Promise<AccountStatsData & { lastStatsTime: Date }> {
+    const account = await this.accountRepository.getAccountById(accountId)
+    if (!account || account.userId !== userId) {
+      throw new AppException(ResponseCode.AccountNotFound)
+    }
+
+    if (!this.platformService.isSupportedRefreshPlatform(account.type)) {
+      throw new AppException(ResponseCode.AccountRefreshNotSupported)
+    }
+
+    if (account.lastStatsTime) {
+      const elapsed = Date.now() - new Date(account.lastStatsTime).getTime()
+      if (elapsed < REFRESH_COOLDOWN_MS) {
+        throw new AppException(ResponseCode.AccountRefreshTooFrequent)
+      }
+    }
+
+    const stats = await this.platformService.fetchLatestStatsFromPlatform(account)
+    const validStats = this.pickValidAccountStatistics(stats)
+    if (Object.keys(validStats).length === 0) {
+      throw new AppException(ResponseCode.ChannelAccountInfoFailed)
+    }
+
+    const now = new Date()
+    await this.updateAccountStatistics(accountId, validStats)
+    await this.accountRepository.updateById(accountId, { lastStatsTime: now })
+
+    return {
+      ...validStats,
+      lastStatsTime: now,
     }
   }
 }

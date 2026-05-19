@@ -24,7 +24,7 @@
     "cancelText": "Discard"
   },
   "buttons": {
-    "customizePerAccount": "Customize per account",
+    "customizePerAccount": "Next step",
     "cancel": "Cancel",
     "cancelPublish": "Cancel Publish",
     "schedulePublish": "Scheduled Publish",
@@ -47,7 +47,8 @@
     "tiktokForbidden": "This platform does not support publishing yet",
     "xhsOffline": "Xiaohongshu account is offline, please download the App to operate",
     "emptyChannel": "No accounts in this channel",
-    "regionRestricted": "This platform is not available in your region"
+    "noAccount": "No accounts yet, add a channel to get started",
+    "addChannel": "Add Channel"
   },
   "status": {
     "publishFailed": "Failed",
@@ -89,9 +90,12 @@
     "searchLocation": "Search location",
     "selectLocation": "Select location",
     "descriptionPlaceholder": "Start writing",
+    "topicHint": "Type \"#\" to set topics",
     "fans": "Fans",
     "searchPlaceholder": "Search...",
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "description": "Description",
+    "noLocationsFound": "No locations found"
   },
   "writingAssistant": "AI Assistant",
   "aiAssistant": "AI Assistant",
@@ -223,36 +227,64 @@
     "instagramImageValidation": "Instagram Post image aspect ratio must be between 4:5 and 1.91:1.",
     "instagramReelAspectRatio": "Instagram Reel video aspect ratio must be between 4:5 and 9:16.",
     "facebookReelDuration": "Facebook Reel video duration must be 3–90 seconds",
-    "facebookStoryDuration": "Facebook Story video duration must be 3–4 hours",
+    "facebookStoryDuration": "Facebook Story video duration must be 3–60 seconds",
     "instagramVideoSize": "Instagram video size cannot exceed 100MB",
-    "instagramReelDuration": "Instagram Reel video duration must be 5 seconds–15 minutes",
+    "instagramReelDuration": "Instagram Reel video duration must be 3 seconds–15 minutes",
     "instagramStoryDuration": "Instagram Story video duration must be 3–60 seconds",
     "threadsVideoSize": "Threads video size cannot exceed 1GB",
     "threadsVideoDuration": "Threads video duration must be greater than 0 and no more than 5 minutes",
     "threadsImageMin": "Threads requires at least two images",
     "pinterestVideoDuration": "Pinterest video duration must be 4 seconds–15 minutes",
-    "pinterestVideoSize": "Pinterest video size cannot exceed 1GB",
+    "pinterestVideoSize": "Pinterest video size cannot exceed 2GB",
     "tiktokVideoDuration": "TikTok video duration must be 3 seconds to 10 minutes",
-    "tiktokVideoSize": "TikTok video size cannot exceed 1GB",
-    "tiktokVideoMinResolution": "TikTok video minimum resolution is 360x360",
+    "tiktokVideoSize": "TikTok video size cannot exceed 4GB",
+    "tiktokImageMinResolution": "TikTok image minimum resolution is 360x360",
+    "tiktokImageFormat": "TikTok image format only supports JPEG, JPG, and WEBP",
     "twitterVideoDuration": "Twitter video duration must be 0.5–140 seconds",
     "twitterVideoSize": "Twitter video size cannot exceed 512MB",
-    "facebookPostImageSize": "Facebook Post image size cannot exceed 10MB",
+    "facebookPostImageSize": "Facebook Post image size cannot exceed 4MB",
     "facebookStoryImageSize": "Facebook Story image size cannot exceed 4MB",
     "instagramImageSize": "Instagram image size cannot exceed 8MB",
-    "pinterestImageSize": "Pinterest image size cannot exceed 10MB",
+    "pinterestImageSize": "Pinterest image size cannot exceed 20MB",
     "tiktokImageSize": "TikTok image size cannot exceed 20MB",
-    "tiktokImageResolution": "TikTok image max resolution is 1080x1920 or 1920x1080",
+    "tiktokVideoResolution": "TikTok video max resolution is 1080x1920 or 1920x1080",
     "tiktokPrivacyLevelRequired": "Please select the privacy level for TikTok video",
     "tiktokContentDisclosureRequired": "Please select your content disclosure type: promoting your own brand or promoting a third party",
     "twitterImageSize": "Twitter image size cannot exceed 5MB",
     "twitterImageResolution": "Twitter image max resolution is 8192x8192",
+    "twitterPollMinOptions": "Poll requires at least 2 options",
+    "twitterPollDuration": "Poll duration must be 5-10080 minutes",
+    "twitterPollNoMedia": "Polls cannot include images or videos",
+    "twitterPollOptionInvalid": "Poll options must be 1-25 characters",
+    "twitterTaggedUsersLimit": "Twitter image posts can tag up to 10 users",
+    "twitterAltTextMax": "Twitter media alt text cannot exceed 1000 characters",
     "youtubeResolutionSuggestion": "Recommended video resolution: 1920×1080 (16:9) or 1080×1920 (9:16).",
     "youtubeVideoSize": "YouTube video size cannot exceed 256GB",
     "youtubeVideoDuration": "YouTube video duration cannot exceed 12 hours",
     "categoryRequired": "You must select a category!",
     "kwaiResolutionSuggestion": "Recommended video resolution: 1080x1920 (vertical).",
-    "kwaiDurationSuggestion": "Recommended video duration: 15 seconds - 3 minutes."
+    "kwaiDurationSuggestion": "Recommended video duration: 15 seconds - 3 minutes.",
+    "xhsVideoSize": "RedNote video size cannot exceed 20GB",
+    "xhsImageSize": "RedNote image size cannot exceed 20MB per image",
+    "xhsVideoDuration": "RedNote video duration cannot exceed 4 hours",
+    "bilibiliVideoSize": "Bilibili video size cannot exceed 16GB",
+    "bilibiliVideoDuration": "Bilibili video duration cannot exceed 10 hours",
+    "douyinVideoSize": "Douyin video size cannot exceed 4GB",
+    "douyinVideoDuration": "Douyin video duration cannot exceed 15 minutes",
+    "kwaiVideoSize": "Kwai video size cannot exceed 12GB",
+    "kwaiVideoDuration": "Kwai video duration cannot exceed 1 hour",
+    "facebookVideoSize": "Facebook video size cannot exceed 4GB",
+    "facebookPostVideoDuration": "Facebook Post video duration cannot exceed 4 hours",
+    "facebookStoryVideoSize": "Facebook Story video size cannot exceed 1000MB",
+    "instagramReelVideoSize": "Instagram Reel video size cannot exceed 300MB",
+    "instagramStoryVideoSize": "Instagram Story video size cannot exceed 100MB",
+    "threadsImageSize": "Threads image size cannot exceed 8MB",
+    "linkedinImageSize": "LinkedIn image size cannot exceed 5MB",
+    "linkedinVideoSize": "LinkedIn video size cannot exceed 500MB",
+    "linkedinVideoDuration": "LinkedIn video duration must be 3 seconds–30 minutes",
+    "wxSphVideoSize": "WeChat Channels video size cannot exceed 20GB",
+    "wxSphVideoDuration": "WeChat Channels video duration cannot exceed 8 hours",
+    "wxGzhImageSize": "WeChat Official Account image size cannot exceed 10MB"
   },
   "preview": {
     "title": "Preview",
@@ -307,7 +339,10 @@
     "authFailed": "Authorization failed",
     "parseCachedChatModelsFailed": "Failed to parse cached chat models",
     "getChatModelsFailed": "Failed to get chat models",
-    "mobileNotSupported": "This feature is not supported on mobile, please use desktop"
+    "mobileNotSupported": "This feature is not supported on mobile, please use desktop",
+    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your {{platform}} profile.",
+    "douyinScanPublish": "Douyin publishing requires scanning a QR code with the Douyin app. Please watch for the QR code popup.",
+    "wxSphLinkPollingLoginRequired": "WeChat Channels login has expired. Please log in again and keep your browser open; the plugin will continue fetching the work link."
   },
   "badges": {
     "offline": "Offline",
@@ -330,7 +365,7 @@
     },
     "commercial": {
       "title": "Disclose video content",
-      "toggle": "Turn on to disclose that this video promotes goods orservices in exchange for something of value. Your video",
+      "toggle": "Turn on to disclose that this video promotes goods or services in exchange for something of value. Your video",
       "yourBrand": "Your Brand - You are promoting yourself or your own business. This content will be classified as Brand Organic.",
       "yourBrandTitle": "Your Brand",
       "yourBrandDesc": "You are promoting yourself or your own business. This content will be labeled as 'Promotional content'.",
@@ -348,9 +383,17 @@
       "processNote": "Note: After publishing, it may take a few minutes for the content to process and appear on your profile."
     }
   },
-  "messages": {
-    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your {{platform}} profile.",
-    "douyinScanPublish": "Douyin publishing requires scanning a QR code with the Douyin app. Please watch for the QR code popup."
+  "xhs": {
+    "declaration": {
+      "title": "Content declaration",
+      "placeholder": "Select declaration type",
+      "none": "None",
+      "options": {
+        "1": "Virtual performance, for entertainment only",
+        "2": "Post contains AI-generated content",
+        "3": "Content contains marketing or ads"
+      }
+    }
   },
   "previewvideo": "Preview Video",
   "record": {
@@ -361,7 +404,9 @@
       "shares": "Shares"
     },
     "viewWork": "View Work",
-    "updatedAt": "Updated"
+    "updatedAt": "Updated",
+    "wxSphReviewPendingDesc": "The work link updates automatically after WeChat Channels approves the video. Keep your browser open and stay logged in.",
+    "wxSphReviewPendingShort": "Waiting for WeChat Channels review"
   },
   "clientType": {
     "label": "Source",
@@ -397,5 +442,76 @@
   },
   "errorSummary": {
     "title": "Found {{count}} account(s) with issues"
+  },
+  "twitter": {
+    "replyTo": "Reply to",
+    "everyone": "Everyone",
+    "replySettings": {
+      "following": "People you follow",
+      "mentionedUsers": "Only mentioned users",
+      "subscribers": "Subscribers",
+      "verified": "Verified users"
+    },
+    "aiContent": "AI content",
+    "containsAi": "Contains AI-generated media",
+    "poll": "Poll",
+    "pollOptions": "({{count}} options)",
+    "pollOptionsLabel": "Poll options",
+    "addPollOption": "Add option",
+    "pollOptionPlaceholder": "Option {{n}} (1-25 chars)",
+    "duration": "Duration (min):",
+    "durationRange": "5–10080",
+    "pollReply": "Poll reply:",
+    "tagUsers": "Tag users",
+    "tagUsersPlaceholder": "User ID",
+    "tagUsersLimit": "Max 10 users, image posts only",
+    "altText": "Alt text",
+    "altTextImagePlaceholder": "Describe this image (1-1000 chars)",
+    "altTextVideoPlaceholder": "Describe this video (1-1000 chars)",
+    "pollMediaWarning": "Polls cannot include images or videos. Remove media to add a poll.",
+    "mediaDisabledByPoll": "Poll is enabled. Media enhancements apply after removing the poll.",
+    "noMediaOptions": "Add images or a video to set media tags and alt text.",
+    "sections": {
+      "basic": "Basic settings",
+      "poll": "Poll",
+      "pollDesc": "Polls cannot be posted with images or videos.",
+      "media": "Media enhancements",
+      "mediaDesc": "Tag users on images and add alt text for media."
+    }
+  },
+  "wxSph": {
+    "search": {
+      "loading": "Searching...",
+      "minKeyword": "Enter at least 2 characters to search",
+      "pluginUnavailable": "The current plugin version does not support WeChat Channels search. Please update the plugin and try again."
+    },
+    "location": {
+      "title": "Location",
+      "hint": "Search WeChat Channels locations by keyword and choose one to submit with the post.",
+      "clear": "Clear",
+      "searchPlaceholder": "Search and select a location",
+      "searchFailed": "Location search failed",
+      "empty": "No matching locations found",
+      "selected": "Selected: {{name}}",
+      "addressEmpty": "No address available"
+    },
+    "activity": {
+      "title": "Activity",
+      "hint": "Search WeChat Channels activities by keyword and choose one to join.",
+      "clear": "Clear",
+      "searchPlaceholder": "Search and select an activity",
+      "searchFailed": "Activity search failed",
+      "empty": "No matching activities found",
+      "selected": "Selected: {{name}}"
+    },
+    "extLink": {
+      "title": "Link",
+      "placeholder": "Paste an extension link",
+      "hint": "Optional. It will be passed to the WeChat Channels extended reading field when publishing."
+    },
+    "original": {
+      "title": "Declare Original",
+      "hint": "After declaration, the post can show an original mark and may be eligible for ad revenue."
+    }
   }
 }

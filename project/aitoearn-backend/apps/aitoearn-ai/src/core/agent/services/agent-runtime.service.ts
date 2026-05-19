@@ -44,6 +44,7 @@ import { catchError, concatMap, filter, finalize, first, map, mergeMap, share, s
 import { z } from 'zod'
 import { RedlockKey } from '../../../common/enums'
 import { config } from '../../../config'
+import { AiAvailabilityService } from '../../ai-availability'
 import { McpServerName, POLLING_TASK_AGENT_PROMPT, SKILL_ANALYZER_AGENT_PROMPT, SYSTEM_PROMPT } from '../agent.constants'
 import { CreateContentGenerationTaskDto } from '../agent.dto'
 import { enhancePrompt, filterHeaders, normalizePrompt, sanitizeMessage, shouldFilterSyntheticMessage } from '../agent.utils'
@@ -114,6 +115,7 @@ export class AgentRuntimeService {
     private readonly subtitleMcp: SubtitleMcp,
     private readonly storageProvider: StorageProvider,
     private readonly queueService: QueueService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) {}
 
   private getTaskCwd(taskId: string): string {
@@ -473,6 +475,7 @@ export class AgentRuntimeService {
             taskResult = args.result
             return successResult('Task result submitted successfully')
           },
+          this.aiAvailability,
         )
 
         const [setTitleTool, titleUpdate$, completeTitleUpdate] = this.utilMcp.createSetTitleTool(taskId)
@@ -694,15 +697,7 @@ export class AgentRuntimeService {
     mcpServers: Record<string, McpServerConfig>
     maxBudgetUsd?: number
   }> {
-    let maxBudgetUsd: number | undefined
-    if (userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance <= 0) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-      maxBudgetUsd = balance / 100
-      this.logger.debug({ userId, balance, maxBudgetUsd }, 'User credits available')
-    }
+    const maxBudgetUsd: number | undefined = undefined
 
     let task
     let originalTask
@@ -760,11 +755,6 @@ export class AgentRuntimeService {
       [McpServerName.Content]: {
         type: 'http',
         url: `${config.serverClient.baseUrl}/content/mcp`,
-        headers,
-      },
-      [McpServerName.Statistics]: {
-        type: 'http',
-        url: `${config.serverClient.baseUrl}/statistics/mcp`,
         headers,
       },
       [McpServerName.Publish]: {
@@ -870,7 +860,7 @@ export class AgentRuntimeService {
           void this.contentGenerateRepository.updateStatus(taskId, ContentGenerationTaskStatus.Error)
 
           const errorCodeMap: Record<string, ResponseCode> = {
-            error_max_budget_usd: ResponseCode.UserCreditsInsufficient,
+            error_max_budget_usd: ResponseCode.AgentTaskFailed,
             error_during_execution: ResponseCode.AgentTaskFailed,
             error_max_turns: ResponseCode.AgentTaskFailed,
             error_max_structured_output_retries: ResponseCode.AgentTaskFailed,

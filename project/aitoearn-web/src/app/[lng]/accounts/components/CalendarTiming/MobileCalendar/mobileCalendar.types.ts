@@ -35,12 +35,12 @@ export interface IMobileWeekViewProps {
   currentDate: Date
   /** 选中的日期 */
   selectedDate: Date
+  /** 发布记录数据 */
+  recordMap: Map<string, PublishRecordItem[]>
   /** 选择日期回调 */
   onDateSelect: (date: Date) => void
   /** 周切换回调 */
   onWeekChange: (direction: 'prev' | 'next') => void
-  /** 发布记录数据 */
-  recordMap: Map<string, PublishRecordItem[]>
 }
 
 /** MobileMonthView Props */
@@ -49,10 +49,10 @@ export interface IMobileMonthViewProps {
   currentDate: Date
   /** 选中的日期 */
   selectedDate: Date
-  /** 选择日期回调 */
-  onDateSelect: (date: Date) => void
   /** 发布记录数据 */
   recordMap: Map<string, PublishRecordItem[]>
+  /** 选择日期回调 */
+  onDateSelect: (date: Date) => void
 }
 
 /** MobileDayRecords Props */

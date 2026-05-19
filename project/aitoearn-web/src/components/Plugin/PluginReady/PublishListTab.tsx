@@ -40,7 +40,7 @@ function getStatusClassName(status: PlatformTaskStatus): string {
     case PlatformTaskStatus.ERROR:
       return 'bg-red-100 text-red-700 hover:bg-red-100'
     default:
-      return 'bg-gray-100 text-gray-700 hover:bg-gray-100'
+      return 'bg-muted text-foreground hover:bg-muted'
   }
 }
 
@@ -55,10 +55,10 @@ export function PublishListTab({ onViewDetail }: PublishListTabProps) {
   if (publishTasks.length === 0) {
     return (
       <div className="flex flex-1 flex-col items-center justify-center py-16">
-        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-gray-100">
-          <FileText className="h-8 w-8 text-gray-400" />
+        <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-muted">
+          <FileText className="h-8 w-8 text-muted-foreground" />
         </div>
-        <p className="text-sm text-gray-500">{t('publishList.empty')}</p>
+        <p className="text-sm text-muted-foreground">{t('publishList.empty')}</p>
       </div>
     )
   }
@@ -68,12 +68,12 @@ export function PublishListTab({ onViewDetail }: PublishListTabProps) {
       {publishTasks.map(task => (
         <div
           key={task.id}
-          className="flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 bg-white p-4 transition-all hover:border-gray-300 hover:shadow-sm"
+          className="flex cursor-pointer items-center justify-between rounded-lg border border-border bg-background p-4 transition-all hover:border-border hover:shadow-sm"
           onClick={() => onViewDetail?.(task)}
         >
           {/* 左侧：任务信息 */}
           <div className="flex flex-1 flex-col gap-1.5 overflow-hidden">
-            <span className="truncate font-medium text-gray-900">
+            <span className="truncate font-medium text-foreground">
               {task.title || t('publishList.untitled' as any)}
             </span>
             <div className="flex items-center gap-2">
@@ -92,7 +92,7 @@ export function PublishListTab({ onViewDetail }: PublishListTabProps) {
                 )}
               </div>
               {/* 时间 */}
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-muted-foreground">
                 {dayjs(task.createdAt).format('MM-DD HH:mm')}
               </span>
             </div>

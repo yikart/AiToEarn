@@ -25,6 +25,7 @@ export interface SearchableSelectOption {
   value: string
   label: string
   icon?: string
+  color?: string
 }
 
 export interface SearchableSelectProps {
@@ -119,7 +120,7 @@ function SearchableSelect({
             {selectedOption?.icon && (
               <img src={selectedOption.icon} alt="" className="w-5 h-5 rounded-sm object-contain shrink-0" />
             )}
-            <span className="truncate">{selectedLabel || placeholderText}</span>
+            <span className="truncate" style={{ color: selectedOption?.color }}>{selectedLabel || placeholderText}</span>
           </div>
           {clearable && !disabled && onClear ? (
             <span
@@ -186,7 +187,7 @@ function SearchableSelect({
                   {option.icon && (
                     <img src={option.icon} alt="" className="w-5 h-5 rounded-sm object-contain shrink-0" />
                   )}
-                  <span className="truncate">{option.label}</span>
+                  <span className="truncate" style={{ color: option.color }}>{option.label}</span>
                 </CommandItem>
               ))}
             </CommandGroup>

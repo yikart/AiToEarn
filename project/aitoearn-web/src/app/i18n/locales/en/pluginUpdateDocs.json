@@ -1,0 +1,80 @@
+{
+  "seo": {
+    "title": "Plugin Update Guide - Upgrade the AiToEarn Browser Extension",
+    "description": "Follow this illustrated guide to download the latest .crx package and update the AiToEarn extension from the extensions management page.",
+    "keywords": "plugin update, browser extension upgrade, AiToEarn extension, manual update, Chrome extension"
+  },
+  "hero": {
+    "eyebrow": "Manual Update Workflow",
+    "title": "Plugin Update Guide",
+    "description": "If AiToEarn says your current extension version is outdated, follow this guide to update it with the latest .crx package.",
+    "noticeTitle": "Chrome Web Store installs usually do not need manual updates",
+    "noticeContent": "If you installed the extension from the Chrome Web Store, you normally only need to wait for store review and automatic rollout.",
+    "summaryLabel": "Quick Facts"
+  },
+  "facts": {
+    "time": "Estimated Time",
+    "timeValue": "About 1-3 minutes",
+    "scenario": "Applies To",
+    "scenarioValue": "Users in mainland China who cannot install the extension from the Chrome Web Store, or users who need the latest version immediately."
+  },
+  "actions": {
+    "downloadChina": "Latest China Download",
+    "downloadGithub": "GitHub Download",
+    "viewInstallGuide": "View Install Guide"
+  },
+  "tableOfContents": "Update Steps",
+  "sections": {
+    "beforeUpdate": "Before You Start",
+    "beforeUpdateDesc": "Review the backup notes and confirm your current install method before updating with the .crx package.",
+    "steps": "Update Steps",
+    "stepsDesc": "Follow these 7 steps to finish updating the latest extension package."
+  },
+  "backupNotice": {
+    "title": "Important Notice",
+    "content1": "If you previously installed the extension by extracting a .zip package, manually back up your existing extension data first, such as agents and task settings.",
+    "content2": "The old .zip install method is not compatible with the current one. After installing with the .crx package, you need to manually remove the old .zip-based extension."
+  },
+  "checklist": {
+    "title": "Checklist Before Updating",
+    "item1": "Close the extension popup, extension details page, and related panels before you start so the browser state can refresh cleanly.",
+    "item2": "If you want extra safety, back up your extension data first, such as agents and task settings."
+  },
+  "steps": {
+    "step1": {
+      "title": "Download the latest extension package",
+      "content": "Use the download entry at the top of the page to get the latest .crx package.",
+      "caption": "Download the latest extension package"
+    },
+    "step2": {
+      "title": "Open the download folder",
+      "content": "Open the folder that contains the extension package you just downloaded.",
+      "caption": "Open the download folder"
+    },
+    "step3": {
+      "title": "Open Manage Extensions",
+      "content": "Go to Chrome's extensions management page to start the manual update.",
+      "caption": "Open Manage Extensions"
+    },
+    "step4": {
+      "title": "Enable Developer mode",
+      "content": "Turn on Developer mode in the top-right corner of the extensions management page.",
+      "caption": "Enable Developer mode"
+    },
+    "step5": {
+      "title": "Drag the latest package into the extensions area",
+      "content": "Drag the downloaded .crx file directly into the extensions management page.",
+      "caption": "Drag the latest package into the extensions area"
+    },
+    "step6": {
+      "title": "Click Re-enable to confirm the update",
+      "content": "When Chrome shows the confirmation dialog, click “Re-enable” to finish updating the extension.",
+      "caption": "Click Re-enable to confirm the update"
+    },
+    "step7": {
+      "title": "Turn off Developer mode",
+      "content": "After the update is complete, you can turn off Developer mode.",
+      "caption": "Turn off Developer mode"
+    }
+  }
+}

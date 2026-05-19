@@ -1,5 +1,4 @@
 export class RedlockKey {
-  static CreditsExpirationCheck = 'scheduler:credits-expiration-check'
   static VideoTaskStatusCheck = 'scheduler:video-task-status-check'
   static AgentTaskTimeout = 'scheduler:agent-task-timeout'
   static AgentHealthCheck = 'scheduler:agent-health-check'
@@ -9,4 +8,5 @@ export class RedlockKey {
   static AssetsExpiredCleanup = 'scheduler:assets-expired-cleanup'
   static AssetsR2EventsProcess = 'scheduler:assets-r2-events-process'
   static PublishingTaskEnqueue = 'scheduler:publishing-task-enqueue'
+  static PublishingTaskTimeoutCheck = 'scheduler:publishing-task-timeout-check'
 }

@@ -1,21 +1,33 @@
 import { Injectable } from '@nestjs/common'
-import { AssetsService } from '@yikart/assets'
-import { fileUrlToBlob } from '../../../../common/utils/file.util'
+import { AppException, ResponseCode } from '@yikart/common'
+import { RelayAccountException } from '../../../relay/relay-account.exception'
+import { MyWxPlatApiService } from '../../libs/my-wx-plat/my-wx-plat.service'
 import {
   MediaType,
   WxGzhArticleNews,
   WxGzhArticleNewsPic,
 } from '../../libs/wx-gzh/common'
-import { WxGzhApiService } from '../../libs/wx-gzh/wx-gzh.service'
+import { ChannelAccountService } from '../channel-account.service'
 import { WxPlatService } from './wx-plat.service'
 
 @Injectable()
 export class WxGzhService {
   constructor(
-    private readonly wxGzhApiService: WxGzhApiService,
-    private readonly assetsService: AssetsService,
+    private readonly myWxPlatApiService: MyWxPlatApiService,
     private readonly wxPlatService: WxPlatService,
+    private readonly channelAccountService: ChannelAccountService,
   ) {}
+
+  private async getLocalAccount(userId: string, accountId: string) {
+    const account = await this.channelAccountService.getAccountInfo(accountId)
+    if (!account || account.userId !== userId) {
+      throw new AppException(ResponseCode.AccountNotFound)
+    }
+    if (account.relayAccountRef) {
+      throw new RelayAccountException(account.relayAccountRef, accountId)
+    }
+    return account
+  }
 
   /**
    * 获取token
@@ -23,7 +35,14 @@ export class WxGzhService {
    * @returns
    */
   async getAccessToken(accountId: string) {
-    const res = await this.wxPlatService.getAuthorizerAccessToken(accountId)
+    const accountInfo = await this.channelAccountService.getAccountInfo(accountId)
+    if (!accountInfo) {
+      throw new AppException(ResponseCode.AccountNotFound)
+    }
+    const res = await this.wxPlatService.getAuthorizerAccessToken(accountInfo)
+    if (!res) {
+      throw new AppException(ResponseCode.AccountAuthRequired)
+    }
     return res.authorizer_access_token
   }
 
@@ -32,59 +51,22 @@ export class WxGzhService {
     return res
   }
 
-  /**
-   * 上传临时素材
-   * @param accessToken
-   * @param media
-   * @param type
-   * @returns
-   */
   async uploadTempMedia(
     accountId: string,
     type: MediaType,
     url: string,
   ) {
-    const blobFile = await fileUrlToBlob(this.assetsService.buildUrl(url))
-    const res = await this.wxGzhApiService.uploadTempMedia(
-      await this.getAccessToken(accountId),
-      type,
-      blobFile.blob,
-      blobFile.fileName,
-    )
-    return res
+    return this.myWxPlatApiService.uploadTempMedia(await this.getAccessToken(accountId), type, url)
   }
 
-  /**
-   * 获取临时素材
-   * @param accountId
-   * @param mediaId
-   * @returns
-   */
   async getTempMedia(accountId: string, mediaId: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.getTempMedia(accessToken, mediaId)
-    return res
+    return this.myWxPlatApiService.getTempMedia(await this.getAccessToken(accountId), mediaId)
   }
 
-  /**
-   * 上传图文中的图片素材(不占用限制)
-   * @param file
-   * @returns
-   */
   async uploadImg(accountId: string, imgUrl: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const blobFile = await fileUrlToBlob(this.assetsService.buildUrl(imgUrl))
-    const res = await this.wxGzhApiService.uploadImg(accessToken, blobFile.blob, blobFile.fileName)
-    return res
+    return this.myWxPlatApiService.uploadImg(await this.getAccessToken(accountId), imgUrl)
   }
 
-  /**
-   * 上传永久素材
-   * @param accountId
-   * @param type
-   * @param file
-   * @returns
-   */
   async addMaterial(
     accountId: string,
     type: MediaType,
@@ -94,86 +76,44 @@ export class WxGzhService {
       introduction?: string
     },
   ) {
-    const accessToken = await this.getAccessToken(accountId)
-    const blobFile = await fileUrlToBlob(this.assetsService.buildUrl(fileUrl))
-    const res = await this.wxGzhApiService.addMaterial(
-      accessToken,
-      type,
-      blobFile.blob,
-      blobFile.fileName,
-      videoOptions,
-    )
-    return res
+    return this.myWxPlatApiService.addMaterial(await this.getAccessToken(accountId), type, fileUrl, videoOptions)
   }
 
-  /**
-   * 获取永久素材
-   * @param accountId
-   * @param mediaId
-   * @returns
-   */
   async getMaterial(accountId: string, mediaId: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.getMaterial(accessToken, mediaId)
-    return res
+    return this.myWxPlatApiService.getMaterial(await this.getAccessToken(accountId), mediaId)
   }
 
-  /**
-   * 新建草稿
-   * @param accessToken
-   * @param data
-   * @returns
-   */
   async draftAdd(
     accountId: string,
     data: WxGzhArticleNews | WxGzhArticleNewsPic,
   ) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.draftAdd(accessToken, data)
-    return res
+    return this.myWxPlatApiService.draftAdd(await this.getAccessToken(accountId), data)
   }
 
-  /**
-   * 发布
-   * @param accountId
-   * @param mediaId
-   * @returns
-   */
   async freePublish(accountId: string, mediaId: string) {
     const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.freePublish(accessToken, mediaId)
-    return res
+    return this.myWxPlatApiService.freePublish(accessToken, mediaId)
   }
 
-  /**
-   * 获取累计用户数据
-   * @param accountId
-   * @param beginDate yyyy-MM-dd
-   * @param endDate
-   * @returns
-   */
-  async getusercumulate(accountId: string, beginDate: string, endDate: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.getusercumulate(accessToken, beginDate, endDate)
-    return res
+  async getusercumulate(userId: string, accountId: string, beginDate: string, endDate: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getusercumulateByAccountId(accountId, beginDate, endDate)
   }
 
-  /**
-   * 获取图文阅读概况数据
-   * @param accountId
-   * @param beginDate yyyy-MM-dd
-   * @param endDate
-   * @returns
-   */
-  async getuserread(accountId: string, beginDate: string, endDate: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.getuserread(accessToken, beginDate, endDate)
-    return res
+  async getusercumulateByAccountId(accountId: string, beginDate: string, endDate: string) {
+    return this.myWxPlatApiService.getusercumulate(await this.getAccessToken(accountId), beginDate, endDate)
+  }
+
+  async getuserread(userId: string, accountId: string, beginDate: string, endDate: string) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getuserreadByAccountId(accountId, beginDate, endDate)
+  }
+
+  async getuserreadByAccountId(accountId: string, beginDate: string, endDate: string) {
+    return this.myWxPlatApiService.getuserread(await this.getAccessToken(accountId), beginDate, endDate)
   }
 
   async deleteArticle(accountId: string, mediaId: string) {
-    const accessToken = await this.getAccessToken(accountId)
-    const res = await this.wxGzhApiService.deleteArticle(accessToken, mediaId)
-    return res
+    return this.myWxPlatApiService.deleteArticle(await this.getAccessToken(accountId), mediaId)
   }
 }

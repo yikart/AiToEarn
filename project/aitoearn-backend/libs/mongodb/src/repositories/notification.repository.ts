@@ -147,15 +147,6 @@ export class NotificationRepository extends BaseRepository<Notification> {
     return { count }
   }
 
-  async countByUserTypeUnreadAdmin() {
-    const count = await this.model.countDocuments({
-      userType: UserType.Admin,
-      status: NotificationStatus.Unread,
-      deletedAt: { $exists: false },
-    })
-    return { count }
-  }
-
   async listByUserId(userId: string, status?: NotificationStatus) {
     const filter: FilterQuery<Notification> = {
       userId: new Types.ObjectId(userId),
@@ -171,21 +162,5 @@ export class NotificationRepository extends BaseRepository<Notification> {
     return await this.updateById(id, {
       deletedAt: new Date(),
     })
-  }
-
-  async updateByIdAsReadAdmin(id: string): Promise<boolean> {
-    const result = await this.model.updateOne(
-      {
-        _id: id,
-        userType: UserType.Admin,
-      },
-      {
-        $set: {
-          status: NotificationStatus.Read,
-          readAt: new Date(),
-        },
-      },
-    )
-    return result.modifiedCount > 0
   }
 }

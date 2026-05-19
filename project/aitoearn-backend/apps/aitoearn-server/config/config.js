@@ -61,9 +61,17 @@ const {
   YOUTUBE_CLIENT_SECRET,
   WXPLAT_APP_ID,
   WXPLAT_APP_SECRET,
+  WXPLAT_TOKEN,
   WXPLAT_ENCODING_AES_KEY,
+  MY_WXPLAT_ID,
+  MY_WXPLAT_SECRET,
+  MY_WXPLAT_HOST_URL,
   DOYIN_CLIENT_ID,
   DOYIN_CLIENT_SECRET,
+} = process.env
+
+const {
+  SUPER_CODE,
 } = process.env
 
 const {
@@ -85,6 +93,7 @@ module.exports = {
   port: 3002,
   environment: NODE_ENV,
   enableBadRequestDetails: true,
+  superCode: SUPER_CODE || '',
 
   // 认证
   auth: {
@@ -97,7 +106,7 @@ module.exports = {
     console: {
       enable: true,
       level: 'debug',
-      pretty: true,
+      pretty: false,
     },
   },
 
@@ -131,7 +140,6 @@ module.exports = {
     },
     moreApi: {
       platApiUri: 'https://platapi.yikart.cn',
-      xhsCreatorUri: 'http://39.106.41.190:7008',
     },
     shortLink: {
       baseUrl: `https://${APP_DOMAIN}/api/shortLink/`,
@@ -167,19 +175,34 @@ module.exports = {
       clientId: TIKTOK_CLIENT_ID,
       clientSecret: TIKTOK_CLIENT_SECRET,
       redirectUri: `https://${APP_DOMAIN}/api/plat/tiktok/auth/back`,
-      promotionRedirectUri: `https://${APP_DOMAIN}/api/plat/tiktok/auth/redirect`,
       scopes: [
         'user.info.basic',
         'user.info.profile',
         'video.upload',
         'video.publish',
       ],
-      promotionBaseUrl: `https://${APP_DOMAIN}/promo`,
     },
     twitter: {
       clientId: TWITTER_CLIENT_ID,
       clientSecret: TWITTER_CLIENT_SECRET,
       redirectUri: `https://${APP_DOMAIN}/api/plat/twitter/auth/back`,
+      pricing: {
+        read: {
+          post: 0.5,
+          user: 1,
+          media: 0.5,
+          list: 0.5,
+        },
+        write: {
+          contentCreate: 1.5,
+          contentCreateWithUrl: 20,
+          interactionCreate: 1.5,
+          interactionDelete: 1,
+          contentManage: 0.5,
+          bookmark: 0.5,
+          mediaMetadata: 0.5,
+        },
+      },
     },
     oauth: {
       facebook: {
@@ -214,8 +237,6 @@ module.exports = {
         clientId: INSTAGRAM_CLIENT_ID,
         clientSecret: INSTAGRAM_CLIENT_SECRET,
         redirectUri: `https://${APP_DOMAIN}/api/plat/meta/auth/back`,
-        promotionRedirectUri: `https://${APP_DOMAIN}/api/plat/meta/auth/redirect`,
-        promotionBaseUrl: `https://${APP_DOMAIN}/promo`,
         scopes: [
           'instagram_business_basic',
           'instagram_business_manage_comments',
@@ -232,14 +253,14 @@ module.exports = {
     wxPlat: {
       id: WXPLAT_APP_ID,
       secret: WXPLAT_APP_SECRET,
-      token: 'aitoearn',
+      token: WXPLAT_TOKEN,
       encodingAESKey: WXPLAT_ENCODING_AES_KEY,
       authBackHost: `https://${APP_DOMAIN}/platcallback`,
     },
     myWxPlat: {
-      id: 'dev',
-      secret: 'f1a36f23d027c969d6c6969423d72eda',
-      hostUrl: `https://wxplat.${APP_DOMAIN}`,
+      id: MY_WXPLAT_ID,
+      secret: MY_WXPLAT_SECRET,
+      hostUrl: MY_WXPLAT_HOST_URL,
     },
     youtube: {
       id: YOUTUBE_CLIENT_ID,
@@ -282,19 +303,12 @@ module.exports = {
     token: INTERNAL_TOKEN,
   },
 
-  // 业务
-  credits: {
-    registerBonus: 50,
-  },
-
   // 中转服务（可选）
-  ...(RELAY_SERVER_URL && RELAY_API_KEY
-    ? {
-        relay: {
-          serverUrl: RELAY_SERVER_URL,
-          apiKey: RELAY_API_KEY,
-          callbackUrl: RELAY_CALLBACK_URL,
-        },
-      }
-    : {}),
+  ...(RELAY_SERVER_URL && {
+    relay: {
+      serverUrl: RELAY_SERVER_URL,
+      apiKey: RELAY_API_KEY,
+      callbackUrl: RELAY_CALLBACK_URL,
+    },
+  }),
 }

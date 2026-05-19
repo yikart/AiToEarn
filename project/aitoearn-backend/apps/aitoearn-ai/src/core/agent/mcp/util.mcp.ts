@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ContentGenerationTaskRepository } from '@yikart/mongodb'
 import { Subject } from 'rxjs'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../ai-availability'
 import { McpServerName } from '../agent.constants'
 import {
   AgentMessageType,
@@ -37,6 +38,7 @@ export class UtilMcp {
 
   constructor(
     private readonly contentGenerateRepository: ContentGenerationTaskRepository,
+    private readonly aiAvailability: AiAvailabilityService,
   ) { }
 
   getCurrentTime = wrapTool(
@@ -49,6 +51,7 @@ export class UtilMcp {
       const isoString = now.toISOString()
       return successResult(`Current time:\n- ISO 8601: ${isoString}`)
     },
+    this.aiAvailability,
   )
 
   wait = wrapTool(
@@ -61,6 +64,7 @@ export class UtilMcp {
       await new Promise(resolve => setTimeout(resolve, seconds * 1000))
       return successResult(`Waited for ${seconds} seconds`)
     },
+    this.aiAvailability,
   )
 
   createSetTitleTool(
@@ -88,6 +92,7 @@ export class UtilMcp {
         }))
         return successResult('Title updated successfully')
       },
+      this.aiAvailability,
     )
 
     return [

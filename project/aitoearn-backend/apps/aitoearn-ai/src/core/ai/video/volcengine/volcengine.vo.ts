@@ -16,7 +16,7 @@ const volcengineTaskStatusResponseSchema = z.object({
   error: z.object({
     message: z.string(),
     code: z.string(),
-  }).nullable().describe('错误信息'),
+  }).nullable().optional().describe('错误信息'),
   created_at: z.number().describe('创建时间'),
   updated_at: z.number().describe('更新时间'),
   content: z.object({
@@ -31,6 +31,9 @@ const volcengineTaskStatusResponseSchema = z.object({
   usage: z.object({
     completion_tokens: z.number().optional(),
     total_tokens: z.number().optional(),
+    tool_usage: z.object({
+      web_search: z.number().optional(),
+    }).optional(),
   }).optional().describe('使用量统计'),
 })
 

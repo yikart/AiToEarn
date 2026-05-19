@@ -26,7 +26,8 @@
     "platforms": "プラットフォーム",
     "status": "ステータス",
     "time": "時間",
-    "viewDetail": "詳細を見る"
+    "viewDetail": "詳細を見る",
+    "untitled": "無題"
   },
   "publishDetail": {
     "title": "公開詳細",
@@ -39,8 +40,16 @@
     "shareLink": "共有リンク",
     "failReason": "失敗理由",
     "close": "閉じる",
+    "minimize": "最小化",
     "unknownAccount": "不明なアカウント",
     "creatingRecord": "公開レコード作成中..."
+  },
+  "publishFloating": {
+    "xhsPublishing": "RedNote is publishing",
+    "pluginPublishing": "Plugin publishing in progress",
+    "openDetail": "Click to view details",
+    "completed": "Plugin publishing completed",
+    "failed": "Plugin publishing failed. View details."
   },
   "common": {
     "confirm": "確認",
@@ -72,11 +81,19 @@
     "downloadButton": "今すぐダウンロード",
     "chromeWebStore": "Chrome ウェブストア",
     "chinaDownload": "中国ダウンロード",
+    "chinaLatestZipDownload": "中国向け最新バージョンをダウンロード",
+    "githubLatestDownload": "GitHub 経由の最新バージョンをダウンロード",
     "activeDescription": "ブラウザプラグインが有効になりました。公開機能をご利用いただけます！",
     "platformAccounts": "プラットフォームアカウント",
     "notLoggedIn": "未ログイン",
-    "xhsNotLoggedInTip": "小紅書はクリエイターセンターへのログインが必要です",
+    "xhsNotLoggedInTip": "ノート詳細の取得には<homeLink>小紅書ホームページ</homeLink>へのログインが必要です。投稿にはさらに<creatorLink>小紅書クリエイターセンター</creatorLink>へのログインも必要です。",
+    "xhsHomeLoggedInOnlyStatus": "ホームページにログイン済み",
+    "xhsHomeLoggedInOnlyTip": "小紅書ホームページにはログイン済みのため、ノート詳細を取得できます。投稿するにはクリエイターセンターにもログインしてください。",
+    "xhsCreatorLoggedInOnlyStatus": "クリエイターセンターのみログイン済み",
+    "xhsCreatorLoggedInOnlyTip": "小紅書クリエイターセンターにはログイン済みですが、ノート詳細はまだ取得できません。先にホームページへログインしてください。",
+    "xhsNoteDetailReady": "ノート詳細取得可",
     "loginNow": "今すぐログイン",
+    "authPolling": "認証状態を確認中",
     "viewPublishList": "公開リストを見る",
     "permissionRequired": "権限が必要です",
     "permissionDescription": "プラグインはインストールされていますが、正常に動作するには必要な権限が必要です。ブラウザの拡張機能設定で必要な権限を付与してください。",
@@ -86,15 +103,40 @@
     "syncSuccess": "アカウントの同期に成功しました",
     "syncFailed": "アカウントの同期に失敗しました",
     "xhsHome": "ホーム",
-    "xhsCreator": "クリエイター",
+    "xhsCreator": "クリエイターセンター",
     "xhsLoginHomeTip": "小紅書ホームページにログイン",
     "xhsLoginCreatorTip": "小紅書クリエイターセンターにログイン",
-    "viewGuide": "お困りですか？インストールのヘルプが必要ですか？"
+    "xhsCreatorQuickLoginLabel": "ワンクリックログイン説明",
+    "xhsCreatorQuickLoginTip": "小紅書ホームページにログインした後、クリエイターセンターにワンクリックでログインできます。",
+    "viewGuide": "認証ガイドを見る",
+    "viewInstallGuide": "ブラウザプラグインのインストールガイドを見る（手動インストール）"
   },
   "mobile": {
     "title": "デスクトップ専用",
     "description": "ブラウザ拡張機能はモバイルデバイスでは利用できません。拡張機能のインストールと使用にはデスクトップブラウザをご利用ください。",
     "goToPC": "PCでアクセスしてください",
     "introduction": "AiToEarnプラットフォーム用ブラウザ拡張機能。AiToEarn Webと連携し、小紅書、TikTokなどのプラットフォームでのインタラクションを自動化します — フォロー、いいね、ブックマーク、コメントなど。"
+  },
+  "version": {
+    "title": "プラグインバージョン",
+    "description": "ここでは現在インストールされているプラグインのバージョンを表示し、サイトが求める最新バージョンと比較します。",
+    "current": "現在のバージョン",
+    "latest": "最新バージョン",
+    "updatableTag": "更新可能",
+    "popoverTitle": "プラグインは v{{version}} に更新できます",
+    "unknown": "取得不可",
+    "upToDate": "最新です",
+    "updateAvailable": "更新があります",
+    "unavailable": "バージョン情報を取得できません",
+    "updateDescription": "現在のプラグインバージョンは最新ではありません。機能差異や互換性の問題を避けるため、早めの更新をおすすめします。",
+    "googleStoreNotice": "Chrome ウェブストアからインストールした拡張機能には自動更新があります。特定の機能を急いで使う必要がなければ、1週間ほど待てば自動更新されます。すぐに必要な機能がある場合は、手動で更新してください。",
+    "googleStoreShortNotice": "Chrome ウェブストア版は自動更新されます",
+    "downloadLatestZip": "中国向け最新バージョンをダウンロード",
+    "updatableTo": "v{{version}} に更新可能",
+    "updateButton": "プラグインを更新",
+    "updateNow": "v{{version}} に更新",
+    "viewUpdateGuide": "更新ガイドを見る",
+    "latestDescription": "現在のプラグインは最新バージョンです。このまま正常に利用できます。",
+    "unavailableDescription": "現在プラグインのバージョンを取得できません。しばらくしてからこのダイアログを開き直してください。"
   }
 }

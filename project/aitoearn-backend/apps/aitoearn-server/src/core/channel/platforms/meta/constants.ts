@@ -12,6 +12,12 @@ export const META_TIME_CONSTANTS = {
   FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE: 60 * 60 * 24 * 60, // 60 days
 } as const
 
+export const META_AUTH_CALLBACK_MESSAGES = {
+  getUserProfileFailed: 'get user profile failed',
+  noFacebookPagesFound:
+    'No Facebook pages found for the user. Please ensure you have at least one Facebook Page and the necessary permissions.',
+} as const
+
 interface MetaOAuth2Config {
   pkce: boolean
   shortLived: boolean

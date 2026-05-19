@@ -1,12 +1,37 @@
 import { Inject, Injectable, Logger } from '@nestjs/common'
-import { AccountStatus } from '@yikart/channel-db'
+import { Account, AccountStatus } from '@yikart/channel-db'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
+import { google } from 'googleapis'
 import { BatchAccountStatusVo } from '../../account/account.vo'
 import { RelayAccountException } from '../../relay/relay-account.exception'
 import { RelayClientService } from '../../relay/relay-client.service'
-import { SocialMediaError } from '../libs/exception/base'
-import { PlatformBaseService, WorkDetailInfo } from './base.service'
+import { PlatformBaseService, ValidatedWorkInfo, WorkDetailInfo, WorkLinkInfo } from './base.service'
+import { BilibiliService } from './bilibili/bilibili.service'
 import { ChannelAccountService } from './channel-account.service'
+import { KwaiService } from './kwai/kwai.service'
+import { InstagramService } from './meta/instagram.service'
+import { PinterestService } from './pinterest/pinterest.service'
+import { TiktokService } from './tiktok/tiktok.service'
+import { WxPlatService } from './wx-plat/wx-plat.service'
+import { YoutubeService } from './youtube/youtube.service'
+
+export interface AccountStatsData {
+  fansCount?: number
+  readCount?: number
+  likeCount?: number
+  collectCount?: number
+  commentCount?: number
+  workCount?: number
+}
+
+const SUPPORTED_REFRESH_PLATFORMS = new Set<string>([
+  AccountType.TIKTOK,
+  AccountType.BILIBILI,
+  AccountType.KWAI,
+  AccountType.YOUTUBE,
+  AccountType.INSTAGRAM,
+  AccountType.PINTEREST,
+])
 
 @Injectable()
 export class PlatformService {
@@ -19,6 +44,9 @@ export class PlatformService {
 
   @Inject()
   private readonly relayClientService: RelayClientService
+
+  @Inject()
+  private readonly wxPlatService: WxPlatService
 
   async getUserAccounts(userId: string) {
     const accounts = await this.channelAccountService.getUserAccountList(userId)
@@ -40,7 +68,7 @@ export class PlatformService {
           if (error instanceof RelayAccountException) {
             throw error
           }
-          this.logger.error(`user:[${userId}] -- ${account.type} get access token status failed: ${error}`)
+          this.logger.error(error, `user:[${userId}] -- ${account.type} get access token status failed`)
           account.status = AccountStatus.ABNORMAL
         }
       }
@@ -65,38 +93,39 @@ export class PlatformService {
       }
     }
     catch (error) {
-      this.logger.error(`Fetch relay account statuses failed: ${error}`)
+      this.logger.error(error, 'Fetch relay account statuses failed')
       for (const account of relayAccounts) {
         account.status = AccountStatus.ABNORMAL
       }
     }
   }
 
-  getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string, accountId?: string) {
-    const svc = this.platformServices[accountType]
-    if (svc) {
-      return svc.getWorkLinkInfo(accountType, workLink, dataId, accountId)
+  getWorkLinkInfo(accountType: AccountType, workLink: string, dataId?: string, accountId?: string): Promise<WorkLinkInfo> {
+    if (accountType === AccountType.WxSph) {
+      return this.wxPlatService.getWorkLinkInfo(accountType, workLink, dataId)
     }
-    throw new AppException(ResponseCode.PlatformNotSupported)
+
+    const svc = this.platformServices[accountType]
+    if (!svc) {
+      throw new AppException(ResponseCode.PlatformNotSupported)
+    }
+    return svc.getWorkLinkInfo(accountType, workLink, dataId, accountId)
+  }
+
+  async validateOwnedWorkLink(accountType: AccountType, accountId: string, workLink: string): Promise<ValidatedWorkInfo> {
+    const svc = this.platformServices[accountType]
+    if (!svc) {
+      throw new AppException(ResponseCode.PlatformNotSupported)
+    }
+    return await svc.validateOwnedWorkLink(accountType, accountId, workLink)
   }
 
   async deletePost(accountId: string, platform: AccountType, postId: string) {
-    try {
-      const svc = this.platformServices[platform]
-      if (svc) {
-        return await svc.deletePost(accountId, postId)
-      }
+    const svc = this.platformServices[platform]
+    if (!svc) {
       throw new AppException(ResponseCode.PlatformNotSupported)
     }
-    catch (error) {
-      if (error instanceof SocialMediaError) {
-        throw new AppException(ResponseCode.DeletePostFailed, error.message)
-      }
-      if (error instanceof AppException) {
-        throw error
-      }
-      throw new AppException(ResponseCode.DeletePostFailed, 'Unknown error')
-    }
+    return await svc.deletePost(accountId, postId)
   }
 
   async getAccountTokenStatus(accountId: string, accountType: AccountType): Promise<number> {
@@ -141,5 +170,76 @@ export class PlatformService {
       return svc.verifyWorkOwnership(accountId, dataId)
     }
     throw new AppException(ResponseCode.PlatformNotSupported)
+  }
+
+  isSupportedRefreshPlatform(type: string): boolean {
+    return SUPPORTED_REFRESH_PLATFORMS.has(type)
+  }
+
+  async fetchLatestStatsFromPlatform(account: Account): Promise<AccountStatsData> {
+    const accountId = account.id
+
+    switch (account.type) {
+      case AccountType.TIKTOK: {
+        const svc = this.platformServices[AccountType.TIKTOK] as unknown as TiktokService
+        const info = await svc.getUserInfo(accountId, 'follower_count,following_count,likes_count,video_count')
+        return {
+          fansCount: info.data.user.follower_count ?? undefined,
+          likeCount: info.data.user.like_count ?? undefined,
+          workCount: info.data.user.video_count ?? undefined,
+        }
+      }
+      case AccountType.BILIBILI: {
+        const svc = this.platformServices[AccountType.BILIBILI] as unknown as BilibiliService
+        const stat = await svc.getUserStatByAccountId(accountId)
+        return {
+          fansCount: (stat as any).follower ?? undefined,
+        }
+      }
+      case AccountType.KWAI: {
+        const svc = this.platformServices[AccountType.KWAI] as unknown as KwaiService
+        const info = await svc.getAuthorInfoByAccountId(accountId)
+        return {
+          fansCount: info.fan ?? undefined,
+        }
+      }
+      case AccountType.YOUTUBE: {
+        const svc = this.platformServices[AccountType.YOUTUBE] as unknown as YoutubeService
+        const accessToken = await svc.getUserAccessTokenByAccountId(accountId)
+        const localAuth = new google.auth.OAuth2()
+        localAuth.setCredentials({ access_token: accessToken })
+        const youtube = google.youtube({ version: 'v3', auth: localAuth })
+        const response = await youtube.channels.list({
+          part: ['statistics'],
+          mine: true,
+        })
+        const channel = response.data.items?.[0]
+        const stats = channel?.statistics
+        return {
+          fansCount: stats?.subscriberCount ? Number(stats.subscriberCount) : undefined,
+          readCount: stats?.viewCount ? Number(stats.viewCount) : undefined,
+          workCount: stats?.videoCount ? Number(stats.videoCount) : undefined,
+        }
+      }
+      case AccountType.INSTAGRAM: {
+        const svc = this.platformServices[AccountType.INSTAGRAM] as unknown as InstagramService
+        const info = await svc.getAccountInfoByAccountId(accountId, {
+          fields: 'followers_count,follows_count,media_count',
+        })
+        return {
+          fansCount: info.followers_count ?? undefined,
+          workCount: info.media_count ?? undefined,
+        }
+      }
+      case AccountType.PINTEREST: {
+        const svc = this.platformServices[AccountType.PINTEREST] as unknown as PinterestService
+        const info = await svc.getUserInfo(accountId)
+        return {
+          fansCount: (info as any).follower_count ?? undefined,
+        }
+      }
+      default:
+        throw new AppException(ResponseCode.AccountRefreshNotSupported)
+    }
   }
 }

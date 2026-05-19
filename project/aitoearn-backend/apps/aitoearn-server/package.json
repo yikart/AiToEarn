@@ -5,9 +5,9 @@
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.25.2",
     "@nestjs/axios": "^4.0.1",
-    "@nestjs/bullmq": "^11.0.3",
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/core": "^11.0.1",
+    "@nestjs/bullmq": "11.0.4",
+    "@nestjs/common": "11.1.17",
+    "@nestjs/core": "11.1.17",
     "@nestjs/event-emitter": "^3.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/microservices": "^11.1.6",
@@ -19,8 +19,10 @@
     "@yikart/aitoearn-auth": "workspace:*",
     "@yikart/aitoearn-queue": "workspace:*",
     "@yikart/aitoearn-server-client": "workspace:*",
+    "@yikart/ali-sms": "workspace:*",
     "@yikart/assets": "workspace:*",
     "@yikart/aws-s3": "workspace:*",
+    "@yikart/channel-db": "workspace:*",
     "@yikart/common": "workspace:*",
     "@yikart/helpers": "workspace:*",
     "@yikart/mail": "workspace:*",
@@ -30,7 +32,7 @@
     "@yikart/redlock": "workspace:*",
     "axios": "^1.12.2",
     "bignumber.js": "^9.3.1",
-    "bullmq": "^5.71.0",
+    "bullmq": "5.76.3",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "data-urls": "^5.0.0",
@@ -45,6 +47,7 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.23",
     "mime-types": "^3.0.2",
+    "qs": "6.15.0",
     "rxjs": "^7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^11.1.0",
@@ -59,6 +62,7 @@
     "@types/lodash": "^4.17.20",
     "@types/mime-types": "^3.0.1",
     "@types/multer": "^1.4.13",
+    "@types/qs": "6.15.0",
     "@types/xml2js": "^0.4.14"
   }
 }

@@ -13,5 +13,6 @@
   "uploadFailed": "アップロードに失敗しました",
   "uploadSuccess": "アップロードに成功しました",
   "checkFailed": "確認に失敗しました",
-  "alreadyAuthorized": "認証済みです"
+  "alreadyAuthorized": "認証済みです",
+  "notAuthorized": "Not authorized"
 }

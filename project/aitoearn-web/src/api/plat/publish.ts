@@ -2,6 +2,7 @@ import type {
   GetPublishListParams,
   PublishParams,
   PublishRecordItem,
+  UpdatePublishRecordLinkParams,
 } from '@/api/plat/types/publish.types'
 import type { PlatType } from '@/app/config/platConfig'
 import type { IPlatOption } from '@/components/PublishDialog/publishDialog.type'
@@ -17,9 +18,18 @@ function filterOptionByPlatform(option: IPlatOption, accountType: PlatType): IPl
 }
 
 // 创建发布记录
-export function apiCreatePublishRecord(data: Partial<PublishRecordItem>) {
+export function apiCreatePublishRecord(data: Partial<PublishRecordItem> & { materialId?: string }) {
   return request<{ id: string }>({
     url: 'plat/publish/createRecord',
+    method: 'POST',
+    data,
+  })
+}
+
+// 更新发布记录作品链接
+export function updatePublishRecordLinkApi(data: UpdatePublishRecordLinkParams) {
+  return request<{ id: string }>({
+    url: 'plat/publish/updateRecordLink',
     method: 'POST',
     data,
   })
@@ -96,6 +106,14 @@ export function nowPubTaskApi(id: string) {
 export function getPublishRecordDetail(flowId: string) {
   return request<PublishRecordItem>({
     url: `plat/publish/records/${flowId}`,
+    method: 'GET',
+  })
+}
+
+// 根据记录ID获取发布记录详情（公开接口，用于抖音 H5 发布轮询）
+export function getPublishRecordDetailById(id: string) {
+  return request<PublishRecordItem>({
+    url: `plat/publish/record/${id}`,
     method: 'GET',
   })
 }

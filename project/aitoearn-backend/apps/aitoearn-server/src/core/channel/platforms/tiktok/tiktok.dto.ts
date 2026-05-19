@@ -54,25 +54,10 @@ const UserIdSchema = z.object({
 })
 export class UserIdDto extends createZodDto(UserIdSchema) {}
 
-const GetNoUserAuthUrlSchema = z.object({
-  /** 推广码，用于关联推广任务 */
-  promotionCode: z.string().describe('推广码，用于关联推广任务'),
-})
-export class GetNoUserAuthUrlDto extends createZodDto(GetNoUserAuthUrlSchema) {}
-
-const AuthRedirectQuerySchema = z.object({
-  /** TikTok授权码 */
-  code: z.string().describe('TikTok授权码'),
-  /** 推广码（state参数） */
-  state: z.string().describe('推广码（state参数）'),
-})
-export class AuthRedirectQueryDto extends createZodDto(AuthRedirectQuerySchema) {}
-
 const GetAuthUrlSchema = z.object({
   userId: z.string().optional(),
   spaceId: z.string().optional(),
   scopes: z.array(z.string()).optional(),
-  taskId: z.string().optional().describe('广告主推广任务ID'),
   callbackUrl: z.string().url().optional().describe('OAuth 完成后回调地址'),
   callbackMethod: z.enum(['GET', 'POST']).optional().describe('回调方式，默认 GET'),
 })
@@ -134,19 +119,6 @@ const ListUserVideosSchema = AccountIdSchema.extend({
 export class ListUserVideosDto extends createZodDto(ListUserVideosSchema) {}
 
 export class RevokeTokenDto extends createZodDto(AccountIdSchema) {}
-
-// QR Code 授权相关 DTO
-const CreateQRCodeAuthTaskSchema = z.object({
-  taskId: z.string().optional(),
-  userId: z.string().optional(),
-  spaceId: z.string().optional(),
-})
-export class CreateQRCodeAuthTaskDto extends createZodDto(CreateQRCodeAuthTaskSchema) {}
-
-const CheckQRCodeAuthStatusSchema = z.object({
-  taskId: z.string(),
-})
-export class CheckQRCodeAuthStatusDto extends createZodDto(CheckQRCodeAuthStatusSchema) {}
 
 export const GetAuthUrlResponseSchema = z.object({
   url: z.string().describe('TikTok授权URL'),

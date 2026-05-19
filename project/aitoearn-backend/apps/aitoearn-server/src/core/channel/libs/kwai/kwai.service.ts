@@ -17,6 +17,7 @@ import {
   KwaiStartUploadResponse,
   KwaiUserInfoQuery,
   KwaiUserInfoResponse,
+  KwaiVideoInfo,
   KwaiVideoListResponse,
   KwaiVideoPubParams,
   KwaiVideoUploadResponse,
@@ -61,7 +62,7 @@ export class KwaiApiService {
         url,
         method: config.method,
       })
-      this.logger.error(`Kwai API Error:${config.method || 'GET'}  ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      this.logger.error(err, `Kwai API Error:${config.method || 'GET'} ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }
@@ -86,13 +87,22 @@ export class KwaiApiService {
    * @param taskId
    * @param type 'h5' | 'pc'
    */
-  getAuthPage(taskId: string, type: 'h5' | 'pc') {
+  getAuthPage(
+    taskId: string,
+    type: 'h5' | 'pc',
+    options?: {
+      redirectUri?: string
+      state?: string
+    },
+  ) {
+    const redirectUri = options?.redirectUri || `${this.redirectUri}/${taskId}`
     const params = new URLSearchParams({
       app_id: this.appId,
       scope: 'user_info,user_video_publish,user_video_info',
       response_type: 'code',
       ...(type === 'pc' ? { ua: 'pc' } : {}),
-      redirect_uri: `${this.redirectUri}/${taskId}`,
+      ...(options?.state ? { state: options.state } : {}),
+      redirect_uri: redirectUri,
     })
     const authParams = params.toString()
     return `${this.kwaiAPIHost}/oauth2/authorize?${authParams}`
@@ -248,6 +258,22 @@ export class KwaiApiService {
     if (!data.video_list)
       throw new Error('快手获取快手视频列表失败')
     return data.video_list
+  }
+
+  /**
+   * 获取单个视频详情
+   * @param accessToken
+   * @param photoId
+   */
+  async getVideoInfo(accessToken: string, photoId: string): Promise<KwaiVideoInfo> {
+    const params = {
+      app_id: this.appId,
+      access_token: accessToken,
+      photo_id: photoId,
+    }
+    const url = `${this.kwaiAPIHost}/openapi/photo/info`
+    const data = await this.request<{ video_info: KwaiVideoInfo }>(url, { params }, { operation: 'getVideoInfo' })
+    return data.video_info
   }
 
   async deleteVideo(accessToken: string, videoId: string) {

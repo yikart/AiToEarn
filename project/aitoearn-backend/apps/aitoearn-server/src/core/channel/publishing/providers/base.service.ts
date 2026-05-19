@@ -3,6 +3,7 @@ import { QueueService } from '@yikart/aitoearn-queue'
 import { PostCategory, PostMediaStatus, PostSubCategory } from '@yikart/channel-db'
 import { PublishRecord, PublishStatus } from '@yikart/mongodb'
 import { PublishRecordService } from '../../../publish-record/publish-record.service'
+import { MEDIA_PROCESSING_POLL_ATTEMPTS, MEDIA_PROCESSING_POLL_INTERVAL_MS } from '../constant'
 import { MediaStagingService } from '../media-staging.service'
 import { CreatePublishDto } from '../publish.dto'
 import { PublishingException } from '../publishing.exception'
@@ -215,10 +216,10 @@ export abstract class PublishService {
         jobId: `${jobId}-medias`,
       },
       {
-        attempts: 5,
+        attempts: MEDIA_PROCESSING_POLL_ATTEMPTS,
         backoff: {
           type: 'fixed',
-          delay: 15000,
+          delay: MEDIA_PROCESSING_POLL_INTERVAL_MS,
         },
         removeOnComplete: true,
         removeOnFail: true,

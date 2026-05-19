@@ -336,10 +336,10 @@ const PubParmasTextarea = memo(
             open={editImgIndex !== -1}
             imageUrl={imageFileList[editImgIndex]?.imgUrl || ''}
             onClose={() => setEditImgIndex(-1)}
-            onSave={async (newUrl, blob) => {
+            onSave={async (newUrl, blob, meta) => {
               const image = await formatImg({
                 blob,
-                path: imageFileList[editImgIndex]?.filename || `edited_${Date.now()}.png`,
+                path: meta.fileName,
               })
               image.ossUrl = newUrl
               setImageFileList((prevState) => {
@@ -544,7 +544,16 @@ const PubParmasTextarea = memo(
             {/* 底部操作栏 */}
             <div className="border-t border-border">
               <div className="p-2.5 px-4 relative flex items-center justify-between">
-                <div className="flex items-center">
+                <div className="flex min-w-0 items-center gap-3">
+                  <div
+                    className="flex items-center gap-2 text-xs text-muted-foreground"
+                    data-testid="publish-topic-hint"
+                  >
+                    <span className="inline-flex h-5 min-w-5 items-center justify-center rounded-md border border-border bg-muted px-1.5 font-medium text-foreground">
+                      #
+                    </span>
+                    <span>{t('form.topicHint')}</span>
+                  </div>
                   {/* 写作助手 - 移动端或指定隐藏 */}
                   {!isMobile && !hideWritingAssistant && (
                     <div className="px-1.5 border-l border-border first:border-l-0">

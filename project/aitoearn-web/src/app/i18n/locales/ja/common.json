@@ -13,28 +13,38 @@
     "trialing": "トライアル",
     "go": "Go",
     "plus": "Plus",
-    "ultra": "Ultra"
+    "ultra": "Ultra",
+    "fortune": "Fortune メンバー",
+    "treasure": "Treasure メンバー"
   },
   "subscribe": "アップグレード",
   "balance": "クレジット",
   "recharge": "チャージ",
-  "adBalance": "残高",
+  "adBalance": "広告主残高",
+  "creatorBalance": "クリエイター残高",
   "plugin": "拡張機能",
   "affiliates": "アフィリエイト",
   "goToWebsite": "公式サイトへ",
+  "filing": {
+    "policeRecord": "京公网安备11010502060417号"
+  },
   "pluginStatus": {
     "notInstalled": "インストール",
     "noPermission": "未承認",
     "ready": "準備完了",
-    "checking": "確認中"
+    "checking": "確認中",
+    "updateAvailable": "更新可能"
   },
   "contactUs": "お問い合わせ",
+  "apiErrorContactTip": "ご不明な点がございましたら、",
+  "wechat": "WeChat",
+  "scanToAdd": "QRコードをスキャンして追加",
   "documents": "ドキュメント",
   "helpDocs": "ヘルプドキュメント",
-  "pluginGuide": "プラグインガイド",
+  "pluginGuide": "プラグインのインストールと利用ガイド",
+  "pluginUpdateGuide": "プラグイン更新ガイド",
   "privacyPolicy": "プライバシーポリシー",
   "termsOfService": "利用規約",
-  "downloadAppButton": "アプリをダウンロード",
   "noNotifications": "通知はありません",
   "markAllAsRead": "すべて既読にする",
   "markAsRead": "既読にする",
@@ -42,12 +52,21 @@
   "viewAll": "すべて表示",
   "cancel": "キャンセル",
   "confirm": "確認",
+  "save": "保存",
   "expand": "展開",
   "collapse": "折りたたむ",
   "yes": "はい",
   "no": "いいえ",
   "calendar": {
-    "weekDaysShort": ["日", "月", "火", "水", "木", "金", "土"],
+    "weekDaysShort": [
+      "日",
+      "月",
+      "火",
+      "水",
+      "木",
+      "金",
+      "土"
+    ],
     "monthSuffix": "月"
   },
   "actions": {
@@ -83,14 +102,12 @@
   },
   "header": {
     "messages": "メッセージ",
-    "income": "収入記録",
-    "wallet": "マイウォレット",
     "materialLibrary": "ライブラリ",
     "draftBox": "コンテンツ管理",
     "draftBoxSeoTitle": "コンテンツ管理 - AIバッチ作成と下書きエディタ",
     "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、AiToEarnでマルチプラットフォーム配信を整理。",
     "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn",
-    "agentAssets": "Agent素材"
+    "brandPromotion": "AI Check-in"
   },
   "tasks": "マーケットプレイス",
   "signIn": {
@@ -128,35 +145,6 @@
   "networkBusy": "ネットワークが混雑しています。後でもう一度お試しください！",
   "networkError": "ネットワークエラーです。後でもう一度お試しください！",
   "contact": "お困りですか？サポートにお問い合わせください：",
-  "uptime": {
-    "seoTitle": "AIモデルステータス - リアルタイムモデル可用性監視",
-    "pageKeywords": "AIモデルステータス, モデル可用性, 稼働率追跡, AIサービス状態, モデル監視, AiToEarnステータス",
-    "pageTitle": "AIモデルステータス",
-    "pageDescription": "AIモデルのリアルタイム可用性と稼働時間を監視します。各モデルとプロバイダーの運用状況をご確認ください。",
-    "loading": "読み込み中...",
-    "noData": "データがありません",
-    "uptimePercentage": "稼働率：",
-    "normal": "正常",
-    "timeout": "タイムアウト",
-    "unavailable": "利用不可",
-    "provider": "プロバイダー",
-    "operation": "操作",
-    "latency": "レイテンシー",
-    "errorType": "エラー",
-    "filter": {
-      "title": "フィルター",
-      "model": "モデル",
-      "timeRange": "期間",
-      "all": "すべて",
-      "last7Days": "過去7日間",
-      "last30Days": "過去30日間",
-      "last90Days": "過去90日間",
-      "reset": "リセット",
-      "apply": "適用"
-    },
-    "copy": "コピー",
-    "copied": "コピーしました"
-  },
   "websit": {
     "termsOfService": {
       "title": "利用規約",
@@ -217,14 +205,10 @@
       "importantNoteContent": "データは削除後に復元できません。慎重に操作してください。法律で要求される一部のデータは削除できない場合があります。"
     }
   },
-  "lowBalanceAlert": {
-    "title": "残高不足の警告",
-    "content": "クレジット残高が不足しています。引き続きご利用いただくために、チャージしてください。",
-    "neverRemind": "今後表示しない"
-  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 最低0.03ドル/秒",
-    "videoPromo": "Limited-time promo on Grok, Veo & more video models — as low as {{price}}/sec"
+    "videoPromo": "gpt-image-2 は1枚あたり0.007元から",
+    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
   },
   "chinaDomainPrompt": {
     "title": "中国リージョンに切り替え",
@@ -256,16 +240,40 @@
     "cropFree": "自由",
     "cropConfirm": "切り抜きを適用",
     "cropCancel": "切り抜きをキャンセル",
-    "cropRatio": "比率"
+    "cropRatio": "比率",
+    "outputFormat": "書き出し形式",
+    "convertToFormat": "{{format}} に変換",
+    "compressionQuality": "圧縮品質",
+    "pngLossless": "PNG ロスレス書き出し",
+    "compressImage": "画像圧縮",
+    "compressShort": "圧縮",
+    "convertFormat": "形式変換",
+    "convertShort": "変換",
+    "compressHint": "保存前に品質を調整します。画像は圧縮 JPG として書き出されます。",
+    "convertHint": "保存時に使用する画像形式を選択します。",
+    "compressJpgTip": "圧縮すると出力形式は自動的に JPG になります。",
+    "pngLosslessShort": "ロスレス"
   },
   "switchToInternational": "「国際版」へ",
   "switchToChina": "「中国版」へ",
-  "platformRegionPrompt": {
-    "title": "プラットフォーム地域制限",
-    "chinaContent": "{{platform}} は中国サイトでのみ利用可能です。中国サイトに移動しますか？",
-    "abroadContent": "{{platform}} は国際サイトでのみ利用可能です。国際サイトに移動しますか？",
-    "ok": "移動",
-    "cancel": "キャンセル"
+  "noMore": "これ以上データはありません",
+  "comingSoon": "開発中です、お楽しみに",
+  "enterpriseSurvey": {
+    "description": "企業向け機能のご要望をアンケートでお聞かせください。",
+    "action": "アンケートに回答"
   },
-  "noMore": "これ以上データはありません"
+  "wechatBrowserMask": {
+    "cornerHint": "右上メニュー",
+    "bubbleLine1": "右上のメニューから",
+    "bubbleLine2": "\"ブラウザで開く\" を選択",
+    "openInBrowser": "ブラウザで開く",
+    "description": "WeChat 内では投稿やリダイレクトが制限される場合があります。ブラウザで続行してください。"
+  },
+  "advertiser": "AI Check-in",
+  "datePicker": {
+    "clear": "Clear",
+    "confirm": "Confirm",
+    "selectDate": "Select date",
+    "selectDateRange": "Select date range"
+  }
 }

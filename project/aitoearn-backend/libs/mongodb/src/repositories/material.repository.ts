@@ -9,7 +9,7 @@ import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
 import { FilterQuery, Model, RootFilterQuery } from 'mongoose'
-import { Material, MaterialStatus } from '../schemas'
+import { Material, MaterialSource, MaterialStatus, MaterialType } from '../schemas'
 import { BaseRepository } from './base.repository'
 
 @Injectable()
@@ -35,6 +35,26 @@ export class MaterialRepository extends BaseRepository<Material> {
   async deleteByFilter(filter: FilterQuery<Material>): Promise<boolean> {
     const res = await this.materialModel.deleteMany(filter)
     return res.deletedCount > 0
+  }
+
+  async countByGroupId(groupId: string): Promise<number> {
+    return this.materialModel.countDocuments({ groupId })
+  }
+
+  async countByGroupIds(groupIds: string[]): Promise<Array<{ groupId: string, count: number }>> {
+    return this.materialModel.aggregate([
+      { $match: { groupId: { $in: groupIds } } },
+      { $group: { _id: '$groupId', count: { $sum: 1 } } },
+      { $project: { _id: 0, groupId: '$_id', count: 1 } },
+    ])
+  }
+
+  async countByFilterGroupedByGroupId(filter: FilterQuery<Material>): Promise<Array<{ groupId: string, count: number }>> {
+    return this.materialModel.aggregate([
+      { $match: filter },
+      { $group: { _id: '$groupId', count: { $sum: 1 } } },
+      { $project: { _id: 0, groupId: '$_id', count: 1 } },
+    ])
   }
 
   // 删除
@@ -214,6 +234,18 @@ export class MaterialRepository extends BaseRepository<Material> {
     return data
   }
 
+  async updateGroupIdByIds(ids: string[], targetGroupId: string, userId: string): Promise<number> {
+    const res = await this.materialModel.updateMany(
+      { _id: { $in: ids }, userId },
+      { $set: { groupId: targetGroupId } },
+    )
+    return res.modifiedCount
+  }
+
+  async listByIdsAndUserId(ids: string[], userId: string): Promise<Material[]> {
+    return this.materialModel.find({ _id: { $in: ids }, userId }).lean({ virtuals: true })
+  }
+
   // 增加草稿的使用次数，返回更新后的文档
   async updateUseCountById(id: string): Promise<Material | null> {
     const res = await this.materialModel.findOneAndUpdate(
@@ -249,5 +281,30 @@ export class MaterialRepository extends BaseRepository<Material> {
     ).lean({ virtuals: true })
 
     return result!
+  }
+
+  async listByUserIdAndTypeAndSourceAndStatusAndCreatedAt(
+    userId: string,
+    type: MaterialType,
+    source: MaterialSource,
+    status: MaterialStatus,
+    startAt: Date,
+    limit: number,
+  ): Promise<Material[]> {
+    return await this.materialModel.find({
+      userId,
+      type,
+      source,
+      status,
+      createdAt: { $gte: startAt },
+    }).sort({ createdAt: -1 }).limit(limit).lean({ virtuals: true })
+  }
+
+  async listUserIdsBySourceAndStatusAndUpdatedAt(source: MaterialSource, status: MaterialStatus, startAt: Date): Promise<string[]> {
+    return await this.materialModel.distinct('userId', {
+      source,
+      status,
+      updatedAt: { $gte: startAt },
+    }).exec()
   }
 }

@@ -1,10 +1,9 @@
 import { z } from 'zod'
 import { getLocale } from '../interceptors/request-context.interceptor'
 
-const i18nObjectSchema = z.object({
+export const i18nObjectSchema = z.object({
   'en-US': z.string(),
   'zh-CN': z.string(),
-  'ja-JP': z.string().optional(),
 })
 
 export type I18nObject = z.infer<typeof i18nObjectSchema>

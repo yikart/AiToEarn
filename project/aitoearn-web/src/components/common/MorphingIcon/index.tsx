@@ -7,7 +7,7 @@
 
 import type { Variants } from 'framer-motion'
 import { AnimatePresence, motion } from 'framer-motion'
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useId, useState } from 'react'
 
 import { cn } from '@/lib/utils'
 
@@ -117,7 +117,10 @@ interface MorphingIconProps {
 // 切换间隔：1.5 秒
 const SWITCH_INTERVAL = 1500
 
-export const MorphingIcon = memo(({ size = 16, color = '#c565ef', className }: MorphingIconProps) => {
+export const MorphingIcon = memo(({ size = 16, color, className }: MorphingIconProps) => {
+  const rawGradientId = useId()
+  const gradientId = `morphing-icon-gradient-${rawGradientId.replace(/:/g, '')}`
+  const iconPaint = color || `url(#${gradientId})`
   const [currentIndex, setCurrentIndex] = useState(0)
 
   useEffect(() => {
@@ -148,60 +151,67 @@ export const MorphingIcon = memo(({ size = 16, color = '#c565ef', className }: M
           },
         }}
       >
-        {/* 不使用 mode="wait"，新旧图标重叠过渡避免闪烁 */}
-        <AnimatePresence>
-          <motion.svg
-            key={currentIcon.name}
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke={color}
-            strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="absolute inset-0"
-            style={{ width: size, height: size }}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-          >
-            {/* 路径元素 - 描边绘制动画 */}
-            {currentIcon.paths?.map((d, i) => (
-              <motion.path
-                key={`path-${i}`}
-                d={d}
-                fill="none"
-                variants={createDrawVariants(i)}
-              />
-            ))}
+        <motion.svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke={iconPaint}
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          className="absolute inset-0"
+          style={{ width: size, height: size }}
+        >
+          {!color && (
+            <defs>
+              <linearGradient id={gradientId} x1="2" y1="12" x2="22" y2="12" gradientUnits="userSpaceOnUse">
+                <stop stopColor="var(--brand-purple)" />
+                <stop offset="1" stopColor="var(--brand-cyan)" />
+              </linearGradient>
+            </defs>
+          )}
 
-            {/* 圆形元素 */}
-            {currentIcon.circles?.map((c, i) => {
-              const isSmall = 'isSmall' in c && c.isSmall
-              return isSmall ? (
-                // 小圆点使用 scale 动画
-                <motion.circle
-                  key={`circle-${i}`}
-                  cx={c.cx}
-                  cy={c.cy}
-                  r={c.r}
-                  fill={color}
-                  stroke="none"
-                  variants={smallCircleVariants}
-                />
-              ) : (
-                // 大圆使用 pathLength 描边动画
-                <motion.circle
-                  key={`circle-${i}`}
-                  cx={c.cx}
-                  cy={c.cy}
-                  r={c.r}
+          {/* 不使用 mode="wait"，新旧图标重叠过渡避免闪烁 */}
+          <AnimatePresence>
+            <motion.g key={currentIcon.name} initial="hidden" animate="visible" exit="exit">
+              {/* 路径元素 - 描边绘制动画 */}
+              {currentIcon.paths?.map((d, i) => (
+                <motion.path
+                  key={`path-${i}`}
+                  d={d}
                   fill="none"
-                  variants={createCircleDrawVariants(i)}
+                  variants={createDrawVariants(i)}
                 />
-              )
-            })}
-          </motion.svg>
-        </AnimatePresence>
+              ))}
+
+              {/* 圆形元素 */}
+              {currentIcon.circles?.map((c, i) => {
+                const isSmall = 'isSmall' in c && c.isSmall
+                return isSmall ? (
+                  // 小圆点使用 scale 动画
+                  <motion.circle
+                    key={`circle-${i}`}
+                    cx={c.cx}
+                    cy={c.cy}
+                    r={c.r}
+                    fill={iconPaint}
+                    stroke="none"
+                    variants={smallCircleVariants}
+                  />
+                ) : (
+                  // 大圆使用 pathLength 描边动画
+                  <motion.circle
+                    key={`circle-${i}`}
+                    cx={c.cx}
+                    cy={c.cy}
+                    r={c.r}
+                    fill="none"
+                    variants={createCircleDrawVariants(i)}
+                  />
+                )
+              })}
+            </motion.g>
+          </AnimatePresence>
+        </motion.svg>
       </motion.div>
     </div>
   )

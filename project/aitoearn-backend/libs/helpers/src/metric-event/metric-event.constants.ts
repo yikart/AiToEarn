@@ -1,0 +1,15 @@
+export const MetricEventName = {
+  taskSquarePageView: 'task_square_page_view',
+  taskDetailView: 'task_detail_view',
+  taskAccept: 'task_accept',
+  taskSubmit: 'task_submit',
+  taskApproved: 'task_approved',
+  contentManagementPageView: 'content_management_page_view',
+  contentManagementAiGenerate: 'content_management_ai_generate',
+  aiPublishPageView: 'ai_publish_page_view',
+  aiPublishPublish: 'ai_publish_publish',
+  aiPublishAddChannels: 'ai_publish_add_channels',
+  aiPublishAgentUse: 'ai_publish_agent_use',
+  aiPublishNewWorkClick: 'ai_publish_new_work_click',
+  aiPublishAgentCreateClick: 'ai_publish_agent_create_click',
+} as const

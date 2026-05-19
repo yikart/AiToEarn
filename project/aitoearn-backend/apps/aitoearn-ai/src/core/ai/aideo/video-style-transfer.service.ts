@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, getErrorMessage, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, getErrorMessage, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import {
   AiLog,
@@ -9,6 +9,7 @@ import {
   AiLogStatus,
   AiLogType,
   AssetType,
+  StyleTransferAiLogResponse,
 } from '@yikart/mongodb'
 import { isAxiosError } from 'axios'
 import { config } from '../../../config'
@@ -135,12 +136,12 @@ export class VideoStyleTransferService {
 
     // 如果任务已完成或失败，直接返回数据库中的结果
     if (log.status === AiLogStatus.Success) {
-      const response = log.response
+      const response = log.response as StyleTransferAiLogResponse | undefined
       return {
         taskId,
         status: 'Completed',
-        outputVid: response?.['outputVid'],
-        outputUrl: response?.['outputUrl'],
+        outputVid: response?.outputVid,
+        outputUrl: response?.outputUrl,
       }
     }
 
@@ -164,12 +165,12 @@ export class VideoStyleTransferService {
       // 重新查询数据库获取最新状态
       const updatedLog = await this.aiLogRepo.getById(log.id)
       if (updatedLog) {
-        const response = updatedLog.response
+        const response = updatedLog.response as StyleTransferAiLogResponse | undefined
         return {
           taskId,
           status: updatedLog.status === AiLogStatus.Success ? 'Completed' : 'Failed',
-          outputVid: response?.['outputVid'],
-          outputUrl: response?.['outputUrl'],
+          outputVid: response?.outputVid,
+          outputUrl: response?.outputUrl,
           errorMessage: updatedLog.errorMessage,
         }
       }
@@ -330,6 +331,7 @@ export class VideoStyleTransferService {
         userId,
         amount: totalPrice,
         type: CreditsType.VideoStyleTransfer,
+        source: CreditsConsumptionSource.AiAideo,
         description: `video style transfer - task ID: ${taskId}`,
         metadata: { taskId, duration, resolution },
       })
@@ -337,11 +339,12 @@ export class VideoStyleTransferService {
 
     // 更新日志
     if (log) {
+      const response = log.response as StyleTransferAiLogResponse | undefined
       await this.aiLogRepo.updateById(log.id, {
         status: AiLogStatus.Success,
         points: totalPrice,
         response: {
-          ...(log.response || {}),
+          ...(response || {}),
           duration,
           resolution,
           price: totalPrice,

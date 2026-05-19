@@ -33,7 +33,7 @@ Must end with `WithPagination`: `listWithPagination`
 | `findList` | `listWithPagination` |
 | `delOne` | `deleteById` |
 | `addUseCount` | `updateUseCountById` |
-| `recharge` | `updateRechargeById` |
+| `verify` | `updateVerifyById` |
 | `markAsRead` | `updateAsReadByIds` |
 | `check` | `get` + business logic in Service |
 

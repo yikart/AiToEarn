@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import { TwitterPublishOptionSchema } from './platforms/twitter/twitter-post-options.schema'
 
 export const GetPublishingTaskStatusSchema = z.object({
   flowId: z.string().describe('flow Id from publish task creation'),
@@ -68,13 +69,13 @@ export const PublishTaskOptionSchema = z.object({
   tiktok: TiktokPublishTaskMetaSchema,
   facebook: MetaCommonSchema,
   instagram: MetaCommonSchema,
+  twitter: TwitterPublishOptionSchema.optional(),
 })
 export type PublishTaskOption = z.infer<typeof PublishTaskOptionSchema>
 
 // Base fields for reuse
 const basePublishingFields = {
   accountId: z.string().describe('account id'),
-  userTaskId: z.string().optional().describe('user task id'),
   publishTime: z.string().datetime().optional().describe('publish time'),
 }
 
@@ -176,6 +177,7 @@ export const CreateTwitterPublishingTaskSchema = z.object({
   coverUrl: z.string().optional().describe('cover url'),
   imgUrlList: z.array(z.string()).min(1).max(4).optional().describe('image url list; 1-4 allowed'),
   topics: z.array(z.string()).optional().default([]).describe('topics'),
+  option: TwitterPublishOptionSchema.optional().describe('twitter publish options'),
 })
 export type CreateTwitterPublishingTask = z.infer<typeof CreateTwitterPublishingTaskSchema>
 

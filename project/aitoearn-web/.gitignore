@@ -56,3 +56,5 @@ tests/.auth/
 playwright-report/
 test-results/
 .gstack/
+
+/tmp

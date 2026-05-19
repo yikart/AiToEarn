@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface BilibiliRawError {
   message: string
@@ -8,51 +9,22 @@ export interface BilibiliRawError {
 /**
  * Bilibili error class.
  */
-export class BilibiliError extends SocialMediaError<BilibiliRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: BilibiliRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class BilibiliError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'bilibili'
   }
 
-  protected static override extractRawError(data: unknown): BilibiliRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const d = data as Record<string, unknown>
-    const errResponse: BilibiliRawError = {
-      code: d['code'] as number,
-      message: d['message'] as string,
-    }
-    return errResponse
-  }
 
-  protected static override buildMessage(
-    rawError: BilibiliRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.message || 'Unknown error'}, error code: ${rawError.code || 'N/A'}`
+    return {
+      platformCode: d['code'] as number | undefined,
+      platformMessage: d['message'] as string | undefined,
+    }
   }
 }

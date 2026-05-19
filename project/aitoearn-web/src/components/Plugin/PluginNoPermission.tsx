@@ -9,6 +9,7 @@ import { AlertTriangle, BookOpen, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useChannelManagerStore } from '@/components/ChannelManager'
 import { Button } from '@/components/ui/button'
 import { usePluginStore } from '@/store/plugin'
 
@@ -18,6 +19,8 @@ import { usePluginStore } from '@/store/plugin'
 export function PluginNoPermission() {
   const { t } = useTranslation('plugin')
   const init = usePluginStore(state => state.init)
+  const closePluginModal = usePluginStore(state => state.closePluginModal)
+  const closeChannelManager = useChannelManagerStore(state => state.closeModal)
   const [checking, setChecking] = useState(false)
 
   // 检查权限
@@ -29,6 +32,11 @@ export function PluginNoPermission() {
     finally {
       setChecking(false)
     }
+  }
+
+  const handleViewGuide = () => {
+    closePluginModal()
+    closeChannelManager()
   }
 
   return (
@@ -56,7 +64,8 @@ export function PluginNoPermission() {
 
       {/* 查看安装教程链接 */}
       <Link
-        href="/websit/plugin-guide"
+        href="/websit/plugin-guide#authorize"
+        onClick={handleViewGuide}
         className="mt-6 flex items-center justify-center gap-2 w-full max-w-xs px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors cursor-pointer"
       >
         <BookOpen className="h-5 w-5" />

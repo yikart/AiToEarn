@@ -10,44 +10,42 @@ import {
   PASTE_COMMAND,
 } from 'lexical'
 import { BeautifulMentionNode } from 'lexical-beautiful-mentions'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 /**
  * 插件：根据外部 value 同步更新编辑器内容
  * @param value - 外部传入的文本值
- * @param isInternalChangeRef - 标记是否为内部变化，避免循环更新
+ * @param lastOutputValueRef - 编辑器最近一次通过 onChange 输出的值，用于判断 value 是否为内部回传
  */
 export function InitialValuePlugin({
   value,
-  isInternalChangeRef,
+  lastOutputValueRef,
 }: {
   value: string
-  isInternalChangeRef?: MutableRefObject<boolean>
+  lastOutputValueRef?: MutableRefObject<string>
 }) {
   const [editor] = useLexicalComposerContext()
-  const lastAppliedRef = useRef<string>('')
 
   useEffect(() => {
-    // 如果是内部变化触发的，跳过同步，避免循环更新
-    if (isInternalChangeRef?.current) {
+    // 如果 value 是编辑器自身 onChange 回传的，跳过（无竞态，ref 同步设置）
+    if (lastOutputValueRef && value === lastOutputValueRef.current) {
       return
     }
 
+    // 在 editor.update() 外部读取当前文本，避免空更新触发 OnChangePlugin
+    const currentText = editor.getEditorState().read(() => $getRoot().getTextContent())
+    if (value === currentText) {
+      return
+    }
+
+    // 只在真正需要时才更新编辑器
     editor.update(() => {
       const root = $getRoot()
-      const currentText = root.getTextContent()
-
-      // 只有当 value 真正不同时才更新
-      if (value === currentText && value === lastAppliedRef.current)
-        return
-
-      // 清空并重建内容
       root.clear()
       const paragraph = $createParagraphNode()
       root.append(paragraph)
 
       if (!value) {
-        lastAppliedRef.current = value
         return
       }
 
@@ -69,10 +67,8 @@ export function InitialValuePlugin({
           }
         }
       })
-
-      lastAppliedRef.current = value
     })
-  }, [editor, value, isInternalChangeRef])
+  }, [editor, value, lastOutputValueRef])
 
   return null
 }

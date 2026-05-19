@@ -486,7 +486,6 @@ const PublishDialogAi = memo(
 
               if (normalized === 'completed') {
                 const videoUrl = res.data?.data?.video_url || data?.video_url
-                console.log('videoUrl', videoUrl)
                 setVideoResult(videoUrl)
                 setVideoProgress(100)
 

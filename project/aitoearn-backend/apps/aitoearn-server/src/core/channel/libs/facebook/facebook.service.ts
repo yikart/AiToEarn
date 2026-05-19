@@ -55,8 +55,7 @@ export class FacebookService {
   private readonly clientId: string = config.channel.oauth.facebook.clientId
   private readonly longLivedAccessTokenURL: string = FacebookOAuth2Config.longLivedAccessTokenURL
 
-  private readonly apiHost: string = 'https://graph.facebook.com/'
-  private readonly apiBaseUrl: string = 'https://graph.facebook.com/v23.0'
+  private readonly apiBaseUrl: string = FacebookOAuth2Config.apiBaseUrl
 
   constructor() { }
 
@@ -74,7 +73,7 @@ export class FacebookService {
     }
     catch (error: unknown) {
       const err = FacebookError.buildFromError(error, operation)
-      this.logger.error(`[FB:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      this.logger.error(err, `[FB:${operation}] Error !! ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }
@@ -300,7 +299,7 @@ export class FacebookService {
   }
 
   // https://developers.facebook.com/docs/graph-api/reference/page/photos/#Creating
-  // https://developers.facebook.com/docs/graph-api/reference/v23.0/page/feed#publish
+  // https://developers.facebook.com/docs/graph-api/reference/page/feed#publish
   // https://developers.facebook.com/docs/graph-api/reference/page/photos/#upload
   async publishFeedPost(
     pageId: string,
@@ -359,7 +358,7 @@ export class FacebookService {
     pageAccessToken: string,
     query: FacebookPageDetailRequest,
   ): Promise<FacebookPageDetailResponse> {
-    const url = `${this.apiHost}/${pageId}`
+    const url = `${this.apiBaseUrl}/${pageId}`
     const config: AxiosRequestConfig = {
       method: 'GET',
       headers: {

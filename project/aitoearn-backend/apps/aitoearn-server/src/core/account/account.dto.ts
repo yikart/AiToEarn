@@ -62,6 +62,11 @@ const AccountIdSchema = z.object({
 })
 export class AccountIdDto extends createZodDto(AccountIdSchema) {}
 
+const UserTotalFansCountSchema = z.object({
+  userId: z.string().describe('用户ID'),
+})
+export class UserTotalFansCountDto extends createZodDto(UserTotalFansCountSchema) {}
+
 export const UpdateAccountStatusSchema = AccountIdSchema.merge(
   z.object({
     status: z.enum(AccountStatus),
@@ -93,6 +98,13 @@ const UpdateAccountStatisticsSchema = z.object({
 })
 export class UpdateAccountStatisticsDto extends createZodDto(
   UpdateAccountStatisticsSchema,
+) {}
+
+const UpdateAccountStatisticsDataSchema = UpdateAccountStatisticsSchema.omit({
+  id: true,
+})
+export class UpdateAccountStatisticsDataDto extends createZodDto(
+  UpdateAccountStatisticsDataSchema,
 ) {}
 
 const DeleteAccountsSchema = z.object({

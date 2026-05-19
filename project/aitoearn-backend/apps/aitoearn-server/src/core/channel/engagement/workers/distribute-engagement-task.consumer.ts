@@ -143,21 +143,15 @@ export class EngagementTaskDistributionConsumer extends WorkerHost {
       return
     }
     this.logger.log(`[task-${job.data.taskId}] Processing Engagement Task: ${job.data.taskId} for platform ${task.platform}`)
-    try {
-      if (task.targetScope === 'PARTIAL' && task.targetIds && task.targetIds.length > 0) {
-        await this.distributePartialCommentsTask(task)
-      }
-      else if (task.targetScope === 'ALL') {
-        await this.distributeAllCommentsTask(task)
-      }
-      else {
-        this.logger.warn(`[task-${job.data.taskId}] No target IDs provided for PARTIAL scope task.`)
-        await this.engagementRecordService.updateEngagementTaskStatus(task.id, EngagementTaskStatus.FAILED)
-      }
+    if (task.targetScope === 'PARTIAL' && task.targetIds && task.targetIds.length > 0) {
+      await this.distributePartialCommentsTask(task)
     }
-    catch (error) {
-      this.logger.error(`[task-${job.data.taskId}] Error processing job ${job.id}: ${(error as Error).message}`, (error as Error).stack)
-      throw new Error(`[task-${job.data.taskId}] Job ${job.id} failed: ${(error as Error).message}`)
+    else if (task.targetScope === 'ALL') {
+      await this.distributeAllCommentsTask(task)
+    }
+    else {
+      this.logger.warn(`[task-${job.data.taskId}] No target IDs provided for PARTIAL scope task.`)
+      await this.engagementRecordService.updateEngagementTaskStatus(task.id, EngagementTaskStatus.FAILED)
     }
   }
 }

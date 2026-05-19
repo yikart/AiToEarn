@@ -1,0 +1,20 @@
+.content {
+  min-height: 0;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+
+.textarea {
+  min-height: 320px;
+  resize: none;
+  border: 0;
+  padding: 20px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.textarea:focus-visible {
+  outline: none;
+  box-shadow: none;
+}

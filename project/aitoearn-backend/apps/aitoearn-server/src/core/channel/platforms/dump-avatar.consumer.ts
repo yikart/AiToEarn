@@ -43,7 +43,7 @@ export class DumpAvatarConsumer extends WorkerHost {
       }
     }
     catch (error) {
-      this.logger.error(`[account-${job.data.accountId}] Failed to dump avatar: ${(error as Error).message}`)
+      this.logger.error(error, `[account-${job.data.accountId}] Failed to dump avatar`)
       throw new PublishingUnrecoverableError(String(error), error)
     }
   }

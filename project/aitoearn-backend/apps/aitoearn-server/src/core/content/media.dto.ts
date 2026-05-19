@@ -48,3 +48,10 @@ const MediaIdsSchema = z.object({
   ids: z.array(z.string()).min(1).describe('ID列表'),
 })
 export class MediaIdsDto extends createZodDto(MediaIdsSchema) {}
+
+const TransferMediaSchema = z.object({
+  ids: z.array(z.string()).min(1).describe('媒体资源ID列表'),
+  targetGroupId: z.string().describe('目标媒体分组ID'),
+  mode: z.enum(['move', 'copy']).describe('转移模式：move 移动，copy 复制'),
+})
+export class TransferMediaDto extends createZodDto(TransferMediaSchema, 'TransferMediaDto') {}

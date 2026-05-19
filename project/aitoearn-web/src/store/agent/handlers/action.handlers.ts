@@ -248,18 +248,12 @@ const navigateToPublishPluginHandler: IActionHandler = {
         platformTaskIdMap.set(account.id, requestId)
       })
 
-      console.log(`[ActionHandler] Total plugin publish items: ${allPluginPublishItems.length}`)
-
       if (allPluginPublishItems.length > 0) {
         usePluginStore.getState().executePluginPublish({
           items: allPluginPublishItems,
           platformTaskIdMap,
           onProgress: (event) => {
             const { stage, progress, message: progressMessage, accountId, platform } = event
-            console.log(
-              `[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`,
-            )
-
             if (stage === 'error') {
               toast.error(progressMessage)
             }
@@ -297,11 +291,6 @@ const navigateToPublishOtherHandler: IActionHandler = {
   async execute(taskData, context) {
     const { router, lng } = context
     const queryParams = buildPublishQueryParams(taskData)
-
-    console.log(
-      '[ActionHandler] Navigating to /accounts for publishing, platform:',
-      taskData.platform,
-    )
 
     setTimeout(() => {
       router.push(`/accounts?${queryParams.toString()}`)
@@ -558,7 +547,6 @@ export const ActionRegistry = {
       || taskData.type === 'videoOnly'
       || taskData.type === 'mediaOnly'
     ) {
-      console.log('[ActionRegistry] Skipping media-only result:', taskData.platform)
       return false
     }
 
@@ -566,9 +554,6 @@ export const ActionRegistry = {
     const handler = actionHandlers.find(h => h.canHandle(taskData))
 
     if (handler) {
-      console.log(
-        `[ActionRegistry] Executing handler: ${handler.type} for platform: ${taskData.platform}`,
-      )
       await handler.execute(taskData, context)
       return true
     }
@@ -609,10 +594,6 @@ export const ActionRegistry = {
         otherTasks.push(taskData)
       }
     })
-
-    console.log(
-      `[ActionRegistry] Plugin tasks: ${pluginTasks.length}, Other tasks: ${otherTasks.length}`,
-    )
 
     // 批量处理插件平台任务
     if (pluginTasks.length > 0) {
@@ -677,17 +658,12 @@ export const ActionRegistry = {
         })
       })
 
-      console.log(`[ActionRegistry] Total plugin publish items: ${allPluginPublishItems.length}`)
-
       if (allPluginPublishItems.length > 0) {
         usePluginStore.getState().executePluginPublish({
           items: allPluginPublishItems,
           platformTaskIdMap,
           onProgress: (event) => {
             const { stage, progress, message: progressMessage, accountId, platform } = event
-            console.log(
-              `[${platform}] 账号 ${accountId}: ${stage} - ${progress}% - ${progressMessage}`,
-            )
 
             if (stage === 'error') {
               toast.error(progressMessage)

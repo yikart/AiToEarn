@@ -121,7 +121,9 @@
     "favoriteOnly": "我的收藏",
     "emptyFavorites": "暂无收藏的任务",
     "emptySearch": "未找到匹配的任务",
-    "clearFilters": "清除筛选"
+    "clearFilters": "清除筛选",
+    "downloadVideo": "下载视频",
+    "playVideo": "播放视频"
   },
   "rating": {
     "title": "评分与评价",
@@ -151,7 +153,9 @@
     "image": "图片",
     "document": "文档",
     "uploadFailed": "上传失败，请重试",
-    "uploadCancelled": "上传已取消"
+    "uploadCancelled": "上传已取消",
+    "edit": "编辑",
+    "remove": "移除"
   },
   "workflow": {
     "toolCallCompleted": "工具调用完成",
@@ -184,7 +188,9 @@
     "rechargeCredits": "充值积分",
     "action": "操作",
     "actionDesc": "请完成以下操作",
-    "continue": "继续"
+    "continue": "继续",
+    "error": "生成失败",
+    "errorDesc": "生成失败，请稍后重试。"
   },
   "publishDetail": {
     "title": "发布详情",
@@ -221,5 +227,8 @@
       "publish": "正在发布...",
       "complete": "发布完成"
     }
+  },
+  "plugin": {
+    "platformNeedsPlugin": "该平台需要使用浏览器插件，请先授权插件。"
   }
 }

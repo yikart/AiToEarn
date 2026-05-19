@@ -5,13 +5,13 @@
     "loginDescription": "Melden Sie sich bei Ihrem AiToEarn-Konto an, um Ihre KI-Kreativreise zu beginnen. Unterstützt Google-Anmeldung und E-Mail-Bestätigungscode."
   },
   "welcomeBack": "Anmelden",
-  "loginSubtitle": "Beginnen Sie mit AiToEarn zu erstellen",
+  "loginSubtitle": "Lass uns AltoEarn nutzen!",
   "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
   "login": "Anmelden",
   "or": "oder",
   "emailRequired": "Bitte geben Sie Ihre E-Mail ein",
   "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
-  "emailCodeRequired": "Bitte geben Sie den E-Mail-Bestätigungscode ein",
+  "emailCodeRequired": "Bitte geben Sie den Bestätigungscode ein",
   "emailCodeLength": "Bestätigungscode muss 6 Ziffern haben",
   "enterCode": "6-stelligen Code eingeben",
   "sendCode": "Code senden",
@@ -26,9 +26,12 @@
   "loginFailed": "Anmeldung fehlgeschlagen",
   "loginError": "Anmeldung fehlgeschlagen, bitte später erneut versuchen",
   "googleLoginFailed": "Google-Anmeldung fehlgeschlagen",
+  "switchToEmailLogin": "Mit E-Mail-Code anmelden",
+  "switchToPhoneLogin": "Mit Telefonnummer anmelden",
   "termsText": "Durch Fortfahren stimmen Sie unseren",
   "termsOfService": "Nutzungsbedingungen",
   "and": "und",
   "privacyPolicy": "Datenschutzrichtlinie zu",
-  "newUserPromotion": "Neue Benutzer erhalten 14 Tage kostenlose Mitgliedschaft!"
+  "newUserPromotion": "Neue Benutzer erhalten 14 Tage kostenlose Mitgliedschaft!",
+  "manualLoginDisabledNotice": "In dieser Umgebung ist keine manuelle Anmeldung erforderlich. Wenn der Zugriff weiterhin fehlschlägt, prüfen Sie bitte die Konfiguration."
 }

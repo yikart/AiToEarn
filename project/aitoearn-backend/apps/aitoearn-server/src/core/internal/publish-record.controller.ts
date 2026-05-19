@@ -9,14 +9,19 @@ import { BadRequestException, Body, Controller, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
 import { AccountType, ApiDoc } from '@yikart/common'
-import { DonePublishRecordDto, GetPublishRecordDetailDto, PublishDayInfoListDto, PublishRecordIdDto, PublishRecordListFilterDto } from '../publish-record/publish-record.dto'
+import { PublishRecordLinkStatus, PublishType } from '@yikart/mongodb'
+import { PlatformService } from '../channel/platforms/platforms.service'
+import { DonePublishRecordDto, GetPublishRecordDetailDto, PublishDayInfoListDto, PublishRecordIdDto, PublishRecordListFilterDto, UpdatePublishRecordWorkLinkDto } from '../publish-record/publish-record.dto'
 import { PublishRecordService } from '../publish-record/publish-record.service'
 
 @ApiTags('Internal/PublishRecord')
 @Controller('internal')
 @Internal()
 export class PublishRecordController {
-  constructor(private readonly publishRecordService: PublishRecordService) {}
+  constructor(
+    private readonly publishRecordService: PublishRecordService,
+    private readonly platformService: PlatformService,
+  ) {}
 
   @ApiDoc({
     summary: 'Delete Publish Record',
@@ -37,6 +42,71 @@ export class PublishRecordController {
   @Post('publishRecord/info')
   async getPublishRecordInfo(@Body() data: PublishRecordIdDto) {
     const res = await this.publishRecordService.getPublishRecordInfo(data.id)
+    return res
+  }
+
+  @ApiDoc({
+    summary: 'Update Publish Record Work Link',
+    description: '根据发布记录ID更新作品链接状态；ready 且有 workLink 时同步由作品链接派生的 dataId、uniqueId、type 等字段。',
+    body: UpdatePublishRecordWorkLinkDto.schema,
+  })
+  @Post('publishRecord/workLink/update')
+  async updatePublishRecordWorkLink(@Body() data: UpdatePublishRecordWorkLinkDto) {
+    const publishRecord = await this.publishRecordService.getPublishRecordInfo(data.id)
+    if (!publishRecord) {
+      throw new BadRequestException('publish record not found')
+    }
+    if (!publishRecord.accountType) {
+      throw new BadRequestException('publish record accountType is missing')
+    }
+
+    const linkStatus = data.linkStatus || PublishRecordLinkStatus.READY
+
+    if (linkStatus !== PublishRecordLinkStatus.READY) {
+      const res = await this.publishRecordService.updateWorkLinkById(data.id, {
+        dataId: data.dataId,
+        platformWorkId: data.platformWorkId,
+        linkStatus,
+        linkError: data.linkError,
+        linkMeta: data.linkMeta,
+      })
+      if (!res) {
+        throw new BadRequestException('publish record update failed')
+      }
+      return res
+    }
+
+    if (!data.workLink) {
+      throw new BadRequestException('work link is required when linkStatus is ready')
+    }
+
+    const workLinkInfo = await this.platformService.getWorkLinkInfo(
+      publishRecord.accountType,
+      data.workLink,
+      data.platformWorkId || data.dataId,
+      publishRecord.accountId,
+    )
+    if (!workLinkInfo?.dataId || !workLinkInfo.uniqueId) {
+      throw new BadRequestException('invalid work link')
+    }
+
+    const res = await this.publishRecordService.updateWorkLinkById(data.id, {
+      workLink: workLinkInfo.resolvedUrl || data.workLink,
+      originalWorkLink: workLinkInfo.originalWorkLink ?? null,
+      dataId: workLinkInfo.dataId,
+      uniqueId: workLinkInfo.uniqueId,
+      platformWorkId: data.platformWorkId,
+      workStatus: workLinkInfo.workStatus ?? null,
+      linkStatus,
+      linkError: data.linkError,
+      linkMeta: data.linkMeta,
+      type: Object.values(PublishType).includes(workLinkInfo.type as PublishType)
+        ? (workLinkInfo.type as PublishType)
+        : undefined,
+    })
+    if (!res) {
+      throw new BadRequestException('publish record update failed')
+    }
     return res
   }
 
@@ -88,46 +158,6 @@ export class PublishRecordController {
     if (!res) {
       throw new BadRequestException('publish record not found')
     }
-    return res
-  }
-
-  @ApiDoc({
-    summary: 'Get Publish Record Detail By Task ID',
-  })
-  @Post('publishRecord/detail/byTaskId')
-  async getPublishRecordDetailByTaskId(@Body() data: { taskId: string, userId: string }) {
-    const res = await this.publishRecordService.getPublishRecordByTaskId(data.taskId, data.userId)
-    if (!res) {
-      throw new BadRequestException('publish record not found')
-    }
-    return res
-  }
-
-  @ApiDoc({
-    summary: 'Get Publish Record List By Advertiser Task ID (For Advertiser)',
-  })
-  @Post('publishRecord/list/byAdvertiserTaskId')
-  async getPublishRecordListByAdvertiserTaskId(@Body() data: {
-    advertiserTaskId: string
-    status?: number
-    accountType?: AccountType
-    pageNo?: number
-    pageSize?: number
-  }) {
-    return this.publishRecordService.getPublishRecordListByAdvertiserTaskId(data.advertiserTaskId, {
-      status: data.status,
-      accountType: data.accountType,
-      pageNo: data.pageNo,
-      pageSize: data.pageSize,
-    })
-  }
-
-  @ApiDoc({
-    summary: 'Get Publish Record To User Task',
-  })
-  @Post('publishRecord/userTask')
-  async getPublishRecordToUserTask(@Body() data: { userTaskId: string }) {
-    const res = await this.publishRecordService.getPublishRecordToUserTask(data.userTaskId)
     return res
   }
 

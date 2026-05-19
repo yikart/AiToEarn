@@ -2,6 +2,7 @@ import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-a
 import { Injectable, Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { z } from 'zod'
+import { AiAvailabilityService } from '../../../ai-availability'
 import { DramaRecapService } from '../../../ai/aideo'
 import { DramaRecapTaskStatus } from '../../../ai/libs/volcengine'
 import { McpServerName } from '../../agent.constants'
@@ -45,6 +46,7 @@ export class DramaRecapMcp {
 
   constructor(
     private readonly dramaRecapService: DramaRecapService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) { }
 
   createSubmitDramaRecapTaskTool(userId: string, userType: UserType) {
@@ -78,6 +80,7 @@ Processing time: ~10 minutes per 1-minute video. Returns taskId and dramaScriptT
         })
         return successResult(`Drama recap task submitted successfully. TaskId: ${result.taskId}, DramaScriptTaskId: ${result.dramaScriptTaskId}`)
       },
+      this.aiAvailability,
     )
   }
 
@@ -113,6 +116,7 @@ Processing time: ~10 minutes per 1-minute video. Returns taskId and dramaScriptT
           return errorResult(`Task failed: ${result.errorMessage || 'Unknown error'}`)
         }
       },
+      this.aiAvailability,
     )
   }
 

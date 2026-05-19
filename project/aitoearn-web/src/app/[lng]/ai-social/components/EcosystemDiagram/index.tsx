@@ -74,7 +74,7 @@ export function EcosystemDiagram() {
         </div>
 
         {/* 生态系统图 - 白色背景容器 */}
-        <div className={cn('relative rounded-3xl overflow-hidden', 'bg-white dark:bg-gray-950')}>
+        <div className={cn('relative rounded-3xl overflow-hidden', 'bg-white dark:bg-background')}>
           {/* 内容区域 */}
           <div className="relative z-10 py-12 md:py-16 px-6 md:px-12">
             {/* 桌面端布局 */}
@@ -111,7 +111,7 @@ export function EcosystemDiagram() {
                     <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-100 via-purple-50 to-cyan-100 dark:from-blue-900/40 dark:via-purple-900/30 dark:to-cyan-900/40" />
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/50 to-transparent dark:via-white/10 animate-[spin_20s_linear_infinite]" />
                     {/* 核心光芒 */}
-                    <div className="absolute inset-2 rounded-full bg-white/80 dark:bg-gray-900/80 shadow-[inset_0_0_30px_rgba(59,130,246,0.15),0_0_20px_rgba(139,92,246,0.1)]" />
+                    <div className="absolute inset-2 rounded-full bg-white/80 dark:bg-background/80 shadow-[inset_0_0_30px_rgba(59,130,246,0.15),0_0_20px_rgba(139,92,246,0.1)]" />
                     {/* 脉动光环 */}
                     <div className="absolute inset-0 rounded-full border-2 border-blue-200/30 dark:border-blue-500/20 animate-ping opacity-30" />
                   </div>
@@ -222,7 +222,7 @@ export function EcosystemDiagram() {
                     {/* 光泽效果 */}
                     <div className="absolute inset-0 rounded-full bg-gradient-to-tr from-transparent via-white/40 to-transparent dark:via-white/10 animate-[spin_15s_linear_infinite]" />
                     {/* 核心 */}
-                    <div className="absolute inset-1 rounded-full bg-white/90 dark:bg-gray-900/90 shadow-[inset_0_0_20px_rgba(168,85,247,0.15),0_0_15px_rgba(244,114,182,0.1)] flex items-center justify-center">
+                    <div className="absolute inset-1 rounded-full bg-white/90 dark:bg-background/90 shadow-[inset_0_0_20px_rgba(168,85,247,0.15),0_0_15px_rgba(244,114,182,0.1)] flex items-center justify-center">
                       <span className="text-foreground font-bold text-base lg:text-lg text-center px-2 drop-shadow-sm">
                         {t('ecosystem.consumer')}
                       </span>
@@ -413,7 +413,7 @@ function FunctionNode({ label, angle, radius, isActive, onClick }: FunctionNodeP
           'px-5 py-2.5 rounded-full shadow-md border transition-all duration-300',
           isActive
             ? 'bg-primary border-primary text-primary-foreground scale-110 shadow-lg shadow-primary/30'
-            : 'bg-white dark:bg-gray-900 border-border text-foreground hover:scale-105 hover:border-primary/50 hover:shadow-lg',
+            : 'bg-white dark:bg-background border-border text-foreground hover:scale-105 hover:border-primary/50 hover:shadow-lg',
         )}
       >
         <span className="font-medium text-sm whitespace-nowrap">{label}</span>
@@ -441,7 +441,7 @@ function MobileFunctionNode({
         'px-4 py-2.5 rounded-full shadow-sm border text-center transition-all duration-300 cursor-pointer',
         isActive
           ? 'bg-primary border-primary text-primary-foreground shadow-primary/20'
-          : 'bg-white dark:bg-gray-900 border-border text-foreground hover:border-primary/50',
+          : 'bg-white dark:bg-background border-border text-foreground hover:border-primary/50',
         className,
       )}
       onClick={onClick}
@@ -470,7 +470,7 @@ function DetailPanel({
         // 固定高度，避免内容切换时高度变化导致抖动
         'h-[180px] md:h-[160px]',
         hasContent
-          ? 'bg-white/95 dark:bg-gray-900/95 backdrop-blur-md p-4 md:p-6'
+          ? 'bg-white/95 dark:bg-background/95 backdrop-blur-md p-4 md:p-6'
           : 'bg-transparent',
       )}
     >

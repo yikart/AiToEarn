@@ -33,6 +33,7 @@ import { WxGzhPubService } from './providers/wx-gzh.service'
 import { YoutubePubService } from './providers/youtube.service'
 import { PublishingService } from './publishing.service'
 import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-task.scheduler'
+import { PublishingStatusWatchdogScheduler } from './scheduler/publishing-status-watchdog.scheduler'
 
 @Module({
   imports: [
@@ -72,6 +73,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
     DouyinPubService,
     GoogleBusinessPubService,
     EnqueuePublishingTaskScheduler,
+    PublishingStatusWatchdogScheduler,
     {
       provide: 'PUBLISHING_PROVIDERS',
       useFactory: (
@@ -87,6 +89,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         linkedin: LinkedinPublishService,
         douyin: DouyinPubService,
         googleBusiness: GoogleBusinessPubService,
+        wxGzh: WxGzhPubService,
       ) => ({
         [AccountType.BILIBILI]: bilibili,
         [AccountType.KWAI]: kwai,
@@ -100,6 +103,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         [AccountType.LINKEDIN]: linkedin,
         [AccountType.Douyin]: douyin,
         [AccountType.GOOGLE_BUSINESS]: googleBusiness,
+        [AccountType.WxGzh]: wxGzh,
       }),
       inject: [
         BilibiliPubService,
@@ -114,6 +118,7 @@ import { EnqueuePublishingTaskScheduler } from './scheduler/enqueue-publishing-t
         LinkedinPublishService,
         DouyinPubService,
         GoogleBusinessPubService,
+        WxGzhPubService,
       ],
     },
   ],

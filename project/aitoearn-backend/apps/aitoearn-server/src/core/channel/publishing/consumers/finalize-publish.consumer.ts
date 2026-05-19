@@ -118,7 +118,7 @@ export class FinalizePublishPostConsumer extends WorkerHost {
     }
     // 重试次数耗尽，标记任务为失败
     if (job.opts.attempts && job.attemptsMade >= job.opts.attempts) {
-      this.logger.error(`[task-${job.data.taskId}] Finalize publish task failed after ${job.attemptsMade} attempts, error: ${errorMessage}`)
+      this.logger.error(error, `[task-${job.data.taskId}] Finalize publish task failed after ${job.attemptsMade} attempts`)
       await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
         status: PublishStatus.FAILED,
         errorMsg: errorMessage,

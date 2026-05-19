@@ -45,6 +45,11 @@ function MorePanel({ trigger, onPlanChange, syncPlanIdToUrl }: MorePanelProps) {
     morePlansPagination,
     morePanelOpen,
     selectedPlanId,
+    openMorePanel,
+    closeMorePanel,
+    selectPlan,
+    loadMoreInPanel,
+    onPlanDeleted,
   } = usePlanTabStore(
     useShallow(state => ({
       morePlans: state.morePlans,
@@ -52,17 +57,23 @@ function MorePanel({ trigger, onPlanChange, syncPlanIdToUrl }: MorePanelProps) {
       morePlansPagination: state.morePlansPagination,
       morePanelOpen: state.morePanelOpen,
       selectedPlanId: state.selectedPlanId,
+      openMorePanel: state.openMorePanel,
+      closeMorePanel: state.closeMorePanel,
+      selectPlan: state.selectPlan,
+      loadMoreInPanel: state.loadMoreInPanel,
+      onPlanDeleted: state.onPlanDeleted,
     })),
   )
 
-  const openMorePanel = usePlanTabStore(state => state.openMorePanel)
-  const closeMorePanel = usePlanTabStore(state => state.closeMorePanel)
-  const selectPlan = usePlanTabStore(state => state.selectPlan)
-  const loadMoreInPanel = usePlanTabStore(state => state.loadMoreInPanel)
-  const onPlanDeleted = usePlanTabStore(state => state.onPlanDeleted)
-
-  const openEditPlanModal = useBrandPromotionStore(state => state.openEditPlanModal)
-  const deletePlan = useBrandPromotionStore(state => state.deletePlan)
+  const {
+    openEditPlanModal,
+    deletePlan,
+  } = useBrandPromotionStore(
+    useShallow(state => ({
+      openEditPlanModal: state.openEditPlanModal,
+      deletePlan: state.deletePlan,
+    })),
+  )
 
   const sentinelRef = useRef<HTMLDivElement>(null)
 

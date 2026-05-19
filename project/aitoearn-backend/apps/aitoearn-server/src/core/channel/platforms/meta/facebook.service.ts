@@ -57,46 +57,128 @@ export class FacebookService extends MetaBaseService {
     super()
   }
 
-  private async authorize(
+  private buildReauthorizeException(
     accountId: string,
-  ): Promise<MetaUserOAuthCredential | null> {
-    await this.ensureLocalAccount(accountId)
-    const credential = await this.getOAuth2Credential(accountId)
+    reason: string,
+  ): PlatformAuthExpiredException {
+    const message = `Facebook page authorization data is incomplete (${reason}). Please re-authorize this Facebook Page and try again.`
+    this.logger.error(
+      `[FacebookAuthorizePage] ${message} accountId=${accountId}`,
+    )
+    return new PlatformAuthExpiredException(this.platform, accountId, message)
+  }
+
+  private validatePageCredential(
+    accountId: string,
+    credential: FacebookPageCredentials | null | undefined,
+    source: string,
+  ): FacebookPageCredentials {
     if (!credential) {
-      throw new PlatformAuthExpiredException(this.platform, accountId)
+      this.logger.warn(
+        `[FacebookAuthorizePage] Missing page credential from ${source}, accountId=${accountId}`,
+      )
+      throw new PlatformAuthExpiredException(
+        this.platform,
+        accountId,
+        'Facebook page authorization not found. Please re-authorize this Facebook Page and try again.',
+      )
     }
+
+    if (!credential.id) {
+      this.logger.error(
+        `[FacebookAuthorizePage] Missing page id from ${source}, accountId=${accountId}, credential=${JSON.stringify({
+          name: credential.name,
+          category: credential.category,
+          facebook_user_id: credential.facebook_user_id,
+          hasAccessToken: !!credential.access_token,
+          expiresIn: credential.expires_in,
+        })}`,
+      )
+      throw this.buildReauthorizeException(accountId, `missing page id in ${source}`)
+    }
+
+    if (!credential.access_token) {
+      this.logger.error(
+        `[FacebookAuthorizePage] Missing page access token from ${source}, accountId=${accountId}, pageId=${credential.id}, facebookUserId=${credential.facebook_user_id}`,
+      )
+      throw this.buildReauthorizeException(accountId, `missing page access token in ${source}`)
+    }
+
+    return credential
+  }
+
+  private async getFacebookUserCredential(
+    facebookUserId: string,
+  ): Promise<MetaUserOAuthCredential> {
+    let credential = await this.redisService.getJson<MetaUserOAuthCredential>(
+      ChannelRedisKeys.accessToken('facebook', facebookUserId),
+    )
+    if (!credential) {
+      const oauth2Credential = await this.oauth2CredentialRepository.getOne(
+        facebookUserId,
+        this.platform,
+      )
+      if (!oauth2Credential?.raw) {
+        throw new PlatformAuthExpiredException(this.platform, facebookUserId)
+      }
+      credential = JSON.parse(oauth2Credential.raw) as MetaUserOAuthCredential
+    }
+    return credential
+  }
+
+  private async authorizeFacebookUser(
+    facebookUserId: string,
+  ): Promise<MetaUserOAuthCredential | null> {
+    const credential = await this.getFacebookUserCredential(facebookUserId)
     const now = getCurrentTimestamp()
-    const tokenExpiredAt = now + credential.expires_in
-    const requestTime
-      = tokenExpiredAt - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    if (requestTime <= now) {
+    if (credential.expires_in <= now) {
       this.logger.debug(
-        `Access token for accountId: ${accountId} is expired, refreshing...`,
+        `Facebook user access token for userId: ${facebookUserId} is expired, refreshing...`,
       )
       const refreshedToken = await this.refreshOAuthCredential(
         credential.access_token,
       )
       if (!refreshedToken) {
-        throw new PlatformAuthExpiredException(this.platform, accountId)
+        throw new PlatformAuthExpiredException(this.platform, facebookUserId)
       }
       credential.access_token = refreshedToken.access_token
       credential.expires_in = refreshedToken.expires_in || META_TIME_CONSTANTS.FACEBOOK_LONG_LIVED_TOKEN_DEFAULT_EXPIRE
-      const saved = await this.saveOAuth2Credential(accountId, credential, this.platform)
+      const saved = await this.saveOAuth2Credential(facebookUserId, credential, this.platform)
       if (!saved) {
         this.logger.error(
-          `Failed to save refreshed access token for accountId: ${accountId}`,
+          `Failed to save refreshed access token for facebookUserId: ${facebookUserId}`,
         )
-        throw new PlatformAuthExpiredException(this.platform, accountId)
+        throw new PlatformAuthExpiredException(this.platform, facebookUserId)
       }
       return credential
     }
     return credential
   }
 
+  private async savePageCredential(
+    accountId: string,
+    credential: FacebookPageCredentials,
+  ): Promise<void> {
+    await this.redisService.setJson(
+      ChannelRedisKeys.pageAccessToken('facebook', accountId),
+      credential,
+    )
+    await this.oauth2CredentialRepository.upsertOne(
+      accountId,
+      this.platform,
+      {
+        accessToken: credential.access_token,
+        refreshToken: '',
+        accessTokenExpiresAt: credential.expires_in,
+        raw: JSON.stringify(credential),
+      },
+    )
+  }
+
   async getUserAccount(
     accessToken: string,
   ) {
-    const accountURL = metaOAuth2ConfigMap['facebook'].pageAccountURL || 'https://graph.facebook.com/v23.0/me/accounts'
+    const accountURL = metaOAuth2ConfigMap['facebook'].pageAccountURL
     const response: AxiosResponse<FacebookAccountResponse> = await axios.get(
       accountURL,
       {
@@ -115,20 +197,23 @@ export class FacebookService extends MetaBaseService {
   private async authorizePage(
     accountId: string,
   ): Promise<FacebookPageCredentials> {
-    const pageCredential = await this.getOAuth2Credential(accountId) as unknown as FacebookPageCredentials
-    if (!pageCredential) {
-      this.logger.warn(`No access token found for accountId: ${accountId}`)
-      throw new Error(`No access token found for accountId: ${accountId}`)
-    }
+    const pageCredential = this.validatePageCredential(
+      accountId,
+      await this.getOAuth2Credential(accountId) as unknown as FacebookPageCredentials,
+      'stored credential',
+    )
     const now = getCurrentTimestamp()
-    const tokenExpiredAt = now + pageCredential.expires_in
-    const requestTime
-      = tokenExpiredAt - META_TIME_CONSTANTS.TOKEN_REFRESH_MARGIN
-    if (requestTime <= now) {
+    if (pageCredential.expires_in <= now) {
       this.logger.debug(
         `Access token for accountId: ${accountId} is expired, refreshing...`,
       )
-      const userCredential = await this.authorize(pageCredential.facebook_user_id)
+      if (!pageCredential.facebook_user_id) {
+        this.logger.error(
+          `[FacebookAuthorizePage] Missing facebook_user_id before refresh, accountId=${accountId}, pageId=${pageCredential.id}`,
+        )
+        throw this.buildReauthorizeException(accountId, 'missing facebook_user_id before refresh')
+      }
+      const userCredential = await this.authorizeFacebookUser(pageCredential.facebook_user_id)
       if (!userCredential) {
         this.logger.error(
           `Failed to refresh access token for facebook accountId: ${pageCredential.facebook_user_id}`,
@@ -142,28 +227,36 @@ export class FacebookService extends MetaBaseService {
       if (fbAccountInfo.length > 0) {
         for (const fbAccount of fbAccountInfo) {
           fbAccount.expires_in = userCredential.expires_in
-          const credential = { ...fbAccount, facebook_user_id: userCredential.user_id, expires_in: userCredential.expires_in }
+          const credential = {
+            ...fbAccount,
+            facebook_user_id: userCredential.user_id,
+            expires_in: userCredential.expires_in,
+            spaceId: pageCredential.spaceId,
+            profile_picture_url: pageCredential.profile_picture_url,
+          }
           if (fbAccount.id === pageCredential.id) {
             newPageCredential = credential
           }
-          await this.redisService.setJson(
-            ChannelRedisKeys.pageAccessToken(
-              'facebook',
-              fbAccount.id,
-            ),
-            credential,
-          )
         }
       }
       if (!newPageCredential) {
         this.logger.error(
           `Failed to find page access token for accountId: ${accountId} after refreshing`,
         )
-        throw new Error(`Failed to find page access token for accountId: ${accountId} after refreshing`)
+        throw this.buildReauthorizeException(accountId, `page ${pageCredential.id} not found after refresh`)
       }
-      return newPageCredential
+      await this.savePageCredential(accountId, newPageCredential)
+      return this.validatePageCredential(
+        accountId,
+        newPageCredential,
+        'refreshed credential',
+      )
     }
-    return pageCredential
+    return this.validatePageCredential(
+      accountId,
+      pageCredential,
+      'stored credential',
+    )
   }
 
   private async refreshOAuthCredential(refresh_token: string) {
@@ -239,6 +332,15 @@ export class FacebookService extends MetaBaseService {
   }
 
   async getPageInsights(
+    userId: string,
+    accountId: string,
+    req: FacebookInsightsRequest,
+  ): Promise<FacebookInsightsResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPageInsightsByAccountId(accountId, req)
+  }
+
+  async getPageInsightsByAccountId(
     accountId: string,
     req: FacebookInsightsRequest,
   ): Promise<FacebookInsightsResponse | null> {
@@ -255,6 +357,15 @@ export class FacebookService extends MetaBaseService {
   }
 
   async getPagePublishedPosts(
+    userId: string,
+    accountId: string,
+    query: FacebookPublishedPostRequest,
+  ): Promise<FacebookPublishedPostResponse | null> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPagePublishedPostsByAccountId(accountId, query)
+  }
+
+  async getPagePublishedPostsByAccountId(
     accountId: string,
     query: FacebookPublishedPostRequest,
   ): Promise<FacebookPublishedPostResponse | null> {
@@ -262,10 +373,8 @@ export class FacebookService extends MetaBaseService {
     return await this.facebookAPIService.getPagePublishedPosts(credential.id, credential.access_token, query)
   }
 
-  async getAccountInsights(
-    accountId: string,
-  ) {
-    const pageInsights = await this.getPageInsights(accountId, {
+  async getAccountInsightsByAccountId(accountId: string) {
+    const pageInsights = await this.getPageInsightsByAccountId(accountId, {
       metric: 'page_video_views',
       period: 'lifetime',
     })
@@ -290,9 +399,15 @@ export class FacebookService extends MetaBaseService {
   }
 
   async getPostInsights(
+    userId: string,
     accountId: string,
     postId: string,
   ) {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPostInsightsByAccountId(accountId, postId)
+  }
+
+  async getPostInsightsByAccountId(accountId: string, postId: string) {
     const credential = await this.authorizePage(accountId)
     const postInsightReq: FacebookInsightsRequest = {
       // metric: 'post_reactions_like_total,post_video_views',
@@ -397,6 +512,15 @@ export class FacebookService extends MetaBaseService {
   }
 
   async getPagePosts(
+    userId: string,
+    accountId: string,
+    query: FacebookPagePostRequest,
+  ): Promise<FacebookPostDetailResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPagePostsByAccountId(accountId, query)
+  }
+
+  async getPagePostsByAccountId(
     accountId: string,
     query: FacebookPagePostRequest,
   ): Promise<FacebookPostDetailResponse> {
@@ -405,6 +529,16 @@ export class FacebookService extends MetaBaseService {
   }
 
   async getPostComments(
+    userId: string,
+    accountId: string,
+    postId: string,
+    query: FacebookPostEdgesRequest,
+  ): Promise<FacebookPostEdgesResponse> {
+    await this.getLocalAccount(userId, accountId)
+    return this.getPostCommentsByAccountId(accountId, postId, query)
+  }
+
+  async getPostCommentsByAccountId(
     accountId: string,
     postId: string,
     query: FacebookPostEdgesRequest,

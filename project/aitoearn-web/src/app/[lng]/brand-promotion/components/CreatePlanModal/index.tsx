@@ -29,17 +29,19 @@ function CreatePlanModal() {
     createPlanModalOpen,
     editingPlan,
     isSubmitting,
+    closePlanModal,
+    createPlan,
+    updatePlan,
   } = useBrandPromotionStore(
     useShallow(state => ({
       createPlanModalOpen: state.createPlanModalOpen,
       editingPlan: state.editingPlan,
       isSubmitting: state.isSubmitting,
+      closePlanModal: state.closePlanModal,
+      createPlan: state.createPlan,
+      updatePlan: state.updatePlan,
     })),
   )
-
-  const closePlanModal = useBrandPromotionStore(state => state.closePlanModal)
-  const createPlan = useBrandPromotionStore(state => state.createPlan)
-  const updatePlan = useBrandPromotionStore(state => state.updatePlan)
 
   const isEdit = editingPlan !== null
 

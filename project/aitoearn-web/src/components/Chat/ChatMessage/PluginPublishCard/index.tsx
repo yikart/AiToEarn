@@ -31,7 +31,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
 import { buildPluginPublishItem } from '@/store/agent/handlers/action.handlers'
-import { usePluginStore } from '@/store/plugin'
+import { isPluginPlatformAccountReady, usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
 import { getOssUrl } from '@/utils/oss'
 import { getActionKey, usePluginPublishCache } from './usePluginPublishCache'
@@ -119,7 +119,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
 
     // 3. 检查平台是否已登录（platformAccounts 中是否有该平台账号）
     const platformAccount = platformAccounts[platform]
-    if (!platformAccount) {
+    if (!platformAccount || !isPluginPlatformAccountReady(platformAccount)) {
       setState('PLATFORM_NOT_LOGGED')
       hasTriggeredRef.current = false
       return

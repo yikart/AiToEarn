@@ -130,26 +130,12 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
     }
   }
 
-  // 更新 openAffiliate 状态
-  async updateOpenAffiliateById(id: string, openAffiliate: boolean) {
-    const res = await this.materialGroupModel.updateOne(
-      { _id: id },
-      { $set: { openAffiliate } },
-    )
-    return res.modifiedCount > 0
-  }
-
-  // 关闭同用户其他素材组的 openAffiliate
-  async updateOpenAffiliateByUserId(userId: string, excludeId: string) {
-    const res = await this.materialGroupModel.updateMany(
-      { userId, _id: { $ne: excludeId } },
-      { $set: { openAffiliate: false } },
-    )
-    return res.modifiedCount
-  }
-
   async listByLibraryId(libraryId: string): Promise<MaterialGroup[]> {
     return this.materialGroupModel.find({ libraryId }).lean({ virtuals: true })
+  }
+
+  async countByLibraryId(libraryId: string): Promise<number> {
+    return this.materialGroupModel.countDocuments({ libraryId })
   }
 
   async countByLibraryIdAndUserId(libraryId: string, userId: string): Promise<number> {
@@ -169,13 +155,5 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
       { libraryId },
       { $set: { libraryId: null } },
     ).exec()
-  }
-
-  // 获取开启 openAffiliate 的素材组（最新的一个）
-  async getOpenAffiliate(userId: string) {
-    return await this.materialGroupModel
-      .findOne({ userId, openAffiliate: true })
-      .sort({ createdAt: -1 })
-      .lean({ virtuals: true })
   }
 }

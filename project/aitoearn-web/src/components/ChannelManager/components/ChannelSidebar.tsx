@@ -7,9 +7,10 @@
 
 import type { PlatType } from '@/app/config/platConfig'
 import { Layers, Plus, Puzzle } from 'lucide-react'
+import Image from 'next/image'
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, isPlatformAvailable, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
+import { AccountPlatInfoArr, AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -21,8 +22,10 @@ import { useChannelManagerStore } from '../channelManagerStore'
 /**
  * 检查平台是否需要插件支持
  */
+const pluginSupportedPlatforms: readonly PlatType[] = PLUGIN_SUPPORTED_PLATFORMS
+
 function isPluginPlatform(platform: PlatType): boolean {
-  return PLUGIN_SUPPORTED_PLATFORMS.includes(platform as any)
+  return pluginSupportedPlatforms.includes(platform)
 }
 
 export function ChannelSidebar() {
@@ -46,9 +49,9 @@ export function ChannelSidebar() {
     })),
   )
 
-  // 获取所有平台列表（始终显示所有平台，不可用的会禁用）
+  // 获取所有平台列表
   const allPlatforms = useMemo<PlatType[]>(() => {
-    return RegionSortedPlatInfoArr.map(([platform]) => platform)
+    return AccountPlatInfoArr.map(([platform]) => platform)
   }, [])
 
   // 统计各平台账号数量
@@ -95,33 +98,37 @@ export function ChannelSidebar() {
   }
 
   return (
-    <div data-testid="cm-sidebar" className="flex h-full w-48 flex-col border-r bg-muted/30">
-      {/* 侧边栏标题 */}
-      <div className="border-b p-3">
-        <h3 className="text-sm font-medium text-foreground">{t('channelManager.platforms')}</h3>
-      </div>
-
+    <div data-testid="cm-sidebar" className="flex h-full w-full flex-col overflow-hidden rounded-lg border border-border/70 bg-background shadow-sm">
       <ScrollArea className="flex-1">
-        <div className="space-y-1 p-2">
+        <div className="space-y-1 px-2 pb-2 pt-3">
           {/* 全部频道选项 */}
           <button
             data-testid="cm-sidebar-all-channels"
             type="button"
             onClick={() => setSelectedPlatform('all')}
             className={cn(
-              'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
+              'flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-all',
               selectedPlatform === 'all'
-                ? 'bg-primary text-primary-foreground font-medium'
-                : 'hover:bg-muted/60',
+                ? 'bg-gradient-back text-gradient-foreground shadow-sm shadow-primary/20'
+                : 'text-foreground hover:bg-muted/70',
             )}
           >
-            <Layers className="h-4 w-4" />
-            <span className="flex-1 text-left">{t('channelManager.allChannels')}</span>
             <span
               className={cn(
-                'rounded-full px-2 py-0.5 text-xs',
+                'flex h-6 w-6 shrink-0 items-center justify-center rounded-md border',
                 selectedPlatform === 'all'
-                  ? 'bg-primary-foreground/20 text-primary-foreground'
+                  ? 'border-primary-foreground/20 bg-primary-foreground/15'
+                  : 'border-border bg-background',
+              )}
+            >
+              <Layers className="h-4 w-4" />
+            </span>
+            <span className="flex-1 truncate text-left font-semibold">{t('channelManager.allChannels')}</span>
+            <span
+              className={cn(
+                'min-w-7 rounded-full px-2 py-0.5 text-center text-xs font-medium',
+                selectedPlatform === 'all'
+                  ? 'bg-primary-foreground/20 text-gradient-foreground'
                   : 'bg-muted text-muted-foreground',
               )}
             >
@@ -130,14 +137,13 @@ export function ChannelSidebar() {
           </button>
 
           {/* 分隔线 */}
-          {platformsWithAccounts.length > 0 && <div className="my-2 border-t" />}
+          {platformsWithAccounts.length > 0 && <div className="my-1.5 border-t border-border/70" />}
 
           {/* 有账号的平台 */}
           {platformsWithAccounts.map((platform) => {
             const info = AccountPlatInfoMap.get(platform)
             const count = platformAccountCounts.get(platform) || 0
             const needsPlugin = isPluginPlatform(platform)
-            const isRegionRestricted = !isPlatformAvailable(platform)
 
             if (!info)
               return null
@@ -149,30 +155,37 @@ export function ChannelSidebar() {
                 type="button"
                 onClick={() => handlePlatformClick(platform)}
                 className={cn(
-                  'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm transition-colors',
-                  isRegionRestricted
-                    ? 'opacity-50 grayscale'
-                    : selectedPlatform === platform
-                      ? 'bg-primary text-primary-foreground font-medium'
-                      : 'hover:bg-muted/60',
+                  'flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm transition-all',
+                  selectedPlatform === platform
+                    ? 'bg-gradient-back text-gradient-foreground shadow-sm shadow-primary/20'
+                    : 'text-foreground hover:bg-muted/70',
                 )}
               >
-                <div className="relative shrink-0">
-                  <img
-                    src={typeof info.icon === 'string' ? info.icon : info.icon}
+                <div
+                  className={cn(
+                    'relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md border',
+                    selectedPlatform === platform
+                      ? 'border-primary-foreground/20 bg-primary-foreground/15'
+                      : 'border-border bg-background',
+                  )}
+                >
+                  <Image
+                    src={info.icon}
                     alt={info.name}
+                    width={16}
+                    height={16}
                     className="h-4 w-4 object-contain"
                   />
                   {needsPlugin && (
                     <Puzzle className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground" />
                   )}
                 </div>
-                <span className="flex-1 truncate text-left">{info.name}</span>
+                <span className="flex-1 truncate text-left font-medium">{info.name}</span>
                 <span
                   className={cn(
-                    'rounded-full px-2 py-0.5 text-xs',
+                    'min-w-7 rounded-full px-2 py-0.5 text-center text-xs font-medium',
                     selectedPlatform === platform
-                      ? 'bg-primary-foreground/20 text-primary-foreground'
+                      ? 'bg-primary-foreground/20 text-gradient-foreground'
                       : 'bg-muted text-muted-foreground',
                   )}
                 >
@@ -185,14 +198,13 @@ export function ChannelSidebar() {
           {/* 无账号的平台（灰色显示） */}
           {platformsWithoutAccounts.length > 0 && (
             <>
-              <div className="my-2 border-t" />
-              <div className="px-3 py-1 text-xs text-muted-foreground">
+              <div className="my-1.5 border-t border-border/70" />
+              <div className="px-2.5 py-1 text-xs font-medium text-muted-foreground">
                 {t('channelManager.availablePlatforms')}
               </div>
               {platformsWithoutAccounts.map((platform) => {
                 const info = AccountPlatInfoMap.get(platform)
                 const needsPlugin = isPluginPlatform(platform)
-                const isRegionRestricted = !isPlatformAvailable(platform)
 
                 if (!info)
                   return null
@@ -203,24 +215,24 @@ export function ChannelSidebar() {
                     type="button"
                     onClick={() => handlePlatformClick(platform)}
                     className={cn(
-                      'flex w-full cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors',
-                      isRegionRestricted
-                        ? 'opacity-30 grayscale'
-                        : 'opacity-60 hover:bg-muted/60 hover:opacity-100',
+                      'flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground transition-all',
+                      'opacity-70 hover:bg-muted/70 hover:text-foreground hover:opacity-100',
                     )}
                   >
-                    <div className="relative shrink-0">
-                      <img
-                        src={typeof info.icon === 'string' ? info.icon : info.icon}
+                    <div className="relative flex h-6 w-6 shrink-0 items-center justify-center rounded-md border border-border bg-background">
+                      <Image
+                        src={info.icon}
                         alt={info.name}
+                        width={16}
+                        height={16}
                         className="h-4 w-4 object-contain grayscale"
                       />
                       {needsPlugin && (
                         <Puzzle className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5" />
                       )}
                     </div>
-                    <span className="flex-1 truncate text-left">{info.name}</span>
-                    <Plus className="h-3 w-3" />
+                    <span className="flex-1 truncate text-left font-medium">{info.name}</span>
+                    <Plus className="h-3.5 w-3.5" />
                   </button>
                 )
               })}
@@ -230,11 +242,11 @@ export function ChannelSidebar() {
       </ScrollArea>
 
       {/* 底部：连接新频道按钮 */}
-      <div className="border-t p-3">
+      <div className="border-t border-border/70 p-3">
         <Button
           data-testid="cm-sidebar-connect-btn"
           variant="outline"
-          className="w-full cursor-pointer"
+          className="h-10 w-full cursor-pointer rounded-lg border-primary/45 bg-background text-primary shadow-sm hover:border-primary/70 hover:bg-primary/5"
           onClick={handleConnectNewChannel}
         >
           <Plus className="mr-2 h-4 w-4" />

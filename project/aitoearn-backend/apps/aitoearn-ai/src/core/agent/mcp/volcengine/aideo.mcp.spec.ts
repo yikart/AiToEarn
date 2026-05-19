@@ -1,3 +1,4 @@
+import type { AiAvailabilityService } from '../../../ai-availability'
 import { Logger } from '@nestjs/common'
 import { UserType } from '@yikart/common'
 import { vi } from 'vitest'
@@ -9,6 +10,7 @@ describe('aideoMcp', () => {
   let aideoMcp: AideoMcp
   let mockLogger: Logger
   let mockAideoService: vi.Mocked<AideoService>
+  let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
 
   const userId = 'test-user-id'
   const userType = UserType.User
@@ -25,7 +27,11 @@ describe('aideoMcp', () => {
       getAideoTask: vi.fn(),
     } as unknown as vi.Mocked<AideoService>
 
-    aideoMcp = new AideoMcp(mockAideoService)
+    mockAiAvailability = {
+      execute: vi.fn().mockImplementation((_ctx: unknown, fn: () => unknown) => (fn as () => Promise<unknown>)()),
+    } as unknown as vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
+
+    aideoMcp = new AideoMcp(mockAideoService, mockAiAvailability as unknown as AiAvailabilityService)
     // Override the logger for testing
     Object.defineProperty(aideoMcp, 'logger', { value: mockLogger })
   })

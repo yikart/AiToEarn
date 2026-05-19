@@ -10,7 +10,6 @@ import { Mail } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import {
   getNotificationControl,
-  NotificationType,
   updateNotificationControl,
 } from '@/api/notification'
 import { useTransClient } from '@/app/i18n/client'
@@ -23,18 +22,6 @@ import { toast } from '@/lib/toast'
 interface NotificationControlModalProps {
   visible: boolean
   onClose: () => void
-}
-
-function getNotificationTypeLabel(type: string, t: (key: string) => string): string {
-  const labelMap: Record<string, string> = {
-    [NotificationType.TaskReminder]: t('controlTypes.taskReminder'),
-    [NotificationType.UserWithdraw]: t('controlTypes.userWithdraw'),
-    [NotificationType.TaskPunish]: t('controlTypes.taskPunish'),
-    [NotificationType.TaskDemandAdd]: t('controlTypes.taskDemandAdd'),
-    [NotificationType.TaskDemandBalanceNotEnough]: t('controlTypes.taskDemandBalanceNotEnough'),
-    [NotificationType.AgentResult]: t('controlTypes.agentResult'),
-  }
-  return labelMap[type] || type
 }
 
 const NotificationControlModal: React.FC<NotificationControlModalProps> = ({
@@ -126,7 +113,7 @@ const NotificationControlModal: React.FC<NotificationControlModalProps> = ({
             >
               <div className="flex-1">
                 <span className="text-sm font-medium">
-                  {getNotificationTypeLabel(item.type, t)}
+                  {t(`notificationTypes.${item.type}` as any) || item.type}
                 </span>
               </div>
               <div className="flex items-center gap-2">

@@ -1,3 +1,4 @@
+import type { GeminiVideoAiLog } from '../video-ai-log.interface'
 import {
   GenerateVideosConfig,
   GenerateVideosOperation,
@@ -8,13 +9,17 @@ import {
   VideoGenerationReferenceType,
 } from '@google/genai'
 import { Injectable, Logger } from '@nestjs/common'
+import { AiLogSettlementSettledBy } from '@yikart/aitoearn-ai-shared'
+import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
-import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
+import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
+import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import { GeminiService } from '../../libs/gemini'
 import { ModelsConfigService } from '../../models-config'
+import { AsyncSettlementService } from '../../settlement'
 import { GeminiVeoVideoCallbackDto, UserGeminiVeoVideoCreateRequestDto } from './gemini.dto'
 
 @Injectable()
@@ -27,7 +32,48 @@ export class GeminiVideoService {
     private readonly assetsService: AssetsService,
     private readonly modelsConfigService: ModelsConfigService,
     private readonly creditsHelper: CreditsHelperService,
+    private readonly queueService: QueueService,
+    private readonly aiAvailability: AiAvailabilityService,
+    private readonly asyncSettlementService: AsyncSettlementService,
   ) { }
+
+  private async enqueueTaskRefund(aiLog: AiLog): Promise<void> {
+    await this.asyncSettlementService.markFailed(aiLog.id, {
+      channel: aiLog.channel,
+      action: aiLog.action,
+      settledBy: AiLogSettlementSettledBy.GeminiCallback,
+    })
+
+    if (aiLog.userType !== UserType.User) {
+      return
+    }
+
+    if (!aiLog.taskId) {
+      this.logger.error(
+        { aiLogId: aiLog.id, userId: aiLog.userId },
+        'Cannot enqueue refund: missing taskId',
+      )
+      return
+    }
+
+    await this.queueService.addAiTaskRefundJob({
+      userId: aiLog.userId,
+      taskId: aiLog.id,
+      amount: aiLog.points,
+      description: aiLog.model,
+      expiredAt: null,
+      metadata: {
+        channel: aiLog.channel,
+        action: aiLog.action,
+        failedAt: new Date().toISOString(),
+      },
+    })
+
+    this.logger.log(
+      { userId: aiLog.userId, taskId: aiLog.taskId, amount: aiLog.points },
+      'Enqueued AI task refund',
+    )
+  }
 
   async calculatePrice(params: {
     model: string
@@ -97,7 +143,8 @@ export class GeminiVideoService {
   }
 
   async createVideo(request: UserGeminiVeoVideoCreateRequestDto) {
-    const { userId, userType, model, prompt, seed, duration, negativePrompt, resolution } = request
+    const { source = CreditsConsumptionSource.AiVideo, ...requestWithoutSource } = request
+    const { userId, userType, model, prompt, seed, duration, negativePrompt, resolution } = requestWithoutSource
 
     const pricing = await this.calculatePrice({
       userId,
@@ -105,13 +152,6 @@ export class GeminiVideoService {
       model,
       duration,
     })
-
-    if (userType === UserType.User) {
-      const balance = await this.creditsHelper.getBalance(userId)
-      if (balance < pricing) {
-        throw new AppException(ResponseCode.UserCreditsInsufficient)
-      }
-    }
 
     const startedAt = new Date()
 
@@ -156,17 +196,25 @@ export class GeminiVideoService {
       config.aspectRatio = request.aspectRatio || '16:9'
     }
 
-    const result = await this.geminiLibService.createVideo(params)
-    if (!result.operation.name || result.operation.error) {
-      this.logger.error(result, 'Gemini Veo createVideo failed')
-      throw new AppException(ResponseCode.AiCallFailed, result.operation.error)
-    }
+    const result = await this.aiAvailability.executeAsync(
+      { provider: 'gemini', operation: 'videoGeneration', model },
+      async () => {
+        const r = await this.geminiLibService.createVideo(params)
+        if (!r.operation.name || r.operation.error) {
+          this.logger.error(r, 'Gemini Veo createVideo failed')
+          throw new AppException(ResponseCode.AiCallFailed, r.operation.error)
+        }
+        return r
+      },
+      r => r.operation.name!,
+    )
 
     if (userType === UserType.User) {
       await this.creditsHelper.deductCredits({
         userId,
         amount: pricing,
         type: CreditsType.AiService,
+        source,
         description: model,
       })
     }
@@ -181,8 +229,9 @@ export class GeminiVideoService {
       startedAt,
       type: AiLogType.Video,
       points: pricing,
+      settlement: this.asyncSettlementService.createPendingSettlement(pricing, { source }),
       request: {
-        ...request,
+        ...requestWithoutSource,
         keyPairId: result.keyPairId,
       },
       response: result.operation,
@@ -203,9 +252,10 @@ export class GeminiVideoService {
     if (!aiLog || aiLog.channel !== AiLogChannel.Gemini) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
+    const geminiAiLog = aiLog as GeminiVideoAiLog
 
-    if (aiLog.status !== AiLogStatus.Generating) {
-      return aiLog.response as GeminiVeoVideoCallbackDto
+    if (geminiAiLog.status !== AiLogStatus.Generating) {
+      return geminiAiLog.response!
     }
 
     this.logger.debug(operation, `Gemini Veo callback`)
@@ -214,12 +264,12 @@ export class GeminiVideoService {
     const generatedVideos: { url: string, gcsUrl: string | null }[] = []
 
     // 从 request 读取 keyPairId
-    const requestData = aiLog.request as UserGeminiVeoVideoCreateRequestDto & { keyPairId?: string }
+    const requestData = geminiAiLog.request
     const keyPairId = requestData.keyPairId || this.geminiLibService.keyManager.getDefaultKeyPairId()
 
     if (!requestData.keyPairId) {
       this.logger.warn(
-        { aiLogId: aiLog.id, taskId: aiLog.taskId },
+        { aiLogId: geminiAiLog.id, taskId: geminiAiLog.taskId },
         'AiLog missing keyPairId, using default key pair for download',
       )
     }
@@ -250,10 +300,10 @@ export class GeminiVideoService {
           continue
         }
 
-        const uploadResult = await this.assetsService.uploadFromBuffer(aiLog.userId, buffer, {
+        const uploadResult = await this.assetsService.uploadFromBuffer(geminiAiLog.userId, buffer, {
           type: AssetType.AiVideo,
           mimeType: video.mimeType || 'video/mp4',
-        }, `${aiLog.model}`)
+        }, `${geminiAiLog.model}`)
 
         generatedVideos.push({
           url: uploadResult.asset.path,
@@ -265,27 +315,49 @@ export class GeminiVideoService {
       aiLogStatus = AiLogStatus.Generating
     }
 
-    const duration = Date.now() - aiLog.startedAt.getTime()
+    const duration = Date.now() - geminiAiLog.startedAt.getTime()
     const completedAt = aiLogStatus !== AiLogStatus.Generating ? new Date() : null
 
-    const request = aiLog.request as UserGeminiVeoVideoCreateRequestDto
     const callbackData: GeminiVeoVideoCallbackDto = {
       completedAt,
       status: aiLogStatus,
       generatedVideos,
       name: operation.name!,
-      model: request.model,
-      prompt: request.prompt,
-      createdAt: aiLog.startedAt,
+      model: requestData.model,
+      prompt: requestData.prompt,
+      createdAt: geminiAiLog.startedAt,
       error: operation.error,
     }
 
-    await this.aiLogRepo.updateById(aiLog.id, {
+    await this.aiLogRepo.updateById(geminiAiLog.id, {
       status: aiLogStatus,
       response: callbackData,
       duration,
       errorMessage: operation.error?.['message'],
     })
+
+    if (aiLogStatus === AiLogStatus.Success) {
+      await this.asyncSettlementService.settleSuccess(geminiAiLog.id, geminiAiLog.points, {
+        channel: geminiAiLog.channel,
+        settledBy: AiLogSettlementSettledBy.GeminiCallback,
+      })
+    }
+
+    if (aiLogStatus === AiLogStatus.Failed) {
+      await this.enqueueTaskRefund(geminiAiLog)
+    }
+
+    if (aiLogStatus === AiLogStatus.Success || aiLogStatus === AiLogStatus.Failed) {
+      await this.aiAvailability.recordAsyncComplete(
+        operation.name!,
+        { provider: 'gemini', operation: 'videoGeneration', model: geminiAiLog.model },
+        {
+          success: aiLogStatus === AiLogStatus.Success,
+          latencyMs: duration,
+          errorMessage: operation.error?.['message'] as string | undefined,
+        },
+      )
+    }
 
     return callbackData
   }
@@ -296,13 +368,14 @@ export class GeminiVideoService {
     if (aiLog == null || !aiLog.taskId || aiLog.type !== AiLogType.Video || aiLog.channel !== AiLogChannel.Gemini) {
       throw new AppException(ResponseCode.InvalidAiTaskId)
     }
+    const geminiAiLog = aiLog as GeminiVideoAiLog
 
-    if (aiLog.status === AiLogStatus.Generating) {
-      const operation = await this.geminiLibService.getOperation(this.getOperation({ name: aiLog.taskId }))
+    if (geminiAiLog.status === AiLogStatus.Generating) {
+      const operation = await this.geminiLibService.getOperation(this.getOperation({ name: geminiAiLog.taskId! }))
       return this.callback(operation)
     }
 
-    return aiLog.response as GeminiVeoVideoCallbackDto
+    return geminiAiLog.response!
   }
 
   getTaskResult(result: GeminiVeoVideoCallbackDto) {
@@ -320,13 +393,13 @@ export class GeminiVideoService {
     }
   }
 
-  extractInput(request: Record<string, unknown>) {
+  extractInput(request: GeminiVideoAiLog['request']) {
     return {
-      prompt: (request['prompt'] as string) || '',
-      image: request['image'] as string | undefined,
-      duration: request['duration'] as number | undefined,
-      resolution: request['resolution'] as string | undefined,
-      aspectRatio: request['aspectRatio'] as string | undefined,
+      prompt: request.prompt || '',
+      image: request.image,
+      duration: request.duration,
+      resolution: request.resolution,
+      aspectRatio: request.aspectRatio,
     }
   }
 

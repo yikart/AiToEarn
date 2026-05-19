@@ -33,10 +33,6 @@ const mailConfigSchema = z.object({
 
 const moreApiConfigSchema = z.object({
   platApiUri: z.string().default(''),
-  xhsCreatorUri: z.string().default(''),
-})
-
-export const creditsConfigSchema = z.object({
 })
 
 export const newApiConfigSchema = z.object({
@@ -86,15 +82,48 @@ const TiktokSchema = z.object({
   clientId: z.string().default(''),
   clientSecret: z.string().default(''),
   redirectUri: z.string().default(''),
-  promotionRedirectUri: z.string().default(''),
   scopes: z.array(z.string()).default([]),
-  promotionBaseUrl: z.string().default(''),
+})
+
+const TwitterPricingSchema = z.object({
+  read: z.object({
+    post: z.number().default(0.5),
+    user: z.number().default(1),
+    media: z.number().default(0.5),
+    list: z.number().default(0.5),
+  }),
+  write: z.object({
+    contentCreate: z.number().default(1.5),
+    contentCreateWithUrl: z.number().default(20),
+    interactionCreate: z.number().default(1.5),
+    interactionDelete: z.number().default(1),
+    contentManage: z.number().default(0.5),
+    bookmark: z.number().default(0.5),
+    mediaMetadata: z.number().default(0.5),
+  }),
 })
 
 const TwitterSchema = z.object({
   clientId: z.string().default(''),
   clientSecret: z.string().default(''),
   redirectUri: z.string().default(''),
+  pricing: TwitterPricingSchema.default({
+    read: {
+      post: 0.5,
+      user: 1,
+      media: 0.5,
+      list: 0.5,
+    },
+    write: {
+      contentCreate: 1.5,
+      contentCreateWithUrl: 20,
+      interactionCreate: 1.5,
+      interactionDelete: 1,
+      contentManage: 0.5,
+      bookmark: 0.5,
+      mediaMetadata: 0.5,
+    },
+  }),
 })
 
 const WxPlatSchema = z.object({
@@ -122,8 +151,6 @@ const OAuth2ConfigSchema = z.object({
   clientSecret: z.string().default(''),
   configId: z.string().default(''),
   redirectUri: z.string().default(''),
-  promotionRedirectUri: z.string().default(''),
-  promotionBaseUrl: z.string().default(''),
   scopes: z.array(z.string()).default([]),
 })
 
@@ -163,6 +190,7 @@ export const channelConfigSchema = z.object({
 export const appConfigSchema = z.object({
   ...baseConfig.shape,
   environment: z.enum(['development', 'production']).default('development'),
+  superCode: z.string().optional(),
   auth: aitoearnAuthConfigSchema,
   redis: redisConfigSchema,
   mongodb: mongodbConfigSchema,
@@ -171,7 +199,6 @@ export const appConfigSchema = z.object({
   assets: assetsConfigSchema,
   mail: mailConfigSchema,
   aiClient: aitoearnAiClientConfigSchema,
-  credits: creditsConfigSchema,
   newApi: newApiConfigSchema.optional(),
   channel: channelConfigSchema,
   relay: relayConfigSchema.optional(),

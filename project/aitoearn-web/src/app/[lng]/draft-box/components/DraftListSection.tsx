@@ -11,9 +11,9 @@
 
 import type { PromotionMaterial } from '@/app/[lng]/brand-promotion/brandPromotionStore/types'
 import type { PlatType } from '@/app/config/platConfig'
-import { Check, ListChecks, Plus } from 'lucide-react'
+import { ArrowRightLeft, Check, ListChecks, Plus, Trash2 } from 'lucide-react'
 import Image from 'next/image'
-import { memo, useCallback, useEffect, useRef, useState } from 'react'
+import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import Masonry from 'react-masonry-css'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
@@ -30,8 +30,13 @@ import { BatchActionBar } from './BatchActionBar'
 import { ConditionalDeleteDialog } from './ConditionalDeleteDialog'
 import { useMediaTabStore } from './ContentTabs/mediaTabStore'
 import { DraftListToolbar } from './DraftListToolbar'
-import { GeneratingCard } from './GeneratingCard'
+import {
+  GeneratingTaskCard,
+  getDraftGenerationTaskTarget,
+  shouldShowDraftGenerationTaskCard,
+} from './GeneratingCard'
 import { LazyImage } from './LazyImage'
+import { LOAD_MORE_OBSERVER_OPTIONS } from './loadMoreObserver'
 import { MediaListSection } from './MediaListSection'
 
 /**
@@ -217,76 +222,130 @@ const LoadingIndicator = memo(({ label }: { label: string }) => (
 LoadingIndicator.displayName = 'LoadingIndicator'
 
 interface DraftListSectionProps {
-  /** 传入时显示 Tab（草稿箱/视频/图片），不传则只显示草稿列表 */
-  materialGroupId?: string
+  materialGroupId: string
+  tabs?: DraftListSectionTab[]
+  defaultTab?: DraftListSectionTab
+  allowTransfer?: boolean
 }
 
-export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps) => {
+export type DraftListSectionTab = 'all' | 'drafts' | 'video' | 'img'
+
+const DEFAULT_DRAFT_LIST_TABS: DraftListSectionTab[] = ['all', 'drafts', 'video', 'img']
+
+export const DraftListSection = memo(({
+  materialGroupId,
+  tabs = DEFAULT_DRAFT_LIST_TABS,
+  defaultTab = 'all',
+  allowTransfer = true,
+}: DraftListSectionProps) => {
   const { t } = useTransClient('brandPromotion')
   const { t: tMaterial } = useTransClient('material')
+  const visibleTabs = useMemo(() => tabs.length > 0 ? tabs : DEFAULT_DRAFT_LIST_TABS, [tabs])
+  const resolvedDefaultTab = visibleTabs.includes(defaultTab) ? defaultTab : visibleTabs[0]
+  const [activeTab, setActiveTab] = useState<DraftListSectionTab>(resolvedDefaultTab)
+  const hasAllTab = visibleTabs.includes('all')
+  const hasDraftsTab = visibleTabs.includes('drafts')
+  const hasVideoTab = visibleTabs.includes('video')
+  const hasImgTab = visibleTabs.includes('img')
+  const showTabsList = visibleTabs.length > 1
 
-  const showTabs = !!materialGroupId
-  const [activeTab, setActiveTab] = useState('all')
-
-  // materialGroupId 变化时，有 Tab 模式默认选中"全部"
+  // materialGroupId 变化时，默认选中配置的 Tab
   useEffect(() => {
-    if (materialGroupId) {
-      setActiveTab('all')
-    }
-  }, [materialGroupId])
+    setActiveTab(resolvedDefaultTab)
+  }, [materialGroupId, resolvedDefaultTab])
 
-  // 无限滚动加载触发器
-  const loadMoreRef = useRef<HTMLDivElement>(null)
+  // 无限滚动加载触发器（使用 callback ref + state，确保 Tab 切换后 observer 能正确绑定）
+  const [loadMoreElement, setLoadMoreElement] = useState<HTMLDivElement | null>(null)
+  const loadMoreCallbackRef = useCallback((node: HTMLDivElement | null) => {
+    setLoadMoreElement(node)
+  }, [])
 
   const {
     materials,
     materialsLoading,
     materialsPagination,
     currentPlan,
-    generatingCount,
+    generationTasks,
     batchMode,
     selectedMaterialIds,
+    openCreateMaterialModal,
+    loadMoreMaterials,
+    openDraftDetailDialog,
+    openGenerationDetailDialog,
+    toggleMaterialSelection,
+    fetchMaterials,
   } = usePlanDetailStore(
     useShallow(state => ({
       materials: state.materials,
       materialsLoading: state.materialsLoading,
       materialsPagination: state.materialsPagination,
       currentPlan: state.currentPlan,
-      generatingCount: state.generatingCount,
+      generationTasks: state.generationTasks,
       batchMode: state.batchMode,
       selectedMaterialIds: state.selectedMaterialIds,
+      openCreateMaterialModal: state.openCreateMaterialModal,
+      loadMoreMaterials: state.loadMoreMaterials,
+      openDraftDetailDialog: state.openDraftDetailDialog,
+      openGenerationDetailDialog: state.openGenerationDetailDialog,
+      toggleMaterialSelection: state.toggleMaterialSelection,
+      fetchMaterials: state.fetchMaterials,
     })),
   )
 
-  const openCreateMaterialModal = usePlanDetailStore(state => state.openCreateMaterialModal)
-  const loadMoreMaterials = usePlanDetailStore(state => state.loadMoreMaterials)
-  const openDraftDetailDialog = usePlanDetailStore(state => state.openDraftDetailDialog)
-  const openGenerationDetailDialog = usePlanDetailStore(state => state.openGenerationDetailDialog)
-  const toggleMaterialSelection = usePlanDetailStore(state => state.toggleMaterialSelection)
-
-  const { videoTotal, imgTotal, allTotal } = useMediaTabStore(
+  const { draftTotal, videoTotal, imgTotal, fetchMediaList, fetchAllList, videoInitialized, imgInitialized, allInitialized } = useMediaTabStore(
     useShallow(state => ({
-      videoTotal: state.video.total,
-      imgTotal: state.img.total,
-      allTotal: state.all.draftTotal + state.all.videoTotal + state.all.imgTotal,
+      draftTotal: state.all.draftTotal,
+      videoTotal: state.video.initialized ? state.video.total : state.all.videoTotal,
+      imgTotal: state.img.initialized ? state.img.total : state.all.imgTotal,
+      fetchMediaList: state.fetchMediaList,
+      fetchAllList: state.fetchAllList,
+      videoInitialized: state.video.initialized,
+      imgInitialized: state.img.initialized,
+      allInitialized: state.all.initialized,
     })),
   )
-
-  const fetchMediaList = useMediaTabStore(state => state.fetchMediaList)
-  const fetchAllList = useMediaTabStore(state => state.fetchAllList)
-  const videoInitialized = useMediaTabStore(state => state.video.initialized)
-  const imgInitialized = useMediaTabStore(state => state.img.initialized)
-  const allInitialized = useMediaTabStore(state => state.all.initialized)
 
   const selectedSet = new Set(selectedMaterialIds)
+  const visibleGenerationTasks = useMemo(
+    () => generationTasks.filter(shouldShowDraftGenerationTaskCard),
+    [generationTasks],
+  )
+  const visibleDraftGenerationTasks = useMemo(
+    () => visibleGenerationTasks.filter(task => getDraftGenerationTaskTarget(task) === 'draft'),
+    [visibleGenerationTasks],
+  )
+  const visibleVideoGenerationTasks = useMemo(
+    () => visibleGenerationTasks.filter(task => getDraftGenerationTaskTarget(task) === 'video'),
+    [visibleGenerationTasks],
+  )
+  const visibleImageGenerationTasks = useMemo(
+    () => visibleGenerationTasks.filter(task => getDraftGenerationTaskTarget(task) === 'img'),
+    [visibleGenerationTasks],
+  )
+  const allTotal = draftTotal + videoTotal + imgTotal + visibleGenerationTasks.length
+
+  const exitMediaBatchMode = useMediaTabStore(state => state.exitBatchMode)
+  const enterMediaBatchMode = useMediaTabStore(state => state.enterBatchMode)
+  const mediaBatchMode = useMediaTabStore(state => state.batchMode)
+  const exitDraftBatchMode = usePlanDetailStore(state => state.exitBatchMode)
 
   // Tab 切换处理
   const handleTabChange = useCallback((value: string) => {
-    setActiveTab(value)
+    if (!visibleTabs.includes(value as DraftListSectionTab))
+      return
+
+    // 切换 Tab 时退出所有批量模式
+    exitDraftBatchMode()
+    exitMediaBatchMode()
+
+    setActiveTab(value as DraftListSectionTab)
 
     // 首次切换到对应 Tab 时触发加载
     if (value === 'all' && !allInitialized && materialGroupId && currentPlan) {
       fetchAllList(materialGroupId, currentPlan.id)
+    }
+    if (value === 'drafts' && !usePlanDetailStore.getState().materialsInitialized && currentPlan) {
+      fetchMaterials(currentPlan.id, 1)
     }
     if (value === 'video' && !videoInitialized && materialGroupId) {
       fetchMediaList(materialGroupId, 'video')
@@ -294,11 +353,10 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
     if (value === 'img' && !imgInitialized && materialGroupId) {
       fetchMediaList(materialGroupId, 'img')
     }
-  }, [allInitialized, videoInitialized, imgInitialized, materialGroupId, currentPlan, fetchAllList, fetchMediaList])
+  }, [allInitialized, videoInitialized, imgInitialized, materialGroupId, currentPlan, fetchAllList, fetchMediaList, exitDraftBatchMode, exitMediaBatchMode, fetchMaterials, visibleTabs])
 
   // IntersectionObserver 实现无限滚动
   useEffect(() => {
-    const loadMoreElement = loadMoreRef.current
     if (!loadMoreElement)
       return
 
@@ -309,7 +367,7 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
           loadMoreMaterials(currentPlan.id)
         }
       },
-      { threshold: 0.1 },
+      LOAD_MORE_OBSERVER_OPTIONS,
     )
 
     observer.observe(loadMoreElement)
@@ -317,9 +375,9 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
     return () => {
       observer.disconnect()
     }
-  }, [materialsPagination.hasMore, materialsLoading, currentPlan, loadMoreMaterials])
+  }, [loadMoreElement, materialsPagination.hasMore, materialsLoading, currentPlan, loadMoreMaterials])
 
-  // 根据 activeTab 获取标题（数量已在 Tab Badge 中展示，此处不再重复）
+  // 根据 activeTab 获取标题
   const getHeaderTitle = () => {
     switch (activeTab) {
       case 'all':
@@ -329,14 +387,32 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
       case 'img':
         return tMaterial('mediaManagement.image')
       default:
-        return tMaterial('mediaManagement.drafts', '草稿箱')
+        return tMaterial('mediaManagement.drafts', '草稿')
     }
   }
+
+  const getActiveTabCount = () => {
+    switch (activeTab) {
+      case 'all':
+        return allTotal
+      case 'drafts':
+        return materialsPagination.total + visibleDraftGenerationTasks.length
+      case 'video':
+        return videoTotal + visibleVideoGenerationTasks.length
+      case 'img':
+        return imgTotal + visibleImageGenerationTasks.length
+      default:
+        return materialsPagination.total + visibleDraftGenerationTasks.length
+    }
+  }
+
+  const isDraftsTab = activeTab === 'drafts'
+  const showMediaHeaderBatchActions = !isDraftsTab && !mediaBatchMode && getActiveTabCount() > 0
 
   // 草稿内容区域
   const draftsContent = (
     <>
-      <DraftListToolbar />
+      <DraftListToolbar allowTransfer={allowTransfer} />
       <div>
         <Masonry
           breakpointCols={MASONRY_BREAKPOINTS}
@@ -349,9 +425,9 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
           )}
 
           {/* 生成中卡片 - 批量模式隐藏 */}
-          {!batchMode && generatingCount > 0 && (
-            <GeneratingCard count={generatingCount} onClick={openGenerationDetailDialog} />
-          )}
+          {!batchMode && visibleDraftGenerationTasks.map(task => (
+            <GeneratingTaskCard key={task.id} task={task} onClick={openGenerationDetailDialog} />
+          ))}
 
           {/* 草稿数据 */}
           {materials.map(material => (
@@ -368,7 +444,7 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
         </Masonry>
 
         {/* 加载触发器 */}
-        <div ref={loadMoreRef} />
+        <div ref={loadMoreCallbackRef} />
 
         {/* 加载更多指示器 */}
         {materialsLoading && <LoadingIndicator label={t('common.loading')} />}
@@ -386,186 +462,204 @@ export const DraftListSection = memo(({ materialGroupId }: DraftListSectionProps
   )
 
   // 骨架屏内容
-  const skeletonCard = (
-    <Card>
-      <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base">{t('overview.draftList', { count: materialsPagination.total })}</CardTitle>
-          <Button variant="ghost" size="sm" onClick={openGenerationDetailDialog} className="cursor-pointer gap-1.5 text-muted-foreground">
-            <ListChecks className="h-3.5 w-3.5" />
-            {t('draftManage.generationDetail')}
-          </Button>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <Masonry
-          breakpointCols={MASONRY_BREAKPOINTS}
-          className="flex -ml-4 w-auto"
-          columnClassName="pl-4 bg-clip-padding"
-        >
-          <ManualCreateCard onClick={openCreateMaterialModal} />
-          {Array.from({ length: 8 }).map((_, i) => (
-            <DraftCardSkeleton key={i} index={i} />
-          ))}
-        </Masonry>
-      </CardContent>
-    </Card>
-  )
-
   // TabsList 组件
-  const tabsList = (
-    <TabsList className="w-full sm:w-auto">
-      <TabsTrigger value="all" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
-        {tMaterial('mediaManagement.all')}
-        {allTotal > 0 && (
-          <Badge variant="secondary" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
-            {allTotal}
-          </Badge>
-        )}
-      </TabsTrigger>
-      <TabsTrigger value="drafts" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
-        {tMaterial('mediaManagement.drafts', '草稿箱')}
-        {materialsPagination.total > 0 && (
-          <Badge variant="secondary" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
-            {materialsPagination.total}
-          </Badge>
-        )}
-      </TabsTrigger>
-      <TabsTrigger value="video" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
-        {tMaterial('mediaManagement.video')}
-        {videoTotal > 0 && (
-          <Badge variant="secondary" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
-            {videoTotal}
-          </Badge>
-        )}
-      </TabsTrigger>
-      <TabsTrigger value="img" className="cursor-pointer gap-1.5 flex-1 sm:flex-initial">
-        {tMaterial('mediaManagement.image')}
-        {imgTotal > 0 && (
-          <Badge variant="secondary" className="ml-1 h-5 min-w-[20px] px-1.5 text-xs">
-            {imgTotal}
-          </Badge>
-        )}
-      </TabsTrigger>
+  const tabsList = showTabsList ? (
+    <TabsList className="grid h-auto w-full grid-cols-4 gap-1 sm:inline-flex sm:w-auto">
+      {hasAllTab && (
+        <TabsTrigger value="all" className="cursor-pointer min-w-0 px-2 text-xs sm:px-3 sm:text-sm">
+          {tMaterial('mediaManagement.all')}
+          {allTotal > 0 && (
+            <Badge variant="secondary" className="ml-1 hidden h-5 min-w-[20px] px-1.5 text-xs sm:inline-flex">
+              {allTotal}
+            </Badge>
+          )}
+        </TabsTrigger>
+      )}
+      {hasDraftsTab && (
+        <TabsTrigger value="drafts" className="cursor-pointer min-w-0 px-2 text-xs sm:px-3 sm:text-sm">
+          {tMaterial('mediaManagement.drafts', '草稿')}
+          {materialsPagination.total > 0 && (
+            <Badge variant="secondary" className="ml-1 hidden h-5 min-w-[20px] px-1.5 text-xs sm:inline-flex">
+              {materialsPagination.total}
+            </Badge>
+          )}
+        </TabsTrigger>
+      )}
+      {hasVideoTab && (
+        <TabsTrigger value="video" className="cursor-pointer min-w-0 px-2 text-xs sm:px-3 sm:text-sm">
+          {tMaterial('mediaManagement.video')}
+          {videoTotal > 0 && (
+            <Badge variant="secondary" className="ml-1 hidden h-5 min-w-[20px] px-1.5 text-xs sm:inline-flex">
+              {videoTotal}
+            </Badge>
+          )}
+        </TabsTrigger>
+      )}
+      {hasImgTab && (
+        <TabsTrigger value="img" className="cursor-pointer min-w-0 px-2 text-xs sm:px-3 sm:text-sm">
+          {tMaterial('mediaManagement.image')}
+          {imgTotal > 0 && (
+            <Badge variant="secondary" className="ml-1 hidden h-5 min-w-[20px] px-1.5 text-xs sm:inline-flex">
+              {imgTotal}
+            </Badge>
+          )}
+        </TabsTrigger>
+      )}
     </TabsList>
-  )
+  ) : null
 
-  // 页面加载时预取全部/视频/图片数据
+  // 页面加载时预取全部列表（video/img 由各自 MediaListSection 懒加载）
   useEffect(() => {
-    if (materialGroupId && showTabs) {
-      if (!allInitialized && currentPlan) {
-        fetchAllList(materialGroupId, currentPlan.id)
-      }
-      if (!videoInitialized) {
-        fetchMediaList(materialGroupId, 'video')
-      }
-      if (!imgInitialized) {
-        fetchMediaList(materialGroupId, 'img')
-      }
+    if (hasAllTab && materialGroupId && !allInitialized && currentPlan) {
+      fetchAllList(materialGroupId, currentPlan.id)
     }
-  }, [materialGroupId, showTabs, allInitialized, videoInitialized, imgInitialized, currentPlan, fetchAllList, fetchMediaList])
+  }, [hasAllTab, materialGroupId, allInitialized, currentPlan, fetchAllList])
 
   // 初始加载骨架屏
   if (materialsLoading && materials.length === 0) {
-    if (showTabs) {
-      return (
-        <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-          <Card>
-            <div className="px-6 pt-6">
+    return (
+      <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
+        <Card>
+          {tabsList && (
+            <div className="px-4 pt-4 sm:px-6 sm:pt-6">
               {tabsList}
             </div>
-            <CardHeader className="pb-4">
-              <div className="flex items-center justify-between">
-                <CardTitle className="text-base">{t('overview.draftList', { count: materialsPagination.total })}</CardTitle>
-                <Button variant="ghost" size="sm" onClick={openGenerationDetailDialog} className="cursor-pointer gap-1.5 text-muted-foreground">
-                  <ListChecks className="h-3.5 w-3.5" />
-                  {t('draftManage.generationDetail')}
-                </Button>
+          )}
+          <CardHeader className="px-4 pb-4 pt-4 sm:px-6">
+            <div className="flex items-center justify-between gap-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <CardTitle className="text-base">{getHeaderTitle()}</CardTitle>
+                {getActiveTabCount() > 0 && (
+                  <Badge variant="secondary" className="h-5 min-w-[20px] px-1.5 text-xs sm:hidden">
+                    {getActiveTabCount()}
+                  </Badge>
+                )}
               </div>
-            </CardHeader>
-            <CardContent>
-              <Masonry
-                breakpointCols={MASONRY_BREAKPOINTS}
-                className="flex -ml-4 w-auto"
-                columnClassName="pl-4 bg-clip-padding"
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openGenerationDetailDialog}
+                className="shrink-0 cursor-pointer justify-center gap-1.5 text-muted-foreground"
               >
-                <ManualCreateCard onClick={openCreateMaterialModal} />
-                {Array.from({ length: 8 }).map((_, i) => (
-                  <DraftCardSkeleton key={i} index={i} />
-                ))}
-              </Masonry>
-            </CardContent>
-          </Card>
-        </Tabs>
-      )
-    }
-    return skeletonCard
-  }
-
-  // 无 Tab 模式（DraftManageDrawer）
-  if (!showTabs) {
-    return (
-      <Card>
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base">{t('overview.draftList', { count: materialsPagination.total })}</CardTitle>
-            <Button variant="ghost" size="sm" onClick={openGenerationDetailDialog} className="cursor-pointer gap-1.5 text-muted-foreground">
-              <ListChecks className="h-3.5 w-3.5" />
-              {t('draftManage.generationDetail')}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className={cn(batchMode && 'pb-16')}>
-          {draftsContent}
-        </CardContent>
-        {batchMode && <BatchActionBar />}
-        <ConditionalDeleteDialog />
-      </Card>
+                <ListChecks className="h-3.5 w-3.5" />
+                {t('draftManage.generationDetail')}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="px-4 pb-4 sm:px-6 sm:pb-6">
+            <Masonry
+              breakpointCols={MASONRY_BREAKPOINTS}
+              className="flex -ml-4 w-auto"
+              columnClassName="pl-4 bg-clip-padding"
+            >
+              <ManualCreateCard onClick={openCreateMaterialModal} />
+              {Array.from({ length: 8 }).map((_, i) => (
+                <DraftCardSkeleton key={i} index={i} />
+              ))}
+            </Masonry>
+          </CardContent>
+        </Card>
+      </Tabs>
     )
   }
-
-  // 有 Tab 模式：TabsList 在 Card 内部
   return (
     <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
       <Card>
-        <div className="px-6 pt-6">
-          {tabsList}
-        </div>
-        <CardHeader className="pb-4">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-base">{getHeaderTitle()}</CardTitle>
-            <Button variant="ghost" size="sm" onClick={openGenerationDetailDialog} className="cursor-pointer gap-1.5 text-muted-foreground">
-              <ListChecks className="h-3.5 w-3.5" />
-              {t('draftManage.generationDetail')}
-            </Button>
+        {tabsList && (
+          <div className="px-4 pt-4 sm:px-6 sm:pt-6">
+            {tabsList}
+          </div>
+        )}
+        <CardHeader className="px-4 pb-4 pt-4 sm:px-6">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center justify-between gap-3 sm:min-w-0 sm:flex-1 sm:justify-start">
+              <div className="flex min-w-0 flex-wrap items-center gap-2">
+                <CardTitle className="text-base">{getHeaderTitle()}</CardTitle>
+                {getActiveTabCount() > 0 && (
+                  <Badge variant="secondary" className="h-5 min-w-[20px] px-1.5 text-xs sm:hidden">
+                    {getActiveTabCount()}
+                  </Badge>
+                )}
+              </div>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openGenerationDetailDialog}
+                className="shrink-0 cursor-pointer justify-center gap-1.5 text-muted-foreground sm:hidden"
+              >
+                <ListChecks className="h-3.5 w-3.5" />
+                {t('draftManage.generationDetail')}
+              </Button>
+            </div>
+            <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+              {showMediaHeaderBatchActions && (
+                <div className="grid w-full grid-cols-2 gap-2 sm:flex sm:w-auto">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={enterMediaBatchMode}
+                    className="w-full cursor-pointer justify-center gap-1.5 sm:w-auto"
+                  >
+                    <ArrowRightLeft className="h-3.5 w-3.5" />
+                    {t('draftManage.batchTransfer')}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={enterMediaBatchMode}
+                    className="w-full cursor-pointer justify-center gap-1.5 sm:w-auto"
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
+                    {tMaterial('mediaManagement.batchDelete')}
+                  </Button>
+                </div>
+              )}
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={openGenerationDetailDialog}
+                className="hidden cursor-pointer justify-center gap-1.5 text-muted-foreground sm:inline-flex"
+              >
+                <ListChecks className="h-3.5 w-3.5" />
+                {t('draftManage.generationDetail')}
+              </Button>
+            </div>
           </div>
         </CardHeader>
 
-        <TabsContent value="all" className="mt-0">
-          <CardContent>
-            <AllListSection materialGroupId={materialGroupId} />
-          </CardContent>
-        </TabsContent>
+        {hasAllTab && (
+          <TabsContent value="all" className="mt-0">
+            <CardContent className={cn('px-4 pb-4 sm:px-6 sm:pb-6', mediaBatchMode && 'pb-16 sm:pb-16')}>
+              <AllListSection materialGroupId={materialGroupId} showBatchDeleteTrigger={false} />
+            </CardContent>
+          </TabsContent>
+        )}
 
-        <TabsContent value="drafts" className="mt-0">
-          <CardContent className={cn(batchMode && 'pb-16')}>
-            {draftsContent}
-          </CardContent>
-        </TabsContent>
+        {hasDraftsTab && (
+          <TabsContent value="drafts" className="mt-0">
+            <CardContent className={cn('px-4 pb-4 sm:px-6 sm:pb-6', batchMode && 'pb-16 sm:pb-16')}>
+              {draftsContent}
+            </CardContent>
+          </TabsContent>
+        )}
 
-        <TabsContent value="video" className="mt-0">
-          <CardContent>
-            <MediaListSection type="video" materialGroupId={materialGroupId} />
-          </CardContent>
-        </TabsContent>
+        {hasVideoTab && (
+          <TabsContent value="video" className="mt-0">
+            <CardContent className={cn('px-4 pb-4 sm:px-6 sm:pb-6', mediaBatchMode && 'pb-16 sm:pb-16')}>
+              <MediaListSection type="video" materialGroupId={materialGroupId} showBatchDeleteTrigger={false} />
+            </CardContent>
+          </TabsContent>
+        )}
 
-        <TabsContent value="img" className="mt-0">
-          <CardContent>
-            <MediaListSection type="img" materialGroupId={materialGroupId} />
-          </CardContent>
-        </TabsContent>
+        {hasImgTab && (
+          <TabsContent value="img" className="mt-0">
+            <CardContent className={cn('px-4 pb-4 sm:px-6 sm:pb-6', mediaBatchMode && 'pb-16 sm:pb-16')}>
+              <MediaListSection type="img" materialGroupId={materialGroupId} showBatchDeleteTrigger={false} />
+            </CardContent>
+          </TabsContent>
+        )}
 
-        {batchMode && <BatchActionBar />}
+        {activeTab === 'drafts' && batchMode && <BatchActionBar allowTransfer={allowTransfer} />}
         <ConditionalDeleteDialog />
       </Card>
     </Tabs>

@@ -11,6 +11,16 @@ import { uploadToOss } from '@/api/oss'
 export interface IUseMediaUploadOptions {
   /** 上传失败时的回调 */
   onError?: (error: Error) => void
+  /** 公开上传 ID，传入后使用免鉴权上传接口 */
+  publicUploadId?: string
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof DOMException && error.name === 'AbortError'
+}
+
+function toUploadError(error: unknown) {
+  return error instanceof Error ? error : new Error('Upload failed')
 }
 
 export interface IUseMediaUploadReturn {
@@ -38,7 +48,7 @@ export interface IUseMediaUploadReturn {
  * @returns 媒体上传相关的状态和方法
  */
 export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploadReturn {
-  const { onError } = options ?? {}
+  const { onError, publicUploadId } = options ?? {}
 
   // 状态
   const [medias, setMedias] = useState<IUploadedMedia[]>([])
@@ -96,20 +106,21 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
                 // 兼容 0-1 或 0-100 两种进度表示，统一成 0-100
                 const percent = progress > 1 ? progress : progress * 100
                 setMedias(prev =>
-                  prev.map((m, idx) =>
+                  prev.map(m =>
                     m.id && m.id === targetId
                       ? { ...m, progress: Math.min(99, Math.max(0, percent)) }
                       : m,
                   ),
                 )
               },
+              publicUploadId,
               signal: controller.signal,
             })
 
             setMedias(prev =>
-              prev.map((m, idx) =>
+              prev.map(m =>
                 m.id && m.id === targetId
-                  ? { ...m, url: fullUrl as string, progress: undefined }
+                  ? { ...m, url: fullUrl, progress: undefined }
                   : m,
               ),
             )
@@ -118,10 +129,10 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
           }),
         )
       }
-      catch (error: any) {
-        if (error.name !== 'AbortError') {
+      catch (error) {
+        if (!isAbortError(error)) {
           console.error('Upload failed:', error)
-          onError?.(error)
+          onError?.(toUploadError(error))
         }
       }
       finally {
@@ -129,7 +140,7 @@ export function useMediaUpload(options?: IUseMediaUploadOptions): IUseMediaUploa
         uploadAbortRef.current?.clear()
       }
     },
-    [onError],
+    [onError, publicUploadId],
   )
 
   /**

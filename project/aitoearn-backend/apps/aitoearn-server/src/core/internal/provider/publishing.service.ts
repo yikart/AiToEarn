@@ -34,11 +34,6 @@ export class PublishingInternalService {
     return publishRecord
   }
 
-  async getPublishRecordByTaskId(taskId: string, userId: string) {
-    const res = await this.publishingService.getPublishRecordByTaskId(taskId, userId)
-    return res
-  }
-
   async completePublishTask(
     filter: { dataId: string, uid: string },
     data: {

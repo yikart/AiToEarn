@@ -3,7 +3,12 @@
     "placeholder": "새로운 스시 플래터를 위한 8초 세로형 홍보 영상을 만들어주세요. 경쾌한 재즈 음악, 신선한 연어 클로즈업, 자막 생성, 마지막에 로고를 표시해주세요.",
     "send": "전송",
     "stop": "중지",
-    "uploading": "업로드 중..."
+    "uploading": "업로드 중...",
+    "clearSelection": "Clear Selection",
+    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
+    "noPromotionPlan": "No promotion plans",
+    "selectPromotionPlan": "Select Promotion Plan",
+    "upload": "Upload"
   },
   "message": {
     "thinking": "생각 중...",
@@ -31,7 +36,14 @@
       "failed": "실패"
     },
     "rate": "평가",
-    "share": "공유"
+    "share": "공유",
+    "editTitle": "Edit Title",
+    "favorite": "Favorite",
+    "moreActions": "More",
+    "titleLabel": "Task Title",
+    "titlePlaceholder": "Enter task title",
+    "titleUpdated": "Title updated",
+    "unfavorite": "Unfavorite"
   },
   "home": {
     "title": "무엇을 도와드릴까요?",
@@ -141,7 +153,9 @@
     "image": "이미지",
     "document": "문서",
     "uploadFailed": "업로드 실패, 다시 시도해 주세요",
-    "uploadCancelled": "업로드 취소됨"
+    "uploadCancelled": "업로드 취소됨",
+    "edit": "편집",
+    "remove": "제거"
   },
   "workflow": {
     "toolCallCompleted": "도구 호출 완료",
@@ -169,7 +183,9 @@
     "rechargeCredits": "크레딧 충전",
     "action": "작업",
     "actionDesc": "다음 작업을 완료해 주세요",
-    "continue": "계속"
+    "continue": "계속",
+    "error": "실패",
+    "errorDesc": "생성에 실패했습니다. 나중에 다시 시도해 주세요."
   },
   "publishDetail": {
     "title": "게시 상세",
@@ -200,6 +216,19 @@
       "upload": "업로드 중...",
       "publish": "게시 중...",
       "complete": "게시 완료"
-    }
+    },
+    "goLogin": "Go Login",
+    "installPlugin": "Click to install plugin",
+    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
+    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
+    "retry": "Retry"
+  },
+  "toolDetail": {
+    "input": "Input Parameters",
+    "noResult": "No result yet",
+    "output": "Execution Result"
+  },
+  "plugin": {
+    "platformNeedsPlugin": "이 플랫폼은 브라우저 확장 프로그램이 필요합니다. 먼저 확장 프로그램을 인증해 주세요."
   }
 }

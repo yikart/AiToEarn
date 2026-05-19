@@ -21,6 +21,8 @@ export const PublishRecordItemVoSchema = z.object({
   errorMsg: z.string().optional().describe('错误信息'),
   publishingChannel: z.enum(PublishingChannel).optional().describe('发布渠道'),
   workLink: z.string().optional().describe('作品链接'),
+  originalWorkLink: z.string().optional().describe('原始作品链接'),
+  workStatus: z.string().optional().describe('作品状态'),
   topics: z.array(z.string()).default([]).describe('话题标签'),
   updatedAt: z.date().optional().describe('更新时间'),
 })

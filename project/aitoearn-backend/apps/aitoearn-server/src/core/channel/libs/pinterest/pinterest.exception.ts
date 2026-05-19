@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface PinterestRawError {
   message?: string
@@ -8,47 +9,22 @@ export interface PinterestRawError {
 /**
  * Pinterest error class.
  */
-export class PinterestError extends SocialMediaError<PinterestRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: PinterestRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class PinterestError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'pinterest'
   }
 
-  protected static override extractRawError(data: unknown): PinterestRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as PinterestRawError
-    return errResponse
-  }
 
-  protected static override buildMessage(
-    rawError: PinterestRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.message || 'Unknown error'}, error code: ${rawError.code || 'N/A'}`
+    return {
+      platformCode: errResponse.code,
+      platformMessage: errResponse.message,
+    }
   }
 }

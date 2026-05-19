@@ -56,7 +56,7 @@ const CreateToUserSchema = z.object({
   vars: z.record(z.string(), z.unknown()).optional().describe('模板变量'),
   title: z.string().optional().describe('通知标题（messageKey 不存在时使用）'),
   content: z.string().optional().describe('通知内容（messageKey 不存在时使用）'),
-  type: z.enum(NotificationType).default(NotificationType.TaskReminder).describe('通知类型'),
+  type: z.enum(NotificationType).describe('通知类型'),
   relatedId: z.string().describe('关联资源 ID'),
   data: z.any().optional().describe('附加数据'),
 })

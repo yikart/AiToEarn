@@ -46,6 +46,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
@@ -172,6 +173,8 @@ const RecordCore = memo(
       return AccountPlatInfoMap.get(publishRecord?.accountType ?? PlatType.Xhs)?.icon
     }, [publishRecord])
 
+    const isWxSphRecord = publishRecord.accountType === PlatType.WxSph
+
     const getClientTypeLabel = (clientType?: ClientType) => {
       if (!clientType)
         return null
@@ -254,6 +257,26 @@ const RecordCore = memo(
     const handleCoverMouseDown = (e: React.MouseEvent) => {
       e.stopPropagation()
     }
+
+    const handleViewWork = () => {
+      if (!publishRecord.workLink)
+        return
+
+      window.open(publishRecord.workLink, '_blank')
+    }
+
+    const handleCopyWorkLink = async () => {
+      if (!publishRecord.workLink)
+        return
+
+      await navigator.clipboard.writeText(publishRecord.workLink)
+    }
+
+    const shouldShowViewWork = !!publishRecord.workLink
+    const shouldShowWxSphReviewPending
+      = isWxSphRecord && publishRecord.status === PublishStatus.RELEASED && !publishRecord.workLink
+    const wxSphReviewPendingTooltip = publishRecord.linkError || t('record.wxSphReviewPendingDesc')
+    const shouldShowRecordMetrics = !isWxSphRecord
 
     // 触发按钮
     const TriggerButton = (
@@ -409,23 +432,25 @@ const RecordCore = memo(
         </div>
 
         {/* 信息指标 */}
-        <ScrollButtonContainer>
-          <div className="flex gap-3 md:gap-4 p-2 md:p-2.5 border-b border-border overflow-x-auto">
-            {recordInfo.map(v => (
-              <div key={v.label} className="flex-shrink-0 md:flex-1 min-w-[60px] md:min-w-0">
-                <div className="flex items-center gap-1 md:gap-1.5">
-                  {v.icon}
-                  <span className="text-xs text-muted-foreground whitespace-nowrap">{v.label}</span>
-                </div>
-                {publishRecord.engagement && (
-                  <div className="text-sm md:text-base font-semibold mt-0.5 md:mt-1">
-                    {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+        {shouldShowRecordMetrics && (
+          <ScrollButtonContainer>
+            <div className="flex gap-3 md:gap-4 p-2 md:p-2.5 border-b border-border overflow-x-auto">
+              {recordInfo.map(v => (
+                <div key={v.label} className="flex-shrink-0 md:flex-1 min-w-[60px] md:min-w-0">
+                  <div className="flex items-center gap-1 md:gap-1.5">
+                    {v.icon}
+                    <span className="text-xs text-muted-foreground whitespace-nowrap">{v.label}</span>
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </ScrollButtonContainer>
+                  {publishRecord.engagement && (
+                    <div className="text-sm md:text-base font-semibold mt-0.5 md:mt-1">
+                      {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </ScrollButtonContainer>
+        )}
 
         {/* 底部：操作按钮 */}
         <div
@@ -436,15 +461,13 @@ const RecordCore = memo(
           )}
         >
           {/* 移动端：查看作品 + 更多操作 同一排 */}
-          {isMobile && (publishRecord.workLink || shouldShowDelete) ? (
+          {isMobile && (shouldShowViewWork || shouldShowDelete) ? (
             <div className="flex gap-2 w-full">
-              {publishRecord.workLink && (
+              {shouldShowViewWork && (
                 <Button
                   data-testid="record-view-work-btn"
                   className="cursor-pointer flex-1"
-                  onClick={() => {
-                    window.open(publishRecord.workLink, '_blank')
-                  }}
+                  onClick={handleViewWork}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t('record.viewWork')}
@@ -457,12 +480,8 @@ const RecordCore = memo(
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  {publishRecord.workLink && (
-                    <DropdownMenuItem
-                      onClick={async () => {
-                        await navigator.clipboard.writeText(publishRecord?.workLink ?? '')
-                      }}
-                    >
+                  {shouldShowViewWork && (
+                    <DropdownMenuItem onClick={handleCopyWorkLink}>
                       {t('buttons.copyLink')}
                     </DropdownMenuItem>
                   )}
@@ -495,20 +514,18 @@ const RecordCore = memo(
           ) : (
             // 桌面端或移动端无更多操作时
             <>
-              {publishRecord.workLink && (
+              {shouldShowViewWork && (
                 <Button
                   data-testid="record-view-work-btn"
                   className={cn('cursor-pointer', isMobile && 'w-full')}
-                  onClick={() => {
-                    window.open(publishRecord.workLink, '_blank')
-                  }}
+                  onClick={handleViewWork}
                 >
                   <ExternalLink className="h-4 w-4 mr-2" />
                   {t('record.viewWork')}
                 </Button>
               )}
 
-              {!isMobile && (publishRecord.workLink || shouldShowDelete) && (
+              {!isMobile && (shouldShowViewWork || shouldShowDelete) && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button data-testid="record-more-btn" variant="outline" size="icon" className="cursor-pointer">
@@ -516,12 +533,8 @@ const RecordCore = memo(
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    {publishRecord.workLink && (
-                      <DropdownMenuItem
-                        onClick={async () => {
-                          await navigator.clipboard.writeText(publishRecord?.workLink ?? '')
-                        }}
-                      >
+                    {shouldShowViewWork && (
+                      <DropdownMenuItem onClick={handleCopyWorkLink}>
                         {t('buttons.copyLink')}
                       </DropdownMenuItem>
                     )}
@@ -552,6 +565,32 @@ const RecordCore = memo(
                 </DropdownMenu>
               )}
             </>
+          )}
+
+          {shouldShowWxSphReviewPending && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className={cn('inline-flex', isMobile && 'w-full')}>
+                    <Button
+                      data-testid="record-wx-sph-review-pending-btn"
+                      variant="outline"
+                      className={cn(
+                        'cursor-not-allowed border-primary/30 bg-primary/5 text-primary',
+                        isMobile && 'w-full',
+                      )}
+                      disabled
+                    >
+                      <Clock className="h-4 w-4 mr-2" />
+                      {t('record.wxSphReviewPendingShort')}
+                    </Button>
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="top" align={isMobile ? 'center' : 'end'} className="max-w-72">
+                  {wxSphReviewPendingTooltip}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
 
           {publishRecord.status !== PublishStatus.RELEASED

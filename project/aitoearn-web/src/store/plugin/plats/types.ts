@@ -33,6 +33,12 @@ export interface BaseResult {
   success: boolean
   /** 错误/提示信息 */
   message?: string
+  /** 截图 base64 data URI (png) */
+  screenshot?: string
+  /** 是否需要人工处理（如短信验证码） */
+  needHumanAssist?: boolean
+  /** 需要人工处理的原因 */
+  verificationReason?: string
   /** 原始响应数据 */
   rawData?: any
 }

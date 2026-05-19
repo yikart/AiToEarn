@@ -1,11 +1,13 @@
 import { OnWorkerEvent, WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
+import { AiLogSettlementSettledBy, AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { getErrorMessage, getErrorStack, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { Job } from 'bullmq'
 import { from, lastValueFrom, timer } from 'rxjs'
 import { retry, tap } from 'rxjs/operators'
+import { AsyncSettlementService } from '../settlement'
 import { ImageEditDto, ImageGenerationDto, QrCodeArtDto } from './image.dto'
 import { ImageService } from './image.service'
 
@@ -18,7 +20,7 @@ interface AsyncTaskData {
   type: AiLogType
   pricing: number
   request: unknown
-  taskType: 'generation' | 'edit' | 'qrCodeArt'
+  taskType: AiLogSettlementTaskType
 }
 
 @QueueProcessor(QueueName.AiImageAsync, {
@@ -35,6 +37,7 @@ export class ImageConsumer extends WorkerHost {
   constructor(
     private readonly imageService: ImageService,
     private readonly aiLogRepo: AiLogRepository,
+    private readonly asyncSettlementService: AsyncSettlementService,
   ) {
     super()
   }
@@ -103,13 +106,13 @@ export class ImageConsumer extends WorkerHost {
   /**
    * 执行单次任务
    */
-  private async executeTask(taskType: string, userId: string, request: unknown): Promise<unknown> {
+  private async executeTask(taskType: AiLogSettlementTaskType, userId: string, request: unknown): Promise<unknown> {
     switch (taskType) {
-      case 'generation':
+      case AiLogSettlementTaskType.Generation:
         return await this.imageService.generation(request as ImageGenerationDto)
-      case 'edit':
+      case AiLogSettlementTaskType.Edit:
         return await this.imageService.edit(request as ImageEditDto)
-      case 'qrCodeArt':
+      case AiLogSettlementTaskType.QrCodeArt:
         return await this.imageService.qrCodeArt(userId, request as QrCodeArtDto)
       default:
         throw new Error(`Unknown task type: ${taskType}`)
@@ -165,6 +168,10 @@ export class ImageConsumer extends WorkerHost {
         response: result as Record<string, unknown>,
       })
 
+      await this.asyncSettlementService.settleSuccess(logId, pricing, {
+        taskType,
+      })
+
       this.logger.debug(
         `[log-${logId}] Task completed successfully${attemptCount > 1 ? ` after ${attemptCount} attempts` : ''}`,
       )
@@ -175,11 +182,6 @@ export class ImageConsumer extends WorkerHost {
       const errorMessage = getErrorMessage(error)
       const isRetryable = this.isRetryableError(error)
 
-      // 退还Credits
-      if (pricing > 0 && userType === UserType.User) {
-        await this.imageService.addUserCredits(userId, pricing, model)
-      }
-
       // 更新日志为失败状态
       await this.aiLogRepo.updateById(logId, {
         duration,
@@ -188,6 +190,25 @@ export class ImageConsumer extends WorkerHost {
           ? `${errorMessage} (已重试 ${attemptCount - 1} 次)`
           : errorMessage,
       })
+
+      if (pricing > 0 && userType === UserType.User) {
+        await this.asyncSettlementService.refundFailedTask(logId, {
+          userId,
+          amount: pricing,
+          description: model,
+          metadata: {
+            taskType,
+            errorMessage,
+            settledBy: AiLogSettlementSettledBy.ImageAsyncConsumer,
+          },
+        })
+      }
+      else {
+        await this.asyncSettlementService.markFailed(logId, {
+          taskType,
+          errorMessage,
+        })
+      }
 
       this.logger.error(
         `[log-${logId}] Task failed after ${attemptCount} attempts: ${errorMessage}`,

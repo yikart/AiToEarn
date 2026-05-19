@@ -1,8 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsType, ResponseCode, UserType } from '@yikart/common'
+import { AppException, CreditsConsumptionSource, CreditsType, ResponseCode, UserType } from '@yikart/common'
 import { CreditsHelperService } from '@yikart/helpers'
 import {
+  AideoAiLogResponse,
   AiLog,
   AiLogChannel,
   AiLogRepository,
@@ -178,21 +179,21 @@ export class DramaRecapService {
 
     // 如果任务已完成或失败，直接返回数据库中的结果
     if (log.status === AiLogStatus.Success) {
-      const response = log.response
+      const response = log.response as AideoAiLogResponse | undefined
       return {
         taskId,
         status: DramaRecapTaskStatus.Completed,
-        outputVid: response?.['outputVid'],
-        outputUrl: response?.['outputUrl'],
+        outputVid: response?.outputVid,
+        outputUrl: response?.outputUrl,
       }
     }
 
     if (log.status === AiLogStatus.Failed) {
-      const response = log.response
+      const response = log.response as AideoAiLogResponse | undefined
       return {
         taskId,
         status: DramaRecapTaskStatus.Failed,
-        errorMessage: log.errorMessage || response?.['errorMessage'] || '任务执行失败',
+        errorMessage: log.errorMessage || response?.errorMessage || '任务执行失败',
       }
     }
 
@@ -210,12 +211,12 @@ export class DramaRecapService {
       // 重新查询数据库获取最新状态
       const updatedLog = await this.aiLogRepo.getById(log.id)
       if (updatedLog) {
-        const response = updatedLog.response
+        const response = updatedLog.response as AideoAiLogResponse | undefined
         return {
           taskId,
           status: updatedLog.status === AiLogStatus.Success ? DramaRecapTaskStatus.Completed : DramaRecapTaskStatus.Failed,
-          outputVid: response?.['outputVid'],
-          outputUrl: response?.['outputUrl'],
+          outputVid: response?.outputVid,
+          outputUrl: response?.outputUrl,
           errorMessage: updatedLog.errorMessage,
         }
       }
@@ -238,8 +239,9 @@ export class DramaRecapService {
       const s3Url = await this.saveVideoFromVid(result.Vid, task, 'drama-recap')
 
       // 更新响应数据
+      const response = task.response as AideoAiLogResponse | undefined
       const updatedResponse = {
-        ...task.response,
+        ...(response || {}),
         outputVid: result.Vid,
         outputUrl: s3Url,
       }
@@ -276,8 +278,8 @@ export class DramaRecapService {
    */
   private async billDramaRecapTask(taskLog: AiLog): Promise<void> {
     // 从响应中获取输出视频的 VID
-    const response = taskLog.response
-    const outputVid = response?.['outputVid']
+    const response = taskLog.response as AideoAiLogResponse | undefined
+    const outputVid = response?.outputVid
 
     if (!outputVid) {
       this.logger.warn({ taskId: taskLog.taskId }, '[DramaRecap] 无法获取输出视频 VID，跳过计费')
@@ -310,6 +312,7 @@ export class DramaRecapService {
         userId: taskLog.userId,
         amount: totalPrice,
         type: CreditsType.DramaRecap,
+        source: CreditsConsumptionSource.AiAideo,
         description: `Drama recap, task id: ${taskLog.taskId}`,
         metadata: { taskId: taskLog.taskId, duration, outputVid },
       })

@@ -2,7 +2,6 @@
  * @Description: AI Agent 内容生成任务接口
  */
 import { fetchEventSource } from '@microsoft/fetch-event-source'
-import { useAgentStore } from '@/store/agent'
 import { useUserStore } from '@/store/user'
 import http from '@/utils/request'
 
@@ -258,74 +257,6 @@ export const agentApi = {
       abortController.abort()
     }
 
-    console.log('[SSE] Starting fetchEventSource...')
-
-    // Debug 模式拦截: 如果处于 debug 模式且还有文件可用，使用本地文件回放
-    try {
-      const store = useAgentStore.getState()
-      if (store.debugFiles.length > 0 && store.debugMessageIndex < store.debugFiles.length) {
-        const debugFilePath = useAgentStore.getState().consumeDebugFile()
-
-        if (debugFilePath) {
-          console.log('[SSE] Debug mode active - replaying from:', debugFilePath)
-          let isAborted = false
-          const abort = () => {
-            isAborted = true
-          }
-
-          ;(async () => {
-            try {
-              const resp = await fetch(debugFilePath)
-              if (!resp.ok) {
-                console.warn('[SSE] Debug replay: failed to fetch file:', debugFilePath)
-                onDone?.()
-                return
-              }
-              const raw = await resp.text()
-
-              // 解析 SSE 格式的数据块
-              const blocks = raw
-                .split(/\r?\n\r?\n+/)
-                .map(b => b.trim())
-                .filter(Boolean)
-
-              for (let i = 0; i < blocks.length; i++) {
-                if (isAborted)
-                  break
-                const block = blocks[i]
-                const dataLine = block.split(/\r?\n/).find(l => l.startsWith('data:'))
-                if (!dataLine)
-                  continue
-                const jsonPart = dataLine.replace(/^data:\s*/, '')
-                try {
-                  const data = JSON.parse(jsonPart)
-                  onMessage(data as any)
-                }
-                catch (e) {
-                  console.warn('[SSE] Debug replay: failed to parse block', e)
-                }
-                // 模拟流式推送的小延迟
-                await new Promise(r => setTimeout(r, 40))
-              }
-
-              if (!isAborted) {
-                onDone?.()
-              }
-            }
-            catch (e) {
-              console.error('[SSE] Debug replay error:', e)
-              onDone?.()
-            }
-          })()
-
-          return abort
-        }
-      }
-    }
-    catch (e) {
-      console.warn('[SSE] Debug mode check failed', e)
-    }
-
     try {
       // 获取语言设置
       const lng = useUserStore.getState().lang || 'en'
@@ -343,8 +274,6 @@ export const agentApi = {
 
         // 当连接打开时
         async onopen(response) {
-          console.log('[SSE] Connection opened, status:', response.status)
-
           if (response.ok) {
             return // 一切正常，继续处理消息
           }
@@ -367,21 +296,16 @@ export const agentApi = {
         onmessage(event) {
           // 如果已完成，忽略后续消息
           if (isCompleted) {
-            console.log('[SSE] Already completed, ignoring message')
             return
           }
 
-          console.log('[SSE] Received message:', event)
-
           // 如果没有数据，跳过
           if (!event.data) {
-            console.log('[SSE] Empty message, skipping')
             return
           }
 
           try {
             const data = JSON.parse(event.data)
-            console.log('[SSE] Parsed data:', data)
 
             // 消息去重：基于 uuid 或生成唯一标识
             const messageId
@@ -389,7 +313,6 @@ export const agentApi = {
                 || data.message?.uuid
                 || `${data.type}-${JSON.stringify(data).slice(0, 100)}`
             if (processedMessageIds.has(messageId)) {
-              console.log('[SSE] Duplicate message, skipping:', messageId)
               return
             }
             processedMessageIds.add(messageId)
@@ -397,7 +320,6 @@ export const agentApi = {
             // 保存 sessionId
             if (data.sessionId) {
               sessionId = data.sessionId
-              console.log('[SSE] Got sessionId:', sessionId)
             }
 
             // 调用消息回调
@@ -405,7 +327,6 @@ export const agentApi = {
 
             // 如果收到结束信号，关闭连接
             if (data.type === 'done' || data.type === 'error') {
-              console.log('[SSE] Received end signal:', data.type)
               isCompleted = true
               abortController.abort()
             }
@@ -417,7 +338,6 @@ export const agentApi = {
 
         // 当连接关闭时
         onclose() {
-          console.log('[SSE] Connection closed')
           if (!isCompleted) {
             isCompleted = true
             onDone(sessionId)
@@ -430,7 +350,6 @@ export const agentApi = {
 
           // 如果是手动中止，不抛出错误
           if (abortController.signal.aborted) {
-            console.log('[SSE] Connection aborted by user')
             return
           }
 

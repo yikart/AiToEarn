@@ -5,19 +5,20 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@nestjs/common": "^11.0.0",
-    "@nestjs/core": "^11.0.0",
-    "@nestjs/mongoose": "^11.0.3",
+    "@nestjs/common": "11.1.17",
+    "@nestjs/core": "11.1.17",
+    "@nestjs/mongoose": "11.0.4",
+    "@yikart/aitoearn-ai-shared": "workspace:*",
     "@yikart/common": "workspace:*",
-    "dayjs": "^1.11.14",
-    "lodash": "^4.17.23",
-    "mongodb": "~6.20.0",
-    "mongoose": "^8.18.0",
-    "mongoose-lean-virtuals": "^2.1.0",
-    "tslib": "^2.3.0",
-    "zod": "^4.3.5"
+    "dayjs": "1.11.20",
+    "lodash": "4.17.23",
+    "mongodb": "6.20.0",
+    "mongoose": "8.23.0",
+    "mongoose-lean-virtuals": "2.1.0",
+    "tslib": "2.8.1",
+    "zod": "4.3.6"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.20"
+    "@types/lodash": "4.17.24"
   }
 }

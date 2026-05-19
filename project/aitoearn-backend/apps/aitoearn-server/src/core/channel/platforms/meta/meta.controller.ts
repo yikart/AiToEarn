@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Logger, Param, Post, Query, Res } from '@nestjs/common'
+import { Body, Controller, Get, Param, Post, Query, Res } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Internal, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc } from '@yikart/common'
+import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
 import { Response } from 'express'
 import { FacebookService } from './facebook.service'
 import { InstagramService } from './instagram.service'
@@ -15,8 +16,6 @@ import {
   FacebookPageSelectionSchema,
   GetAuthUrlBodyDto,
   GetAuthUrlBodySchema,
-  GetNoUserAuthUrlDto,
-  GetNoUserAuthUrlSchema,
 } from './meta.dto'
 import { MetaService } from './meta.service'
 import { ThreadsService } from './threads.service'
@@ -24,24 +23,13 @@ import { ThreadsService } from './threads.service'
 @ApiTags('Platform/Meta')
 @Controller('plat/meta')
 export class MetaController {
-  private readonly logger = new Logger(MetaController.name)
-
   constructor(
     private readonly metaService: MetaService,
     private readonly facebookService: FacebookService,
     private readonly instagramService: InstagramService,
     private readonly threadsService: ThreadsService,
+    private readonly metricEventHelperService: MetricEventHelperService,
   ) {}
-
-  @Public()
-  @ApiDoc({
-    summary: 'Get Instagram Public no token Authorization URL',
-    body: GetNoUserAuthUrlSchema,
-  })
-  @Post('/auth/url/public')
-  async getNoUserAuthUrl(@Body() data: GetNoUserAuthUrlDto) {
-    return await this.metaService.getNoUserAuthUrl(data.materialGroupId)
-  }
 
   @ApiDoc({
     summary: 'Get Meta OAuth URL',
@@ -49,7 +37,7 @@ export class MetaController {
   })
   @Post('/auth/url')
   async getAuthUrl(@GetToken() token: TokenInfo, @Body() data: GetAuthUrlBodyDto) {
-    return await this.metaService.generateAuthorizeURL(
+    const result = await this.metaService.generateAuthorizeURL(
       token.id,
       data.platform,
       data.scopes,
@@ -57,6 +45,15 @@ export class MetaController {
       data.callbackUrl,
       data.callbackMethod,
     )
+
+    if (result?.taskId || result?.state) {
+      await this.metricEventHelperService.record(token.id, MetricEventName.aiPublishAddChannels, {
+        bizKey: result.taskId ?? result.state,
+        properties: { platform: data.platform },
+      })
+    }
+
+    return result
   }
 
   @ApiDoc({
@@ -114,29 +111,6 @@ export class MetaController {
     return res.render('auth/meta', result ?? {})
   }
 
-  @Public()
-  @ApiDoc({
-    summary: 'Instagram授权重定向',
-    description: '处理Instagram授权回调，创建账号并保存到数据库，然后301重定向到配置的URL。重定向URL格式：{reDirectBaseUrl}?accountId={accountId}&materialGroupId={state}',
-    query: CreateAccountAndSetAccessTokenSchema,
-  })
-  @Get('/auth/redirect')
-  async handleAuthRedirect(
-    @Query('code') code: string,
-    @Query('state') state: string,
-    @Res() res: Response,
-  ) {
-    const { redirectUrl } = await this.metaService.handleAuthRedirect(code, state)
-    this.logger.debug({
-      path: 'server handleAuthRedirect',
-      data: {
-        redirectUrl,
-      },
-    })
-
-    return res.redirect(301, redirectUrl)
-  }
-
   @ApiDoc({
     summary: 'List Facebook Page Published Posts',
   })
@@ -146,7 +120,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Query() query: any,
   ) {
-    return await this.facebookService.getPagePublishedPosts(accountId, query)
+    return await this.facebookService.getPagePublishedPosts(token.id, accountId, query)
   }
 
   @ApiDoc({
@@ -158,7 +132,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Query() query: any,
   ) {
-    return await this.facebookService.getPageInsights(accountId, query)
+    return await this.facebookService.getPageInsights(token.id, accountId, query)
   }
 
   @ApiDoc({
@@ -170,7 +144,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Param('postId') postId: string,
   ) {
-    return await this.facebookService.getPostInsights(accountId, postId)
+    return await this.facebookService.getPostInsights(token.id, accountId, postId)
   }
 
   @ApiDoc({
@@ -182,7 +156,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Query() query: any,
   ) {
-    return await this.instagramService.getAccountInfo(accountId, query)
+    return await this.instagramService.getAccountInfo(token.id, accountId, query)
   }
 
   @ApiDoc({
@@ -194,7 +168,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Query() query: any,
   ) {
-    return await this.instagramService.getAccountInsights(accountId, query)
+    return await this.instagramService.getAccountInsights(token.id, accountId, query)
   }
 
   @ApiDoc({
@@ -207,7 +181,7 @@ export class MetaController {
     @Param('postId') postId: string,
     @Query() query: any,
   ) {
-    return await this.instagramService.getMediaInsights(accountId, postId, query)
+    return await this.instagramService.getMediaInsights(token.id, accountId, postId, query)
   }
 
   @ApiDoc({
@@ -219,7 +193,7 @@ export class MetaController {
     @Param('accountId') accountId: string,
     @Query() query: any,
   ) {
-    return await this.threadsService.getAccountInsights(accountId, query)
+    return await this.threadsService.getAccountInsights(token.id, accountId, query)
   }
 
   @ApiDoc({
@@ -232,7 +206,7 @@ export class MetaController {
     @Param('postId') postId: string,
     @Query() query: any,
   ) {
-    return await this.threadsService.getMediaInsights(accountId, postId, query)
+    return await this.threadsService.getMediaInsights(token.id, accountId, postId, query)
   }
 
   @ApiDoc({
@@ -244,10 +218,10 @@ export class MetaController {
     @Query('accountId') accountId: string,
     @Query('keyword') keyword: string,
   ) {
-    return await this.threadsService.searchLocations(accountId, keyword)
+    return await this.threadsService.searchLocations(token.id, accountId, keyword)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Facebook Page Insights (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -255,10 +229,10 @@ export class MetaController {
   @Post('/facebook/page/insights')
   async getCrawlerFacebookPageInsights(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.facebookService.getPageInsights(data.accountId, query)
+    return await this.facebookService.getPageInsightsByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Facebook Page Published Posts (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -266,20 +240,20 @@ export class MetaController {
   @Post('/facebook/page/published_posts')
   async getCrawlerFacebookPagePublishedPosts(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.facebookService.getPagePublishedPosts(data.accountId, query)
+    return await this.facebookService.getPagePublishedPostsByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Facebook Post Insights (Crawler)',
     body: CrawlerAccountPostDto.schema,
   })
   @Post('/facebook/post/insights')
   async getCrawlerFacebookPostInsights(@Body() data: CrawlerAccountPostDto) {
-    return await this.facebookService.getPostInsights(data.accountId, data.postId)
+    return await this.facebookService.getPostInsightsByAccountId(data.accountId, data.postId)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Facebook Page Posts (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -287,10 +261,10 @@ export class MetaController {
   @Post('/facebook/page/posts')
   async getCrawlerFacebookPagePosts(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.facebookService.getPagePosts(data.accountId, query)
+    return await this.facebookService.getPagePostsByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Facebook Page Post Comments (Crawler)',
     body: CrawlerAccountPostQueryDto.schema,
@@ -298,10 +272,10 @@ export class MetaController {
   @Post('/facebook/page/post/comments')
   async getCrawlerFacebookPostComments(@Body() data: CrawlerAccountPostQueryDto) {
     const query: any = data.query || {}
-    return await this.facebookService.getPostComments(data.accountId, data.postId, query)
+    return await this.facebookService.getPostCommentsByAccountId(data.accountId, data.postId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Instagram Account Info (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -309,10 +283,10 @@ export class MetaController {
   @Post('/instagram/account/info')
   async getCrawlerInstagramAccountInfo(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.instagramService.getAccountInfo(data.accountId, query)
+    return await this.instagramService.getAccountInfoByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Instagram Post Insights (Crawler)',
     body: CrawlerAccountPostQueryDto.schema,
@@ -320,10 +294,10 @@ export class MetaController {
   @Post('/instagram/post/insights')
   async getCrawlerInstagramPostInsights(@Body() data: CrawlerAccountPostQueryDto) {
     const query: any = data.query || {}
-    return await this.instagramService.getMediaInsights(data.accountId, data.postId, query)
+    return await this.instagramService.getMediaInsightsByAccountId(data.accountId, data.postId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Instagram User Posts (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -331,10 +305,10 @@ export class MetaController {
   @Post('/instagram/user/posts')
   async getCrawlerInstagramUserPosts(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.instagramService.getUserPosts(data.accountId, query)
+    return await this.instagramService.getUserPostsByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Threads Account Insights (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -342,10 +316,10 @@ export class MetaController {
   @Post('/threads/account/insights')
   async getCrawlerThreadsAccountInsights(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.threadsService.getAccountInsights(data.accountId, query)
+    return await this.threadsService.getAccountInsightsByAccountId(data.accountId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Threads Post Insights (Crawler)',
     body: CrawlerAccountPostQueryDto.schema,
@@ -353,10 +327,10 @@ export class MetaController {
   @Post('/threads/post/insights')
   async getCrawlerThreadsPostInsights(@Body() data: CrawlerAccountPostQueryDto) {
     const query: any = data.query || {}
-    return await this.threadsService.getMediaInsights(data.accountId, data.postId, query)
+    return await this.threadsService.getMediaInsightsByAccountId(data.accountId, data.postId, query)
   }
 
-  @Public()
+  @Internal()
   @ApiDoc({
     summary: 'Get Threads User Posts (Crawler)',
     body: CrawlerAccountQueryDto.schema,
@@ -364,6 +338,6 @@ export class MetaController {
   @Post('/threads/user/posts')
   async getCrawlerThreadsUserPosts(@Body() data: CrawlerAccountQueryDto) {
     const query: any = data.query || {}
-    return await this.threadsService.getUserPosts(data.accountId, query)
+    return await this.threadsService.getUserPostsByAccountId(data.accountId, query)
   }
 }

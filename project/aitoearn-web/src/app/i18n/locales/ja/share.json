@@ -47,5 +47,9 @@
   "viewOnly": "閲覧のみ",
   "linkExpiredDesc": "この共有リンクは期限切れです。新しいリンクについては共有者にお問い合わせください。",
   "linkNotFoundDesc": "この共有リンクは存在しないか、削除されました。",
-  "backToHome": "ホームに戻る"
+  "backToHome": "ホームに戻る",
+  "publishShareFailed": "公開の準備に失敗しました",
+  "noImagesToShare": "共有できる画像がありません",
+  "uploadFailed": "アップロードに失敗しました",
+  "noPreview": "プレビューはありません"
 }

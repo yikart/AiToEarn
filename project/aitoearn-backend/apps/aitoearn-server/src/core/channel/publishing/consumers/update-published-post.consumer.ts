@@ -139,7 +139,7 @@ export class UpdatePublishedPostConsumer extends WorkerHost {
       this.logger.error(`[task-${job.data.taskId}] Original error stack:\n${error.originalStack}`)
     }
     if (job.opts.attempts && job.attemptsMade >= job.opts.attempts) {
-      this.logger.error(`[task-${job.data.taskId}] Update published post task failed after ${job.attemptsMade} attempts, error: ${errorMessage}`)
+      this.logger.error(error, `[task-${job.data.taskId}] Update published post task failed after ${job.attemptsMade} attempts`)
       await this.publishingService.updatePublishTaskStatus(job.data.taskId, {
         status: PublishStatus.UPDATED_FAILED,
         errorMsg: errorMessage,

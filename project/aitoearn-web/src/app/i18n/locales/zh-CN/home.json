@@ -55,7 +55,6 @@
     "descriptionPrefix": "📄 ",
     "failedReasonPrefix": "失败原因: ",
     "taskTimeout": "任务超时，请稍后重试",
-    "unknownError": "未知错误",
     "status": {
       "thinking": "AI思考中...",
       "waiting": "等待处理...",
@@ -440,13 +439,20 @@
     ],
     "manage": "内容管理",
     "manageDesc": "自动点赞、收藏、评论",
-    "manageDetails": ["自动对特定内容进行点赞、收藏、评论等操作"],
+    "manageDetails": [
+      "自动对特定内容进行点赞、收藏、评论等操作"
+    ],
     "analyze": "内容分析",
     "analyzeDesc": "全网热点与创意灵感",
-    "analyzeDetails": ["全网热点", "创意灵感"],
+    "analyzeDetails": [
+      "全网热点",
+      "创意灵感"
+    ],
     "dashboard": "数据看板",
     "dashboardDesc": "全网数据一站式整合分析",
-    "dashboardDetails": ["全网数据一站式整合分析"],
+    "dashboardDetails": [
+      "全网数据一站式整合分析"
+    ],
     "trade": "内容交易",
     "sell": "卖",
     "buy": "买",

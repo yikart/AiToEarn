@@ -10,7 +10,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
 import { apiCreateMaterial, apiUpdateMaterial } from '@/api/material'
-import { RegionTaskPlatInfoArr } from '@/app/config/platConfig'
+import { TaskPlatInfoArr } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { UploadTaskStatusEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
@@ -52,7 +52,7 @@ export function useCreateMaterialForm({
   )
 
   // 默认全选平台
-  const defaultPlatforms = useMemo(() => RegionTaskPlatInfoArr.map(([p]) => p), [])
+  const defaultPlatforms = useMemo(() => TaskPlatInfoArr.map(([p]) => p), [])
 
   // 表单参数
   const [params, setParams] = useState<FormParams>({

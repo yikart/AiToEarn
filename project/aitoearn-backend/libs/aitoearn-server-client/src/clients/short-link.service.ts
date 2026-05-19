@@ -1,15 +1,7 @@
 import { Injectable } from '@nestjs/common'
+import { CreateShortLinkOptions, CreateShortLinkResponse } from '@yikart/aitoearn-server-shared'
 import { AxiosRequestConfig } from 'axios'
 import { BaseService } from './base.service'
-
-export interface CreateShortLinkOptions {
-  originalUrl: string
-  expiresInSeconds?: number
-}
-
-export interface CreateShortLinkResponse {
-  shortLink: string
-}
 
 @Injectable()
 export class ShortLinkService extends BaseService {

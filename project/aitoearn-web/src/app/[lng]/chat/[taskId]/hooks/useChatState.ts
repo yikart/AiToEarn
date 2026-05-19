@@ -11,7 +11,6 @@ import { agentApi } from '@/api/agent'
 import { toast } from '@/lib/toast'
 import { useAgentStore } from '@/store/agent'
 import { getDefaultTaskData } from '@/store/agent/agent.state'
-import { useUserStore } from '@/store/user'
 import { convertMessages, isTaskCompleted } from '../utils'
 import { useTaskPolling } from './useTaskPolling'
 
@@ -52,17 +51,13 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
   const { taskId, t } = options
 
   // 全局 Store 状态 - 获取任务级数据
-  const { currentTaskId, taskMessages, setMessages, debugFiles } = useAgentStore(
+  const { currentTaskId, taskMessages, setMessages } = useAgentStore(
     useShallow(state => ({
       currentTaskId: state.currentTaskId,
       taskMessages: state.taskMessages,
       setMessages: state.setMessages,
-      debugFiles: state.debugFiles,
     })),
   )
-
-  // 判断是否处于 debug 模式
-  const isDebugMode = debugFiles.length > 0
 
   // 获取当前任务的数据（按 taskId 隔离）
   const currentTaskData = taskMessages[taskId] || getDefaultTaskData()
@@ -70,9 +65,6 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
   const storeWorkflowSteps = currentTaskData.workflowSteps
   const storeIsGenerating = currentTaskData.isGenerating
   const storeProgress = currentTaskData.progress
-
-  // 获取 Credits 余额
-  const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
   // 判断是否为活跃任务
   const isActiveTask = currentTaskId === taskId
@@ -196,9 +188,6 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
             }
           }
 
-          // 获取到 result 后，刷新 Credits 余额
-          fetchCreditsBalance()
-
           hasLoadedRef.current = true
         }
         else {
@@ -215,11 +204,10 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
     }
 
     loadTask()
-  }, [taskId, storeMessages.length, t, setMessages, startPolling, fetchCreditsBalance])
+  }, [taskId, storeMessages.length, t, setMessages, startPolling])
 
   // 计算最终显示的消息和状态
   // 优先使用 store 中的消息（支持任务缓存和实时更新）
-  // debug 模式下强制使用 store 的消息，用于调试回放
   // taskId='new' 时，使用 currentTaskId 对应的消息（临时任务的消息）
   // 这样可以在创建任务后立即显示用户消息和 AI 思考状态
   const displayMessages = (() => {
@@ -228,7 +216,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
       const currentData = taskMessages[currentTaskId]
       return currentData?.messages || []
     }
-    return storeMessages.length > 0 || isActiveTask || isDebugMode ? storeMessages : localMessages
+    return storeMessages.length > 0 || isActiveTask ? storeMessages : localMessages
   })()
   const isGenerating = isRealtimeGenerating || localIsGenerating || isPolling
   // taskId='new' 时，工作流步骤存储在 currentTaskId（临时任务）中
@@ -237,7 +225,7 @@ export function useChatState(options: IChatStateOptions): IChatStateReturn {
       const currentData = taskMessages[currentTaskId]
       return currentData?.workflowSteps || []
     }
-    return isActiveTask || isDebugMode ? storeWorkflowSteps : []
+    return isActiveTask ? storeWorkflowSteps : []
   })()
 
   /**

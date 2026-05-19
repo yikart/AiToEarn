@@ -11,11 +11,6 @@ body {
   overflow: hidden;
 }
 
-/* Welcome 页面样式隔离 - 防止全局污染 */
-html:not(.welcome-page-active) {
-  font-size: 100% !important;
-}
-
 body {
   font-family: Suisseintl, sans-serif;
 }
@@ -55,9 +50,13 @@ button {
   --color-warning-foreground: var(--warning-foreground);
   --color-info: var(--info);
   --color-info-foreground: var(--info-foreground);
+  --color-brand-purple: var(--brand-purple);
+  --color-brand-cyan: var(--brand-cyan);
+  --color-gradient-foreground: var(--gradient-foreground);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --background-image-gradient-back: var(--gradientBackColor);
   --color-chart-1: var(--chart-1);
   --color-chart-2: var(--chart-2);
   --color-chart-3: var(--chart-3);
@@ -74,6 +73,14 @@ button {
 }
 
 :root {
+  --gradientBackColor: linear-gradient(to right in oklch, var(--brand-purple), var(--brand-cyan));
+  /* 品牌色 */
+  --brand-purple: oklch(0.74 0.17 3);
+  --brand-cyan: oklch(0.71 0.17 294);
+  --gradient-foreground: oklch(0.985 0 0);
+  /* Section 交替背景色 */
+  --section-alt-bg: #f8f9fa;
+
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
@@ -81,9 +88,8 @@ button {
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* 回退到原来的灰色 */
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
+  --primary: var(--brand-cyan);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -100,31 +106,33 @@ button {
   --info-foreground: oklch(0.985 0 0);
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --ring: var(--brand-cyan);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: color-mix(in oklch, var(--brand-cyan) 3%, var(--background));
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--brand-cyan);
+  --sidebar-primary-foreground: var(--gradient-foreground);
+  --sidebar-accent: color-mix(in oklch, var(--brand-cyan) 10%, var(--background));
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: color-mix(in oklch, var(--border) 50%, transparent);
+  --sidebar-ring: var(--brand-cyan);
 }
 
 .dark {
+  --gradient-foreground: oklch(0.985 0 0);
+  --section-alt-bg: rgba(255, 255, 255, 0.03);
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
   --card: oklch(0.205 0 0);
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
+  --primary: var(--brand-purple);
+  --primary-foreground: oklch(0.145 0 0);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -141,20 +149,20 @@ button {
   --info-foreground: oklch(0.985 0 0);
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --ring: var(--brand-cyan);
   --chart-1: oklch(0.488 0.243 264.376);
   --chart-2: oklch(0.696 0.17 162.48);
   --chart-3: oklch(0.769 0.188 70.08);
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
+  --sidebar: color-mix(in oklch, var(--brand-cyan) 7%, var(--background));
+  --sidebar-foreground: var(--foreground);
+  --sidebar-primary: var(--brand-cyan);
+  --sidebar-primary-foreground: var(--gradient-foreground);
+  --sidebar-accent: color-mix(in oklch, var(--brand-cyan) 14%, var(--background));
+  --sidebar-accent-foreground: var(--foreground);
+  --sidebar-border: color-mix(in oklch, var(--border) 50%, transparent);
+  --sidebar-ring: var(--brand-cyan);
 }
 
 @layer base {
@@ -166,6 +174,49 @@ button {
   }
   *:focus-visible {
     @apply outline-2 outline-offset-2 outline-ring;
+  }
+}
+
+@layer components {
+  .publish-topic-mention {
+    display: inline;
+    align-items: center;
+    margin-inline: 0.0625rem;
+    padding: 0 0.0625rem 0.0625rem;
+    vertical-align: baseline;
+    color: color-mix(in oklch, var(--brand-cyan) 76%, var(--foreground));
+    border-radius: calc(var(--radius-sm) + 1px);
+    background: linear-gradient(90deg, var(--brand-cyan), var(--brand-purple)) 0 100% / 100% 0.08em
+      no-repeat;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    line-height: inherit;
+    transition:
+      background 0.18s ease,
+      color 0.18s ease;
+  }
+
+  .publish-topic-mention_trigger {
+    color: color-mix(in oklch, var(--brand-purple) 62%, var(--brand-cyan));
+    font-weight: 700;
+  }
+
+  .publish-topic-mention_value {
+    color: color-mix(in oklch, var(--brand-cyan) 76%, var(--foreground));
+    font-weight: 600;
+  }
+
+  .publish-topic-mention-focused {
+    padding-inline: 0.25rem;
+    background:
+      linear-gradient(var(--background), var(--background)) padding-box,
+      var(--gradientBackColor) border-box;
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--brand-cyan) 34%, transparent);
+  }
+
+  .publish-topic-mention-focused .publish-topic-mention_trigger,
+  .publish-topic-mention-focused .publish-topic-mention_value {
+    color: color-mix(in oklch, var(--brand-cyan) 82%, var(--foreground));
   }
 }
 
@@ -226,13 +277,6 @@ body > div {
 
 .add-account-responsive-modal ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
-}
-
-/* 定价页面响应式布局 - 1400px 以上显示4列 */
-@media (min-width: 1400px) {
-  .pricing-grid-4 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-  }
 }
 
 /* Shimmer 渐变动画 - 用于骨架屏 loading 效果 */

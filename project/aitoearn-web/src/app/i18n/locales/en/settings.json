@@ -2,20 +2,14 @@
   "title": "Settings",
   "tabs": {
     "profile": "Profile",
-    "agent": "Agent",
-    "wallet": "Wallet",
-    "income": "Income",
-    "balance": "Balance",
-    "subscription": "Credits",
-    "membership": "Bills",
-    "brandInfo": "Brand Info",
-    "general": "General"
+    "general": "General",
+    "agent": "Agent"
   },
   "profile": {
-    "totalIncome": "Balance",
-    "currentBalance": "Current Credits",
     "logout": "Logout",
     "edit": "Edit",
+    "editName": "Edit nickname",
+    "changeAvatar": "Change avatar",
     "save": "Save",
     "saving": "Saving...",
     "cancel": "Cancel",
@@ -37,126 +31,6 @@
     "imageLoading": "Loading image...",
     "processing": "Processing...",
     "githubStars": "GitHub Stars"
-  },
-  "income": {
-    "balance": "Balance",
-    "withdrawableBalance": "Withdrawable Balance",
-    "incomeRecords": "Income Records",
-    "balanceRecords": "Balance Records",
-    "withdrawRecords": "Withdrawal Records",
-    "incomeId": "Income ID",
-    "withdrawId": "Withdrawal ID",
-    "amount": "Amount",
-    "type": "Type",
-    "statusLabel": "Status",
-    "description": "Description",
-    "createTime": "Created At",
-    "updateTime": "Updated At",
-    "all": "All",
-    "incomeDetail": "Income Details",
-    "noWallet": "No wallet added",
-    "noWalletTip": "Please add a wallet in the Wallet tab first",
-    "manageWallets": "Manage Wallets",
-    "addWallet": "Add Wallet",
-    "withdrawButton": "Withdraw",
-    "rechargeButton": "Recharge",
-    "noIncomeRecords": "No income records",
-    "noBalanceRecords": "No balance records",
-    "noWithdrawRecords": "No withdrawal records",
-    "balanceAfter": "Balance After",
-    "currencyFilter": "Currency",
-    "typeFilter": "Type",
-    "balanceTypes": {
-      "task_creation": "Task Creation",
-      "manual_deduct": "Manual Deduction",
-      "refund": "Refund",
-      "recharge": "Recharge",
-      "manual_add": "Manual Addition",
-      "task_refund": "Task Refund",
-      "task_stopped": "Task Stopped",
-      "withdraw": "Withdraw",
-      "withdraw_refund": "Withdraw Refund",
-      "task": "Task Income",
-      "commission": "Commission"
-    },
-    "types": {
-      "task": "Task Income",
-      "task_back": "Task Refund",
-      "reward_back": "Reward Refund",
-      "taskBack": "Task Refund",
-      "rewardBack": "Reward Refund",
-      "taskWithdraw": "Task Withdrawal",
-      "task_withdraw": "Task Withdrawal"
-    },
-    "status": {
-      "pending": "Pending",
-      "withdrawn": "Withdrawn"
-    },
-    "withdraw": {
-      "cancel": "Cancel",
-      "cancelConfirmTitle": "Cancel Withdrawal",
-      "cancelConfirmDesc": "Are you sure you want to cancel this withdrawal request?",
-      "type": {
-        "task": "Task",
-        "reward": "Reward"
-      },
-      "walletAccount": "Wallet",
-      "adminNote": "Note",
-      "paidAt": "Paid At",
-      "screenshots": "Screenshots",
-      "status": {
-        "pending": "Pending",
-        "approved": "Approved",
-        "paid": "Paid",
-        "failed": "Failed",
-        "rejected": "Rejected"
-      }
-    },
-    "withdrawStatus": {
-      "wait": "Processing",
-      "success": "Success",
-      "fail": "Failed",
-      "task_withdraw": "Task Withdrawal",
-      "unknown": "Unknown"
-    },
-    "messages": {
-      "getIncomeRecordsFailed": "Failed to get income records",
-      "getBalanceRecordsFailed": "Failed to get balance records",
-      "getIncomeDetailFailed": "Failed to get income details",
-      "getWithdrawRecordsFailed": "Failed to get withdrawal records",
-      "cancelWithdrawSuccess": "Withdrawal cancelled successfully",
-      "cancelWithdrawFailed": "Failed to cancel withdrawal",
-      "noIncomeRecords": "No income records",
-      "noWithdrawRecords": "No withdrawal records",
-      "noIncomeDetail": "No income details",
-      "loading": "Loading...",
-      "totalRecords": "Total {{total}} records"
-    }
-  },
-  "subscription": {
-    "currentPlan": "Current Plan",
-    "upgrade": "Recharge",
-    "manage": "Manage Subscription",
-    "balance": "Credits",
-    "usageRecords": "Usage Records",
-    "detail": "Detail",
-    "date": "Date",
-    "amount": "Amount",
-    "amountChange": "Amount Change",
-    "noRecords": "No usage records yet",
-    "loading": "Loading...",
-    "loadMore": "Load More",
-    "types": {
-      "register_bonus": "Registration Bonus",
-      "purchase": "Purchase",
-      "vip_monthly": "VIP Monthly",
-      "ai_service": "AI Service",
-      "video_style_transfer": "Video Style Transfer",
-      "publish": "Publish",
-      "expired": "Expired",
-      "manual": "Manual Adjustment"
-    },
-    "viewAgentPricing": "View the specific prices of each model of the agent"
   },
   "general": {
     "language": "Website Language",

@@ -14,11 +14,13 @@ import type { CalendarViewType } from '@/store/system'
 import dayjs from 'dayjs'
 import { CalendarDays, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import { memo, useMemo } from 'react'
+import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { useGetClientLng } from '@/hooks/useSystem'
 import { getDayjsLocale } from '@/lib/i18n/languageConfig'
 import { cn } from '@/lib/utils'
+import { useSystemStore } from '@/store/system'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 import 'dayjs/locale/de'
@@ -39,6 +41,19 @@ const CalendarToolbar = memo<ICalendarToolbarProps>(
   ({ currentDate, viewType, onPrev, onNext, onToday, onViewTypeChange }) => {
     const { t } = useTransClient('account')
     const lng = useGetClientLng()
+    const {
+      showSolarFestivals,
+      showSolarTerms,
+      setShowSolarFestivals,
+      setShowSolarTerms,
+    } = useSystemStore(
+      useShallow(state => ({
+        showSolarFestivals: state.calendarShowSolarFestivals,
+        showSolarTerms: state.calendarShowSolarTerms,
+        setShowSolarFestivals: state.setCalendarShowSolarFestivals,
+        setShowSolarTerms: state.setCalendarShowSolarTerms,
+      })),
+    )
 
     // 根据语言设置 dayjs locale 并格式化日期
     const formattedDate = useMemo(() => {
@@ -147,6 +162,44 @@ const CalendarToolbar = memo<ICalendarToolbarProps>(
 
         {/* 右侧：视图切换和今天按钮 */}
         <div className="flex items-center gap-2">
+          <div
+            className="hidden items-center gap-0.5 rounded-md border border-border bg-muted/40 p-0.5 md:flex"
+            aria-label={`${t('calendar.filters.solarFestivals')} / ${t('calendar.filters.solarTerms')}`}
+          >
+            <Button
+              data-testid="calendar-toggle-solar-festival"
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={cn(
+                'h-7 rounded-md px-2.5 text-xs font-medium cursor-pointer shadow-none',
+                showSolarFestivals
+                  ? 'bg-background text-foreground shadow-sm hover:bg-background'
+                  : 'text-muted-foreground hover:bg-background/60 hover:text-foreground',
+              )}
+              aria-pressed={showSolarFestivals}
+              onClick={() => setShowSolarFestivals(!showSolarFestivals)}
+            >
+              {t('calendar.filters.solarFestivals')}
+            </Button>
+            <Button
+              data-testid="calendar-toggle-solar-term"
+              type="button"
+              variant="ghost"
+              size="sm"
+              className={cn(
+                'h-7 rounded-md px-2.5 text-xs font-medium cursor-pointer shadow-none',
+                showSolarTerms
+                  ? 'bg-background text-foreground shadow-sm hover:bg-background'
+                  : 'text-muted-foreground hover:bg-background/60 hover:text-foreground',
+              )}
+              aria-pressed={showSolarTerms}
+              onClick={() => setShowSolarTerms(!showSolarTerms)}
+            >
+              {t('calendar.filters.solarTerms')}
+            </Button>
+          </div>
+
           {/* 视图切换按钮 */}
           <div className="flex items-center border rounded-md">
             <Button

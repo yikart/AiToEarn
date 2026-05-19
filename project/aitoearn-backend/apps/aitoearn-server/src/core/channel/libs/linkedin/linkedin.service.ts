@@ -28,7 +28,7 @@ export class LinkedinService {
     }
     catch (error: unknown) {
       const err = LinkedInError.buildFromError(error, operation)
-      this.logger.error(`[LinkedIn:${operation}] Error !! ${url} message=${err.message} status=${err.status} rawError=${JSON.stringify(err.rawError)}`)
+      this.logger.error(err, `[LinkedIn:${operation}] Error !! ${url} kind=${err.kind} httpStatus=${err.cause.httpStatus ?? 'N/A'} platformCode=${err.cause.platformCode ?? 'N/A'} platformMessage=${err.cause.platformMessage || 'N/A'}`)
       throw err
     }
   }

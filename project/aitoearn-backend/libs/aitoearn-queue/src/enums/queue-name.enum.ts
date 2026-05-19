@@ -24,15 +24,18 @@ export enum QueueName {
   /** 更新发布任务队列 */
   UpdatePublishedPost = 'update_published_post',
 
-  /** Credits 购买处理队列 */
-  CreditsPurchase = 'credits_purchase',
-
-  /** Credits 退款处理队列 */
-  CreditsRefund = 'credits_refund',
-
   /** 通知队列 */
   Notification = 'bull_notification',
 
+  /** AI任务失败退款处理队列 */
+  AiTaskRefund = 'ai_task_refund',
+
   /** DraftGeneration 生成队列 */
   DraftGeneration = 'place_draft_generation',
+
+  /** DraftGeneration 低优先级生成队列 */
+  DraftGenerationLowPriority = 'place_draft_generation_low_priority',
+
+  /** 用户事件批量写入队列 */
+  UserEventBatch = 'user_event_batch',
 }

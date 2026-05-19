@@ -112,12 +112,17 @@ const ImageStack = memo(({
       return
     setExitingKeys(prev => new Set(prev).add(imageId))
     const timer = setTimeout(() => {
-      onImagesChange(selectedIdsRef.current.filter(id => id !== imageId))
+      const nextSelectedIds = selectedIdsRef.current.filter(id => id !== imageId)
+      onImagesChange(nextSelectedIds)
+      if (nextSelectedIds.length + localMediasRef.current.length === 0) {
+        clearCollapseTimer()
+        setExpanded(false)
+      }
       setExitingKeys((prev) => { const n = new Set(prev); n.delete(imageId); return n })
       exitTimeoutsRef.current.delete(timer)
     }, 300)
     exitTimeoutsRef.current.add(timer)
-  }, [onImagesChange, exitingKeys])
+  }, [clearCollapseTimer, onImagesChange, exitingKeys])
 
   const handleDeleteLocalMedia = useCallback((e: React.MouseEvent, mediaId: string) => {
     e.stopPropagation()
@@ -126,16 +131,22 @@ const ImageStack = memo(({
     setExitingKeys(prev => new Set(prev).add(`local-${mediaId}`))
     const timer = setTimeout(() => {
       const idx = localMediasRef.current.findIndex(m => m.id === mediaId)
-      if (idx >= 0)
+      if (idx >= 0) {
         onLocalMediaRemove(idx)
+        if (selectedIdsRef.current.length + localMediasRef.current.length - 1 === 0) {
+          clearCollapseTimer()
+          setExpanded(false)
+        }
+      }
       setExitingKeys((prev) => { const n = new Set(prev); n.delete(`local-${mediaId}`); return n })
       exitTimeoutsRef.current.delete(timer)
     }, 300)
     exitTimeoutsRef.current.add(timer)
-  }, [onLocalMediaRemove, exitingKeys])
+  }, [clearCollapseTimer, onLocalMediaRemove, exitingKeys])
 
   // 总项目数（店铺图片 + 本地媒体）
   const totalMediaCount = images.length + localMedias.length
+  const isExpanded = totalMediaCount === 0 ? true : expanded
 
   const handlePopoverOpenChange = useCallback((open: boolean) => {
     setPopoverOpen(open)
@@ -200,21 +211,6 @@ const ImageStack = memo(({
       }
     })
   }, [localMedias, videoInfoMap])
-
-  // 桌面端空状态自动展开，使 "+" 显示为卡片；首次加载完成后自动折叠
-  const prevTotalMediaCountRef = useRef(0)
-  useEffect(() => {
-    if (!isMobile) {
-      if (totalMediaCount === 0) {
-        setExpanded(true)
-      }
-      else if (prevTotalMediaCountRef.current === 0 && totalMediaCount > 0) {
-        // 从空到有媒体（初始加载），折叠回去
-        setExpanded(false)
-      }
-    }
-    prevTotalMediaCountRef.current = totalMediaCount
-  }, [totalMediaCount, isMobile])
 
   // 移动端：flex-wrap 网格，始终展开
   if (isMobile) {
@@ -340,8 +336,8 @@ const ImageStack = memo(({
         <div className="relative w-20 h-24 flex-shrink-0">
           {/* 展开态悬浮容器 — hover 区域 = 图片容器 */}
           <div
-            className={cn(styles.expandContainer, expanded && styles.expanded)}
-            style={expanded
+            className={cn(styles.expandContainer, isExpanded && styles.expanded)}
+            style={isExpanded
               ? { ...expandedContainerStyle, left: containerLeft }
               : { width: ITEM_WIDTH, height: ITEM_HEIGHT, left: containerLeft }}
             onMouseEnter={() => {
@@ -365,8 +361,8 @@ const ImageStack = memo(({
               return (
                 <div
                   key={image.id}
-                  className={cn(styles.imageItem, expanded && styles.imageItemExpanded, isExiting && styles.imageItemExiting)}
-                  style={expanded
+                  className={cn(styles.imageItem, isExpanded && styles.imageItemExpanded, isExiting && styles.imageItemExiting)}
+                  style={isExpanded
                     ? {
                         '--expand-x': `${index * (ITEM_WIDTH + EXPAND_GAP)}px`,
                         '--expand-rotation': `${expandRotation}deg`,
@@ -379,16 +375,16 @@ const ImageStack = memo(({
                         pointerEvents: (index >= totalMediaCount - 5 ? 'auto' : 'none') as React.CSSProperties['pointerEvents'],
                       }}
                   onMouseEnter={() => {
-                    if (!expanded)
+                    if (!isExpanded)
                       setExpanded(true)
                     setHoveredVideoIndex(null)
                   }}
-                  onClick={() => expanded && handleMediaClick(getOssUrl(image.url), 'image')}
+                  onClick={() => isExpanded && handleMediaClick(getOssUrl(image.url), 'image')}
                 >
                   <div className="relative w-full h-full overflow-hidden rounded-md cursor-pointer">
                     <Image src={getOssUrl(image.url)} alt="" fill className="object-cover" sizes="50px" />
                   </div>
-                  {expanded && (
+                  {isExpanded && (
                     <button
                       type="button"
                       className={styles.deleteButton}
@@ -412,8 +408,8 @@ const ImageStack = memo(({
               return (
                 <div
                   key={media.id || `local-${index}`}
-                  className={cn(styles.imageItem, expanded && styles.imageItemExpanded, isExiting && styles.imageItemExiting, isVideo && 'group/video')}
-                  style={expanded
+                  className={cn(styles.imageItem, isExpanded && styles.imageItemExpanded, isExiting && styles.imageItemExiting, isVideo && 'group/video')}
+                  style={isExpanded
                     ? {
                         '--expand-x': `${globalIndex * (ITEM_WIDTH + EXPAND_GAP)}px`,
                         '--expand-rotation': `${expandRotation}deg`,
@@ -426,7 +422,7 @@ const ImageStack = memo(({
                         pointerEvents: (globalIndex >= totalMediaCount - 5 ? 'auto' : 'none') as React.CSSProperties['pointerEvents'],
                       }}
                   onMouseEnter={() => {
-                    if (!expanded)
+                    if (!isExpanded)
                       setExpanded(true)
                     if (isVideo)
                       setHoveredVideoIndex(globalIndex)
@@ -436,7 +432,7 @@ const ImageStack = memo(({
                     if (isVideo)
                       setHoveredVideoIndex(null)
                   }}
-                  onClick={() => expanded && !isUploading && media.url && handleMediaClick(media.url, isVideo ? 'video' : 'image')}
+                  onClick={() => isExpanded && !isUploading && media.url && handleMediaClick(media.url, isVideo ? 'video' : 'image')}
                 >
                   <div className="relative w-full h-full overflow-hidden rounded-md cursor-pointer">
                     {isVideo
@@ -470,7 +466,7 @@ const ImageStack = memo(({
                       </div>
                     )}
                   </div>
-                  {expanded && (
+                  {isExpanded && (
                     <button
                       type="button"
                       className={styles.deleteButton}
@@ -483,7 +479,7 @@ const ImageStack = memo(({
               )
             })}
             {/* 视频气泡提示 — 渲染在 expandContainer 内，脱离旋转 GPU 图层 */}
-            {expanded && hoveredVideoIndex !== null && videoHintText && (
+            {isExpanded && hoveredVideoIndex !== null && videoHintText && (
               <div
                 className="absolute pointer-events-none whitespace-nowrap z-[60] bg-primary text-primary-foreground text-xs rounded-md px-2 py-1"
                 style={{
@@ -500,9 +496,9 @@ const ImageStack = memo(({
               <div
                 className={cn(
                   styles.addButtonWrapper,
-                  expanded ? styles.addButtonWrapperExpanded : styles.addButtonWrapperCollapsed,
+                  isExpanded ? styles.addButtonWrapperExpanded : styles.addButtonWrapperCollapsed,
                 )}
-                style={expanded
+                style={isExpanded
                   ? { '--expand-x': `${totalMediaCount * (ITEM_WIDTH + EXPAND_GAP)}px` } as React.CSSProperties
                   : undefined}
               >
@@ -517,8 +513,8 @@ const ImageStack = memo(({
                   canUploadVideo={canUploadVideo}
                   localImageCount={localImageCount}
                 >
-                  <button data-testid="draftbox-ai-add-media-btn" type="button" className={expanded ? styles.addButtonExpanded : styles.addButtonCollapsed}>
-                    <Plus className={expanded ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
+                  <button data-testid="draftbox-ai-add-media-btn" type="button" className={isExpanded ? styles.addButtonExpanded : styles.addButtonCollapsed}>
+                    <Plus className={isExpanded ? 'h-4 w-4' : 'h-3.5 w-3.5'} />
                   </button>
                 </AddMediaButton>
               </div>

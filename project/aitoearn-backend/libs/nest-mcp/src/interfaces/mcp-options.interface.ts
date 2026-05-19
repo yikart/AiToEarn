@@ -1,5 +1,5 @@
 import { ServerCapabilities } from '@modelcontextprotocol/sdk/types.js'
-import { CanActivate, ModuleMetadata, Type } from '@nestjs/common'
+import { CanActivate, ModuleMetadata, Provider, Type } from '@nestjs/common'
 
 export enum McpTransportType {
   SSE = 'sse',
@@ -38,6 +38,12 @@ export interface McpOptions {
      */
     statelessMode?: boolean
   }
+  /**
+   * Custom provider for MCP tool monitoring.
+   * Must provide `MCP_TOOL_MONITOR` token implementing `McpToolMonitor`.
+   * Defaults to a no-op adapter if not provided.
+   */
+  toolMonitorProvider?: Provider
 }
 
 // Async variant omits transport since controllers are not auto-registered in forRootAsync

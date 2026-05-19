@@ -79,7 +79,6 @@ export function migrateTaskInstance(fromId: string, toId: string): void {
   if (instance && fromId !== toId) {
     taskInstances.delete(fromId)
     taskInstances.set(toId, instance)
-    console.log(`[TaskInstances] Migrated instance: ${fromId} -> ${toId}`)
   }
 }
 

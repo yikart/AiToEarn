@@ -2,6 +2,8 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const publicAssetsVersion = '20260517'
+const publicAssetsCacheControl = 'public, max-age=0, must-revalidate'
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
@@ -33,7 +35,7 @@ const nextConfig = {
   rewrites: async () => {
     const rewrites = []
 
-    // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连用
+    // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连 用
     // 如：NEXT_PUBLIC_PROXY_URL = http://localhost:8080
     if (process.env.NEXT_PUBLIC_PROXY_URL) {
       rewrites.push({
@@ -42,6 +44,16 @@ const nextConfig = {
       })
     }
     return rewrites
+  },
+  redirects: async () => {
+    return [
+      {
+        source: '/assets/:path*',
+        missing: [{ type: 'query', key: 'v' }],
+        destination: `/assets/:path*?v=${publicAssetsVersion}`,
+        permanent: false,
+      },
+    ]
   },
 }
 
@@ -67,6 +79,15 @@ nextConfig.headers = async () => {
     {
       source: '/api/:path*',
       headers: CorsHeaders,
+    },
+    {
+      source: '/assets/:path*',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: publicAssetsCacheControl,
+        },
+      ],
     },
     {
       // 为所有页面添加 SEO 相关的 headers

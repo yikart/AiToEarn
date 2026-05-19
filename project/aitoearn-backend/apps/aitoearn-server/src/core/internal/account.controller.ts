@@ -9,10 +9,21 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Internal } from '@yikart/aitoearn-auth'
-import { ApiDoc } from '@yikart/common'
+import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 import { AccountGroupService } from '../account/account-group.service'
-import { AccountIdDto, AccountListByIdsDto, AccountListByParamDto, AccountListByTypesDto, CreateAccountDto, UpdateAccountDto, UpdateAccountStatisticsDto, UpdateAccountStatusDto } from '../account/account.dto'
+import {
+  AccountIdDto,
+  AccountListByIdsDto,
+  AccountListByParamDto,
+  AccountListByTypesDto,
+  CreateAccountDto,
+  UpdateAccountDto,
+  UpdateAccountStatisticsDataDto,
+  UpdateAccountStatusDto,
+  UserTotalFansCountDto,
+} from '../account/account.dto'
 import { AccountService } from '../account/account.service'
+import { TotalFansCountVo } from '../account/account.vo'
 import { AccountInternalService } from './provider/account.service'
 
 @ApiTags('Internal/Account')
@@ -41,7 +52,7 @@ export class AccountController {
   })
   @Post('/:userId/socials/accounts')
   async createOrUpdateAccount(
-    @Param('userId') userId: string,
+    @Param('userId', ParseObjectIdPipe) userId: string,
     @Body() body: CreateAccountDto,
   ) {
     this.logger.debug(`Creating social media account for userId: ${userId}`)
@@ -56,7 +67,7 @@ export class AccountController {
   })
   @Get('/:userId/socials/accounts/:accountId')
   async getAccountDetail(
-    @Param('userId') userId: string,
+    @Param('userId', ParseObjectIdPipe) userId: string,
     @Param('accountId') accountId: string,
   ) {
     return await this.accountInternalService.getAccountDetail(
@@ -71,7 +82,7 @@ export class AccountController {
   })
   @Patch('/:userId/socials/accounts/:accountId')
   async updateAccountInfo(
-    @Param('userId') userId: string,
+    @Param('userId', ParseObjectIdPipe) userId: string,
     @Param('accountId') accountId: string,
     @Body() body: UpdateAccountDto,
   ) {
@@ -84,11 +95,12 @@ export class AccountController {
 
   @ApiDoc({
     summary: 'Update Account Insights',
+    body: UpdateAccountStatisticsDataDto.schema,
   })
   @Patch('/socials/accounts/:accountId/statistics')
   async updateAccountStatistics(
     @Param('accountId') accountId: string,
-    @Body() body: UpdateAccountStatisticsDto,
+    @Body() body: UpdateAccountStatisticsDataDto,
   ) {
     return this.accountInternalService.updateAccountStatistics(
       accountId,
@@ -103,6 +115,17 @@ export class AccountController {
   @Post('account/info')
   async getAccountInfoToTask(@Body() body: AccountIdDto) {
     return this.accountService.getAccountById(body.id)
+  }
+
+  @ApiDoc({
+    summary: 'Get User Online Account Total Fans Count for Task',
+    body: UserTotalFansCountDto.schema,
+    response: TotalFansCountVo,
+  })
+  @Post('account/total-fans-count')
+  async getUserTotalFansCountToTask(@Body() body: UserTotalFansCountDto): Promise<TotalFansCountVo> {
+    const totalFansCount = await this.accountService.getUserTotalFansCount(body.userId)
+    return TotalFansCountVo.create({ totalFansCount })
   }
 
   @ApiDoc({
@@ -153,7 +176,7 @@ export class AccountController {
   })
   @Get('accountGroup/info/:id')
   async getAccountGroupInfo(
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ) {
     return this.accountGroupService.findOneById(id)
   }

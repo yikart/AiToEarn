@@ -1,4 +1,5 @@
 import { createZodDto, TableDto } from '@yikart/common'
+import { PublishRecordSource } from '@yikart/mongodb'
 import { z } from 'zod'
 import { DouyinDownloadType, DouyinPrivateStatus } from '../../libs/douyin/common'
 import { ArchiveStatus } from './common'
@@ -80,10 +81,10 @@ const GetArchiveListSchema = AccountIdSchema.extend({
 export class GetArchiveListDto extends createZodDto(GetArchiveListSchema) {}
 
 export const CreateDouyinPublishSchema = z.object({
+  source: z.nativeEnum(PublishRecordSource).optional().describe('发布来源'),
   title: z.string().optional().describe('标题'),
   desc: z.string().optional().describe('描述'),
   accountId: z.string().optional().describe('账号ID'),
-  taskId: z.string().optional().describe('任务ID'),
   materialGroupId: z.string().optional().describe('草稿箱ID'),
   materialId: z.string().optional().describe('草稿ID'),
   videoUrl: z.string().optional().describe('视频URL'),

@@ -1,5 +1,6 @@
 import { HttpModule } from '@nestjs/axios'
 import { Global, Module } from '@nestjs/common'
+import { MetricEventHelperModule } from '@yikart/helpers'
 import { AccountModule } from '../account/account.module'
 import { PublishModule } from '../publish-record/publish-record.module'
 import { ChannelController } from './channel.controller'
@@ -27,6 +28,7 @@ import { PublishModule as PublishingModule } from './publishing/publishing.modul
     PublishModule,
     AccountModule,
     ChannelInternalModule,
+    MetricEventHelperModule,
   ],
   providers: [ChannelService, PublishService],
   controllers: [
@@ -35,6 +37,6 @@ import { PublishModule as PublishingModule } from './publishing/publishing.modul
     EngagementController,
     ChannelController,
   ],
-  exports: [ChannelService, PublishingModule, PlatModule],
+  exports: [ChannelService, PublishService, PublishingModule, PlatModule],
 })
 export class ChannelModule { }

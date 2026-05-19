@@ -1,4 +1,5 @@
-import { IErrorContext, SocialMediaError } from '../exception'
+import type { SocialMediaErrorCause } from '../exception'
+import { SocialMediaError } from '../exception'
 
 export interface ThreadsRawError {
   message: string
@@ -13,47 +14,22 @@ export interface ThreadsRawError {
 /**
  * Threads error class.
  */
-export class ThreadsError extends SocialMediaError<ThreadsRawError> {
-  constructor(
-    platform: string,
-    operation: string,
-    name: string,
-    message: string,
-    status: number | undefined,
-    rawStatus: number | undefined,
-    rawError: ThreadsRawError,
-    isNetworkError: boolean,
-    context: IErrorContext | undefined,
-  ) {
-    super(
-      platform,
-      operation,
-      name,
-      message,
-      status,
-      rawStatus,
-      rawError,
-      isNetworkError,
-      context,
-    )
-  }
-
+export class ThreadsError extends SocialMediaError {
   protected static override getPlatformName(): string {
     return 'threads'
   }
 
-  protected static override extractRawError(data: unknown): ThreadsRawError | undefined {
+  protected static override extractPlatformCause(
+    data: unknown,
+  ): Partial<Pick<SocialMediaErrorCause, 'platformCode' | 'platformMessage'>> {
     if (!data || typeof data !== 'object') {
-      return undefined
+      return {}
     }
     const errResponse = data as { error?: ThreadsRawError }
-    return errResponse.error
-  }
 
-  protected static override buildMessage(
-    rawError: ThreadsRawError,
-    operation: string,
-  ): string {
-    return `Failed to ${operation}. ${rawError.error_user_title || rawError.message}, error code: ${rawError.code}`
+    return {
+      platformCode: errResponse.error?.code,
+      platformMessage: errResponse.error?.error_user_title || errResponse.error?.message,
+    }
   }
 }

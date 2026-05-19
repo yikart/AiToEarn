@@ -15,30 +15,6 @@ export class UserService extends BaseService {
   }
 
   /**
-   * 生成用户推广码
-   */
-  async generatePopularizeCode(userId: string): Promise<string> {
-    const url = `/internal/user/popularize-code/generate`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: { userId },
-    }
-    return this.request<string>(url, config)
-  }
-
-  /**
-   * 根据推广码获取用户信息
-   */
-  async getUserByPopularizeCode(inviteCode: string): Promise<UserInfo | null> {
-    const url = `/internal/user/popularize-code/get-user`
-    const config: AxiosRequestConfig = {
-      method: 'POST',
-      data: { inviteCode },
-    }
-    return this.request<UserInfo | null>(url, config)
-  }
-
-  /**
    * 批量获取用户信息
    */
   async listByIds(userIds: string[]): Promise<UserInfo[]> {

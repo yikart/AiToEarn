@@ -1,17 +1,22 @@
+import type { VideoAiLogByChannel } from './video-ai-log.interface'
 import { Injectable, Logger } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
 import { WithLoggerContext } from '@yikart/common'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogType } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
+import { AxiosError } from 'axios'
 import { RedlockKey } from '../../../common'
+import { DashscopeService as DashscopeLibService } from '../libs/dashscope'
 import { GeminiService } from '../libs/gemini'
 import { GrokLibService, GrokVideoTaskStatus } from '../libs/grok'
 import { OpenaiService } from '../libs/openai'
 import { VolcengineService } from '../libs/volcengine'
+import { DashscopeVideoService } from './dashscope'
 import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
-import { OpenAIVideoCallbackDto, OpenAIVideoService } from './openai'
-import { VolcengineCallbackDto, VolcengineVideoService } from './volcengine'
+import { OpenAIVideoService } from './openai'
+import { VideoService } from './video.service'
+import { VolcengineVideoService } from './volcengine'
 
 @Injectable()
 export class VideoTaskStatusScheduler {
@@ -27,6 +32,9 @@ export class VideoTaskStatusScheduler {
     private readonly geminiVideoService: GeminiVideoService,
     private readonly grokLibService: GrokLibService,
     private readonly grokVideoService: GrokVideoService,
+    private readonly dashscopeLibService: DashscopeLibService,
+    private readonly dashscopeVideoService: DashscopeVideoService,
+    private readonly videoService: VideoService,
   ) { }
 
   /**
@@ -61,11 +69,11 @@ export class VideoTaskStatusScheduler {
 
     if (channel === AiLogChannel.Volcengine) {
       const result = await this.volcengineLibService.getVideoGenerationTask(taskId)
-      await this.volcengineVideoService.callback(result as unknown as VolcengineCallbackDto)
+      await this.volcengineVideoService.callback(result)
     }
     else if (channel === AiLogChannel.OpenAI) {
       const result = await this.openaiLibService.retrieveVideo(taskId)
-      await this.openaiVideoService.callback(result as unknown as OpenAIVideoCallbackDto)
+      await this.openaiVideoService.callback(result)
     }
     else if (channel === AiLogChannel.Gemini) {
       try {
@@ -77,25 +85,37 @@ export class VideoTaskStatusScheduler {
       }
     }
     else if (channel === AiLogChannel.Grok) {
+      const grokTask = task as VideoAiLogByChannel<AiLogChannel.Grok>
       try {
         const result = await this.grokLibService.getVideoStatus(taskId)
-        await this.grokVideoService.callback(result, task)
+        await this.grokVideoService.callback(result, grokTask)
       }
       catch (e) {
-        const status = (e as { response?: { status?: number } })?.response?.status
-        if (status === 404) {
-          await this.grokVideoService.callback({
-            status: GrokVideoTaskStatus.Failed,
-            error: { code: 'NOT_FOUND', message: 'Task not found on Grok (404)' },
-          }, task)
+        let errorMessage: string = (e as Error).message
+        let code = '500'
+        if (e instanceof AxiosError) {
+          const status = e?.response?.status
+          if (status && status >= 400 && status < 500) {
+            const data = e.response?.data
+            errorMessage = data?.error || data?.code || `Grok API error (${status})`
+            code = data?.code || `HTTP_${status}`
+          }
         }
-        else {
-          throw e
-        }
+        await this.grokVideoService.callback({
+          status: GrokVideoTaskStatus.Failed,
+          error: { code, message: errorMessage },
+        }, grokTask)
       }
+    }
+    else if (channel === AiLogChannel.Dashscope) {
+      const result = await this.dashscopeLibService.getVideoTask(taskId)
+      await this.dashscopeVideoService.callback(result)
     }
     else {
       this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)
+      return
     }
+
+    await this.videoService.ensureSavedMediaByAiLogId(task.id)
   }
 }
