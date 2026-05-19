@@ -269,6 +269,7 @@ services:
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: 1
+      AUTO_LOGIN_ENABLED: "false"
 
   nginx:
     image: nginx:alpine
