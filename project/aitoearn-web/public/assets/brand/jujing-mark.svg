@@ -1,0 +1,26 @@
+<svg width="256" height="256" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="blue" x1="12" x2="45" y1="23" y2="46">
+      <stop stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#00a4ef"/>
+    </linearGradient>
+    <linearGradient id="cyan" x1="31" x2="51" y1="19" y2="44">
+      <stop stop-color="#00bbd9"/>
+      <stop offset="1" stop-color="#5ad7e8"/>
+    </linearGradient>
+    <linearGradient id="green" x1="42" x2="57" y1="41" y2="30">
+      <stop stop-color="#22c55e"/>
+      <stop offset="1" stop-color="#3fdd83"/>
+    </linearGradient>
+    <filter id="shadow" x="-2" y="-2" width="68" height="68" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#2563eb" flood-opacity=".16"/>
+    </filter>
+  </defs>
+  <rect x="5" y="5" width="54" height="54" rx="14" fill="#fff" stroke="#e7edf6" filter="url(#shadow)"/>
+  <path d="M13.4 25.4c5.6.1 8.5 2.6 11 9.1 1.5 4 3.2 6 5.4 6.2 2.7.2 5.1-2.4 8.7-8.1l6.9-10.9c.8-1.2 2.6-.8 2.8.7l1.3 11.1c.2 1.6-1.8 2.6-2.9 1.4l-6.8-7.1" stroke="url(#blue)" stroke-width="8.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M31.7 41.1c3.2-.9 5.4-3.9 8.5-8.7l5.1-8.1 8.2 10.1" stroke="url(#cyan)" stroke-width="8.2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M48.5 38.3 56 33.4" stroke="url(#green)" stroke-width="3.2" stroke-linecap="round"/>
+  <circle cx="34.2" cy="17.4" r="3.3" fill="#2563eb"/>
+  <circle cx="56" cy="33.4" r="3.1" fill="#22c55e"/>
+  <circle cx="45.2" cy="24.1" r="1.5" fill="#fff" opacity=".5"/>
+</svg>

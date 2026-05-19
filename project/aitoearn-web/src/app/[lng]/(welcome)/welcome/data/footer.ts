@@ -1,3 +1,5 @@
+import { APP_BRAND } from '@/config/brand'
+
 /**
  * footer.ts - 页脚数据
  * 包含页脚链接和配置信息
@@ -26,7 +28,7 @@ export const footerLegal: FooterLink[] = [
 
 // 资源链接
 export const footerResources: FooterLink[] = [
-  { label: 'docs', href: 'https://docs.aitoearn.ai/', external: true },
+  { label: 'docs', href: APP_BRAND.siteUrl, external: true },
 ]
 
 // 账户链接
@@ -36,7 +38,7 @@ export const footerAccount: FooterLink[] = [
 
 // 联系信息
 export const footerContact = {
-  email: 'hello@aiearn.ai',
-  emailHref: 'mailto:hello@aiearn.ai',
-  github: 'https://github.com/yikart/aitoearn',
+  email: APP_BRAND.contactEmail,
+  emailHref: `mailto:${APP_BRAND.contactEmail}`,
+  github: APP_BRAND.siteUrl,
 }

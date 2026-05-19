@@ -7,12 +7,11 @@
 
 import type { NavItem } from '../../data/navigation'
 
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
-import logo from '@/assets/images/logo.png'
+import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { cn } from '@/lib/utils'
 import { navigateToLogin } from '@/utils/auth'
 
@@ -39,14 +38,7 @@ function NavItemComponent({ item, t }: { item: NavItem, t: (key: string) => stri
 function Logo() {
   return (
     <Link href="/" className="mr-8 flex items-center gap-2 md:mr-16">
-      <Image
-        src={logo}
-        alt="AiToEarn"
-        width={40}
-        height={40}
-        className="size-8 rounded-md md:size-10"
-      />
-      <span className="text-lg font-semibold md:text-xl">AiToEarn</span>
+      <BrandWordmark markSize={40} showTagline size="lg" />
     </Link>
   )
 }

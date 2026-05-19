@@ -1,10 +1,26 @@
 /*  全局css变量 */
 :root {
-  --gradientBackColor: linear-gradient(to right, oklch(55.8% 0.288 302.321), oklch(54.6% 0.245 262.881));
+  --gradientBackColor: linear-gradient(135deg, #2563eb 0%, #00bbd9 52%, #22c55e 100%);
 
   /* 品牌色 */
-  --brand-purple: oklch(55.8% 0.288 302.321);
-  --brand-cyan: oklch(54.6% 0.245 262.881);
+  --brand-cloud: #ffffff;
+  --brand-mist: #f2f4f7;
+  --brand-ink: #102033;
+  --brand-whale: #2563eb;
+  --brand-signal: #00bbd9;
+  --brand-growth: #22c55e;
+  --brand-spark: #f59e0b;
+  --brand-purple: var(--brand-whale);
+  --brand-cyan: var(--brand-signal);
+  --brand-surface: rgba(255, 255, 255, 0.84);
+  --brand-signal-line: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(37, 99, 235, 0.58) 26%,
+    rgba(0, 187, 217, 0.72) 52%,
+    rgba(34, 197, 94, 0.64) 76%,
+    transparent 100%
+  );
 
   /* Section 交替背景色 */
   --section-alt-bg: #f8f9fa;
@@ -12,4 +28,5 @@
 
 .dark {
   --section-alt-bg: rgba(255, 255, 255, 0.03);
+  --brand-surface: rgba(16, 32, 51, 0.76);
 }

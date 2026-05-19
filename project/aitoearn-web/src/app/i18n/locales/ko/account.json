@@ -2,10 +2,10 @@
   "seo": {
     "title": "멀티 플랫폼 게시 - 15개 이상 소셜 네트워크에 포스팅",
     "description": "대시보드에서 TikTok, YouTube, Instagram, Facebook, X, LinkedIn 등에 콘텐츠를 관리하고 게시하세요. 여러 계정을 연결하고 15개 이상의 플랫폼에 콘텐츠를 배포하세요.",
-    "keywords": "멀티 플랫폼 게시, 소셜 미디어 관리, 크로스 플랫폼 포스팅, 콘텐츠 배포, 예약 게시, AiToEarn"
+    "keywords": "멀티 플랫폼 게시, 소셜 미디어 관리, 크로스 플랫폼 포스팅, 콘텐츠 배포, 예약 게시, Giant Whale Network"
   },
   "title": "게시",
-  "describe": "AiToEarn은 원클릭으로 여러 플랫폼에 콘텐츠를 게시할 수 있습니다. 10개 이상의 플랫폼을 지원합니다.",
+  "describe": "Giant Whale Network은 원클릭으로 여러 플랫폼에 콘텐츠를 게시할 수 있습니다. 10개 이상의 플랫폼을 지원합니다.",
   "keywords": "다중 플랫폼 게시, 소셜 미디어 관리, 콘텐츠 게시 도구, 예약 게시, 대량 게시, 계정 관리, 채널 관리, 콘텐츠 마케팅, 자체 미디어 운영, AI 콘텐츠 게시, 캘린더 게시, TikTok 게시, YouTube 게시, Instagram 게시, Facebook 게시, Twitter 게시, Douyin 게시, Xiaohongshu 게시, Kuaishou 게시, Bilibili 게시, WeChat 비디오, WeChat 공식 계정, Threads 게시, Pinterest 게시, LinkedIn 게시, 다중 계정 관리, 콘텐츠 배포, 소셜 미디어 마케팅, 크리에이터 도구, KOL 도구, 브랜드 마케팅 도구",
   "today": "오늘",
   "defaultSpace": "기본 스페이스",
@@ -311,7 +311,7 @@
     "availablePlatforms": "사용 가능한 플랫폼",
     "connectNewChannel": "채널 연결",
     "backToChannels": "내 채널로 돌아가기",
-    "newUserTip": "채널을 연결하여 멋진 AiToEarn 여정을 시작하세요!",
+    "newUserTip": "채널을 연결하여 멋진 Giant Whale Network 여정을 시작하세요!",
     "addChannel": "채널 추가",
     "connecting": "{{platform}} 연결 중",
     "authWaitingTip": "새 창에서 인증을 완료해 주세요...",

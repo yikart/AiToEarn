@@ -3,9 +3,9 @@
   "seo": {
     "title": "多平台矩阵发布 - 一键发布到15+社交网络",
     "description": "在一个后台管理并发布内容到抖音、小红书、B站、快手、微信视频号、TikTok、YouTube等15+社交平台。连接多个账号，定时发布，同时分发内容。",
-    "keywords": "多平台发布, 社媒管理, 跨平台发布, 内容分发, 定时发布, 批量发布, 账号管理, AiToEarn"
+    "keywords": "多平台发布, 社媒管理, 跨平台发布, 内容分发, 定时发布, 批量发布, 账号管理, 巨鲸网络"
   },
-  "describe": "AiToEarn 将您帮内容一键发布到多个平台, 我们支持10+个平台的内容发布",
+  "describe": "巨鲸网络 将您帮内容一键发布到多个平台, 我们支持10+个平台的内容发布",
   "keywords": "多平台发布, 社交媒体管理, 内容发布工具, 定时发布, 批量发布, 账号管理, 频道管理, 内容营销, 自媒体运营, AI内容发布, 日历发布, TikTok发布, YouTube发布, Instagram发布, Facebook发布, Twitter发布, 抖音发布, 小红书发布, 快手发布, B站发布, 微信视频号, 微信公众号, Threads发布, Pinterest发布, LinkedIn发布, 多账号管理, 内容分发, 社交媒体营销, 创作者工具, KOL工具, 品牌营销工具",
   "today": "今天",
   "defaultSpace": "默认空间",
@@ -304,7 +304,7 @@
   "rightClickTip": "右键点击空间或频道可进行删除、排序等操作",
   "channelManager": {
     "browserPlugin": "浏览器插件",
-    "xhsMobileNotSupported": "对不起，小红书需要依赖浏览器插件，请去PC端AiToEarn操作小红书",
+    "xhsMobileNotSupported": "对不起，小红书需要依赖浏览器插件，请去PC端巨鲸网络操作小红书",
     "myChannels": "我的频道",
     "title": "频道管理",
     "description": "管理您的频道和分组",
@@ -313,7 +313,7 @@
     "availablePlatforms": "可连接的平台",
     "connectNewChannel": "连接新频道",
     "backToChannels": "返回我的频道",
-    "newUserTip": "授权任何频道开始您奇妙的AiToEarn之旅吧！",
+    "newUserTip": "授权任何频道开始您奇妙的巨鲸网络之旅吧！",
     "addChannel": "添加频道",
     "connecting": "正在连接 {{platform}}",
     "authWaitingTip": "请在新窗口完成授权操作...",

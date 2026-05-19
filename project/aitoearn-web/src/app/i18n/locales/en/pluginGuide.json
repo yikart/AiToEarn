@@ -1,12 +1,12 @@
 {
   "seo": {
-    "title": "Browser Extension Guide - Install AiToEarn Plugin",
-    "description": "Step-by-step guide to install and use the AiToEarn browser extension for automated social media content publishing and management.",
-    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, AiToEarn"
+    "title": "Browser Extension Guide - Install Giant Whale Network Plugin",
+    "description": "Step-by-step guide to install and use the Giant Whale Network browser extension for automated social media content publishing and management.",
+    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, Giant Whale Network"
   },
   "title": "Browser Plugin Guide",
   "lastUpdated": "Last Updated",
-  "introduction": "This guide will walk you through how to install and use the AiToEarn browser plugin, enabling you to manage your social media accounts and publish content more conveniently.",
+  "introduction": "This guide will walk you through how to install and use the Giant Whale Network browser plugin, enabling you to manage your social media accounts and publish content more conveniently.",
   "tableOfContents": "Contents",
   "sections": {
     "installation": "Install Plugin",
@@ -19,7 +19,7 @@
   "steps": {
     "step1": {
       "title": "Step 1: Open Plugin Management Dialog",
-      "content": "On the AiToEarn platform page, click the plugin icon in the upper right corner to open the browser plugin management dialog.",
+      "content": "On the Giant Whale Network platform page, click the plugin icon in the upper right corner to open the browser plugin management dialog.",
       "caption": "Click the Extension button in the upper right corner"
     },
     "step2": {
@@ -33,7 +33,7 @@
     "step3": {
       "title": "Step 3: Check Installation Status",
       "content": "After installation, click the browser's extensions button to check if the installation was successful.",
-      "caption": "Find AiToEarn plugin in browser extension bar"
+      "caption": "Find Giant Whale Network plugin in browser extension bar"
     },
     "step4": {
       "title": "Step 4: Enter Plugin Details Page",
@@ -41,16 +41,16 @@
     },
     "step5": {
       "title": "Step 5: Authorize the Plugin",
-      "notLoggedInContent": "If you are not logged in on the AiToEarn homepage, click \"Go to Home\" to go to the AiToEarn homepage and log in.",
+      "notLoggedInContent": "If you are not logged in on the Giant Whale Network homepage, click \"Go to Home\" to go to the Giant Whale Network homepage and log in.",
       "notLoggedInCaption": "Click 'Go to Home' to log in first",
-      "loggedInContent": "If you are already logged in on the AiToEarn homepage, click \"Authorize Now\" to authorize.",
+      "loggedInContent": "If you are already logged in on the Giant Whale Network homepage, click \"Authorize Now\" to authorize.",
       "loggedInCaption": "Click 'Authorize Now' to authorize the plugin"
     },
     "step6": {
       "title": "Step 6: Confirm Plugin is Ready",
-      "content": "Permission has been granted successfully. Next, open the AiToEarn platform, refresh the page, and you will see the plugin is ready. Click on it to view details.",
+      "content": "Permission has been granted successfully. Next, open the Giant Whale Network platform, refresh the page, and you will see the plugin is ready. Click on it to view details.",
       "caption1": "Authorization successful",
-      "caption2": "Return to AiToEarn platform to check plugin status"
+      "caption2": "Return to Giant Whale Network platform to check plugin status"
     },
     "step7": {
       "title": "Step 7: View Account Information",
@@ -73,13 +73,13 @@
     },
     "step9": {
       "title": "View Sync Results",
-      "content": "Return to the AiToEarn homepage and click \"My Channels\" to enter the account management page.",
+      "content": "Return to the Giant Whale Network homepage and click \"My Channels\" to enter the account management page.",
       "caption1": "Click 'My Channels' to enter account management",
       "caption2": "You can see the Xiaohongshu account has been successfully synced"
     },
     "complete": {
       "title": "Complete",
-      "content": "Now you can use the AiToEarn platform normally!"
+      "content": "Now you can use the Giant Whale Network platform normally!"
     }
   },
   "manualInstall": {

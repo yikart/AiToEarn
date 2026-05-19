@@ -48,7 +48,15 @@
   "yes": "是",
   "no": "否",
   "calendar": {
-    "weekDaysShort": ["日", "一", "二", "三", "四", "五", "六"],
+    "weekDaysShort": [
+      "日",
+      "一",
+      "二",
+      "三",
+      "四",
+      "五",
+      "六"
+    ],
     "monthSuffix": "月"
   },
   "actions": {
@@ -89,8 +97,8 @@
     "materialLibrary": "素材库",
     "draftBox": "内容管理",
     "draftBoxSeoTitle": "内容管理 - AI批量创作与草稿编辑",
-    "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用AiToEarn组织多平台分发内容。",
-    "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, AiToEarn",
+    "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用巨鲸网络组织多平台分发内容。",
+    "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, 巨鲸网络",
     "brandPromotion": "AI打卡",
     "agentAssets": "Agent素材"
   },
@@ -116,7 +124,7 @@
     "title": "下载{{appName}}",
     "operationInApp": "请在{{appName}}中操作添加",
     "description": "为了更好的用户体验和功能完整性，该操作需要在 {{appName}} 中完成账号添加。请下载并安装 {{appName}} 后继续操作。",
-    "operationDescription": "请在Aitoearn App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装Aitoearn App后继续操作。",
+    "operationDescription": "请在巨鲸网络 App中操作{{platform}}频道账号<br/>为了更好的用户体验和完整性，请下载并安装巨鲸网络 App后继续操作。",
     "scanQrCode": "扫描二维码下载",
     "downloadLink": "下载链接：",
     "copy": "复制",
@@ -129,7 +137,7 @@
   },
   "uptime": {
     "seoTitle": "AI 模型状态 - 实时模型可用性监控",
-    "pageKeywords": "AI模型状态, 模型可用性, 在线率追踪, AI服务健康, 模型监控, AiToEarn状态",
+    "pageKeywords": "AI模型状态, 模型可用性, 在线率追踪, AI服务健康, 模型监控, 巨鲸网络状态",
     "pageTitle": "AI 模型状态",
     "pageDescription": "实时监控 AI 模型的可用性和运行状态。查看各模型和服务商的运行状况。",
     "loading": "加载中...",

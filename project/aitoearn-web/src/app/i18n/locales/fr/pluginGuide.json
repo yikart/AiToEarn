@@ -1,12 +1,12 @@
 {
   "seo": {
-    "title": "Browser Extension Guide - Install AiToEarn Plugin",
-    "description": "Step-by-step guide to install and use the AiToEarn browser extension for automated social media content publishing and management.",
-    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, AiToEarn"
+    "title": "Browser Extension Guide - Install Giant Whale Network Plugin",
+    "description": "Step-by-step guide to install and use the Giant Whale Network browser extension for automated social media content publishing and management.",
+    "keywords": "browser extension, plugin guide, installation guide, Chrome extension, social media automation, Giant Whale Network"
   },
   "title": "Guide du plugin de navigateur",
   "lastUpdated": "Dernière mise à jour",
-  "introduction": "Ce guide vous expliquera comment installer et utiliser le plugin de navigateur AiToEarn, vous permettant de gérer vos comptes de réseaux sociaux et de publier du contenu plus facilement.",
+  "introduction": "Ce guide vous expliquera comment installer et utiliser le plugin de navigateur Giant Whale Network, vous permettant de gérer vos comptes de réseaux sociaux et de publier du contenu plus facilement.",
   "tableOfContents": "Sommaire",
   "sections": {
     "installation": "Installer le plugin",
@@ -19,7 +19,7 @@
   "steps": {
     "step1": {
       "title": "Étape 1 : Ouvrir la boîte de dialogue de gestion du plugin",
-      "content": "Sur la page de la plateforme AiToEarn, cliquez sur l'icône du plugin dans le coin supérieur droit pour ouvrir la boîte de dialogue de gestion du plugin de navigateur.",
+      "content": "Sur la page de la plateforme Giant Whale Network, cliquez sur l'icône du plugin dans le coin supérieur droit pour ouvrir la boîte de dialogue de gestion du plugin de navigateur.",
       "caption": "Cliquez sur le bouton Extension dans le coin supérieur droit"
     },
     "step2": {
@@ -33,7 +33,7 @@
     "step3": {
       "title": "Étape 3 : Vérifier le statut d'installation",
       "content": "Après l'installation, cliquez sur le bouton des extensions du navigateur pour vérifier si l'installation a réussi.",
-      "caption": "Trouvez le plugin AiToEarn dans la barre d'extensions du navigateur"
+      "caption": "Trouvez le plugin Giant Whale Network dans la barre d'extensions du navigateur"
     },
     "step4": {
       "title": "Étape 4 : Accéder à la page de détails du plugin",
@@ -41,16 +41,16 @@
     },
     "step5": {
       "title": "Étape 5 : Autoriser le plugin",
-      "notLoggedInContent": "Si vous n'êtes pas connecté sur la page d'accueil AiToEarn, cliquez sur \"Go to Home\" pour accéder à la page d'accueil AiToEarn et vous connecter.",
+      "notLoggedInContent": "Si vous n'êtes pas connecté sur la page d'accueil Giant Whale Network, cliquez sur \"Go to Home\" pour accéder à la page d'accueil Giant Whale Network et vous connecter.",
       "notLoggedInCaption": "Cliquez sur 'Go to Home' pour vous connecter d'abord",
-      "loggedInContent": "Si vous êtes déjà connecté sur la page d'accueil AiToEarn, cliquez sur \"Authorize Now\" pour autoriser.",
+      "loggedInContent": "Si vous êtes déjà connecté sur la page d'accueil Giant Whale Network, cliquez sur \"Authorize Now\" pour autoriser.",
       "loggedInCaption": "Cliquez sur 'Authorize Now' pour autoriser le plugin"
     },
     "step6": {
       "title": "Étape 6 : Confirmer que le plugin est prêt",
-      "content": "La permission a été accordée avec succès. Ensuite, ouvrez la plateforme AiToEarn, rafraîchissez la page, et vous verrez que le plugin est prêt. Cliquez dessus pour voir les détails.",
+      "content": "La permission a été accordée avec succès. Ensuite, ouvrez la plateforme Giant Whale Network, rafraîchissez la page, et vous verrez que le plugin est prêt. Cliquez dessus pour voir les détails.",
       "caption1": "Autorisation réussie",
-      "caption2": "Retournez à la plateforme AiToEarn pour vérifier le statut du plugin"
+      "caption2": "Retournez à la plateforme Giant Whale Network pour vérifier le statut du plugin"
     },
     "step7": {
       "title": "Étape 7 : Voir les informations du compte",
@@ -73,13 +73,13 @@
     },
     "step9": {
       "title": "Voir les résultats de la synchronisation",
-      "content": "Retournez à la page d'accueil AiToEarn et cliquez sur \"Mes chaînes\" pour accéder à la page de gestion des comptes.",
+      "content": "Retournez à la page d'accueil Giant Whale Network et cliquez sur \"Mes chaînes\" pour accéder à la page de gestion des comptes.",
       "caption1": "Cliquez sur 'Mes chaînes' pour accéder à la gestion des comptes",
       "caption2": "Vous pouvez voir que le compte Xiaohongshu a été synchronisé avec succès"
     },
     "complete": {
       "title": "Terminé",
-      "content": "Vous pouvez maintenant utiliser la plateforme AiToEarn normalement !"
+      "content": "Vous pouvez maintenant utiliser la plateforme Giant Whale Network normalement !"
     }
   },
   "manualInstall": {

@@ -1,12 +1,12 @@
 {
   "seo": {
-    "title": "浏览器插件安装指南 - AiToEarn 扩展程序",
-    "description": "详细的 AiToEarn 浏览器插件安装和使用教程,帮助您实现社交媒体内容的自动化发布和管理。",
-    "keywords": "浏览器插件, 插件安装, 安装指南, Chrome扩展, 社交媒体自动化, AiToEarn"
+    "title": "浏览器插件安装指南 - 巨鲸网络 扩展程序",
+    "description": "详细的 巨鲸网络 浏览器插件安装和使用教程,帮助您实现社交媒体内容的自动化发布和管理。",
+    "keywords": "浏览器插件, 插件安装, 安装指南, Chrome扩展, 社交媒体自动化, 巨鲸网络"
   },
   "title": "浏览器插件使用教程",
   "lastUpdated": "最后更新",
-  "introduction": "本教程将指导您如何安装和使用 AiToEarn 浏览器插件，让您能够更便捷地管理社交媒体账号和发布内容。",
+  "introduction": "本教程将指导您如何安装和使用 巨鲸网络 浏览器插件，让您能够更便捷地管理社交媒体账号和发布内容。",
   "tableOfContents": "目录",
   "sections": {
     "installation": "安装插件",
@@ -19,7 +19,7 @@
   "steps": {
     "step1": {
       "title": "第一步：打开插件管理弹框",
-      "content": "在 AiToEarn 平台页面，点击右上角的插件图标，打开浏览器插件管理弹框。",
+      "content": "在 巨鲸网络 平台页面，点击右上角的插件图标，打开浏览器插件管理弹框。",
       "caption": "点击页面右上角的 Extension 按钮"
     },
     "step2": {
@@ -33,7 +33,7 @@
     "step3": {
       "title": "第三步：检查安装状态",
       "content": "安装完成后我们点击浏览器的扩展程序按钮，查看是否安装成功。",
-      "caption": "在浏览器扩展栏中找到 AiToEarn 插件"
+      "caption": "在浏览器扩展栏中找到 巨鲸网络 插件"
     },
     "step4": {
       "title": "第四步：进入插件详情页",
@@ -41,16 +41,16 @@
     },
     "step5": {
       "title": "第五步：授权插件",
-      "notLoggedInContent": "如果您没有在 AiToEarn 主页登录，点击 \"Go to Home\"，前往 AiToEarn 登录。",
+      "notLoggedInContent": "如果您没有在 巨鲸网络 主页登录，点击 \"Go to Home\"，前往 巨鲸网络 登录。",
       "notLoggedInCaption": "点击 'Go to Home' 前往登录",
-      "loggedInContent": "如果您已在 AiToEarn 主页登录，点击 \"Authorize Now\" 即可授权。",
+      "loggedInContent": "如果您已在 巨鲸网络 主页登录，点击 \"Authorize Now\" 即可授权。",
       "loggedInCaption": "点击 'Authorize Now' 授权插件"
     },
     "step6": {
       "title": "第六步：确认插件就绪",
-      "content": "权限已授予成功，下一步打开 AiToEarn 平台，刷新页面，此时可以看到插件已经就绪，点击它查看详情。",
+      "content": "权限已授予成功，下一步打开 巨鲸网络 平台，刷新页面，此时可以看到插件已经就绪，点击它查看详情。",
       "caption1": "授权成功提示",
-      "caption2": "返回 AiToEarn 平台查看插件状态"
+      "caption2": "返回 巨鲸网络 平台查看插件状态"
     },
     "step7": {
       "title": "第七步：查看账号信息",
@@ -73,13 +73,13 @@
     },
     "step9": {
       "title": "查看同步结果",
-      "content": "回到 AiToEarn 主页，点击 \"My Channels\" 进入账号管理页面。",
+      "content": "回到 巨鲸网络 主页，点击 \"My Channels\" 进入账号管理页面。",
       "caption1": "点击 'My Channels' 进入账号管理",
       "caption2": "可以看到小红书账号已成功同步"
     },
     "complete": {
       "title": "完成",
-      "content": "此时您可以正常使用 AiToEarn 平台了！"
+      "content": "此时您可以正常使用 巨鲸网络 平台了！"
     }
   },
   "manualInstall": {

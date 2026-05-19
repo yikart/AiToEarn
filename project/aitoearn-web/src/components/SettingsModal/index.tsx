@@ -9,10 +9,9 @@
 
 import type { ReactNode } from 'react'
 import { Globe, User } from 'lucide-react'
-import Image from 'next/image'
 import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import logo from '@/assets/images/logo.png'
+import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
@@ -154,10 +153,9 @@ export function SettingsModal({ open, onClose, defaultTab }: SettingsModalProps)
           <div className="flex w-full shrink-0 overflow-hidden flex-col border-b border-border md:w-52 md:border-b-0 md:border-r">
             {/* 侧边栏头部 - Logo + 项目名称 */}
             <div className="flex h-14 shrink-0 items-center gap-2 px-4 md:h-auto md:px-5 md:py-4">
-              <Image src={logo} alt="Aitoearn" width={24} height={24} className="hidden md:block md:h-7 md:w-7" />
-              <span className="text-sm font-semibold tracking-tight text-foreground md:text-base">
+              <BrandWordmark className="hidden md:inline-flex" markSize={28} size="sm" />
+              <span className="text-sm font-semibold tracking-tight text-foreground md:hidden">
                 <span className="md:hidden">{t('title')}</span>
-                <span className="hidden md:inline">Aitoearn</span>
               </span>
             </div>
 

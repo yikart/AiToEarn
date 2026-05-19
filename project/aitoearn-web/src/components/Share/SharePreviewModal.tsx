@@ -12,6 +12,7 @@ import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
+import { APP_BRAND } from '@/config/brand'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import { usePublishDialogStorageStore } from '../PublishDialog/usePublishDialogStorageStore'
@@ -32,7 +33,7 @@ interface SharePreviewModalProps {
 async function uploadBlobsToOss(blobs: Blob[]): Promise<string[]> {
   const uploadedUrls: string[] = []
   for (let i = 0; i < blobs.length; i++) {
-    const file = new File([blobs[i]], `aitoearn_export_${Date.now()}_${i}.png`, {
+    const file = new File([blobs[i]], `jujing_export_${Date.now()}_${i}.png`, {
       type: blobs[i].type || 'image/png',
     })
     try {
@@ -62,8 +63,8 @@ export function SharePreviewModal({ open, onClose, blobs, urls, taskId }: ShareP
         a.href = url
         a.download
           = blobs.length === 1
-            ? `aitoearn_conversation_${taskId}.png`
-            : `aitoearn_${taskId}_${i + 1}.png`
+            ? `jujing_conversation_${taskId}.png`
+            : `jujing_${taskId}_${i + 1}.png`
         document.body.appendChild(a)
         a.click()
         a.remove()
@@ -155,8 +156,8 @@ export function SharePreviewModal({ open, onClose, blobs, urls, taskId }: ShareP
       const title = ''
       const description
         = t('publishShareDescription')
-          || 'I generated this conversation on aitoearn using agent, check it out!'
-      const tags = ['aitoearn', 'agent']
+          || `I generated this conversation on ${APP_BRAND.englishName} using agent, check it out!`
+      const tags = ['巨鲸网络', 'agent']
 
       // 构建 URL 参数并跳转到账号页面
       const params = new URLSearchParams()

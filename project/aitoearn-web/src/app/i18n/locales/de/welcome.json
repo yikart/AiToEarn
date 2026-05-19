@@ -5,8 +5,8 @@
   },
   "seo": {
     "title": "KI-gestützte Content-Erstellung & Social-Media-Plattform",
-    "description": "AiToEarn bietet den bequemsten KI-Videoerstellungsservice, hilft beim Traffic für Offline-Geschäfte und bietet Social-Media-Konto-Hosting für Content-Publishing und Kommentar-Interaktion.",
-    "keywords": "KI-Videoerstellung,Social-Media-Management,Multi-Plattform-Veröffentlichung,KI-Marketing,Content-Erstellung,Social-Media-Automatisierung,AiToEarn,Markenwerbung"
+    "description": "Giant Whale Network bietet den bequemsten KI-Videoerstellungsservice, hilft beim Traffic für Offline-Geschäfte und bietet Social-Media-Konto-Hosting für Content-Publishing und Kommentar-Interaktion.",
+    "keywords": "KI-Videoerstellung,Social-Media-Management,Multi-Plattform-Veröffentlichung,KI-Marketing,Content-Erstellung,Social-Media-Automatisierung,Giant Whale Network,Markenwerbung"
   },
   "navbar": {
     "pricing": "Preise",
@@ -19,7 +19,7 @@
   "hero": {
     "badge": "KI-gestütztes Restaurant-Wachstum",
     "title": "KI-Wachstumsoperator für Solo-Unternehmen",
-    "subtitle": "Mit AiToEarn können Sie einfach Traffic zu Ihren Offline-Geschäften lenken. AiToEarn bietet Ihnen den bequemsten KI-Videoerstellungsservice. Sie können auch Ihre Social-Media-Konten auf AiToEarn hosten, und wir helfen Ihnen bei der Content-Veröffentlichung und Kommentar-Interaktion.",
+    "subtitle": "Mit Giant Whale Network können Sie einfach Traffic zu Ihren Offline-Geschäften lenken. Giant Whale Network bietet Ihnen den bequemsten KI-Videoerstellungsservice. Sie können auch Ihre Social-Media-Konten auf Giant Whale Network hosten, und wir helfen Ihnen bei der Content-Veröffentlichung und Kommentar-Interaktion.",
     "placeholder": "Finden Sie Ihr Restaurant",
     "cta": "Holen Sie sich meinen KI-Agenten",
     "selectFirst": "Bitte wählen Sie zuerst ein Restaurant aus",
@@ -52,13 +52,13 @@
   },
   "reviews": {
     "title": "Was unsere Nutzer sagen",
-    "subtitle": "Schließen Sie sich Tausenden von Einzelunternehmern an, die AiToEarn vertrauen",
+    "subtitle": "Schließen Sie sich Tausenden von Einzelunternehmern an, die Giant Whale Network vertrauen",
     "viewOnGithub": "Auf GitHub ansehen",
     "review1": {
       "content": "Endlich ein Open-Source-Tool, das Multi-Plattform-Publishing handhabt! Ein Klick zu Douyin, TikTok, YouTube - spart mir jede Woche Stunden."
     },
     "review2": {
-      "content": "Als Einzelunternehmer ist AiToEarn ein Game Changer. KI generiert Inhalte, veröffentlicht automatisch, handhabt sogar Kommentare. Meine Social Media läuft jetzt von selbst."
+      "content": "Als Einzelunternehmer ist Giant Whale Network ein Game Changer. KI generiert Inhalte, veröffentlicht automatisch, handhabt sogar Kommentare. Meine Social Media läuft jetzt von selbst."
     },
     "review3": {
       "content": "Die KI-Agent-Funktion ist unglaublich. Sie schreibt, optimiert und postet Inhalte automatisch. Inhaltskosten um 90% gesunken."
@@ -87,16 +87,22 @@
     "subtitle": "Scannen & veröffentlichen, 90%+ Kostenreduzierung pro Beitrag",
     "description": "Automatisch generierte Qualitätsinhalte verwandeln jeden Check-in in Social-Media-Exposition",
     "playVideo": "Video abspielen",
-    "video1": { "title": "Blacklock Check-in Vlog" },
-    "video2": { "title": "Restaurant-Entdeckung" },
-    "video3": { "title": "The Shed Britisches Restaurant" }
+    "video1": {
+      "title": "Blacklock Check-in Vlog"
+    },
+    "video2": {
+      "title": "Restaurant-Entdeckung"
+    },
+    "video3": {
+      "title": "The Shed Britisches Restaurant"
+    }
   },
   "testimonials": {
     "title": "Hören Sie von Restaurantbesitzern wie Ihnen",
     "watchVideo": "Video ansehen"
   },
   "beliefs": {
-    "title": "Warum AiToEarn wählen",
+    "title": "Warum Giant Whale Network wählen",
     "subtitle": "Entwickelt für Einzelunternehmer und kleine Unternehmen",
     "belief1": {
       "title": "Für Einzelunternehmer entwickelt",
@@ -133,7 +139,7 @@
     }
   },
   "experience": {
-    "title": "Mit Aitoearn erhalten Sie mehr Traffic, mehr Umsatz, mehr Kunden",
+    "title": "Mit Giant Whale Network erhalten Sie mehr Traffic, mehr Umsatz, mehr Kunden",
     "subtitle": "Von Offline-Marketing bis Multi-Plattform-Publishing, lassen Sie die KI die schwere Arbeit erledigen",
     "tab1": {
       "title": "Offline Check-in Marketing",
@@ -173,6 +179,6 @@
     "extensionPrivacy": "Erweiterungs-Datenschutzrichtlinie",
     "contact": "Kontaktieren Sie uns",
     "supportedPlatforms": "Unterstützte Plattformen",
-    "copyright": "© 2026 AiToEarn. Alle Rechte vorbehalten."
+    "copyright": "© 2026 Giant Whale Network. Alle Rechte vorbehalten."
   }
 }

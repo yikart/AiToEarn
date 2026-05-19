@@ -6,6 +6,7 @@
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
+import { APP_BRAND } from '@/config/brand'
 import { getMetadata } from '@/utils/general'
 import WelcomePageContent from './WelcomePageContent'
 
@@ -33,7 +34,7 @@ export async function generateMetadata({
             url: 'https://cdn.prod.website-files.com/66643a14df53b71d1ed72d08/6664485e59f0f7d9a9e54e5e_owner_og-p-1600.jpg',
             width: 1600,
             height: 838,
-            alt: 'AiToEarn - AI Content Creation Platform',
+            alt: `${APP_BRAND.name} - AI Content Creation Platform`,
           },
         ],
       },

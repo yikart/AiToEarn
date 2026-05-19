@@ -47,7 +47,15 @@
   "yes": "はい",
   "no": "いいえ",
   "calendar": {
-    "weekDaysShort": ["日", "月", "火", "水", "木", "金", "土"],
+    "weekDaysShort": [
+      "日",
+      "月",
+      "火",
+      "水",
+      "木",
+      "金",
+      "土"
+    ],
     "monthSuffix": "月"
   },
   "actions": {
@@ -88,8 +96,8 @@
     "materialLibrary": "ライブラリ",
     "draftBox": "コンテンツ管理",
     "draftBoxSeoTitle": "コンテンツ管理 - AIバッチ作成と下書きエディタ",
-    "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、AiToEarnでマルチプラットフォーム配信を整理。",
-    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn",
+    "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、Giant Whale Networkでマルチプラットフォーム配信を整理。",
+    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, Giant Whale Network",
     "agentAssets": "Agent素材"
   },
   "tasks": "マーケットプレイス",
@@ -114,7 +122,7 @@
     "title": "{{appName}}をダウンロード",
     "operationInApp": "{{appName}}で操作して追加してください",
     "description": "より良いユーザー体験と完全な機能をご利用いただくため、この操作は{{appName}}でアカウントを追加する必要があります。{{appName}}をダウンロードしてインストールしてください。",
-    "operationDescription": "Aitoearn Appで{{platform}}チャンネルアカウントを操作してください<br/>より良いユーザー体験と完全な機能をご利用いただくため、Aitoearn Appをダウンロードしてインストールしてください。",
+    "operationDescription": "Giant Whale Network Appで{{platform}}チャンネルアカウントを操作してください<br/>より良いユーザー体験と完全な機能をご利用いただくため、Giant Whale Network Appをダウンロードしてインストールしてください。",
     "scanQrCode": "QRコードをスキャンしてダウンロード",
     "downloadLink": "ダウンロードリンク：",
     "copy": "コピー",
@@ -130,7 +138,7 @@
   "contact": "お困りですか？サポートにお問い合わせください：",
   "uptime": {
     "seoTitle": "AIモデルステータス - リアルタイムモデル可用性監視",
-    "pageKeywords": "AIモデルステータス, モデル可用性, 稼働率追跡, AIサービス状態, モデル監視, AiToEarnステータス",
+    "pageKeywords": "AIモデルステータス, モデル可用性, 稼働率追跡, AIサービス状態, モデル監視, Giant Whale Networkステータス",
     "pageTitle": "AIモデルステータス",
     "pageDescription": "AIモデルのリアルタイム可用性と稼働時間を監視します。各モデルとプロバイダーの運用状況をご確認ください。",
     "loading": "読み込み中...",

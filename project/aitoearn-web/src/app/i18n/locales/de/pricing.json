@@ -5,7 +5,7 @@
     "keywords": "KI-Preise, Planauswahl, Inhaltserstellungspakete, KI-Abonnement, Videogenerierungspreise"
   },
   "pageTitle": "Nutzungsbasierte Abrechnung",
-  "pageDescription": "Aitoearn ist mehr als ein Softwareunternehmen — wir sind ein Ergebnislieferant.\nUnser Ziel ist es, Betriebsergebnisse für Solopreneure zu liefern.\nDie Aitoearn-Guthaben, die Sie kaufen (zur Deckung der Token-Gebühren), werden für Modellkosten von Google, OpenAI, xAI, Anthropic und anderen Anbietern verwendet.\nWir versprechen, dass unsere Preise niemals die offiziellen Preise eines Modells übersteigen werden.\nUnd wenn unser Nutzungsvolumen wächst und wir Mengenrabatte von diesen Anbietern erhalten, werden wir diese Einsparungen an Sie weitergeben.",
+  "pageDescription": "Giant Whale Network ist mehr als ein Softwareunternehmen — wir sind ein Ergebnislieferant.\nUnser Ziel ist es, Betriebsergebnisse für Solopreneure zu liefern.\nDie Giant Whale Network-Guthaben, die Sie kaufen (zur Deckung der Token-Gebühren), werden für Modellkosten von Google, OpenAI, xAI, Anthropic und anderen Anbietern verwendet.\nWir versprechen, dass unsere Preise niemals die offiziellen Preise eines Modells übersteigen werden.\nUnd wenn unser Nutzungsvolumen wächst und wir Mengenrabatte von diesen Anbietern erhalten, werden wir diese Einsparungen an Sie weitergeben.",
   "sections": {
     "credits": "Guthaben kaufen",
     "creditsDesc": "Kaufen Sie Guthaben nach Bedarf, ohne Abonnement"
@@ -477,7 +477,7 @@
       "thirdPartyApisDesc": "Für den Zugriff auf Bildmodelle, Videomodelle, Videobearbeitung/-verarbeitung und andere externe Dienste",
       "costNote": "Der tatsächliche Guthabenverbrauch einer Aufgabe hängt von ihrer Komplexität, Dauer und Anzahl externer Aufrufe ab.",
       "storageNote": "Nach Abschluss einer Aufgabe verbraucht das Speichern, Hosten, Anzeigen oder Bereitstellen ihrer Ausgabe keine zusätzlichen Guthaben.",
-      "refundNote": "Wenn eine Aufgabe aufgrund technischer Probleme von AiToEarn fehlschlägt, erstatten wir die verbrauchten Guthaben vollständig.",
+      "refundNote": "Wenn eine Aufgabe aufgrund technischer Probleme von Giant Whale Network fehlschlägt, erstatten wir die verbrauchten Guthaben vollständig.",
       "exchangeRate": "100 Guthaben = 1 USD"
     },
     "llm": {

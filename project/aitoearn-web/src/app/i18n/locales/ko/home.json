@@ -1,14 +1,14 @@
 {
   "dropToUpload": "업로드하려면 놓으세요",
   "announcement": {
-    "text": "AiToEarn은 에이전트를 사용하여 모든 콘텐츠 요구사항을 충족합니다. 실행 중 여러 도구를 호출하므로 시간이 걸릴 수 있습니다. 언제든지 종료하고 나중에 작업 진행 상황을 확인할 수 있습니다."
+    "text": "Giant Whale Network은 에이전트를 사용하여 모든 콘텐츠 요구사항을 충족합니다. 실행 중 여러 도구를 호출하므로 시간이 걸릴 수 있습니다. 언제든지 종료하고 나중에 작업 진행 상황을 확인할 수 있습니다."
   },
   "releaseBanner": {
     "tag": "릴리스 v0.8.0",
     "text": "플러그인과 활발한 마켓플레이스로 AI 워크플로우를 구축하고 확장하세요."
   },
   "header": {
-    "logo": "Aitoearn",
+    "logo": "Giant Whale Network",
     "nav": {
       "home": "홈",
       "marketplace": "마켓플레이스",
@@ -33,8 +33,8 @@
   },
   "seo": {
     "title": "AI 영상 및 콘텐츠 제작 - 15개 이상 소셜 플랫폼에 게시",
-    "description": "AiToEarn은 AI 기반 소셜 미디어 성장 운영자입니다. AI로 동영상, 이미지, 카피를 생성하고 TikTok, YouTube, Instagram, Facebook, X 등 15개 이상의 플랫폼에 원클릭 배포하세요. AI 콘텐츠 제작, 스마트 편집, 스타일 변환, 영상 번역, 트렌드 발견, 브랜드 모니터링, 통합 인게이지먼트 대시보드를 제공합니다.",
-    "keywords": "AI 콘텐츠 마케팅, AI 소셜 미디어 관리, AI 영상 생성, 다중 플랫폼 게시, AI 콘텐츠 제작, 소셜 미디어 자동화, TikTok 마케팅, YouTube 마케팅, AI 에이전트, 콘텐츠 배포, AI 카피라이팅, 영상 편집 AI, 브랜드 모니터링, AiToEarn"
+    "description": "Giant Whale Network은 AI 기반 소셜 미디어 성장 운영자입니다. AI로 동영상, 이미지, 카피를 생성하고 TikTok, YouTube, Instagram, Facebook, X 등 15개 이상의 플랫폼에 원클릭 배포하세요. AI 콘텐츠 제작, 스마트 편집, 스타일 변환, 영상 번역, 트렌드 발견, 브랜드 모니터링, 통합 인게이지먼트 대시보드를 제공합니다.",
+    "keywords": "AI 콘텐츠 마케팅, AI 소셜 미디어 관리, AI 영상 생성, 다중 플랫폼 게시, AI 콘텐츠 제작, 소셜 미디어 자동화, TikTok 마케팅, YouTube 마케팅, AI 에이전트, 콘텐츠 배포, AI 카피라이팅, 영상 편집 AI, 브랜드 모니터링, Giant Whale Network"
   },
   "agentGenerator": {
     "title": "무엇을 도와드릴까요?",
@@ -399,20 +399,20 @@
       "twitter": "Twitter"
     },
     "bigText": "Let's Use AI To",
-    "copyright": "© 2025 AiToEarn, Corp.",
+    "copyright": "© 2025 Giant Whale Network, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "데이터 삭제 안내",
       "prelaunch": "현재 애플리케이션은 출시 전 단계이며 실제 사용자 데이터를 저장하지 않습니다. 테스트 시스템과 상호작용한 경우 데이터 제거를 위해 문의해 주세요.",
       "standardTitle": "표준 절차 (출시 후):",
       "standardSteps": [
-        "AiToEarn 계정에 로그인",
+        "Giant Whale Network 계정에 로그인",
         "설정 > 개인정보로 이동",
         "\"계정 삭제 요청\" 클릭",
         "등록된 이메일로 확인이 전송됩니다"
       ],
       "contactTitle": "도움을 위한 연락처:",
-      "contactEmail": "이메일: metat@aitoearning.com (출시 전 문의만)"
+      "contactEmail": "이메일: contact@jujing.network (출시 전 문의만)"
     }
   }
 }

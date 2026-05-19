@@ -5,10 +5,10 @@
 
 'use client'
 
-import { Github } from 'lucide-react'
+import { Globe2 } from 'lucide-react'
 
 import { useTransClient } from '@/app/i18n/client'
-import { useGitHubStars } from '@/app/layout/shared/hooks/useGitHubStars'
+import { APP_BRAND } from '@/config/brand'
 
 import {
   allReviews,
@@ -25,7 +25,6 @@ import {
 
 export function ReviewsSection() {
   const { t } = useTransClient('welcome')
-  const starCount = useGitHubStars()
 
   return (
     <section className="py-16 md:py-24" style={{ backgroundImage: 'linear-gradient(#fff, #f0eae1 40%)' }}>
@@ -81,17 +80,16 @@ export function ReviewsSection() {
           </Carousel>
         </div>
 
-        {/* 底部按钮 - GitHub */}
+        {/* 底部按钮 */}
         <div className="mt-8 flex justify-center">
           <a
-            href="https://github.com/yikart/AiToEarn"
+            href={APP_BRAND.siteUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex cursor-pointer items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-opacity hover:opacity-90"
           >
-            <Github className="size-4" />
-            {t('reviews.viewOnGithub')}
-            <span className="rounded-full bg-background/20 px-2 py-0.5 text-xs">{starCount}</span>
+            <Globe2 className="size-4" />
+            {APP_BRAND.name}
           </a>
         </div>
       </div>

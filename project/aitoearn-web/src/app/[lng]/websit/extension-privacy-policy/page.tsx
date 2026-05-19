@@ -1,6 +1,6 @@
 /**
  * ExtensionPrivacyPolicyPage - 浏览器扩展隐私政策页面
- * 展示 AiToEarn 浏览器扩展的隐私政策和数据收集说明
+ * 展示 巨鲸网络 浏览器扩展的隐私政策和数据收集说明
  */
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
@@ -36,16 +36,16 @@ export default function ExtensionPrivacyPolicyPage() {
       <main className={styles.main}>
         <div className={styles.container}>
           <div className={styles.header}>
-            <h1 className={styles.title}>AiToEarn Extension Privacy Policy</h1>
+            <h1 className={styles.title}>巨鲸网络 Extension Privacy Policy</h1>
             <p className={styles.lastUpdated}>Last Updated: 2024-12-15</p>
           </div>
 
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
-                This Privacy Policy describes how AiToEarn Extension ("Extension", "we", "us", or
+                This Privacy Policy describes how 巨鲸网络 Extension ("Extension", "we", "us", or
                 "our") collects, uses, and protects information when you use our browser extension.
-                By installing and using the AiToEarn Extension, you agree to the collection and use
+                By installing and using the 巨鲸网络 Extension, you agree to the collection and use
                 of information in accordance with this policy.
               </p>
             </section>
@@ -89,9 +89,9 @@ export default function ExtensionPrivacyPolicyPage() {
             <section className={styles.section} id="section1">
               <h2 className={styles.sectionTitle}>1. Overview</h2>
               <p className={styles.sectionContent}>
-                AiToEarn Extension is a browser extension designed to help users automate content
-                publishing, engagement, and social media tasks seamlessly with the AiToEarn web
-                platform (https://aitoearn.ai). The extension works in conjunction with supported
+                巨鲸网络 Extension is a browser extension designed to help users automate content
+                publishing, engagement, and social media tasks seamlessly with the 巨鲸网络 web
+                platform (https://jujing.network). The extension works in conjunction with supported
                 social media platforms including Douyin, Xiaohongshu (Little Red Book), and other
                 services.
               </p>
@@ -145,7 +145,7 @@ export default function ExtensionPrivacyPolicyPage() {
             <section className={styles.section} id="section3">
               <h2 className={styles.sectionTitle}>3. Browser Permissions</h2>
               <p className={styles.sectionContent}>
-                The AiToEarn Extension requires certain browser permissions to function. Here's why
+                The 巨鲸网络 Extension requires certain browser permissions to function. Here's why
                 we need each permission:
               </p>
 
@@ -188,7 +188,7 @@ export default function ExtensionPrivacyPolicyPage() {
               <ul className={styles.listContent}>
                 <li>douyin.com - For Douyin platform integration</li>
                 <li>xiaohongshu.com - For Xiaohongshu platform integration</li>
-                <li>aitoearn.ai - For communication with AiToEarn web platform</li>
+                <li>jujing.network - For communication with 巨鲸网络 web platform</li>
               </ul>
             </section>
 
@@ -200,7 +200,7 @@ export default function ExtensionPrivacyPolicyPage() {
               <ul className={styles.listContent}>
                 <li>To provide and maintain the extension's functionality</li>
                 <li>To automate content publishing and engagement tasks on your behalf</li>
-                <li>To synchronize data with the AiToEarn web platform</li>
+                <li>To synchronize data with the 巨鲸网络 web platform</li>
                 <li>To authenticate your sessions with connected social media platforms</li>
                 <li>To improve and optimize the extension's performance</li>
                 <li>To diagnose technical issues and provide customer support</li>
@@ -221,7 +221,7 @@ export default function ExtensionPrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>Server Storage</h3>
               <p className={styles.sectionContent}>
-                Certain data may be transmitted to and stored on AiToEarn servers to enable
+                Certain data may be transmitted to and stored on 巨鲸网络 servers to enable
                 synchronization between the extension and the web platform. This data is encrypted
                 during transmission using industry-standard TLS/SSL protocols.
               </p>
@@ -274,9 +274,9 @@ export default function ExtensionPrivacyPolicyPage() {
                 following circumstances:
               </p>
 
-              <h3 className={styles.subSectionTitle}>With AiToEarn Platform</h3>
+              <h3 className={styles.subSectionTitle}>With 巨鲸网络 Platform</h3>
               <p className={styles.sectionContent}>
-                Data is shared between the extension and the AiToEarn web platform to provide
+                Data is shared between the extension and the 巨鲸网络 web platform to provide
                 seamless functionality and synchronization.
               </p>
 
@@ -289,7 +289,7 @@ export default function ExtensionPrivacyPolicyPage() {
               <h3 className={styles.subSectionTitle}>Legal Requirements</h3>
               <p className={styles.sectionContent}>
                 We may disclose your information if required by law, legal process, or government
-                request, or to protect the rights, property, or safety of AiToEarn, our users, or
+                request, or to protect the rights, property, or safety of 巨鲸网络, our users, or
                 others.
               </p>
             </section>
@@ -354,11 +354,11 @@ export default function ExtensionPrivacyPolicyPage() {
                 <p className={styles.contactText}>
                   <strong>Email:</strong>
                   {' '}
-                  hello@aitoearn.ai
+                  contact@jujing.network
                   <br />
                   <strong>Website:</strong>
                   {' '}
-                  https://aitoearn.ai
+                  https://jujing.network
                 </p>
               </div>
             </section>

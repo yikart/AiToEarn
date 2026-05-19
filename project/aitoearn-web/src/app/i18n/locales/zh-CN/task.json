@@ -5,7 +5,6 @@
   "publishPromotion": "发布推广",
   "back": "返回",
   "refresh": "刷新",
-
   "menu.taskSquare": "淘金广场",
   "menu.draftBox": "内容管理",
   "menu.offlinePromo": "AI打卡",
@@ -17,7 +16,6 @@
   "menu.myBrand": "我的Agent",
   "menu.contentTrading": "内容交易",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "全部平台",
   "filter.sortDefault": "默认排序",
   "filter.sortNewest": "最新发布",
@@ -43,14 +41,12 @@
   "filter.clear": "清除",
   "filter.reset": "重置",
   "card.publishTime": "发布时间",
-
   "banner.title": "想要推广您的品牌？",
   "banner.description": "发布推广任务，让创作者帮您传播",
   "banner.publishNow": "立即发布",
   "banner.statsCreators": "创作者",
   "banner.statsPlatforms": "支持平台",
   "banner.statsSettlement": "快速结算",
-
   "card.perArticle": "每篇可赚",
   "card.perInteraction": "每次可赚",
   "card.baseReward": "基础奖励",
@@ -63,16 +59,13 @@
   "card.createTime": "创建时间",
   "card.stampSoldOut": "已抢光",
   "card.stampCancelled": "已取消",
-
   "list.loading": "加载中...",
   "list.loadingMore": "加载更多...",
   "list.noMore": "没有更多了",
   "list.empty": "暂无任务",
   "list.emptyHint": "当前没有可领取的任务",
-
   "login.button": "立即登录",
   "login.hint": "登录后查看更多任务",
-
   "published": "我发布的",
   "accepted": "我接受的",
   "published.empty": "暂无发布的任务",
@@ -86,7 +79,6 @@
   "accepted.statDoing": "进行中",
   "accepted.statSettled": "已结算",
   "myTasksSubtitle": "管理你接受和发布的任务",
-
   "status.active": "进行中",
   "status.cancelled": "已下架",
   "status.pending": "待审核",
@@ -98,7 +90,6 @@
   "status.rejected": "已驳回",
   "status.disputed": "争议中",
   "status.del": "已撤销",
-
   "statusHint.doing": "请完成任务要求并提交作品",
   "statusHint.doing_interaction": "请完成互动任务并提交截图",
   "statusHint.waiting": "作品正在发布中，请耐心等待",
@@ -109,7 +100,6 @@
   "statusHint.disputed": "您的争议已提交，正在审核中",
   "statusHint.cancelled": "任务已取消",
   "statusHint.del": "任务已被管理员撤销",
-
   "action.edit": "编辑",
   "action.cancel": "下架任务",
   "action.cancelConfirm": "确认下架该任务？下架后任务将不再展示给用户，已接取的任务不受影响。",
@@ -119,7 +109,6 @@
   "action.submit": "提交任务",
   "action.accept": "接受任务",
   "action.confirmPublish": "确认发布",
-
   "detail.taskInfo": "任务信息",
   "detail.taskTitle": "任务标题",
   "detail.taskDescription": "任务描述",
@@ -155,7 +144,6 @@
   "detail.downloadAllImages": "下载全部图片",
   "detail.downloadComplete": "下载完成",
   "detail.downloadFailed": "下载失败",
-
   "create.title": "发布推广",
   "create.platform": "选择平台",
   "create.linkDraftBox": "关联草稿箱",
@@ -243,13 +231,11 @@
   "create.publishSuccess": "发布成功",
   "create.publishFailed": "发布失败",
   "create.collectNotSupported": "该平台不支持收藏",
-
   "detail.selectAccount": "选择账号",
   "detail.selectAccountPlaceholder": "请选择社交账号",
   "detail.noMatchAccount": "暂无该平台的账号",
   "detail.alreadyAccepted": "已接受",
   "detail.loginToAccept": "登录后接受任务",
-
   "detail.rewardPerPost": "每篇奖励",
   "detail.rewardPerInteraction": "每次奖励",
   "detail.recruitProgress": "招募进度",
@@ -265,10 +251,8 @@
   "detail.locationWarning": "发布作品时必须携带此位置信息，否则任务将无法通过审核！",
   "detail.topics": "相关话题",
   "detail.noDeadline": "无截止日期",
-
   "countdown.remaining": "剩余提交时间",
   "countdown.expired": "已超时",
-
   "toast.acceptSuccess": "接受任务成功",
   "toast.acceptFailed": "接受任务失败",
   "toast.submitSuccess": "提交成功",
@@ -279,7 +263,6 @@
   "toast.activateFailed": "上架失败",
   "toast.processWaitingSuccess": "处理成功",
   "toast.processWaitingFailed": "处理失败",
-
   "action.trackData": "追踪数据",
   "stats.title": "任务统计数据",
   "stats.taskInfo": "任务信息",
@@ -320,7 +303,6 @@
   "stats.trendShares": "分享量",
   "stats.trendFavorites": "收藏量",
   "stats.trendNoData": "暂无趋势数据",
-
   "workPerformance.title": "作品表现",
   "workPerformance.estimatedEarnings": "预估收益",
   "workPerformance.estimatedCost": "预估花费",
@@ -333,7 +315,6 @@
   "workPerformance.settleAmount": "金额",
   "workPerformance.settlementRule": "结算规则：作品审核通过后，系统将持续采集 7 天数据，届时自动结算",
   "workPerformance.dataUpdateTime": "我们会在 UTC 时间晚上两点更新作品数据",
-
   "userTasks.title": "接受用户列表",
   "userTasks.empty": "暂无用户接受此任务",
   "userTasks.reward": "奖励",
@@ -372,21 +353,19 @@
   "toast.approveFailed": "操作失败",
   "toast.rejectSuccess": "已拒绝",
   "toast.rejectFailed": "操作失败",
-
   "seo.homeTitle": "付费推广任务 - 用社交媒体赚钱",
   "seo.myTasksTitle": "我的任务 - 追踪已发布与已接受的推广",
-  "seo.myTasksDescription": "在一个面板管理所有推广任务。追踪已发布任务的投稿统计和收益，监控已接受任务的截止时间和进度，在AiToEarn查看所有社交媒体平台的任务表现。",
-  "seo.myTasksKeywords": "任务管理, 推广追踪, 已发布任务, 已接受任务, 收益追踪, 社媒任务, 内容推广, AiToEarn后台",
+  "seo.myTasksDescription": "在一个面板管理所有推广任务。追踪已发布任务的投稿统计和收益，监控已接受任务的截止时间和进度，在巨鲸网络查看所有社交媒体平台的任务表现。",
+  "seo.myTasksKeywords": "任务管理, 推广追踪, 已发布任务, 已接受任务, 收益追踪, 社媒任务, 内容推广, 巨鲸网络后台",
   "seo.createTitle": "创建推广任务 - 设定奖励与投稿要求",
-  "seo.createDescription": "在AiToEarn创建付费推广任务。设定预算、选择目标平台、定义内容要求，让社交媒体创作者在抖音、小红书、TikTok、YouTube等平台推广您的品牌。",
-  "seo.createKeywords": "创建推广, 付费任务, 品牌推广, 达人营销, 社媒广告, 内容要求, 推广预算, AiToEarn广告主",
+  "seo.createDescription": "在巨鲸网络创建付费推广任务。设定预算、选择目标平台、定义内容要求，让社交媒体创作者在抖音、小红书、TikTok、YouTube等平台推广您的品牌。",
+  "seo.createKeywords": "创建推广, 付费任务, 品牌推广, 达人营销, 社媒广告, 内容要求, 推广预算, 巨鲸网络广告主",
   "seo.defaultTitle": "任务详情 - 查看推广奖励与要求",
-  "seo.homeDescription": "在AiToEarn淘金广场发现付费社交媒体推广任务。通过在抖音、小红书、B站、快手、微信视频号、TikTok、YouTube等14+社交平台推广品牌赚取佣金。浏览任务、接受推广、创作内容并获得报酬，用你的社交媒体影响力开始赚钱。",
-  "seo.homeKeywords": "付费推广任务, 社交媒体推广, 网赚, 自媒体赚钱, 抖音推广, 小红书推广, B站推广, 快手推广, TikTok推广, YouTube推广, 品牌推广, 内容创作者, 达人接单, KOL推广, AiToEarn",
-  "seo.detailTitleSuffix": "- AiToEarn任务市场",
-  "seo.defaultDescription": "查看任务详情，在AiToEarn完成推广任务赚取奖励。",
+  "seo.homeDescription": "在巨鲸网络淘金广场发现付费社交媒体推广任务。通过在抖音、小红书、B站、快手、微信视频号、TikTok、YouTube等14+社交平台推广品牌赚取佣金。浏览任务、接受推广、创作内容并获得报酬，用你的社交媒体影响力开始赚钱。",
+  "seo.homeKeywords": "付费推广任务, 社交媒体推广, 网赚, 自媒体赚钱, 抖音推广, 小红书推广, B站推广, 快手推广, TikTok推广, YouTube推广, 品牌推广, 内容创作者, 达人接单, KOL推广, 巨鲸网络",
+  "seo.detailTitleSuffix": "- 巨鲸网络任务市场",
+  "seo.defaultDescription": "查看任务详情，在巨鲸网络完成推广任务赚取奖励。",
   "seo.perPost": "篇",
-
   "detail.locationScreenshot": "位置截图",
   "detail.locationScreenshotWarning": "请上传作品发布后的截图，截图中必须显示作品的发布位置，否则审核将不通过！",
   "detail.locationScreenshotRequired": "请上传位置截图",
@@ -398,7 +377,6 @@
   "detail.interactionAction.like": "点赞",
   "detail.interactionAction.collect": "收藏",
   "detail.interactionAction.comment": "评论",
-
   "create.insufficientBalance.title": "余额不足",
   "create.insufficientBalance.description": "创建此任务需要 {{symbol}}{{required}}，当前余额 {{symbol}}{{current}}，差额 {{symbol}}{{deficit}}，是否前往充值 {{symbol}}{{rechargeAmount}}？",
   "create.insufficientBalance.goRecharge": "前往充值",
@@ -407,7 +385,6 @@
   "create.insufficientBalance.balanceSufficientContent": "已恢复上次的任务创建进度，当前余额充足，是否立即创建任务？",
   "create.insufficientBalance.createNow": "立即创建",
   "create.draftRestored": "已恢复上次任务创建进度",
-
   "create.tabPromotion": "推广任务",
   "create.tabInteraction": "互动任务",
   "create.interaction.title": "发布互动任务",
@@ -429,7 +406,6 @@
   "create.interaction.validation.rewardMin": "单次奖励最低 {{symbol}}{{min}}",
   "create.interaction.validation.quantityMin": "至少需要1人",
   "create.interaction.validation.unsupportedPlatform": "请输入支持的平台作品链接（支持：小红书、TikTok、YouTube、Twitter、Facebook、Instagram、B站、抖音）",
-
   "verifyCode.AI_THEME_MISMATCH": "AI 判定内容与任务主题不相关（匹配分数：{{matchScore}}/100，阈值：{{threshold}}）",
   "verifyCode.AI_CANNOT_ANALYZE": "AI 无法分析内容，需人工审核",
   "verifyCode.WORK_LINK_INVALID": "作品链接无效或作品已被删除",
@@ -449,11 +425,9 @@
   "verifyCode.PUBLISHER_REJECTED": "发布者拒绝：{{reason}}",
   "verifyCode.AUTO_AUDIT_REJECTED": "自动审核未通过",
   "verifyCode.DRAFT_SIMILARITY_LOW": "发布作品与草稿相似度低（相似度：{{score}}/100，阈值：{{threshold}}）",
-
   "detail.rejectionReason": "原因",
   "detail.settleStatusFailed": "结算失败",
   "detail.settleStatusExpired": "结算已过期",
-
   "detail.submitByLink": "提交链接",
   "detail.publishFromPlatform": "从平台发布",
   "detail.fasterReview": "审核更快",
@@ -469,7 +443,6 @@
   "detail.viewIncome": "查看收入",
   "detail.taskSubmitting": "任务提交中...",
   "detail.retryProcess": "手动处理",
-
   "dispute.title": "提交争议",
   "dispute.reason": "争议原因",
   "dispute.reasonPlaceholder": "请描述您不同意审核结果的原因",
@@ -485,7 +458,6 @@
   "dispute.reasonRequired": "请填写争议原因",
   "dispute.screenshotRequired": "请上传至少一张截图作为证据",
   "action.refreshPublishStatus": "刷新",
-
   "stats.triggerCapture": "抓取数据",
   "stats.captureSuccess": "数据获取中，请几分钟后手动刷新数据",
   "stats.captureTooltip": "手动抓取作品最新数据，点击后请等待几分钟再刷新页面查看",
@@ -496,16 +468,13 @@
   "stats.remainingCooldown": "剩余 {{minutes}} 分钟",
   "userTasks.expandAll": "全部展开",
   "userTasks.collapseAll": "全部折叠",
-
   "stats.dataNotRealtime": "以下数据非实时，仅供参考。如需确认请点击作品链接查看最新数据",
   "stats.dataSnapshot": "数据快照（更新于 {{time}}，非实时）",
   "stats.interactionMet": "达标",
   "stats.interactionNotMet": "未达标",
   "stats.interactionRequired": "要求: ≥{{count}}，当前: {{current}}",
-
   "create.cpmCpeDeposit": "CPM/CPE 押金",
   "create.cpmCpeDepositHint": "CPM/CPE 任务每篇需预付 $50 押金，结算金额封顶为押金额度，剩余押金将退回。",
-
   "create.tabPromotionDesc": "发布您的推广需求，让创作者领取任务并制作发布视频内容",
   "create.tabInteractionDesc": "发布互动需求，让用户为您的作品进行点赞、收藏、评论等互动操作",
   "create.confirmDialog.title": "确认发布任务",
@@ -528,7 +497,6 @@
   "create.confirmDialog.rewardPerPerson": "单次奖励",
   "create.confirmDialog.interactionQuantity": "互动人数",
   "create.confirmDialog.people": "人",
-
   "detail.cpmReward": "千次播放金额",
   "detail.cpeReward": "千次互动金额",
   "detail.engagementRule": "互动分规则：点赞×1 + 收藏×3 + 评论×5",
@@ -538,16 +506,13 @@
   "detail.cpeRewardUnit": "/ 千次互动",
   "card.cpmReward": "千次播放",
   "card.cpeReward": "千次互动",
-
   "detail.interactionLink": "互动链接",
   "detail.interactionTip": "需要{{actions}}此作品",
-
   "action.delete": "删除任务",
   "action.deleteConfirm": "确认删除该任务？",
   "action.deleteConfirmContent": "任务必须已停止且无进行中的用户任务，任务删除后剩余的余额会被退回。",
   "toast.deleteSuccess": "删除成功",
   "toast.deleteFailed": "删除失败",
-
   "time.justNow": "刚刚",
   "time.minutesAgo": "{{minutes}}分钟前",
   "time.hoursAgo": "{{hours}}小时前",

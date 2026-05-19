@@ -6,13 +6,12 @@
 'use client'
 
 import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
-import logo from '@/assets/images/logo.png'
+import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { useUserStore } from '@/store/user'
 
 import { EmailLoginForm } from './EmailLoginForm'
@@ -57,8 +56,7 @@ export default function LoginContent() {
           href="/"
           className="flex items-center gap-2 text-foreground no-underline hover:opacity-80 transition-opacity"
         >
-          <Image src={logo} alt="AiToEarn" width={28} height={28} />
-          <span className="text-lg font-semibold tracking-tight">AiToEarn</span>
+          <BrandWordmark markSize={30} showTagline size="md" />
         </Link>
       </div>
 
@@ -75,15 +73,9 @@ export default function LoginContent() {
           <div className="mb-8 flex flex-col items-center">
             <Link
               href="/"
-              className="mb-6 flex h-20 w-20 items-center justify-center hover:opacity-80 transition-opacity"
+              className="mb-6 flex items-center justify-center hover:opacity-80 transition-opacity"
             >
-              <Image
-                src={logo}
-                alt="AiToEarn"
-                width={72}
-                height={72}
-                className="drop-shadow-md"
-              />
+              <BrandWordmark direction="stack" markSize={72} showTagline size="lg" />
             </Link>
             <h1 className="text-2xl font-semibold text-foreground">{t('welcomeBack')}</h1>
             <p className="mt-2 text-muted-foreground">{t('loginSubtitle')}</p>

@@ -1,8 +1,10 @@
+import { APP_BRAND } from '@/config/brand'
+
 export default function HealthzPage() {
   return (
     <html>
       <head>
-        <title>AiToEarn</title>
+        <title>{APP_BRAND.name}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body style={{ margin: 0, padding: 0 }}>

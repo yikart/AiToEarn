@@ -1,14 +1,14 @@
 {
   "dropToUpload": "松手上传文件",
   "announcement": {
-    "text": "AiToEarn 使用 Agent 来完成你所有的内容需求，期间会调用大量工具，执行时间会稍久，您可以随时退出，稍后再来查看任务的完成情况。"
+    "text": "巨鲸网络 使用 Agent 来完成你所有的内容需求，期间会调用大量工具，执行时间会稍久，您可以随时退出，稍后再来查看任务的完成情况。"
   },
   "releaseBanner": {
     "tag": "Release v0.8.0",
     "text": "通过插件和繁荣的市场构建和扩展AI工作流程。"
   },
   "header": {
-    "logo": "Aitoearn",
+    "logo": "巨鲸网络",
     "nav": {
       "home": "首页",
       "marketplace": "市场",
@@ -33,8 +33,8 @@
   },
   "seo": {
     "title": "AI视频与内容创作 - 一键发布15+社交平台",
-    "description": "AiToEarn是你的AI社交媒体运营员工。一句话AI生成视频、图片和文案，一键发布到抖音、小红书、B站、快手、TikTok、YouTube等15+主流平台。提供AI内容创作、智能剪辑、视频转绘、视频翻译、热点发现、品牌监控、统一互动管理等全链路功能，助力创作者和企业实现AI驱动的内容增长与变现。",
-    "keywords": "AI内容营销, AI社交媒体管理, AI视频生成, 多平台发布, AI创作, 自媒体运营, 抖音运营, 小红书运营, AI Agent, 内容分发, AI文案生成, 智能剪辑, 视频转绘, 品牌监控, AiToEarn"
+    "description": "巨鲸网络是你的AI社交媒体运营员工。一句话AI生成视频、图片和文案，一键发布到抖音、小红书、B站、快手、TikTok、YouTube等15+主流平台。提供AI内容创作、智能剪辑、视频转绘、视频翻译、热点发现、品牌监控、统一互动管理等全链路功能，助力创作者和企业实现AI驱动的内容增长与变现。",
+    "keywords": "AI内容营销, AI社交媒体管理, AI视频生成, 多平台发布, AI创作, 自媒体运营, 抖音运营, 小红书运营, AI Agent, 内容分发, AI文案生成, 智能剪辑, 视频转绘, 品牌监控, 巨鲸网络"
   },
   "agentGenerator": {
     "title": "有什么可以帮你的？",
@@ -96,7 +96,6 @@
     "saveDraftSuccess": "草稿保存成功",
     "noDraftGroupFound": "未找到可用的草稿分组，请先创建分组",
     "noDraftGroup": "未找到可用的草稿分组",
-    "unknownError": "未知错误",
     "needAddChannel": "需要添加频道",
     "channelNotAdded": "检测到您还没有添加{platform}频道，是否前往添加？",
     "goAdd": "去添加",
@@ -400,24 +399,24 @@
       "twitter": "Twitter"
     },
     "bigText": "Let's Use AI To",
-    "copyright": "© 2025 AiToEarn, Corp.",
+    "copyright": "© 2025 巨鲸网络, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "Data Deletion Instructions",
       "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
       "standardTitle": "Standard Procedure (Post-Launch):",
       "standardSteps": [
-        "Log in to your AiToEarn account",
+        "Log in to your 巨鲸网络 account",
         "Navigate to Settings > Privacy",
         "Click \"Request Account Deletion\"",
         "Confirmation will be sent to your registered email"
       ],
       "contactTitle": "Contact for Assistance:",
-      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+      "contactEmail": "Email: contact@jujing.network (Pre-launch inquiries only)"
     }
   },
   "ecosystem": {
-    "title": "一图解读 AiToEarn",
+    "title": "一图解读 巨鲸网络",
     "subtitle": "AI驱动的内容创作与变现生态闭环",
     "creator": "内容创作者",
     "consumer": "内容需求者",
@@ -440,13 +439,20 @@
     ],
     "manage": "内容管理",
     "manageDesc": "自动点赞、收藏、评论",
-    "manageDetails": ["自动对特定内容进行点赞、收藏、评论等操作"],
+    "manageDetails": [
+      "自动对特定内容进行点赞、收藏、评论等操作"
+    ],
     "analyze": "内容分析",
     "analyzeDesc": "全网热点与创意灵感",
-    "analyzeDetails": ["全网热点", "创意灵感"],
+    "analyzeDetails": [
+      "全网热点",
+      "创意灵感"
+    ],
     "dashboard": "数据看板",
     "dashboardDesc": "全网数据一站式整合分析",
-    "dashboardDetails": ["全网数据一站式整合分析"],
+    "dashboardDetails": [
+      "全网数据一站式整合分析"
+    ],
     "trade": "内容交易",
     "sell": "卖",
     "buy": "买",

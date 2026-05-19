@@ -59,18 +59,18 @@ export default function DataProtectionContent() {
             <section className={styles.section}>
               <h2 className={styles.sectionTitle}>1. Data Controller Information</h2>
               <p className={styles.sectionContent}>
-                Aitoearn, Inc. acts as the data controller for personal data collected through our
+                巨鲸网络, Inc. acts as the data controller for personal data collected through our
                 services. We are responsible for determining the purposes and means of processing
                 your personal data.
               </p>
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Contact Information</h3>
                 <p className={styles.contactText}>
-                  Email: privacy@aiearn.ai
+                  Email: contact@jujing.network
                   <br />
                   Address: [Company Address]
                   <br />
-                  Data Protection Officer: dpo@aiearn.ai
+                  Data Protection Officer: contact@jujing.network
                 </p>
               </div>
             </section>
@@ -315,7 +315,7 @@ export default function DataProtectionContent() {
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Data Protection Requests</h3>
                 <p className={styles.contactText}>
-                  Email: privacy@aiearn.ai
+                  Email: contact@jujing.network
                   <br />
                   Subject Line: Data Protection Request - [Type of Request]
                   <br />
@@ -367,11 +367,11 @@ export default function DataProtectionContent() {
                   practices:
                   <br />
                   <br />
-                  Email: privacy@aiearn.ai
+                  Email: contact@jujing.network
                   <br />
-                  Data Protection Officer: dpo@aiearn.ai
+                  Data Protection Officer: contact@jujing.network
                   <br />
-                  General Contact: hello@aiearn.ai
+                  General Contact: contact@jujing.network
                 </p>
               </div>
             </section>

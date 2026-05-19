@@ -2,10 +2,10 @@
   "title": "Publish",
   "seo": {
     "title": "Multi-Platform Publishing - Post to 15+ Social Networks",
-    "description": "Manage and publish content across TikTok, YouTube, Instagram, Facebook, X, LinkedIn and more from one dashboard. Connect multiple accounts, schedule posts, and distribute content to 15+ social platforms with AiToEarn.",
-    "keywords": "multi-platform publishing, social media management, cross-platform posting, content distribution, scheduled posting, bulk publishing, account management, AiToEarn"
+    "description": "Manage and publish content across TikTok, YouTube, Instagram, Facebook, X, LinkedIn and more from one dashboard. Connect multiple accounts, schedule posts, and distribute content to 15+ social platforms with Giant Whale Network.",
+    "keywords": "multi-platform publishing, social media management, cross-platform posting, content distribution, scheduled posting, bulk publishing, account management, Giant Whale Network"
   },
-  "describe": "AiToEarn helps you publish content to multiple platforms with one click. We support 10+ platforms for content publishing.",
+  "describe": "Giant Whale Network helps you publish content to multiple platforms with one click. We support 10+ platforms for content publishing.",
   "keywords": "multi-platform publishing, social media management, content publishing tool, scheduled posting, bulk publishing, account management, channel management, content marketing, self-media operation, AI content publishing, calendar publishing, TikTok publishing, YouTube publishing, Instagram publishing, Facebook publishing, Twitter publishing, Douyin publishing, Xiaohongshu publishing, Kuaishou publishing, Bilibili publishing, WeChat Video, WeChat Official Account, Threads publishing, Pinterest publishing, LinkedIn publishing, multi-account management, content distribution, social media marketing, creator tools, KOL tools, brand marketing tools",
   "today": "Today",
   "defaultSpace": "Default Space",
@@ -305,7 +305,7 @@
   "agentCreate": "Agent Create",
   "channelManager": {
     "browserPlugin": "Browser Plugin",
-    "xhsMobileNotSupported": "Sorry, Rednote requires a browser plugin. Please use AiToEarn on PC to operate Rednote.",
+    "xhsMobileNotSupported": "Sorry, Rednote requires a browser plugin. Please use Giant Whale Network on PC to operate Rednote.",
     "myChannels": "My Channels",
     "title": "Channel Manager",
     "description": "Manage your channels and groups",
@@ -314,7 +314,7 @@
     "availablePlatforms": "Available Platforms",
     "connectNewChannel": "Connect Channel",
     "backToChannels": "Back to My Channels",
-    "newUserTip": "Connect any channel to start your amazing AiToEarn journey!",
+    "newUserTip": "Connect any channel to start your amazing Giant Whale Network journey!",
     "addChannel": "Add Channel",
     "connecting": "Connecting {{platform}}",
     "authWaitingTip": "Please complete authorization in the new window...",

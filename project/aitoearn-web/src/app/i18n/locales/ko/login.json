@@ -1,11 +1,11 @@
 {
   "seo": {
     "loginTitle": "로그인 - AI 콘텐츠 작업 공간에 접속",
-    "loginDescription": "AiToEarn 계정에 로그인하여 AI 창작 여정을 시작하세요. Google 로그인 및 이메일 인증 코드를 지원합니다.",
-    "loginKeywords": "로그인, 사인인, AiToEarn 계정, AI 플랫폼 로그인, 크리에이터 로그인, 소셜 미디어 관리"
+    "loginDescription": "Giant Whale Network 계정에 로그인하여 AI 창작 여정을 시작하세요. Google 로그인 및 이메일 인증 코드를 지원합니다.",
+    "loginKeywords": "로그인, 사인인, Giant Whale Network 계정, AI 플랫폼 로그인, 크리에이터 로그인, 소셜 미디어 관리"
   },
   "welcomeBack": "로그인",
-  "loginSubtitle": "AiToEarn으로 창작 시작하기",
+  "loginSubtitle": "Giant Whale Network으로 창작 시작하기",
   "emailPlaceholder": "이메일 주소 입력",
   "login": "로그인",
   "or": "또는",

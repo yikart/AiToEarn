@@ -15,7 +15,7 @@
     "error": "错误"
   },
   "error": {
-    "pluginNotInstalled": "请先安装 Aitoearn 浏览器插件",
+    "pluginNotInstalled": "请先安装 巨鲸网络 浏览器插件",
     "publishingInProgress": "当前正在发布中，请稍后再试",
     "loginFailed": "登录失败",
     "publishFailed": "发布失败"
@@ -68,10 +68,10 @@
     "pluginActive": "插件已激活",
     "pluginInactive": "插件未激活",
     "downloadPlugin": "下载插件",
-    "downloadDescription": "AiToEarn 浏览器插件专门用于小红书的智能操作。请点击下方按钮下载安装。",
+    "downloadDescription": "巨鲸网络浏览器插件用于小红书、抖音账号登录态检测和自动化操作。请先查看教程，再下载测试插件包安装。",
     "downloadButton": "立即下载",
-    "chromeWebStore": "Chrome 应用商店",
-    "chinaDownload": "中国地区下载",
+    "chromeWebStore": "查看安装教程",
+    "chinaDownload": "下载测试插件包",
     "activeDescription": "您的浏览器插件已成功激活，可以开始使用发布功能了！",
     "platformAccounts": "平台账号",
     "notLoggedIn": "未登录",
@@ -89,12 +89,12 @@
     "xhsCreator": "创作者",
     "xhsLoginHomeTip": "登录小红书主页",
     "xhsLoginCreatorTip": "登录小红书创作者后台",
-    "viewGuide": "使用有困难，不会安装？"
+    "viewGuide": "内测阶段请通过 Chrome 扩展程序的开发者模式加载解压后的插件目录。"
   },
   "mobile": {
     "title": "仅支持桌面端",
     "description": "浏览器插件无法在移动设备上使用，请前往电脑端浏览器安装和使用插件。",
     "goToPC": "请在电脑端访问",
-    "introduction": "AiToEarn平台浏览器插件，配合AiToEarn网页端使用，可自动化小红书，tiktok等平台互动，实现关注，点赞，收藏，评论等。"
+    "introduction": "巨鲸网络平台浏览器插件，配合巨鲸网络网页端使用，可自动化小红书，tiktok等平台互动，实现关注，点赞，收藏，评论等。"
   }
 }

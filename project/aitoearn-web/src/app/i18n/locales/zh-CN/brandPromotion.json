@@ -1,8 +1,8 @@
 {
   "seo": {
     "title": "AI品牌推广 - 二维码营销与数据分析",
-    "description": "使用AiToEarn创建和管理品牌推广计划。AI批量生成推广视频和图片素材，通过推广二维码让顾客一键发布内容，实时追踪浏览量、点赞、评论、分享等数据表现。支持AI艺术二维码生成、草稿管理、发布记录追踪，一站式推广管理后台助力品牌曝光增长。",
-    "keywords": "品牌推广, AI推广素材生成, 推广计划管理, 二维码营销, AI视频生成, 推广素材, 社交媒体推广, 内容发布, 营销数据分析, AI营销工具, 品牌曝光, 线下推广, AiToEarn"
+    "description": "使用巨鲸网络创建和管理品牌推广计划。AI批量生成推广视频和图片素材，通过推广二维码让顾客一键发布内容，实时追踪浏览量、点赞、评论、分享等数据表现。支持AI艺术二维码生成、草稿管理、发布记录追踪，一站式推广管理后台助力品牌曝光增长。",
+    "keywords": "品牌推广, AI推广素材生成, 推广计划管理, 二维码营销, AI视频生成, 推广素材, 社交媒体推广, 内容发布, 营销数据分析, AI营销工具, 品牌曝光, 线下推广, 巨鲸网络"
   },
   "header": {
     "title": "线下推广",
@@ -73,7 +73,7 @@
     "storeNotActive": "店铺正在初始化中，请稍后再试",
     "storeNotLinked": "您未关联店铺，请先关联店铺再试用AI批量生成草稿",
     "promptTitle": "自定义提示词",
-    "creditsPerSecond": "{{credits}}积分1s",
+    "creditsPerSecond": "积分/s",
     "totalCredits": "预计消耗 {{total}} 积分",
     "insufficientBalance": "本次生成预计消耗{{total}}积分，您剩余{{balance}}积分，余额不足，请充值后重试！",
     "linkStoreFirst": "请先关联店铺",
@@ -100,7 +100,6 @@
     "imageModel": "图片模型",
     "imageCount": "图片数",
     "creditsPerImage": "{{credits}} 积分/张",
-    "creditsPerSecond": "积分/s",
     "imageResolution": "分辨率",
     "imageTextGenerated": "图文生成任务已创建",
     "videoEditMode": "视频编辑",

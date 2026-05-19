@@ -47,7 +47,15 @@
   "yes": "Oui",
   "no": "Non",
   "calendar": {
-    "weekDaysShort": ["Dim", "Lun", "Mar", "Mer", "Jeu", "Ven", "Sam"],
+    "weekDaysShort": [
+      "Dim",
+      "Lun",
+      "Mar",
+      "Mer",
+      "Jeu",
+      "Ven",
+      "Sam"
+    ],
     "monthSuffix": ""
   },
   "actions": {
@@ -88,8 +96,8 @@
     "materialLibrary": "Bibliothèque",
     "draftBox": "Gestion de contenu",
     "draftBoxSeoTitle": "Gestion de contenu - Création par lots IA et éditeur de brouillons",
-    "draftBoxSeoDescription": "Gérez tous vos brouillons de contenu en un seul endroit. Utilisez l'IA pour générer des publications par lots et organisez la distribution multi-plateformes avec AiToEarn.",
-    "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, AiToEarn",
+    "draftBoxSeoDescription": "Gérez tous vos brouillons de contenu en un seul endroit. Utilisez l'IA pour générer des publications par lots et organisez la distribution multi-plateformes avec Giant Whale Network.",
+    "draftBoxSeoKeywords": "gestion de contenu, éditeur de brouillons, génération de contenu IA, création par lots, brouillons réseaux sociaux, Giant Whale Network",
     "agentAssets": "Ressources Agent"
   },
   "tasks": "Marché",
@@ -114,7 +122,7 @@
     "title": "Télécharger {{appName}}",
     "operationInApp": "Veuillez opérer dans {{appName}} pour ajouter",
     "description": "Pour une meilleure expérience utilisateur et des fonctionnalités complètes, cette opération doit être effectuée dans {{appName}} pour ajouter des comptes. Veuillez télécharger et installer {{appName}} pour continuer.",
-    "operationDescription": "Veuillez opérer le compte de chaîne {{platform}} dans l'application Aitoearn<br/>Pour une meilleure expérience utilisateur et des fonctionnalités complètes, veuillez télécharger et installer l'application Aitoearn pour continuer.",
+    "operationDescription": "Veuillez opérer le compte de chaîne {{platform}} dans l'application Giant Whale Network<br/>Pour une meilleure expérience utilisateur et des fonctionnalités complètes, veuillez télécharger et installer l'application Giant Whale Network pour continuer.",
     "scanQrCode": "Scannez le QR code pour télécharger",
     "downloadLink": "Lien de téléchargement :",
     "copy": "Copier",
@@ -130,7 +138,7 @@
   "contact": "Besoin d'aide ? Contactez le support :",
   "uptime": {
     "seoTitle": "Statut des modèles IA - Surveillance de disponibilité en temps réel",
-    "pageKeywords": "statut modèle IA, disponibilité modèle, suivi disponibilité, santé service IA, surveillance modèle, AiToEarn statut",
+    "pageKeywords": "statut modèle IA, disponibilité modèle, suivi disponibilité, santé service IA, surveillance modèle, Giant Whale Network statut",
     "pageTitle": "Statut des modèles IA",
     "pageDescription": "Surveillez la disponibilité en temps réel et le temps de fonctionnement des modèles IA. Vérifiez le statut opérationnel de chaque modèle et fournisseur.",
     "loading": "Chargement...",

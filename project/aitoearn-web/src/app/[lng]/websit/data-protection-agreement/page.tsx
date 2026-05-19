@@ -1,6 +1,6 @@
 /**
  * DataProtectionAgreementPage - 数据保护协议页面
- * 展示 AiToEarn 平台的数据保护协议和 GDPR 合规信息
+ * 展示 巨鲸网络 平台的数据保护协议和 GDPR 合规信息
  */
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'

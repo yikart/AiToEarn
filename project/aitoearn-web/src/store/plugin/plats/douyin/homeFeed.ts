@@ -5,6 +5,7 @@
  */
 
 import type { HomeFeedItem, HomeFeedListParams, HomeFeedListResult } from '../types'
+import { ensurePluginBridge } from '../../bridge'
 
 /**
  * 深度过滤对象中的 null 值字段
@@ -224,7 +225,8 @@ export function transformToHomeFeedItem(item: any): HomeFeedItem {
  */
 export async function getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
   // 检查插件是否可用
-  if (!window.AIToEarnPlugin) {
+  const plugin = ensurePluginBridge()
+  if (!plugin) {
     return {
       success: false,
       message: '插件未安装或未就绪',
@@ -269,7 +271,7 @@ export async function getHomeFeedList(params: HomeFeedListParams): Promise<HomeF
 
   try {
     // 调用插件的抖音请求接口
-    const response = await window.AIToEarnPlugin.douyinRequest<any>({
+    const response = await plugin.douyinRequest<any>({
       path: requestUrl,
       method: 'POST',
     })

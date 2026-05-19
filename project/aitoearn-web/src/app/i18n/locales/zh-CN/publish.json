@@ -296,19 +296,8 @@
     "preview": "点击查看"
   },
   "messages": {
-    "authFailedRetry": "授权失败，请重试",
-    "pleaseInputContent": "请先输入内容",
-    "contentModerationFailed": "内容安全检测失败，请稍后重试",
-    "contentModerationError": "内容安全检测失败",
-    "unsupportedPlatformType": "未支持的平台类型",
-    "platformNotSupportedDirect": "暂不支持 {{platform}} 平台的直接授权",
-    "facebookAuthFailed": "Facebook授权失败",
-    "accountListRefreshed": "账号列表已刷新",
-    "refreshAccountListFailed": "刷新账号列表失败",
-    "authFailed": "授权失败",
-    "parseCachedChatModelsFailed": "解析缓存的聊天模型失败",
-    "getChatModelsFailed": "获取聊天模型失败",
-    "mobileNotSupported": "该功能暂不支持移动端，请使用电脑端操作"
+    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 {{platform}} 个人主页上。",
+    "douyinScanPublish": "抖音发布需要使用抖音 App 扫码确认，请留意扫码弹窗。"
   },
   "badges": {
     "offline": "已离线",
@@ -348,10 +337,6 @@
       "both": "发布即表示您同意 TikTok 的品牌内容政策音乐使用确认。",
       "processNote": "提示：发布后内容可能需要几分钟处理，才会显示在您的个人主页上。"
     }
-  },
-  "messages": {
-    "publishSubmitted": "发布已提交，系统正在处理，内容可能需要几分钟才会显示在您的 {{platform}} 个人主页上。",
-    "douyinScanPublish": "抖音发布需要使用抖音 App 扫码确认，请留意扫码弹窗。"
   },
   "previewvideo": "预览视频",
   "record": {

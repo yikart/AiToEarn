@@ -1,3 +1,5 @@
+import { APP_BRAND } from '@/config/brand'
+
 /**
  * navigation.ts - 导航栏数据
  * Welcome 页面的 Navigation 使用
@@ -11,6 +13,6 @@ export interface NavItem {
 }
 
 export const navigation: NavItem[] = [
-  { type: 'link', labelKey: 'docs', href: 'https://docs.aitoearn.ai/', external: true },
+  { type: 'link', labelKey: 'docs', href: APP_BRAND.siteUrl, external: true },
   { type: 'link', labelKey: 'aiSocial', href: '/ai-social' },
 ]

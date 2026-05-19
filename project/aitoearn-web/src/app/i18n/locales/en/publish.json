@@ -295,19 +295,8 @@
     "preview": "Preview"
   },
   "messages": {
-    "authFailedRetry": "Authorization failed, please try again",
-    "pleaseInputContent": "Please input content first",
-    "contentModerationFailed": "Content moderation failed, please try again later",
-    "contentModerationError": "Content moderation failed",
-    "unsupportedPlatformType": "Unsupported platform type",
-    "platformNotSupportedDirect": "Direct authorization for {{platform}} platform is not supported yet",
-    "facebookAuthFailed": "Facebook authorization failed",
-    "accountListRefreshed": "Account list refreshed",
-    "refreshAccountListFailed": "Failed to refresh account list",
-    "authFailed": "Authorization failed",
-    "parseCachedChatModelsFailed": "Failed to parse cached chat models",
-    "getChatModelsFailed": "Failed to get chat models",
-    "mobileNotSupported": "This feature is not supported on mobile, please use desktop"
+    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your {{platform}} profile.",
+    "douyinScanPublish": "Douyin publishing requires scanning a QR code with the Douyin app. Please watch for the QR code popup."
   },
   "badges": {
     "offline": "Offline",
@@ -347,10 +336,6 @@
       "both": "By posting, you agree to TikTok's Branded Content Policy and Music Usage Confirmation.",
       "processNote": "Note: After publishing, it may take a few minutes for the content to process and appear on your profile."
     }
-  },
-  "messages": {
-    "publishSubmitted": "Your post has been submitted. It may take a few minutes for the content to process and appear on your {{platform}} profile.",
-    "douyinScanPublish": "Douyin publishing requires scanning a QR code with the Douyin app. Please watch for the QR code popup."
   },
   "previewvideo": "Preview Video",
   "record": {

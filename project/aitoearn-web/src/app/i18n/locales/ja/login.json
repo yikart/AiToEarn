@@ -1,11 +1,11 @@
 {
   "seo": {
     "loginTitle": "ログイン - AIコンテンツワークスペースにアクセス",
-    "loginKeywords": "ログイン, サインイン, AiToEarnアカウント, AIプラットフォームログイン, クリエイターログイン, SNS管理",
-    "loginDescription": "AiToEarnアカウントにサインインして、AIクリエイティブの旅を始めましょう。Googleログインとメール認証コードに対応しています。"
+    "loginKeywords": "ログイン, サインイン, Giant Whale Networkアカウント, AIプラットフォームログイン, クリエイターログイン, SNS管理",
+    "loginDescription": "Giant Whale Networkアカウントにサインインして、AIクリエイティブの旅を始めましょう。Googleログインとメール認証コードに対応しています。"
   },
   "welcomeBack": "サインイン",
-  "loginSubtitle": "AiToEarnで創作を始めましょう",
+  "loginSubtitle": "Giant Whale Networkで創作を始めましょう",
   "emailPlaceholder": "メールアドレスを入力",
   "login": "サインイン",
   "or": "または",

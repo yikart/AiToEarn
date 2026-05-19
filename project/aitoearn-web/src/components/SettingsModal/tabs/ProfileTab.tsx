@@ -14,6 +14,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { AvatarCropModal } from '@/components/AvatarCropModal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
+import { APP_BRAND } from '@/config/brand'
 import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
@@ -232,22 +233,10 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
       {/* Docs & GitHub Stars */}
       <div className="flex flex-wrap items-center gap-3">
         <Button asChild variant="outline" size="sm">
-          <a href="https://docs.aitoearn.ai/" target="_blank" rel="noopener noreferrer">
+          <a href={APP_BRAND.siteUrl} target="_blank" rel="noopener noreferrer">
             {tCommon('docs')}
           </a>
         </Button>
-        <a
-          href="https://github.com/yikart/AttAiToEarn"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center"
-        >
-          <img
-            src="https://camo.githubusercontent.com/9feb948af77cdb3d349cafc64266332d8d24243f6bd72de0980b75c9de719cd8/68747470733a2f2f696d672e736869656c64732e696f2f6769746875622f73746172732f79696b6172742f4174744169546f4561726e3f636f6c6f723d666136343730"
-            alt={t('profile.githubStars')}
-            className="h-5"
-          />
-        </a>
       </div>
 
       {/* 退出登录按钮 */}

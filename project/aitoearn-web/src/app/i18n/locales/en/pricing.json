@@ -5,7 +5,7 @@
     "keywords": "AI pricing, plan selection, content creation packages, AI subscription, video generation pricing"
   },
   "pageTitle": "Pay As You Go",
-  "pageDescription": "Aitoearn is more than a software company — we are a results delivery company.\nOur goal is to deliver operational results for solo entrepreneurs.\nThe Aitoearn credits you purchase (covering token fees) are used to pay for model costs from Google, OpenAI, xAI, Anthropic, and other providers.\nWe promise that our prices will never exceed the official pricing of any model.\nAnd as our usage grows and we earn volume discounts from these providers, we will pass those savings on to you.",
+  "pageDescription": "Giant Whale Network is more than a software company — we are a results delivery company.\nOur goal is to deliver operational results for solo entrepreneurs.\nThe Giant Whale Network credits you purchase (covering token fees) are used to pay for model costs from Google, OpenAI, xAI, Anthropic, and other providers.\nWe promise that our prices will never exceed the official pricing of any model.\nAnd as our usage grows and we earn volume discounts from these providers, we will pass those savings on to you.",
   "sections": {
     "credits": "Buy Credits",
     "creditsDesc": "Purchase credits on demand, use flexibly, no subscription needed"
@@ -477,7 +477,7 @@
       "thirdPartyApisDesc": "Used for accessing image models, video models, video editing/processing, and other external services",
       "costNote": "The actual credit consumption of a task depends on its complexity, duration, and number of external calls.",
       "storageNote": "After a task is completed, storing, hosting, displaying, or deploying its output does not consume additional credits.",
-      "refundNote": "If a task fails due to AiToEarn technical issues, we will fully refund the credits consumed by that task.",
+      "refundNote": "If a task fails due to Giant Whale Network technical issues, we will fully refund the credits consumed by that task.",
       "exchangeRate": "100 Credits = $1 USD"
     },
     "llm": {

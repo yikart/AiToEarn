@@ -15,7 +15,7 @@
     "error": "Error"
   },
   "error": {
-    "pluginNotInstalled": "Please install Aitoearn browser plugin first",
+    "pluginNotInstalled": "Please install Giant Whale Network browser plugin first",
     "publishingInProgress": "Publishing in progress, please try again later",
     "loginFailed": "Login failed",
     "publishFailed": "Publish failed"
@@ -68,7 +68,7 @@
     "pluginActive": "Plugin Active",
     "pluginInactive": "Plugin Inactive",
     "downloadPlugin": "Download Plugin",
-    "downloadDescription": "The AiToEarn browser plugin is specifically designed for the intelligent operation of Xiaohongshu. Please click the button below to download and install.",
+    "downloadDescription": "The Giant Whale Network browser plugin is specifically designed for the intelligent operation of Xiaohongshu. Please click the button below to download and install.",
     "downloadButton": "Download Now",
     "chromeWebStore": "Chrome Web Store",
     "chinaDownload": "China Download",
@@ -95,6 +95,6 @@
     "title": "Desktop Only",
     "description": "The browser extension is not available on mobile devices. Please use a desktop browser to install and use the extension.",
     "goToPC": "Please visit on PC",
-    "introduction": "AiToEarn platform browser extension. Works with AiToEarn web to automate interactions on Xiaohongshu, TikTok and other platforms — follow, like, bookmark, comment and more."
+    "introduction": "Giant Whale Network platform browser extension. Works with Giant Whale Network web to automate interactions on Xiaohongshu, TikTok and other platforms — follow, like, bookmark, comment and more."
   }
 }

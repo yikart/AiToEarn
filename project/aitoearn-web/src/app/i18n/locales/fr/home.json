@@ -1,14 +1,14 @@
 {
   "dropToUpload": "Déposez pour télécharger",
   "announcement": {
-    "text": "AiToEarn utilise Agent pour répondre à tous vos besoins en contenu. Il appelle de nombreux outils pendant l'exécution, ce qui peut prendre du temps. Vous pouvez quitter à tout moment et vérifier la progression de la tâche plus tard."
+    "text": "Giant Whale Network utilise Agent pour répondre à tous vos besoins en contenu. Il appelle de nombreux outils pendant l'exécution, ce qui peut prendre du temps. Vous pouvez quitter à tout moment et vérifier la progression de la tâche plus tard."
   },
   "releaseBanner": {
     "tag": "Version v0.8.0",
     "text": "Construisez et étendez les workflows IA avec des plugins et un marché florissant."
   },
   "header": {
-    "logo": "Aitoearn",
+    "logo": "Giant Whale Network",
     "nav": {
       "home": "Accueil",
       "marketplace": "Marché",
@@ -27,14 +27,14 @@
     "starsText": "étoiles sur",
     "github": "GitHub",
     "title": "Le meilleur agent IA\npour le marketing de contenu",
-    "subtitle": "À partir d'aujourd'hui, gérez facilement vos réseaux sociaux avec l'IA. AiToEarn fournit des capacités complètes allant de l'inspiration créative, à la création de contenu, à la distribution de contenu jusqu'à la gestion des interactions de contenu, rendant l'IA accessible à tous.",
+    "subtitle": "À partir d'aujourd'hui, gérez facilement vos réseaux sociaux avec l'IA. Giant Whale Network fournit des capacités complètes allant de l'inspiration créative, à la création de contenu, à la distribution de contenu jusqu'à la gestion des interactions de contenu, rendant l'IA accessible à tous.",
     "getStarted": "Commencer",
     "useMobilePhone": "utiliser sur mobile"
   },
   "seo": {
     "title": "Création de vidéos et contenus IA pour 15+ plateformes sociales",
-    "description": "AiToEarn est votre opérateur de croissance IA pour les réseaux sociaux. Générez des vidéos, images et textes avec l'IA, puis publiez en un clic sur plus de 15 plateformes dont TikTok, YouTube, Instagram, Facebook et X. Création de contenu IA, montage vidéo intelligent, transfert de style, traduction vidéo, découverte de tendances, surveillance de marque et tableau de bord d'engagement unifié.",
-    "keywords": "marketing de contenu IA, gestion réseaux sociaux IA, génération vidéo IA, publication multiplateforme, création de contenu IA, automatisation réseaux sociaux, marketing TikTok, marketing YouTube, Agent IA, distribution de contenu, rédaction IA, montage vidéo IA, surveillance de marque, AiToEarn"
+    "description": "Giant Whale Network est votre opérateur de croissance IA pour les réseaux sociaux. Générez des vidéos, images et textes avec l'IA, puis publiez en un clic sur plus de 15 plateformes dont TikTok, YouTube, Instagram, Facebook et X. Création de contenu IA, montage vidéo intelligent, transfert de style, traduction vidéo, découverte de tendances, surveillance de marque et tableau de bord d'engagement unifié.",
+    "keywords": "marketing de contenu IA, gestion réseaux sociaux IA, génération vidéo IA, publication multiplateforme, création de contenu IA, automatisation réseaux sociaux, marketing TikTok, marketing YouTube, Agent IA, distribution de contenu, rédaction IA, montage vidéo IA, surveillance de marque, Giant Whale Network"
   },
   "agentGenerator": {
     "title": "Comment puis-je vous aider ?",
@@ -399,20 +399,20 @@
       "twitter": "Twitter"
     },
     "bigText": "Utilisons l'IA pour",
-    "copyright": "© 2025 AiToEarn, Corp.",
+    "copyright": "© 2025 Giant Whale Network, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "Instructions de suppression des données",
       "prelaunch": "Notre application est actuellement en phase de pré-lancement et ne stocke pas de vraies données utilisateur. Si vous avez interagi avec nos systèmes de test, contactez-nous pour la suppression des données.",
       "standardTitle": "Procédure standard (post-lancement) :",
       "standardSteps": [
-        "Connectez-vous à votre compte AiToEarn",
+        "Connectez-vous à votre compte Giant Whale Network",
         "Allez dans Paramètres > Confidentialité",
         "Cliquez sur \"Demander la suppression du compte\"",
         "La confirmation sera envoyée à votre e-mail enregistré"
       ],
       "contactTitle": "Contactez-nous pour obtenir de l'aide :",
-      "contactEmail": "E-mail : metat@aitoearning.com (Demandes pré-lancement uniquement)"
+      "contactEmail": "E-mail : contact@jujing.network (Demandes pré-lancement uniquement)"
     }
   }
 }

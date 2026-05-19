@@ -63,6 +63,13 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
       return
     }
 
+    // 自动登录 token 已注入但 store 还没完成下一轮渲染时，先让自动登录 effect 落地，
+    // 避免路由守卫误弹登录框并把目标页面带回首页。
+    if (autoLoginToken) {
+      hasPromptedRef.current = false
+      return
+    }
+
     // 公开页面不需要跳转
     if (isPublicPage(pathname)) {
       hasPromptedRef.current = false
@@ -77,7 +84,7 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, token, pathname])
+  }, [_hasHydrated, token, pathname, autoLoginToken])
 
   // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
   useLayoutEffect(() => {

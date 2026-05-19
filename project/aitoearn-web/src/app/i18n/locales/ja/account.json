@@ -3,9 +3,9 @@
   "seo": {
     "title": "マルチプラットフォーム投稿 - 15以上のSNSに配信",
     "description": "ダッシュボードからTikTok、YouTube、Instagram、Facebook、X、LinkedInなどにコンテンツを管理・投稿。複数アカウント接続、投稿予約、15以上のSNSにコンテンツを配信。",
-    "keywords": "マルチプラットフォーム投稿, SNS管理, クロスプラットフォーム投稿, コンテンツ配信, 予約投稿, 一括投稿, アカウント管理, AiToEarn"
+    "keywords": "マルチプラットフォーム投稿, SNS管理, クロスプラットフォーム投稿, コンテンツ配信, 予約投稿, 一括投稿, アカウント管理, Giant Whale Network"
   },
-  "describe": "AiToEarnはワンクリックで複数のプラットフォームにコンテンツを公開できます。10以上のプラットフォームに対応しています。",
+  "describe": "Giant Whale Networkはワンクリックで複数のプラットフォームにコンテンツを公開できます。10以上のプラットフォームに対応しています。",
   "keywords": "マルチプラットフォーム公開, ソーシャルメディア管理, コンテンツ公開ツール, 予約投稿, 一括投稿, アカウント管理, チャンネル管理, コンテンツマーケティング, 自メディア運営, AIコンテンツ公開, カレンダー投稿, TikTok投稿, YouTube投稿, Instagram投稿, Facebook投稿, Twitter投稿, 抖音投稿, 小紅書投稿, 快手投稿, Bilibili投稿, WeChat動画, WeChat公式アカウント, Threads投稿, Pinterest投稿, LinkedIn投稿, マルチアカウント管理, コンテンツ配信, ソーシャルメディアマーケティング, クリエイターツール, KOLツール, ブランドマーケティングツール",
   "today": "今日",
   "defaultSpace": "デフォルトスペース",
@@ -189,7 +189,7 @@
     "openInBrowser": "ブラウザで開く"
   },
   "mobileDownloadTip": {
-    "welcomeTitle": "AiToEarnへようこそ",
+    "welcomeTitle": "Giant Whale Networkへようこそ",
     "description": "完全な体験のために、お使いのデバイスにアプリをダウンロードしてください",
     "downloadButton": "アプリをダウンロード"
   },
@@ -311,7 +311,7 @@
     "availablePlatforms": "利用可能なプラットフォーム",
     "connectNewChannel": "チャンネルを接続",
     "backToChannels": "マイチャンネルに戻る",
-    "newUserTip": "任意のチャンネルを接続して、素晴らしいAiToEarnの旅を始めましょう！",
+    "newUserTip": "任意のチャンネルを接続して、素晴らしいGiant Whale Networkの旅を始めましょう！",
     "addChannel": "チャンネルを追加",
     "connecting": "{{platform}}に接続中",
     "authWaitingTip": "新しいウィンドウで認証を完了してください...",

@@ -5,7 +5,6 @@
   "publishPromotion": "Publish Promotion",
   "back": "Back",
   "refresh": "Aktualisieren",
-
   "menu.taskSquare": "Gold Rush Square",
   "menu.draftBox": "Content Management",
   "menu.offlinePromo": "AI Check-in",
@@ -17,7 +16,6 @@
   "menu.myBrand": "My Agent",
   "menu.contentTrading": "Content Trading",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "All Platforms",
   "filter.sortDefault": "Default Sort",
   "filter.sortNewest": "Newest First",
@@ -42,11 +40,9 @@
   "filter.clear": "Löschen",
   "filter.reset": "Zurücksetzen",
   "card.publishTime": "Veröffentlicht",
-
   "banner.title": "Want to promote your brand?",
   "banner.description": "Post a promotion task and let creators spread the word",
   "banner.publishNow": "Publish Now",
-
   "card.perArticle": "Earn per post",
   "card.perInteraction": "Earn per task",
   "card.goCheck": "Details",
@@ -58,16 +54,13 @@
   "card.createTime": "Created",
   "card.stampSoldOut": "AUSVERKAUFT",
   "card.stampCancelled": "STORNIERT",
-
   "list.loading": "Loading...",
   "list.loadingMore": "Loading more...",
   "list.noMore": "No more",
   "list.empty": "No tasks",
   "list.emptyHint": "No tasks available at the moment",
-
   "login.button": "Login Now",
   "login.hint": "Login to see more tasks",
-
   "published": "Published",
   "accepted": "Accepted",
   "published.empty": "No published tasks",
@@ -81,7 +74,6 @@
   "accepted.statDoing": "In Bearbeitung",
   "accepted.statSettled": "Abgerechnet",
   "myTasksSubtitle": "Verwalten Sie Ihre akzeptierten und veröffentlichten Aufgaben",
-
   "status.active": "Active",
   "status.cancelled": "Delisted",
   "status.pending": "Überprüfung ausstehend",
@@ -93,7 +85,6 @@
   "status.rejected": "Abgelehnt",
   "status.disputed": "Einspruch",
   "status.del": "Widerrufen",
-
   "statusHint.doing": "Bitte erfüllen Sie die Aufgabenanforderungen und reichen Sie Ihre Arbeit ein",
   "statusHint.doing_interaction": "Bitte schließen Sie die Interaktionsaufgabe ab und reichen Sie Screenshots ein",
   "statusHint.waiting": "Ihre Arbeit wird veröffentlicht, bitte warten",
@@ -104,7 +95,6 @@
   "statusHint.disputed": "Ihr Einspruch wurde eingereicht und wird geprüft",
   "statusHint.cancelled": "Aufgabe wurde storniert",
   "statusHint.del": "Aufgabe wurde vom Administrator widerrufen",
-
   "action.edit": "Edit",
   "action.cancel": "Delist Task",
   "action.cancelConfirm": "Confirm delist this task? It will no longer be visible to users, but accepted tasks are not affected.",
@@ -114,7 +104,6 @@
   "action.submit": "Submit Task",
   "action.accept": "Accept Task",
   "action.confirmPublish": "Confirm Publish",
-
   "detail.taskInfo": "Task Info",
   "detail.taskTitle": "Aufgabentitel",
   "detail.taskDescription": "Aufgabenbeschreibung",
@@ -150,7 +139,6 @@
   "detail.downloadAllImages": "Alle Bilder herunterladen",
   "detail.downloadComplete": "Download abgeschlossen",
   "detail.downloadFailed": "Download fehlgeschlagen",
-
   "create.title": "Publish Promotion",
   "create.platform": "Select Platform",
   "create.linkDraftBox": "Entwurfsbox verknüpfen",
@@ -224,7 +212,6 @@
   "create.validation.cpmRewardMin": "CPM-Preis muss größer als 0 sein",
   "create.validation.cpeRewardMin": "CPE-Preis muss größer als 0 sein",
   "create.collectNotSupported": "Diese Plattform unterstützt keine Favoriten",
-
   "detail.rewardPerPost": "Belohnung pro Beitrag",
   "detail.rewardPerInteraction": "Belohnung pro Interaktion",
   "detail.recruitProgress": "Rekrutierungsfortschritt",
@@ -240,10 +227,8 @@
   "detail.locationWarning": "Ihre Veröffentlichung muss diesen Standort enthalten, andernfalls wird die Aufgabe die Überprüfung nicht bestehen!",
   "detail.topics": "Themen",
   "detail.noDeadline": "Keine Frist",
-
   "countdown.remaining": "Verbleibende Zeit",
   "countdown.expired": "Abgelaufen",
-
   "toast.acceptSuccess": "Task accepted",
   "toast.acceptFailed": "Failed to accept task",
   "toast.submitSuccess": "Submitted successfully",
@@ -254,7 +239,6 @@
   "toast.activateFailed": "Relist failed",
   "toast.processWaitingSuccess": "Erfolgreich verarbeitet",
   "toast.processWaitingFailed": "Verarbeitung fehlgeschlagen",
-
   "action.trackData": "Tracking-Daten",
   "stats.title": "Aufgabenstatistiken",
   "stats.taskInfo": "Aufgabeninfo",
@@ -295,21 +279,19 @@
   "stats.trendShares": "Geteilt",
   "stats.trendFavorites": "Favoriten",
   "stats.trendNoData": "Noch keine Trenddaten",
-
   "seo.homeTitle": "Bezahlte Promotion-Aufgaben - Mit Social Media verdienen",
   "seo.myTasksTitle": "Meine Aufgaben - Veröffentlichte & Angenommene Promotions verfolgen",
   "seo.myTasksDescription": "Verwalten Sie alle Ihre Promotion-Aufgaben in einem Dashboard. Verfolgen Sie veröffentlichte Aufgaben mit Einreichungsstatistiken und Einnahmen, überwachen Sie angenommene Aufgaben.",
-  "seo.myTasksKeywords": "Aufgabenverwaltung, Promotion-Tracking, veröffentlichte Aufgaben, angenommene Aufgaben, Einnahmen-Tracker, Social-Media-Aufgaben, AiToEarn",
+  "seo.myTasksKeywords": "Aufgabenverwaltung, Promotion-Tracking, veröffentlichte Aufgaben, angenommene Aufgaben, Einnahmen-Tracker, Social-Media-Aufgaben, Giant Whale Network",
   "seo.createTitle": "Promotion-Aufgabe erstellen - Belohnungen & Anforderungen festlegen",
-  "seo.createDescription": "Erstellen Sie bezahlte Promotion-Aufgaben auf AiToEarn. Legen Sie Ihr Budget fest, wählen Sie Zielplattformen und definieren Sie Inhaltsanforderungen für TikTok, YouTube, Instagram und mehr.",
-  "seo.createKeywords": "Promotion erstellen, bezahlte Aufgaben, Markenpromotion, Influencer-Marketing, Social-Media-Werbung, AiToEarn",
+  "seo.createDescription": "Erstellen Sie bezahlte Promotion-Aufgaben auf Giant Whale Network. Legen Sie Ihr Budget fest, wählen Sie Zielplattformen und definieren Sie Inhaltsanforderungen für TikTok, YouTube, Instagram und mehr.",
+  "seo.createKeywords": "Promotion erstellen, bezahlte Aufgaben, Markenpromotion, Influencer-Marketing, Social-Media-Werbung, Giant Whale Network",
   "seo.defaultTitle": "Aufgabendetails - Promotion-Belohnungen & Anforderungen ansehen",
-  "seo.homeDescription": "Entdecken Sie bezahlte Social-Media-Promotion-Aufgaben auf dem AiToEarn Gold Rush Square. Verdienen Sie Provisionen durch Markenwerbung auf TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn und über 10 globalen Plattformen. Aufgaben durchsuchen, annehmen, Inhalte erstellen und bezahlt werden.",
-  "seo.homeKeywords": "bezahlte Promotion, Social Media Promotion, Online Geld verdienen, Influencer Marketing, TikTok Promotion, YouTube Promotion, Instagram Promotion, Markenwerbung, Content Creator Jobs, Social Media Jobs, AiToEarn",
-  "seo.detailTitleSuffix": "- AiToEarn Aufgabenmarkt",
-  "seo.defaultDescription": "Aufgabendetails ansehen und Belohnungen verdienen, indem Sie Promotion-Aufgaben auf AiToEarn erledigen.",
+  "seo.homeDescription": "Entdecken Sie bezahlte Social-Media-Promotion-Aufgaben auf dem Giant Whale Network Gold Rush Square. Verdienen Sie Provisionen durch Markenwerbung auf TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn und über 10 globalen Plattformen. Aufgaben durchsuchen, annehmen, Inhalte erstellen und bezahlt werden.",
+  "seo.homeKeywords": "bezahlte Promotion, Social Media Promotion, Online Geld verdienen, Influencer Marketing, TikTok Promotion, YouTube Promotion, Instagram Promotion, Markenwerbung, Content Creator Jobs, Social Media Jobs, Giant Whale Network",
+  "seo.detailTitleSuffix": "- Giant Whale Network Aufgabenmarkt",
+  "seo.defaultDescription": "Aufgabendetails ansehen und Belohnungen verdienen, indem Sie Promotion-Aufgaben auf Giant Whale Network erledigen.",
   "seo.perPost": "Beitrag",
-
   "detail.locationScreenshot": "Standort-Screenshot",
   "detail.locationScreenshotWarning": "Bitte laden Sie einen Screenshot Ihrer veröffentlichten Arbeit hoch, der den Standort zeigt. Der Screenshot muss den Standort der Veröffentlichung anzeigen, andernfalls wird die Überprüfung nicht bestanden!",
   "detail.locationScreenshotRequired": "Bitte laden Sie einen Standort-Screenshot hoch",
@@ -321,7 +303,6 @@
   "detail.interactionAction.like": "Gefällt mir",
   "detail.interactionAction.collect": "Sammeln",
   "detail.interactionAction.comment": "Kommentieren",
-
   "create.insufficientBalance.title": "Unzureichendes Guthaben",
   "create.insufficientBalance.description": "Diese Aufgabe erfordert {{symbol}}{{required}}, Ihr aktuelles Guthaben beträgt {{symbol}}{{current}}, Differenz {{symbol}}{{deficit}}. Möchten Sie {{symbol}}{{rechargeAmount}} aufladen?",
   "create.insufficientBalance.goRecharge": "Aufladen",
@@ -330,7 +311,6 @@
   "create.insufficientBalance.balanceSufficientContent": "Ihr vorheriger Aufgabenfortschritt wurde wiederhergestellt. Ihr Guthaben ist jetzt ausreichend. Möchten Sie die Aufgabe jetzt erstellen?",
   "create.insufficientBalance.createNow": "Jetzt erstellen",
   "create.draftRestored": "Vorheriger Aufgabenfortschritt wiederhergestellt",
-
   "create.tabPromotion": "Werbeaufgabe",
   "create.tabInteraction": "Interaktionsaufgabe",
   "create.interaction.title": "Interaktionsaufgabe veröffentlichen",
@@ -352,7 +332,6 @@
   "create.interaction.validation.rewardMin": "Mindestens {{symbol}}{{min}} pro Person",
   "create.interaction.validation.quantityMin": "Mindestens 1 Person erforderlich",
   "create.interaction.validation.unsupportedPlatform": "Bitte geben Sie einen unterstützten Plattform-Link ein (Unterstützt: Xiaohongshu, TikTok, YouTube, Twitter, Facebook, Instagram, Bilibili, Douyin)",
-
   "detail.submitByLink": "Link einreichen",
   "detail.publishFromPlatform": "Von Plattform veröffentlichen",
   "detail.fasterReview": "Schnellere Prüfung",
@@ -368,7 +347,6 @@
   "detail.viewIncome": "Einkommen anzeigen",
   "detail.taskSubmitting": "Aufgabe wird eingereicht...",
   "detail.retryProcess": "Erneut versuchen",
-
   "dispute.title": "Einspruch einlegen",
   "dispute.reason": "Einspruchsgrund",
   "dispute.reasonPlaceholder": "Bitte beschreiben Sie, warum Sie mit dem Prüfergebnis nicht einverstanden sind",
@@ -383,7 +361,6 @@
   "dispute.confirmTitle": "Einspruch bestätigen",
   "dispute.reasonRequired": "Bitte geben Sie einen Einspruchsgrund an",
   "dispute.screenshotRequired": "Bitte laden Sie mindestens einen Screenshot als Beweis hoch",
-
   "detail.cpmReward": "Pro 1K Aufrufe",
   "detail.cpeReward": "Pro 1K Interaktionen",
   "detail.engagementRule": "Interaktionsregel: Like×1 + Sammeln×3 + Kommentar×5",
@@ -393,10 +370,8 @@
   "detail.cpeRewardUnit": "/ 1K Interaktionen",
   "card.cpmReward": "Pro 1K Aufrufe",
   "card.cpeReward": "Pro 1K Interaktionen",
-
   "detail.interactionLink": "Interaktionslink",
   "detail.interactionTip": "Sie müssen dieses Werk {{actions}}",
-
   "time.justNow": "Gerade eben",
   "time.minutesAgo": "vor {{minutes}} Min.",
   "time.hoursAgo": "vor {{hours}} Std.",

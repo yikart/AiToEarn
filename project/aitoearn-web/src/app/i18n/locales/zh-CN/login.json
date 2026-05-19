@@ -1,11 +1,11 @@
 {
   "seo": {
     "loginTitle": "登录 - 进入您的AI内容创作工作台",
-    "loginKeywords": "登录, 注册, AiToEarn账号, AI平台登录, 创作者登录, 社媒管理登录",
-    "loginDescription": "登录 AiToEarn 账户，开始您的 AI 创作之旅。支持手机验证码登录和邮箱验证码登录。"
+    "loginKeywords": "登录, 注册, 巨鲸网络账号, AI平台登录, 创作者登录, 社媒管理登录",
+    "loginDescription": "登录 巨鲸网络 账户，开始您的 AI 创作之旅。支持手机验证码登录和邮箱验证码登录。"
   },
   "welcomeBack": "登录",
-  "loginSubtitle": "和 AiToEarn 一起开始创作",
+  "loginSubtitle": "和 巨鲸网络 一起开始创作",
   "emailPlaceholder": "请输入邮箱地址",
   "login": "登录",
   "or": "或者",

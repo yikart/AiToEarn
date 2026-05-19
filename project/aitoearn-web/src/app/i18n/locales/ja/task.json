@@ -5,7 +5,6 @@
   "publishPromotion": "Publish Promotion",
   "back": "Back",
   "refresh": "更新",
-
   "menu.taskSquare": "Gold Rush Square",
   "menu.draftBox": "Content Management",
   "menu.offlinePromo": "AI Check-in",
@@ -17,7 +16,6 @@
   "menu.myBrand": "My Agent",
   "menu.contentTrading": "Content Trading",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "All Platforms",
   "filter.sortDefault": "Default Sort",
   "filter.sortNewest": "Newest First",
@@ -42,11 +40,9 @@
   "filter.clear": "クリア",
   "filter.reset": "リセット",
   "card.publishTime": "公開日",
-
   "banner.title": "Want to promote your brand?",
   "banner.description": "Post a promotion task and let creators spread the word",
   "banner.publishNow": "Publish Now",
-
   "card.perArticle": "Earn per post",
   "card.perInteraction": "Earn per task",
   "card.goCheck": "Details",
@@ -58,16 +54,13 @@
   "card.createTime": "Created",
   "card.stampSoldOut": "完売",
   "card.stampCancelled": "キャンセル",
-
   "list.loading": "Loading...",
   "list.loadingMore": "Loading more...",
   "list.noMore": "No more",
   "list.empty": "No tasks",
   "list.emptyHint": "No tasks available at the moment",
-
   "login.button": "Login Now",
   "login.hint": "Login to see more tasks",
-
   "published": "Published",
   "accepted": "Accepted",
   "published.empty": "No published tasks",
@@ -81,7 +74,6 @@
   "accepted.statDoing": "進行中",
   "accepted.statSettled": "精算済み",
   "myTasksSubtitle": "受けたタスクと公開したタスクを管理",
-
   "status.active": "Active",
   "status.cancelled": "Delisted",
   "status.pending": "審査待ち",
@@ -93,7 +85,6 @@
   "status.rejected": "却下",
   "status.disputed": "異議申立中",
   "status.del": "取り消し",
-
   "statusHint.doing": "タスク要件を完了し、作品を提出してください",
   "statusHint.doing_interaction": "インタラクションタスクを完了し、スクリーンショットを提出してください",
   "statusHint.waiting": "作品を公開中です。お待ちください",
@@ -104,7 +95,6 @@
   "statusHint.disputed": "異議申立が提出され、審査中です",
   "statusHint.cancelled": "タスクがキャンセルされました",
   "statusHint.del": "タスクが管理者により取り消されました",
-
   "action.edit": "Edit",
   "action.cancel": "Delist Task",
   "action.cancelConfirm": "Confirm delist this task? It will no longer be visible to users, but accepted tasks are not affected.",
@@ -114,7 +104,6 @@
   "action.submit": "Submit Task",
   "action.accept": "Accept Task",
   "action.confirmPublish": "Confirm Publish",
-
   "detail.taskInfo": "Task Info",
   "detail.taskTitle": "タスクタイトル",
   "detail.taskDescription": "タスク説明",
@@ -150,7 +139,6 @@
   "detail.downloadAllImages": "すべての画像をダウンロード",
   "detail.downloadComplete": "ダウンロード完了",
   "detail.downloadFailed": "ダウンロード失敗",
-
   "create.title": "Publish Promotion",
   "create.platform": "Select Platform",
   "create.linkDraftBox": "下書きボックスを関連付け",
@@ -224,7 +212,6 @@
   "create.validation.cpmRewardMin": "CPM価格は0より大きくしてください",
   "create.validation.cpeRewardMin": "CPE価格は0より大きくしてください",
   "create.collectNotSupported": "このプラットフォームはお気に入りに対応していません",
-
   "detail.rewardPerPost": "1件あたりの報酬",
   "detail.rewardPerInteraction": "1回あたりの報酬",
   "detail.recruitProgress": "募集状況",
@@ -240,10 +227,8 @@
   "detail.locationWarning": "公開する作品にはこの位置情報を含める必要があります。含まれていない場合、タスクは審査を通過しません！",
   "detail.topics": "トピック",
   "detail.noDeadline": "期限なし",
-
   "countdown.remaining": "残り提出時間",
   "countdown.expired": "期限切れ",
-
   "toast.acceptSuccess": "Task accepted",
   "toast.acceptFailed": "Failed to accept task",
   "toast.submitSuccess": "Submitted successfully",
@@ -254,7 +239,6 @@
   "toast.activateFailed": "Relist failed",
   "toast.processWaitingSuccess": "処理成功",
   "toast.processWaitingFailed": "処理失敗",
-
   "action.trackData": "トラッキングデータ",
   "stats.title": "タスク統計データ",
   "stats.taskInfo": "タスク情報",
@@ -295,21 +279,19 @@
   "stats.trendShares": "シェア数",
   "stats.trendFavorites": "お気に入り数",
   "stats.trendNoData": "トレンドデータはまだありません",
-
   "seo.homeTitle": "有料プロモーションタスク - SNSで稼ぐ",
   "seo.myTasksTitle": "マイタスク - 公開・受諾したプロモーションを追跡",
-  "seo.myTasksDescription": "ダッシュボードで全プロモーションタスクを管理。公開タスクの投稿統計と収益を追跡し、受諾タスクの締切と進捗を監視。AiToEarnでSNS全体のタスクパフォーマンスを確認。",
-  "seo.myTasksKeywords": "タスク管理, プロモーション追跡, 公開タスク, 受諾タスク, 収益追跡, SNSタスク, コンテンツプロモーション, AiToEarnダッシュボード",
+  "seo.myTasksDescription": "ダッシュボードで全プロモーションタスクを管理。公開タスクの投稿統計と収益を追跡し、受諾タスクの締切と進捗を監視。Giant Whale NetworkでSNS全体のタスクパフォーマンスを確認。",
+  "seo.myTasksKeywords": "タスク管理, プロモーション追跡, 公開タスク, 受諾タスク, 収益追跡, SNSタスク, コンテンツプロモーション, Giant Whale Networkダッシュボード",
   "seo.createTitle": "プロモーションタスク作成 - 報酬と要件を設定",
-  "seo.createDescription": "AiToEarnで有料プロモーションタスクを作成。予算を設定し、ターゲットプラットフォームを選択、コンテンツ要件を定義して、TikTok、YouTube、Instagramなどでブランドをプロモーション。",
-  "seo.createKeywords": "プロモーション作成, 有料タスク, ブランドプロモーション, インフルエンサーマーケティング, SNS広告, コンテンツ要件, プロモーション予算, AiToEarn",
+  "seo.createDescription": "Giant Whale Networkで有料プロモーションタスクを作成。予算を設定し、ターゲットプラットフォームを選択、コンテンツ要件を定義して、TikTok、YouTube、Instagramなどでブランドをプロモーション。",
+  "seo.createKeywords": "プロモーション作成, 有料タスク, ブランドプロモーション, インフルエンサーマーケティング, SNS広告, コンテンツ要件, プロモーション予算, Giant Whale Network",
   "seo.defaultTitle": "タスク詳細 - プロモーション報酬と要件を確認",
-  "seo.homeDescription": "AiToEarnゴールドラッシュスクエアで有料SNSプロモーションタスクを発見。TikTok、YouTube、Instagram、Facebook、X（Twitter）、LinkedInなど10以上のグローバルプラットフォームでブランドを宣伝してコミッションを獲得。タスクを閲覧、受注、コンテンツを作成して報酬を得よう。",
-  "seo.homeKeywords": "有料プロモーション, SNSプロモーション, オンライン収入, インフルエンサーマーケティング, TikTokプロモーション, YouTubeプロモーション, Instagramプロモーション, ブランドプロモーション, コンテンツクリエイター, SNS副業, AiToEarn",
-  "seo.detailTitleSuffix": "- AiToEarnタスクマーケット",
-  "seo.defaultDescription": "タスクの詳細を確認し、AiToEarnでプロモーションタスクを完了して報酬を獲得。",
+  "seo.homeDescription": "Giant Whale Networkゴールドラッシュスクエアで有料SNSプロモーションタスクを発見。TikTok、YouTube、Instagram、Facebook、X（Twitter）、LinkedInなど10以上のグローバルプラットフォームでブランドを宣伝してコミッションを獲得。タスクを閲覧、受注、コンテンツを作成して報酬を得よう。",
+  "seo.homeKeywords": "有料プロモーション, SNSプロモーション, オンライン収入, インフルエンサーマーケティング, TikTokプロモーション, YouTubeプロモーション, Instagramプロモーション, ブランドプロモーション, コンテンツクリエイター, SNS副業, Giant Whale Network",
+  "seo.detailTitleSuffix": "- Giant Whale Networkタスクマーケット",
+  "seo.defaultDescription": "タスクの詳細を確認し、Giant Whale Networkでプロモーションタスクを完了して報酬を獲得。",
   "seo.perPost": "件",
-
   "detail.locationScreenshot": "位置スクリーンショット",
   "detail.locationScreenshotWarning": "投稿後のスクリーンショットをアップロードしてください。スクリーンショットには作品の投稿位置が表示されている必要があります。表示されていない場合、審査に通りません！",
   "detail.locationScreenshotRequired": "位置スクリーンショットをアップロードしてください",
@@ -321,7 +303,6 @@
   "detail.interactionAction.like": "いいね",
   "detail.interactionAction.collect": "お気に入り",
   "detail.interactionAction.comment": "コメント",
-
   "create.insufficientBalance.title": "残高不足",
   "create.insufficientBalance.description": "このタスクの作成には {{symbol}}{{required}} が必要です。現在の残高は {{symbol}}{{current}}、不足額は {{symbol}}{{deficit}} です。{{symbol}}{{rechargeAmount}} をチャージしますか？",
   "create.insufficientBalance.goRecharge": "チャージする",
@@ -330,7 +311,6 @@
   "create.insufficientBalance.balanceSufficientContent": "前回のタスク作成進捗が復元されました。現在の残高は十分です。すぐにタスクを作成しますか？",
   "create.insufficientBalance.createNow": "今すぐ作成",
   "create.draftRestored": "前回のタスク作成進捗を復元しました",
-
   "create.tabPromotion": "プロモーションタスク",
   "create.tabInteraction": "インタラクションタスク",
   "create.interaction.title": "インタラクションタスクを公開",
@@ -352,7 +332,6 @@
   "create.interaction.validation.rewardMin": "1人あたりの報酬は最低 {{symbol}}{{min}}",
   "create.interaction.validation.quantityMin": "最低1人必要です",
   "create.interaction.validation.unsupportedPlatform": "対応プラットフォームのリンクを入力してください（対応：小紅書、TikTok、YouTube、Twitter、Facebook、Instagram、Bilibili、Douyin）",
-
   "detail.submitByLink": "リンクを提出",
   "detail.publishFromPlatform": "プラットフォームから公開",
   "detail.fasterReview": "審査が早い",
@@ -368,7 +347,6 @@
   "detail.viewIncome": "収入を確認",
   "detail.taskSubmitting": "タスク送信中...",
   "detail.retryProcess": "手動処理",
-
   "dispute.title": "異議申立",
   "dispute.reason": "異議の理由",
   "dispute.reasonPlaceholder": "審査結果に同意できない理由を説明してください",
@@ -383,7 +361,6 @@
   "dispute.confirmTitle": "異議申立の確認",
   "dispute.reasonRequired": "異議の理由を入力してください",
   "dispute.screenshotRequired": "証拠として少なくとも1枚のスクリーンショットをアップロードしてください",
-
   "detail.cpmReward": "1K再生あたり",
   "detail.cpeReward": "1Kエンゲージメントあたり",
   "detail.engagementRule": "エンゲージメントルール：いいね×1 + お気に入り×3 + コメント×5",
@@ -393,10 +370,8 @@
   "detail.cpeRewardUnit": "/ 1Kエンゲージメント",
   "card.cpmReward": "1K再生あたり",
   "card.cpeReward": "1Kエンゲージメントあたり",
-
   "detail.interactionLink": "インタラクションリンク",
   "detail.interactionTip": "この作品に{{actions}}する必要があります",
-
   "time.justNow": "たった今",
   "time.minutesAgo": "{{minutes}}分前",
   "time.hoursAgo": "{{hours}}時間前",

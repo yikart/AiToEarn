@@ -5,7 +5,6 @@
   "publishPromotion": "Publish Promotion",
   "back": "Back",
   "refresh": "Refresh",
-
   "menu.taskSquare": "Gold Rush Square",
   "menu.draftBox": "Content Management",
   "menu.offlinePromo": "AI Check-in",
@@ -17,7 +16,6 @@
   "menu.myBrand": "My Agent",
   "menu.contentTrading": "Content Trading",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "All Platforms",
   "filter.sortDefault": "Default Sort",
   "filter.sortNewest": "Newest First",
@@ -43,14 +41,12 @@
   "filter.clear": "Clear",
   "filter.reset": "Reset",
   "card.publishTime": "Published",
-
   "banner.title": "Want to promote your brand?",
   "banner.description": "Post a promotion task and let creators spread the word",
   "banner.publishNow": "Publish Now",
   "banner.statsCreators": "Creators",
   "banner.statsPlatforms": "Platforms",
   "banner.statsSettlement": "Fast Settlement",
-
   "card.perArticle": "Earn per post",
   "card.perInteraction": "Earn per task",
   "card.baseReward": "Base Reward",
@@ -63,16 +59,13 @@
   "card.createTime": "Created",
   "card.stampSoldOut": "SOLD OUT",
   "card.stampCancelled": "CANCELLED",
-
   "list.loading": "Loading...",
   "list.loadingMore": "Loading more...",
   "list.noMore": "No more",
   "list.empty": "No tasks",
   "list.emptyHint": "No tasks available at the moment",
-
   "login.button": "Login Now",
   "login.hint": "Login to see more tasks",
-
   "published": "Published",
   "accepted": "Accepted",
   "published.empty": "No published tasks",
@@ -86,7 +79,6 @@
   "accepted.statDoing": "In Progress",
   "accepted.statSettled": "Settled",
   "myTasksSubtitle": "Manage your accepted and published tasks",
-
   "status.active": "Active",
   "status.cancelled": "Delisted",
   "status.pending": "Pending Review",
@@ -98,7 +90,6 @@
   "status.rejected": "Rejected",
   "status.disputed": "Disputed",
   "status.del": "Revoked",
-
   "statusHint.doing": "Please complete the task requirements and submit your work",
   "statusHint.doing_interaction": "Please complete the interaction task and submit screenshots",
   "statusHint.waiting": "Your work is being published, please wait",
@@ -109,7 +100,6 @@
   "statusHint.disputed": "Your dispute has been submitted and is under review",
   "statusHint.cancelled": "Task has been cancelled",
   "statusHint.del": "Task has been revoked by admin",
-
   "action.edit": "Edit",
   "action.cancel": "Delist Task",
   "action.cancelConfirm": "Confirm delist this task? It will no longer be visible to users, but accepted tasks are not affected.",
@@ -119,7 +109,6 @@
   "action.submit": "Submit Task",
   "action.accept": "Accept Task",
   "action.confirmPublish": "Confirm Publish",
-
   "detail.taskInfo": "Task Info",
   "detail.taskTitle": "Task Title",
   "detail.taskDescription": "Task Description",
@@ -155,7 +144,6 @@
   "detail.downloadAllImages": "Download All Images",
   "detail.downloadComplete": "Download Complete",
   "detail.downloadFailed": "Download Failed",
-
   "create.title": "Publish Promotion",
   "create.platform": "Select Platform",
   "create.linkDraftBox": "Link Draft Box",
@@ -243,13 +231,11 @@
   "create.publishSuccess": "Published successfully",
   "create.publishFailed": "Publish failed",
   "create.collectNotSupported": "This platform does not support collects",
-
   "detail.selectAccount": "Select Account",
   "detail.selectAccountPlaceholder": "Please select a social account",
   "detail.noMatchAccount": "No account for this platform",
   "detail.alreadyAccepted": "Already Accepted",
   "detail.loginToAccept": "Login to accept task",
-
   "detail.rewardPerPost": "Reward Per Post",
   "detail.rewardPerInteraction": "Reward Per Interaction",
   "detail.recruitProgress": "Recruit Progress",
@@ -265,10 +251,8 @@
   "detail.locationWarning": "Your published work must include this location, otherwise the task will not pass review!",
   "detail.topics": "Topics",
   "detail.noDeadline": "No Deadline",
-
   "countdown.remaining": "Time remaining",
   "countdown.expired": "Expired",
-
   "toast.acceptSuccess": "Task accepted",
   "toast.acceptFailed": "Failed to accept task",
   "toast.submitSuccess": "Submitted successfully",
@@ -279,7 +263,6 @@
   "toast.activateFailed": "Relist failed",
   "toast.processWaitingSuccess": "Processed successfully",
   "toast.processWaitingFailed": "Processing failed",
-
   "action.trackData": "Track Data",
   "stats.title": "Task Statistics",
   "stats.taskInfo": "Task Info",
@@ -320,7 +303,6 @@
   "stats.trendShares": "Shares",
   "stats.trendFavorites": "Favorites",
   "stats.trendNoData": "No trend data yet",
-
   "workPerformance.title": "Work Performance",
   "workPerformance.estimatedEarnings": "Estimated Earnings",
   "workPerformance.estimatedCost": "Estimated Cost",
@@ -333,7 +315,6 @@
   "workPerformance.settleAmount": "Amount",
   "workPerformance.settlementRule": "Settlement rule: After the work is approved, the system collects data for 7 days and then settles automatically",
   "workPerformance.dataUpdateTime": "Work data is updated daily at 2:00 AM UTC",
-
   "userTasks.title": "Accepted Users",
   "userTasks.empty": "No users have accepted this task yet",
   "userTasks.reward": "Reward",
@@ -372,21 +353,19 @@
   "toast.approveFailed": "Operation failed",
   "toast.rejectSuccess": "Rejected",
   "toast.rejectFailed": "Operation failed",
-
   "seo.homeTitle": "Paid Promotion Tasks - Earn with Social Media",
   "seo.myTasksTitle": "My Tasks - Track Published & Accepted Promotions",
-  "seo.myTasksDescription": "Manage all your promotion tasks in one dashboard. Track published tasks with submission stats and earnings, monitor accepted tasks with deadlines and progress, and review task performance across social media platforms on AiToEarn.",
-  "seo.myTasksKeywords": "task management, promotion tracking, published tasks, accepted tasks, earnings tracker, social media tasks, content promotion, AiToEarn dashboard",
+  "seo.myTasksDescription": "Manage all your promotion tasks in one dashboard. Track published tasks with submission stats and earnings, monitor accepted tasks with deadlines and progress, and review task performance across social media platforms on Giant Whale Network.",
+  "seo.myTasksKeywords": "task management, promotion tracking, published tasks, accepted tasks, earnings tracker, social media tasks, content promotion, Giant Whale Network dashboard",
   "seo.createTitle": "Create Promotion Task - Set Rewards & Requirements",
-  "seo.createDescription": "Create paid promotion tasks on AiToEarn. Set your budget, choose target platforms, define content requirements, and let social media creators promote your brand across TikTok, YouTube, Instagram and more.",
-  "seo.createKeywords": "create promotion, paid tasks, brand promotion, influencer marketing, social media advertising, content requirements, promotion budget, AiToEarn",
+  "seo.createDescription": "Create paid promotion tasks on Giant Whale Network. Set your budget, choose target platforms, define content requirements, and let social media creators promote your brand across TikTok, YouTube, Instagram and more.",
+  "seo.createKeywords": "create promotion, paid tasks, brand promotion, influencer marketing, social media advertising, content requirements, promotion budget, Giant Whale Network",
   "seo.defaultTitle": "Task Details - View Promotion Rewards & Requirements",
-  "seo.homeDescription": "Discover paid social media promotion tasks on AiToEarn Gold Rush Square. Earn commissions by promoting brands across TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn and 10+ global platforms. Browse tasks, accept assignments, create content and get paid — start earning with your social media influence today.",
-  "seo.homeKeywords": "paid promotion tasks, social media promotion, earn money online, influencer marketing, TikTok promotion, YouTube promotion, Instagram promotion, Facebook promotion, brand promotion, content creator jobs, social media jobs, AiToEarn, online side hustle, creator economy",
-  "seo.detailTitleSuffix": "- AiToEarn Task Market",
-  "seo.defaultDescription": "View task details and earn rewards by completing promotion tasks on AiToEarn.",
+  "seo.homeDescription": "Discover paid social media promotion tasks on Giant Whale Network Gold Rush Square. Earn commissions by promoting brands across TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn and 10+ global platforms. Browse tasks, accept assignments, create content and get paid — start earning with your social media influence today.",
+  "seo.homeKeywords": "paid promotion tasks, social media promotion, earn money online, influencer marketing, TikTok promotion, YouTube promotion, Instagram promotion, Facebook promotion, brand promotion, content creator jobs, social media jobs, Giant Whale Network, online side hustle, creator economy",
+  "seo.detailTitleSuffix": "- Giant Whale Network Task Market",
+  "seo.defaultDescription": "View task details and earn rewards by completing promotion tasks on Giant Whale Network.",
   "seo.perPost": "post",
-
   "detail.locationScreenshot": "Location Screenshot",
   "detail.locationScreenshotWarning": "Please upload a screenshot of your published work showing the location. The screenshot must display the work's location, otherwise the review will not pass!",
   "detail.locationScreenshotRequired": "Please upload a location screenshot",
@@ -398,7 +377,6 @@
   "detail.interactionAction.like": "Like",
   "detail.interactionAction.collect": "Collect",
   "detail.interactionAction.comment": "Comment",
-
   "create.insufficientBalance.title": "Insufficient Balance",
   "create.insufficientBalance.description": "This task requires {{symbol}}{{required}}, your current balance is {{symbol}}{{current}}, deficit {{symbol}}{{deficit}}. Would you like to recharge {{symbol}}{{rechargeAmount}}?",
   "create.insufficientBalance.goRecharge": "Go Recharge",
@@ -407,7 +385,6 @@
   "create.insufficientBalance.balanceSufficientContent": "Your previous task progress has been restored. Your balance is now sufficient. Would you like to create the task now?",
   "create.insufficientBalance.createNow": "Create Now",
   "create.draftRestored": "Previous task progress restored",
-
   "create.tabPromotion": "Promotion Task",
   "create.tabInteraction": "Interaction Task",
   "create.interaction.title": "Publish Interaction Task",
@@ -429,7 +406,6 @@
   "create.interaction.validation.rewardMin": "Minimum {{symbol}}{{min}} per person",
   "create.interaction.validation.quantityMin": "At least 1 person required",
   "create.interaction.validation.unsupportedPlatform": "Please enter a supported platform link (Supported: Xiaohongshu, TikTok, YouTube, Twitter, Facebook, Instagram, Bilibili, Douyin)",
-
   "verifyCode.AI_THEME_MISMATCH": "AI determined content is not relevant to the task (score: {{matchScore}}/100, threshold: {{threshold}})",
   "verifyCode.AI_CANNOT_ANALYZE": "AI could not analyze the content, manual review required",
   "verifyCode.WORK_LINK_INVALID": "Work link is invalid or the work has been deleted",
@@ -449,11 +425,9 @@
   "verifyCode.PUBLISHER_REJECTED": "Rejected by publisher: {{reason}}",
   "verifyCode.AUTO_AUDIT_REJECTED": "Automated audit rejected",
   "verifyCode.DRAFT_SIMILARITY_LOW": "Published work has low similarity to draft (similarity: {{score}}/100, threshold: {{threshold}})",
-
   "detail.rejectionReason": "Reason",
   "detail.settleStatusFailed": "Settlement failed",
   "detail.settleStatusExpired": "Settlement expired",
-
   "detail.submitByLink": "Submit Link",
   "detail.publishFromPlatform": "Publish from Platform",
   "detail.fasterReview": "Faster Review",
@@ -469,7 +443,6 @@
   "detail.viewIncome": "View income",
   "detail.taskSubmitting": "Submitting task...",
   "detail.retryProcess": "Retry",
-
   "dispute.title": "Submit Dispute",
   "dispute.reason": "Dispute Reason",
   "dispute.reasonPlaceholder": "Please describe why you disagree with the review result",
@@ -485,7 +458,6 @@
   "dispute.reasonRequired": "Please provide a dispute reason",
   "dispute.screenshotRequired": "Please upload at least one screenshot as evidence",
   "action.refreshPublishStatus": "Refresh",
-
   "stats.triggerCapture": "Fetch Data",
   "stats.captureSuccess": "Data is being fetched, please refresh manually in a few minutes",
   "stats.captureTooltip": "Manually fetch latest post data. Please wait a few minutes and refresh the page after clicking",
@@ -496,16 +468,13 @@
   "stats.remainingCooldown": "{{minutes}} min remaining",
   "userTasks.expandAll": "Expand All",
   "userTasks.collapseAll": "Collapse All",
-
   "stats.dataNotRealtime": "Data below is not real-time and is for reference only. Please click the post link to verify the latest data",
   "stats.dataSnapshot": "Data snapshot (updated {{time}}, not real-time)",
   "stats.interactionMet": "Met",
   "stats.interactionNotMet": "Not met",
   "stats.interactionRequired": "Required: ≥{{count}}, current: {{current}}",
-
   "create.cpmCpeDeposit": "CPM/CPE Deposit",
   "create.cpmCpeDepositHint": "CPM/CPE tasks require a deposit of $50 per post. Settlement is capped at the deposit amount. Any remaining deposit will be refunded.",
-
   "create.tabPromotionDesc": "Publish your promotion needs and let creators pick up tasks to create and publish video content",
   "create.tabInteractionDesc": "Publish interaction needs and let users like, bookmark, and comment on your content",
   "create.confirmDialog.title": "Confirm Task Publication",
@@ -528,7 +497,6 @@
   "create.confirmDialog.rewardPerPerson": "Reward Per Person",
   "create.confirmDialog.interactionQuantity": "Number of People",
   "create.confirmDialog.people": "people",
-
   "detail.cpmReward": "Per 1K Views",
   "detail.cpeReward": "Per 1K Engagements",
   "detail.engagementRule": "Engagement Rule: Like×1 + Collect×3 + Comment×5",
@@ -538,16 +506,13 @@
   "detail.cpeRewardUnit": "/ 1K Engagements",
   "card.cpmReward": "Per 1K Views",
   "card.cpeReward": "Per 1K Engagements",
-
   "detail.interactionLink": "Interaction Link",
   "detail.interactionTip": "You need to {{actions}} this work",
-
   "action.delete": "Delete Task",
   "action.deleteConfirm": "Confirm delete this task?",
   "action.deleteConfirmContent": "The task must be stopped with no active user tasks. The remaining balance will be refunded after deletion.",
   "toast.deleteSuccess": "Deleted successfully",
   "toast.deleteFailed": "Delete failed",
-
   "time.justNow": "Just now",
   "time.minutesAgo": "{{minutes}}m ago",
   "time.hoursAgo": "{{hours}}h ago",

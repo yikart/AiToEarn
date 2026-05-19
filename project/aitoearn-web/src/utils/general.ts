@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
+import { APP_BRAND } from '@/config/brand'
 import { getHreflang, languages } from '@/lib/i18n/languageConfig'
 
 export async function getPageTitle(name: string, lng: string) {
-  return `${name} —— AiToEarn`
+  return `${name} —— ${APP_BRAND.name}`
 }
 
 /**
@@ -55,7 +56,7 @@ export async function getMetadata(props: Metadata, lng: string, path?: string): 
       title,
       description,
       url: `${baseUrl}/${lng}${path}`,
-      siteName: 'AiToEarn',
+      siteName: APP_BRAND.name,
       locale: lng,
       type: 'website',
       images: [

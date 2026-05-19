@@ -5,8 +5,8 @@
   },
   "seo": {
     "title": "AI驱动的内容创作与社交媒体管理平台",
-    "description": "AiToEarn为您提供最方便的AI视频制作服务，帮助线下门店引流，同时提供社媒账号托管，完成内容发布和评论互动。",
-    "keywords": "AI视频制作,社媒管理,多平台发布,AI营销,内容创作,社交媒体自动化,AiToEarn,AI运营,线下推广,一键发布,爱团团"
+    "description": "巨鲸网络为您提供最方便的AI视频制作服务，帮助线下门店引流，同时提供社媒账号托管，完成内容发布和评论互动。",
+    "keywords": "AI视频制作,社媒管理,多平台发布,AI营销,内容创作,社交媒体自动化,巨鲸网络,AI运营,线下推广,一键发布,爱团团"
   },
   "navbar": {
     "pricing": "定价",
@@ -19,7 +19,7 @@
   "hero": {
     "badge": "AI 驱动餐厅增长",
     "title": "一人公司的AI运营员工",
-    "subtitle": "使用AiToEarn，你可以轻松为您的线下门店引流。AiToEarn为您提供最方便的AI视频制作服务，同时，您可以将您的社媒账号托管在AiToEarn，我们帮您完成内容发布和评论互动。",
+    "subtitle": "使用巨鲸网络，你可以轻松为您的线下门店引流。巨鲸网络为您提供最方便的AI视频制作服务，同时，您可以将您的社媒账号托管在巨鲸网络，我们帮您完成内容发布和评论互动。",
     "placeholder": "输入您的餐厅名称",
     "cta": "获取我的AI助手",
     "selectFirst": "请先选择一家餐厅",
@@ -52,13 +52,13 @@
   },
   "reviews": {
     "title": "用户评价",
-    "subtitle": "加入数千位信任 AiToEarn 的一人公司创业者",
+    "subtitle": "加入数千位信任 巨鲸网络 的一人公司创业者",
     "viewOnGithub": "在 GitHub 上查看",
     "review1": {
       "content": "终于有一个能处理多平台发布的开源工具！一键发布到抖音、TikTok、YouTube - 每周节省好几个小时。"
     },
     "review2": {
-      "content": "作为一人创业者，AiToEarn 简直是神器。AI 生成内容、自动发布，甚至处理评论。我的社媒现在完全自动运行。"
+      "content": "作为一人创业者，巨鲸网络 简直是神器。AI 生成内容、自动发布，甚至处理评论。我的社媒现在完全自动运行。"
     },
     "review3": {
       "content": "AI Agent 功能太棒了。自动撰写、优化、发布内容。内容成本降低了 90%。"
@@ -87,16 +87,22 @@
     "subtitle": "扫码即发布，单条成本下降 90%+",
     "description": "高质量内容自动生成，让每一次线下互动转化为有效的社交媒体曝光",
     "playVideo": "播放视频",
-    "video1": { "title": "Blacklock 探店 Vlog" },
-    "video2": { "title": "餐厅探索短视频" },
-    "video3": { "title": "The Shed 英式餐厅" }
+    "video1": {
+      "title": "Blacklock 探店 Vlog"
+    },
+    "video2": {
+      "title": "餐厅探索短视频"
+    },
+    "video3": {
+      "title": "The Shed 英式餐厅"
+    }
   },
   "testimonials": {
     "title": "听听像您一样的餐厅老板怎么说",
     "watchVideo": "观看视频"
   },
   "beliefs": {
-    "title": "为什么选择 AiToEarn",
+    "title": "为什么选择 巨鲸网络",
     "subtitle": "专为一人公司和小型企业打造",
     "belief1": {
       "title": "专为一人公司设计",
@@ -133,7 +139,7 @@
     }
   },
   "experience": {
-    "title": "使用 Aitoearn，获得更多流量、更多销售、更多客户",
+    "title": "使用 巨鲸网络，获得更多流量、更多销售、更多客户",
     "subtitle": "从线下营销到多平台发布，让 AI 为您代劳",
     "tab1": {
       "title": "线下推广营销",
@@ -173,6 +179,6 @@
     "extensionPrivacy": "扩展隐私政策",
     "contact": "联系我们",
     "supportedPlatforms": "支持平台",
-    "copyright": "© 2026 AiToEarn. 保留所有权利。"
+    "copyright": "© 2026 巨鲸网络. 保留所有权利。"
   }
 }

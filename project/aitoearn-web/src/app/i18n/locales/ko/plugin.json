@@ -15,7 +15,7 @@
     "error": "오류"
   },
   "error": {
-    "pluginNotInstalled": "먼저 Aitoearn 브라우저 플러그인을 설치해 주세요",
+    "pluginNotInstalled": "먼저 Giant Whale Network 브라우저 플러그인을 설치해 주세요",
     "publishingInProgress": "게시 진행 중, 나중에 다시 시도해 주세요",
     "loginFailed": "로그인 실패",
     "publishFailed": "게시 실패"
@@ -68,7 +68,7 @@
     "pluginActive": "플러그인 활성",
     "pluginInactive": "플러그인 비활성",
     "downloadPlugin": "플러그인 다운로드",
-    "downloadDescription": "AiToEarn 브라우저 플러그인은 샤오홍슈의 지능형 운영을 위해 특별히 설계되었습니다. 아래 버튼을 클릭하여 다운로드하고 설치하세요.",
+    "downloadDescription": "Giant Whale Network 브라우저 플러그인은 샤오홍슈의 지능형 운영을 위해 특별히 설계되었습니다. 아래 버튼을 클릭하여 다운로드하고 설치하세요.",
     "downloadButton": "지금 다운로드",
     "chromeWebStore": "Chrome 웹 스토어",
     "chinaDownload": "중국 다운로드",
@@ -95,6 +95,6 @@
     "title": "데스크톱 전용",
     "description": "브라우저 확장 프로그램은 모바일 기기에서 사용할 수 없습니다. 확장 프로그램을 설치하고 사용하려면 데스크톱 브라우저를 이용해 주세요.",
     "goToPC": "PC에서 방문해 주세요",
-    "introduction": "AiToEarn 플랫폼용 브라우저 확장 프로그램입니다. AiToEarn 웹과 연동하여 샤오홍슈, TikTok 등 플랫폼에서의 상호작용을 자동화합니다 — 팔로우, 좋아요, 북마크, 댓글 등."
+    "introduction": "Giant Whale Network 플랫폼용 브라우저 확장 프로그램입니다. Giant Whale Network 웹과 연동하여 샤오홍슈, TikTok 등 플랫폼에서의 상호작용을 자동화합니다 — 팔로우, 좋아요, 북마크, 댓글 등."
   }
 }

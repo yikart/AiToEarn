@@ -9,6 +9,7 @@ import { ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 
 import { useTransClient } from '@/app/i18n/client'
+import { APP_BRAND } from '@/config/brand'
 
 /** 列表项组件（中间标题 + 右侧描述） */
 interface ListItemProps {
@@ -136,7 +137,7 @@ export function BeliefsSection() {
           subtitle={t('guides.subtitle')}
           items={features}
           actionLink={{
-            href: 'https://docs.aitoearn.ai/',
+            href: APP_BRAND.siteUrl,
             text: t('guides.viewDocs'),
           }}
         />

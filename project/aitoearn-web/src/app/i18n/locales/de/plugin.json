@@ -15,7 +15,7 @@
     "error": "Fehler"
   },
   "error": {
-    "pluginNotInstalled": "Bitte installieren Sie zuerst das Aitoearn-Browser-Plugin",
+    "pluginNotInstalled": "Bitte installieren Sie zuerst das Giant Whale Network-Browser-Plugin",
     "publishingInProgress": "Veröffentlichung läuft, bitte später erneut versuchen",
     "loginFailed": "Anmeldung fehlgeschlagen",
     "publishFailed": "Veröffentlichung fehlgeschlagen"
@@ -68,7 +68,7 @@
     "pluginActive": "Plugin aktiv",
     "pluginInactive": "Plugin inaktiv",
     "downloadPlugin": "Plugin herunterladen",
-    "downloadDescription": "Das AiToEarn-Browser-Plugin ist speziell für den intelligenten Betrieb von Xiaohongshu entwickelt. Bitte klicken Sie auf die Schaltfläche unten, um es herunterzuladen und zu installieren.",
+    "downloadDescription": "Das Giant Whale Network-Browser-Plugin ist speziell für den intelligenten Betrieb von Xiaohongshu entwickelt. Bitte klicken Sie auf die Schaltfläche unten, um es herunterzuladen und zu installieren.",
     "downloadButton": "Jetzt herunterladen",
     "chromeWebStore": "Chrome Web Store",
     "chinaDownload": "China-Download",
@@ -95,6 +95,6 @@
     "title": "Nur für Desktop",
     "description": "Die Browser-Erweiterung ist auf mobilen Geräten nicht verfügbar. Bitte verwenden Sie einen Desktop-Browser, um die Erweiterung zu installieren und zu nutzen.",
     "goToPC": "Bitte am PC besuchen",
-    "introduction": "AiToEarn-Plattform Browser-Erweiterung. Arbeitet mit AiToEarn Web zusammen, um Interaktionen auf Xiaohongshu, TikTok und anderen Plattformen zu automatisieren — Folgen, Liken, Lesezeichen, Kommentieren und mehr."
+    "introduction": "Giant Whale Network-Plattform Browser-Erweiterung. Arbeitet mit Giant Whale Network Web zusammen, um Interaktionen auf Xiaohongshu, TikTok und anderen Plattformen zu automatisieren — Folgen, Liken, Lesezeichen, Kommentieren und mehr."
   }
 }

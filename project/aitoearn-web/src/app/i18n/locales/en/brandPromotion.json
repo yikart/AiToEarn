@@ -1,8 +1,8 @@
 {
   "seo": {
     "title": "AI Brand Promotion - QR Code Marketing & Analytics",
-    "description": "Create and manage brand promotion plans with AiToEarn. Use AI to batch generate promotional videos and images, share QR codes for customer-driven content publishing, and track real-time performance data including views, likes, comments and shares. Generate AI art QR codes, manage drafts, and monitor promotion results — all in one powerful dashboard.",
-    "keywords": "brand promotion, AI promotional content, promotion plan management, QR code marketing, AI video generation, promotional materials, social media promotion, content publishing, marketing analytics, AI marketing tools, brand awareness, local business promotion, AiToEarn"
+    "description": "Create and manage brand promotion plans with Giant Whale Network. Use AI to batch generate promotional videos and images, share QR codes for customer-driven content publishing, and track real-time performance data including views, likes, comments and shares. Generate AI art QR codes, manage drafts, and monitor promotion results — all in one powerful dashboard.",
+    "keywords": "brand promotion, AI promotional content, promotion plan management, QR code marketing, AI video generation, promotional materials, social media promotion, content publishing, marketing analytics, AI marketing tools, brand awareness, local business promotion, Giant Whale Network"
   },
   "header": {
     "title": "Brand Promotion",
@@ -73,7 +73,7 @@
     "storeNotActive": "Store is initializing, please try again later",
     "storeNotLinked": "No store linked. Please link a store first to use AI batch generation.",
     "promptTitle": "Custom Prompt",
-    "creditsPerSecond": "{{credits}} credits/1s",
+    "creditsPerSecond": "credits/s",
     "totalCredits": "Est. {{total}} credits",
     "insufficientBalance": "This generation requires {{total}} credits, but you only have {{balance}} credits. Please top up and try again.",
     "linkStoreFirst": "Please link a store first",
@@ -100,7 +100,6 @@
     "imageModel": "Image Model",
     "imageCount": "Images",
     "creditsPerImage": "{{credits}} credits/image",
-    "creditsPerSecond": "credits/s",
     "imageResolution": "Resolution",
     "imageTextGenerated": "Image post generation started",
     "videoEditMode": "Video Edit",

@@ -13,8 +13,9 @@ import Image from 'next/image'
 import { useSearchParams } from 'next/navigation'
 import { Suspense, useCallback, useEffect, useRef, useState } from 'react'
 
-import logo from '@/assets/images/logo.png'
 import douyinIcon from '@/assets/svgs/plat/douyin.svg'
+import { BrandMark } from '@/components/Brand/BrandMark'
+import { APP_BRAND } from '@/config/brand'
 import { openApp } from '@/utils/appLaunch'
 
 type LaunchStatus = 'loading' | 'launching' | 'failed'
@@ -30,7 +31,7 @@ const colors = {
   errorBg: 'rgba(239,68,68,0.1)',
   warning: '#f97316',
   warningBg: 'rgba(249,115,22,0.1)',
-  btnBg: '#0f172a',
+  btnBg: APP_BRAND.colors.ink,
   btnText: '#ffffff',
   iconCircleBg: 'rgba(148,163,184,0.15)',
 }
@@ -111,8 +112,8 @@ function AnimationStyles() {
 function BrandHeader() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
-      <Image src={logo} alt="AiToEarn" width={32} height={32} style={{ borderRadius: 8 }} />
-      <span style={{ fontSize: 18, fontWeight: 600, color: colors.text, letterSpacing: '-0.025em' }}>AiToEarn</span>
+      <BrandMark size={32} />
+      <span style={{ fontSize: 18, fontWeight: 600, color: colors.text }}>{APP_BRAND.name}</span>
     </div>
   )
 }

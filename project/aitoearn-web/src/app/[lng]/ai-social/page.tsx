@@ -5,6 +5,7 @@
 
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
+import { APP_BRAND } from '@/config/brand'
 import { getMetadata } from '@/utils/general'
 import { AiSocialPageContent } from './AiSocialPageContent'
 
@@ -23,7 +24,7 @@ export async function generateMetadata({
     {
       title: t('seo.title'),
       description: t('seo.description'),
-      keywords: `${t('seo.keywords')}, aitoearn, AiToEarn`,
+      keywords: `${t('seo.keywords')}, ${APP_BRAND.name}, ${APP_BRAND.englishName}`,
       referrer: 'no-referrer',
     },
     lng,

@@ -6,15 +6,11 @@
 
 import type { LogoSectionProps } from '../types'
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react'
-import Image from 'next/image'
 import Link from 'next/link'
-import logo from '@/assets/images/logo.png'
-import { useGetClientLng } from '@/hooks/useSystem'
+import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { cn } from '@/lib/utils'
 
 export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
-  const lng = useGetClientLng()
-
   return (
     <div
       className={cn(
@@ -31,7 +27,7 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
             className="flex items-center justify-center transition-opacity group-hover:opacity-0"
             data-testid="sidebar-logo-link"
           >
-            <Image src={logo} alt="Aitoearn" width={32} height={32} />
+            <BrandWordmark collapsed markSize={32} />
           </Link>
           {/* 展开按钮 - 默认隐藏，hover 时显示 */}
           <button
@@ -49,8 +45,7 @@ export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
             className="flex items-center gap-2 text-foreground no-underline hover:opacity-85"
             data-testid="sidebar-logo-link"
           >
-            <Image src={logo} alt="Aitoearn" width={32} height={32} />
-            <span className="text-base font-semibold tracking-tight">Aitoearn</span>
+            <BrandWordmark markSize={32} showTagline size="md" />
           </Link>
           <button
             onClick={onToggle}

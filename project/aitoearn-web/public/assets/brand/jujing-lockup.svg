@@ -1,0 +1,31 @@
+<svg width="720" height="180" viewBox="0 0 720 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="720" height="180" rx="24" fill="#ffffff"/>
+  <rect x="1" y="1" width="718" height="178" rx="23" stroke="#e7edf6" stroke-width="2"/>
+  <svg x="48" y="46" width="88" height="88" viewBox="0 0 64 64" fill="none">
+    <defs>
+      <linearGradient id="lockup-blue" x1="12" x2="45" y1="23" y2="46">
+        <stop stop-color="#2563eb"/>
+        <stop offset="1" stop-color="#00a4ef"/>
+      </linearGradient>
+      <linearGradient id="lockup-cyan" x1="31" x2="51" y1="19" y2="44">
+        <stop stop-color="#00bbd9"/>
+        <stop offset="1" stop-color="#5ad7e8"/>
+      </linearGradient>
+      <linearGradient id="lockup-green" x1="42" x2="57" y1="41" y2="30">
+        <stop stop-color="#22c55e"/>
+        <stop offset="1" stop-color="#3fdd83"/>
+      </linearGradient>
+    </defs>
+    <rect x="5" y="5" width="54" height="54" rx="14" fill="#fff" stroke="#e7edf6"/>
+    <path d="M13.4 25.4c5.6.1 8.5 2.6 11 9.1 1.5 4 3.2 6 5.4 6.2 2.7.2 5.1-2.4 8.7-8.1l6.9-10.9c.8-1.2 2.6-.8 2.8.7l1.3 11.1c.2 1.6-1.8 2.6-2.9 1.4l-6.8-7.1" stroke="url(#lockup-blue)" stroke-width="8.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M31.7 41.1c3.2-.9 5.4-3.9 8.5-8.7l5.1-8.1 8.2 10.1" stroke="url(#lockup-cyan)" stroke-width="8.2" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M48.5 38.3 56 33.4" stroke="url(#lockup-green)" stroke-width="3.2" stroke-linecap="round"/>
+    <circle cx="34.2" cy="17.4" r="3.3" fill="#2563eb"/>
+    <circle cx="56" cy="33.4" r="3.1" fill="#22c55e"/>
+  </svg>
+  <text x="164" y="84" fill="#102033" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC','Microsoft YaHei',sans-serif" font-size="44" font-weight="760" letter-spacing="8">巨鲸网络</text>
+  <text x="168" y="124" fill="#64748b" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="18" font-weight="650" letter-spacing="9">JUJING NETWORK</text>
+  <path d="M505 90h88" stroke="#00bbd9" stroke-width="2" stroke-linecap="round" opacity=".68"/>
+  <circle cx="608" cy="90" r="5" fill="#22c55e"/>
+  <circle cx="632" cy="90" r="4" fill="#2563eb"/>
+</svg>

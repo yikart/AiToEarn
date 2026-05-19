@@ -43,7 +43,7 @@
   },
   "apply": "Appliquer",
   "agentFeatures": {
-    "title": "Fonctionnalité clé Aitoearn",
+    "title": "Fonctionnalité clé Giant Whale Network",
     "subtitle": "Nos fonctionnalités phares, en un clic",
     "platforms": "Plateformes prises en charge",
     "helperTitle": "Publication en une ligne",
@@ -78,7 +78,6 @@
         "title": "Génération vidéo",
         "desc": "Produire des brouillons de vidéo courte à partir de scripts ou prompts, incluant musique et suggestions de plans"
       },
-
       "highlight": {
         "title": "Édition des moments forts",
         "desc": "Détecter automatiquement les moments à haute énergie et créer des clips de moments forts en utilisant des modèles"
@@ -95,7 +94,6 @@
         "title": "Téléchargement et conversion d'assets",
         "desc": "Récupérer les vidéos de plateforme, télécharger en lot en plusieurs résolutions et convertir les formats"
       },
-
       "videoTranslation": {
         "title": "Traduction vidéo",
         "desc": "Support de synchronisation labiale au niveau du visage, clonage vocal et export de sous-titres intégrés/soft"
@@ -112,7 +110,6 @@
         "title": "Optimisation SEO et mots-clés",
         "desc": "Fournir des suggestions d'optimisation de recherche et découverte pour le texte et les descriptions"
       },
-
       "schedule": {
         "title": "Publication programmée",
         "desc": "Support de planification unique, récurrente et sensible au fuseau horaire avec publication automatique"
@@ -125,7 +122,6 @@
         "title": "Suggestion d'heure intelligente",
         "desc": "Recommander les heures de publication optimales basées sur les données historiques pour maximiser la portée"
       },
-
       "sse": {
         "title": "Tâches en streaming (SSE)",
         "desc": "Diffuser la génération de tâches en temps réel avec résultats incrémentiels et support d'annulation"
@@ -138,7 +134,6 @@
         "title": "Workflows extensibles",
         "desc": "Support de pipelines multi-étapes et gestionnaires d'actions personnalisés pour chaîner l'automatisation complexe"
       },
-
       "videoUnderstanding": {
         "title": "Compréhension vidéo",
         "desc": "Reconnaître automatiquement les émotions, les personnes et les événements pour générer des tags et des chapitres"
@@ -147,7 +142,6 @@
         "title": "Rapports et insights",
         "desc": "Générer automatiquement des rapports de performance de publication et des suggestions de croissance pour révision et optimisation"
       },
-
       "commentAssistant": {
         "title": "Assistant commentaires et DM",
         "desc": "Générer automatiquement des suggestions de réponse et des modèles de réponse en lot pour booster l'engagement"

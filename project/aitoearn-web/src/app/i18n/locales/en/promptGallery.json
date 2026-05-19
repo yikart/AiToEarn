@@ -45,7 +45,7 @@
   },
   "apply": "Apply",
   "agentFeatures": {
-    "title": "Aitoearn Key Feature",
+    "title": "Giant Whale Network Key Feature",
     "subtitle": "Our signature features, one click away",
     "platforms": "Supported platforms",
     "helperTitle": "One-line publish",
@@ -80,7 +80,6 @@
         "title": "Video Generation",
         "desc": "Produce short video drafts from scripts or prompts, including music and shot suggestions"
       },
-
       "highlight": {
         "title": "Highlight Editing",
         "desc": "Automatically detect high-energy moments and create highlight clips using templates"
@@ -97,7 +96,6 @@
         "title": "Asset Download & Convert",
         "desc": "Fetch platform videos, batch-download in multiple resolutions and convert formats"
       },
-
       "videoTranslation": {
         "title": "Video Translation",
         "desc": "Support face-level lip-sync, voice cloning and embedded/soft subtitle export"
@@ -114,7 +112,6 @@
         "title": "SEO & Keyword Optimization",
         "desc": "Provide search and discovery optimization suggestions for copy and descriptions"
       },
-
       "schedule": {
         "title": "Scheduled Publishing",
         "desc": "Support one-time, recurring and timezone-aware scheduling and auto-publish"
@@ -127,7 +124,6 @@
         "title": "Smart Time Suggestion",
         "desc": "Recommend optimal publish times based on historical data to maximize reach"
       },
-
       "sse": {
         "title": "Streaming Tasks (SSE)",
         "desc": "Stream task generation in real-time with incremental results and cancel support"
@@ -140,7 +136,6 @@
         "title": "Extensible Workflows",
         "desc": "Support multi-step pipelines and custom action handlers to chain complex automation"
       },
-
       "videoUnderstanding": {
         "title": "Video Understanding",
         "desc": "Automatically recognize emotions, people and events to generate tags and chapters"
@@ -149,7 +144,6 @@
         "title": "Reporting & Insights",
         "desc": "Auto-generate publish performance and growth suggestions for review and optimization"
       },
-
       "commentAssistant": {
         "title": "Comment & DM Assistant",
         "desc": "Auto-generate reply suggestions and batch-reply templates to boost engagement"

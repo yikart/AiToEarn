@@ -1,6 +1,6 @@
 /**
  * PrivacyPolicyPage - 隐私政策页面
- * 展示 AiToEarn 平台隐私政策和数据保护说明
+ * 展示 巨鲸网络 平台隐私政策和数据保护说明
  */
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
@@ -43,9 +43,9 @@ export default function PrivacyPolicyPage() {
           <div className={styles.content}>
             <section className={styles.section}>
               <p className={styles.introduction}>
-                Aitoearn provides this Privacy Policy to inform you of our policies and procedures
+                巨鲸网络 provides this Privacy Policy to inform you of our policies and procedures
                 regarding the collection, use, protection, and disclosure of Personal Information
-                received from your use of this website, located at https://aitoearn.ai (“Site”), as
+                received from your use of this website, located at https://jujing.network (“Site”), as
                 well as all related websites including our subdomains, applications, browser
                 extensions, and other services provided by us (collectively, together with the Site,
                 our “Service”), and in connection with our customer, vendor, and partner
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
               <p className={styles.sectionContent}>
                 Registration with, use of, and access to the Service is subject to this Privacy
                 Policy and our Terms of Use located at
-                https://aitoearn.ai/en/websit/terms-of-service.
+                https://jujing.network/en/websit/terms-of-service.
               </p>
             </section>
 
@@ -139,7 +139,7 @@ export default function PrivacyPolicyPage() {
               <p className={styles.sectionContent}>
                 If you desire to have access to certain restricted sections of the Site or request
                 to receive marketing materials, you may be required to become a registered user, and
-                to submit the following types of Personal Information to Aitoearn: your name, email
+                to submit the following types of Personal Information to 巨鲸网络: your name, email
                 address, phone number, full user name, password, city, and time zone.
               </p>
 
@@ -167,13 +167,13 @@ export default function PrivacyPolicyPage() {
                 2a. Personal Information Collected from Connected Social Media Accounts
               </h2>
               <p className={styles.sectionContent}>
-                If you connect your third party social media account to your Aitoearn account, we
+                If you connect your third party social media account to your 巨鲸网络 account, we
                 may collect certain information stored in your social media account such as:
               </p>
 
               <h3 className={styles.subSectionTitle}>Facebook</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect a Facebook page or profile to your Aitoearn
+                巨鲸网络 may allow you to connect a Facebook page or profile to your 巨鲸网络
                 account, in which case we will access certain information from Facebook regarding
                 your account. In particular, we may collect profile image, display name, username /
                 page ID or profile ID, access tokens, sent posts. This includes the content of your
@@ -183,7 +183,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>Twitter</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect a Twitter profile to your Aitoearn account, in
+                巨鲸网络 may allow you to connect a Twitter profile to your 巨鲸网络 account, in
                 which case we will access certain information from Twitter regarding your account.
                 In particular, we may collect profile image, display name, username / profile ID,
                 access tokens, and sent posts. This includes the content of your post and engagement
@@ -193,7 +193,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>Instagram</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect an Instagram profile to your Aitoearn account, in
+                巨鲸网络 may allow you to connect an Instagram profile to your 巨鲸网络 account, in
                 which case we will access certain information from Instagram regarding your account.
                 In particular, we may collect profile image, display name, username / profile ID,
                 access tokens, and sent posts.
@@ -201,7 +201,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>LinkedIn</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect a LinkedIn profile to your Aitoearn account, in
+                巨鲸网络 may allow you to connect a LinkedIn profile to your 巨鲸网络 account, in
                 which case we will access certain information from LinkedIn regarding your account.
                 In particular, we may collect profile image, display name, username / profile ID,
                 access tokens, and sent posts.
@@ -209,7 +209,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>TikTok</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect a TikTok profile to your Aitoearn account, in
+                巨鲸网络 may allow you to connect a TikTok profile to your 巨鲸网络 account, in
                 which case we will access certain information from TikTok regarding your account. In
                 particular, we may collect profile image, display name, username / profile ID,
                 access tokens, and sent posts.
@@ -217,11 +217,11 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>YouTube</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may allow you to connect a YouTube channel to your Aitoearn account, in
+                巨鲸网络 may allow you to connect a YouTube channel to your 巨鲸网络 account, in
                 which case we will access certain information from Google and YouTube regarding your
                 account. In particular, we may collect profile image, display name, profile ID,
-                access tokens, existing videos. Aitoearn uses YouTube API Services and by using the
-                YouTube integration via Aitoearn, you agree to be bound by the YouTube Terms of
+                access tokens, existing videos. 巨鲸网络 uses YouTube API Services and by using the
+                YouTube integration via 巨鲸网络, you agree to be bound by the YouTube Terms of
                 Service.
               </p>
             </section>
@@ -245,7 +245,7 @@ export default function PrivacyPolicyPage() {
               <p className={styles.sectionContent}>
                 Like many websites, we also use "cookie" technology to collect additional website
                 usage data and to improve the Site and our Service. A cookie is a small data file
-                that we transfer to your computer's hard disk. Aitoearn may use both session cookies
+                that we transfer to your computer's hard disk. 巨鲸网络 may use both session cookies
                 and persistent cookies to better understand how you interact with the Site and our
                 Service.
               </p>
@@ -277,7 +277,7 @@ export default function PrivacyPolicyPage() {
                   your preferences);
                 </li>
                 <li>publish your content, comments or messages on social media platforms;</li>
-                <li>provide tailored advertising, for Aitoearn services, via Google AdWords;</li>
+                <li>provide tailored advertising, for 巨鲸网络 services, via Google AdWords;</li>
                 <li>aggregate your Personal Information for analytical purposes;</li>
                 <li>provide customer support;</li>
                 <li>operate, evaluate and improve our business;</li>
@@ -312,7 +312,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>Compliance with Laws and Law Enforcement</h3>
               <p className={styles.sectionContent}>
-                Aitoearn cooperates with government and law enforcement officials or private parties
+                巨鲸网络 cooperates with government and law enforcement officials or private parties
                 to enforce and comply with the law. To the extent permitted under applicable law, we
                 may disclose any information about you to government or law enforcement officials or
                 private parties as we believe is necessary or appropriate to investigate, respond
@@ -321,7 +321,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className={styles.subSectionTitle}>Business Transfers</h3>
               <p className={styles.sectionContent}>
-                Aitoearn may sell, transfer or otherwise share some or all of its assets, including
+                巨鲸网络 may sell, transfer or otherwise share some or all of its assets, including
                 personal information, in connection with a merger, acquisition, reorganization, sale
                 of assets, or similar transaction, or in the event of insolvency or bankruptcy.
               </p>
@@ -330,7 +330,7 @@ export default function PrivacyPolicyPage() {
             <section className={styles.section} id="section5">
               <h2 className={styles.sectionTitle}>5. How We Protect Your Personal Information</h2>
               <p className={styles.sectionContent}>
-                Aitoearn cares deeply about safeguarding the confidentiality of your personal
+                巨鲸网络 cares deeply about safeguarding the confidentiality of your personal
                 information. We employ administrative and electronic measures designed to
                 appropriately protect your personal information against accidental or unlawful
                 destruction, accidental loss, unauthorized alteration, unauthorized disclosure or
@@ -357,7 +357,7 @@ export default function PrivacyPolicyPage() {
                 If you decide at any time that you no longer wish to receive marketing
                 communications from us, please follow the unsubscribe instructions provided in any
                 of the communications. You may also opt out from receiving commercial email from us
-                by sending your request to us by email at hello@aitoearn.ai.
+                by sending your request to us by email at contact@jujing.network.
               </p>
               <p className={styles.sectionContent}>
                 In certain jurisdictions you have the right to request access and receive
@@ -386,7 +386,7 @@ export default function PrivacyPolicyPage() {
                 information.
               </p>
               <p className={styles.sectionContent}>
-                Aitoearn complies with the EU-U.S. Data Privacy Framework, the Swiss-U.S. Data
+                巨鲸网络 complies with the EU-U.S. Data Privacy Framework, the Swiss-U.S. Data
                 Privacy Framework, and the UK Extension to the Data Privacy Framework (the "DPFs")
                 to transfer personal information outside the EEA, the UK and Switzerland to the U.S.
               </p>
@@ -397,7 +397,7 @@ export default function PrivacyPolicyPage() {
               <p className={styles.sectionContent}>
                 The site is not directed to persons under 16. If a parent or guardian becomes aware
                 that his or her child has provided us with personal information without their
-                consent, he or she should contact us at hello@aitoearn.ai. We do not knowingly
+                consent, he or she should contact us at contact@jujing.network. We do not knowingly
                 collect personal information from children under 16. If we become aware that a child
                 under 16 has provided us with personal information, we will delete such information
                 from our files.
@@ -426,7 +426,7 @@ export default function PrivacyPolicyPage() {
               <div className={styles.contactInfo}>
                 <h3 className={styles.contactTitle}>Contact Information</h3>
                 <p className={styles.contactText}>
-                  Aitoearn Inc. is the entity responsible for the processing of your personal
+                  巨鲸网络 Inc. is the entity responsible for the processing of your personal
                   information. If you have any questions or comments regarding this privacy policy,
                   or if you would like to exercise your rights to your personal information, you may
                   contact us:
@@ -434,15 +434,15 @@ export default function PrivacyPolicyPage() {
                 <p className={styles.contactText}>
                   <strong>Email:</strong>
                   {' '}
-                  hello@aitoearn.ai
+                  contact@jujing.network
                   <br />
                   <strong>Privacy Questions:</strong>
                   {' '}
-                  privacy@aitoearn.ai
+                  contact@jujing.network
                 </p>
                 <p className={styles.contactText}>
                   If you have any thoughts or questions about this privacy policy please let us know
-                  at hello@aitoearn.ai
+                  at contact@jujing.network
                 </p>
               </div>
             </section>

@@ -1,14 +1,14 @@
 {
   "dropToUpload": "ドロップしてアップロード",
   "announcement": {
-    "text": "AiToEarnはAgentを使用してすべてのコンテンツニーズに対応します。実行中に多くのツールを呼び出すため、時間がかかる場合があります。いつでも終了して、後でタスクの進捗を確認できます。"
+    "text": "Giant Whale NetworkはAgentを使用してすべてのコンテンツニーズに対応します。実行中に多くのツールを呼び出すため、時間がかかる場合があります。いつでも終了して、後でタスクの進捗を確認できます。"
   },
   "releaseBanner": {
     "tag": "リリース v0.8.0",
     "text": "プラグインと活発なマーケットプレイスでAIワークフローを構築・拡張。"
   },
   "header": {
-    "logo": "Aitoearn",
+    "logo": "Giant Whale Network",
     "nav": {
       "home": "ホーム",
       "marketplace": "マーケットプレイス",
@@ -33,8 +33,8 @@
   },
   "seo": {
     "title": "AI動画・コンテンツ制作 - 15以上のSNSに一括投稿",
-    "description": "AiToEarnはAI搭載のSNS運営アシスタントです。AIで動画・画像・コピーを生成し、TikTok、YouTube、Instagram、Facebookなど15以上のプラットフォームにワンクリックで配信。AIコンテンツ制作、スマート編集、スタイル変換、動画翻訳、トレンド発見、ブランド監視、統合エンゲージメント管理を提供します。",
-    "keywords": "AIコンテンツマーケティング, AIソーシャルメディア管理, AI動画生成, マルチプラットフォーム配信, AIコンテンツ制作, SNS自動化, TikTokマーケティング, YouTubeマーケティング, AIエージェント, コンテンツ配信, AI文章作成, 動画編集AI, ブランド監視, AiToEarn"
+    "description": "Giant Whale NetworkはAI搭載のSNS運営アシスタントです。AIで動画・画像・コピーを生成し、TikTok、YouTube、Instagram、Facebookなど15以上のプラットフォームにワンクリックで配信。AIコンテンツ制作、スマート編集、スタイル変換、動画翻訳、トレンド発見、ブランド監視、統合エンゲージメント管理を提供します。",
+    "keywords": "AIコンテンツマーケティング, AIソーシャルメディア管理, AI動画生成, マルチプラットフォーム配信, AIコンテンツ制作, SNS自動化, TikTokマーケティング, YouTubeマーケティング, AIエージェント, コンテンツ配信, AI文章作成, 動画編集AI, ブランド監視, Giant Whale Network"
   },
   "agentGenerator": {
     "title": "何かお手伝いできますか？",
@@ -399,20 +399,20 @@
       "twitter": "Twitter"
     },
     "bigText": "Let's Use AI To",
-    "copyright": "© 2025 AiToEarn, Corp.",
+    "copyright": "© 2025 Giant Whale Network, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "データ削除手順",
       "prelaunch": "当アプリケーションは現在プレローンチ段階であり、実際のユーザーデータは保存していません。テストシステムとのやり取りがある場合は、データ削除についてお問い合わせください。",
       "standardTitle": "標準手順（ローンチ後）：",
       "standardSteps": [
-        "AiToEarnアカウントにログイン",
+        "Giant Whale Networkアカウントにログイン",
         "設定 > プライバシーに移動",
         "「アカウント削除をリクエスト」をクリック",
         "登録メールに確認が送信されます"
       ],
       "contactTitle": "サポートへのお問い合わせ：",
-      "contactEmail": "メール：metat@aitoearning.com（プレローンチのお問い合わせのみ）"
+      "contactEmail": "メール：contact@jujing.network（プレローンチのお問い合わせのみ）"
     }
   }
 }

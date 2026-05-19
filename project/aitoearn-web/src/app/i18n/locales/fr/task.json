@@ -5,7 +5,6 @@
   "publishPromotion": "Publish Promotion",
   "back": "Back",
   "refresh": "Actualiser",
-
   "menu.taskSquare": "Gold Rush Square",
   "menu.draftBox": "Content Management",
   "menu.offlinePromo": "AI Check-in",
@@ -17,7 +16,6 @@
   "menu.myBrand": "My Agent",
   "menu.contentTrading": "Content Trading",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "All Platforms",
   "filter.sortDefault": "Default Sort",
   "filter.sortNewest": "Newest First",
@@ -42,11 +40,9 @@
   "filter.clear": "Effacer",
   "filter.reset": "Réinitialiser",
   "card.publishTime": "Publié",
-
   "banner.title": "Want to promote your brand?",
   "banner.description": "Post a promotion task and let creators spread the word",
   "banner.publishNow": "Publish Now",
-
   "card.perArticle": "Earn per post",
   "card.perInteraction": "Earn per task",
   "card.goCheck": "Details",
@@ -58,16 +54,13 @@
   "card.createTime": "Created",
   "card.stampSoldOut": "COMPLET",
   "card.stampCancelled": "ANNULÉ",
-
   "list.loading": "Loading...",
   "list.loadingMore": "Loading more...",
   "list.noMore": "No more",
   "list.empty": "No tasks",
   "list.emptyHint": "No tasks available at the moment",
-
   "login.button": "Login Now",
   "login.hint": "Login to see more tasks",
-
   "published": "Published",
   "accepted": "Accepted",
   "published.empty": "No published tasks",
@@ -81,7 +74,6 @@
   "accepted.statDoing": "En cours",
   "accepted.statSettled": "Réglé",
   "myTasksSubtitle": "Gérez vos tâches acceptées et publiées",
-
   "status.active": "Active",
   "status.cancelled": "Delisted",
   "status.pending": "En attente de vérification",
@@ -93,7 +85,6 @@
   "status.rejected": "Rejeté",
   "status.disputed": "Contesté",
   "status.del": "Révoqué",
-
   "statusHint.doing": "Veuillez compléter les exigences et soumettre votre travail",
   "statusHint.doing_interaction": "Veuillez compléter la tâche d'interaction et soumettre des captures d'écran",
   "statusHint.waiting": "Votre travail est en cours de publication, veuillez patienter",
@@ -104,7 +95,6 @@
   "statusHint.disputed": "Votre contestation a été soumise et est en cours d'examen",
   "statusHint.cancelled": "La tâche a été annulée",
   "statusHint.del": "La tâche a été révoquée par l'administrateur",
-
   "action.edit": "Edit",
   "action.cancel": "Delist Task",
   "action.cancelConfirm": "Confirm delist this task? It will no longer be visible to users, but accepted tasks are not affected.",
@@ -114,7 +104,6 @@
   "action.submit": "Submit Task",
   "action.accept": "Accept Task",
   "action.confirmPublish": "Confirm Publish",
-
   "detail.taskInfo": "Task Info",
   "detail.taskTitle": "Titre de la tâche",
   "detail.taskDescription": "Description de la tâche",
@@ -150,7 +139,6 @@
   "detail.downloadAllImages": "Télécharger toutes les images",
   "detail.downloadComplete": "Téléchargement terminé",
   "detail.downloadFailed": "Échec du téléchargement",
-
   "create.title": "Publish Promotion",
   "create.platform": "Select Platform",
   "create.linkDraftBox": "Lier la boîte de brouillons",
@@ -224,7 +212,6 @@
   "create.validation.cpmRewardMin": "Le prix CPM doit être supérieur à 0",
   "create.validation.cpeRewardMin": "Le prix CPE doit être supérieur à 0",
   "create.collectNotSupported": "Cette plateforme ne prend pas en charge les favoris",
-
   "detail.rewardPerPost": "Récompense par article",
   "detail.rewardPerInteraction": "Récompense par interaction",
   "detail.recruitProgress": "Progression du recrutement",
@@ -240,10 +227,8 @@
   "detail.locationWarning": "Votre publication doit inclure cette localisation, sinon la tâche ne passera pas la vérification !",
   "detail.topics": "Sujets",
   "detail.noDeadline": "Pas de date limite",
-
   "countdown.remaining": "Temps restant",
   "countdown.expired": "Expiré",
-
   "toast.acceptSuccess": "Task accepted",
   "toast.acceptFailed": "Failed to accept task",
   "toast.submitSuccess": "Submitted successfully",
@@ -254,7 +239,6 @@
   "toast.activateFailed": "Relist failed",
   "toast.processWaitingSuccess": "Traitement réussi",
   "toast.processWaitingFailed": "Échec du traitement",
-
   "action.trackData": "Données de suivi",
   "stats.title": "Statistiques de la tâche",
   "stats.taskInfo": "Info tâche",
@@ -295,21 +279,19 @@
   "stats.trendShares": "Partages",
   "stats.trendFavorites": "Favoris",
   "stats.trendNoData": "Pas encore de données de tendance",
-
   "seo.homeTitle": "Tâches de promotion payantes - Gagnez avec les réseaux sociaux",
   "seo.myTasksTitle": "Mes tâches - Suivre les promotions publiées et acceptées",
-  "seo.myTasksDescription": "Gérez toutes vos tâches de promotion dans un tableau de bord. Suivez les tâches publiées avec les statistiques de soumission et les revenus, surveillez les tâches acceptées avec les délais et la progression sur AiToEarn.",
-  "seo.myTasksKeywords": "gestion des tâches, suivi des promotions, tâches publiées, tâches acceptées, suivi des revenus, tâches réseaux sociaux, AiToEarn",
+  "seo.myTasksDescription": "Gérez toutes vos tâches de promotion dans un tableau de bord. Suivez les tâches publiées avec les statistiques de soumission et les revenus, surveillez les tâches acceptées avec les délais et la progression sur Giant Whale Network.",
+  "seo.myTasksKeywords": "gestion des tâches, suivi des promotions, tâches publiées, tâches acceptées, suivi des revenus, tâches réseaux sociaux, Giant Whale Network",
   "seo.createTitle": "Créer une tâche de promotion - Définir récompenses et exigences",
-  "seo.createDescription": "Créez des tâches de promotion payantes sur AiToEarn. Définissez votre budget, choisissez les plateformes cibles et les exigences de contenu pour TikTok, YouTube, Instagram et plus.",
-  "seo.createKeywords": "créer promotion, tâches payantes, promotion de marque, marketing d'influence, publicité réseaux sociaux, AiToEarn",
+  "seo.createDescription": "Créez des tâches de promotion payantes sur Giant Whale Network. Définissez votre budget, choisissez les plateformes cibles et les exigences de contenu pour TikTok, YouTube, Instagram et plus.",
+  "seo.createKeywords": "créer promotion, tâches payantes, promotion de marque, marketing d'influence, publicité réseaux sociaux, Giant Whale Network",
   "seo.defaultTitle": "Détails de la tâche - Voir les récompenses et exigences",
-  "seo.homeDescription": "Découvrez des tâches de promotion payantes sur AiToEarn Gold Rush Square. Gagnez des commissions en promouvant des marques sur TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn et plus de 10 plateformes mondiales. Parcourez les tâches, acceptez des missions, créez du contenu et soyez payé.",
-  "seo.homeKeywords": "tâches de promotion payantes, promotion réseaux sociaux, gagner de l'argent en ligne, marketing d'influence, promotion TikTok, promotion YouTube, promotion Instagram, promotion de marque, créateur de contenu, AiToEarn",
-  "seo.detailTitleSuffix": "- Marché des tâches AiToEarn",
-  "seo.defaultDescription": "Consultez les détails des tâches et gagnez des récompenses en complétant des tâches de promotion sur AiToEarn.",
+  "seo.homeDescription": "Découvrez des tâches de promotion payantes sur Giant Whale Network Gold Rush Square. Gagnez des commissions en promouvant des marques sur TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn et plus de 10 plateformes mondiales. Parcourez les tâches, acceptez des missions, créez du contenu et soyez payé.",
+  "seo.homeKeywords": "tâches de promotion payantes, promotion réseaux sociaux, gagner de l'argent en ligne, marketing d'influence, promotion TikTok, promotion YouTube, promotion Instagram, promotion de marque, créateur de contenu, Giant Whale Network",
+  "seo.detailTitleSuffix": "- Marché des tâches Giant Whale Network",
+  "seo.defaultDescription": "Consultez les détails des tâches et gagnez des récompenses en complétant des tâches de promotion sur Giant Whale Network.",
   "seo.perPost": "article",
-
   "detail.locationScreenshot": "Capture d'écran de localisation",
   "detail.locationScreenshotWarning": "Veuillez télécharger une capture d'écran de votre publication montrant la localisation. La capture doit afficher la localisation de la publication, sinon la vérification ne sera pas approuvée !",
   "detail.locationScreenshotRequired": "Veuillez télécharger une capture d'écran de localisation",
@@ -321,7 +303,6 @@
   "detail.interactionAction.like": "J'aime",
   "detail.interactionAction.collect": "Collecter",
   "detail.interactionAction.comment": "Commenter",
-
   "create.insufficientBalance.title": "Solde insuffisant",
   "create.insufficientBalance.description": "La création de cette tâche nécessite {{symbol}}{{required}}, votre solde actuel est de {{symbol}}{{current}}, le déficit est de {{symbol}}{{deficit}}. Souhaitez-vous recharger {{symbol}}{{rechargeAmount}} ?",
   "create.insufficientBalance.goRecharge": "Recharger",
@@ -330,7 +311,6 @@
   "create.insufficientBalance.balanceSufficientContent": "Votre progression précédente a été restaurée. Votre solde est maintenant suffisant. Souhaitez-vous créer la tâche maintenant ?",
   "create.insufficientBalance.createNow": "Créer maintenant",
   "create.draftRestored": "Progression précédente restaurée",
-
   "create.tabPromotion": "Tâche de promotion",
   "create.tabInteraction": "Tâche d'interaction",
   "create.interaction.title": "Publier une tâche d'interaction",
@@ -352,7 +332,6 @@
   "create.interaction.validation.rewardMin": "Minimum {{symbol}}{{min}} par personne",
   "create.interaction.validation.quantityMin": "Au moins 1 personne requise",
   "create.interaction.validation.unsupportedPlatform": "Veuillez entrer un lien de plateforme prise en charge (Supporté : Xiaohongshu, TikTok, YouTube, Twitter, Facebook, Instagram, Bilibili, Douyin)",
-
   "detail.submitByLink": "Soumettre le lien",
   "detail.publishFromPlatform": "Publier depuis la plateforme",
   "detail.fasterReview": "Examen rapide",
@@ -368,7 +347,6 @@
   "detail.viewIncome": "Voir les revenus",
   "detail.taskSubmitting": "Soumission de la tâche...",
   "detail.retryProcess": "Réessayer",
-
   "dispute.title": "Soumettre une contestation",
   "dispute.reason": "Raison de la contestation",
   "dispute.reasonPlaceholder": "Veuillez décrire pourquoi vous n'êtes pas d'accord avec le résultat de l'examen",
@@ -383,7 +361,6 @@
   "dispute.confirmTitle": "Confirmer la contestation",
   "dispute.reasonRequired": "Veuillez fournir une raison de contestation",
   "dispute.screenshotRequired": "Veuillez télécharger au moins une capture d'écran comme preuve",
-
   "detail.cpmReward": "Pour 1K vues",
   "detail.cpeReward": "Pour 1K interactions",
   "detail.engagementRule": "Règle d'interaction : Like×1 + Collecte×3 + Commentaire×5",
@@ -393,10 +370,8 @@
   "detail.cpeRewardUnit": "/ 1K interactions",
   "card.cpmReward": "Pour 1K vues",
   "card.cpeReward": "Pour 1K interactions",
-
   "detail.interactionLink": "Lien d'interaction",
   "detail.interactionTip": "Vous devez {{actions}} cette œuvre",
-
   "time.justNow": "À l'instant",
   "time.minutesAgo": "il y a {{minutes}} min",
   "time.hoursAgo": "il y a {{hours}} h",

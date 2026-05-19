@@ -15,7 +15,7 @@
     "error": "エラー"
   },
   "error": {
-    "pluginNotInstalled": "まずAitoearnブラウザプラグインをインストールしてください",
+    "pluginNotInstalled": "まずGiant Whale Networkブラウザプラグインをインストールしてください",
     "publishingInProgress": "公開処理中です。後でもう一度お試しください",
     "loginFailed": "ログインに失敗しました",
     "publishFailed": "公開に失敗しました"
@@ -68,7 +68,7 @@
     "pluginActive": "プラグイン有効",
     "pluginInactive": "プラグイン無効",
     "downloadPlugin": "プラグインをダウンロード",
-    "downloadDescription": "AiToEarnブラウザプラグインは小紅書のスマート運用のために特別に設計されています。下のボタンをクリックしてダウンロードしてインストールしてください。",
+    "downloadDescription": "Giant Whale Networkブラウザプラグインは小紅書のスマート運用のために特別に設計されています。下のボタンをクリックしてダウンロードしてインストールしてください。",
     "downloadButton": "今すぐダウンロード",
     "chromeWebStore": "Chrome ウェブストア",
     "chinaDownload": "中国ダウンロード",
@@ -95,6 +95,6 @@
     "title": "デスクトップ専用",
     "description": "ブラウザ拡張機能はモバイルデバイスでは利用できません。拡張機能のインストールと使用にはデスクトップブラウザをご利用ください。",
     "goToPC": "PCでアクセスしてください",
-    "introduction": "AiToEarnプラットフォーム用ブラウザ拡張機能。AiToEarn Webと連携し、小紅書、TikTokなどのプラットフォームでのインタラクションを自動化します — フォロー、いいね、ブックマーク、コメントなど。"
+    "introduction": "Giant Whale Networkプラットフォーム用ブラウザ拡張機能。Giant Whale Network Webと連携し、小紅書、TikTokなどのプラットフォームでのインタラクションを自動化します — フォロー、いいね、ブックマーク、コメントなど。"
   }
 }

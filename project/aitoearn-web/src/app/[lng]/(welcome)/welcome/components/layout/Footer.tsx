@@ -12,7 +12,7 @@ import Link from 'next/link'
 
 import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import logo from '@/assets/images/logo.png'
+import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 
 import {
   footerAccount,
@@ -57,14 +57,7 @@ export function Footer() {
             {/* 第一列: Logo + GitHub + 邮箱 */}
             <div className="space-y-6">
               <Link href="/" className="inline-flex items-center gap-2">
-                <Image
-                  src={logo}
-                  alt="AiToEarn"
-                  width={32}
-                  height={32}
-                  className="size-8 rounded-md"
-                />
-                <span className="text-lg font-semibold">AiToEarn</span>
+                <BrandWordmark markSize={34} showTagline size="lg" />
               </Link>
               <div className="flex items-center gap-4">
                 <a

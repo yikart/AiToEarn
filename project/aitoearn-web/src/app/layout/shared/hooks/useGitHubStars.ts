@@ -22,6 +22,9 @@ export function useGitHubStars() {
   )
 
   useEffect(() => {
+    if (!GITHUB_REPO)
+      return
+
     if (Date.now() - githubStarsUpdatedAt < ONE_DAY_MS)
       return
 
@@ -39,5 +42,5 @@ export function useGitHubStars() {
       })
   }, [githubStarsUpdatedAt])
 
-  return githubStars
+  return GITHUB_REPO ? githubStars : ''
 }

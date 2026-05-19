@@ -5,8 +5,8 @@
   },
   "seo": {
     "title": "AI搭載コンテンツ制作・SNS管理プラットフォーム",
-    "description": "AiToEarnは最も便利なAI動画作成サービスを提供し、オフライン店舗への集客を支援し、コンテンツ公開とコメント対応のためのソーシャルメディアアカウントホスティングを提供します。",
-    "keywords": "AI動画作成,SNS管理,マルチプラットフォーム公開,AIマーケティング,コンテンツ作成,ソーシャルメディア自動化,AiToEarn,ブランドプロモーション"
+    "description": "Giant Whale Networkは最も便利なAI動画作成サービスを提供し、オフライン店舗への集客を支援し、コンテンツ公開とコメント対応のためのソーシャルメディアアカウントホスティングを提供します。",
+    "keywords": "AI動画作成,SNS管理,マルチプラットフォーム公開,AIマーケティング,コンテンツ作成,ソーシャルメディア自動化,Giant Whale Network,ブランドプロモーション"
   },
   "navbar": {
     "pricing": "料金",
@@ -19,7 +19,7 @@
   "hero": {
     "badge": "AI駆動のレストラン成長",
     "title": "一人ビジネスのためのAIグロースオペレーター",
-    "subtitle": "AiToEarnを使えば、オフライン店舗への集客が簡単にできます。AiToEarnは最も便利なAI動画作成サービスを提供します。また、AiToEarnでソーシャルメディアアカウントをホスティングすれば、コンテンツ公開とコメント対応をサポートします。",
+    "subtitle": "Giant Whale Networkを使えば、オフライン店舗への集客が簡単にできます。Giant Whale Networkは最も便利なAI動画作成サービスを提供します。また、Giant Whale Networkでソーシャルメディアアカウントをホスティングすれば、コンテンツ公開とコメント対応をサポートします。",
     "placeholder": "レストランを検索",
     "cta": "AIエージェントを取得",
     "selectFirst": "まずレストランを選択してください",
@@ -52,13 +52,13 @@
   },
   "reviews": {
     "title": "ユーザーの声",
-    "subtitle": "AiToEarnを信頼する何千人もの一人起業家に参加しましょう",
+    "subtitle": "Giant Whale Networkを信頼する何千人もの一人起業家に参加しましょう",
     "viewOnGithub": "GitHubで見る",
     "review1": {
       "content": "ついにマルチプラットフォーム公開を扱えるオープンソースツールが登場！Douyin、TikTok、YouTubeへワンクリック - 毎週何時間も節約できます。"
     },
     "review2": {
-      "content": "一人起業家として、AiToEarnはゲームチェンジャーです。AIがコンテンツを生成し、自動公開し、コメントまで対応。SNSが自動で運営されています。"
+      "content": "一人起業家として、Giant Whale Networkはゲームチェンジャーです。AIがコンテンツを生成し、自動公開し、コメントまで対応。SNSが自動で運営されています。"
     },
     "review3": {
       "content": "AIエージェント機能は素晴らしい。コンテンツの作成、最適化、投稿を自動で行います。コンテンツコストが90%削減されました。"
@@ -87,16 +87,22 @@
     "subtitle": "スキャン＆公開、投稿あたり90%以上のコスト削減",
     "description": "自動生成された高品質コンテンツで、チェックインをSNS露出に変換",
     "playVideo": "動画を再生",
-    "video1": { "title": "Blacklockチェックインvlog" },
-    "video2": { "title": "レストラン発見" },
-    "video3": { "title": "The Shedブリティッシュレストラン" }
+    "video1": {
+      "title": "Blacklockチェックインvlog"
+    },
+    "video2": {
+      "title": "レストラン発見"
+    },
+    "video3": {
+      "title": "The Shedブリティッシュレストラン"
+    }
   },
   "testimonials": {
     "title": "あなたのようなレストランオーナーの声を聞く",
     "watchVideo": "動画を見る"
   },
   "beliefs": {
-    "title": "AiToEarnを選ぶ理由",
+    "title": "Giant Whale Networkを選ぶ理由",
     "subtitle": "一人起業家と小規模事業者のために設計",
     "belief1": {
       "title": "一人起業家向けに設計",
@@ -133,7 +139,7 @@
     }
   },
   "experience": {
-    "title": "Aitoearnで、より多くのトラフィック、より多くの売上、より多くの顧客を獲得",
+    "title": "Giant Whale Networkで、より多くのトラフィック、より多くの売上、より多くの顧客を獲得",
     "subtitle": "オフラインマーケティングからマルチプラットフォーム公開まで、AIにお任せ",
     "tab1": {
       "title": "オフラインチェックインマーケティング",
@@ -173,6 +179,6 @@
     "extensionPrivacy": "拡張機能プライバシーポリシー",
     "contact": "お問い合わせ",
     "supportedPlatforms": "対応プラットフォーム",
-    "copyright": "© 2026 AiToEarn. All rights reserved."
+    "copyright": "© 2026 Giant Whale Network. All rights reserved."
   }
 }

@@ -1,6 +1,6 @@
 /**
  * PluginGuidePage - 浏览器插件图文教学页面
- * 用于指导用户安装和使用 AiToEarn 浏览器插件
+ * 用于指导用户安装和使用 巨鲸网络 浏览器插件
  */
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'

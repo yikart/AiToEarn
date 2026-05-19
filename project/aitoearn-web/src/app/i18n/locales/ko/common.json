@@ -47,7 +47,15 @@
   "yes": "예",
   "no": "아니오",
   "calendar": {
-    "weekDaysShort": ["일", "월", "화", "수", "목", "금", "토"],
+    "weekDaysShort": [
+      "일",
+      "월",
+      "화",
+      "수",
+      "목",
+      "금",
+      "토"
+    ],
     "monthSuffix": "월"
   },
   "actions": {
@@ -88,8 +96,8 @@
     "materialLibrary": "라이브러리",
     "draftBox": "콘텐츠 관리",
     "draftBoxSeoTitle": "콘텐츠 관리 - AI 일괄 생성 및 초안 편집기",
-    "draftBoxSeoDescription": "모든 콘텐츠 초안을 한 곳에서 관리하세요. AI로 소셜 미디어 게시물을 일괄 생성하고, 게시 전 초안을 편집하고, AiToEarn으로 멀티 플랫폼 배포를 정리하세요.",
-    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn",
+    "draftBoxSeoDescription": "모든 콘텐츠 초안을 한 곳에서 관리하세요. AI로 소셜 미디어 게시물을 일괄 생성하고, 게시 전 초안을 편집하고, Giant Whale Network으로 멀티 플랫폼 배포를 정리하세요.",
+    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, Giant Whale Network",
     "agentAssets": "Agent 자산"
   },
   "tasks": "마켓플레이스",
@@ -114,7 +122,7 @@
     "title": "{{appName}} 다운로드",
     "operationInApp": "추가하려면 {{appName}}에서 작업해 주세요",
     "description": "더 나은 사용자 경험과 완전한 기능을 위해 이 작업은 {{appName}}에서 완료해야 합니다. {{appName}}을 다운로드하고 설치하여 계속 진행해 주세요.",
-    "operationDescription": "Aitoearn 앱에서 {{platform}} 채널 계정을 작업해 주세요<br/>더 나은 사용자 경험과 완전한 기능을 위해 Aitoearn 앱을 다운로드하여 설치해 주세요.",
+    "operationDescription": "Giant Whale Network 앱에서 {{platform}} 채널 계정을 작업해 주세요<br/>더 나은 사용자 경험과 완전한 기능을 위해 Giant Whale Network 앱을 다운로드하여 설치해 주세요.",
     "scanQrCode": "QR 코드를 스캔하여 다운로드",
     "downloadLink": "다운로드 링크:",
     "copy": "복사",
@@ -130,7 +138,7 @@
   "contact": "도움이 필요하세요? 지원팀에 문의하세요:",
   "uptime": {
     "seoTitle": "AI 모델 상태 - 실시간 모델 가용성 모니터링",
-    "pageKeywords": "AI 모델 상태, 모델 가용성, 가동률 추적, AI 서비스 상태, 모델 모니터링, AiToEarn 상태",
+    "pageKeywords": "AI 모델 상태, 모델 가용성, 가동률 추적, AI 서비스 상태, 모델 모니터링, Giant Whale Network 상태",
     "pageTitle": "AI 모델 상태",
     "pageDescription": "AI 모델의 실시간 가용성과 가동 시간을 모니터링합니다. 각 모델과 제공업체의 작동 상태를 확인합니다.",
     "loading": "로딩 중...",

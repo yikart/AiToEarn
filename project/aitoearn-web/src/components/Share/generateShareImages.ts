@@ -8,8 +8,8 @@ import QRCode from 'qrcode'
 import React from 'react'
 import { createRoot } from 'react-dom/client'
 import { setDisableLanguageSwitch } from '@/app/i18n/client'
-import logo from '@/assets/images/logo.png'
 import ChatMessage from '@/components/Chat/ChatMessage'
+import { APP_BRAND } from '@/config/brand'
 import { getOssUrl } from '@/utils/oss'
 
 /** 图片生成选项 */
@@ -136,18 +136,32 @@ async function generateImageFromAllMessages(
       }),
     )
 
-    const appTitle = options?.appTitle || 'AiToEarn'
-    const appUrl = options?.appUrl || 'https://aitoearn.ai'
+    const appTitle = options?.appTitle || APP_BRAND.name
+    const appUrl = options?.appUrl || APP_BRAND.siteUrl
     const shareUrl = options?.shareUrl
     const expiresAt = options?.expiresAt
 
     const headerEl = React.createElement(
       'div',
       { style: { display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '16px' } },
-      React.createElement('img', {
-        src: typeof logo === 'string' ? logo : logo.src,
-        style: { width: '40px', height: '40px', borderRadius: '8px' },
-      }),
+      React.createElement(
+        'div',
+        {
+          style: {
+            width: '40px',
+            height: '40px',
+            borderRadius: '10px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ffffff',
+            fontSize: '14px',
+            fontWeight: 700,
+            background: `linear-gradient(135deg, ${APP_BRAND.colors.whale} 0%, ${APP_BRAND.colors.signal} 52%, ${APP_BRAND.colors.growth} 100%)`,
+          },
+        },
+        APP_BRAND.shortName,
+      ),
       React.createElement(
         'div',
         { style: { display: 'flex', flexDirection: 'column' } },
@@ -203,10 +217,24 @@ async function generateImageFromAllMessages(
             React.createElement(
               'div',
               { style: { display: 'flex', alignItems: 'center', gap: '8px' } },
-              React.createElement('img', {
-                src: typeof logo === 'string' ? logo : logo.src,
-                style: { width: '24px', height: '24px', borderRadius: '4px' },
-              }),
+              React.createElement(
+                'div',
+                {
+                  style: {
+                    width: '24px',
+                    height: '24px',
+                    borderRadius: '6px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    color: '#ffffff',
+                    fontSize: '9px',
+                    fontWeight: 700,
+                    background: `linear-gradient(135deg, ${APP_BRAND.colors.whale} 0%, ${APP_BRAND.colors.signal} 52%, ${APP_BRAND.colors.growth} 100%)`,
+                  },
+                },
+                APP_BRAND.shortName,
+              ),
               React.createElement(
                 'span',
                 { style: { fontSize: '14px', fontWeight: 600, color: '#0f172a' } },

@@ -1,14 +1,14 @@
 {
   "dropToUpload": "Drop to upload",
   "announcement": {
-    "text": "AiToEarn uses Agent to fulfill all your content needs. It calls many tools during execution, which may take some time. You can exit anytime and check the task progress later."
+    "text": "Giant Whale Network uses Agent to fulfill all your content needs. It calls many tools during execution, which may take some time. You can exit anytime and check the task progress later."
   },
   "releaseBanner": {
     "tag": "Release v0.8.0",
     "text": "Build and Extend AI Workflows with Plugins and a Thriving Marketplace."
   },
   "header": {
-    "logo": "Aitoearn",
+    "logo": "Giant Whale Network",
     "nav": {
       "home": "Home",
       "marketplace": "Marketplace",
@@ -27,14 +27,14 @@
     "starsText": "stars on",
     "github": "GitHub",
     "title": "The Best Content Marketing\nAI Agent",
-    "subtitle": "From today on, easily manage your social media with AI. AiToEarn provides one-stop capabilities from creative inspiration, content creation, content distribution to content interaction management, making AI within reach.",
+    "subtitle": "From today on, easily manage your social media with AI. Giant Whale Network provides one-stop capabilities from creative inspiration, content creation, content distribution to content interaction management, making AI within reach.",
     "getStarted": "Get Started",
     "useMobilePhone": "use on mobile phone"
   },
   "seo": {
     "title": "AI Video & Content Creator for 15+ Social Platforms",
-    "description": "AiToEarn is your AI-powered social media growth operator. Generate videos, images and copy with AI, then publish to 15+ platforms including TikTok, YouTube, Instagram, Facebook and X in one click. Features AI content creation, smart video editing, style transfer, video translation, trend discovery, brand monitoring and unified engagement dashboard for creators and enterprises.",
-    "keywords": "AI content marketing, AI social media management, AI video generation, multi-platform publishing, AI content creation, social media automation, TikTok marketing, YouTube marketing, Instagram marketing, AI Agent, content distribution, influencer tools, AI copywriting, video editing AI, brand monitoring, AiToEarn"
+    "description": "Giant Whale Network is your AI-powered social media growth operator. Generate videos, images and copy with AI, then publish to 15+ platforms including TikTok, YouTube, Instagram, Facebook and X in one click. Features AI content creation, smart video editing, style transfer, video translation, trend discovery, brand monitoring and unified engagement dashboard for creators and enterprises.",
+    "keywords": "AI content marketing, AI social media management, AI video generation, multi-platform publishing, AI content creation, social media automation, TikTok marketing, YouTube marketing, Instagram marketing, AI Agent, content distribution, influencer tools, AI copywriting, video editing AI, brand monitoring, Giant Whale Network"
   },
   "agentGenerator": {
     "title": "How can I help you?",
@@ -96,7 +96,6 @@
     "saveDraftSuccess": "Draft saved successfully",
     "noDraftGroupFound": "No available draft group found, please create a group first",
     "noDraftGroup": "No available draft group found",
-    "unknownError": "Unknown error",
     "needAddChannel": "Need to Add Channel",
     "channelNotAdded": "We detected that you haven't added the {platform} channel yet. Would you like to add it?",
     "goAdd": "Go Add",
@@ -400,24 +399,24 @@
       "twitter": "Twitter"
     },
     "bigText": "Let's Use AI To",
-    "copyright": "© 2025 AiToEarn, Corp.",
+    "copyright": "© 2025 Giant Whale Network, Corp.",
     "tagline": "",
     "dataDeletion": {
       "title": "Data Deletion Instructions",
       "prelaunch": "Our application is currently in pre-launch phase and does not store real user data. If you have interacted with our test systems, contact us for data removal.",
       "standardTitle": "Standard Procedure (Post-Launch):",
       "standardSteps": [
-        "Log in to your AiToEarn account",
+        "Log in to your Giant Whale Network account",
         "Navigate to Settings > Privacy",
         "Click \"Request Account Deletion\"",
         "Confirmation will be sent to your registered email"
       ],
       "contactTitle": "Contact for Assistance:",
-      "contactEmail": "Email: metat@aitoearning.com (Pre-launch inquiries only)"
+      "contactEmail": "Email: contact@jujing.network (Pre-launch inquiries only)"
     }
   },
   "ecosystem": {
-    "title": "Understanding AiToEarn",
+    "title": "Understanding Giant Whale Network",
     "subtitle": "AI-Powered Content Creation & Monetization Ecosystem",
     "creator": "Content Creator",
     "consumer": "Content Consumer",
@@ -440,13 +439,20 @@
     ],
     "manage": "Content Management",
     "manageDesc": "Auto likes, bookmarks, comments",
-    "manageDetails": ["Automatically like, bookmark, and comment on specific content"],
+    "manageDetails": [
+      "Automatically like, bookmark, and comment on specific content"
+    ],
     "analyze": "Content Analysis",
     "analyzeDesc": "Global trends & creative inspiration",
-    "analyzeDetails": ["Global Trending Topics", "Creative Inspiration"],
+    "analyzeDetails": [
+      "Global Trending Topics",
+      "Creative Inspiration"
+    ],
     "dashboard": "Data Dashboard",
     "dashboardDesc": "Unified data analytics across platforms",
-    "dashboardDetails": ["Unified data analytics across all platforms"],
+    "dashboardDetails": [
+      "Unified data analytics across all platforms"
+    ],
     "trade": "Content Trading",
     "sell": "Sell",
     "buy": "Buy",

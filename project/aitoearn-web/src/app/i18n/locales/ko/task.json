@@ -5,7 +5,6 @@
   "publishPromotion": "Publish Promotion",
   "back": "Back",
   "refresh": "새로고침",
-
   "menu.taskSquare": "Gold Rush Square",
   "menu.draftBox": "Content Management",
   "menu.offlinePromo": "AI Check-in",
@@ -17,7 +16,6 @@
   "menu.myBrand": "My Agent",
   "menu.contentTrading": "Content Trading",
   "menu.aiAgent": "AI Agent",
-
   "filter.allPlatforms": "All Platforms",
   "filter.sortDefault": "Default Sort",
   "filter.sortNewest": "Newest First",
@@ -42,11 +40,9 @@
   "filter.clear": "지우기",
   "filter.reset": "초기화",
   "card.publishTime": "게시일",
-
   "banner.title": "Want to promote your brand?",
   "banner.description": "Post a promotion task and let creators spread the word",
   "banner.publishNow": "Publish Now",
-
   "card.perArticle": "Earn per post",
   "card.perInteraction": "Earn per task",
   "card.goCheck": "Details",
@@ -58,16 +54,13 @@
   "card.createTime": "Created",
   "card.stampSoldOut": "마감",
   "card.stampCancelled": "취소됨",
-
   "list.loading": "Loading...",
   "list.loadingMore": "Loading more...",
   "list.noMore": "No more",
   "list.empty": "No tasks",
   "list.emptyHint": "No tasks available at the moment",
-
   "login.button": "Login Now",
   "login.hint": "Login to see more tasks",
-
   "published": "Published",
   "accepted": "Accepted",
   "published.empty": "No published tasks",
@@ -81,7 +74,6 @@
   "accepted.statDoing": "진행 중",
   "accepted.statSettled": "정산 완료",
   "myTasksSubtitle": "수락한 작업과 게시한 작업 관리",
-
   "status.active": "Active",
   "status.cancelled": "Delisted",
   "status.pending": "검토 대기 중",
@@ -93,7 +85,6 @@
   "status.rejected": "거절됨",
   "status.disputed": "이의 신청 중",
   "status.del": "철회됨",
-
   "statusHint.doing": "작업 요구 사항을 완료하고 작품을 제출하세요",
   "statusHint.doing_interaction": "인터랙션 작업을 완료하고 스크린샷을 제출하세요",
   "statusHint.waiting": "작품이 게시 중입니다. 잠시 기다려 주세요",
@@ -104,7 +95,6 @@
   "statusHint.disputed": "이의 신청이 접수되어 검토 중입니다",
   "statusHint.cancelled": "작업이 취소되었습니다",
   "statusHint.del": "관리자에 의해 작업이 철회되었습니다",
-
   "action.edit": "Edit",
   "action.cancel": "Delist Task",
   "action.cancelConfirm": "Confirm delist this task? It will no longer be visible to users, but accepted tasks are not affected.",
@@ -114,7 +104,6 @@
   "action.submit": "Submit Task",
   "action.accept": "Accept Task",
   "action.confirmPublish": "Confirm Publish",
-
   "detail.taskInfo": "Task Info",
   "detail.taskTitle": "작업 제목",
   "detail.taskDescription": "작업 설명",
@@ -150,7 +139,6 @@
   "detail.downloadAllImages": "모든 이미지 다운로드",
   "detail.downloadComplete": "다운로드 완료",
   "detail.downloadFailed": "다운로드 실패",
-
   "create.title": "Publish Promotion",
   "create.platform": "Select Platform",
   "create.linkDraftBox": "초안함 연결",
@@ -224,7 +212,6 @@
   "create.validation.cpmRewardMin": "CPM 가격은 0보다 커야 합니다",
   "create.validation.cpeRewardMin": "CPE 가격은 0보다 커야 합니다",
   "create.collectNotSupported": "이 플랫폼은 즐겨찾기를 지원하지 않습니다",
-
   "detail.rewardPerPost": "건당 보상",
   "detail.rewardPerInteraction": "인터랙션당 보상",
   "detail.recruitProgress": "모집 현황",
@@ -240,10 +227,8 @@
   "detail.locationWarning": "게시물에 이 위치 정보를 포함해야 합니다. 포함하지 않으면 작업이 심사를 통과하지 못합니다!",
   "detail.topics": "토픽",
   "detail.noDeadline": "마감 없음",
-
   "countdown.remaining": "남은 제출 시간",
   "countdown.expired": "시간 초과",
-
   "toast.acceptSuccess": "Task accepted",
   "toast.acceptFailed": "Failed to accept task",
   "toast.submitSuccess": "Submitted successfully",
@@ -254,7 +239,6 @@
   "toast.activateFailed": "Relist failed",
   "toast.processWaitingSuccess": "처리 성공",
   "toast.processWaitingFailed": "처리 실패",
-
   "action.trackData": "추적 데이터",
   "stats.title": "작업 통계 데이터",
   "stats.taskInfo": "작업 정보",
@@ -295,21 +279,19 @@
   "stats.trendShares": "공유",
   "stats.trendFavorites": "즐겨찾기",
   "stats.trendNoData": "아직 트렌드 데이터가 없습니다",
-
   "seo.homeTitle": "유료 프로모션 작업 - 소셜 미디어로 수익 창출",
   "seo.myTasksTitle": "내 작업 - 게시 및 수락한 프로모션 추적",
-  "seo.myTasksDescription": "대시보드에서 모든 프로모션 작업을 관리하세요. 게시된 작업의 제출 통계와 수익을 추적하고, 수락된 작업의 마감일과 진행 상황을 AiToEarn에서 모니터링하세요.",
-  "seo.myTasksKeywords": "작업 관리, 프로모션 추적, 게시된 작업, 수락된 작업, 수익 추적, 소셜 미디어 작업, AiToEarn 대시보드",
+  "seo.myTasksDescription": "대시보드에서 모든 프로모션 작업을 관리하세요. 게시된 작업의 제출 통계와 수익을 추적하고, 수락된 작업의 마감일과 진행 상황을 Giant Whale Network에서 모니터링하세요.",
+  "seo.myTasksKeywords": "작업 관리, 프로모션 추적, 게시된 작업, 수락된 작업, 수익 추적, 소셜 미디어 작업, Giant Whale Network 대시보드",
   "seo.createTitle": "프로모션 작업 생성 - 보상 및 요구사항 설정",
-  "seo.createDescription": "AiToEarn에서 유료 프로모션 작업을 생성하세요. 예산을 설정하고, 타겟 플랫폼을 선택하고, 콘텐츠 요구사항을 정의하여 TikTok, YouTube, Instagram 등에서 브랜드를 홍보하세요.",
-  "seo.createKeywords": "프로모션 생성, 유료 작업, 브랜드 프로모션, 인플루언서 마케팅, 소셜 미디어 광고, AiToEarn",
+  "seo.createDescription": "Giant Whale Network에서 유료 프로모션 작업을 생성하세요. 예산을 설정하고, 타겟 플랫폼을 선택하고, 콘텐츠 요구사항을 정의하여 TikTok, YouTube, Instagram 등에서 브랜드를 홍보하세요.",
+  "seo.createKeywords": "프로모션 생성, 유료 작업, 브랜드 프로모션, 인플루언서 마케팅, 소셜 미디어 광고, Giant Whale Network",
   "seo.defaultTitle": "작업 상세 - 프로모션 보상 및 요구사항 확인",
-  "seo.homeDescription": "AiToEarn 골드러시 스퀘어에서 유료 소셜 미디어 프로모션 작업을 발견하세요. TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn 등 10개 이상의 글로벌 플랫폼에서 브랜드를 홍보하고 커미션을 받으세요. 작업을 검색하고 수락하여 콘텐츠를 만들고 수익을 창출하세요.",
-  "seo.homeKeywords": "유료 프로모션 작업, 소셜 미디어 홍보, 온라인 수익, 인플루언서 마케팅, TikTok 홍보, YouTube 홍보, Instagram 홍보, 브랜드 프로모션, 콘텐츠 크리에이터, SNS 부업, AiToEarn",
-  "seo.detailTitleSuffix": "- AiToEarn 작업 마켓",
-  "seo.defaultDescription": "작업 세부 정보를 확인하고 AiToEarn에서 프로모션 작업을 완료하여 보상을 받으세요.",
+  "seo.homeDescription": "Giant Whale Network 골드러시 스퀘어에서 유료 소셜 미디어 프로모션 작업을 발견하세요. TikTok, YouTube, Instagram, Facebook, X (Twitter), LinkedIn 등 10개 이상의 글로벌 플랫폼에서 브랜드를 홍보하고 커미션을 받으세요. 작업을 검색하고 수락하여 콘텐츠를 만들고 수익을 창출하세요.",
+  "seo.homeKeywords": "유료 프로모션 작업, 소셜 미디어 홍보, 온라인 수익, 인플루언서 마케팅, TikTok 홍보, YouTube 홍보, Instagram 홍보, 브랜드 프로모션, 콘텐츠 크리에이터, SNS 부업, Giant Whale Network",
+  "seo.detailTitleSuffix": "- Giant Whale Network 작업 마켓",
+  "seo.defaultDescription": "작업 세부 정보를 확인하고 Giant Whale Network에서 프로모션 작업을 완료하여 보상을 받으세요.",
   "seo.perPost": "건",
-
   "detail.locationScreenshot": "위치 스크린샷",
   "detail.locationScreenshotWarning": "게시된 작품의 스크린샷을 업로드해 주세요. 스크린샷에 작품의 게시 위치가 표시되어야 합니다. 그렇지 않으면 심사를 통과할 수 없습니다!",
   "detail.locationScreenshotRequired": "위치 스크린샷을 업로드해 주세요",
@@ -321,7 +303,6 @@
   "detail.interactionAction.like": "좋아요",
   "detail.interactionAction.collect": "즐겨찾기",
   "detail.interactionAction.comment": "댓글",
-
   "create.insufficientBalance.title": "잔액 부족",
   "create.insufficientBalance.description": "이 작업을 생성하려면 {{symbol}}{{required}}이(가) 필요합니다. 현재 잔액은 {{symbol}}{{current}}, 부족액은 {{symbol}}{{deficit}}입니다. {{symbol}}{{rechargeAmount}}을(를) 충전하시겠습니까?",
   "create.insufficientBalance.goRecharge": "충전하기",
@@ -330,7 +311,6 @@
   "create.insufficientBalance.balanceSufficientContent": "이전 작업 생성 진행 상황이 복원되었습니다. 현재 잔액이 충분합니다. 지금 작업을 생성하시겠습니까?",
   "create.insufficientBalance.createNow": "지금 생성",
   "create.draftRestored": "이전 작업 생성 진행 상황이 복원되었습니다",
-
   "create.tabPromotion": "프로모션 작업",
   "create.tabInteraction": "인터랙션 작업",
   "create.interaction.title": "인터랙션 작업 게시",
@@ -352,7 +332,6 @@
   "create.interaction.validation.rewardMin": "1인당 최소 {{symbol}}{{min}}",
   "create.interaction.validation.quantityMin": "최소 1명이 필요합니다",
   "create.interaction.validation.unsupportedPlatform": "지원되는 플랫폼 링크를 입력하세요 (지원: Xiaohongshu, TikTok, YouTube, Twitter, Facebook, Instagram, Bilibili, Douyin)",
-
   "detail.submitByLink": "링크 제출",
   "detail.publishFromPlatform": "플랫폼에서 게시",
   "detail.fasterReview": "빠른 심사",
@@ -368,7 +347,6 @@
   "detail.viewIncome": "수입 확인",
   "detail.taskSubmitting": "작업 제출 중...",
   "detail.retryProcess": "수동 처리",
-
   "dispute.title": "이의 제기",
   "dispute.reason": "이의 사유",
   "dispute.reasonPlaceholder": "심사 결과에 동의하지 않는 이유를 설명해 주세요",
@@ -383,7 +361,6 @@
   "dispute.confirmTitle": "이의 제기 확인",
   "dispute.reasonRequired": "이의 사유를 입력해 주세요",
   "dispute.screenshotRequired": "증거로 최소 1장의 스크린샷을 업로드해 주세요",
-
   "detail.cpmReward": "1K 조회당",
   "detail.cpeReward": "1K 참여당",
   "detail.engagementRule": "참여 규칙: 좋아요×1 + 즐겨찾기×3 + 댓글×5",
@@ -393,10 +370,8 @@
   "detail.cpeRewardUnit": "/ 1K 참여",
   "card.cpmReward": "1K 조회당",
   "card.cpeReward": "1K 참여당",
-
   "detail.interactionLink": "인터랙션 링크",
   "detail.interactionTip": "이 작품에 {{actions}}해야 합니다",
-
   "time.justNow": "방금 전",
   "time.minutesAgo": "{{minutes}}분 전",
   "time.hoursAgo": "{{hours}}시간 전",

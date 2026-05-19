@@ -5,7 +5,7 @@
     "keywords": "Tarifs IA, sélection de forfait, forfaits de création de contenu, abonnement IA, tarifs génération vidéo"
   },
   "pageTitle": "Paiement à l'usage",
-  "pageDescription": "Aitoearn est bien plus qu'une entreprise de logiciels — nous sommes une entreprise de livraison de résultats.\nNotre objectif est de fournir des résultats opérationnels aux entrepreneurs solo.\nLes crédits Aitoearn que vous achetez (couvrant les frais de tokens) sont utilisés pour payer les coûts des modèles de Google, OpenAI, xAI, Anthropic et d'autres fournisseurs.\nNous vous promettons que nos prix ne dépasseront jamais les tarifs officiels de chaque modèle.\nEt à mesure que notre utilisation augmente et que nous obtenons des remises sur volume de ces fournisseurs, nous vous ferons bénéficier de ces économies.",
+  "pageDescription": "Giant Whale Network est bien plus qu'une entreprise de logiciels — nous sommes une entreprise de livraison de résultats.\nNotre objectif est de fournir des résultats opérationnels aux entrepreneurs solo.\nLes crédits Giant Whale Network que vous achetez (couvrant les frais de tokens) sont utilisés pour payer les coûts des modèles de Google, OpenAI, xAI, Anthropic et d'autres fournisseurs.\nNous vous promettons que nos prix ne dépasseront jamais les tarifs officiels de chaque modèle.\nEt à mesure que notre utilisation augmente et que nous obtenons des remises sur volume de ces fournisseurs, nous vous ferons bénéficier de ces économies.",
   "sections": {
     "credits": "Acheter des crédits",
     "creditsDesc": "Achetez des crédits à la demande, sans abonnement"
@@ -477,7 +477,7 @@
       "thirdPartyApisDesc": "Pour accéder aux modèles d'images, modèles vidéo, édition/traitement vidéo et autres services externes",
       "costNote": "La consommation réelle de crédits d'une tâche dépend de sa complexité, sa durée et du nombre d'appels externes.",
       "storageNote": "Une fois une tâche terminée, le stockage, l'hébergement, l'affichage ou le déploiement de sa sortie ne consomme pas de crédits supplémentaires.",
-      "refundNote": "Si une tâche échoue en raison de problèmes techniques d'AiToEarn, nous rembourserons intégralement les crédits consommés.",
+      "refundNote": "Si une tâche échoue en raison de problèmes techniques d'Giant Whale Network, nous rembourserons intégralement les crédits consommés.",
       "exchangeRate": "100 Crédits = 1 USD"
     },
     "llm": {

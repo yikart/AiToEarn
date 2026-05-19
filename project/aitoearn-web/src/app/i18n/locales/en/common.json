@@ -48,7 +48,15 @@
   "yes": "Yes",
   "no": "No",
   "calendar": {
-    "weekDaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
+    "weekDaysShort": [
+      "Sun",
+      "Mon",
+      "Tue",
+      "Wed",
+      "Thu",
+      "Fri",
+      "Sat"
+    ],
     "monthSuffix": ""
   },
   "actions": {
@@ -89,8 +97,8 @@
     "materialLibrary": "Library",
     "draftBox": "Content Management",
     "draftBoxSeoTitle": "Content Management - AI Batch Creation & Draft Editor",
-    "draftBoxSeoDescription": "Manage all your content drafts in one place. Use AI to batch generate social media posts, edit drafts before publishing, and organize content for multi-platform distribution with AiToEarn.",
-    "draftBoxSeoKeywords": "content management, draft editor, AI content generation, batch content creation, social media drafts, content scheduling, AiToEarn",
+    "draftBoxSeoDescription": "Manage all your content drafts in one place. Use AI to batch generate social media posts, edit drafts before publishing, and organize content for multi-platform distribution with Giant Whale Network.",
+    "draftBoxSeoKeywords": "content management, draft editor, AI content generation, batch content creation, social media drafts, content scheduling, Giant Whale Network",
     "brandPromotion": "AI Check-in",
     "agentAssets": "Agent Assets"
   },
@@ -116,7 +124,7 @@
     "title": "Download {{appName}}",
     "operationInApp": "Please operate in {{appName}} to add",
     "description": "For better user experience and complete functionality, this operation needs to be completed in {{appName}} to add accounts. Please download and install {{appName}} to continue.",
-    "operationDescription": "Please operate {{platform}} channel account in Aitoearn App<br/>For better user experience and completeness, please download and install Aitoearn App to continue.",
+    "operationDescription": "Please operate {{platform}} channel account in Giant Whale Network App<br/>For better user experience and completeness, please download and install Giant Whale Network App to continue.",
     "scanQrCode": "Scan QR code to download",
     "downloadLink": "Download link:",
     "copy": "Copy",
@@ -132,7 +140,7 @@
   "contact": "Need help? Contact support:",
   "uptime": {
     "seoTitle": "AI Model Status - Real-Time Model Availability Monitor",
-    "pageKeywords": "AI model status, model availability, uptime tracker, AI service health, model monitoring, AiToEarn status",
+    "pageKeywords": "AI model status, model availability, uptime tracker, AI service health, model monitoring, Giant Whale Network status",
     "pageTitle": "AI Model Status",
     "pageDescription": "Monitor the real-time availability and uptime of AI models. Check the operational status of each model and provider.",
     "loading": "Loading...",
