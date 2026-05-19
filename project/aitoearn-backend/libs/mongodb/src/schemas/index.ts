@@ -6,6 +6,14 @@ import { Asset, AssetSchema } from './asset.schema'
 import { Blog, BlogSchema } from './blog.schema'
 import { ContentGenerationTask, ContentGenerationTaskSchema } from './content-generation-task.schema'
 import {
+  CustomerRadarWorkspace,
+  CustomerRadarWorkspaceSchema,
+  GlobalKnowledge,
+  GlobalKnowledgeSchema,
+  SystemSetting,
+  SystemSettingSchema,
+} from './customer-growth.schema'
+import {
   CreditsBalance,
   CreditsBalanceSchema,
 } from './credits-balance.schema'
@@ -49,6 +57,7 @@ export * from './blog.schema'
 export * from './content-generation-task.schema'
 export * from './credits-balance.schema'
 export * from './credits-record.schema'
+export * from './customer-growth.schema'
 export * from './engagement.task.schema'
 export * from './interaction-record.schema'
 export * from './material-adaptation.schema'
@@ -91,6 +100,9 @@ export const schemas = [
   { name: PublishInfo.name, schema: PublishInfoSchema },
   { name: PublishRecord.name, schema: PublishRecordSchema },
   { name: ContentGenerationTask.name, schema: ContentGenerationTaskSchema },
+  { name: GlobalKnowledge.name, schema: GlobalKnowledgeSchema },
+  { name: CustomerRadarWorkspace.name, schema: CustomerRadarWorkspaceSchema },
+  { name: SystemSetting.name, schema: SystemSettingSchema },
   { name: UserNotificationControl.name, schema: UserNotificationControlSchema },
   { name: Asset.name, schema: AssetSchema },
   { name: QrCodeArtImage.name, schema: QrCodeArtImageSchema },

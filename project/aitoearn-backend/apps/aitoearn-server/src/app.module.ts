@@ -17,6 +17,7 @@ import { AssetsModule } from './core/assets/assets.module'
 import { ChannelModule } from './core/channel/channel.module'
 import { ContentModule } from './core/content/content.module'
 import { CreditsModule } from './core/credits/credits.module'
+import { CustomerGrowthModule } from './core/customer-growth/customer-growth.module'
 import { InternalModule } from './core/internal/internal.module'
 import { NotificationModule } from './core/notification/notification.module'
 import { PublishModule } from './core/publish-record/publish-record.module'
@@ -51,6 +52,7 @@ import { UserModule } from './core/user/user.module'
     AccountModule,
     UserModule,
     CreditsModule,
+    CustomerGrowthModule,
     ContentModule,
     ChannelModule,
     PublishModule,

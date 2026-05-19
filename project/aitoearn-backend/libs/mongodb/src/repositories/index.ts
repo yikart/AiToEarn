@@ -7,6 +7,11 @@ import { BlogRepository } from './blog.repository'
 import { ContentGenerationTaskRepository } from './content-generation-task.repository'
 import { CreditsBalanceRepository } from './credits-balance.repository'
 import { CreditsRecordRepository } from './credits-record.repository'
+import {
+  CustomerRadarWorkspaceRepository,
+  GlobalKnowledgeRepository,
+  SystemSettingRepository,
+} from './customer-growth.repository'
 import { MaterialAdaptationRepository } from './material-adaptation.repository'
 import { MaterialGroupRepository } from './material-group.repository'
 import { MaterialTaskRepository } from './material-task.repository'
@@ -30,6 +35,7 @@ export * from './blog.repository'
 export * from './content-generation-task.repository'
 export * from './credits-balance.repository'
 export * from './credits-record.repository'
+export * from './customer-growth.repository'
 export * from './material-adaptation.repository'
 export * from './material-group.repository'
 export * from './material-task.repository'
@@ -64,6 +70,9 @@ export const repositories = [
   MaterialTaskRepository,
   PublishRecordRepository,
   ContentGenerationTaskRepository,
+  GlobalKnowledgeRepository,
+  CustomerRadarWorkspaceRepository,
+  SystemSettingRepository,
   UserNotificationControlRepository,
   QrCodeArtImageRepository,
 ] as const
