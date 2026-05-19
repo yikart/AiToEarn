@@ -73,7 +73,7 @@ const SignInCard = forwardRef((props, ref) => {
      
      navigate('/publish');
 
-    return
+    return;
 
     setLoading(true);
     try {
@@ -138,4 +138,4 @@ const SignInCard = forwardRef((props, ref) => {
   );
 });
 
-export default SignInCard; 
+export default SignInCard;
