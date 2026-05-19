@@ -21,6 +21,8 @@
     "test:agent:video": "cross-env PROMPT_TYPE=video playwright test tests/e2e/home/agent-chat.spec.ts -g \"执行多提示词对话测试\" --headed --project=chromium",
     "test:agent:image": "cross-env PROMPT_TYPE=image playwright test tests/e2e/home/agent-chat.spec.ts -g \"执行多提示词对话测试\" --headed --project=chromium",
     "test:agent:publish": "cross-env PROMPT_TYPE=publish playwright test tests/e2e/home/agent-chat.spec.ts -g \"执行多提示词对话测试\" --headed --project=chromium",
+    "test:customer-radar:readonly": "node scripts/customer-radar-live-check.mjs",
+    "test:customer-radar:mock-publish": "node scripts/customer-radar-live-check.mjs --mock-publish",
     "test:report": "playwright show-report",
     "test:install": "playwright install",
     "build:copy": "tsc && next build && npm run copy-static",

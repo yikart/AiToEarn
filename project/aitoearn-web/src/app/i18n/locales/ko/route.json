@@ -17,5 +17,8 @@
   "addChannel": "채널 추가",
   "sidebar.more": "더 보기",
   "uptime": "상태",
-  "taskSquare": "골드러시 광장"
+  "taskSquare": "골드러시 광장",
+  "customerRadar": "Customer Radar",
+  "knowledgeBase": "Knowledge Base",
+  "systemAdmin": "System Admin"
 }

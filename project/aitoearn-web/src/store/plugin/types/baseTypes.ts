@@ -143,6 +143,11 @@ export interface DouyinInteractionResult {
  */
 export interface AIToEarnPluginAPI {
   /**
+   * 获取插件版本
+   */
+  getVersion?: () => Promise<{ name?: string, version?: string }>
+
+  /**
    * 检查插件权限
    * @returns Promise<权限检查结果>
    */
@@ -194,6 +199,11 @@ export interface AIToEarnPluginAPI {
    * @returns Promise<私信结果>
    */
   douyinDirectMessage: (params: DouyinDirectMessageParams) => Promise<DouyinInteractionResult>
+
+  /**
+   * 统一平台互动能力
+   */
+  unifiedInteraction?: (params: Record<string, any>) => Promise<any>
 }
 
 /**
@@ -203,6 +213,7 @@ declare global {
   interface Window {
     // @ts-ignore
     AIToEarnPlugin?: AIToEarnPluginAPI
+    JuJingBrowserBridge?: AIToEarnPluginAPI
   }
 }
 

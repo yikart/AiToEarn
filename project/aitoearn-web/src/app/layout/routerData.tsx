@@ -3,9 +3,12 @@
  * 包含导航项的图标、路径、翻译键等信息
  */
 import {
+  BookOpenText,
   Bot,
   History,
   Home,
+  Radar,
+  ServerCog,
   Sparkles,
   Upload,
 } from 'lucide-react'
@@ -35,6 +38,24 @@ export const routerData: IRouterDataItem[] = [
     translationKey: 'aiSocial',
     path: '/ai-social',
     icon: <Sparkles size={20} />,
+  },
+  {
+    name: 'Customer Radar',
+    translationKey: 'customerRadar',
+    path: '/customer-radar',
+    icon: <Radar size={20} />,
+  },
+  {
+    name: 'Knowledge Base',
+    translationKey: 'knowledgeBase',
+    path: '/knowledge-base',
+    icon: <BookOpenText size={20} />,
+  },
+  {
+    name: 'System Admin',
+    translationKey: 'systemAdmin',
+    path: '/system-admin',
+    icon: <ServerCog size={20} />,
   },
   {
     name: 'Task History',

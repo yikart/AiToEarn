@@ -3,6 +3,7 @@
  */
 
 import type { GetWorkDetailParams, GetWorkDetailResult, TopicInfo, WorkDetail } from '../types'
+import { ensurePluginBridge } from '../../bridge'
 
 /**
  * 小红书详情 API 响应类型
@@ -199,7 +200,8 @@ function transformToWorkDetail(item: XhsDetailItem): WorkDetail {
  */
 export async function getWorkDetail(params: GetWorkDetailParams): Promise<GetWorkDetailResult> {
   // 检查插件
-  if (!window.AIToEarnPlugin) {
+  const plugin = ensurePluginBridge()
+  if (!plugin) {
     return {
       success: false,
       message: '插件未安装或未就绪',
@@ -227,7 +229,7 @@ export async function getWorkDetail(params: GetWorkDetailParams): Promise<GetWor
   }
 
   try {
-    const response = await window.AIToEarnPlugin.xhsRequest<XhsDetailResponse>({
+    const response = await plugin.xhsRequest<XhsDetailResponse>({
       path: '/api/sns/web/v1/feed',
       method: 'POST',
       data: requestData,

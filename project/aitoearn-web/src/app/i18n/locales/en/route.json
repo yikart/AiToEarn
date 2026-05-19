@@ -18,7 +18,10 @@
   "sidebar.more": "More",
   "uptime": "Status",
   "aiSocial": "AI Publish",
+  "customerRadar": "Customer Radar",
   "taskSquare": "Gold Rush Square",
   "myTasks": "My Tasks",
-  "createTask": "Create Task"
+  "createTask": "Create Task",
+  "knowledgeBase": "Knowledge Base",
+  "systemAdmin": "System Admin"
 }

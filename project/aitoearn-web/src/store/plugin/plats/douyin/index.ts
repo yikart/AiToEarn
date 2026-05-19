@@ -31,6 +31,7 @@ import type {
 } from '../types'
 import type { DouyinDirectMessageResponse, DouyinInteractionResponse } from './types'
 import { PlatType } from '@/app/config/platConfig'
+import { ensurePluginBridge } from '../../bridge'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 import { getWorkDetail, getWorkDetailFromListItem } from './workDetail'
 
@@ -43,10 +44,12 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
   /**
    * 检查插件是否可用
    */
-  private checkPlugin(): void {
-    if (!window.AIToEarnPlugin) {
+  private getPlugin() {
+    const plugin = ensurePluginBridge()
+    if (!plugin) {
       throw new Error('插件未安装或未就绪')
     }
+    return plugin
   }
 
   /**
@@ -64,9 +67,9 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * @param isLike true=点赞，false=取消点赞
    */
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
-    const response = (await window.AIToEarnPlugin!.douyinInteraction({
+    const response = (await plugin.douyinInteraction({
       action: 'like',
       workId,
       targetState: isLike,
@@ -86,7 +89,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * @param params 评论参数
    */
   async commentWork(params: CommentParams): Promise<CommentResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
     // 不支持二级评论
     if (params.replyToCommentId) {
@@ -96,7 +99,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       }
     }
 
-    const response = (await window.AIToEarnPlugin!.douyinInteraction({
+    const response = (await plugin.douyinInteraction({
       action: 'comment',
       workId: params.workId,
       targetState: true,
@@ -117,9 +120,9 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * @param isFavorite true=收藏，false=取消收藏
    */
   async favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
-    const response = (await window.AIToEarnPlugin!.douyinInteraction({
+    const response = (await plugin.douyinInteraction({
       action: 'favorite',
       workId,
       targetState: isFavorite,
@@ -138,7 +141,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * @param params 私信参数
    */
   async sendDirectMessage(params: DirectMessageParams): Promise<DirectMessageResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
     // 验证参数
     if (!params.workId && !params.authorUrl) {
@@ -155,7 +158,7 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
       }
     }
 
-    const response = (await window.AIToEarnPlugin!.douyinDirectMessage({
+    const response = (await plugin.douyinDirectMessage({
       workId: params.workId,
       authorUrl: params.authorUrl,
       content: params.content,

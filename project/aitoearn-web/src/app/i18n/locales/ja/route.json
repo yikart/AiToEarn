@@ -17,5 +17,8 @@
   "addChannel": "チャンネル追加",
   "sidebar.more": "もっと見る",
   "uptime": "稼働状況",
-  "taskSquare": "ゴールドラッシュ広場"
+  "taskSquare": "ゴールドラッシュ広場",
+  "customerRadar": "Customer Radar",
+  "knowledgeBase": "Knowledge Base",
+  "systemAdmin": "System Admin"
 }

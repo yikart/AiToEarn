@@ -24,6 +24,7 @@ import type {
 } from '../types'
 import type { XhsBaseResponse, XhsCommentResponse } from './types'
 import { PlatType } from '@/app/config/platConfig'
+import { ensurePluginBridge } from '../../bridge'
 import { getCommentList, getSubCommentList } from './comment'
 import { getHomeFeedList, homeFeedCursor } from './homeFeed'
 import { getWorkDetail } from './workDetail'
@@ -37,10 +38,12 @@ class XhsPlatformInteraction implements IPlatformInteraction {
   /**
    * 检查插件是否可用
    */
-  private checkPlugin(): void {
-    if (!window.AIToEarnPlugin) {
+  private getPlugin() {
+    const plugin = ensurePluginBridge()
+    if (!plugin) {
       throw new Error('插件未安装或未就绪')
     }
+    return plugin
   }
 
   /**
@@ -55,11 +58,11 @@ class XhsPlatformInteraction implements IPlatformInteraction {
    * 点赞/取消点赞作品
    */
   async likeWork(workId: string, isLike: boolean): Promise<LikeResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
     const path = isLike ? '/api/sns/web/v1/note/like' : '/api/sns/web/v1/note/dislike'
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<XhsBaseResponse>({
+    const response = await plugin.xhsRequest<XhsBaseResponse>({
       path,
       method: 'POST',
       data: { note_oid: workId },
@@ -76,7 +79,7 @@ class XhsPlatformInteraction implements IPlatformInteraction {
    * 评论作品
    */
   async commentWork(params: CommentParams): Promise<CommentResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
     const data: {
       note_id: string
@@ -93,7 +96,7 @@ class XhsPlatformInteraction implements IPlatformInteraction {
       data.target_comment_id = params.replyToCommentId
     }
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<XhsCommentResponse>({
+    const response = await plugin.xhsRequest<XhsCommentResponse>({
       path: '/api/sns/web/v1/comment/post',
       method: 'POST',
       data,
@@ -111,13 +114,13 @@ class XhsPlatformInteraction implements IPlatformInteraction {
    * 收藏/取消收藏作品
    */
   async favoriteWork(workId: string, isFavorite: boolean): Promise<FavoriteResult> {
-    this.checkPlugin()
+    const plugin = this.getPlugin()
 
     const path = isFavorite ? '/api/sns/web/v1/note/collect' : '/api/sns/web/v1/note/uncollect'
 
     const data = isFavorite ? { note_id: workId } : { note_ids: workId }
 
-    const response = await window.AIToEarnPlugin!.xhsRequest<XhsBaseResponse>({
+    const response = await plugin.xhsRequest<XhsBaseResponse>({
       path,
       method: 'POST',
       data,

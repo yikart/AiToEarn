@@ -17,5 +17,8 @@
   "addChannel": "Kanal hinzufügen",
   "sidebar.more": "Mehr",
   "uptime": "Status",
-  "taskSquare": "Goldrausch-Markt"
+  "taskSquare": "Goldrausch-Markt",
+  "customerRadar": "Customer Radar",
+  "knowledgeBase": "Knowledge Base",
+  "systemAdmin": "System Admin"
 }

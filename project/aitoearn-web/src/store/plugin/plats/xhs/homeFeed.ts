@@ -4,6 +4,7 @@
 
 import type { HomeFeedItem, HomeFeedListParams, HomeFeedListResult } from '../types'
 import type { XhsHomeFeedItem, XhsHomeFeedResponse } from './types'
+import { ensurePluginBridge } from '../../bridge'
 
 /**
  * 首页列表游标管理器
@@ -126,7 +127,8 @@ export function transformToHomeFeedItem(item: XhsHomeFeedItem): HomeFeedItem {
  */
 export async function getHomeFeedList(params: HomeFeedListParams): Promise<HomeFeedListResult> {
   // 检查插件
-  if (!window.AIToEarnPlugin) {
+  const plugin = ensurePluginBridge()
+  if (!plugin) {
     return {
       success: false,
       message: '插件未安装或未就绪',
@@ -171,7 +173,7 @@ export async function getHomeFeedList(params: HomeFeedListParams): Promise<HomeF
   const requestData = buildHomeFeedRequestData(params, cursorScore)
 
   try {
-    const response = await window.AIToEarnPlugin.xhsRequest<XhsHomeFeedResponse>({
+    const response = await plugin.xhsRequest<XhsHomeFeedResponse>({
       path: '/api/sns/web/v1/homefeed',
       method: 'POST',
       data: requestData,

@@ -26,6 +26,7 @@ import { AccountStatus } from '@/app/config/accountConfig'
 import { useAccountStore } from '@/store/account'
 import { generateUUID, parseTopicString } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
+import { ensurePluginBridge } from './bridge'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
 import {
@@ -92,7 +93,7 @@ export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | n
 
 /** 错误消息 */
 const ERROR_MESSAGES = {
-  PLUGIN_NOT_INSTALLED: '请先安装 Aitoearn 浏览器插件',
+  PLUGIN_NOT_INSTALLED: '请先安装巨鲸网络浏览器插件',
   PLUGIN_NOT_READY: '插件未就绪，请先授权插件权限',
   PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
 } as const
@@ -175,7 +176,7 @@ export const usePluginStore = create(
 
       /** 检查插件是否安装 */
       checkPlugin() {
-        const isAvailable = typeof window !== 'undefined' && !!window.AIToEarnPlugin
+        const isAvailable = !!ensurePluginBridge()
 
         if (!isAvailable) {
           set({ status: Status.NOT_INSTALLED })
@@ -190,13 +191,13 @@ export const usePluginStore = create(
 
       /** 检查插件权限 */
       async checkPermission() {
-        const isInstalled = typeof window !== 'undefined' && !!window.AIToEarnPlugin
-        if (!isInstalled) {
+        const plugin = ensurePluginBridge()
+        if (!plugin) {
           set({ status: Status.NOT_INSTALLED })
           return false
         }
         try {
-          const result = await window.AIToEarnPlugin!.checkPermission()
+          const result = await plugin.checkPermission()
           if (result.granted) {
             set({ status: Status.READY })
             return true
@@ -333,7 +334,7 @@ export const usePluginStore = create(
         await Promise.all(
           PLUGIN_SUPPORTED_PLATFORMS.map(async (platform) => {
             try {
-              accounts[platform] = await window.AIToEarnPlugin!.login(platform)
+              accounts[platform] = await ensurePluginBridge()!.login(platform)
             }
             catch {
               accounts[platform] = null
@@ -429,7 +430,7 @@ export const usePluginStore = create(
           throw new Error(ERROR_MESSAGES.PLUGIN_NOT_READY)
 
         try {
-          const result = await window.AIToEarnPlugin!.login(platform)
+          const result = await ensurePluginBridge()!.login(platform)
           set({
             platformAccounts: { ...platformAccounts, [platform]: result },
           })
@@ -485,7 +486,7 @@ export const usePluginStore = create(
         })
 
         try {
-          const result = await window.AIToEarnPlugin!.publish(params, (progress) => {
+          const result = await ensurePluginBridge()!.publish(params, (progress) => {
             // 更新该账号的进度
             const updatedProgress = new Map(get().platformProgress)
             updatedProgress.set(publishKey, progress)
