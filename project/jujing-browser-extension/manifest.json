@@ -1,0 +1,66 @@
+{
+  "manifest_version": 3,
+  "name": "巨鲸网络智能获客助手",
+  "description": "连接巨鲸网络客户雷达与用户已登录的社媒账号，用于登录检测、评论抓取与人工确认后的互动执行。",
+  "version": "0.1.0",
+  "minimum_chrome_version": "114",
+  "permissions": [
+    "activeTab",
+    "cookies",
+    "scripting",
+    "storage",
+    "tabs"
+  ],
+  "host_permissions": [
+    "http://localhost/*",
+    "http://127.0.0.1/*",
+    "http://*:*/*",
+    "https://*.xiaohongshu.com/*",
+    "https://*.xhscdn.com/*",
+    "https://*.douyin.com/*",
+    "https://creator.douyin.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "http://*:*/*"
+      ],
+      "js": [
+        "src/content-home.js"
+      ],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://*.xiaohongshu.com/*",
+        "https://*.douyin.com/*",
+        "https://creator.douyin.com/*"
+      ],
+      "js": [
+        "src/content-platform.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "src/web-api.js"
+      ],
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "http://*:*/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "巨鲸网络智能获客助手"
+  }
+}

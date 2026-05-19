@@ -11,9 +11,8 @@ export const DEFAULT_POLLING_INTERVAL = 2000
  * 插件下载链接配置
  */
 export const PLUGIN_DOWNLOAD_LINKS = {
-  chrome:
-    'https://chromewebstore.google.com/detail/aitoearn-extension/hnmocdhmnfgcjnedmdgfefcobideaeja',
-  china: 'https://ai-to-earn.oss-cn-beijing.aliyuncs.com/comment/aitoearn-extension.crx',
+  chrome: '/websit/plugin-guide',
+  china: '/downloads/jujing-browser-extension.zip',
 } as const
 
 /**
