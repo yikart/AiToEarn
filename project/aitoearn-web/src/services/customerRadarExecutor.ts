@@ -16,11 +16,6 @@ const platformMap: Partial<Record<CustomerRadarPlatform, PlatType>> = {
   xhs: PlatType.Xhs,
 }
 
-const platformLoginMap: Partial<Record<CustomerRadarPlatform, string>> = {
-  douyin: PlatType.Douyin,
-  xhs: PlatType.Xhs,
-}
-
 const outboundRiskTerms = ['AI', 'ai', '测试', '自动化', '机器人', '主动获客工具']
 const noisyKeywordSignalPattern = /相关搜索|登录后查看搜索结果|手机号登录|获取验证码|扫码登录|沪ICP备|营业执照/
 
@@ -42,12 +37,17 @@ function hasPlugin() {
   return Boolean(ensurePluginBridge())
 }
 
-function hasUnsafeOutboundTerms(content: string) {
-  return outboundRiskTerms.some(term => content.includes(term))
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      window.setTimeout(() => reject(new Error(`${label}超时`)), timeoutMs)
+    }),
+  ])
 }
 
-function canLoginPlatform(platform: CustomerRadarPlatform) {
-  return Boolean(platformLoginMap[platform])
+function hasUnsafeOutboundTerms(content: string) {
+  return outboundRiskTerms.some(term => content.includes(term))
 }
 
 function createUnavailableCapability(platform: CustomerRadarPlatform, reason: string): CustomerRadarPlatformCapability {
@@ -329,7 +329,6 @@ export function getCustomerRadarPlatformCapabilities(
 
 export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) {
   const checkedAt = nowText()
-  const socialAccounts: CustomerRadarSocialAccount[] = []
 
   if (!hasPlugin()) {
     return {
@@ -350,7 +349,7 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
   }
 
   try {
-    const permission = await ensurePluginBridge()!.checkPermission()
+    const permission = await withTimeout(ensurePluginBridge()!.checkPermission(), 12000, '本地执行器权限检查')
     if (!permission.granted) {
       return {
         capabilities: profile.platforms.map(platform => createUnavailableCapability(
@@ -387,82 +386,20 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
     }
   }
 
-  const capabilities: CustomerRadarPlatformCapability[] = []
-  const logs: CustomerRadarExecutionLog[] = []
-
-  for (const platform of profile.platforms) {
-    const pluginPlatform = platformLoginMap[platform]
-    if (!canLoginPlatform(platform) || !pluginPlatform) {
-      capabilities.push(createUnavailableCapability(platform, `${platform} 暂未接入本地页面执行器。`))
-      socialAccounts.push(createSocialAccount(platform, {
-        lastCheckedAt: checkedAt,
-        loginStatus: 'unknown',
-        note: '该平台暂未接入本地执行器；频道登录态请以频道管理为准。',
-        pluginConnected: false,
-      }))
-      continue
-    }
-
-    try {
-      const account = await ensurePluginBridge()!.login(pluginPlatform as any)
-      const accountName = account?.nickname || account?.account || account?.uid
-      const loggedIn = Boolean(account?.uid || accountName)
-
-      socialAccounts.push(createSocialAccount(platform, {
-        lastCheckedAt: checkedAt,
-        loginStatus: loggedIn ? 'logged_in' : 'not_logged_in',
-        nickname: accountName || `${platform}账号`,
-        note: loggedIn
-          ? `本地执行器识别到页面账号：${accountName || account.uid}。`
-          : '本地执行器在线，但没有识别到可执行的页面账号。',
-        pluginConnected: true,
-      }))
-
-      if (platform === 'xhs') {
-        capabilities.push({
-          platform,
-          available: loggedIn,
-          canPublishComment: loggedIn,
-          canScanComments: loggedIn,
-          canSendDirectMessage: false,
-          note: loggedIn
-            ? '小红书页面执行能力在线：可抓取自己笔记评论、生成回复并发布评论。'
-            : '小红书页面未就绪：频道账号不受影响，真实页面动作需重新检测执行器。',
-        })
-      }
-      else if (platform === 'douyin') {
-        capabilities.push({
-          platform,
-          available: loggedIn,
-          canPublishComment: loggedIn,
-          canScanComments: false,
-          canSendDirectMessage: loggedIn,
-          note: loggedIn
-            ? '抖音账号在线：可执行评论/私信动作；评论列表抓取仍需后续补齐。'
-            : '抖音页面未就绪：频道账号不受影响，真实页面动作需重新检测执行器。',
-        })
-      }
-    }
-    catch (error) {
-      capabilities.push(createUnavailableCapability(
-        platform,
-        `${platform} 页面执行能力检测失败：${error instanceof Error ? error.message : '未知错误'}`,
-      ))
-      socialAccounts.push(createSocialAccount(platform, {
-        lastCheckedAt: checkedAt,
-        loginStatus: 'expired',
-        note: `本地执行器可用，但页面执行能力检测失败：${error instanceof Error ? error.message : '未知错误'}`,
-        pluginConnected: true,
-      }))
-    }
-  }
-
-  const onlineCount = socialAccounts.filter(item => item.loginStatus === 'logged_in').length
-  logs.unshift(createLog(
-    onlineCount > 0 ? 'success' : 'warning',
-    '本地执行器握手完成',
-    `已检测 ${profile.platforms.length} 个平台，${onlineCount} 个平台具备页面执行能力。频道账号登录态以频道管理为准。`,
-  ))
+  const capabilities = getCustomerRadarPlatformCapabilities(profile.platforms)
+  const logs: CustomerRadarExecutionLog[] = [
+    createLog(
+      'success',
+      '本地执行器握手完成',
+      `已确认原版/本地页面执行器注入成功；真实平台动作会复用频道账号登录态，不再由执行器单独登录。`,
+    ),
+  ]
+  const socialAccounts = profile.platforms.map(platform => createSocialAccount(platform, {
+    lastCheckedAt: checkedAt,
+    loginStatus: 'unknown',
+    note: '执行器握手成功；账号是否已登录请以频道管理读取结果为准。',
+    pluginConnected: true,
+  }))
 
   return {
     capabilities,
