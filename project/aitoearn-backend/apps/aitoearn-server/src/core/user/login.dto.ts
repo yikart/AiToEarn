@@ -8,6 +8,13 @@
 import { createZodDto } from '@yikart/common'
 import z from 'zod'
 
+const PhoneSchema = z.string().regex(/^1[3-9]\d{9}$/, { message: '请输入正确的手机号' })
+const AccountSchema = z.string().refine(
+  value => z.string().email().safeParse(value).success || PhoneSchema.safeParse(value).success,
+  { message: '请输入有效的手机号或邮箱' },
+)
+const PasswordSchema = z.string().min(6, { message: '密码至少6位' }).max(64, { message: '密码最多64位' })
+
 export const MailLoginSchema = z.object({
   mail: z.string().email().describe('邮箱'),
 })
@@ -48,12 +55,23 @@ const UserCancelSchema = z.object({
 export class UserCancelDto extends createZodDto(UserCancelSchema) {}
 
 const PhoneLoginSchema = z.object({
-  phone: z.string().regex(/^1[3-9]\d{9}$/, { message: '请输入正确的手机号' }).describe('手机号'),
+  phone: PhoneSchema.describe('手机号'),
 })
 export class PhoneLoginDto extends createZodDto(PhoneLoginSchema) {}
 
 const PhoneVerifySchema = z.object({
-  phone: z.string().regex(/^1[3-9]\d{9}$/, { message: '请输入正确的手机号' }).describe('手机号'),
+  phone: PhoneSchema.describe('手机号'),
   code: z.string().length(6, { message: '验证码为6位数字' }).describe('短信验证码'),
 })
 export class PhoneVerifyDto extends createZodDto(PhoneVerifySchema) {}
+
+export const PasswordLoginSchema = z.object({
+  account: AccountSchema.describe('手机号或邮箱'),
+  password: PasswordSchema.describe('密码'),
+})
+export class PasswordLoginDto extends createZodDto(PasswordLoginSchema, 'PasswordLoginDto') {}
+
+export const PasswordRegisterSchema = PasswordLoginSchema.extend({
+  inviteCode: z.string().describe('邀请码').optional(),
+})
+export class PasswordRegisterDto extends createZodDto(PasswordRegisterSchema, 'PasswordRegisterDto') {}

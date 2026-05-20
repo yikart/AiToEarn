@@ -9,6 +9,7 @@ export enum UserCreateType {
 export class NewUser extends User {
   static createType: UserCreateType
   constructor(type: UserCreateType.phone, phone: string)
+  constructor(type: UserCreateType.phone, phone: string, option: { password: string, salt: string })
   constructor(type: UserCreateType.mail, mail: string)
   constructor(type: UserCreateType.mail, mail: string, option: { password: string, salt: string })
   constructor(type: UserCreateType.google, mail: string, googleAccount: User['googleAccount'])
@@ -18,6 +19,11 @@ export class NewUser extends User {
 
     if (type === UserCreateType.phone) {
       this.phone = identifier
+      if (params) {
+        const phoneParams = params as { password: string, salt: string }
+        this.password = phoneParams.password
+        this.salt = phoneParams.salt
+      }
     }
     else {
       this.mail = identifier

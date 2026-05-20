@@ -1,6 +1,6 @@
 /**
  * LoginContent - 登录页面内容组件
- * 手机号/邮箱验证码登录
+ * 手机号/邮箱账号密码登录
  */
 
 'use client'
@@ -14,7 +14,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { useUserStore } from '@/store/user'
 
-import { LoginMethodForm } from './LoginMethodForm'
+import { PasswordLoginForm } from './PasswordLoginForm'
 
 const fadeInUp = {
   initial: { opacity: 0, y: 10 },
@@ -82,7 +82,7 @@ export default function LoginContent() {
           </div>
 
           {/* 登录表单 */}
-          <LoginMethodForm />
+          <PasswordLoginForm />
         </motion.div>
 
         {/* 底部条款 */}

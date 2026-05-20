@@ -10,7 +10,7 @@ import { useRouter } from 'next/navigation'
 import { memo, useCallback } from 'react'
 import { useShallow } from 'zustand/shallow'
 
-import { LoginMethodForm } from '@/app/[lng]/auth/login/components/LoginContent/LoginMethodForm'
+import { PasswordLoginForm } from '@/app/[lng]/auth/login/components/LoginContent/PasswordLoginForm'
 import { useTransClient } from '@/app/i18n/client'
 import { BrandWordmark } from '@/components/Brand/BrandWordmark'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
@@ -79,7 +79,7 @@ const LoginDialogContent = memo(() => {
 
         {/* 登录表单 */}
         <div className="px-2">
-          <LoginMethodForm
+          <PasswordLoginForm
             onLoginSuccess={handleLoginSuccess}
             redirectUrl={redirectUrl}
             inviteCode={inviteCode}

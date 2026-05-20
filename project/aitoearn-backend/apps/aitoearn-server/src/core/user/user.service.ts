@@ -74,15 +74,17 @@ export class UserService {
     return res
   }
 
-  async getUserInfoByPhone(phone: string): Promise<User | null> {
-    const res = await this.userRepository.getByPhone(phone)
+  async getUserInfoByPhone(phone: string, all = false): Promise<User | null> {
+    const res = await this.userRepository.getByPhone(phone, all)
     if (!res)
       return null
     return res
   }
 
-  async createUserByPhone(phone: string): Promise<User> {
-    const newData = new NewUser(UserCreateType.phone, phone)
+  async createUserByPhone(phone: string, password?: string, salt?: string): Promise<User> {
+    const newData = password && salt
+      ? new NewUser(UserCreateType.phone, phone, { password, salt })
+      : new NewUser(UserCreateType.phone, phone)
     newData.locale = getLocale()
     const userInfo = await this.userRepository.create(newData)
     this.afterCreate(userInfo)
@@ -92,16 +94,20 @@ export class UserService {
   /**
    * Create user by email
    * @param mail
+   * @param inviteCode
    * @param password
    * @param salt
-   * @param inviteCode
    * @returns
    */
   async createUserByMail(
     mail: string,
     inviteCode?: string,
+    password?: string,
+    salt?: string,
   ): Promise<User> {
-    const newData = new NewUser(UserCreateType.mail, mail)
+    const newData = password && salt
+      ? new NewUser(UserCreateType.mail, mail, { password, salt })
+      : new NewUser(UserCreateType.mail, mail)
     newData.inviteCode = inviteCode
     newData.locale = getLocale()
 

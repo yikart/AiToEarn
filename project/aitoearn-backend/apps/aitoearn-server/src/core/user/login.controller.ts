@@ -2,12 +2,12 @@ import { Body, Controller, Delete, Get, Logger, Post, Put, UseGuards } from '@ne
 import { ApiTags } from '@nestjs/swagger'
 import { AitoearnAuthService, GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
-import { UserStatus } from '@yikart/mongodb'
+import { User, UserStatus } from '@yikart/mongodb'
 import { RedisService } from '@yikart/redis'
 
 import { RateLimit, RateLimitGuard } from '../../common/guards'
 import { getRandomString } from '../../common/utils'
-import { encryptPassword } from '../../common/utils/password.util'
+import { encryptPassword, validatePassWord } from '../../common/utils/password.util'
 import { config } from '../../config'
 import {
   GoogleLoginDto,
@@ -18,12 +18,18 @@ import {
   MailRepasswordVerifySchema,
   MailVerifyDto,
   MailVerifySchema,
+  PasswordLoginDto,
+  PasswordLoginSchema,
+  PasswordRegisterDto,
+  PasswordRegisterSchema,
   PhoneLoginDto,
   PhoneVerifyDto,
   UserCancelDto,
 } from './login.dto'
 import { LoginService } from './login.service'
 import { UserService } from './user.service'
+
+const PHONE_PATTERN = /^1[3-9]\d{9}$/
 
 @ApiTags('User/Login')
 @Controller('login')
@@ -36,6 +42,90 @@ export class LoginController {
     private readonly redisService: RedisService,
     private readonly loginService: LoginService,
   ) { }
+
+  private parseAccount(account: string): { mail?: string, phone?: string } {
+    const normalized = account.trim()
+    if (PHONE_PATTERN.test(normalized))
+      return { phone: normalized }
+    return { mail: normalized.toLowerCase() }
+  }
+
+  private buildLoginResponse(userInfo: User, type: 'login' | 'regist') {
+    const token = this.authService.generateToken(userInfo)
+    const tokenInfo = this.authService.decodeToken(token)
+
+    this.userService.afterLogin(userInfo)
+
+    return {
+      type,
+      token,
+      exp: tokenInfo.exp,
+      userInfo,
+    }
+  }
+
+  @ApiDoc({
+    summary: '账号密码注册',
+    description: '使用手机号或邮箱注册账号，用户自行设置密码。',
+    body: PasswordRegisterSchema,
+  })
+  @Public()
+  @RateLimit({ ttl: 60, limit: 5, keyGenerator: req => `passwordRegister:${req.body.account}` })
+  @Post('password/register')
+  async registerByPassword(@Body() body: PasswordRegisterDto) {
+    const { account, password, inviteCode } = body
+    const { mail, phone } = this.parseAccount(account)
+    const { password: encryptedPassword, salt } = encryptPassword(password)
+
+    let userInfo
+    if (phone) {
+      const existingUser = await this.userService.getUserInfoByPhone(phone)
+      if (existingUser)
+        throw new AppException(ResponseCode.ValidationFailed, 'The account already exists')
+      userInfo = await this.userService.createUserByPhone(phone, encryptedPassword, salt)
+    }
+    else if (mail) {
+      const existingUser = await this.userService.getUserInfoByMail(mail, true)
+      if (existingUser && !existingUser.isDelete)
+        throw new AppException(ResponseCode.ValidationFailed, 'The account already exists')
+      if (inviteCode) {
+        const inviteUserInfo = await this.userService.getUserByPopularizeCode(inviteCode)
+        if (!inviteUserInfo)
+          throw new AppException(ResponseCode.UserLoginCodeError)
+      }
+      userInfo = await this.userService.createUserByMail(mail, inviteCode, encryptedPassword, salt)
+    }
+
+    if (!userInfo)
+      throw new AppException(ResponseCode.ValidationFailed, 'Invalid account')
+
+    return this.buildLoginResponse(userInfo, 'regist')
+  }
+
+  @ApiDoc({
+    summary: '账号密码登录',
+    description: '使用手机号或邮箱和密码登录。',
+    body: PasswordLoginSchema,
+  })
+  @Public()
+  @RateLimit({ ttl: 60, limit: 10, keyGenerator: req => `passwordLogin:${req.body.account}` })
+  @Post('password')
+  async loginByPassword(@Body() body: PasswordLoginDto) {
+    const { account, password } = body
+    const { mail, phone } = this.parseAccount(account)
+    const userInfo = phone
+      ? await this.userService.getUserInfoByPhone(phone, true)
+      : await this.userService.getUserInfoByMail(mail || '', true)
+
+    if (!userInfo || userInfo.isDelete)
+      throw new AppException(ResponseCode.UserNotFound, 'The account does not exist')
+    if (userInfo.status === UserStatus.STOP)
+      throw new AppException(ResponseCode.UserStatusError, 'The User is disabled')
+    if (!userInfo.password || !userInfo.salt || !validatePassWord(userInfo.password, userInfo.salt, password))
+      throw new AppException(ResponseCode.ValidationFailed, 'The account or password is incorrect')
+
+    return this.buildLoginResponse(userInfo, 'login')
+  }
 
   @ApiDoc({
     summary: '发送邮箱登录验证码',

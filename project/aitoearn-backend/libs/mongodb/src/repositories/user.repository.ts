@@ -73,11 +73,15 @@ export class UserRepository extends BaseRepository<User> {
     return userInfo
   }
 
-  async getByPhone(phone: string): Promise<User | null> {
-    const userInfo = await this.model.findOne({
+  async getByPhone(phone: string, all = false): Promise<User | null> {
+    const db = this.model.findOne({
       phone,
       isDelete: false,
     })
+    if (all)
+      db.select('+password +salt')
+    const userInfo = await db.lean({ virtuals: true }).exec()
+
     return userInfo
   }
 

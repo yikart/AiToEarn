@@ -1,6 +1,6 @@
 /**
  * LoginPage - 登录页面
- * 支持邮箱验证码登录、手机验证码登录
+ * 支持手机号或邮箱账号密码登录
  */
 
 import type { Metadata } from 'next'
