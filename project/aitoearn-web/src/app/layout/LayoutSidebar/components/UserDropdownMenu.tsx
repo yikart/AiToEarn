@@ -8,7 +8,7 @@
 
 import type { SidebarCommonProps } from '../types'
 import type { SettingsTab } from '@/components/SettingsModal'
-import { Bell, BookOpen, ChevronRight, FileText, Globe, LogOut, Mail, ScrollText, Settings, Shield } from 'lucide-react'
+import { Bell, BookOpen, ChevronRight, FileText, LogOut, Mail, ScrollText, Settings, Shield } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
@@ -145,12 +145,6 @@ function LoggedInMenuContent({
 
         <div className="my-1 h-px bg-border" />
 
-        {/* 低频：外部链接 */}
-        <MenuItem
-          icon={Globe}
-          label={t('common:goToWebsite')}
-          href="/welcome"
-        />
         {/* 中频：文档 + 联系我们 */}
         <div className="group/docs relative">
           {/* 触发行 */}

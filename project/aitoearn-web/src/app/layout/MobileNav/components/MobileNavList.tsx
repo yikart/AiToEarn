@@ -5,10 +5,8 @@ import type { MobileNavListProps } from '../types'
 import {
   ChevronDown,
   ChevronUp,
-  Globe,
   MoreHorizontal,
 } from 'lucide-react'
-import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { filterRouterDataForUser, routerData } from '@/app/layout/routerData'
@@ -97,21 +95,6 @@ export function MobileNavList({
                   onClose={onClose}
                 />
               ))}
-
-              {/* 前往官网 */}
-              <Link
-                href="/welcome"
-                onClick={onClose}
-                className={cn(
-                  'flex items-center gap-3 px-4 py-3 rounded-lg text-base font-medium transition-all',
-                  'text-muted-foreground hover:bg-muted hover:text-foreground',
-                  currentRoute === '/welcome' && 'bg-primary/10 text-primary',
-                )}
-              >
-                <Globe size={20} className="text-muted-foreground" />
-                <span>{t('common:goToWebsite')}</span>
-              </Link>
-
             </div>
           )}
         </div>
