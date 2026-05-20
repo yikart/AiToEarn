@@ -24,8 +24,12 @@ import type {
 } from '@/api/customerRadar'
 import { customerRadarApi } from '@/api/customerRadar'
 import type { GlobalKnowledgeItem } from '@/api/globalKnowledge'
+import type { SocialAccount } from '@/api/types/account.type'
+import { AccountStatus } from '@/app/config/accountConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { ensurePluginBridge } from '@/store/plugin/bridge'
 import type { CommentItem } from '@/store/plugin/plats/types'
+import { useAccountStore } from '@/store/account'
 import {
   getCustomerRadarPlatformCapabilities,
   scanKeywordDiscovery,
@@ -90,6 +94,13 @@ const platformLoginUrls: Record<CustomerRadarPlatform, string> = {
   douyin: 'https://www.douyin.com/',
   wxSph: 'https://channels.weixin.qq.com/',
   xhs: 'https://www.xiaohongshu.com/',
+}
+
+const platformAccountTypeMap: Partial<Record<CustomerRadarPlatform, PlatType>> = {
+  bilibili: PlatType.BILIBILI,
+  douyin: PlatType.Douyin,
+  wxSph: PlatType.WxSph,
+  xhs: PlatType.Xhs,
 }
 
 const commentSourceLabels: Record<CustomerRadarCommentSource, string> = {
@@ -776,10 +787,48 @@ function createSocialAccounts(profile: CustomerRadarProfile): CustomerRadarSocia
     lastCheckedAt: '未检测',
     loginStatus: 'unknown',
     nickname: `${platformLabels[platform]}账号`,
-    note: '等待浏览器插件检测平台登录态。',
+    note: '等待读取频道账号登录态。',
     platform,
     pluginConnected: false,
   }))
+}
+
+function createSocialAccountsFromChannels(profile: CustomerRadarProfile, accounts: SocialAccount[]): CustomerRadarSocialAccount[] {
+  const checkedAt = nowText()
+
+  return profile.platforms.map((platform) => {
+    const accountType = platformAccountTypeMap[platform]
+    const matched = accountType
+      ? accounts.find(account => account.type === accountType)
+      : undefined
+
+    if (!matched) {
+      return {
+        id: `social-${platform}`,
+        lastCheckedAt: accounts.length ? checkedAt : '未检测',
+        loginStatus: 'unknown',
+        nickname: `${platformLabels[platform]}账号`,
+        note: `未找到已绑定的${platformLabels[platform]}频道账号，请先到频道管理里连接该平台。`,
+        platform,
+        pluginConnected: false,
+      }
+    }
+
+    const disabled = matched.status === AccountStatus.DISABLE
+    const nickname = matched.nickname || matched.account || matched.uid || `${platformLabels[platform]}账号`
+
+    return {
+      id: `social-${platform}-${matched.id}`,
+      lastCheckedAt: checkedAt,
+      loginStatus: disabled ? 'expired' : 'logged_in',
+      nickname,
+      note: disabled
+        ? `频道管理中的${platformLabels[platform]}账号已失效，请重新连接后再执行。`
+        : `已复用频道管理中的${platformLabels[platform]}登录态：${nickname}。`,
+      platform,
+      pluginConnected: false,
+    }
+  })
 }
 
 function createAutomationTask(profile: CustomerRadarProfile, mode: CustomerRadarAutomationRun['mode'], ownedPostWorkId?: string, cadence: CustomerRadarTask['cadence'] = 'manual'): CustomerRadarTask {
@@ -810,7 +859,7 @@ function createAutomationTask(profile: CustomerRadarProfile, mode: CustomerRadar
     ownedPostWorkId: hasOwnedPost ? ownedPostWorkId || '' : '',
     perRunLimit: limitPolicy.perRunLimit,
     platforms: profile.platforms,
-    pluginRequired: true,
+    pluginRequired: false,
     stats: {
       collected: 0,
       published: 0,
@@ -991,6 +1040,9 @@ function exportTaskRunCsv(task: CustomerRadarTask, run: CustomerRadarTaskRun, le
 export function CustomerRadarPageContent() {
   const remoteLoadedRef = useRef(false)
   const autoRunningTaskIdsRef = useRef<Set<string>>(new Set())
+  const accountList = useAccountStore(state => state.accountList)
+  const accountLoading = useAccountStore(state => state.accountLoading)
+  const getAccountList = useAccountStore(state => state.getAccountList)
   const [profile, setProfile] = useState<CustomerRadarProfile>(defaultProfile)
   const [keywordText, setKeywordText] = useState(joinText(defaultProfile.keywords))
   const [painPointText, setPainPointText] = useState(joinText(defaultProfile.painPoints))
@@ -1112,12 +1164,13 @@ export function CustomerRadarPageContent() {
 
     return knowledgeBase.filter(item => ids.has(item.id)).slice(0, 4)
   }, [selectedCustomer])
-  const pluginConnected = platformCapabilities.some(item => item.available)
+  const localExecutorReady = platformCapabilities.some(item => item.available)
   const accountReady = socialAccounts.some(item => item.loginStatus === 'logged_in')
+  const executionModeReady = !liveExecutionEnabled || localExecutorReady
   const knowledgeReady = relevantKnowledge.some(item => item.enabled)
   const readySteps = [
-    pluginConnected,
     accountReady,
+    executionModeReady,
     knowledgeReady,
     automationTasks.some(item => ['ready', 'running', 'completed'].includes(item.status)),
   ].filter(Boolean).length
@@ -1188,6 +1241,13 @@ export function CustomerRadarPageContent() {
     if (!selectedCustomerId || !filteredCustomers.some(customer => customer.id === selectedCustomerId))
       setSelectedCustomerId(filteredCustomers[0].id)
   }, [filteredCustomers, selectedCustomerId])
+
+  useEffect(() => {
+    if (accountList.length || accountLoading)
+      return
+
+    void getAccountList()
+  }, [accountList.length, accountLoading, getAccountList])
 
   useEffect(() => {
     let cancelled = false
@@ -1281,8 +1341,8 @@ export function CustomerRadarPageContent() {
   }, [automationRun, automationTasks, customerRecordsState, executionLogs, leads, liveExecutionEnabled, ownedPostWorkId, ownedPostXsecToken, platformCapabilities, profile, replyCandidates, socialAccounts, taskRuns])
 
   useEffect(() => {
-    setSocialAccounts(current => normalizeSocialAccounts(current, profile))
-  }, [profile.platforms])
+    setSocialAccounts(createSocialAccountsFromChannels(profile, accountList))
+  }, [accountList, profile])
 
   useEffect(() => {
     if (!remoteLoadedRef.current)
@@ -1772,9 +1832,10 @@ export function CustomerRadarPageContent() {
 
   async function handleStartAutomationRun() {
     const nextProfile = syncProfile()
+    const channelAccounts = createSocialAccountsFromChannels(nextProfile, useAccountStore.getState().accountList)
     const inspection = await probeCustomerRadarExecutor(nextProfile)
     setPlatformCapabilities(inspection.capabilities)
-    setSocialAccounts(inspection.socialAccounts)
+    setSocialAccounts(channelAccounts)
     setExecutionLogs(current => [...inspection.logs, ...current])
     setIsScanning(true)
     setAutomationRun(current => ({
@@ -1878,11 +1939,27 @@ export function CustomerRadarPageContent() {
   }
 
   async function handleInspectExecutor() {
-    const inspection = await probeCustomerRadarExecutor(syncProfile())
+    const nextProfile = syncProfile()
+    await getAccountList()
+    const channelAccounts = createSocialAccountsFromChannels(nextProfile, useAccountStore.getState().accountList)
+    const connectedCount = channelAccounts.filter(account => account.loginStatus === 'logged_in').length
+    const inspection = await probeCustomerRadarExecutor(nextProfile)
     setPlatformCapabilities(inspection.capabilities)
-    setSocialAccounts(inspection.socialAccounts)
-    setExecutionLogs(current => [...inspection.logs, ...current])
-    toast.success('已检测插件和平台执行能力')
+    setSocialAccounts(channelAccounts)
+    setExecutionLogs(current => [
+      {
+        id: `customer-radar-channel-${Date.now()}`,
+        at: nowText(),
+        detail: connectedCount
+          ? `已从频道管理读取到 ${connectedCount} 个可用平台账号，客户雷达会复用这些登录态。`
+          : '未读取到可用频道账号，请先到频道管理连接平台账号；本地执行器不再作为登录前置条件。',
+        level: connectedCount ? 'success' : 'warning',
+        title: '频道账号检测完成',
+      },
+      ...inspection.logs,
+      ...current,
+    ])
+    toast.success('已检测频道账号和执行能力')
   }
 
   async function handlePluginDiagnostic() {
@@ -1895,8 +1972,8 @@ export function CustomerRadarPageContent() {
         checkedAt,
         hasPlugin: false,
         platforms: [
-          { error: '未检测到浏览器插件对象', platform: 'xhs', ready: false },
-          { error: '未检测到浏览器插件对象', platform: 'douyin', ready: false },
+          { error: '未检测到本地执行器对象', platform: 'xhs', ready: false },
+          { error: '未检测到本地执行器对象', platform: 'douyin', ready: false },
         ],
       }
       setPluginDiagnostic(result)
@@ -1904,14 +1981,14 @@ export function CustomerRadarPageContent() {
         {
           id: `customer-radar-plugin-${Date.now()}`,
           at: checkedAt,
-          detail: '当前浏览器没有注入 window.AIToEarnPlugin。请确认已安装并启用巨鲸网络智能获客助手。',
+          detail: '当前浏览器没有注入本地页面执行器。频道账号登录态不受影响；真实页面抓取/发布会保持安全演练或待接入。',
           level: 'warning',
-          title: '插件未检测到',
+          title: '本地执行器未接入',
         },
         ...current,
       ])
       setIsPluginDiagnosticRunning(false)
-      toast.warning('未检测到巨鲸浏览器插件')
+      toast.warning('本地执行器未接入，频道账号仍可使用')
       return
     }
 
@@ -1925,7 +2002,7 @@ export function CustomerRadarPageContent() {
       result.version = await plugin.getVersion?.()
     }
     catch {
-      result.version = { name: '未知插件', version: '未知' }
+      result.version = { name: '未知执行器', version: '未知' }
     }
 
     try {
@@ -1947,7 +2024,7 @@ export function CustomerRadarPageContent() {
       }
       catch (error) {
         result.platforms.push({
-          error: error instanceof Error ? error.message : '登录态检测失败',
+          error: error instanceof Error ? error.message : '页面执行能力检测失败',
           platform,
           ready: false,
         })
@@ -1961,35 +2038,21 @@ export function CustomerRadarPageContent() {
           available: true,
           canPublishComment: true,
           canScanComments: true,
-          note: '巨鲸插件已检测到登录态，可进入真实执行链路测试。',
+          note: '本地执行器已检测到页面能力，可进入真实执行链路测试。',
         }
       : capability))
-    setSocialAccounts(current => current.map(account => {
-      const detected = result.platforms.find(item => item.platform === account.platform)
-      if (!detected)
-        return account
-
-      return {
-        ...account,
-        lastCheckedAt: checkedAt,
-        loginStatus: detected.ready ? 'logged_in' : 'not_logged_in',
-        nickname: detected.nickname || account.nickname,
-        note: detected.ready ? '插件已检测到平台登录态。' : detected.error || '未检测到平台登录态。',
-        pluginConnected: result.hasPlugin,
-      }
-    }))
     setExecutionLogs(current => [
       {
         id: `customer-radar-plugin-${Date.now()}`,
         at: checkedAt,
-        detail: `插件：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；小红书：${result.platforms.find(item => item.platform === 'xhs')?.ready ? '已登录' : '未登录'}；抖音：${result.platforms.find(item => item.platform === 'douyin')?.ready ? '已登录' : '未登录'}。`,
+        detail: `本地执行器：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；小红书页面：${result.platforms.find(item => item.platform === 'xhs')?.ready ? '可执行' : '未就绪'}；抖音页面：${result.platforms.find(item => item.platform === 'douyin')?.ready ? '可执行' : '未就绪'}。频道账号登录仍以频道管理为准。`,
         level: result.platforms.some(item => item.ready) ? 'success' : 'warning',
-        title: '插件诊断完成',
+        title: '本地执行器诊断完成',
       },
       ...current,
     ])
     setIsPluginDiagnosticRunning(false)
-    toast.success('插件诊断完成')
+    toast.success('本地执行器诊断完成')
   }
 
   function handleCreateAutomationTask() {
@@ -2655,9 +2718,11 @@ export function CustomerRadarPageContent() {
 
   async function handleLiveExecutionChange(enabled: boolean) {
     if (enabled) {
-      const inspection = await probeCustomerRadarExecutor(syncProfile())
+      const nextProfile = syncProfile()
+      const channelAccounts = createSocialAccountsFromChannels(nextProfile, useAccountStore.getState().accountList)
+      const inspection = await probeCustomerRadarExecutor(nextProfile)
       setPlatformCapabilities(inspection.capabilities)
-      setSocialAccounts(inspection.socialAccounts)
+      setSocialAccounts(channelAccounts)
       setExecutionLogs(current => [...inspection.logs, ...current])
 
       const publishReady = inspection.capabilities.some(item => item.available && item.canPublishComment)
@@ -2667,13 +2732,13 @@ export function CustomerRadarPageContent() {
           {
             id: `customer-radar-log-${Date.now()}`,
             at: new Date().toLocaleString('zh-CN', { hour12: false }),
-            detail: '未检测到可真实发布评论的平台账号，已保持安全演练模式。请先安装插件、授权权限，并登录目标平台后重新检测。',
+            detail: '频道账号已按频道管理读取；但当前没有可执行真实发布的本地页面执行能力，已保持安全演练模式。',
             level: 'warning',
             title: '真实执行未开启',
           },
           ...current,
         ])
-        toast.warning('未检测到可真实发布的平台账号，仍保持安全演练')
+        toast.warning('本地执行器未就绪，仍保持安全演练')
         return
       }
     }
@@ -2684,7 +2749,7 @@ export function CustomerRadarPageContent() {
         id: `customer-radar-log-${Date.now()}`,
         at: new Date().toLocaleString('zh-CN', { hour12: false }),
         detail: enabled
-          ? '真实平台执行已打开：后续发布按钮和全自动任务可通过插件向平台发送评论。请只在确认账号、内容和目标页面后使用。'
+          ? '真实平台执行已打开：后续发布按钮和全自动任务可通过本地页面执行器向平台发送评论。请只在确认账号、内容和目标页面后使用。'
           : '真实平台执行已关闭：系统只抓取、生成、入库和记录日志，不会向平台发送评论。',
         level: enabled ? 'warning' : 'info',
         title: enabled ? '真实执行已打开' : '安全演练模式',
@@ -2756,7 +2821,7 @@ export function CustomerRadarPageContent() {
                   </Badge>
                 </div>
                 <p className="mt-2 text-sm leading-6 text-slate-600">
-                  {tenantContext?.customerName || '当前客户'} 的数据独立保存：知识库、线索池、客户记忆、任务日志和插件状态都按登录账号隔离。
+                  {tenantContext?.customerName || '当前客户'} 的数据独立保存：知识库、线索池、客户记忆、任务日志和执行状态都按登录账号隔离。
                 </p>
               </div>
             </div>
@@ -2868,7 +2933,7 @@ export function CustomerRadarPageContent() {
                     </Badge>
                   </div>
                   <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                    客户登录后先完成插件、平台账号、知识库和任务创建四件事，再开始跑自动获客。这里就是客户侧每天打开系统后的第一屏。
+                    客户登录后先复用频道账号，再确认执行模式、知识库和获客任务。这里就是客户侧每天打开系统后的第一屏。
                   </p>
                 </div>
               </div>
@@ -2892,11 +2957,11 @@ export function CustomerRadarPageContent() {
                 </div>
                 <Button variant="outline" onClick={handlePluginDiagnostic} loading={isPluginDiagnosticRunning}>
                   <PlugZap className={cn('size-4', isPluginDiagnosticRunning && 'animate-pulse')} />
-                  插件诊断
+                  执行器诊断
                 </Button>
                 <Button variant="outline" onClick={handleInspectExecutor}>
                   <PlugZap className="size-4" />
-                  检测插件/账号
+                  检测频道/执行器
                 </Button>
                 <Button className="bg-[#102033] hover:bg-[#182b45]" onClick={handleCreateAutomationTask}>
                   <PlusCircle className="size-4" />
@@ -2906,8 +2971,8 @@ export function CustomerRadarPageContent() {
             </div>
 
             <div className="mt-5 grid gap-3 md:grid-cols-4">
-              <ReadinessStep active={pluginConnected} label="浏览器插件" text={pluginConnected ? '已检测到插件能力' : '未检测到插件，先模拟执行'} />
-              <ReadinessStep active={accountReady} label="平台账号" text={accountReady ? '至少一个账号可执行' : '等待平台登录检测'} />
+              <ReadinessStep active={accountReady} label="频道账号" text={accountReady ? '已复用频道登录态' : '先到频道管理连接账号'} />
+              <ReadinessStep active={executionModeReady} label="执行模式" text={localExecutorReady ? '真实执行能力可用' : '安全演练可运行'} />
               <ReadinessStep active={knowledgeReady} label="知识库" text={knowledgeReady ? '已可用于 AI 回复' : '请到全局知识库补充'} />
               <ReadinessStep active={automationTasks.length > 0} label="获客任务" text={automationTasks.length ? `${automationTasks.length} 个任务` : '先创建一个任务'} />
             </div>
@@ -2922,7 +2987,7 @@ export function CustomerRadarPageContent() {
               <div className="mt-5 rounded-lg border border-blue-100 bg-blue-50/60 p-4">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div>
-                    <div className="text-sm font-semibold text-slate-900">浏览器插件诊断</div>
+                    <div className="text-sm font-semibold text-slate-900">本地执行器诊断</div>
                     <div className="mt-1 text-xs text-slate-500">{pluginDiagnostic.checkedAt}</div>
                   </div>
                   <Badge
@@ -2934,12 +2999,12 @@ export function CustomerRadarPageContent() {
                         : 'border-rose-200 bg-rose-50 text-rose-700',
                     )}
                   >
-                    {pluginDiagnostic.hasPlugin ? '已注入' : '未注入'}
+                    {pluginDiagnostic.hasPlugin ? '已接入' : '未接入'}
                   </Badge>
                 </div>
                 <div className="mt-3 grid gap-3 md:grid-cols-3">
                   <div className="rounded-md border border-white/80 bg-white/80 p-3">
-                    <div className="text-xs text-slate-500">插件版本</div>
+                    <div className="text-xs text-slate-500">执行器版本</div>
                     <div className="mt-1 text-sm font-medium text-slate-900">
                       {pluginDiagnostic.version?.name || '未知'}
                       {' '}
@@ -2956,7 +3021,7 @@ export function CustomerRadarPageContent() {
                     <div key={item.platform} className="rounded-md border border-white/80 bg-white/80 p-3">
                       <div className="text-xs text-slate-500">{platformLabels[item.platform]}</div>
                       <div className={cn('mt-1 text-sm font-medium', item.ready ? 'text-emerald-700' : 'text-rose-700')}>
-                        {item.ready ? `已登录：${item.nickname || item.uid || '当前账号'}` : item.error || '未登录'}
+                        {item.ready ? `页面可执行：${item.nickname || item.uid || '当前账号'}` : item.error || '未就绪'}
                       </div>
                     </div>
                   ))}
@@ -3072,7 +3137,7 @@ export function CustomerRadarPageContent() {
                   </Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                  真实上线时填写自己发布的小红书笔记 ID，系统会尝试抓取该笔记评论，生成客户资料和候选回复。本地测试可直接点击按钮，插件未就绪时会使用样例评论验证流程。
+                  真实上线时填写自己发布的小红书笔记 ID，系统会尝试抓取该笔记评论，生成客户资料和候选回复。本地执行器未接入时会使用样例评论验证流程。
                 </p>
               </div>
             </div>
@@ -3216,7 +3281,7 @@ export function CustomerRadarPageContent() {
                 <Settings2 className="size-5 text-blue-600" />
                 <h2 className="text-lg font-semibold">平台执行器能力</h2>
               </div>
-              <p className="mt-1 text-sm text-slate-500">检测当前浏览器插件与平台适配能力，决定哪些动作能真执行，哪些只能进入模拟或待开发。</p>
+              <p className="mt-1 text-sm text-slate-500">频道账号负责登录态；本地执行器只决定真实页面抓取和发布能力。</p>
             </div>
             <div className="grid gap-3 p-5 md:grid-cols-2">
               {platformCapabilities.map(capability => (
@@ -3917,8 +3982,9 @@ function ReadinessStep({ active, label, text }: { active: boolean, label: string
 }
 
 function SocialAccountRow({ account }: { account: CustomerRadarSocialAccount }) {
-  function openPlatformLogin() {
-    window.open(platformLoginUrls[account.platform], '_blank', 'noopener,noreferrer')
+  function openChannelManager() {
+    const locale = window.location.pathname.split('/').filter(Boolean)[0] || 'zh-CN'
+    window.location.href = `/${locale}/accounts`
   }
 
   return (
@@ -3935,8 +4001,8 @@ function SocialAccountRow({ account }: { account: CustomerRadarSocialAccount }) 
       <p className="mt-3 text-sm leading-6 text-slate-600">{account.note}</p>
       <div className="mt-3 flex items-center justify-between gap-3">
         <div className="text-xs text-slate-400">最近检测：{account.lastCheckedAt}</div>
-        <Button type="button" size="sm" variant="outline" onClick={openPlatformLogin}>
-          打开平台
+        <Button type="button" size="sm" variant="outline" onClick={openChannelManager}>
+          管理频道
         </Button>
       </div>
     </div>

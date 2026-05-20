@@ -183,8 +183,8 @@ export function getCustomerRadarPlatformCapabilities(
         canScanComments: pluginReady,
         canSendDirectMessage: false,
         note: pluginReady
-          ? '小红书插件能力可用：可抓评论、可评论作品/回复评论。'
-          : '需要安装并登录浏览器插件后，才能抓取和发布小红书评论。',
+          ? '小红书本地执行器可用：可抓评论、可评论作品/回复评论。'
+          : '本地执行器未接入，真实抓取和发布小红书评论会进入安全演练；频道登录态请以频道管理为准。',
       }
     }
 
@@ -196,8 +196,8 @@ export function getCustomerRadarPlatformCapabilities(
         canScanComments: false,
         canSendDirectMessage: pluginReady,
         note: pluginReady
-          ? '抖音插件可发布评论/私信，但评论列表抓取仍需补齐。'
-          : '需要安装并登录浏览器插件；抖音评论列表抓取仍需开发。',
+          ? '抖音本地执行器可发布评论/私信，但评论列表抓取仍需补齐。'
+          : '本地执行器未接入；抖音评论列表抓取仍需开发，频道登录态请以频道管理为准。',
       }
     }
 
@@ -220,15 +220,15 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
     return {
       capabilities: profile.platforms.map(platform => createUnavailableCapability(
         platform,
-        '未检测到巨鲸浏览器插件，真实抓取和发布不可用；当前任务会进入模拟执行。',
+        '未检测到本地页面执行器，真实抓取和发布不可用；当前任务会进入安全演练。',
       )),
       logs: [
-        createLog('warning', '插件未安装或未注入', '当前页面没有检测到 window.AIToEarnPlugin，请先安装并授权巨鲸网络浏览器插件。'),
+        createLog('warning', '本地执行器未接入', '当前页面没有检测到本地页面执行器；频道账号登录态不受影响，真实抓取/发布会进入安全演练。'),
       ],
       socialAccounts: profile.platforms.map(platform => createSocialAccount(platform, {
         lastCheckedAt: checkedAt,
-        loginStatus: 'not_logged_in',
-        note: '未检测到插件，无法读取平台登录态。',
+        loginStatus: 'unknown',
+        note: '本地执行器未接入；平台登录态请以频道管理读取结果为准。',
         pluginConnected: false,
       })),
     }
@@ -240,15 +240,15 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
       return {
         capabilities: profile.platforms.map(platform => createUnavailableCapability(
           platform,
-          '插件已安装但未授权，无法读取平台登录态和执行动作。',
+          '本地执行器未授权，无法执行真实页面动作。',
         )),
         logs: [
-          createLog('warning', '插件未授权', `插件已安装，但权限未完整授权。已授权权限：${permission.permissions?.join('、') || '无'}`),
+          createLog('warning', '本地执行器未授权', `本地执行器已接入，但权限未完整授权。已授权权限：${permission.permissions?.join('、') || '无'}`),
         ],
         socialAccounts: profile.platforms.map(platform => createSocialAccount(platform, {
           lastCheckedAt: checkedAt,
           loginStatus: 'unknown',
-          note: '插件未授权，无法检测平台账号。',
+          note: '本地执行器未授权；平台登录态请以频道管理读取结果为准。',
           pluginConnected: true,
         })),
       }
@@ -258,15 +258,15 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
     return {
       capabilities: profile.platforms.map(platform => createUnavailableCapability(
         platform,
-        '插件权限检查失败，无法确认执行能力。',
+        '本地执行器权限检查失败，无法确认真实页面执行能力。',
       )),
       logs: [
-        createLog('error', '插件握手失败', error instanceof Error ? error.message : '插件权限检查异常'),
+        createLog('error', '本地执行器握手失败', error instanceof Error ? error.message : '本地执行器权限检查异常'),
       ],
       socialAccounts: profile.platforms.map(platform => createSocialAccount(platform, {
         lastCheckedAt: checkedAt,
         loginStatus: 'unknown',
-        note: '插件握手失败，无法检测平台账号。',
+        note: '本地执行器握手失败；平台登录态请以频道管理读取结果为准。',
         pluginConnected: true,
       })),
     }
@@ -278,11 +278,11 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
   for (const platform of profile.platforms) {
     const pluginPlatform = platformLoginMap[platform]
     if (!canLoginPlatform(platform) || !pluginPlatform) {
-      capabilities.push(createUnavailableCapability(platform, `${platform} 暂未接入插件登录态检测。`))
+      capabilities.push(createUnavailableCapability(platform, `${platform} 暂未接入本地页面执行器。`))
       socialAccounts.push(createSocialAccount(platform, {
         lastCheckedAt: checkedAt,
         loginStatus: 'unknown',
-        note: '该平台暂未接入插件登录检测。',
+        note: '该平台暂未接入本地执行器；频道登录态请以频道管理为准。',
         pluginConnected: false,
       }))
       continue
@@ -298,8 +298,8 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
         loginStatus: loggedIn ? 'logged_in' : 'not_logged_in',
         nickname: accountName || `${platform}账号`,
         note: loggedIn
-          ? `已通过插件识别到平台账号：${accountName || account.uid}。`
-          : '插件在线，但没有识别到已登录的平台账号。',
+          ? `本地执行器识别到页面账号：${accountName || account.uid}。`
+          : '本地执行器在线，但没有识别到可执行的页面账号。',
         pluginConnected: true,
       }))
 
@@ -311,8 +311,8 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
           canScanComments: loggedIn,
           canSendDirectMessage: false,
           note: loggedIn
-            ? '小红书账号在线：可抓取自己笔记评论、生成回复并通过插件发布评论。'
-            : '小红书账号未登录：请在浏览器里登录小红书后重新检测。',
+            ? '小红书页面执行能力在线：可抓取自己笔记评论、生成回复并发布评论。'
+            : '小红书页面未就绪：频道账号不受影响，真实页面动作需重新检测执行器。',
         })
       }
       else if (platform === 'douyin') {
@@ -324,19 +324,19 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
           canSendDirectMessage: loggedIn,
           note: loggedIn
             ? '抖音账号在线：可执行评论/私信动作；评论列表抓取仍需后续补齐。'
-            : '抖音账号未登录：请在浏览器里登录抖音后重新检测。',
+            : '抖音页面未就绪：频道账号不受影响，真实页面动作需重新检测执行器。',
         })
       }
     }
     catch (error) {
       capabilities.push(createUnavailableCapability(
         platform,
-        `${platform} 登录态检测失败：${error instanceof Error ? error.message : '未知错误'}`,
+        `${platform} 页面执行能力检测失败：${error instanceof Error ? error.message : '未知错误'}`,
       ))
       socialAccounts.push(createSocialAccount(platform, {
         lastCheckedAt: checkedAt,
         loginStatus: 'expired',
-        note: `插件可用，但平台登录态检测失败：${error instanceof Error ? error.message : '未知错误'}`,
+        note: `本地执行器可用，但页面执行能力检测失败：${error instanceof Error ? error.message : '未知错误'}`,
         pluginConnected: true,
       }))
     }
@@ -345,8 +345,8 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
   const onlineCount = socialAccounts.filter(item => item.loginStatus === 'logged_in').length
   logs.unshift(createLog(
     onlineCount > 0 ? 'success' : 'warning',
-    '插件握手完成',
-    `已检测 ${profile.platforms.length} 个平台，${onlineCount} 个平台账号在线。`,
+    '本地执行器握手完成',
+    `已检测 ${profile.platforms.length} 个平台，${onlineCount} 个平台具备页面执行能力。频道账号登录态以频道管理为准。`,
   ))
 
   return {
@@ -363,10 +363,10 @@ export function inspectCustomerRadarExecutor(profile: CustomerRadarProfile) {
   const logs: CustomerRadarExecutionLog[] = [
     createLog(
       hasPlugin() ? 'success' : 'warning',
-      hasPlugin() ? '插件能力已检测' : '插件未就绪',
+      hasPlugin() ? '本地执行器已检测' : '本地执行器未接入',
       hasPlugin()
         ? `已检测 ${capabilities.length} 个平台，其中 ${scanReadyCount} 个支持评论扫描，${publishReadyCount} 个支持发布评论。`
-        : '当前本地 Web 页面未检测到浏览器插件，任务会进入模拟执行；真实抓取和发布需要插件在线。',
+        : '当前本地 Web 页面未检测到本地执行器，任务会进入安全演练；频道账号登录态以频道管理为准。',
     ),
   ]
 
@@ -396,7 +396,7 @@ export async function scanOwnedPostComments(input: ScanOwnedPostCommentsInput) {
   if (!hasPlugin()) {
     return {
       comments: demoOwnedPostComments,
-      log: createLog('warning', '插件未就绪，使用样例评论', '当前页面没有检测到浏览器插件，已载入本地样例评论用于验证流程；真实抓取需要插件在线并登录小红书。'),
+      log: createLog('warning', '本地执行器未接入，使用样例评论', '当前页面没有检测到本地执行器，已载入本地样例评论用于验证流程；真实抓取需要本地执行器在线。'),
       success: true,
     }
   }
@@ -411,7 +411,7 @@ export async function scanOwnedPostComments(input: ScanOwnedPostCommentsInput) {
     if (!response.success) {
       return {
         comments: [],
-        log: createLog('error', '小红书评论抓取失败', response.message || '插件返回抓取失败。'),
+        log: createLog('error', '小红书评论抓取失败', response.message || '本地执行器返回抓取失败。'),
         success: false,
       }
     }
@@ -455,7 +455,7 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
       .slice(0, input.count || 8)
 
     return {
-      log: createLog('warning', '插件未就绪，使用关键词样例线索', `当前页面没有检测到浏览器插件，已用“${keyword}”样例线索验证关键词获客流程。`),
+      log: createLog('warning', '本地执行器未接入，使用关键词样例线索', `当前页面没有检测到本地执行器，已用“${keyword}”样例线索验证关键词获客流程。`),
       signals: fallbackSignals.map(item => ({ ...item, keyword })),
       success: true,
     }
@@ -510,7 +510,7 @@ export async function publishCustomerRadarReply(candidate: CustomerReplyCandidat
 
   if (!hasPlugin()) {
     return {
-      log: createLog('warning', '模拟发布回复', '浏览器插件未就绪，已按本地演示流程写入客户记忆；真实平台没有收到评论。'),
+      log: createLog('warning', '模拟发布回复', '本地执行器未接入，已按本地演示流程写入客户记忆；真实平台没有收到评论。'),
       skipped: true,
       success: true,
     }
@@ -558,7 +558,7 @@ export async function publishCustomerRadarReply(candidate: CustomerReplyCandidat
       log: createLog(
         response.success ? 'success' : 'error',
         response.success ? '平台评论已发布' : '平台评论发布失败',
-        response.message || (response.success ? '评论已通过插件执行发布。' : '插件返回发布失败。'),
+        response.message || (response.success ? '评论已通过本地执行器发布。' : '本地执行器返回发布失败。'),
       ),
       success: response.success,
     }
