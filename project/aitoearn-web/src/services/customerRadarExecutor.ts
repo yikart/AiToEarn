@@ -7,7 +7,7 @@ import type {
   CustomerReplyCandidate,
 } from '@/api/customerRadar'
 import { PlatType } from '@/app/config/platConfig'
-import { ensurePluginBridge } from '@/store/plugin/bridge'
+import { ensurePluginBridge, waitForPluginBridge } from '@/store/plugin/bridge'
 import type { CommentItem } from '@/store/plugin/plats/types'
 import { platformManager } from '@/store/plugin/plats/manager'
 
@@ -329,8 +329,10 @@ export function getCustomerRadarPlatformCapabilities(
 
 export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) {
   const checkedAt = nowText()
+  const plugin = await waitForPluginBridge(8000)
+  const permissionLogs: CustomerRadarExecutionLog[] = []
 
-  if (!hasPlugin()) {
+  if (!plugin) {
     return {
       capabilities: profile.platforms.map(platform => createUnavailableCapability(
         platform,
@@ -349,41 +351,21 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
   }
 
   try {
-    const permission = await withTimeout(ensurePluginBridge()!.checkPermission(), 12000, '本地执行器权限检查')
+    const permission = await withTimeout(plugin.checkPermission(), 12000, '本地执行器权限检查')
     if (!permission.granted) {
-      return {
-        capabilities: profile.platforms.map(platform => createUnavailableCapability(
-          platform,
-          '本地执行器未授权，无法执行真实页面动作。',
-        )),
-        logs: [
-          createLog('warning', '本地执行器未授权', `本地执行器已接入，但权限未完整授权。已授权权限：${permission.permissions?.join('、') || '无'}`),
-        ],
-        socialAccounts: profile.platforms.map(platform => createSocialAccount(platform, {
-          lastCheckedAt: checkedAt,
-          loginStatus: 'unknown',
-          note: '本地执行器未授权；平台登录态请以频道管理读取结果为准。',
-          pluginConnected: true,
-        })),
-      }
+      permissionLogs.push(createLog(
+        'warning',
+        '原版插件权限未完整授权',
+        `已检测到原版插件并继续启用关键词获客页面执行能力；频道账号登录态仍以频道管理为准。已授权权限：${permission.permissions?.join('、') || '无'}`,
+      ))
     }
   }
   catch (error) {
-    return {
-      capabilities: profile.platforms.map(platform => createUnavailableCapability(
-        platform,
-        '本地执行器权限检查失败，无法确认真实页面执行能力。',
-      )),
-      logs: [
-        createLog('error', '本地执行器握手失败', error instanceof Error ? error.message : '本地执行器权限检查异常'),
-      ],
-      socialAccounts: profile.platforms.map(platform => createSocialAccount(platform, {
-        lastCheckedAt: checkedAt,
-        loginStatus: 'unknown',
-        note: '本地执行器握手失败；平台登录态请以频道管理读取结果为准。',
-        pluginConnected: true,
-      })),
-    }
+    permissionLogs.push(createLog(
+      'warning',
+      '原版插件权限检查未返回',
+      `${error instanceof Error ? error.message : '本地执行器权限检查异常'}；关键词获客会继续优先尝试原版插件页面执行能力。`,
+    ))
   }
 
   const capabilities = getCustomerRadarPlatformCapabilities(profile.platforms)
@@ -393,6 +375,7 @@ export async function probeCustomerRadarExecutor(profile: CustomerRadarProfile) 
       '本地执行器握手完成',
       `已确认原版/本地页面执行器注入成功；真实平台动作会复用频道账号登录态，不再由执行器单独登录。`,
     ),
+    ...permissionLogs,
   ]
   const socialAccounts = profile.platforms.map(platform => createSocialAccount(platform, {
     lastCheckedAt: checkedAt,
@@ -445,7 +428,9 @@ export async function scanOwnedPostComments(input: ScanOwnedPostCommentsInput) {
     }
   }
 
-  if (!hasPlugin()) {
+  const plugin = await waitForPluginBridge(6000)
+
+  if (!plugin) {
     return {
       comments: demoOwnedPostComments,
       log: createLog('warning', '本地执行器未接入，使用样例评论', '当前页面没有检测到本地执行器，已载入本地样例评论用于验证流程；真实抓取需要本地执行器在线。'),
@@ -501,7 +486,9 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
     }
   }
 
-  if (!hasPlugin()) {
+  const plugin = await waitForPluginBridge(6000)
+
+  if (!plugin) {
     const fallbackSignals = demoKeywordSignals
       .filter(item => !input.excludedWords?.some(word => item.commentContent.includes(word) || item.sourceTitle.includes(word)))
       .slice(0, input.count || 8)
@@ -514,7 +501,6 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
   }
 
   try {
-    const plugin = ensurePluginBridge()!
     let result: KeywordDiscoveryPluginResult | undefined
 
     if (input.platform === 'xhs' && plugin.remoteAutomationRun) {
@@ -567,8 +553,9 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
 
 export async function publishCustomerRadarReply(candidate: CustomerReplyCandidate, options?: { liveExecutionEnabled?: boolean }) {
   const mappedPlatform = platformMap[candidate.platform]
+  const plugin = await waitForPluginBridge(6000)
 
-  if (!hasPlugin()) {
+  if (!plugin) {
     return {
       log: createLog('warning', '模拟发布回复', '本地执行器未接入，已按本地演示流程写入客户记忆；真实平台没有收到评论。'),
       skipped: true,

@@ -26,7 +26,7 @@ import { AccountStatus } from '@/app/config/accountConfig'
 import { useAccountStore } from '@/store/account'
 import { generateUUID, parseTopicString } from '@/utils'
 import { getOssUrl } from '@/utils/oss'
-import { ensurePluginBridge } from './bridge'
+import { ensurePluginBridge, waitForPluginBridge } from './bridge'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
 import {
@@ -105,6 +105,15 @@ const ERROR_MESSAGES = {
  */
 function getPublishKey(platform: PluginPlatformType, accountId?: string): string {
   return accountId ? `${platform}-${accountId}` : platform
+}
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number, label: string): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      window.setTimeout(() => reject(new Error(`${label}超时`)), timeoutMs)
+    }),
+  ])
 }
 
 /** 平台发布进度映射，key 为 platform 或 platform-accountId */
@@ -191,13 +200,13 @@ export const usePluginStore = create(
 
       /** 检查插件权限 */
       async checkPermission() {
-        const plugin = ensurePluginBridge()
+        const plugin = await waitForPluginBridge(8000)
         if (!plugin) {
           set({ status: Status.NOT_INSTALLED })
           return false
         }
         try {
-          const result = await plugin.checkPermission()
+          const result = await withTimeout(plugin.checkPermission(), 12000, '插件权限检查')
           if (result.granted) {
             set({ status: Status.READY })
             return true
@@ -228,10 +237,9 @@ export const usePluginStore = create(
             return
 
           const hasPermission = await methods.checkPermission()
-          // 已安装且已授权，停止轮询并刷新账号信息
+          // 已安装且已授权，停止轮询；频道账号登录态由频道管理维护。
           if (hasPermission) {
             methods.stopPolling()
-            await methods.refreshAllPlatformAccounts()
           }
         }
 
@@ -251,17 +259,20 @@ export const usePluginStore = create(
 
       /**
        * 初始化方法
-       * 1. 先将所有抖音和小红书账号设为离线
-       * 2. 检查插件状态，未安装或未授权则轮询，已就绪则刷新账号
+       * 1. 检查原版插件注入和权限
+       * 2. 插件账号只作为执行器能力参考，不覆盖频道管理登录态
        */
       async init() {
         // 设置初始化状态
         set({ isInitializing: true })
 
-        // 先将所有插件支持的平台账号设为离线
         methods.setAllPluginAccountsOffline()
 
-        const isInstalled = methods.checkPlugin()
+        const plugin = await waitForPluginBridge(8000)
+        const isInstalled = Boolean(plugin)
+        if (isInstalled && (get().status === Status.UNKNOWN || get().status === Status.NOT_INSTALLED))
+          set({ status: Status.CHECKING })
+
         if (!isInstalled) {
           // 未安装，开始轮询，初始化完成
           set({ isInitializing: false })
@@ -277,38 +288,13 @@ export const usePluginStore = create(
           return
         }
 
-        // 已就绪，刷新账号信息
-        await methods.refreshAllPlatformAccounts()
-        // 初始化完成
+        // 已就绪。插件只作为执行器桥接，账号登录态继续以频道管理为准。
         set({ isInitializing: false })
       },
 
-      /** 将所有插件支持的平台账号设为离线 */
+      /** 重置插件账号缓存；频道账号在线状态由频道管理维护 */
       setAllPluginAccountsOffline() {
-        const { accountList, accountMap, accountAccountMap } = useAccountStore.getState()
-        let hasChange = false
-
-        const updatedAccountList = accountList.map((acc) => {
-          if (!PLUGIN_SUPPORTED_PLATFORMS.includes(acc.type as any))
-            return acc
-
-          if (acc.status !== AccountStatus.DISABLE) {
-            hasChange = true
-            const updatedAccount = { ...acc, status: AccountStatus.DISABLE }
-            accountMap.set(acc.id, updatedAccount)
-            accountAccountMap.set(acc.account, updatedAccount)
-            return updatedAccount
-          }
-          return acc
-        })
-
-        if (hasChange) {
-          useAccountStore.setState({
-            accountList: updatedAccountList,
-            accountMap: new Map(accountMap),
-            accountAccountMap: new Map(accountAccountMap),
-          })
-        }
+        set({ platformAccounts: createInitialPlatformAccounts() })
       },
 
       /**
@@ -317,16 +303,16 @@ export const usePluginStore = create(
        */
       async syncAccountStatus() {
         methods.setAllPluginAccountsOffline()
-        const { status } = get()
-        if (status === Status.READY) {
-          await methods.refreshAllPlatformAccounts()
-        }
       },
 
-      /** 刷新所有平台账号信息，并同步更新 accountList 中的在线/离线状态 */
+      /** 刷新插件侧账号信息，不覆盖频道管理账号状态 */
       async refreshAllPlatformAccounts() {
         const { status } = get()
         if (status !== Status.READY)
+          return
+
+        const plugin = await waitForPluginBridge(4000)
+        if (!plugin)
           return
 
         const accounts: Partial<PlatformAccountsMap> = {}
@@ -334,7 +320,7 @@ export const usePluginStore = create(
         await Promise.all(
           PLUGIN_SUPPORTED_PLATFORMS.map(async (platform) => {
             try {
-              accounts[platform] = await ensurePluginBridge()!.login(platform)
+              accounts[platform] = await withTimeout(plugin.login(platform), 10000, `${platform}插件账号同步`)
             }
             catch {
               accounts[platform] = null
@@ -343,36 +329,6 @@ export const usePluginStore = create(
         )
 
         set({ platformAccounts: accounts as PlatformAccountsMap })
-
-        // 根据 platformAccounts 更新 accountList 中的在线/离线状态
-        const { accountList, accountMap, accountAccountMap } = useAccountStore.getState()
-        let hasChange = false
-
-        const updatedAccountList = accountList.map((acc) => {
-          if (!PLUGIN_SUPPORTED_PLATFORMS.includes(acc.type as any))
-            return acc
-
-          const platformAccount = accounts[acc.type as keyof typeof accounts]
-          const shouldBeOnline = platformAccount?.uid === acc.uid
-          const newStatus = shouldBeOnline ? AccountStatus.USABLE : AccountStatus.DISABLE
-
-          if (acc.status !== newStatus) {
-            hasChange = true
-            const updatedAccount = { ...acc, status: newStatus }
-            accountMap.set(acc.id, updatedAccount)
-            accountAccountMap.set(acc.account, updatedAccount)
-            return updatedAccount
-          }
-          return acc
-        })
-
-        if (hasChange) {
-          useAccountStore.setState({
-            accountList: updatedAccountList,
-            accountMap: new Map(accountMap),
-            accountAccountMap: new Map(accountAccountMap),
-          })
-        }
       },
 
       /** 同步插件账号到数据库 */

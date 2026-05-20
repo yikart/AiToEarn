@@ -2,6 +2,8 @@ import type { AIToEarnPluginAPI } from './types/baseTypes'
 
 const PAGE_SOURCE = 'aitoearn-web'
 const REQUEST_TIMEOUT_MS = 120000
+const DEFAULT_BRIDGE_WAIT_MS = 6000
+const BRIDGE_POLL_INTERVAL_MS = 250
 
 const MessageType = {
   CHECK_PERMISSION_REQUEST: 'CHECK_PERMISSION_REQUEST',
@@ -149,15 +151,74 @@ function createPageBridge(): AIToEarnPluginAPI {
   }
 }
 
+function isCustomExtensionBridgeReady() {
+  return document.documentElement.dataset.jujingExtensionBridge === 'ready'
+}
+
+function getPluginBridge() {
+  if (window.AIToEarnPlugin?.remoteAutomationRun)
+    return window.AIToEarnPlugin
+
+  if (window.AIToEarnPlugin && !window.__AIToEarnMessageBridge)
+    window.__AIToEarnMessageBridge = createPageBridge()
+
+  if (window.__AIToEarnMessageBridge)
+    return window.__AIToEarnMessageBridge
+
+  if (!isCustomExtensionBridgeReady())
+    return null
+
+  window.__AIToEarnMessageBridge = createPageBridge()
+  window.AIToEarnPlugin = window.__AIToEarnMessageBridge
+  window.JuJingBrowserBridge = window.__AIToEarnMessageBridge
+  return window.__AIToEarnMessageBridge
+}
+
 export function ensurePluginBridge() {
   if (typeof window === 'undefined')
     return null
 
-  const bridgeReady = document.documentElement.dataset.jujingExtensionBridge === 'ready'
-  if (!bridgeReady)
-    return window.AIToEarnPlugin || null
+  return getPluginBridge()
+}
 
-  window.AIToEarnPlugin = createPageBridge()
-  window.JuJingBrowserBridge = window.AIToEarnPlugin
-  return window.AIToEarnPlugin
+export function waitForPluginBridge(timeoutMs = DEFAULT_BRIDGE_WAIT_MS): Promise<AIToEarnPluginAPI | null> {
+  if (typeof window === 'undefined')
+    return Promise.resolve(null)
+
+  const current = getPluginBridge()
+  if (current)
+    return Promise.resolve(current)
+
+  return new Promise((resolve) => {
+    const startedAt = Date.now()
+    let timer: number | null = null
+
+    const cleanup = () => {
+      if (timer)
+        window.clearTimeout(timer)
+      window.removeEventListener('jujing-plugin-ready', check)
+      window.removeEventListener('aitoearn-plugin-ready', check)
+    }
+
+    function check() {
+      const plugin = getPluginBridge()
+      if (plugin) {
+        cleanup()
+        resolve(plugin)
+        return
+      }
+
+      if (Date.now() - startedAt >= timeoutMs) {
+        cleanup()
+        resolve(null)
+        return
+      }
+
+      timer = window.setTimeout(check, BRIDGE_POLL_INTERVAL_MS)
+    }
+
+    window.addEventListener('jujing-plugin-ready', check)
+    window.addEventListener('aitoearn-plugin-ready', check)
+    timer = window.setTimeout(check, BRIDGE_POLL_INTERVAL_MS)
+  })
 }

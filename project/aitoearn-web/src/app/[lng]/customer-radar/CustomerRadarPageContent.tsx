@@ -27,7 +27,7 @@ import type { GlobalKnowledgeItem } from '@/api/globalKnowledge'
 import type { SocialAccount } from '@/api/types/account.type'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { PlatType } from '@/app/config/platConfig'
-import { ensurePluginBridge } from '@/store/plugin/bridge'
+import { waitForPluginBridge } from '@/store/plugin/bridge'
 import type { CommentItem } from '@/store/plugin/plats/types'
 import { useAccountStore } from '@/store/account'
 import {
@@ -723,6 +723,16 @@ function createLeads(profile: CustomerRadarProfile): CustomerLead[] {
 
 function nowText() {
   return new Date().toLocaleString('zh-CN', { hour12: false })
+}
+
+function withTimeout<T>(promise: Promise<T> | undefined, timeoutMs: number, fallback: T): Promise<T> {
+  if (!promise)
+    return Promise.resolve(fallback)
+
+  return Promise.race([
+    promise.catch(() => fallback),
+    new Promise<T>(resolve => window.setTimeout(() => resolve(fallback), timeoutMs)),
+  ])
 }
 
 function getNextRunAtForCadence(cadence: CustomerRadarTask['cadence']) {
@@ -1965,7 +1975,7 @@ export function CustomerRadarPageContent() {
   async function handlePluginDiagnostic() {
     setIsPluginDiagnosticRunning(true)
     const checkedAt = nowText()
-    const plugin = ensurePluginBridge()
+    const plugin = await waitForPluginBridge(8000)
 
     if (!plugin) {
       const result: PluginDiagnosticResult = {
@@ -1999,36 +2009,30 @@ export function CustomerRadarPageContent() {
     }
 
     try {
-      result.version = await plugin.getVersion?.()
+      result.version = await withTimeout(plugin.getVersion?.(), 8000, { name: '未知执行器', version: '未知' })
     }
     catch {
       result.version = { name: '未知执行器', version: '未知' }
     }
 
     try {
-      result.permission = await plugin.checkPermission?.()
+      result.permission = await withTimeout(plugin.checkPermission?.(), 8000, { granted: false, permissions: [] })
     }
     catch {
       result.permission = { granted: false, origins: [], permissions: [] }
     }
 
     for (const platform of ['xhs', 'douyin'] as const) {
-      try {
-        const account = await (plugin as any).login(platform)
-        result.platforms.push({
-          nickname: account?.nickname || account?.account || `${platformLabels[platform]}账号`,
-          platform,
-          ready: true,
-          uid: account?.uid,
-        })
-      }
-      catch (error) {
-        result.platforms.push({
-          error: error instanceof Error ? error.message : '页面执行能力检测失败',
-          platform,
-          ready: false,
-        })
-      }
+      const ready = platform === 'xhs'
+        ? Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.xhsRequest)
+        : Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.douyinInteraction || plugin.douyinDirectMessage)
+
+      result.platforms.push({
+        error: ready ? undefined : '未检测到该平台可用的页面执行接口',
+        nickname: ready ? `${platformLabels[platform]}页面执行器` : undefined,
+        platform,
+        ready,
+      })
     }
 
     setPluginDiagnostic(result)
@@ -2045,7 +2049,7 @@ export function CustomerRadarPageContent() {
       {
         id: `customer-radar-plugin-${Date.now()}`,
         at: checkedAt,
-        detail: `本地执行器：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；小红书页面：${result.platforms.find(item => item.platform === 'xhs')?.ready ? '可执行' : '未就绪'}；抖音页面：${result.platforms.find(item => item.platform === 'douyin')?.ready ? '可执行' : '未就绪'}。频道账号登录仍以频道管理为准。`,
+        detail: `本地执行器：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；小红书页面：${result.platforms.find(item => item.platform === 'xhs')?.ready ? '可执行' : '未就绪'}；抖音页面：${result.platforms.find(item => item.platform === 'douyin')?.ready ? '可执行' : '未就绪'}。诊断不再调用插件登录，频道账号登录仍以频道管理为准，关键词获客优先走原版插件页面自动化能力。`,
         level: result.platforms.some(item => item.ready) ? 'success' : 'warning',
         title: '本地执行器诊断完成',
       },

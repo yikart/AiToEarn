@@ -244,6 +244,7 @@ declare global {
   interface Window {
     // @ts-ignore
     AIToEarnPlugin?: AIToEarnPluginAPI
+    __AIToEarnMessageBridge?: AIToEarnPluginAPI
     JuJingBrowserBridge?: AIToEarnPluginAPI
   }
 }
