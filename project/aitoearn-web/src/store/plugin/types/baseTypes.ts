@@ -139,6 +139,32 @@ export interface DouyinInteractionResult {
 }
 
 /**
+ * 远程页面自动化执行参数
+ */
+export interface RemoteAutomationRunParams {
+  /** 目标页面 URL */
+  url: string
+  /** 在目标页面主上下文执行的 JS 代码 */
+  code: string
+  /** 超时时间 */
+  timeout?: number
+  /** 是否返回截图 */
+  needScreenshot?: boolean
+}
+
+/**
+ * 远程页面自动化执行结果
+ */
+export interface RemoteAutomationRunResult<T = any> {
+  success: boolean
+  message?: string
+  error?: string
+  result?: T
+  executionTime?: number
+  screenshot?: string
+}
+
+/**
  * 插件 API 接口定义
  */
 export interface AIToEarnPluginAPI {
@@ -204,6 +230,11 @@ export interface AIToEarnPluginAPI {
    * 统一平台互动能力
    */
   unifiedInteraction?: (params: Record<string, any>) => Promise<any>
+
+  /**
+   * 原版插件远程页面自动化能力
+   */
+  remoteAutomationRun?: <T = any>(params: RemoteAutomationRunParams) => Promise<RemoteAutomationRunResult<T>>
 }
 
 /**

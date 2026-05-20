@@ -146,6 +146,13 @@ export interface ScanKeywordDiscoveryInput {
   platform: Extract<CustomerRadarPlatform, 'xhs' | 'douyin'>
 }
 
+interface KeywordDiscoveryPluginResult {
+  items?: Partial<KeywordDiscoverySignal>[]
+  keyword?: string
+  message?: string
+  success?: boolean
+}
+
 const demoKeywordSignals: KeywordDiscoverySignal[] = [
   {
     author: '同城新店主',
@@ -168,6 +175,114 @@ const demoKeywordSignals: KeywordDiscoverySignal[] = [
     workId: 'demo-keyword-note-2',
   },
 ]
+
+function createXhsSearchUrl(keyword: string) {
+  return `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(keyword)}&source=web_search_result_notes`
+}
+
+function createXhsKeywordDiscoveryScript(keyword: string, limit: number) {
+  return `
+    const keyword = ${JSON.stringify(keyword)};
+    const limit = ${JSON.stringify(limit)};
+    const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+    const normalize = value => String(value || '').replace(/\\s+/g, ' ').trim();
+    const toAbsoluteUrl = value => {
+      try {
+        return new URL(value || '', location.href).href;
+      }
+      catch {
+        return '';
+      }
+    };
+    const getWorkId = value => {
+      const match = String(value || '').match(/\\/(?:explore|discovery\\/item|video)\\/([^/?#]+)/);
+      return match ? match[1] : '';
+    };
+    const isSearchWorkUrl = value => /xiaohongshu\\.com\\/(?:explore|discovery\\/item)\\//.test(value);
+
+    await sleep(1800);
+    window.scrollTo({ top: Math.min(document.body.scrollHeight || 0, 900), behavior: 'instant' });
+    await sleep(900);
+
+    const pageText = normalize(document.body?.innerText);
+    if (/登录后查看搜索结果|手机号登录|获取验证码|扫码登录|登录后查看更多/.test(pageText)) {
+      return {
+        items: [],
+        keyword,
+        message: '小红书搜索页要求登录，请先在 Chrome 里的小红书完成登录后重试',
+        success: false,
+      };
+    }
+
+    const seen = new Set();
+    const items = [];
+    const anchors = Array.from(document.querySelectorAll('a[href]'));
+    for (const anchor of anchors) {
+      const sourceUrl = toAbsoluteUrl(anchor.getAttribute('href'));
+      if (!isSearchWorkUrl(sourceUrl) || seen.has(sourceUrl))
+        continue;
+
+      seen.add(sourceUrl);
+      const card = anchor.closest('[class*="note"], [class*="card"], section, article, div') || anchor;
+      const cardText = normalize(card.innerText || anchor.innerText);
+      const title = normalize(
+        anchor.getAttribute('title')
+        || anchor.getAttribute('aria-label')
+        || card.querySelector('[class*="title"], [class*="desc"], [class*="content"]')?.textContent
+        || cardText.split(' ').slice(0, 24).join(' ')
+      );
+      const authorLink = card.querySelector('a[href*="/user"]');
+      const author = normalize(
+        authorLink?.textContent
+        || card.querySelector('[class*="author"], [class*="name"], [class*="user"]')?.textContent
+        || '小红书用户'
+      );
+
+      items.push({
+        author,
+        authorId: authorLink ? toAbsoluteUrl(authorLink.getAttribute('href')) : '',
+        commentContent: cardText || title || keyword,
+        sourceTitle: title || '小红书搜索结果',
+        sourceUrl,
+        workId: getWorkId(sourceUrl),
+      });
+
+      if (items.length >= limit)
+        break;
+    }
+
+    return {
+      items,
+      keyword,
+      message: items.length > 0 ? '已通过原版 AiToEarn 插件读取小红书搜索页线索' : '搜索页已打开，但没有识别到可用作品线索',
+      success: items.length > 0,
+    };
+  `
+}
+
+function normalizeKeywordDiscoverySignals(
+  result: KeywordDiscoveryPluginResult | undefined,
+  input: ScanKeywordDiscoveryInput,
+): KeywordDiscoverySignal[] {
+  const keyword = input.keyword.trim()
+  const rawItems: Partial<KeywordDiscoverySignal>[] = Array.isArray(result?.items) ? result.items : []
+
+  return rawItems
+    .map((item: Partial<KeywordDiscoverySignal>) => ({
+      author: item.author || '平台用户',
+      authorId: item.authorId || '',
+      commentContent: item.commentContent || item.sourceTitle || '',
+      keyword,
+      platform: input.platform,
+      sourceTitle: item.sourceTitle || `关键词 ${keyword} 的搜索结果`,
+      sourceUrl: item.sourceUrl || '',
+      workId: item.workId,
+    }))
+    .filter(item => item.commentContent.trim())
+    .filter(item => !noisyKeywordSignalPattern.test(`${item.author} ${item.commentContent} ${item.sourceTitle}`))
+    .filter(item => item.sourceUrl.includes('/explore/') || item.sourceUrl.includes('/video/') || item.sourceUrl.includes('/discovery/item/'))
+    .filter(item => !input.excludedWords?.some(word => item.commentContent.includes(word) || item.sourceTitle.includes(word)))
+}
 
 export function getCustomerRadarPlatformCapabilities(
   platforms: CustomerRadarPlatform[],
@@ -462,29 +577,37 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
   }
 
   try {
-    const result = await ensurePluginBridge()!.unifiedInteraction?.({
-      action: 'discoverByKeyword',
-      count: input.count || 8,
-      keyword,
-      platform: input.platform,
-    })
+    const plugin = ensurePluginBridge()!
+    let result: KeywordDiscoveryPluginResult | undefined
 
-    const rawItems: Partial<KeywordDiscoverySignal>[] = Array.isArray(result?.items) ? result.items : []
-    const signals: KeywordDiscoverySignal[] = rawItems
-      .map((item: Partial<KeywordDiscoverySignal>) => ({
-        author: item.author || '平台用户',
-        authorId: item.authorId || '',
-        commentContent: item.commentContent || item.sourceTitle || '',
+    if (input.platform === 'xhs' && plugin.remoteAutomationRun) {
+      const remoteResult = await plugin.remoteAutomationRun<KeywordDiscoveryPluginResult>({
+        code: createXhsKeywordDiscoveryScript(keyword, input.count || 8),
+        needScreenshot: false,
+        timeout: 45000,
+        url: createXhsSearchUrl(keyword),
+      })
+
+      if (!remoteResult.success && !remoteResult.result) {
+        throw new Error(remoteResult.error || remoteResult.message || '原版插件关键词采集失败')
+      }
+
+      result = remoteResult.result || {
+        items: [],
+        message: remoteResult.message,
+        success: remoteResult.success,
+      }
+    }
+    else {
+      result = await plugin.unifiedInteraction?.({
+        action: 'discoverByKeyword',
+        count: input.count || 8,
         keyword,
         platform: input.platform,
-        sourceTitle: item.sourceTitle || `关键词 ${keyword} 的搜索结果`,
-        sourceUrl: item.sourceUrl || '',
-        workId: item.workId,
-      }))
-      .filter(item => item.commentContent.trim())
-      .filter(item => !noisyKeywordSignalPattern.test(`${item.author} ${item.commentContent} ${item.sourceTitle}`))
-      .filter(item => item.sourceUrl.includes('/explore/') || item.sourceUrl.includes('/video/') || item.sourceUrl.includes('/discovery/item/'))
-      .filter(item => !input.excludedWords?.some(word => item.commentContent.includes(word) || item.sourceTitle.includes(word)))
+      })
+    }
+
+    const signals = normalizeKeywordDiscoverySignals(result, input)
 
     return {
       log: createLog(

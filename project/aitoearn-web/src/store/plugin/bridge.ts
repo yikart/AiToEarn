@@ -20,6 +20,8 @@ const MessageType = {
   PUBLISH_ERROR: 'PUBLISH_ERROR',
   PUBLISH_PROGRESS: 'PUBLISH_PROGRESS',
   PUBLISH_REQUEST: 'PUBLISH_REQUEST',
+  REMOTE_AUTOMATION_RUN: 'REMOTE_AUTOMATION_RUN',
+  REMOTE_AUTOMATION_RUN_RESPONSE: 'REMOTE_AUTOMATION_RUN_RESPONSE',
   UNIFIED_INTERACTION: 'UNIFIED_INTERACTION',
   UNIFIED_INTERACTION_RESPONSE: 'UNIFIED_INTERACTION_RESPONSE',
   XHS_REQUEST: 'XHS_REQUEST',
@@ -134,6 +136,9 @@ function createPageBridge(): AIToEarnPluginAPI {
     },
     unifiedInteraction(params) {
       return request(MessageType.UNIFIED_INTERACTION, MessageType.UNIFIED_INTERACTION_RESPONSE, params)
+    },
+    remoteAutomationRun(params) {
+      return request(MessageType.REMOTE_AUTOMATION_RUN, MessageType.REMOTE_AUTOMATION_RUN_RESPONSE, params, params.timeout || REQUEST_TIMEOUT_MS)
     },
     async xhsRequest(params) {
       const result = await request<any>(MessageType.XHS_REQUEST, MessageType.XHS_REQUEST_RESPONSE, params)
