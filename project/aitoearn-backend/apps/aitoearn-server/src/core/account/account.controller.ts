@@ -88,8 +88,18 @@ export class AccountController {
     summary: 'Get Account Detail',
   })
   @Get(':id')
-  async getAccountInfo(@Param() param: AccountIdDto) {
-    return this.accountService.getAccountById(param.id)
+  async getAccountInfo(
+    @GetToken() token: TokenInfo,
+    @Param() param: AccountIdDto,
+  ) {
+    const account = await this.accountService.getAccountById(param.id)
+    if (!account || account.userId !== token.id) {
+      throw new AppException(ResponseCode.AccountNotFound, 'The account does not exist.')
+    }
+    if (account.avatar) {
+      account.avatar = FileUtil.buildUrl(account.avatar)
+    }
+    return account
   }
 
   @ApiDoc({

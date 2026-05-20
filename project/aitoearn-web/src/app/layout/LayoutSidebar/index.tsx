@@ -7,7 +7,7 @@
 
 import { useState } from 'react'
 import { useShallow } from 'zustand/shallow'
-import { routerData } from '@/app/layout/routerData'
+import { filterRouterDataForUser, routerData } from '@/app/layout/routerData'
 import { useNavigationLogic } from '@/app/layout/shared'
 import NotificationPanel from '@/components/notification/NotificationPanel'
 import { useSettingsModalStore } from '@/components/SettingsModal/store'
@@ -31,6 +31,7 @@ function LayoutSidebar() {
       setSidebarCollapsed: state.setSidebarCollapsed,
     })),
   )
+  const userInfo = useUserStore(state => state.userInfo)
 
   // UI 状态
   const [notificationVisible, setNotificationVisible] = useState(false)
@@ -42,7 +43,7 @@ function LayoutSidebar() {
   }
 
   // 转换路由数据为 NavSection 所需格式
-  const navItems = routerData.map(item => ({
+  const navItems = filterRouterDataForUser(routerData, userInfo).map(item => ({
     path: item.path || '/',
     translationKey: item.translationKey,
     icon: item.icon,

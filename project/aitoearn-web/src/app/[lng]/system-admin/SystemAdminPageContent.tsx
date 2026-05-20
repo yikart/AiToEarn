@@ -1,7 +1,6 @@
 'use client'
 
 import type { CustomerTenantPlan, SystemAiConfig } from '@/api/systemSettings'
-import { systemSettingsApi } from '@/api/systemSettings'
 import {
   Bot,
   CheckCircle2,
@@ -15,10 +14,13 @@ import {
   UsersRound,
 } from 'lucide-react'
 import { useEffect, useState } from 'react'
+import { systemSettingsApi } from '@/api/systemSettings'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
+import { useUserStore } from '@/store/user'
+import { isSystemAdminUser } from '@/utils/systemAdmin'
 
 const defaultConfig: SystemAiConfig = {
   anthropicBaseUrl: 'https://api.anthropic.com',
@@ -31,22 +33,47 @@ export function SystemAdminPageContent() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [savingTenants, setSavingTenants] = useState(false)
+  const token = useUserStore(state => state.token)
+  const userInfo = useUserStore(state => state.userInfo)
+  const hasHydrated = useUserStore(state => state._hasHydrated)
+  const isAdmin = isSystemAdminUser(userInfo)
+  const hasUserInfo = Boolean(userInfo?.id || userInfo?.mail)
 
   useEffect(() => {
-    async function loadAdminData() {
-      const [configRes, tenantsRes] = await Promise.all([
-        systemSettingsApi.getAiConfig(),
-        systemSettingsApi.getCustomerTenants(),
-      ])
-      if (configRes?.code === 0 && configRes.data)
-        setConfig({ ...defaultConfig, ...configRes.data })
-      if (tenantsRes?.code === 0 && tenantsRes.data)
-        setTenants(tenantsRes.data)
+    if (!hasHydrated || !token || !hasUserInfo)
+      return
+
+    if (!isAdmin) {
       setLoading(false)
+      return
+    }
+
+    let cancelled = false
+
+    async function loadAdminData() {
+      try {
+        const [configRes, tenantsRes] = await Promise.all([
+          systemSettingsApi.getAiConfig(),
+          systemSettingsApi.getCustomerTenants(),
+        ])
+        if (cancelled)
+          return
+        if (configRes?.code === 0 && configRes.data)
+          setConfig({ ...defaultConfig, ...configRes.data })
+        if (tenantsRes?.code === 0 && tenantsRes.data)
+          setTenants(tenantsRes.data)
+      }
+      finally {
+        if (!cancelled)
+          setLoading(false)
+      }
     }
 
     void loadAdminData()
-  }, [])
+    return () => {
+      cancelled = true
+    }
+  }, [hasHydrated, hasUserInfo, isAdmin, token])
 
   function updateConfig(patch: Partial<SystemAiConfig>) {
     setConfig(current => ({ ...current, ...patch }))
@@ -86,6 +113,32 @@ export function SystemAdminPageContent() {
   const activeTenantCount = tenants.filter(item => item.status === 'active' || item.status === 'trial').length
   const totalLeads = tenants.reduce((sum, item) => sum + (item.metrics?.leads || 0), 0)
   const totalTasks = tenants.reduce((sum, item) => sum + (item.metrics?.tasks || 0), 0)
+
+  if (!hasHydrated || (token && !hasUserInfo)) {
+    return (
+      <main className="min-h-screen bg-[#f7f9fc] px-4 py-5 text-[#102033] md:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl rounded-lg border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+          正在确认账号权限...
+        </div>
+      </main>
+    )
+  }
+
+  if (!token || !isAdmin) {
+    return (
+      <main className="min-h-screen bg-[#f7f9fc] px-4 py-5 text-[#102033] md:px-6 lg:px-8">
+        <div className="mx-auto flex max-w-2xl flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex items-center gap-2 text-lg font-semibold text-slate-900">
+            <ShieldCheck className="size-5 text-blue-600" />
+            无系统管理权限
+          </div>
+          <p className="text-sm leading-6 text-slate-600">
+            当前账号只能使用自己的频道、知识库和客户雷达。系统管理仅对部署管理员开放。
+          </p>
+        </div>
+      </main>
+    )
+  }
 
   return (
     <main className="min-h-screen bg-[#f7f9fc] px-4 py-5 text-[#102033] md:px-6 lg:px-8">
@@ -203,7 +256,13 @@ export function SystemAdminPageContent() {
                         {tenant.status === 'active' ? '正式' : tenant.status === 'trial' ? '试用' : '暂停'}
                       </Badge>
                     </div>
-                    <p className="mt-1 text-sm text-slate-500">{tenant.mail || '未绑定邮箱'} · {tenant.tenantId}</p>
+                    <p className="mt-1 text-sm text-slate-500">
+                      {tenant.mail || '未绑定邮箱'}
+                      {' '}
+                      ·
+                      {' '}
+                      {tenant.tenantId}
+                    </p>
                     <div className="mt-3 grid gap-2 text-sm md:grid-cols-3">
                       <MiniStat label="线索" value={tenant.metrics?.leads || 0} />
                       <MiniStat label="客户" value={tenant.metrics?.customers || 0} />
@@ -211,7 +270,7 @@ export function SystemAdminPageContent() {
                     </div>
                   </div>
 
-                    <div className="grid w-full gap-3 md:grid-cols-3 xl:max-w-3xl">
+                  <div className="grid w-full gap-3 md:grid-cols-3 xl:max-w-3xl">
                     <Field label="客户名称">
                       <Input value={tenant.customerName || ''} onChange={event => updateTenant(tenant.userId, { customerName: event.target.value })} />
                     </Field>

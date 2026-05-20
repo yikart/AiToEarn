@@ -1,3 +1,4 @@
+import type { UserInfo } from '@/store/user'
 /**
  * 路由/导航数据配置
  * 包含导航项的图标、路径、翻译键等信息
@@ -12,6 +13,7 @@ import {
   Sparkles,
   Upload,
 } from 'lucide-react'
+import { isSystemAdminUser } from '@/utils/systemAdmin'
 
 export interface IRouterDataItem {
   // 导航标题
@@ -24,6 +26,8 @@ export interface IRouterDataItem {
   icon?: React.ReactNode
   // 子导航
   children?: IRouterDataItem[]
+  // 仅系统管理员可见
+  adminOnly?: boolean
 }
 
 export const routerData: IRouterDataItem[] = [
@@ -56,6 +60,7 @@ export const routerData: IRouterDataItem[] = [
     translationKey: 'systemAdmin',
     path: '/system-admin',
     icon: <ServerCog size={20} />,
+    adminOnly: true,
   },
   {
     name: 'Task History',
@@ -77,3 +82,16 @@ export const routerData: IRouterDataItem[] = [
     icon: <Bot size={20} />,
   },
 ]
+
+export function filterRouterDataForUser(
+  items: IRouterDataItem[],
+  userInfo?: Partial<UserInfo>,
+): IRouterDataItem[] {
+  const isAdmin = isSystemAdminUser(userInfo)
+  return items
+    .filter(item => !item.adminOnly || isAdmin)
+    .map(item => ({
+      ...item,
+      children: item.children ? filterRouterDataForUser(item.children, userInfo) : undefined,
+    }))
+}

@@ -1,5 +1,5 @@
-import http from '@/utils/request'
 import type { GlobalKnowledgeItem } from './globalKnowledge'
+import http from '@/utils/request'
 
 export type CustomerRadarPlatform = 'douyin' | 'xhs' | 'wxSph' | 'bilibili'
 
@@ -195,14 +195,6 @@ export interface CustomerReplyCandidate {
   status: CustomerReplyCandidateStatus
 }
 
-export interface CustomerRadarScanRequest {
-  profile: CustomerRadarProfile
-}
-
-export interface CustomerRadarScanResponse {
-  leads: CustomerLead[]
-}
-
 export interface CustomerReplyGenerationRequest {
   candidate: CustomerReplyCandidate
   customer?: CustomerRecord
@@ -275,30 +267,6 @@ export const customerRadarApi = {
   },
   saveWorkspace(data: CustomerRadarWorkspace) {
     return http.post<CustomerRadarWorkspace>('customer-radar/workspace', data, true)
-  },
-  scan(data: CustomerRadarScanRequest) {
-    return http.post<CustomerRadarScanResponse>('customer-radar/scan', data)
-  },
-  approveLead(leadId: string) {
-    return http.post<{ success: boolean }>('customer-radar/leads/approve', { leadId })
-  },
-  rejectLead(leadId: string) {
-    return http.post<{ success: boolean }>('customer-radar/leads/reject', { leadId })
-  },
-  getCustomers() {
-    return http.get<CustomerRecord[]>('customer-radar/customers')
-  },
-  getKnowledgeBase() {
-    return http.get<GlobalKnowledgeItem[]>('knowledge-base')
-  },
-  createAutomationRun(data: { profile: CustomerRadarProfile }) {
-    return http.post<CustomerRadarAutomationRun>('customer-radar/automation-runs', data)
-  },
-  approveReply(candidateId: string) {
-    return http.post<{ success: boolean }>('customer-radar/reply-candidates/approve', { candidateId })
-  },
-  publishReply(candidateId: string) {
-    return http.post<{ success: boolean }>('customer-radar/reply-candidates/publish', { candidateId })
   },
   generateReplyCandidate(data: CustomerReplyGenerationRequest) {
     return http.post<CustomerReplyGenerationResponse>('customer-radar/reply-candidates/generate', data, true)
