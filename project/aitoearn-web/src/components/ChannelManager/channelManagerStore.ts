@@ -67,6 +67,8 @@ const initialAuthState: AuthState = {
   isTimeout: false,
 }
 
+const XHS_CREATOR_LOGIN_URL = 'https://creator.xiaohongshu.com/'
+
 /** 初始状态 */
 const initialState: ChannelManagerState = {
   open: false,
@@ -403,6 +405,16 @@ export const useChannelManagerStore = create(
       async startAuth(platform: PlatType, spaceId?: string) {
         // 清理之前的定时器
         clearAllTimers()
+
+        if (platform === PlatType.Xhs) {
+          set({
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
+            targetSpaceId: spaceId || get().targetSpaceId,
+          })
+          window.location.assign(XHS_CREATOR_LOGIN_URL)
+          return
+        }
 
         // 设置授权状态
         set({

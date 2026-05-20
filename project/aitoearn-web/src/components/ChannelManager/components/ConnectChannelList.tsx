@@ -6,14 +6,12 @@
 'use client'
 
 import { ArrowLeft, Sparkles } from 'lucide-react'
-import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
 import { isPlatformAvailable, PlatType, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { useIsMobile } from '@/hooks/useIsMobile'
 import { useAccountStore } from '@/store/account'
 import { useUserStore } from '@/store/user'
 import { navigateToLogin } from '@/utils/auth'
@@ -21,7 +19,6 @@ import { useChannelManagerStore } from '../channelManagerStore'
 
 export function ConnectChannelList() {
   const { t } = useTransClient('account')
-  const isMobile = useIsMobile()
 
   const { isNewUser, setCurrentView, startAuth, targetSpaceId, setTargetSpaceId, closeModal }
     = useChannelManagerStore(
@@ -54,12 +51,6 @@ export function ConnectChannelList() {
 
   // 处理平台点击
   const handlePlatformClick = (platform: PlatType) => {
-    // 移动端点击小红书时显示提示
-    if (isMobile && platform === PlatType.Xhs) {
-      toast.warning(t('channelManager.xhsMobileNotSupported'))
-      return
-    }
-
     // 未登录时关闭频道弹框并跳转登录页
     if (!token) {
       closeModal()
@@ -136,13 +127,6 @@ export function ConnectChannelList() {
                       `}
                       onClick={() => handlePlatformClick(key as PlatType)}
                     >
-                      {/* 小红书浏览器插件标签 */}
-                      {key === PlatType.Xhs && (
-                        <span className="absolute -right-px -top-px z-20 rounded-bl rounded-tr-lg bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                          {t('channelManager.browserPlugin')}
-                        </span>
-                      )}
-
                       {/* 光泽效果 */}
                       <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 

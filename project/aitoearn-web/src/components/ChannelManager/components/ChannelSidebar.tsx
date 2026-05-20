@@ -6,7 +6,7 @@
 'use client'
 
 import type { PlatType } from '@/app/config/platConfig'
-import { Layers, Plus, Puzzle } from 'lucide-react'
+import { Layers, Plus } from 'lucide-react'
 import { useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { AccountPlatInfoMap, isPlatformAvailable, RegionSortedPlatInfoArr } from '@/app/config/platConfig'
@@ -15,15 +15,7 @@ import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
-import { PLUGIN_SUPPORTED_PLATFORMS } from '@/store/plugin'
 import { useChannelManagerStore } from '../channelManagerStore'
-
-/**
- * 检查平台是否需要插件支持
- */
-function isPluginPlatform(platform: PlatType): boolean {
-  return PLUGIN_SUPPORTED_PLATFORMS.includes(platform as any)
-}
 
 export function ChannelSidebar() {
   const { t } = useTransClient('account')
@@ -136,7 +128,6 @@ export function ChannelSidebar() {
           {platformsWithAccounts.map((platform) => {
             const info = AccountPlatInfoMap.get(platform)
             const count = platformAccountCounts.get(platform) || 0
-            const needsPlugin = isPluginPlatform(platform)
             const isRegionRestricted = !isPlatformAvailable(platform)
 
             if (!info)
@@ -163,9 +154,6 @@ export function ChannelSidebar() {
                     alt={info.name}
                     className="h-4 w-4 object-contain"
                   />
-                  {needsPlugin && (
-                    <Puzzle className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 text-muted-foreground" />
-                  )}
                 </div>
                 <span className="flex-1 truncate text-left">{info.name}</span>
                 <span
@@ -191,7 +179,6 @@ export function ChannelSidebar() {
               </div>
               {platformsWithoutAccounts.map((platform) => {
                 const info = AccountPlatInfoMap.get(platform)
-                const needsPlugin = isPluginPlatform(platform)
                 const isRegionRestricted = !isPlatformAvailable(platform)
 
                 if (!info)
@@ -215,9 +202,6 @@ export function ChannelSidebar() {
                         alt={info.name}
                         className="h-4 w-4 object-contain grayscale"
                       />
-                      {needsPlugin && (
-                        <Puzzle className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5" />
-                      )}
                     </div>
                     <span className="flex-1 truncate text-left">{info.name}</span>
                     <Plus className="h-3 w-3" />
