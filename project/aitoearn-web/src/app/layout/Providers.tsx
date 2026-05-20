@@ -1,14 +1,13 @@
 /**
  * Providers - 全局 Provider 组件
- * 包含 Google OAuth、Ant Design 配置、Toast、主题等全局配置
+ * 包含 Ant Design 配置、Toast、主题等全局配置
  */
 
 'use client'
 
-import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ThemeProvider } from 'next-themes'
-import { usePathname, useRouter } from 'next/navigation'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { usePathname } from 'next/navigation'
+import { useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
 import LoginDialog from '@/app/layout/LoginDialog'
 import { useLoginDialogStore } from '@/app/layout/LoginDialog/store'
@@ -22,7 +21,6 @@ import { isPublicPage } from '@/utils/route'
 
 export function Providers({ children, lng, autoLoginToken }: { children: React.ReactNode, lng: string, autoLoginToken?: string }) {
   const pathname = usePathname()
-  const router = useRouter()
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
 
@@ -86,42 +84,22 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
   }, [_hasHydrated, token, pathname, autoLoginToken])
 
-  // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
-  useLayoutEffect(() => {
-    const hl = lng.replace('-', '_')
-    const GIS_URL = 'https://accounts.google.com/gsi/client'
-    const originalAppendChild = document.body.appendChild.bind(document.body)
-
-    document.body.appendChild = function <T extends Node>(node: T): T {
-      if (node instanceof HTMLScriptElement && node.src === GIS_URL) {
-        node.src = `${GIS_URL}?hl=${hl}`
-      }
-      return originalAppendChild(node)
-    }
-
-    return () => {
-      document.body.appendChild = originalAppendChild
-    }
-  }, [lng])
-
   return (
     <>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
-        <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com">
-          <Toaster position="top-center" richColors />
-          {/* 专用右上角通知中心（不影响现有 toast） */}
-          <NotificationCenter />
-          <LowBalanceAlertProvider />
-          {/* 全局登录弹框 */}
-          <LoginDialog />
-          {/* 全局设置弹框 - 统一在此渲染，避免多处重复 */}
-          <SettingsModal
-            open={settingsVisible}
-            onClose={closeSettings}
-            defaultTab={settingsDefaultTab}
-          />
-          {children}
-        </GoogleOAuthProvider>
+        <Toaster position="top-center" richColors />
+        {/* 专用右上角通知中心（不影响现有 toast） */}
+        <NotificationCenter />
+        <LowBalanceAlertProvider />
+        {/* 全局登录弹框 */}
+        <LoginDialog />
+        {/* 全局设置弹框 - 统一在此渲染，避免多处重复 */}
+        <SettingsModal
+          open={settingsVisible}
+          onClose={closeSettings}
+          defaultTab={settingsDefaultTab}
+        />
+        {children}
       </ThemeProvider>
     </>
   )

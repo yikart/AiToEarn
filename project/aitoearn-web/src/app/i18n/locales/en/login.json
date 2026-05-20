@@ -2,12 +2,14 @@
   "seo": {
     "loginTitle": "Sign In - Access Your AI Content Workspace",
     "loginKeywords": "login, sign in, Giant Whale Network account, AI platform login, content creator login, social media management",
-    "loginDescription": "Sign in to your Giant Whale Network account to start your AI creative journey. Supports Google login and email verification code login."
+    "loginDescription": "Sign in to your Giant Whale Network account to start your AI creative journey. Supports phone and email verification code login."
   },
   "welcomeBack": "Sign in",
   "loginSubtitle": "Start creating with Giant Whale Network",
   "emailPlaceholder": "Enter your email address",
   "login": "Sign in",
+  "phoneLogin": "Phone",
+  "emailLogin": "Email",
   "or": "or",
   "emailRequired": "Please enter your email",
   "emailInvalid": "Please enter a valid email address",
@@ -25,7 +27,6 @@
   "loginSuccess": "Login successful",
   "loginFailed": "Login failed",
   "loginError": "Login failed, please try again later",
-  "googleLoginFailed": "Google login failed",
   "termsText": "By continuing, you agree to our",
   "termsOfService": "Terms of Service",
   "and": "and",

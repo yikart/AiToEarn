@@ -2,12 +2,14 @@
   "seo": {
     "loginTitle": "ログイン - AIコンテンツワークスペースにアクセス",
     "loginKeywords": "ログイン, サインイン, Giant Whale Networkアカウント, AIプラットフォームログイン, クリエイターログイン, SNS管理",
-    "loginDescription": "Giant Whale Networkアカウントにサインインして、AIクリエイティブの旅を始めましょう。Googleログインとメール認証コードに対応しています。"
+    "loginDescription": "Giant Whale Networkアカウントにサインインして、AIクリエイティブの旅を始めましょう。電話番号とメールの認証コードログインに対応しています。"
   },
   "welcomeBack": "サインイン",
   "loginSubtitle": "Giant Whale Networkで創作を始めましょう",
   "emailPlaceholder": "メールアドレスを入力",
   "login": "サインイン",
+  "phoneLogin": "電話番号",
+  "emailLogin": "メール",
   "or": "または",
   "emailRequired": "メールアドレスを入力してください",
   "emailInvalid": "有効なメールアドレスを入力してください",
@@ -25,7 +27,6 @@
   "loginSuccess": "ログインに成功しました",
   "loginFailed": "ログインに失敗しました",
   "loginError": "ログインに失敗しました。後でもう一度お試しください",
-  "googleLoginFailed": "Googleログインに失敗しました",
   "termsText": "続行することで、以下に同意したものとみなされます：",
   "termsOfService": "利用規約",
   "and": "および",

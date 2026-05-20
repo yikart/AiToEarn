@@ -6,6 +6,19 @@ import type { StateStorage } from 'zustand/middleware'
  */
 const isBrowser = typeof window !== 'undefined' && typeof indexedDB !== 'undefined'
 
+function getLocalStorage(): Storage | undefined {
+  if (typeof window === 'undefined' || !('localStorage' in window)) {
+    return undefined
+  }
+
+  try {
+    return window.localStorage
+  }
+  catch {
+    return undefined
+  }
+}
+
 /**
  * 动态导入 idb-keyval，仅在浏览器环境中使用
  * 避免 SSR 时报错：indexedDB is not defined
@@ -32,14 +45,14 @@ class IndexedDBStorage implements StateStorage {
     try {
       const idb = await getIdbKeyval()
       if (idb) {
-        const value = (await idb.get(name)) || localStorage.getItem(name)
+        const value = (await idb.get(name)) || getLocalStorage()?.getItem(name)
         return value
       }
-      return localStorage.getItem(name)
+      return getLocalStorage()?.getItem(name) ?? null
     }
     catch (error) {
       console.error('[IndexedDBStorage] getItem error:', error)
-      return localStorage.getItem(name)
+      return getLocalStorage()?.getItem(name) ?? null
     }
   }
 
@@ -61,9 +74,7 @@ class IndexedDBStorage implements StateStorage {
     }
     catch (error) {
       console.error('[IndexedDBStorage] setItem error:', error)
-      if (isBrowser) {
-        localStorage.setItem(name, value)
-      }
+      getLocalStorage()?.setItem(name, value)
     }
   }
 
@@ -81,7 +92,7 @@ class IndexedDBStorage implements StateStorage {
     }
     catch (error) {
       console.error('[IndexedDBStorage] removeItem error:', error)
-      localStorage.removeItem(name)
+      getLocalStorage()?.removeItem(name)
     }
   }
 
@@ -99,7 +110,7 @@ class IndexedDBStorage implements StateStorage {
     }
     catch (error) {
       console.error('[IndexedDBStorage] clear error:', error)
-      localStorage.clear()
+      getLocalStorage()?.clear()
     }
   }
 }

@@ -2,12 +2,14 @@
   "seo": {
     "loginTitle": "Anmelden - Zugang zu Ihrem KI-Content-Arbeitsbereich",
     "loginKeywords": "Anmelden, Login, Giant Whale Network-Konto, KI-Plattform-Login, Creator-Login, Social-Media-Management",
-    "loginDescription": "Melden Sie sich bei Ihrem Giant Whale Network-Konto an, um Ihre KI-Kreativreise zu beginnen. Unterstützt Google-Anmeldung und E-Mail-Bestätigungscode."
+    "loginDescription": "Melden Sie sich bei Ihrem Giant Whale Network-Konto an, um Ihre KI-Kreativreise zu beginnen. Unterstützt Anmeldung per Telefon- und E-Mail-Bestätigungscode."
   },
   "welcomeBack": "Anmelden",
   "loginSubtitle": "Beginnen Sie mit Giant Whale Network zu erstellen",
   "emailPlaceholder": "Geben Sie Ihre E-Mail-Adresse ein",
   "login": "Anmelden",
+  "phoneLogin": "Telefon",
+  "emailLogin": "E-Mail",
   "or": "oder",
   "emailRequired": "Bitte geben Sie Ihre E-Mail ein",
   "emailInvalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein",
@@ -25,7 +27,6 @@
   "loginSuccess": "Anmeldung erfolgreich",
   "loginFailed": "Anmeldung fehlgeschlagen",
   "loginError": "Anmeldung fehlgeschlagen, bitte später erneut versuchen",
-  "googleLoginFailed": "Google-Anmeldung fehlgeschlagen",
   "termsText": "Durch Fortfahren stimmen Sie unseren",
   "termsOfService": "Nutzungsbedingungen",
   "and": "und",

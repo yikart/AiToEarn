@@ -1,13 +1,15 @@
 {
   "seo": {
     "loginTitle": "Connexion - Accédez à votre espace de création IA",
-    "loginDescription": "Connectez-vous à votre compte Giant Whale Network pour commencer votre voyage créatif avec l'IA. Supporte la connexion Google et par code de vérification e-mail.",
+    "loginDescription": "Connectez-vous à votre compte Giant Whale Network pour commencer votre voyage créatif avec l'IA. Prend en charge la connexion par code de vérification téléphone et e-mail.",
     "loginKeywords": "connexion, se connecter, compte Giant Whale Network, connexion plateforme IA, connexion créateur, gestion réseaux sociaux"
   },
   "welcomeBack": "Se connecter",
   "loginSubtitle": "Commencez à créer avec Giant Whale Network",
   "emailPlaceholder": "Entrez votre adresse e-mail",
   "login": "Se connecter",
+  "phoneLogin": "Téléphone",
+  "emailLogin": "E-mail",
   "or": "ou",
   "emailRequired": "Veuillez entrer votre e-mail",
   "emailInvalid": "Veuillez entrer une adresse e-mail valide",
@@ -25,7 +27,6 @@
   "loginSuccess": "Connexion réussie",
   "loginFailed": "Échec de la connexion",
   "loginError": "Échec de la connexion, veuillez réessayer plus tard",
-  "googleLoginFailed": "Échec de la connexion Google",
   "termsText": "En continuant, vous acceptez nos",
   "termsOfService": "Conditions d'utilisation",
   "and": "et",
