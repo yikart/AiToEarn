@@ -183,7 +183,7 @@ AiToEarn タスクをリアルタイムの X/Twitter 文脈から始める場合
 openclaw plugins install @xquik/tweetclaw
 ```
 
-TweetClaw で tweets と replies の検索、ユーザー確認、フォロワー文脈のエクスポート、tweets のモニタリングを行い、source URL、handle、timestamp、engagement signal を記録します。レビュー済みの要約または URL だけを AiToEarn のドラフト生成と配信に渡してください。post tweets、post tweet replies、direct messages、media upload、media download は別途承認が必要な操作として扱います。
+TweetClaw で tweets と replies の検索、ユーザー確認、フォロワー文脈のエクスポート、tweets のモニタリングを行い、source URL、handle、timestamp、engagement signal を記録します。レビュー済みの要約または URL だけを AiToEarn のドラフト生成と配信に渡してください。`post tweets`、`post tweet replies`、`direct messages`、`media upload`、`media download` は別途承認が必要な操作として扱います。
 
 ---
 

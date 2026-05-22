@@ -178,7 +178,7 @@ When an AiToEarn task starts from live X/Twitter context, install [TweetClaw](ht
 openclaw plugins install @xquik/tweetclaw
 ```
 
-Use TweetClaw to search tweets, search tweet replies, look up users, export follower context, monitor tweets, and capture source URLs, handles, timestamps, and engagement signals. Feed only reviewed summaries or URLs into AiToEarn draft generation and distribution. Keep post tweets, post tweet replies, direct messages, media upload, and media download as separate approval-gated actions.
+Use TweetClaw to search tweets, search tweet replies, look up users, export follower context, monitor tweets, and capture source URLs, handles, timestamps, and engagement signals. Feed only reviewed summaries or URLs into AiToEarn draft generation and distribution. Keep `post tweets`, `post tweet replies`, `direct messages`, `media upload`, and `media download` as separate approval-gated actions.
 
 ---
 

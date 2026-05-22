@@ -184,7 +184,7 @@ npx -y @aitoearn/openclaw-plugin-cli
 openclaw plugins install @xquik/tweetclaw
 ```
 
-先用 TweetClaw 搜索 tweets 和 replies、查询用户、导出粉丝上下文、监控 tweets，并记录来源 URL、作者 handle、时间戳和互动信号。只把人工复核后的摘要或 URL 交给 AiToEarn 做草稿生成与分发。post tweets、post tweet replies、direct messages、media upload 和 media download 保持为单独审批动作。
+先用 TweetClaw 搜索 tweets 和 replies、查询用户、导出粉丝上下文、监控 tweets，并记录来源 URL、作者 handle、时间戳和互动信号。只把人工复核后的摘要或 URL 交给 AiToEarn 做草稿生成与分发。`post tweets`、`post tweet replies`、`direct messages`、`media upload` 和 `media download` 保持为单独审批动作。
 
 ---
 
