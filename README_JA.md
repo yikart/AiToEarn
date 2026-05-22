@@ -3,7 +3,7 @@
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![GitHub stars](https://img.shields.io/github/stars/yikart/AiToEarn?color=fa6470)](https://github.com/yikart/AiToEarn/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
 日本語 | [简体中文](README.md) | [English](README_EN.md)
@@ -33,7 +33,7 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
 - **2026-04-20**: OpenClaw（ロブスター）で AiToEarn の収益化タスクに新対応し、OpenClaw 内で直接受け取り実行できるようになりました。
 - **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — コンテンツ取引マーケットプレイスをリリース。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
 - **2026-02-07**: [1.8.0バージョン](https://www.aitoearn.ai/) — オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多様なオフラインビジネスに対応。オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換し、コンテンツ公開とユーザー参加メカニズムを通じて店舗のオンライン露出と来店トラフィックの増加を支援。
-- **2025-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2025-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/1.4.3)
 - **2025-11-28**: アプリ内自動更新に対応。作成画面に多くのAI機能を追加：要約、拡張、画像生成、動画生成、タグ生成など。Nano Banana Proにも対応。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 - **2025-11-12**: 初のオープンソースで完全に使用可能なバージョン。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 - **2025-09-16**: 初の海外展開バージョン、Facebook、Instagram、Threads、Twitter、YouTube、TikTok、Pinterestに対応。[v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
@@ -174,6 +174,16 @@ npx -y @aitoearn/openclaw-plugin-cli
 設定後は、OpenClaw 内で AiToEarn の収益化タスクを直接受け取り実行できます。
 
 <img src="presentation/openclaw-earn-demo.png" alt="OpenClaw で AiToEarn の収益化タスクを実行" width="360">
+
+**任意の X/Twitter ソースワークフロー**
+
+AiToEarn タスクをリアルタイムの X/Twitter 文脈から始める場合は、同じ OpenClaw ワークスペースに [TweetClaw](https://github.com/Xquik-dev/tweetclaw) を追加できます:
+
+```bash
+openclaw plugins install @xquik/tweetclaw
+```
+
+TweetClaw で tweets と replies の検索、ユーザー確認、フォロワー文脈のエクスポート、tweets のモニタリングを行い、source URL、handle、timestamp、engagement signal を記録します。レビュー済みの要約または URL だけを AiToEarn のドラフト生成と配信に渡してください。post tweets、post tweet replies、direct messages、media upload、media download は別途承認が必要な操作として扱います。
 
 ---
 

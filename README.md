@@ -3,7 +3,7 @@
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
 [![GitHub stars](https://img.shields.io/github/stars/yikart/AiToEarn?color=fa6470)](https://github.com/yikart/AiToEarn/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE.txt)
 [![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
 
 简体中文 | [English](README_EN.md) | [日本語](README_JA.md)
@@ -33,7 +33,7 @@ AiToEarn 通过 **AI Agent自动化**，帮助 OPC（一人公司）、创作者
 - **2026-04-20**: OpenClaw（龙虾）新增 AiToEarn 赚钱支持，可在龙虾中直接接收并执行内容变现任务。
 - **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — 内容交易市场上线；新增 OpenClaw（龙虾）支持，可在龙虾中直接使用 AiToEarn；新增 MCP 协议支持，可在 Claude、Cursor 等任何支持 MCP 的 Agent 或大模型中使用 AiToEarn。
 - **2026-02-07**: [1.8.0 version](https://www.aitoearn.ai/)，新增线下商户推广解决方案，支持餐厅、零售店、民宿、美容美发、健身房等多种线下业态，将线下推广活动转化为可执行的线上传播任务，通过内容发布与用户参与机制，帮助门店获取更多线上曝光和到店流量。
-- **2025-12-15**: "All In Agent" 的开始！我们加入了能够自动内容生成和发布以及一些帮助你操作 Aitoearn 的超级 AI 智能 Agent。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2025-12-15**: "All In Agent" 的开始！我们加入了能够自动内容生成和发布以及一些帮助你操作 Aitoearn 的超级 AI 智能 Agent。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/1.4.3)
 - **2025-11-28**: 支持应用内自动更新。在创作界面新增大量 AI 功能，例如：缩写、扩写、图片生成、视频生成、标签生成等，并支持 Nano Banana Pro。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 - **2025-11-12**: 首个开源且可完全使用的版本。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 - **2025-09-16**: 首个出海版本，新增支持 Facebook、Instagram、Threads、Twitter、YouTube、TikTok、Pinterest。[v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
@@ -175,6 +175,16 @@ npx -y @aitoearn/openclaw-plugin-cli
 安装完成后，你就可以在 OpenClaw 中直接接收并执行 AiToEarn 的赚钱任务：
 
 <img src="presentation/openclaw-earn-demo.png" alt="在 OpenClaw 中执行 AiToEarn 赚钱任务" width="360">
+
+**可选 X/Twitter 素材工作流**
+
+当 AiToEarn 任务需要从实时 X/Twitter 语境出发时，可在同一个 OpenClaw 工作区安装 [TweetClaw](https://github.com/Xquik-dev/tweetclaw)：
+
+```bash
+openclaw plugins install @xquik/tweetclaw
+```
+
+先用 TweetClaw 搜索 tweets 和 replies、查询用户、导出粉丝上下文、监控 tweets，并记录来源 URL、作者 handle、时间戳和互动信号。只把人工复核后的摘要或 URL 交给 AiToEarn 做草稿生成与分发。post tweets、post tweet replies、direct messages、media upload 和 media download 保持为单独审批动作。
 
 ---
 
