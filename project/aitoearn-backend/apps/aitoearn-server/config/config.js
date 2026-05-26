@@ -26,6 +26,7 @@ const {
 
 const {
   NODE_ENV,
+  APP_ENV,
   APP_DOMAIN,
 } = process.env
 
@@ -61,7 +62,10 @@ const {
   YOUTUBE_CLIENT_SECRET,
   WXPLAT_APP_ID,
   WXPLAT_APP_SECRET,
+  WXPLAT_TOKEN,
   WXPLAT_ENCODING_AES_KEY,
+  MY_WXPLAT_ID,
+  MY_WXPLAT_SECRET,
   DOYIN_CLIENT_ID,
   DOYIN_CLIENT_SECRET,
 } = process.env
@@ -78,6 +82,55 @@ const {
   RELAY_API_KEY,
   RELAY_CALLBACK_URL,
 } = process.env
+
+function isProductionRuntime() {
+  return NODE_ENV === 'production' || APP_ENV === 'production'
+}
+
+function isPlaceholder(value, placeholders) {
+  return !value || placeholders.includes(value)
+}
+
+function parseAssetsConfig() {
+  try {
+    return ASSETS_CONFIG ? JSON.parse(ASSETS_CONFIG) : {}
+  }
+  catch (error) {
+    throw new Error(`ASSETS_CONFIG 格式错误: ${error.message}`)
+  }
+}
+
+const assetsConfig = parseAssetsConfig()
+
+function assertNoInsecureDefaults() {
+  if (!isProductionRuntime() || process.env.AITOEARN_ALLOW_INSECURE_DEFAULTS === 'true')
+    return
+
+  const problems = []
+  const requiredSecrets = [
+    ['JWT_SECRET', JWT_SECRET, ['change-this-jwt-secret']],
+    ['INTERNAL_TOKEN', INTERNAL_TOKEN, ['change-this-secret-token']],
+    ['MONGODB_PASSWORD', MONGODB_PASSWORD, ['password']],
+    ['REDIS_PASSWORD', REDIS_PASSWORD, ['password']],
+    ['ASSETS_CONFIG.accessKeyId', assetsConfig.accessKeyId, ['rustfsadmin']],
+    ['ASSETS_CONFIG.secretAccessKey', assetsConfig.secretAccessKey, ['rustfsadmin']],
+    ['WXPLAT_TOKEN', WXPLAT_TOKEN, ['aitoearn']],
+    ['MY_WXPLAT_SECRET', MY_WXPLAT_SECRET, ['f1a36f23d027c969d6c6969423d72eda']],
+  ]
+
+  for (const [name, value, placeholders] of requiredSecrets) {
+    if (isPlaceholder(value, placeholders))
+      problems.push(name)
+  }
+
+  if (problems.length) {
+    throw new Error(
+      `生产环境拒绝使用默认/空密钥：${problems.join(', ')}。请配置安全密钥，或仅在本地开发时设置 AITOEARN_ALLOW_INSECURE_DEFAULTS=true。`,
+    )
+  }
+}
+
+assertNoInsecureDefaults()
 
 module.exports = {
   // 应用基础
@@ -232,13 +285,13 @@ module.exports = {
     wxPlat: {
       id: WXPLAT_APP_ID,
       secret: WXPLAT_APP_SECRET,
-      token: 'aitoearn',
+      token: WXPLAT_TOKEN,
       encodingAESKey: WXPLAT_ENCODING_AES_KEY,
       authBackHost: `https://${APP_DOMAIN}/platcallback`,
     },
     myWxPlat: {
-      id: 'dev',
-      secret: 'f1a36f23d027c969d6c6969423d72eda',
+      id: MY_WXPLAT_ID,
+      secret: MY_WXPLAT_SECRET,
       hostUrl: `https://wxplat.${APP_DOMAIN}`,
     },
     youtube: {
@@ -254,7 +307,7 @@ module.exports = {
   },
 
   // 外部服务
-  assets: JSON.parse(ASSETS_CONFIG),
+  assets: assetsConfig,
   mail: {
     transport: {
       host: 'email-smtp.ap-southeast-1.amazonaws.com',

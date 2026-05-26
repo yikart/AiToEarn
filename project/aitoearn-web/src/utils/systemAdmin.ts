@@ -1,7 +1,5 @@
 import type { UserInfo } from '@/store/user'
 
-const DEFAULT_SYSTEM_ADMIN_EMAILS = ['admin@aitoearn.local']
-
 function normalizeEmails(value?: string) {
   return (value || '')
     .split(',')
@@ -11,7 +9,7 @@ function normalizeEmails(value?: string) {
 
 export function getSystemAdminEmails() {
   const configuredEmails = normalizeEmails(process.env.NEXT_PUBLIC_SYSTEM_ADMIN_EMAILS)
-  return configuredEmails.length ? configuredEmails : DEFAULT_SYSTEM_ADMIN_EMAILS
+  return configuredEmails
 }
 
 export function isSystemAdminUser(userInfo?: Partial<UserInfo>) {

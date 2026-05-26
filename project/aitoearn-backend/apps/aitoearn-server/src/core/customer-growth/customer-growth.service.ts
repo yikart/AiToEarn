@@ -311,7 +311,7 @@ export class CustomerGrowthService {
   private async resolveReplyAiConfig(userId: string): Promise<ResolvedAiConfig> {
     const [tenantConfig, systemConfig, planMap] = await Promise.all([
       this.getRawTenantAiConfig(userId),
-      this.getSystemAiConfig(),
+      this.getRawSystemAiConfig(),
       this.getTenantPlanMap(),
     ])
     const tenantPlan = planMap.get(userId)
@@ -425,7 +425,7 @@ export class CustomerGrowthService {
         temperature: 0.65,
       }),
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       method: 'POST',
@@ -534,12 +534,27 @@ export class CustomerGrowthService {
   }
 
   async getSystemAiConfig() {
+    const config = await this.getRawSystemAiConfig()
+    return this.maskTenantAiConfig(config)
+  }
+
+  private async getRawSystemAiConfig() {
     const setting = await this.systemSettingRepository.getByKey('ai-config')
-    return setting?.value || {}
+    return this.normalizeTenantAiConfig(setting?.value as Partial<CustomerTenantAiConfigDto> | undefined)
   }
 
   async saveSystemAiConfig(userId: string, data: SystemAiConfigDto) {
-    const saved = await this.systemSettingRepository.upsertByKey('ai-config', { ...data }, userId)
-    return saved?.value || {}
+    const existing = await this.getRawSystemAiConfig()
+    const next = this.normalizeTenantAiConfig({ ...existing, ...data })
+    const input = data as Partial<CustomerTenantAiConfigDto>
+
+    for (const field of secretFields) {
+      if (!input[field] || String(input[field]).includes('***'))
+        (next as Record<string, unknown>)[field] = existing[field]
+    }
+
+    const saved = await this.systemSettingRepository.upsertByKey('ai-config', next as Record<string, unknown>, userId)
+    const savedConfig = this.normalizeTenantAiConfig(saved?.value as Partial<CustomerTenantAiConfigDto> | undefined)
+    return this.maskTenantAiConfig(savedConfig)
   }
 }

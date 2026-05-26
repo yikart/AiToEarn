@@ -95,6 +95,7 @@
     "defaultPrompt": "为位于{{position}}的{{name}}创建一个探店打卡内容，展示专业的探店体验",
     "defaultPromptNoPosition": "为{{name}}创建一个探店打卡内容，展示专业的探店体验",
     "promptRequired": "请输入提示词后再生成",
+    "connectAccountFirst": "请先在“我的频道”连接至少一个可发布账号，再生成平台草稿。",
     "contentTypeVideo": "视频",
     "contentTypeImageText": "图文",
     "imageModel": "图片模型",

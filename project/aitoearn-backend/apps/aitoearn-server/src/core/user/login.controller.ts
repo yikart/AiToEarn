@@ -56,11 +56,32 @@ export class LoginController {
 
     this.userService.afterLogin(userInfo)
 
+    const safeUserInfo = this.toSafeUserInfo(userInfo)
+
     return {
       type,
       token,
       exp: tokenInfo.exp,
-      userInfo,
+      userInfo: safeUserInfo,
+    }
+  }
+
+  private toSafeUserInfo(userInfo: User) {
+    const user = userInfo as User & { _id?: unknown }
+    return {
+      _id: user._id,
+      avatar: userInfo.avatar,
+      createdAt: userInfo.createdAt,
+      id: userInfo.id,
+      mail: userInfo.mail,
+      name: userInfo.name,
+      phone: userInfo.phone,
+      placeId: userInfo.placeId,
+      popularizeCode: userInfo.popularizeCode,
+      score: userInfo.score,
+      status: userInfo.status,
+      updatedAt: userInfo.updatedAt,
+      userType: userInfo.userType,
     }
   }
 

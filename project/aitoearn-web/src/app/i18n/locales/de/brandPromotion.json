@@ -19,6 +19,7 @@
     "items": "Stück",
     "noLimit": "Kein Limit",
     "noPlatformSelected": "Keine Zielplattform ausgewählt, keine Parameterbegrenzungen.",
+    "connectAccountFirst": "Verbinden Sie zuerst mindestens ein veröffentlichungsfähiges Kanal-Konto.",
     "selectAll": "Alle auswählen",
     "deselectAll": "Alle abwählen",
     "limitsMinTip": "Zeigt den Minimalwert aller ausgewählten Plattformen.",

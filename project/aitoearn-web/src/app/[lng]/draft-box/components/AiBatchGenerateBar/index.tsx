@@ -14,7 +14,7 @@ import { RotateCcw, Upload, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
-import { AccountPlatInfoMap, RegionTaskPlatInfoArr, TASK_EXCLUDED_PLATFORMS } from '@/app/config/platConfig'
+import { AccountPlatInfoMap, isPlatformAvailable, TASK_EXCLUDED_PLATFORMS } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
 import { useGetClientLng } from '@/hooks/useSystem'
@@ -69,6 +69,7 @@ interface AiBatchGenerateBarProps {
 const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGenerateBarProps) => {
   const { t } = useTransClient('brandPromotion')
   const lng = useGetClientLng()
+  const accountList = useAccountStore(state => state.accountList)
 
   const imageList = EMPTY_IMAGE_LIST
 
@@ -117,7 +118,11 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   const [isDraftMode, setIsDraftMode] = useState(config.isDraftMode ?? true)
   // 计算当前区域可用平台
   const availablePlatforms = useMemo(() =>
-    RegionTaskPlatInfoArr.map(([plat]) => plat), [])
+    Array.from(new Set(
+      accountList
+        .filter(account => account.status !== 0 && AccountPlatInfoMap.has(account.type) && isPlatformAvailable(account.type) && !TASK_EXCLUDED_PLATFORMS.has(account.type))
+        .map(account => account.type),
+    )), [accountList])
 
   // 默认选中平台
   const defaultPlatforms = useMemo(() => availablePlatforms, [availablePlatforms])
@@ -384,7 +389,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       setSelectedPlatforms(defaultPlatforms)
     }
     else {
-      setSelectedPlatforms(storedPlatforms.filter(p => AccountPlatInfoMap.has(p) && !TASK_EXCLUDED_PLATFORMS.has(p)))
+      setSelectedPlatforms(storedPlatforms.filter(p => availablePlatforms.includes(p)))
     }
     // 从 store 恢复描述
     const storedPrompt = newConfig.promptValue ?? ''
@@ -421,7 +426,14 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
       videoDurationMapRef.current.clear()
     }
     isMediaInitializedRef.current = true
-  }, [configKey, _hasHydrated])
+  }, [configKey, _hasHydrated, availablePlatforms])
+
+  useEffect(() => {
+    if (!_hasHydrated || config.selectedPlatforms.length > 0 || selectedPlatforms.length > 0 || availablePlatforms.length === 0)
+      return
+    setSelectedPlatforms(availablePlatforms)
+    updateConfig(configKey, { selectedPlatforms: availablePlatforms })
+  }, [_hasHydrated, availablePlatforms, config.selectedPlatforms.length, selectedPlatforms.length, configKey, updateConfig])
 
   // 已选图片对象
   const selectedImages = useMemo(() => {
@@ -440,7 +452,7 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
 
   // 有效选中平台（排除不兼容的），用于限制计算和 API 提交
   const effectiveSelectedPlatforms = useMemo(() =>
-    selectedPlatforms.filter(p => !incompatiblePlatforms.has(p)), [selectedPlatforms, incompatiblePlatforms])
+    selectedPlatforms.filter(p => availablePlatforms.includes(p) && !incompatiblePlatforms.has(p)), [selectedPlatforms, availablePlatforms, incompatiblePlatforms])
 
   // 平台限制计算（基于有效平台）
   const effectiveLimitsDetailed: EffectiveLimitsDetailed = useMemo(() => {
@@ -587,9 +599,10 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
   }, [aspectRatio, duration, configKey, updateConfig, imageList, localMedias, removeLocalMedia, t, pricingData?.videoModels])
 
   const handlePlatformsChange = useCallback((platforms: PlatType[]) => {
-    setSelectedPlatforms(platforms)
-    updateConfig(configKey, { selectedPlatforms: platforms })
-  }, [configKey, updateConfig])
+    const connectedPlatforms = platforms.filter(platform => availablePlatforms.includes(platform))
+    setSelectedPlatforms(connectedPlatforms)
+    updateConfig(configKey, { selectedPlatforms: connectedPlatforms })
+  }, [availablePlatforms, configKey, updateConfig])
 
   const handleDraftModeChange = useCallback((isDraft: boolean) => {
     setIsDraftMode(isDraft)
@@ -774,6 +787,11 @@ const AiBatchGenerateBar = memo(({ groupId, onGenerated, className }: AiBatchGen
     // 提示词验证
     if (!promptValue.trim()) {
       toast.warning(t('detail.promptRequired'))
+      return
+    }
+
+    if (isDraftMode && effectiveSelectedPlatforms.length === 0) {
+      toast.warning(t('detail.connectAccountFirst'))
       return
     }
 

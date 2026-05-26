@@ -6,9 +6,9 @@ import type {
   CustomerRadarSocialAccount,
   CustomerReplyCandidate,
 } from '@/api/customerRadar'
+import type { CommentItem } from '@/store/plugin/plats/types'
 import { PlatType } from '@/app/config/platConfig'
 import { ensurePluginBridge, waitForPluginBridge } from '@/store/plugin/bridge'
-import type { CommentItem } from '@/store/plugin/plats/types'
 import { platformManager } from '@/store/plugin/plats/manager'
 
 const platformMap: Partial<Record<CustomerRadarPlatform, PlatType>> = {
@@ -152,29 +152,6 @@ interface KeywordDiscoveryPluginResult {
   message?: string
   success?: boolean
 }
-
-const demoKeywordSignals: KeywordDiscoverySignal[] = [
-  {
-    author: '同城新店主',
-    authorId: 'demo-keyword-user-1',
-    commentContent: '新店开业一个月，小红书发了不少但没人咨询，想知道怎么找到同城客户。',
-    keyword: '开业引流',
-    platform: 'xhs',
-    sourceTitle: '新店开业到底怎么做小红书才有咨询？',
-    sourceUrl: 'https://www.xiaohongshu.com/search_result?keyword=%E5%BC%80%E4%B8%9A%E5%BC%95%E6%B5%81',
-    workId: 'demo-keyword-note-1',
-  },
-  {
-    author: '门店运营阿南',
-    authorId: 'demo-keyword-user-2',
-    commentContent: '每天发内容但没有转化，不知道评论区哪些人是真客户。',
-    keyword: '小红书运营',
-    platform: 'xhs',
-    sourceTitle: '门店账号发内容没有转化怎么办',
-    sourceUrl: 'https://www.xiaohongshu.com/search_result?keyword=%E5%B0%8F%E7%BA%A2%E4%B9%A6%E8%BF%90%E8%90%A5',
-    workId: 'demo-keyword-note-2',
-  },
-]
 
 function createXhsSearchUrl(keyword: string) {
   return `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(keyword)}&source=web_search_result_notes`
@@ -489,14 +466,10 @@ export async function scanKeywordDiscovery(input: ScanKeywordDiscoveryInput) {
   const plugin = await waitForPluginBridge(6000)
 
   if (!plugin) {
-    const fallbackSignals = demoKeywordSignals
-      .filter(item => !input.excludedWords?.some(word => item.commentContent.includes(word) || item.sourceTitle.includes(word)))
-      .slice(0, input.count || 8)
-
     return {
-      log: createLog('warning', '本地执行器未接入，使用关键词样例线索', `当前页面没有检测到本地执行器，已用“${keyword}”样例线索验证关键词获客流程。`),
-      signals: fallbackSignals.map(item => ({ ...item, keyword })),
-      success: true,
+      log: createLog('warning', '本地执行器未接入，关键词获客未执行', `当前页面没有检测到原版插件页面执行器，已阻止“${keyword}”关键词样例线索入库。请先安装并授权插件，再运行真实关键词获客。`),
+      signals: [] as KeywordDiscoverySignal[],
+      success: false,
     }
   }
 

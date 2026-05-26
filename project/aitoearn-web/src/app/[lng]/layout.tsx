@@ -1,6 +1,5 @@
 import { dir } from 'i18next'
 import { headers } from 'next/headers'
-import Script from 'next/script'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
 import LayoutSidebar from '@/app/layout/LayoutSidebar'
@@ -59,7 +58,6 @@ export default async function RootLayout({
   const host = headersList.get('host') || 'localhost:3000'
   const proto = headersList.get('x-forwarded-proto') || 'https'
   const baseUrl = `${proto}://${host}`
-  const autoLoginToken = process.env.AUTO_LOGIN_ENABLED === 'true' ? process.env.AUTO_LOGIN_TOKEN || '' : ''
 
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
@@ -91,16 +89,7 @@ export default async function RootLayout({
         />
       </head>
       <body suppressHydrationWarning>
-        {/* Rewardful 脚本 */}
-        <Script
-          id="rewardful-init"
-          strategy="afterInteractive"
-          dangerouslySetInnerHTML={{
-            __html: `(function(w,r){w._rwq=r;w[r]=w[r]||function(){(w[r].q=w[r].q||[]).push(arguments)}})(window,'rewardful');`,
-          }}
-        />
-        <Script src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" strategy="afterInteractive" />
-        <Providers lng={lng} autoLoginToken={autoLoginToken}>
+        <Providers lng={lng}>
           {/* 全局频道管理弹框 */}
           <ChannelManager />
           <p className="hidden">Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf</p>

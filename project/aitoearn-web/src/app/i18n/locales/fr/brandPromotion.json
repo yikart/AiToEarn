@@ -19,6 +19,7 @@
     "items": "éléments",
     "noLimit": "Pas de limite",
     "noPlatformSelected": "Aucune plateforme cible sélectionnée, aucune limite de paramètres.",
+    "connectAccountFirst": "Connectez d'abord au moins un compte de canal publiable.",
     "selectAll": "Tout sélectionner",
     "deselectAll": "Tout désélectionner",
     "limitsMinTip": "Affiche la valeur minimale de toutes les plateformes sélectionnées.",

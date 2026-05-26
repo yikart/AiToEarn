@@ -19,7 +19,7 @@ import { Toaster } from '@/components/ui/sonner'
 import { useUserStore } from '@/store/user'
 import { isPublicPage } from '@/utils/route'
 
-export function Providers({ children, lng, autoLoginToken }: { children: React.ReactNode, lng: string, autoLoginToken?: string }) {
+export function Providers({ children, lng }: { children: React.ReactNode, lng: string }) {
   const pathname = usePathname()
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
@@ -37,12 +37,8 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
   useEffect(() => {
     if (!_hasHydrated)
       return
-    // 自动登录：无 token 时使用环境变量注入的 token
-    if (!useUserStore.getState().token && autoLoginToken) {
-      useUserStore.getState().setToken(autoLoginToken)
-    }
     useUserStore.getState().appInit()
-  }, [_hasHydrated, autoLoginToken])
+  }, [_hasHydrated])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
@@ -61,13 +57,6 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
       return
     }
 
-    // 自动登录 token 已注入但 store 还没完成下一轮渲染时，先让自动登录 effect 落地，
-    // 避免路由守卫误弹登录框并把目标页面带回首页。
-    if (autoLoginToken) {
-      hasPromptedRef.current = false
-      return
-    }
-
     // 公开页面不需要跳转
     if (isPublicPage(pathname)) {
       hasPromptedRef.current = false
@@ -82,7 +71,7 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, token, pathname, autoLoginToken])
+  }, [_hasHydrated, token, pathname])
 
   return (
     <>

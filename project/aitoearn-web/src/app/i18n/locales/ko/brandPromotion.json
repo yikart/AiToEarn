@@ -19,6 +19,7 @@
     "items": "개",
     "noLimit": "제한 없음",
     "noPlatformSelected": "대상 플랫폼이 선택되지 않았습니다. 매개변수 제한이 없습니다.",
+    "connectAccountFirst": "게시 가능한 채널 계정을 먼저 하나 이상 연결하세요.",
     "selectAll": "모두 선택",
     "deselectAll": "모두 해제",
     "limitsMinTip": "선택된 모든 플랫폼의 최소값을 표시합니다.",

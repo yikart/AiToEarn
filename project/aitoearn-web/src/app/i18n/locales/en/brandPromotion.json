@@ -95,6 +95,7 @@
     "defaultPrompt": "Create a vlogger content for this {{name}} located at {{position}}, featuring a professional exploring and checking-in experience",
     "defaultPromptNoPosition": "Create a vlogger content for this {{name}}, featuring a professional exploring and checking-in experience",
     "promptRequired": "Please enter a prompt before generating",
+    "connectAccountFirst": "Connect at least one publishable channel account before generating platform drafts.",
     "contentTypeVideo": "Video",
     "contentTypeImageText": "Image Post",
     "imageModel": "Image Model",

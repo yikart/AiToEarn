@@ -1,4 +1,9 @@
 const {
+  NODE_ENV,
+  APP_ENV,
+} = process.env
+
+const {
   REDIS_HOST,
   REDIS_PORT,
   REDIS_PASSWORD,
@@ -42,6 +47,53 @@ const {
 const {
   SERVER_URL,
 } = process.env
+
+function isProductionRuntime() {
+  return NODE_ENV === 'production' || APP_ENV === 'production'
+}
+
+function isPlaceholder(value, placeholders) {
+  return !value || placeholders.includes(value)
+}
+
+function parseAssetsConfig() {
+  try {
+    return ASSETS_CONFIG ? JSON.parse(ASSETS_CONFIG) : {}
+  }
+  catch (error) {
+    throw new Error(`ASSETS_CONFIG 格式错误: ${error.message}`)
+  }
+}
+
+const assetsConfig = parseAssetsConfig()
+
+function assertNoInsecureDefaults() {
+  if (!isProductionRuntime() || process.env.AITOEARN_ALLOW_INSECURE_DEFAULTS === 'true')
+    return
+
+  const problems = []
+  const requiredSecrets = [
+    ['JWT_SECRET', JWT_SECRET, ['change-this-jwt-secret']],
+    ['INTERNAL_TOKEN', INTERNAL_TOKEN, ['change-this-secret-token']],
+    ['MONGODB_PASSWORD', MONGODB_PASSWORD, ['password']],
+    ['REDIS_PASSWORD', REDIS_PASSWORD, ['password']],
+    ['ASSETS_CONFIG.accessKeyId', assetsConfig.accessKeyId, ['rustfsadmin']],
+    ['ASSETS_CONFIG.secretAccessKey', assetsConfig.secretAccessKey, ['rustfsadmin']],
+  ]
+
+  for (const [name, value, placeholders] of requiredSecrets) {
+    if (isPlaceholder(value, placeholders))
+      problems.push(name)
+  }
+
+  if (problems.length) {
+    throw new Error(
+      `生产环境拒绝使用默认/空密钥：${problems.join(', ')}。请配置安全密钥，或仅在本地开发时设置 AITOEARN_ALLOW_INSECURE_DEFAULTS=true。`,
+    )
+  }
+}
+
+assertNoInsecureDefaults()
 
 function parseGeminiKeyPairs() {
   if (!GEMINI_KEY_PAIRS) {
@@ -93,7 +145,7 @@ module.exports = {
     baseUrl: SERVER_URL,
     token: INTERNAL_TOKEN,
   },
-  assets: JSON.parse(ASSETS_CONFIG),
+  assets: assetsConfig,
   ai: {
     volcengine: {
       baseUrl: 'https://ark.cn-beijing.volces.com/',
@@ -115,6 +167,10 @@ module.exports = {
     anthropic: {
       baseUrl: ANTHROPIC_BASE_URL,
       apiKey: ANTHROPIC_API_KEY,
+    },
+    dashscope: {
+      baseUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
+      apiKey: process.env.DASHSCOPE_API_KEY || '',
     },
     gemini: {
       keyPairs: parseGeminiKeyPairs(),
@@ -153,6 +209,7 @@ module.exports = {
         {
           name: 'gemini-3.1-pro-preview',
           description: 'Gemini 3.1 Pro Preview',
+          channel: 'gemini',
           inputModalities: ['text', 'image', 'audio', 'video'],
           outputModalities: ['text'],
           pricing: {
@@ -172,6 +229,7 @@ module.exports = {
         {
           name: 'gemini-3-flash-preview',
           description: 'Gemini 3 Flash Preview',
+          channel: 'gemini',
           inputModalities: ['text', 'image', 'audio', 'video'],
           outputModalities: ['text'],
           pricing: {
@@ -186,6 +244,7 @@ module.exports = {
         {
           name: 'gpt-5',
           description: 'GPT 5',
+          channel: 'openai',
           inputModalities: ['text', 'image'],
           outputModalities: ['text'],
           pricing: {
@@ -200,6 +259,7 @@ module.exports = {
         {
           name: 'gemini-3.1-flash-image-preview',
           description: 'Nano Banana 2',
+          channel: 'gemini',
           inputModalities: ['text', 'image'],
           outputModalities: ['image'],
           pricing: {
@@ -214,6 +274,7 @@ module.exports = {
         {
           name: 'gemini-3-pro-image-preview',
           description: 'Nano Banana Pro',
+          channel: 'gemini',
           inputModalities: ['text', 'image'],
           outputModalities: ['image'],
           pricing: {
@@ -228,6 +289,7 @@ module.exports = {
         {
           name: 'claude-opus-4-5-20251101',
           description: 'Claude Opus 4.5',
+          channel: 'anthropic',
           inputModalities: ['text', 'image'],
           outputModalities: ['text'],
           pricing: {
@@ -242,6 +304,7 @@ module.exports = {
         {
           name: 'claude-opus-4-6',
           description: 'Claude Opus 4.6',
+          channel: 'anthropic',
           inputModalities: ['text', 'image'],
           outputModalities: ['text'],
           pricing: {
@@ -256,6 +319,7 @@ module.exports = {
         {
           name: 'claude-sonnet-4-5-20250929',
           description: 'Claude Sonnet 4.5',
+          channel: 'anthropic',
           inputModalities: ['text', 'image'],
           outputModalities: ['text'],
           pricing: {
@@ -336,6 +400,11 @@ module.exports = {
       },
     },
     draftGeneration: {
+      planner: {
+        channel: 'openai',
+        defaultModel: 'gpt-5',
+        model: 'gpt-5',
+      },
       imageModels: [
         {
           model: 'gemini-3.1-flash-image-preview',
@@ -365,5 +434,12 @@ module.exports = {
   agent: {
     baseUrl: `${OPENAI_BASE_URL}/messages`,
     apiKey: OPENAI_API_KEY,
+    analysis: {
+      channel: 'openai',
+      apiKey: OPENAI_API_KEY,
+      baseUrl: OPENAI_BASE_URL,
+      defaultModel: 'gpt-5',
+      model: 'gpt-5',
+    },
   },
 }

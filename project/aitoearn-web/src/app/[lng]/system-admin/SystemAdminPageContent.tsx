@@ -20,7 +20,6 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { toast } from '@/lib/toast'
 import { useUserStore } from '@/store/user'
-import { isSystemAdminUser } from '@/utils/systemAdmin'
 
 const defaultConfig: SystemAiConfig = {
   anthropicBaseUrl: 'https://api.anthropic.com',
@@ -33,31 +32,31 @@ export function SystemAdminPageContent() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [savingTenants, setSavingTenants] = useState(false)
+  const [accessDenied, setAccessDenied] = useState(false)
   const token = useUserStore(state => state.token)
   const userInfo = useUserStore(state => state.userInfo)
   const hasHydrated = useUserStore(state => state._hasHydrated)
-  const isAdmin = isSystemAdminUser(userInfo)
   const hasUserInfo = Boolean(userInfo?.id || userInfo?.mail)
 
   useEffect(() => {
     if (!hasHydrated || !token || !hasUserInfo)
       return
 
-    if (!isAdmin) {
-      setLoading(false)
-      return
-    }
-
     let cancelled = false
 
     async function loadAdminData() {
       try {
+        setAccessDenied(false)
         const [configRes, tenantsRes] = await Promise.all([
           systemSettingsApi.getAiConfig(),
           systemSettingsApi.getCustomerTenants(),
         ])
         if (cancelled)
           return
+        if (configRes?.code === 403 || tenantsRes?.code === 403) {
+          setAccessDenied(true)
+          return
+        }
         if (configRes?.code === 0 && configRes.data)
           setConfig({ ...defaultConfig, ...configRes.data })
         if (tenantsRes?.code === 0 && tenantsRes.data)
@@ -73,7 +72,7 @@ export function SystemAdminPageContent() {
     return () => {
       cancelled = true
     }
-  }, [hasHydrated, hasUserInfo, isAdmin, token])
+  }, [hasHydrated, hasUserInfo, token])
 
   function updateConfig(patch: Partial<SystemAiConfig>) {
     setConfig(current => ({ ...current, ...patch }))
@@ -124,7 +123,7 @@ export function SystemAdminPageContent() {
     )
   }
 
-  if (!token || !isAdmin) {
+  if (!token || accessDenied) {
     return (
       <main className="min-h-screen bg-[#f7f9fc] px-4 py-5 text-[#102033] md:px-6 lg:px-8">
         <div className="mx-auto flex max-w-2xl flex-col gap-3 rounded-lg border border-slate-200 bg-white p-6 shadow-sm">
@@ -215,7 +214,7 @@ export function SystemAdminPageContent() {
               <h2 className="text-lg font-semibold">多客户运行逻辑</h2>
             </div>
             <div className="space-y-3">
-              <StatusRow title="客户登录" value="邮箱/手机验证码注册登录" />
+              <StatusRow title="客户登录" value="手机号或邮箱注册，使用密码登录" />
               <StatusRow title="数据隔离" value="后端接口使用当前 token.id 读写" />
               <StatusRow title="客户雷达" value="每个客户独立保存配置、线索、客户库、日志" />
               <StatusRow title="知识库" value="每个客户独立维护 AI 回复知识" />

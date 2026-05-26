@@ -89,6 +89,8 @@ services:
       JWT_SECRET: change-this-jwt-secret
       DB_NAME: aitoearn
       AUTO_LOGIN_TOKEN_PATH: /data/init/token.txt
+      SYSTEM_ADMIN_EMAIL: ${SYSTEM_ADMIN_EMAIL:-}
+      SYSTEM_ADMIN_PASSWORD: ${SYSTEM_ADMIN_PASSWORD:-}
     entrypoint: /bin/sh -c "npm install --omit=dev 2>/dev/null && node init.mjs"
     networks:
       - aitoearn-network
@@ -200,6 +202,10 @@ services:
 
       JWT_SECRET: change-this-jwt-secret
       INTERNAL_TOKEN: change-this-secret-token
+      SYSTEM_ADMIN_EMAILS: ${SYSTEM_ADMIN_EMAILS:-}
+      WXPLAT_TOKEN: aitoearn
+      MY_WXPLAT_ID: dev
+      MY_WXPLAT_SECRET: f1a36f23d027c969d6c6969423d72eda
 
       ASSETS_CONFIG: '{"provider":"s3","region":"us-east-1","bucketName":"aitoearn","endpoint":"http://rustfs.local:9000","publicEndpoint":"http://127.0.0.1:9000","cdnEndpoint":"http://127.0.0.1:8080/oss","accessKeyId":"rustfsadmin","secretAccessKey":"rustfsadmin","forcePathStyle":true}'
 
@@ -265,7 +271,6 @@ services:
       - init-data:/data/init:ro
     networks:
       - aitoearn-network
-    command: ["/bin/sh", "-c", "AUTO_LOGIN_TOKEN=$$(cat /data/init/token.txt 2>/dev/null || echo '') exec node server.js"]
     environment:
       NODE_ENV: production
       NEXT_TELEMETRY_DISABLED: 1

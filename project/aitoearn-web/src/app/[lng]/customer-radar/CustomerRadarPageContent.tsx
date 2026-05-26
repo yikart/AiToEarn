@@ -1057,12 +1057,10 @@ export function CustomerRadarPageContent() {
   const [keywordText, setKeywordText] = useState(joinText(defaultProfile.keywords))
   const [painPointText, setPainPointText] = useState(joinText(defaultProfile.painPoints))
   const [excludedText, setExcludedText] = useState(joinText(defaultProfile.excludedWords))
-  const [leads, setLeads] = useState<CustomerLead[]>(createLeads(defaultProfile))
-  const [customerRecordsState, setCustomerRecordsState] = useState<CustomerRecord[]>(customerRecords)
+  const [leads, setLeads] = useState<CustomerLead[]>([])
+  const [customerRecordsState, setCustomerRecordsState] = useState<CustomerRecord[]>([])
   const [automationRun, setAutomationRun] = useState<CustomerRadarAutomationRun>(initialAutomationRun)
-  const [replyCandidates, setReplyCandidates] = useState<CustomerReplyCandidate[]>(
-    seedReplyCandidates,
-  )
+  const [replyCandidates, setReplyCandidates] = useState<CustomerReplyCandidate[]>([])
   const [executionLogs, setExecutionLogs] = useState<CustomerRadarExecutionLog[]>([])
   const [platformCapabilities, setPlatformCapabilities] = useState<CustomerRadarPlatformCapability[]>(
     getCustomerRadarPlatformCapabilities(defaultProfile.platforms),
@@ -1090,6 +1088,7 @@ export function CustomerRadarPageContent() {
   const [isPluginDiagnosticRunning, setIsPluginDiagnosticRunning] = useState(false)
   const [liveExecutionEnabled, setLiveExecutionEnabled] = useState(false)
   const [taskCadence, setTaskCadence] = useState<CustomerRadarTask['cadence']>('manual')
+  const [workspaceLoaded, setWorkspaceLoaded] = useState(false)
 
   const selectedLead = leads.find(item => item.id === selectedLeadId) || leads[0]
   const selectedCustomer = customerRecordsState.find(item => item.id === selectedCustomerId)
@@ -1184,6 +1183,10 @@ export function CustomerRadarPageContent() {
     knowledgeReady,
     automationTasks.some(item => ['ready', 'running', 'completed'].includes(item.status)),
   ].filter(Boolean).length
+  const hasWorkspaceData = leads.length > 0
+    || customerRecordsState.length > 0
+    || replyCandidates.length > 0
+    || automationTasks.length > 0
   const selectedTaskRuns = useMemo(() => {
     if (!selectedTask)
       return []
@@ -1314,8 +1317,21 @@ export function CustomerRadarPageContent() {
         setSelectedTaskId(remote.automationTasks?.[0]?.id || null)
         setSelectedTaskRunId(remote.taskRuns?.[0]?.id || remote.automationTasks?.[0]?.runs?.[0]?.id || null)
       }
+      else if (res?.code === 0) {
+        setLeads([])
+        setCustomerRecordsState([])
+        setReplyCandidates([])
+        setExecutionLogs([])
+        setAutomationTasks([])
+        setTaskRuns([])
+        setSelectedLeadId(null)
+        setSelectedCustomerId(null)
+        setSelectedTaskId(null)
+        setSelectedTaskRunId(null)
+      }
 
       remoteLoadedRef.current = true
+      setWorkspaceLoaded(true)
     }
 
     void loadRemoteWorkspace()
@@ -1749,7 +1765,7 @@ export function CustomerRadarPageContent() {
     })
     setExecutionLogs(current => [result.log, ...current.filter(item => !isNoisyKeywordExecutionLog(item))])
 
-    if (!result.success)
+    if (!result.success) {
       return {
         candidates: [] as CustomerReplyCandidate[],
         leads: [] as CustomerLead[],
@@ -1757,6 +1773,7 @@ export function CustomerRadarPageContent() {
         signals: result.signals,
         skippedSignals: [] as KeywordDiscoverySignal[],
       }
+    }
 
     const classified = classifyKeywordDiscoverySignals(result.signals)
     const nextLeads = createKeywordDiscoveryLeads(classified.activeSignals, nextProfile)
@@ -1803,11 +1820,13 @@ export function CustomerRadarPageContent() {
       collectedCount: current.collectedCount + result.leads.length,
       replyDraftCount: current.replyDraftCount + result.candidates.length,
       scannedCount: current.scannedCount + Math.max(result.signals.length, result.leads.length),
-      status: current.mode === 'full_auto' && result.candidates.length ? 'publishing' : 'awaiting_approval',
+      status: result.candidates.length
+        ? current.mode === 'full_auto' ? 'publishing' : 'awaiting_approval'
+        : 'idle',
       updatedAt: result.leads.length ? '关键词获客已生成线索和候选回复' : '关键词获客暂无新线索',
     }))
 
-  if (automationRun.mode === 'full_auto' && result.candidates.length) {
+    if (automationRun.mode === 'full_auto' && result.candidates.length) {
       let successCount = 0
       let skippedCount = 0
       for (const candidate of result.candidates) {
@@ -2023,12 +2042,17 @@ export function CustomerRadarPageContent() {
     }
 
     for (const platform of ['xhs', 'douyin'] as const) {
-      const ready = platform === 'xhs'
+      const hasPageApi = platform === 'xhs'
         ? Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.xhsRequest)
         : Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.douyinInteraction || plugin.douyinDirectMessage)
+      const ready = Boolean(result.permission?.granted && hasPageApi)
 
       result.platforms.push({
-        error: ready ? undefined : '未检测到该平台可用的页面执行接口',
+        error: ready
+          ? undefined
+          : result.permission?.granted
+            ? '未检测到该平台可用的页面执行接口'
+            : '已检测到插件，但尚未完成权限授权',
         nickname: ready ? `${platformLabels[platform]}页面执行器` : undefined,
         platform,
         ready,
@@ -2042,7 +2066,7 @@ export function CustomerRadarPageContent() {
           available: true,
           canPublishComment: true,
           canScanComments: true,
-          note: '本地执行器已检测到页面能力，可进入真实执行链路测试。',
+          note: '原版插件已授权并检测到页面执行能力，可进入真实执行链路测试。',
         }
       : capability))
     setExecutionLogs(current => [
@@ -2763,6 +2787,18 @@ export function CustomerRadarPageContent() {
     toast[enabled ? 'warning' : 'info'](enabled ? '真实平台执行已打开' : '已切回安全演练模式')
   }
 
+  function currentLocale() {
+    return window.location.pathname.split('/').filter(Boolean)[0] || 'zh-CN'
+  }
+
+  function openAccountsPage() {
+    window.location.href = `/${currentLocale()}/accounts`
+  }
+
+  function openPluginGuide() {
+    window.location.href = `/${currentLocale()}/websit/plugin-guide`
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f9fc] px-4 py-5 text-[#102033] md:px-6 lg:px-8">
       <div className="mx-auto flex max-w-7xl flex-col gap-5">
@@ -3126,6 +3162,55 @@ export function CustomerRadarPageContent() {
             </Field>
           </div>
         </section>
+
+        {workspaceLoaded && !hasWorkspaceData && (
+          <section className="rounded-lg border border-blue-100 bg-blue-50/70 p-5 shadow-sm">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+              <div className="flex min-w-0 gap-4">
+                <div className="flex size-12 shrink-0 items-center justify-center rounded-lg bg-white text-blue-600 ring-1 ring-blue-100">
+                  <ListChecks className="size-6" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className="text-lg font-semibold text-slate-950">先完成真实获客前置配置</h2>
+                  <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
+                    新客户空间不会再预置演示线索。请先连接频道账号、安装并授权原版浏览器插件，再运行关键词搜索；未检测到插件时系统不会把样例线索写入真实客户池。
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <Button type="button" className="bg-[#102033] hover:bg-[#182b45]" onClick={openAccountsPage}>
+                  <UserCheck className="size-4" />
+                  连接频道账号
+                </Button>
+                <Button type="button" variant="outline" onClick={openPluginGuide}>
+                  <PlugZap className="size-4" />
+                  查看插件教程
+                </Button>
+                <Button type="button" variant="outline" onClick={handlePluginDiagnostic} disabled={isPluginDiagnosticRunning}>
+                  <RefreshCw className={cn('size-4', isPluginDiagnosticRunning && 'animate-spin')} />
+                  检测执行器
+                </Button>
+              </div>
+            </div>
+            <div className="mt-5 grid gap-3 md:grid-cols-3">
+              <ReadinessStep
+                label="1. 频道账号"
+                text="在“我的频道”里登录小红书等平台账号，平台登录态仍以频道管理读取结果为准。"
+                active={accountReady}
+              />
+              <ReadinessStep
+                label="2. 原版插件"
+                text="关键词获客优先走原版插件页面自动化能力；未授权时只提示，不写入演示线索。"
+                active={localExecutorReady}
+              />
+              <ReadinessStep
+                label="3. 关键词画像"
+                text="设置行业、区域、关键词和排除词后，再开始扫描真实笔记与评论信号。"
+                active={profile.keywords.length > 0}
+              />
+            </div>
+          </section>
+        )}
 
         <section className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">

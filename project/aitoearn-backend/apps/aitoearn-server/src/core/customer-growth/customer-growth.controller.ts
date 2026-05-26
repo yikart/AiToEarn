@@ -90,12 +90,12 @@ export class SystemSettingsController {
   constructor(private readonly customerGrowthService: CustomerGrowthService) { }
 
   private assertSystemAdmin(token: TokenInfo) {
-    const adminEmails = (process.env['SYSTEM_ADMIN_EMAILS'] || 'admin@aitoearn.local')
+    const adminEmails = (process.env['SYSTEM_ADMIN_EMAILS'] || '')
       .split(',')
       .map(item => item.trim().toLowerCase())
       .filter(Boolean)
 
-    if (!token.mail || !adminEmails.includes(token.mail.toLowerCase()))
+    if (!adminEmails.length || !token.mail || !adminEmails.includes(token.mail.toLowerCase()))
       throw new ForbiddenException('Only system administrators can manage AI configuration')
   }
 

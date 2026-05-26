@@ -182,7 +182,7 @@ export function AgentAssetsPageCore() {
                 {t('agentAssets.noAssetsDesc')}
               </p>
               <Button asChild className="cursor-pointer">
-                <Link href="/chat">{t('agentAssets.goToChat')}</Link>
+                <Link href="/chat/new">{t('agentAssets.goToChat')}</Link>
               </Button>
             </div>
           ) : (

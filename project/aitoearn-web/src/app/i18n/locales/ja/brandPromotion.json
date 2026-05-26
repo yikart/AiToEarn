@@ -19,6 +19,7 @@
     "items": "件",
     "noLimit": "制限なし",
     "noPlatformSelected": "ターゲットプラットフォームが選択されていません。パラメータ制限はありません。",
+    "connectAccountFirst": "公開可能なチャンネルアカウントを先に1つ以上接続してください。",
     "selectAll": "すべて選択",
     "deselectAll": "すべて解除",
     "limitsMinTip": "選択されたすべてのプラットフォームの最小値を表示します。",
