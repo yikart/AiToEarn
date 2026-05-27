@@ -67,8 +67,6 @@ const initialAuthState: AuthState = {
   isTimeout: false,
 }
 
-const XHS_CREATOR_LOGIN_URL = 'https://creator.xiaohongshu.com/'
-
 /** 初始状态 */
 const initialState: ChannelManagerState = {
   open: false,
@@ -406,16 +404,6 @@ export const useChannelManagerStore = create(
         // 清理之前的定时器
         clearAllTimers()
 
-        if (platform === PlatType.Xhs) {
-          set({
-            currentView: 'connect-list',
-            authState: { ...initialAuthState },
-            targetSpaceId: spaceId || get().targetSpaceId,
-          })
-          window.location.assign(XHS_CREATOR_LOGIN_URL)
-          return
-        }
-
         // 设置授权状态
         set({
           currentView: 'auth-loading',
@@ -567,8 +555,17 @@ export const useChannelManagerStore = create(
           return
         }
 
-        // 检查是否有账号
-        const account = pluginStore.platformAccounts[platform]
+        // 通过插件读取平台登录态。即使本地 store 暂无缓存，也主动触发一次插件登录检测。
+        let account = pluginStore.platformAccounts[platform]
+        if (!account) {
+          try {
+            account = await pluginStore.login(platform)
+          }
+          catch (error) {
+            console.error('Plugin platform login detection failed:', error)
+          }
+        }
+
         if (!account) {
           // 平台未登录，重置状态并打开插件弹框
           set({
