@@ -1,6 +1,6 @@
 import { PLATFORM_ORIGINS, REQUIRED_PERMISSIONS, RuntimeAction } from './shared.js'
 
-const EXTENSION_VERSION = '0.1.2'
+const EXTENSION_VERSION = '0.1.3'
 
 const platformCookieUrls = {
   bilibili: ['https://www.bilibili.com'],
@@ -281,6 +281,7 @@ async function readPlatformPageState(tabId, platform) {
         const text = document.body?.innerText || ''
         const title = document.title || ''
         const cookie = document.cookie || ''
+        const lines = text.split('\n').map(item => item.trim()).filter(Boolean)
         const nicknameCandidates = [
           '[class*="user"] [class*="name"]',
           '[class*="nickname"]',
@@ -296,6 +297,11 @@ async function readPlatformPageState(tabId, platform) {
             nickname = value
             break
           }
+        }
+
+        if (!nickname && targetPlatform === 'kwai' && location.hostname === 'cp.kuaishou.com') {
+          const ignored = new Set(['发布作品', '首页', '内容管理', '互动管理', '数据中心'])
+          nickname = lines.find(line => line.length <= 40 && !ignored.has(line)) || ''
         }
 
         return {
@@ -326,6 +332,28 @@ async function readPlatformPageState(tabId, platform) {
 
 function pickCookie(cookies, names) {
   return cookies.find(cookie => names.includes(cookie.name))
+}
+
+function hashText(value) {
+  let hash = 0
+  const input = String(value || '')
+  for (let index = 0; index < input.length; index += 1)
+    hash = ((hash << 5) - hash) + input.charCodeAt(index) | 0
+  return Math.abs(hash).toString(36)
+}
+
+function isTrustedLoggedInPage(platform, pageState) {
+  if (!pageState?.isLikelyLoggedIn || pageState?.isLoginWall)
+    return false
+
+  const href = pageState.href || ''
+  if (platform === 'kwai')
+    return href.includes('cp.kuaishou.com')
+  if (platform === 'douyin')
+    return href.includes('creator.douyin.com')
+  if (platform === 'xhs')
+    return href.includes('creator.xiaohongshu.com') || href.includes('xiaohongshu.com')
+  return true
 }
 
 const loginCookieConfig = {
@@ -430,7 +458,9 @@ async function login(platformInput) {
   const userId = pickCookie(cookies, loginConfig.uidCookies)
   const nickname = typeof pageState?.nickname === 'string' ? pageState.nickname.trim() : ''
   const uid = userId?.value?.trim()
-  const hasVerifiedAccount = Boolean(session && uid)
+  const pageVerified = Boolean(session && nickname && isTrustedLoggedInPage(platform, pageState))
+  const hasVerifiedAccount = Boolean(session && (uid || pageVerified || loginConfig.uidCookies.length === 0))
+  const resolvedUid = uid || (nickname ? `page:${platform}:${hashText(nickname)}` : `browser:${platform}:${session?.name || 'session'}`)
 
   if (platform === 'xhs') {
     if (pageState?.isLoginWall || !hasVerifiedAccount) {
@@ -452,7 +482,7 @@ async function login(platformInput) {
         creatorReady: cookies.some(cookie => cookie.name.includes('creator')),
         nickname: nickname || uid,
         platform: 'xhs',
-        uid,
+        uid: resolvedUid,
       },
     }
   }
@@ -471,11 +501,11 @@ async function login(platformInput) {
   return {
     success: true,
     data: {
-      account: nickname || uid,
+      account: nickname || uid || `${loginConfig.label}（浏览器已登录）`,
       cookieReady: Boolean(session),
-      nickname: nickname || uid,
+      nickname: nickname || uid || `${loginConfig.label}（浏览器已登录）`,
       platform,
-      uid,
+      uid: resolvedUid,
     },
   }
 }

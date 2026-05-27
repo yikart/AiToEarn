@@ -106,12 +106,12 @@ export function ChannelManager() {
             <AlertDialogTitle>确认频道账号</AlertDialogTitle>
             <AlertDialogDescription>
               {pendingPluginAccountConfirm
-                ? `检测到${pendingPluginAccountConfirm.platformName}账号：${pendingPluginAccountConfirm.accountName}。确认这是你的账号后再同步到频道管理。`
+                ? `已检测到${pendingPluginAccountConfirm.platformName}账号：${pendingPluginAccountConfirm.accountName}。点确认后会添加到频道列表。`
                 : ''}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel data-testid="cm-plugin-account-reject-btn">不是我的账号</AlertDialogCancel>
+            <AlertDialogCancel data-testid="cm-plugin-account-reject-btn">切换账号</AlertDialogCancel>
             <AlertDialogAction
               data-testid="cm-plugin-account-confirm-btn"
               onClick={(event) => {
@@ -119,7 +119,7 @@ export function ChannelManager() {
                 confirmPluginAccountSync()
               }}
             >
-              确认同步
+              确认添加
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
