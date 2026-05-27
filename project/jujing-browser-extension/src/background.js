@@ -1,6 +1,6 @@
 import { PLATFORM_ORIGINS, REQUIRED_PERMISSIONS, RuntimeAction } from './shared.js'
 
-const EXTENSION_VERSION = '0.1.1'
+const EXTENSION_VERSION = '0.1.2'
 
 const platformCookieUrls = {
   bilibili: ['https://www.bilibili.com'],
@@ -336,8 +336,8 @@ const loginCookieConfig = {
   },
   douyin: {
     label: '抖音',
-    sessionCookies: ['sessionid', 'sessionid_ss', 'sid_tt', 'passport_csrf_token'],
-    uidCookies: ['uid_tt', 'uid_tt_ss', 'passport_auth_status'],
+    sessionCookies: ['sessionid', 'sessionid_ss', 'sid_tt'],
+    uidCookies: ['uid_tt', 'uid_tt_ss'],
   },
   facebook: {
     label: 'Facebook',
@@ -351,18 +351,18 @@ const loginCookieConfig = {
   },
   kwai: {
     label: '快手',
-    sessionCookies: ['kuaishou.server.web_st', 'kuaishou.server.web_ph', 'did', 'userId'],
-    uidCookies: ['userId', 'did'],
+    sessionCookies: ['kuaishou.server.web_st', 'kuaishou.server.web_ph'],
+    uidCookies: ['userId'],
   },
   linkedin: {
     label: 'LinkedIn',
     sessionCookies: ['li_at', 'JSESSIONID', 'bcookie'],
-    uidCookies: ['bcookie'],
+    uidCookies: [],
   },
   pinterest: {
     label: 'Pinterest',
     sessionCookies: ['_pinterest_sess', 'csrftoken'],
-    uidCookies: ['_auth'],
+    uidCookies: [],
   },
   threads: {
     label: 'Threads',
@@ -386,7 +386,7 @@ const loginCookieConfig = {
   },
   wxSph: {
     label: '视频号',
-    sessionCookies: ['sessionid', 'wxuin', 'token'],
+    sessionCookies: ['sessionid', 'wxuin'],
     uidCookies: ['wxuin'],
   },
   xhs: {
@@ -407,7 +407,7 @@ const loginCookieConfig = {
   youtube: {
     label: 'YouTube',
     sessionCookies: ['LOGIN_INFO', 'SID', 'HSID', 'SSID', 'SAPISID'],
-    uidCookies: ['VISITOR_INFO1_LIVE'],
+    uidCookies: [],
   },
 }
 
@@ -428,14 +428,17 @@ async function login(platformInput) {
   const pageState = activeTab?.id ? await readPlatformPageState(activeTab.id, platform) : null
   const session = pickCookie(cookies, loginConfig.sessionCookies)
   const userId = pickCookie(cookies, loginConfig.uidCookies)
+  const nickname = typeof pageState?.nickname === 'string' ? pageState.nickname.trim() : ''
+  const uid = userId?.value?.trim()
+  const hasVerifiedAccount = Boolean(session && uid)
 
   if (platform === 'xhs') {
-    if (pageState?.isLoginWall || (!session && !pageState?.isLikelyLoggedIn)) {
+    if (pageState?.isLoginWall || !hasVerifiedAccount) {
       return {
         success: false,
         error: pageState?.isLoginWall
           ? '小红书搜索页要求登录，请先在打开的小红书页面完成登录'
-          : '未检测到小红书登录态，请先登录小红书主页和创作者中心',
+          : '未检测到小红书真实账号登录态，请先登录小红书主页和创作者中心',
         code: 'XHS_NOT_LOGGED_IN',
         data: { tabs: tabs.map(tab => tab.url), cookieNames: cookies.map(cookie => cookie.name) },
       }
@@ -444,22 +447,22 @@ async function login(platformInput) {
     return {
       success: true,
       data: {
-        account: pageState?.nickname || '小红书账号',
+        account: nickname || uid,
         cookieReady: Boolean(session),
         creatorReady: cookies.some(cookie => cookie.name.includes('creator')),
-        nickname: pageState?.nickname || '小红书账号',
+        nickname: nickname || uid,
         platform: 'xhs',
-        uid: userId?.value || session?.value?.slice(0, 16) || 'xhs-current-user',
+        uid,
       },
     }
   }
 
-  if (pageState?.isLoginWall || (!session && !pageState?.isLikelyLoggedIn)) {
+  if (pageState?.isLoginWall || !hasVerifiedAccount) {
     return {
       success: false,
       error: pageState?.isLoginWall
         ? `${loginConfig.label}页面要求登录，请先在打开的${loginConfig.label}页面完成登录`
-        : `未检测到${loginConfig.label}登录态，请先登录${loginConfig.label}页面`,
+        : `未检测到${loginConfig.label}真实账号登录态，请先登录${loginConfig.label}页面`,
       code: `${platform.toUpperCase()}_NOT_LOGGED_IN`,
       data: { tabs: tabs.map(tab => tab.url), cookieNames: cookies.map(cookie => cookie.name) },
     }
@@ -468,11 +471,11 @@ async function login(platformInput) {
   return {
     success: true,
     data: {
-      account: pageState?.nickname || `${loginConfig.label}账号`,
+      account: nickname || uid,
       cookieReady: Boolean(session),
-      nickname: pageState?.nickname || `${loginConfig.label}账号`,
+      nickname: nickname || uid,
       platform,
-      uid: userId?.value || session?.value?.slice(0, 16) || `${platform}-current-user`,
+      uid,
     },
   }
 }

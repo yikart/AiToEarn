@@ -44,6 +44,13 @@ export interface ChannelManagerState {
   onAuthSuccess: ((account: SocialAccount, platform: PlatType) => void) | null
   /** 是否为新用户（没有任何账号） */
   isNewUser: boolean
+  /** 插件检测到平台账号后的人工确认信息 */
+  pendingPluginAccountConfirm: {
+    platform: PluginAccountPlatformType
+    platformName: string
+    accountName: string
+    spaceId?: string
+  } | null
 }
 
 /** 频道管理器方法 */
@@ -70,6 +77,10 @@ export interface ChannelManagerMethods {
   startAuth: (platform: PlatType, spaceId?: string) => Promise<void>
   /** 处理插件平台的网页登录态授权 */
   handlePluginPlatformAuth: (platform: PluginAccountPlatformType, spaceId?: string) => Promise<void>
+  /** 确认同步插件检测到的平台账号 */
+  confirmPluginAccountSync: () => Promise<void>
+  /** 取消同步插件检测到的平台账号 */
+  rejectPluginAccountSync: () => void
   /** 停止授权（取消/超时） */
   stopAuth: () => void
   /** 重新打开授权页面 */

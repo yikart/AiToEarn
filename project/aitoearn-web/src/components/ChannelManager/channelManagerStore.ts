@@ -76,6 +76,7 @@ const initialState: ChannelManagerState = {
   targetSpaceId: null,
   onAuthSuccess: null,
   isNewUser: false,
+  pendingPluginAccountConfirm: null,
 }
 
 function getInitialState(): ChannelManagerState {
@@ -576,6 +577,27 @@ export const useChannelManagerStore = create(
           return
         }
 
+        const accountName = account.nickname || account.account || account.uid
+        set({
+          currentView: 'connect-list',
+          authState: { ...initialAuthState },
+          pendingPluginAccountConfirm: {
+            platform,
+            platformName,
+            accountName,
+            spaceId,
+          },
+        })
+      },
+
+      /** 确认同步插件检测到的平台账号 */
+      async confirmPluginAccountSync() {
+        const pending = get().pendingPluginAccountConfirm
+        if (!pending)
+          return
+
+        const { platform, spaceId } = pending
+        const pluginStore = usePluginStore.getState()
         // 同步账号到数据库
         try {
           const result = await pluginStore.syncAccountToDatabase(platform, spaceId)
@@ -587,6 +609,8 @@ export const useChannelManagerStore = create(
             // 刷新账户列表
             await useAccountStore.getState().getAccountList()
 
+            set({ pendingPluginAccountConfirm: null })
+
             // 处理授权成功
             methods.handleAuthSuccess(result)
           }
@@ -594,6 +618,7 @@ export const useChannelManagerStore = create(
             set({
               currentView: 'connect-list',
               authState: { ...initialAuthState },
+              pendingPluginAccountConfirm: null,
             })
             toast.error(t('channelManager.syncFailed'))
           }
@@ -603,9 +628,27 @@ export const useChannelManagerStore = create(
           set({
             currentView: 'connect-list',
             authState: { ...initialAuthState },
+            pendingPluginAccountConfirm: null,
           })
           toast.error(t('channelManager.syncFailed'))
         }
+      },
+
+      /** 取消同步插件检测到的平台账号 */
+      rejectPluginAccountSync() {
+        const pending = get().pendingPluginAccountConfirm
+        if (!pending)
+          return
+
+        const platInfo = AccountPlatInfoMap.get(pending.platform)
+        set({
+          currentView: 'connect-list',
+          authState: { ...initialAuthState },
+          pendingPluginAccountConfirm: null,
+        })
+        if (platInfo?.url)
+          window.open(platInfo.url, '_blank')
+        toast.warning(`请先在${pending.platformName}页面切换或登录你的账号，再回来添加频道`)
       },
 
       /** 停止授权（取消/超时） */
