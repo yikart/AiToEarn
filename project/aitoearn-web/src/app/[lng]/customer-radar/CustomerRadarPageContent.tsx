@@ -803,6 +803,17 @@ function createSocialAccounts(profile: CustomerRadarProfile): CustomerRadarSocia
   }))
 }
 
+function createInitialPlatformCapabilities(profile: CustomerRadarProfile): CustomerRadarPlatformCapability[] {
+  return profile.platforms.map(platform => ({
+    platform,
+    available: false,
+    canPublishComment: false,
+    canScanComments: false,
+    canSendDirectMessage: false,
+    note: '等待页面加载后检测本地执行器能力；频道账号登录态以频道管理为准。',
+  }))
+}
+
 function createSocialAccountsFromChannels(profile: CustomerRadarProfile, accounts: SocialAccount[]): CustomerRadarSocialAccount[] {
   const checkedAt = nowText()
 
@@ -1062,9 +1073,7 @@ export function CustomerRadarPageContent() {
   const [automationRun, setAutomationRun] = useState<CustomerRadarAutomationRun>(initialAutomationRun)
   const [replyCandidates, setReplyCandidates] = useState<CustomerReplyCandidate[]>([])
   const [executionLogs, setExecutionLogs] = useState<CustomerRadarExecutionLog[]>([])
-  const [platformCapabilities, setPlatformCapabilities] = useState<CustomerRadarPlatformCapability[]>(
-    getCustomerRadarPlatformCapabilities(defaultProfile.platforms),
-  )
+  const [platformCapabilities, setPlatformCapabilities] = useState<CustomerRadarPlatformCapability[]>(createInitialPlatformCapabilities(defaultProfile))
   const [automationTasks, setAutomationTasks] = useState<CustomerRadarTask[]>([])
   const [taskRuns, setTaskRuns] = useState<CustomerRadarTaskRun[]>([])
   const [socialAccounts, setSocialAccounts] = useState<CustomerRadarSocialAccount[]>(createSocialAccounts(defaultProfile))

@@ -7,6 +7,7 @@
 
 import type { SidebarCommonProps } from '../../types'
 import { Puzzle } from 'lucide-react'
+import { useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { PluginModal } from '@/components/Plugin'
@@ -18,14 +19,24 @@ import { PluginStatus } from '@/store/plugin/types/baseTypes'
 export function PluginEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
 
-  const { pluginStatus, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
+  const { pluginStatus, pluginModalVisible, init, stopPolling, openPluginModal, closePluginModal } = usePluginStore(
     useShallow(state => ({
       pluginStatus: state.status,
       pluginModalVisible: state.pluginModalVisible,
+      init: state.init,
+      stopPolling: state.stopPolling,
       openPluginModal: state.openPluginModal,
       closePluginModal: state.closePluginModal,
     })),
   )
+
+  useEffect(() => {
+    init()
+
+    return () => {
+      stopPolling()
+    }
+  }, [init, stopPolling])
 
   // 根据插件状态返回对应的颜色和状态文本
   const getStatusInfo = () => {
