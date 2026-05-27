@@ -1,7 +1,21 @@
 import type { GlobalKnowledgeItem } from './globalKnowledge'
 import http from '@/utils/request'
 
-export type CustomerRadarPlatform = 'douyin' | 'xhs' | 'wxSph' | 'bilibili'
+export type CustomerRadarPlatform
+  = | 'bilibili'
+    | 'douyin'
+    | 'facebook'
+    | 'instagram'
+    | 'kwai'
+    | 'linkedin'
+    | 'pinterest'
+    | 'threads'
+    | 'tiktok'
+    | 'twitter'
+    | 'wxGzh'
+    | 'wxSph'
+    | 'xhs'
+    | 'youtube'
 
 export type CustomerRadarCommentSource = 'keyword_discovery' | 'owned_post_comments'
 
@@ -101,6 +115,7 @@ export interface CustomerRadarExecutionLog {
 export interface CustomerRadarPlatformCapability {
   platform: CustomerRadarPlatform
   available: boolean
+  canDiscoverKeyword: boolean
   canScanComments: boolean
   canPublishComment: boolean
   canSendDirectMessage: boolean
@@ -129,6 +144,7 @@ export interface CustomerRadarTask {
   maxFailures: number
   mode: CustomerRadarAutomationRun['mode']
   ownedPostWorkId?: string
+  ownedPostPlatform?: CustomerRadarPlatform
   perRunLimit: number
   pluginRequired: boolean
   createdAt: string
@@ -216,6 +232,7 @@ export interface CustomerRadarWorkspace {
   executionLogs: CustomerRadarExecutionLog[]
   leads: CustomerLead[]
   ownedPostWorkId?: string
+  ownedPostPlatform?: CustomerRadarPlatform
   ownedPostXsecToken?: string
   platformCapabilities: CustomerRadarPlatformCapability[]
   profile: CustomerRadarProfile

@@ -71,6 +71,23 @@ Visit: **[http://localhost:8080](http://localhost:8080)**
 
 > First startup auto-creates an admin account and logs you in automatically.
 
+If you bind a public domain, make sure ports 80/443 reach your reverse proxy, then start with:
+
+```bash
+APP_DOMAIN=your-domain.com \
+RELAY_CALLBACK_URL=https://your-domain.com/api/plat/relay-callback \
+docker compose up -d
+```
+
+Verify the domain is not being blocked by DNS/ICP interception and that HTTPS has a certificate:
+
+```bash
+curl -I http://your-domain.com/_nhealth
+openssl s_client -connect your-domain.com:443 -servername your-domain.com </dev/null
+```
+
+`curl` should not redirect to a DNSPod/Tencent `webblock.html` page, and `openssl` should show certificate details. Otherwise the frontend may appear from cache, but `/api/*` calls, channel linking, and platform authorization will fail with network errors.
+
 ### Step 3: Configure Relay (Strongly Recommended)
 
 > **Why configure Relay?**
@@ -88,7 +105,7 @@ Visit: **[http://localhost:8080](http://localhost:8080)**
 ```yaml
 RELAY_SERVER_URL: https://aitoearn.ai/api
 RELAY_API_KEY: your-api-key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+RELAY_CALLBACK_URL: https://your-domain.com/api/plat/relay-callback
 ```
 
 3. Restart the service:

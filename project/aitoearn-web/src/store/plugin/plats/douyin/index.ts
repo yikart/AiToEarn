@@ -16,6 +16,7 @@
 import type {
   CommentListParams,
   CommentListResult,
+  CommentItem,
   CommentParams,
   CommentResult,
   DirectMessageParams,
@@ -203,13 +204,53 @@ class DouyinPlatformInteraction implements IPlatformInteraction {
    * @param params 评论列表请求参数
    */
   async getCommentList(params: CommentListParams): Promise<CommentListResult> {
-    // TODO: 实现抖音评论列表
+    const plugin = this.getPlugin()
+    const response = await plugin.unifiedInteraction?.({
+      action: 'scanComments',
+      count: params.count || 30,
+      platform: 'douyin',
+      workId: params.workId,
+    })
+
+    if (!response?.success) {
+      return {
+        success: false,
+        message: response?.error || response?.message || '抖音评论列表抓取失败，请确认作品页已打开且评论区可见',
+        comments: [],
+        cursor: '',
+        hasMore: false,
+        rawData: response,
+      }
+    }
+
+    const comments = Array.isArray(response.comments)
+      ? response.comments.map((item: any, index: number): CommentItem => ({
+          content: item.content || '',
+          createTime: Number(item.createTime || Date.now()),
+          hasMoreReplies: false,
+          id: item.id || `douyin-comment-${Date.now()}-${index}`,
+          ipLocation: item.ipLocation || '',
+          isAuthor: false,
+          isLiked: false,
+          likeCount: Number(item.likeCount || 0),
+          origin: item,
+          replies: [],
+          replyCount: 0,
+          user: {
+            avatar: item.user?.avatar || '',
+            id: item.user?.id || `douyin-user-${index}`,
+            nickname: item.user?.nickname || `抖音用户${index + 1}`,
+          },
+        }))
+      : []
+
     return {
-      success: false,
-      message: '抖音评论列表功能开发中',
-      comments: [],
+      success: comments.length > 0,
+      message: response.message || (comments.length > 0 ? `已从抖音页面识别 ${comments.length} 条评论` : '抖音页面未识别到评论'),
+      comments,
       cursor: '',
       hasMore: false,
+      rawData: response,
     }
   }
 

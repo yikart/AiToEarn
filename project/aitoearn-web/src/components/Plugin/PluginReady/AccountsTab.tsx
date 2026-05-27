@@ -5,7 +5,7 @@
 
 'use client'
 
-import type { PluginPlatformType } from '@/store/plugin/types/baseTypes'
+import type { PluginAccountPlatformType } from '@/store/plugin/types/baseTypes'
 import { BookOpen, CheckCircle, ExternalLink, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -19,7 +19,7 @@ import { toast } from '@/lib/toast'
 import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
-import { PLUGIN_SUPPORTED_PLATFORMS } from '@/store/plugin/types/baseTypes'
+import { PLUGIN_ACCOUNT_AUTH_PLATFORMS } from '@/store/plugin/types/baseTypes'
 
 interface AccountsTabProps {
   /** 需要高亮的平台 */
@@ -29,7 +29,7 @@ interface AccountsTabProps {
 /**
  * 获取平台显示名称
  */
-function getPlatformName(platform: PluginPlatformType): string {
+function getPlatformName(platform: PluginAccountPlatformType): string {
   const platInfo = AccountPlatInfoMap.get(platform)
   return platInfo?.name || platform
 }
@@ -43,12 +43,12 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
   const syncAccountToDatabase = usePluginStore(state => state.syncAccountToDatabase)
   const accountGroupList = useAccountStore(state => state.accountGroupList)
 
-  const [syncLoading, setSyncLoading] = useState<PluginPlatformType | null>(null)
+  const [syncLoading, setSyncLoading] = useState<PluginAccountPlatformType | null>(null)
 
   /**
    * 处理同步账号到数据库
    */
-  const handleSyncAccount = async (platform: PluginPlatformType) => {
+  const handleSyncAccount = async (platform: PluginAccountPlatformType) => {
     setSyncLoading(platform)
     try {
       const defaultGroup = accountGroupList.find(g => g.isDefault)
@@ -73,7 +73,7 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
   /**
    * 处理去登录
    */
-  const handleGoLogin = (platform: PluginPlatformType) => {
+  const handleGoLogin = (platform: PluginAccountPlatformType) => {
     const platInfo = AccountPlatInfoMap.get(platform)
     if (platInfo?.url) {
       window.open(platInfo.url, '_blank')
@@ -90,7 +90,7 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
 
       {/* 平台账号列表 */}
       <div className="flex flex-col gap-3">
-        {PLUGIN_SUPPORTED_PLATFORMS.map((platform) => {
+        {PLUGIN_ACCOUNT_AUTH_PLATFORMS.map((platform) => {
           const account = platformAccounts[platform]
           const shouldHighlight = highlightPlatform?.toLowerCase() === platform.toLowerCase()
 

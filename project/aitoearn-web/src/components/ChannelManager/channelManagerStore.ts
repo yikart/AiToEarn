@@ -11,7 +11,7 @@ import type {
   ChannelManagerView,
 } from './types'
 import type { SocialAccount } from '@/api/types/account.type'
-import type { PluginPlatformType } from '@/store/plugin'
+import type { PluginAccountPlatformType } from '@/store/plugin'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
@@ -38,7 +38,7 @@ import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import i18next from '@/app/i18n/client'
 import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
-import { PLUGIN_SUPPORTED_PLATFORMS, PluginStatus, usePluginStore } from '@/store/plugin'
+import { PLUGIN_ACCOUNT_AUTH_PLATFORMS, PluginStatus, usePluginStore } from '@/store/plugin'
 import { useUserStore } from '@/store/user'
 import { DEFAULT_AUTH_COUNTDOWN, POLLING_INTERVAL } from './types'
 
@@ -52,8 +52,8 @@ function t(key: string, options?: Record<string, string>): string {
 /**
  * 检查平台是否为插件支持的平台
  */
-function isPluginSupportedPlatform(platform: PlatType): platform is PluginPlatformType {
-  return PLUGIN_SUPPORTED_PLATFORMS.includes(platform as PluginPlatformType)
+function isPluginSupportedPlatform(platform: PlatType): platform is PluginAccountPlatformType {
+  return PLUGIN_ACCOUNT_AUTH_PLATFORMS.includes(platform as PluginAccountPlatformType)
 }
 
 /** 初始授权状态 */
@@ -534,13 +534,11 @@ export const useChannelManagerStore = create(
         }
       },
 
-      /**
-       * 处理插件平台的授权（小红书、抖音等）
-       * 这些平台通过浏览器插件同步账号，而非OAuth
-       */
-      async handlePluginPlatformAuth(platform: PluginPlatformType, spaceId?: string) {
+      /** 处理插件平台的网页登录态授权 */
+      async handlePluginPlatformAuth(platform: PluginAccountPlatformType, spaceId?: string) {
         const pluginStore = usePluginStore.getState()
-        const platformName = AccountPlatInfoMap.get(platform)?.name || platform
+        const platInfo = AccountPlatInfoMap.get(platform)
+        const platformName = platInfo?.name || platform
 
         // 检查插件是否就绪
         if (pluginStore.status !== PluginStatus.READY) {
@@ -567,14 +565,14 @@ export const useChannelManagerStore = create(
         }
 
         if (!account) {
-          // 平台未登录，重置状态并打开插件弹框
+          // 平台未登录，按原版方式打开平台官网让用户先登录。
           set({
             currentView: 'connect-list',
             authState: { ...initialAuthState },
           })
+          if (platInfo?.url)
+            window.open(platInfo.url, '_blank')
           toast.warning(t('channelManager.platformNotLoggedIn', { platform: platformName }))
-          // 打开插件弹框引导用户登录
-          pluginStore.openPluginModal()
           return
         }
 

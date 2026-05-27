@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "巨鲸网络智能获客助手",
-  "description": "连接巨鲸网络客户雷达与用户已登录的社媒账号，用于登录检测、评论抓取与人工确认后的互动执行。",
-  "version": "0.1.0",
+  "description": "连接巨鲸网络客户雷达与平台公开页面，用于评论抓取、关键词线索扫描与人工确认后的互动执行。",
+  "version": "0.1.1",
   "minimum_chrome_version": "114",
   "permissions": [
     "activeTab",
@@ -14,11 +14,31 @@
   "host_permissions": [
     "http://localhost/*",
     "http://127.0.0.1/*",
-    "http://*:*/*",
+    "http://*/*",
+    "https://nasnas.vip/*",
+    "https://*.nasnas.vip/*",
+    "https://aitoearn.cn/*",
+    "https://*.aitoearn.cn/*",
+    "https://aitoearn.ai/*",
+    "https://*.aitoearn.ai/*",
     "https://*.xiaohongshu.com/*",
     "https://*.xhscdn.com/*",
+    "https://*.bilibili.com/*",
     "https://*.douyin.com/*",
-    "https://creator.douyin.com/*"
+    "https://creator.douyin.com/*",
+    "https://*.facebook.com/*",
+    "https://*.instagram.com/*",
+    "https://*.kuaishou.com/*",
+    "https://*.linkedin.com/*",
+    "https://*.pinterest.com/*",
+    "https://*.sogou.com/*",
+    "https://*.threads.net/*",
+    "https://*.tiktok.com/*",
+    "https://*.twitter.com/*",
+    "https://*.weixin.qq.com/*",
+    "https://*.youtube.com/*",
+    "https://channels.weixin.qq.com/*",
+    "https://x.com/*"
   ],
   "background": {
     "service_worker": "src/background.js",
@@ -29,7 +49,31 @@
       "matches": [
         "http://localhost/*",
         "http://127.0.0.1/*",
-        "http://*:*/*"
+        "http://*/*",
+        "https://nasnas.vip/*",
+        "https://*.nasnas.vip/*",
+        "https://aitoearn.cn/*",
+        "https://*.aitoearn.cn/*",
+        "https://aitoearn.ai/*",
+        "https://*.aitoearn.ai/*"
+      ],
+      "js": [
+        "src/web-api.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "http://localhost/*",
+        "http://127.0.0.1/*",
+        "http://*/*",
+        "https://nasnas.vip/*",
+        "https://*.nasnas.vip/*",
+        "https://aitoearn.cn/*",
+        "https://*.aitoearn.cn/*",
+        "https://aitoearn.ai/*",
+        "https://*.aitoearn.ai/*"
       ],
       "js": [
         "src/content-home.js"
@@ -39,8 +83,22 @@
     {
       "matches": [
         "https://*.xiaohongshu.com/*",
+        "https://*.bilibili.com/*",
         "https://*.douyin.com/*",
-        "https://creator.douyin.com/*"
+        "https://creator.douyin.com/*",
+        "https://*.facebook.com/*",
+        "https://*.instagram.com/*",
+        "https://*.kuaishou.com/*",
+        "https://*.linkedin.com/*",
+        "https://*.pinterest.com/*",
+        "https://*.sogou.com/*",
+        "https://*.threads.net/*",
+        "https://*.tiktok.com/*",
+        "https://*.twitter.com/*",
+        "https://*.weixin.qq.com/*",
+        "https://*.youtube.com/*",
+        "https://channels.weixin.qq.com/*",
+        "https://x.com/*"
       ],
       "js": [
         "src/content-platform.js"
@@ -56,7 +114,13 @@
       "matches": [
         "http://localhost/*",
         "http://127.0.0.1/*",
-        "http://*:*/*"
+        "http://*/*",
+        "https://nasnas.vip/*",
+        "https://*.nasnas.vip/*",
+        "https://aitoearn.cn/*",
+        "https://*.aitoearn.cn/*",
+        "https://aitoearn.ai/*",
+        "https://*.aitoearn.ai/*"
       ]
     }
   ],

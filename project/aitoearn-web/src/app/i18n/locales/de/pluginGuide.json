@@ -95,15 +95,15 @@
     },
     "step3": {
       "title": "Heruntergeladene Plugin-Datei finden",
-      "content": "Öffnen Sie den Download-Ordner Ihres Browsers und finden Sie das heruntergeladene .crx-Plugin-Paket."
+      "content": "Öffnen Sie den Download-Ordner Ihres Browsers, finden Sie das heruntergeladene .zip-Plugin-Paket und entpacken Sie es in einen festen Ordner."
     },
     "step4": {
-      "title": "Drag & Drop zum Installieren des Plugins",
-      "content": "Ziehen Sie das .crx-Plugin-Paket per Drag & Drop auf die Erweiterungsseite."
+      "title": "Entpackten Plugin-Ordner laden",
+      "content": "Klicken Sie auf der Erweiterungsseite auf \"Load unpacked\" und wählen Sie den entpackten Ordner aus, der manifest.json enthält."
     },
     "step5": {
       "title": "Installation bestätigen",
-      "content": "Klicken Sie im Popup-Dialog auf \"Erweiterung hinzufügen\", um die Installation zu bestätigen."
+      "content": "Sobald das Plugin in der Erweiterungsliste erscheint, kehren Sie zu AiToEarn zurück, aktualisieren Sie die Seite und autorisieren Sie es im Plugin-Statusbereich."
     }
   },
   "faq": {

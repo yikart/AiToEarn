@@ -255,6 +255,16 @@ docker compose up -d
 
 启动后打开 **[http://localhost:8080](http://localhost:8080)** 即可使用。
 
+如果绑定公网域名，请在启动前设置实际域名，并确保 80/443 已正确反向代理到本服务：
+
+```bash
+APP_DOMAIN=your-domain.com \
+RELAY_CALLBACK_URL=https://your-domain.com/api/plat/relay-callback \
+docker compose up -d
+```
+
+平台授权和频道连接会使用 `APP_DOMAIN` 生成回调地址。若域名被 DNS/备案拦截、HTTPS 没有证书，或仍指向 `localhost`，抖音、快手、YouTube 等平台按钮会出现网络错误或授权失败。
+
 #### 配置 Relay（强烈推荐）
 
 > **为什么要配 Relay？** 发布内容需要登录社交媒体账号（抖音、小红书、TikTok 等），而这些平台的 OAuth 登录需要开发者凭据。配置 Relay 后，你可以直接借用官方 aitoearn.ai 的凭据完成授权，**不需要自己去各平台申请开发者账号**。
@@ -266,7 +276,7 @@ docker compose up -d
 ```yaml
 RELAY_SERVER_URL: https://aitoearn.ai/api
 RELAY_API_KEY: 你的API-Key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+RELAY_CALLBACK_URL: https://your-domain.com/api/plat/relay-callback
 ```
 
 然后重启：`docker compose restart aitoearn-server`

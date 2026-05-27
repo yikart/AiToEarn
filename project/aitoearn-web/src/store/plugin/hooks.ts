@@ -6,6 +6,7 @@
 
 import type {
   OperationResult,
+  PluginAccountPlatformType,
   PluginPlatformType,
   ProgressCallback,
   PublishParams,
@@ -91,7 +92,7 @@ export function usePluginLogin() {
    * @returns Promise<账号信息>
    */
   const loginToPlatform = useCallback(
-    async (platform: PluginPlatformType) => {
+    async (platform: PluginAccountPlatformType) => {
       try {
         const accountInfo = await login(platform)
         return { success: true, data: accountInfo } as OperationResult

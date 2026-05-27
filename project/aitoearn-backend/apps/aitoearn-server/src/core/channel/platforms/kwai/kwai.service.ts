@@ -28,6 +28,32 @@ export class KwaiService extends PlatformBaseService {
     super()
   }
 
+  private assertKwaiOAuthConfigured() {
+    const kwaiConfig = config.channel.kwai
+    const missing = [
+      ['KWAI_CLIENT_ID', kwaiConfig.id],
+      ['KWAI_CLIENT_SECRET', kwaiConfig.secret],
+      ['APP_DOMAIN', config.appDomain],
+      ['kwai.authBackHost', kwaiConfig.authBackHost],
+    ]
+      .filter(([, value]) => !String(value || '').trim())
+      .map(([name]) => name)
+
+    if (missing.length) {
+      throw new AppException(
+        ResponseCode.ValidationFailed,
+        `快手官方授权未配置完整：${missing.join('、')}。请先配置快手开放平台应用信息后再连接快手频道。`,
+      )
+    }
+
+    if (/^https:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\//i.test(kwaiConfig.authBackHost)) {
+      throw new AppException(
+        ResponseCode.ValidationFailed,
+        '快手官方授权回调地址不能使用 localhost。请把 APP_DOMAIN 配置为可被快手开放平台访问的 HTTPS 域名，并在快手开放平台后台配置同一个回调地址。',
+      )
+    }
+  }
+
   private async getOAuth2Credential(accountId: string): Promise<KwaiOAuthCredentialsResponse | null> {
     let credential = await this.redisService.getJson<KwaiOAuthCredentialsResponse>(
       ChannelRedisKeys.accessToken('kwai', accountId),
@@ -127,6 +153,7 @@ export class KwaiService extends PlatformBaseService {
     if (!config.channel.kwai.id && config.relay) {
       throw new RelayAuthException()
     }
+    this.assertKwaiOAuthConfigured()
     const taskId = uuidv4()
     const urlInfo = this.kwaiApiService.getAuthPage(taskId, data.type)
     const rRes = await this.redisService.setJson(

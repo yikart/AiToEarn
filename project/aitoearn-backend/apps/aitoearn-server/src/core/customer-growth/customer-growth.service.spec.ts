@@ -28,7 +28,7 @@ function createService() {
   }
 }
 
-describe('CustomerGrowthService', () => {
+describe('customerGrowthService', () => {
   it('generates a safe local fallback reply when no AI provider key is configured', async () => {
     const { service, systemSettingRepository } = createService()
 

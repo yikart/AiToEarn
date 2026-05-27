@@ -2,7 +2,6 @@
  * 平台交互统一类型定义
  */
 
-import type { PLUGIN_SUPPORTED_PLATFORMS } from '../types/baseTypes'
 import type { PlatType } from '@/app/config/platConfig'
 
 // ============================================================================
@@ -300,9 +299,10 @@ export interface IPlatformInteraction {
 // ============================================================================
 
 /**
- * 支持交互功能的平台类型
+ * 支持雷达页面执行的平台类型。
+ * 发布渠道仍走原版授权/发布链路，不能用这个类型反推插件发布范围。
  */
-export type SupportedPlatformType = (typeof PLUGIN_SUPPORTED_PLATFORMS)[number]
+export type SupportedPlatformType = PlatType
 
 // ============================================================================
 // 评论列表相关类型

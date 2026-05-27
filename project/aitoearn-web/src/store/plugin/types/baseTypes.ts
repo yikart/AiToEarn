@@ -50,14 +50,44 @@ export enum PluginStatus {
 }
 
 /**
- * 插件支持的平台列表
+ * 插件发布支持的平台列表。
+ *
+ * 注意：这里只控制内容发布是否走插件执行，不等同于频道账号登录检测范围。
  */
 export const PLUGIN_SUPPORTED_PLATFORMS = [PlatType.Xhs] as const
+
+/**
+ * 插件账号登录检测支持的平台列表。
+ *
+ * 原版插件登录链路是打开/读取平台网页登录态，再同步账号到频道管理；不需要先有
+ * 官方 OAuth client id，也不要求用户在未登录前就已经有平台账号 id。
+ */
+export const PLUGIN_ACCOUNT_AUTH_PLATFORMS = [
+  PlatType.Xhs,
+  PlatType.Douyin,
+  PlatType.KWAI,
+  PlatType.BILIBILI,
+  PlatType.WxSph,
+  PlatType.WxGzh,
+  PlatType.Tiktok,
+  PlatType.YouTube,
+  PlatType.Facebook,
+  PlatType.Instagram,
+  PlatType.Threads,
+  PlatType.Twitter,
+  PlatType.Pinterest,
+  PlatType.LinkedIn,
+] as const
 
 /**
  * 插件支持的平台类型（直接复用 PlatType）
  */
 export type PluginPlatformType = (typeof PLUGIN_SUPPORTED_PLATFORMS)[number]
+
+/**
+ * 插件账号登录检测平台类型
+ */
+export type PluginAccountPlatformType = (typeof PLUGIN_ACCOUNT_AUTH_PLATFORMS)[number]
 
 /**
  * 发布参数（扩展基础类型，添加 platform 字段）
@@ -184,7 +214,7 @@ export interface AIToEarnPluginAPI {
    * @param platform 平台类型
    * @returns Promise<账号信息>
    */
-  login: (platform: PluginPlatformType) => Promise<PlatAccountInfo>
+  login: (platform: PluginAccountPlatformType) => Promise<PlatAccountInfo>
 
   /**
    * 发布内容到指定平台
@@ -232,7 +262,7 @@ export interface AIToEarnPluginAPI {
   unifiedInteraction?: (params: Record<string, any>) => Promise<any>
 
   /**
-   * 原版插件远程页面自动化能力
+   * 客户雷达页面执行器能力
    */
   remoteAutomationRun?: <T = any>(params: RemoteAutomationRunParams) => Promise<RemoteAutomationRunResult<T>>
 }

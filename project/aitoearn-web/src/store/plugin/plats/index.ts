@@ -29,6 +29,8 @@
  */
 
 export { douyinInteraction } from './douyin'
+export { createGenericRadarInteraction, GenericRadarPlatformInteraction } from './generic'
+export { kwaiInteraction } from './kwai'
 
 // 管理器
 export { platformManager } from './manager'

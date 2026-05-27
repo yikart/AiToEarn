@@ -71,6 +71,23 @@ docker compose up -d
 
 > 首次启动会自动创建管理员账号并自动登录，无需手动注册。
 
+如果你要绑定公网域名，请先让域名的 80/443 正常到达你的反向代理，并在启动前设置：
+
+```bash
+APP_DOMAIN=your-domain.com \
+RELAY_CALLBACK_URL=https://your-domain.com/api/plat/relay-callback \
+docker compose up -d
+```
+
+验证域名不是 DNS/备案拦截页，并且 HTTPS 有证书：
+
+```bash
+curl -I http://your-domain.com/_nhealth
+openssl s_client -connect your-domain.com:443 -servername your-domain.com </dev/null
+```
+
+`curl` 不应跳到 DNSPod/Tencent `webblock.html`，`openssl` 应能看到证书信息。否则前端可能能从缓存打开，但 `/api/*` 请求、频道连接和平台授权会报网络错误。
+
 ### 第 3 步：配置 Relay 中继（强烈推荐）
 
 > **为什么要配 Relay？**
@@ -88,7 +105,7 @@ docker compose up -d
 ```yaml
 RELAY_SERVER_URL: https://aitoearn.ai/api
 RELAY_API_KEY: 你的API-Key
-RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+RELAY_CALLBACK_URL: https://your-domain.com/api/plat/relay-callback
 ```
 
 3. 重启服务：

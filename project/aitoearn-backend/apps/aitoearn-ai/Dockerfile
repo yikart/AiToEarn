@@ -1,4 +1,4 @@
-FROM node:24-alpine AS deps
+FROM node:22-alpine AS deps
 
 RUN npm install -g pnpm
 
@@ -6,13 +6,13 @@ WORKDIR /app
 
 COPY deps/ ./
 
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --prod
+RUN pnpm install --prod --dangerously-allow-all-builds
 
-FROM node:24-alpine AS production
+FROM node:22-alpine AS production
 
 ARG APP_NAME
 
-RUN apk add --no-cache curl ffmpeg
+RUN sed -i "s|https://dl-cdn.alpinelinux.org/alpine|http://mirrors.tencentyun.com/alpine|g; s|http://dl-cdn.alpinelinux.org/alpine|http://mirrors.tencentyun.com/alpine|g" /etc/apk/repositories && apk add --no-cache curl ffmpeg
 
 WORKDIR /app
 

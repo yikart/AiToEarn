@@ -76,6 +76,9 @@ export class CustomerRadarWorkspace extends WithTimestampSchema {
   @Prop({ required: false, default: '' })
   ownedPostWorkId?: string
 
+  @Prop({ required: false, default: 'xhs' })
+  ownedPostPlatform?: string
+
   @Prop({ required: false, default: '' })
   ownedPostXsecToken?: string
 

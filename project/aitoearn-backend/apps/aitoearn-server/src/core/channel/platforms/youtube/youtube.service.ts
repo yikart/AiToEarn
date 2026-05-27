@@ -61,6 +61,24 @@ export class YoutubeService extends PlatformBaseService {
     this.youtubeClient = google.youtube({ version: 'v3', auth: this.oauth2Client })
   }
 
+  private assertYoutubeOAuthConfigured() {
+    const missing = [
+      ['YOUTUBE_CLIENT_ID', this.webClientId],
+      ['YOUTUBE_CLIENT_SECRET', this.webClientSecret],
+      ['APP_DOMAIN', config.appDomain],
+      ['youtube.authBackHost', this.webRenderBaseUrl],
+    ]
+      .filter(([, value]) => !String(value || '').trim())
+      .map(([name]) => name)
+
+    if (missing.length) {
+      throw new AppException(
+        ResponseCode.ValidationFailed,
+        `YouTube 官方授权未配置完整：${missing.join('、')}。请先配置 Relay API Key，或配置 YouTube OAuth 客户端信息后再连接 YouTube 频道。`,
+      )
+    }
+  }
+
   /**
    * 创建账号+设置授权Token
    * @param taskId
@@ -508,6 +526,7 @@ export class YoutubeService extends PlatformBaseService {
     if (!config.channel.youtube.id && config.relay) {
       throw new RelayAuthException()
     }
+    this.assertYoutubeOAuthConfigured()
     const state = uuidv4()
     // 指定YouTube特定的scope
     const youtubeScopes = [

@@ -95,15 +95,15 @@
     },
     "step3": {
       "title": "Find the Downloaded Plugin File",
-      "content": "Open your browser's download folder and find the downloaded .crx plugin package."
+      "content": "Open your browser's download folder, find the downloaded .zip plugin package, and unzip it to a fixed folder."
     },
     "step4": {
-      "title": "Drag and Drop to Install Plugin",
-      "content": "Drag and drop the .crx plugin package to the extensions page."
+      "title": "Load the Unpacked Plugin Folder",
+      "content": "On the extensions page, click \"Load unpacked\" and select the unzipped folder that contains manifest.json."
     },
     "step5": {
       "title": "Confirm Installation",
-      "content": "In the pop-up dialog, click \"Add extension\" to confirm the installation."
+      "content": "After the plugin appears in the extensions list, return to AiToEarn, refresh the page, and authorize it from the plugin status panel."
     }
   },
   "faq": {

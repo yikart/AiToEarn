@@ -2,8 +2,8 @@
  * 插件相关工具函数
  */
 
-import type { PlatAccountInfo, PlatformPublishTask, PluginPlatformType } from './types/baseTypes'
-import { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS } from './types/baseTypes'
+import type { PlatAccountInfo, PlatformPublishTask, PluginAccountPlatformType } from './types/baseTypes'
+import { PlatformTaskStatus, PLUGIN_ACCOUNT_AUTH_PLATFORMS } from './types/baseTypes'
 
 /** 生成唯一ID */
 export function generateId() {
@@ -26,8 +26,8 @@ export function calculateOverallStatus(platformTasks: PlatformPublishTask[]) {
 
 /** 创建初始平台账号映射 */
 export function createInitialPlatformAccounts() {
-  const accounts: Record<PluginPlatformType, PlatAccountInfo | null> = {} as any
-  for (const platform of PLUGIN_SUPPORTED_PLATFORMS) {
+  const accounts: Record<PluginAccountPlatformType, PlatAccountInfo | null> = {} as any
+  for (const platform of PLUGIN_ACCOUNT_AUTH_PLATFORMS) {
     accounts[platform] = null
   }
   return accounts

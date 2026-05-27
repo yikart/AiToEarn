@@ -85,22 +85,63 @@ import { cn } from '@/lib/utils'
 const platformLabels: Record<CustomerRadarPlatform, string> = {
   bilibili: 'B站',
   douyin: '抖音',
+  facebook: 'Facebook',
+  instagram: 'Instagram',
+  kwai: '快手',
+  linkedin: 'LinkedIn',
+  pinterest: 'Pinterest',
+  threads: 'Threads',
+  tiktok: 'TikTok',
+  twitter: 'Twitter / X',
+  wxGzh: '微信公众号',
   wxSph: '视频号',
   xhs: '小红书',
+  youtube: 'YouTube',
 }
 
 const platformLoginUrls: Record<CustomerRadarPlatform, string> = {
   bilibili: 'https://www.bilibili.com/',
   douyin: 'https://www.douyin.com/',
+  facebook: 'https://www.facebook.com/',
+  instagram: 'https://www.instagram.com/',
+  kwai: 'https://www.kuaishou.com/',
+  linkedin: 'https://www.linkedin.com/',
+  pinterest: 'https://www.pinterest.com/',
+  threads: 'https://www.threads.net/',
+  tiktok: 'https://www.tiktok.com/',
+  twitter: 'https://x.com/',
+  wxGzh: 'https://mp.weixin.qq.com/',
   wxSph: 'https://channels.weixin.qq.com/',
   xhs: 'https://www.xiaohongshu.com/',
+  youtube: 'https://www.youtube.com/',
 }
 
 const platformAccountTypeMap: Partial<Record<CustomerRadarPlatform, PlatType>> = {
   bilibili: PlatType.BILIBILI,
   douyin: PlatType.Douyin,
+  facebook: PlatType.Facebook,
+  instagram: PlatType.Instagram,
+  kwai: PlatType.KWAI,
+  linkedin: PlatType.LinkedIn,
+  pinterest: PlatType.Pinterest,
+  threads: PlatType.Threads,
+  tiktok: PlatType.Tiktok,
+  twitter: PlatType.Twitter,
+  wxGzh: PlatType.WxGzh,
   wxSph: PlatType.WxSph,
   xhs: PlatType.Xhs,
+  youtube: PlatType.YouTube,
+}
+
+const ownedPostCommentScanStatus: Partial<Record<CustomerRadarPlatform, { className: string, text: string }>> = {
+  douyin: {
+    className: 'border-blue-200 bg-blue-50 text-blue-700',
+    text: '已接入页面可见评论扫描，需要本地执行器在线',
+  },
+  kwai: {
+    className: 'border-blue-200 bg-blue-50 text-blue-700',
+    text: '已接入页面可见评论扫描，需要本地执行器在线',
+  },
 }
 
 const commentSourceLabels: Record<CustomerRadarCommentSource, string> = {
@@ -114,7 +155,7 @@ const defaultProfile: CustomerRadarProfile = {
   keywords: ['探店', '装修', '开业引流', '到店客流', '小红书运营'],
   painPoints: ['没人咨询', '账号发了没流量', '不知道怎么拍视频'],
   excludedWords: ['招聘', '加盟广告', '兼职'],
-  platforms: ['xhs', 'douyin'],
+  platforms: ['xhs', 'douyin', 'kwai', 'bilibili', 'wxSph', 'wxGzh'],
   commentSources: ['keyword_discovery', 'owned_post_comments'],
   dailyLimit: 80,
   requireApproval: true,
@@ -380,7 +421,22 @@ const knowledgeBase: GlobalKnowledgeItem[] = [
   },
 ]
 
-const platformOptions: CustomerRadarPlatform[] = ['xhs', 'douyin', 'wxSph', 'bilibili']
+const platformOptions: CustomerRadarPlatform[] = [
+  'xhs',
+  'douyin',
+  'kwai',
+  'bilibili',
+  'wxSph',
+  'wxGzh',
+  'tiktok',
+  'youtube',
+  'facebook',
+  'instagram',
+  'threads',
+  'twitter',
+  'pinterest',
+  'linkedin',
+]
 
 const commentSourceOptions: CustomerRadarCommentSource[] = ['keyword_discovery', 'owned_post_comments']
 
@@ -395,7 +451,7 @@ interface PluginDiagnosticResult {
   platforms: {
     error?: string
     nickname?: string
-    platform: 'xhs' | 'douyin'
+    platform: CustomerRadarPlatform
     ready: boolean
     uid?: string
   }[]
@@ -806,11 +862,12 @@ function createSocialAccounts(profile: CustomerRadarProfile): CustomerRadarSocia
 function createInitialPlatformCapabilities(profile: CustomerRadarProfile): CustomerRadarPlatformCapability[] {
   return profile.platforms.map(platform => ({
     platform,
-    available: false,
-    canPublishComment: false,
-    canScanComments: false,
-    canSendDirectMessage: false,
-    note: '等待页面加载后检测本地执行器能力；频道账号登录态以频道管理为准。',
+    available: true,
+    canDiscoverKeyword: true,
+    canPublishComment: true,
+    canScanComments: true,
+    canSendDirectMessage: true,
+    note: '雷达全功能已开放；自动关键词扫描、评论扫描和触达会按平台官方 API 或页面执行器逐步落地。',
   }))
 }
 
@@ -852,7 +909,13 @@ function createSocialAccountsFromChannels(profile: CustomerRadarProfile, account
   })
 }
 
-function createAutomationTask(profile: CustomerRadarProfile, mode: CustomerRadarAutomationRun['mode'], ownedPostWorkId?: string, cadence: CustomerRadarTask['cadence'] = 'manual'): CustomerRadarTask {
+function createAutomationTask(
+  profile: CustomerRadarProfile,
+  mode: CustomerRadarAutomationRun['mode'],
+  ownedPostWorkId?: string,
+  ownedPostPlatform: CustomerRadarPlatform = 'xhs',
+  cadence: CustomerRadarTask['cadence'] = 'manual',
+): CustomerRadarTask {
   const sourceSet = new Set(profile.commentSources || defaultProfile.commentSources)
   const hasKeywordDiscovery = sourceSet.has('keyword_discovery')
   const hasOwnedPost = sourceSet.has('owned_post_comments')
@@ -878,6 +941,7 @@ function createAutomationTask(profile: CustomerRadarProfile, mode: CustomerRadar
     name: `${profile.industry}自动获客`,
     nextRunAt: getNextRunAtForCadence(cadence),
     ownedPostWorkId: hasOwnedPost ? ownedPostWorkId || '' : '',
+    ownedPostPlatform: hasOwnedPost ? ownedPostPlatform : undefined,
     perRunLimit: limitPolicy.perRunLimit,
     platforms: profile.platforms,
     pluginRequired: false,
@@ -1090,6 +1154,7 @@ export function CustomerRadarPageContent() {
   const [tenantAiConfig, setTenantAiConfig] = useState<CustomerRadarTenantAiConfig>(defaultTenantAiConfig)
   const [isSavingTenantAiConfig, setIsSavingTenantAiConfig] = useState(false)
   const [generatingReplyId, setGeneratingReplyId] = useState<string | null>(null)
+  const [ownedPostPlatform, setOwnedPostPlatform] = useState<CustomerRadarPlatform>('xhs')
   const [ownedPostWorkId, setOwnedPostWorkId] = useState('')
   const [ownedPostXsecToken, setOwnedPostXsecToken] = useState('')
   const [isFetchingOwnedComments, setIsFetchingOwnedComments] = useState(false)
@@ -1314,10 +1379,11 @@ export function CustomerRadarPageContent() {
         setAutomationRun(remote.automationRun || initialAutomationRun)
         setReplyCandidates(remoteReplyCandidates)
         setExecutionLogs(remoteExecutionLogs)
-        setPlatformCapabilities(remote.platformCapabilities || getCustomerRadarPlatformCapabilities(remote.profile?.platforms || defaultProfile.platforms))
+        setPlatformCapabilities(getCustomerRadarPlatformCapabilities(tenantAwareProfile.platforms))
         setAutomationTasks(normalizeAutomationTasks(remote.automationTasks, remoteProfile))
         setTaskRuns(normalizeTaskRuns(remote.taskRuns))
         setSocialAccounts(normalizeSocialAccounts(remote.socialAccounts, tenantAwareProfile))
+        setOwnedPostPlatform(remote.ownedPostPlatform || 'xhs')
         setOwnedPostWorkId(remote.ownedPostWorkId || '')
         setOwnedPostXsecToken(remote.ownedPostXsecToken || '')
         setLiveExecutionEnabled(Boolean(remote.liveExecutionEnabled))
@@ -1363,6 +1429,7 @@ export function CustomerRadarPageContent() {
         leads,
         liveExecutionEnabled,
         ownedPostWorkId,
+        ownedPostPlatform,
         ownedPostXsecToken,
         platformCapabilities,
         profile,
@@ -1373,7 +1440,7 @@ export function CustomerRadarPageContent() {
     }, 700)
 
     return () => window.clearTimeout(saveTimer)
-  }, [automationRun, automationTasks, customerRecordsState, executionLogs, leads, liveExecutionEnabled, ownedPostWorkId, ownedPostXsecToken, platformCapabilities, profile, replyCandidates, socialAccounts, taskRuns])
+  }, [automationRun, automationTasks, customerRecordsState, executionLogs, leads, liveExecutionEnabled, ownedPostPlatform, ownedPostWorkId, ownedPostXsecToken, platformCapabilities, profile, replyCandidates, socialAccounts, taskRuns])
 
   useEffect(() => {
     setSocialAccounts(createSocialAccountsFromChannels(profile, accountList))
@@ -1482,10 +1549,16 @@ export function CustomerRadarPageContent() {
     })
   }
 
-  function createOwnedPostCandidates(comments: CommentItem[], workId: string, mode: CustomerRadarAutomationRun['mode']) {
+  function createOwnedPostCandidates(
+    comments: CommentItem[],
+    workId: string,
+    mode: CustomerRadarAutomationRun['mode'],
+    platform: CustomerRadarPlatform,
+  ) {
     return comments.map((comment, index): CustomerReplyCandidate => {
       const author = comment.user.nickname || `评论用户${index + 1}`
-      const customerId = `owned-xhs-${comment.user.id || comment.id}`
+      const customerId = `owned-${platform}-${comment.user.id || comment.id}`
+      const platformName = platformLabels[platform]
 
       return {
         id: `owned-reply-${comment.id}-${Date.now()}`,
@@ -1493,13 +1566,13 @@ export function CustomerRadarPageContent() {
         commentContent: comment.content,
         commentId: comment.id,
         customerId,
-        customerMemory: `来自自己发布笔记评论，用户关心：${comment.content}`,
+        customerMemory: `来自自己发布的${platformName}作品评论，用户关心：${comment.content}`,
         knowledgeRefs: ['回复语气规则', '客户雷达核心价值', '平台触达边界'],
         leadId: workId,
-        platform: 'xhs',
+        platform,
         replyContent: `可以的，你这个问题适合先做一次账号和评论区诊断。我们会先看你现在的内容、评论问题和客户画像，再给你一版低打扰的获客建议。`,
-        riskNote: '自己笔记评论：用户已经主动咨询，回复风险较低；全自动模式下也会写入日志和客户记忆。',
-        sourceTitle: `自己的小红书笔记 ${workId}`,
+        riskNote: `自己的${platformName}作品评论：用户已经主动咨询，回复风险较低；全自动模式下也会写入日志和客户记忆。`,
+        sourceTitle: `自己的${platformName}作品 ${workId}`,
         sourceType: 'owned_post_comments',
         status: mode === 'full_auto' ? 'approved' : 'draft',
         workId,
@@ -1507,38 +1580,39 @@ export function CustomerRadarPageContent() {
     })
   }
 
-  function upsertOwnedPostCustomers(comments: CommentItem[], workId: string) {
+  function upsertOwnedPostCustomers(comments: CommentItem[], workId: string, platform: CustomerRadarPlatform) {
     setCustomerRecordsState((items) => {
       const nextItems = [...items]
+      const platformName = platformLabels[platform]
 
       for (const comment of comments) {
-        const customerId = `owned-xhs-${comment.user.id || comment.id}`
+        const customerId = `owned-${platform}-${comment.user.id || comment.id}`
         const existingIndex = nextItems.findIndex(item => item.id === customerId)
         const record: CustomerRecord = {
           city: comment.ipLocation || '未知',
-          company: '小红书评论用户',
+          company: `${platformName}评论用户`,
           id: customerId,
           interactions: [
             {
               id: `interaction-owned-${comment.id}-${Date.now()}`,
               at: new Date().toLocaleString('zh-CN', { hour12: false }),
-              channel: 'xhs',
-              summary: `在自己的笔记 ${workId} 下留言：${comment.content}`,
+              channel: platform,
+              summary: `在自己的${platformName}作品 ${workId} 下留言：${comment.content}`,
               type: 'comment',
             },
           ],
           lastTouchAt: new Date().toLocaleString('zh-CN', { hour12: false }),
           memory: [
-            `来自自己发布笔记评论，原始评论是：${comment.content}`,
+            `来自自己发布的${platformName}作品评论，原始评论是：${comment.content}`,
             '已主动在我方内容下咨询，优先级高于冷启动主动触达。',
           ],
-          name: comment.user.nickname || '小红书评论用户',
+          name: comment.user.nickname || `${platformName}评论用户`,
           owner: '巨鲸增长顾问',
-          platform: 'xhs',
+          platform,
           role: '潜在客户',
-          source: `自己的小红书笔记 ${workId}`,
+          source: `自己的${platformName}作品 ${workId}`,
           stage: 'qualified',
-          tags: ['自己笔记评论', '主动咨询'],
+          tags: ['自己作品评论', '主动咨询', platformName],
           valueLevel: 'high',
         }
 
@@ -1766,25 +1840,33 @@ export function CustomerRadarPageContent() {
     if (keyword && keyword !== keywordDiscoveryTerm)
       setKeywordDiscoveryTerm(keyword)
 
-    const result = await scanKeywordDiscovery({
-      count: options?.limit || Math.min(Math.max(nextProfile.dailyLimit, 1), 12),
-      excludedWords: nextProfile.excludedWords,
-      keyword,
-      platform: 'xhs',
-    })
-    setExecutionLogs(current => [result.log, ...current.filter(item => !isNoisyKeywordExecutionLog(item))])
+    const scanPlatforms = nextProfile.platforms.length ? nextProfile.platforms : defaultProfile.platforms
+    const results: Array<Awaited<ReturnType<typeof scanKeywordDiscovery>>> = []
 
-    if (!result.success) {
+    for (const platform of scanPlatforms) {
+      results.push(await scanKeywordDiscovery({
+        count: options?.limit || Math.min(Math.max(nextProfile.dailyLimit, 1), 12),
+        excludedWords: nextProfile.excludedWords,
+        keyword,
+        platform,
+      }))
+    }
+
+    const signals = results.flatMap(result => result.signals)
+    const hasSuccess = results.some(result => result.success)
+    setExecutionLogs(current => [...results.map(result => result.log), ...current.filter(item => !isNoisyKeywordExecutionLog(item))])
+
+    if (!hasSuccess) {
       return {
         candidates: [] as CustomerReplyCandidate[],
         leads: [] as CustomerLead[],
         revisitedSignals: [] as KeywordDiscoverySignal[],
-        signals: result.signals,
+        signals,
         skippedSignals: [] as KeywordDiscoverySignal[],
       }
     }
 
-    const classified = classifyKeywordDiscoverySignals(result.signals)
+    const classified = classifyKeywordDiscoverySignals(signals)
     const nextLeads = createKeywordDiscoveryLeads(classified.activeSignals, nextProfile)
     const nextCandidates = createKeywordDiscoveryCandidates(classified.activeSignals, nextLeads, automationRun.mode)
     upsertKeywordDiscoveryCustomers(classified.activeSignals, classified.revisitedSignals)
@@ -1809,7 +1891,7 @@ export function CustomerRadarPageContent() {
       candidates: nextCandidates,
       leads: nextLeads,
       revisitedSignals: classified.revisitedSignals,
-      signals: result.signals,
+      signals,
       skippedSignals: classified.skippedSignals,
     }
   }
@@ -2009,17 +2091,18 @@ export function CustomerRadarPageContent() {
       const result: PluginDiagnosticResult = {
         checkedAt,
         hasPlugin: false,
-        platforms: [
-          { error: '未检测到本地执行器对象', platform: 'xhs', ready: false },
-          { error: '未检测到本地执行器对象', platform: 'douyin', ready: false },
-        ],
+        platforms: profile.platforms.map(platform => ({
+          error: '未检测到本地执行器对象',
+          platform,
+          ready: false,
+        })),
       }
       setPluginDiagnostic(result)
       setExecutionLogs(current => [
         {
           id: `customer-radar-plugin-${Date.now()}`,
           at: checkedAt,
-          detail: '当前浏览器没有注入本地页面执行器。频道账号登录态不受影响；真实页面抓取/发布会保持安全演练或待接入。',
+          detail: '客户雷达全平台功能已开放；当前浏览器没有注入本地页面执行器。频道账号登录态不受影响，真实页面抓取/发布会等待执行通道或进入人工确认。',
           level: 'warning',
           title: '本地执行器未接入',
         },
@@ -2050,17 +2133,17 @@ export function CustomerRadarPageContent() {
       result.permission = { granted: false, origins: [], permissions: [] }
     }
 
-    for (const platform of ['xhs', 'douyin'] as const) {
-      const hasPageApi = platform === 'xhs'
-        ? Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.xhsRequest)
-        : Boolean(plugin.remoteAutomationRun || plugin.unifiedInteraction || plugin.douyinInteraction || plugin.douyinDirectMessage)
-      const ready = Boolean(result.permission?.granted && hasPageApi)
+    const diagnosticCapabilities = getCustomerRadarPlatformCapabilities(profile.platforms, plugin)
+
+    for (const platform of profile.platforms) {
+      const capability = diagnosticCapabilities.find(item => item.platform === platform)
+      const ready = Boolean(result.permission?.granted && capability?.available)
 
       result.platforms.push({
         error: ready
           ? undefined
           : result.permission?.granted
-            ? '未检测到该平台可用的页面执行接口'
+            ? capability?.note || `${platformLabels[platform]}执行通道待接入`
             : '已检测到插件，但尚未完成权限授权',
         nickname: ready ? `${platformLabels[platform]}页面执行器` : undefined,
         platform,
@@ -2069,20 +2152,12 @@ export function CustomerRadarPageContent() {
     }
 
     setPluginDiagnostic(result)
-    setPlatformCapabilities(current => current.map(capability => result.platforms.some(item => item.platform === capability.platform && item.ready)
-      ? {
-          ...capability,
-          available: true,
-          canPublishComment: true,
-          canScanComments: true,
-          note: '原版插件已授权并检测到页面执行能力，可进入真实执行链路测试。',
-        }
-      : capability))
+    setPlatformCapabilities(diagnosticCapabilities)
     setExecutionLogs(current => [
       {
         id: `customer-radar-plugin-${Date.now()}`,
         at: checkedAt,
-        detail: `本地执行器：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；小红书页面：${result.platforms.find(item => item.platform === 'xhs')?.ready ? '可执行' : '未就绪'}；抖音页面：${result.platforms.find(item => item.platform === 'douyin')?.ready ? '可执行' : '未就绪'}。诊断不再调用插件登录，频道账号登录仍以频道管理为准，关键词获客优先走原版插件页面自动化能力。`,
+        detail: `本地执行器：${result.version?.name || '未知'} ${result.version?.version || ''}；权限：${result.permission?.granted ? '已授权' : '未授权'}；已检测平台：${result.platforms.map(item => `${platformLabels[item.platform]}${item.ready ? '执行通道已连接' : '执行通道待接入'}`).join('、')}。诊断不再调用插件登录，频道账号登录仍以频道管理为准；每个平台雷达功能保持全开，执行落地按官方接口或页面执行器适配。`,
         level: result.platforms.some(item => item.ready) ? 'success' : 'warning',
         title: '本地执行器诊断完成',
       },
@@ -2095,7 +2170,7 @@ export function CustomerRadarPageContent() {
   function handleCreateAutomationTask() {
     const nextProfile = syncProfile()
     const task = {
-      ...createAutomationTask(nextProfile, automationRun.mode, ownedPostWorkId.trim(), taskCadence),
+      ...createAutomationTask(nextProfile, automationRun.mode, ownedPostWorkId.trim(), ownedPostPlatform, taskCadence),
       dailyLimit: tenantContext?.dailyLimit || nextProfile.dailyLimit,
       perRunLimit: tenantContext?.perRunLimit || createTaskLimitPolicy(nextProfile).perRunLimit,
     }
@@ -2189,17 +2264,18 @@ export function CustomerRadarPageContent() {
 
     const remainingAllowance = Math.max(allowance.count - scanned, 0)
     if (task.commentSources.includes('owned_post_comments') && task.ownedPostWorkId && remainingAllowance > 0) {
+      const targetPlatform = task.ownedPostPlatform || ownedPostPlatform
       const result = await scanOwnedPostComments({
         count: remainingAllowance,
-        platform: 'xhs',
+        platform: targetPlatform,
         workId: task.ownedPostWorkId,
-        xsecToken: ownedPostXsecToken.trim() || undefined,
+        xsecToken: targetPlatform === 'xhs' ? ownedPostXsecToken.trim() || undefined : undefined,
       })
       setExecutionLogs(current => [result.log, ...current])
       if (result.success) {
-        const candidates = createOwnedPostCandidates(result.comments, task.ownedPostWorkId, task.mode)
+        const candidates = createOwnedPostCandidates(result.comments, task.ownedPostWorkId, task.mode, targetPlatform)
         producedCandidates.push(...candidates)
-        upsertOwnedPostCustomers(result.comments, task.ownedPostWorkId)
+        upsertOwnedPostCustomers(result.comments, task.ownedPostWorkId, targetPlatform)
         setReplyCandidates(current => [...candidates, ...current])
         collected += result.comments.length
         scanned += result.comments.length
@@ -2315,9 +2391,9 @@ export function CustomerRadarPageContent() {
 
     const result = await scanOwnedPostComments({
       count: 20,
-      platform: 'xhs',
+      platform: ownedPostPlatform,
       workId,
-      xsecToken: ownedPostXsecToken.trim() || undefined,
+      xsecToken: ownedPostPlatform === 'xhs' ? ownedPostXsecToken.trim() || undefined : undefined,
     })
     setExecutionLogs(current => [result.log, ...current])
 
@@ -2327,8 +2403,8 @@ export function CustomerRadarPageContent() {
       return
     }
 
-    const nextCandidates = createOwnedPostCandidates(result.comments, workId, automationRun.mode)
-    upsertOwnedPostCustomers(result.comments, workId)
+    const nextCandidates = createOwnedPostCandidates(result.comments, workId, automationRun.mode, ownedPostPlatform)
+    upsertOwnedPostCustomers(result.comments, workId, ownedPostPlatform)
     setReplyCandidates(current => [...nextCandidates, ...current.filter(item => item.sourceType !== 'owned_post_comments' || item.workId !== workId)])
     setAutomationRun(current => ({
       ...current,
@@ -2723,10 +2799,21 @@ export function CustomerRadarPageContent() {
   }
 
   function handleOwnedPostInputChange(value: string) {
+    if (ownedPostPlatform !== 'xhs') {
+      setOwnedPostWorkId(value.trim())
+      return
+    }
+
     const parsed = parseXhsNoteInput(value)
     setOwnedPostWorkId(parsed.noteId)
     if (parsed.xsecToken)
       setOwnedPostXsecToken(parsed.xsecToken)
+  }
+
+  function handleOwnedPostPlatformChange(platform: CustomerRadarPlatform) {
+    setOwnedPostPlatform(platform)
+    if (platform !== 'xhs')
+      setOwnedPostXsecToken('')
   }
 
   function handleAutomationModeChange(mode: CustomerRadarAutomationRun['mode']) {
@@ -3166,7 +3253,7 @@ export function CustomerRadarPageContent() {
             </Field>
             <Field label="当前平台">
               <div className="flex h-9 items-center rounded-md border border-slate-200 px-3 text-sm text-slate-700">
-                小红书优先，抖音搜索待加固
+                按已选平台逐个扫描，执行通道未连接的平台会生成待执行日志
               </div>
             </Field>
           </div>
@@ -3204,12 +3291,12 @@ export function CustomerRadarPageContent() {
             <div className="mt-5 grid gap-3 md:grid-cols-3">
               <ReadinessStep
                 label="1. 频道账号"
-                text="在“我的频道”里登录小红书等平台账号，平台登录态仍以频道管理读取结果为准。"
+                text="在“我的频道”里登录各平台账号，平台登录态仍以频道管理读取结果为准。"
                 active={accountReady}
               />
               <ReadinessStep
-                label="2. 原版插件"
-                text="关键词获客优先走原版插件页面自动化能力；未授权时只提示，不写入演示线索。"
+                label="2. 执行器能力"
+                text="客户雷达按官方接口或页面执行器运行；未授权时只提示，不写入演示线索。"
                 active={localExecutorReady}
               />
               <ReadinessStep
@@ -3235,7 +3322,7 @@ export function CustomerRadarPageContent() {
                   </Badge>
                 </div>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-600">
-                  真实上线时填写自己发布的小红书笔记 ID，系统会尝试抓取该笔记评论，生成客户资料和候选回复。本地执行器未接入时会使用样例评论验证流程。
+                  真实上线时选择平台并填写自己发布的作品 ID 或链接，系统会尝试抓取评论，生成客户资料和候选回复；执行通道未连接的平台会进入待执行日志，不写入假线索。
                 </p>
               </div>
             </div>
@@ -3249,21 +3336,48 @@ export function CustomerRadarPageContent() {
             </Button>
           </div>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
-            <Field label="小红书笔记 ID">
+          <div className="mt-5 grid gap-4 md:grid-cols-[220px_minmax(0,1fr)_minmax(0,1fr)]">
+            <Field label="作品平台">
+              <select
+                className="h-9 w-full rounded-md border border-slate-200 bg-white px-3 text-sm text-slate-700 outline-none focus:border-slate-400"
+                value={ownedPostPlatform}
+                onChange={event => handleOwnedPostPlatformChange(event.target.value as CustomerRadarPlatform)}
+              >
+                {platformOptions.map(platform => (
+                  <option key={platform} value={platform}>
+                    {platformLabels[platform]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label={`${platformLabels[ownedPostPlatform]}作品 ID / 链接`}>
               <Input
                 value={ownedPostWorkId}
                 onChange={event => handleOwnedPostInputChange(event.target.value)}
-                placeholder="可直接粘贴笔记链接 / note_id"
+                placeholder={ownedPostPlatform === 'xhs' ? '可直接粘贴笔记链接 / note_id' : '可直接粘贴作品链接或平台作品 ID'}
               />
             </Field>
-            <Field label="xsec_token（可选）">
-              <Input
-                value={ownedPostXsecToken}
-                onChange={event => setOwnedPostXsecToken(event.target.value)}
-                placeholder="部分小红书评论接口需要 xsec_token"
-              />
-            </Field>
+            {ownedPostPlatform === 'xhs'
+              ? (
+                  <Field label="xsec_token（可选）">
+                    <Input
+                      value={ownedPostXsecToken}
+                      onChange={event => setOwnedPostXsecToken(event.target.value)}
+                      placeholder="部分小红书评论接口需要 xsec_token"
+                    />
+                  </Field>
+                )
+              : (
+                  <Field label="接入状态">
+                    <div className={cn(
+                      'flex h-9 items-center rounded-md border px-3 text-sm',
+                      ownedPostCommentScanStatus[ownedPostPlatform]?.className || 'border-amber-200 bg-amber-50 text-amber-700',
+                    )}
+                    >
+                      {ownedPostCommentScanStatus[ownedPostPlatform]?.text || '该平台评论抓取功能已开放，执行通道待接入'}
+                    </div>
+                  </Field>
+                )}
           </div>
         </section>
 
@@ -3395,10 +3509,11 @@ export function CustomerRadarPageContent() {
                           : 'border-amber-200 bg-amber-50 text-amber-700',
                       )}
                     >
-                      {capability.available ? '可连接' : '待接入'}
+                      {capability.available ? '全功能' : '待接入'}
                     </Badge>
                   </div>
-                  <div className="mt-3 grid grid-cols-3 gap-2 text-xs">
+                  <div className="mt-3 grid grid-cols-2 gap-2 text-xs sm:grid-cols-4">
+                    <CapabilityPill active={capability.canDiscoverKeyword} label="搜关键词" />
                     <CapabilityPill active={capability.canScanComments} label="抓评论" />
                     <CapabilityPill active={capability.canPublishComment} label="发评论" />
                     <CapabilityPill active={capability.canSendDirectMessage} label="发私信" />

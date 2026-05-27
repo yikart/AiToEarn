@@ -5,7 +5,7 @@
 
 import type { SocialAccount } from '@/api/types/account.type'
 import type { PlatType } from '@/app/config/platConfig'
-import type { PluginPlatformType } from '@/store/plugin'
+import type { PluginAccountPlatformType } from '@/store/plugin'
 
 /** 频道管理器视图类型 */
 export type ChannelManagerView = 'main' | 'connect-list' | 'auth-loading'
@@ -68,8 +68,8 @@ export interface ChannelManagerMethods {
   setTargetSpaceId: (spaceId: string | null) => void
   /** 开始授权流程 */
   startAuth: (platform: PlatType, spaceId?: string) => Promise<void>
-  /** 处理插件平台的授权（小红书、抖音等） */
-  handlePluginPlatformAuth: (platform: PluginPlatformType, spaceId?: string) => Promise<void>
+  /** 处理插件平台的网页登录态授权 */
+  handlePluginPlatformAuth: (platform: PluginAccountPlatformType, spaceId?: string) => Promise<void>
   /** 停止授权（取消/超时） */
   stopAuth: () => void
   /** 重新打开授权页面 */

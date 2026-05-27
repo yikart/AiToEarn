@@ -231,7 +231,7 @@ async function run() {
 
   try {
     await page.goto(targetUrl, { waitUntil: 'networkidle' })
-    await page.getByRole('button', { name: '检测插件/账号' }).first().click()
+    await page.getByRole('button', { name: /检测.*执行器/ }).first().click()
     await page.waitForTimeout(800)
 
     if (mode === 'mock-publish') {

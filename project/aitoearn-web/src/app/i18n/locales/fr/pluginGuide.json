@@ -95,15 +95,15 @@
     },
     "step3": {
       "title": "Trouver le fichier du plugin téléchargé",
-      "content": "Ouvrez le dossier de téléchargement de votre navigateur et trouvez le package du plugin .crx téléchargé."
+      "content": "Ouvrez le dossier de téléchargement de votre navigateur, trouvez le package du plugin .zip téléchargé, puis décompressez-le dans un dossier fixe."
     },
     "step4": {
-      "title": "Glisser-déposer pour installer le plugin",
-      "content": "Glissez-déposez le package du plugin .crx sur la page des extensions."
+      "title": "Charger le dossier du plugin décompressé",
+      "content": "Sur la page des extensions, cliquez sur \"Load unpacked\" et sélectionnez le dossier décompressé qui contient manifest.json."
     },
     "step5": {
       "title": "Confirmer l'installation",
-      "content": "Dans la boîte de dialogue qui apparaît, cliquez sur \"Ajouter l'extension\" pour confirmer l'installation."
+      "content": "Lorsque le plugin apparaît dans la liste des extensions, retournez sur AiToEarn, actualisez la page, puis autorisez-le depuis le panneau d'état du plugin."
     }
   },
   "faq": {

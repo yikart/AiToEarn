@@ -21,7 +21,10 @@ import type {
   SupportedPlatformType,
 } from './types'
 import type { PlatType } from '@/app/config/platConfig'
+import { PlatType as PlatformType } from '@/app/config/platConfig'
 import { douyinInteraction } from './douyin'
+import { createGenericRadarInteraction } from './generic'
+import { kwaiInteraction } from './kwai'
 import { xhsInteraction } from './xhs'
 
 /**
@@ -33,6 +36,19 @@ class PlatformInteractionManager {
   constructor() {
     this.register(xhsInteraction)
     this.register(douyinInteraction)
+    this.register(kwaiInteraction)
+    this.registerGenericRadarPlatforms()
+  }
+
+  private registerGenericRadarPlatforms(): void {
+    const registered = new Set<PlatType>(this.platforms.keys())
+    const platforms = Object.values(PlatformType) as PlatType[]
+
+    for (const platform of platforms) {
+      if (!registered.has(platform)) {
+        this.register(createGenericRadarInteraction(platform))
+      }
+    }
   }
 
   /**

@@ -1,23 +1,103 @@
 import { PLATFORM_ORIGINS, REQUIRED_PERMISSIONS, RuntimeAction } from './shared.js'
 
-const EXTENSION_VERSION = '0.1.0'
+const EXTENSION_VERSION = '0.1.1'
 
 const platformCookieUrls = {
+  bilibili: ['https://www.bilibili.com'],
   douyin: ['https://www.douyin.com', 'https://creator.douyin.com'],
+  facebook: ['https://www.facebook.com'],
+  instagram: ['https://www.instagram.com'],
+  kwai: ['https://www.kuaishou.com', 'https://cp.kuaishou.com'],
+  linkedin: ['https://www.linkedin.com'],
+  pinterest: ['https://www.pinterest.com'],
+  threads: ['https://www.threads.net'],
+  tiktok: ['https://www.tiktok.com'],
+  twitter: ['https://x.com', 'https://twitter.com'],
+  wxGzh: ['https://weixin.sogou.com', 'https://mp.weixin.qq.com'],
+  wxSph: ['https://channels.weixin.qq.com'],
   xhs: ['https://www.xiaohongshu.com', 'https://creator.xiaohongshu.com', 'https://edith.xiaohongshu.com'],
+  youtube: ['https://www.youtube.com'],
 }
 
 const platformTabMatchers = {
+  bilibili: ['*://*.bilibili.com/*'],
   douyin: ['*://*.douyin.com/*', '*://creator.douyin.com/*'],
+  facebook: ['*://*.facebook.com/*'],
+  instagram: ['*://*.instagram.com/*'],
+  kwai: ['*://*.kuaishou.com/*', '*://cp.kuaishou.com/*'],
+  linkedin: ['*://*.linkedin.com/*'],
+  pinterest: ['*://*.pinterest.com/*'],
+  threads: ['*://*.threads.net/*'],
+  tiktok: ['*://*.tiktok.com/*'],
+  twitter: ['*://x.com/*', '*://*.twitter.com/*'],
+  wxGzh: ['*://weixin.sogou.com/*', '*://*.weixin.qq.com/*'],
+  wxSph: ['*://channels.weixin.qq.com/*'],
   xhs: ['*://*.xiaohongshu.com/*'],
+  youtube: ['*://*.youtube.com/*'],
 }
 
 function normalizePlatform(platform) {
+  if (platform === 'bilibili' || platform === 'BILIBILI')
+    return 'bilibili'
   if (platform === 'xhs' || platform === 'Xhs')
     return 'xhs'
   if (platform === 'douyin' || platform === 'Douyin')
     return 'douyin'
+  if (platform === 'kwai' || platform === 'Kwai' || platform === 'KWAI')
+    return 'kwai'
+  if (platform === 'facebook' || platform === 'Facebook')
+    return 'facebook'
+  if (platform === 'instagram' || platform === 'Instagram')
+    return 'instagram'
+  if (platform === 'linkedin' || platform === 'LinkedIn')
+    return 'linkedin'
+  if (platform === 'pinterest' || platform === 'Pinterest')
+    return 'pinterest'
+  if (platform === 'threads' || platform === 'Threads')
+    return 'threads'
+  if (platform === 'tiktok' || platform === 'Tiktok')
+    return 'tiktok'
+  if (platform === 'twitter' || platform === 'Twitter')
+    return 'twitter'
+  if (platform === 'wxGzh' || platform === 'WxGzh')
+    return 'wxGzh'
+  if (platform === 'wxSph' || platform === 'WxSph')
+    return 'wxSph'
+  if (platform === 'youtube' || platform === 'YouTube')
+    return 'youtube'
   return platform
+}
+
+function getPlatformLabel(platform) {
+  if (platform === 'bilibili')
+    return 'B站'
+  if (platform === 'xhs')
+    return '小红书'
+  if (platform === 'douyin')
+    return '抖音'
+  if (platform === 'kwai')
+    return '快手'
+  if (platform === 'facebook')
+    return 'Facebook'
+  if (platform === 'instagram')
+    return 'Instagram'
+  if (platform === 'linkedin')
+    return 'LinkedIn'
+  if (platform === 'pinterest')
+    return 'Pinterest'
+  if (platform === 'threads')
+    return 'Threads'
+  if (platform === 'tiktok')
+    return 'TikTok'
+  if (platform === 'twitter')
+    return 'Twitter / X'
+  if (platform === 'wxGzh')
+    return '微信公众号'
+  if (platform === 'wxSph')
+    return '视频号'
+  if (platform === 'youtube')
+    return 'YouTube'
+  return platform || '平台'
 }
 
 async function getAllGrantedPermissions() {
@@ -72,11 +152,47 @@ async function queryPlatformTabs(platform) {
 function getTargetUrl(platform, params = {}) {
   const keyword = params.keyword?.trim()
   if (params.action === 'discoverByKeyword' && keyword) {
+    if (platform === 'bilibili')
+      return `https://search.bilibili.com/all?keyword=${encodeURIComponent(keyword)}`
+
     if (platform === 'xhs')
       return `https://www.xiaohongshu.com/search_result?keyword=${encodeURIComponent(keyword)}&source=web_search_result_notes`
 
     if (platform === 'douyin')
       return `https://www.douyin.com/search/${encodeURIComponent(keyword)}?source=normal_search&type=general`
+
+    if (platform === 'kwai')
+      return `https://www.kuaishou.com/search/video?searchKey=${encodeURIComponent(keyword)}`
+
+    if (platform === 'facebook')
+      return `https://www.facebook.com/search/posts/?q=${encodeURIComponent(keyword)}`
+
+    if (platform === 'instagram')
+      return `https://www.instagram.com/explore/search/keyword/?q=${encodeURIComponent(keyword)}`
+
+    if (platform === 'linkedin')
+      return `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keyword)}`
+
+    if (platform === 'pinterest')
+      return `https://www.pinterest.com/search/pins/?q=${encodeURIComponent(keyword)}`
+
+    if (platform === 'threads')
+      return `https://www.threads.net/search?q=${encodeURIComponent(keyword)}`
+
+    if (platform === 'tiktok')
+      return `https://www.tiktok.com/search?q=${encodeURIComponent(keyword)}`
+
+    if (platform === 'twitter')
+      return `https://x.com/search?q=${encodeURIComponent(keyword)}&src=typed_query&f=live`
+
+    if (platform === 'wxGzh')
+      return `https://weixin.sogou.com/weixin?type=2&query=${encodeURIComponent(keyword)}`
+
+    if (platform === 'wxSph')
+      return `https://channels.weixin.qq.com/platform/search?query=${encodeURIComponent(keyword)}`
+
+    if (platform === 'youtube')
+      return `https://www.youtube.com/results?search_query=${encodeURIComponent(keyword)}`
   }
 
   const workId = params.workId || params.authorUrl
@@ -91,6 +207,15 @@ function getTargetUrl(platform, params = {}) {
 
   if (platform === 'douyin')
     return `https://www.douyin.com/video/${encodeURIComponent(workId)}`
+
+  if (platform === 'kwai')
+    return `https://www.kuaishou.com/short-video/${encodeURIComponent(workId)}`
+
+  if (platform === 'bilibili')
+    return `https://www.bilibili.com/video/${encodeURIComponent(workId)}`
+
+  if (platform === 'youtube')
+    return `https://www.youtube.com/watch?v=${encodeURIComponent(workId)}`
 
   return ''
 }
@@ -178,10 +303,12 @@ async function readPlatformPageState(tabId, platform) {
           href: location.href,
           isLoginWall: targetPlatform === 'xhs'
             ? /登录后查看搜索结果|手机号登录|获取验证码|扫码登录|登录后查看更多/.test(text)
-            : /登录后查看|扫码登录|手机号登录|获取验证码/.test(text),
+            : /登录后查看|扫码登录|手机号登录|获取验证码|立即登录/.test(text),
           isLikelyLoggedIn: targetPlatform === 'xhs'
             ? /创作中心|发布笔记|消息|我|creator/i.test(text + title) && !/登录后查看搜索结果|手机号登录|获取验证码|扫码登录|登录后查看更多/.test(text)
-            : /创作者服务中心|消息|关注|推荐|我的/i.test(text + title),
+            : targetPlatform === 'kwai'
+              ? /创作者服务平台|创作者中心|消息|关注|推荐|我的|作品管理/i.test(text + title)
+              : /创作者服务中心|消息|关注|推荐|我的/i.test(text + title),
           nickname,
           title,
         }
@@ -201,9 +328,93 @@ function pickCookie(cookies, names) {
   return cookies.find(cookie => names.includes(cookie.name))
 }
 
+const loginCookieConfig = {
+  bilibili: {
+    label: 'B站',
+    sessionCookies: ['SESSDATA', 'bili_jct', 'DedeUserID'],
+    uidCookies: ['DedeUserID'],
+  },
+  douyin: {
+    label: '抖音',
+    sessionCookies: ['sessionid', 'sessionid_ss', 'sid_tt', 'passport_csrf_token'],
+    uidCookies: ['uid_tt', 'uid_tt_ss', 'passport_auth_status'],
+  },
+  facebook: {
+    label: 'Facebook',
+    sessionCookies: ['c_user', 'xs', 'fr'],
+    uidCookies: ['c_user'],
+  },
+  instagram: {
+    label: 'Instagram',
+    sessionCookies: ['sessionid', 'ds_user_id', 'csrftoken'],
+    uidCookies: ['ds_user_id'],
+  },
+  kwai: {
+    label: '快手',
+    sessionCookies: ['kuaishou.server.web_st', 'kuaishou.server.web_ph', 'did', 'userId'],
+    uidCookies: ['userId', 'did'],
+  },
+  linkedin: {
+    label: 'LinkedIn',
+    sessionCookies: ['li_at', 'JSESSIONID', 'bcookie'],
+    uidCookies: ['bcookie'],
+  },
+  pinterest: {
+    label: 'Pinterest',
+    sessionCookies: ['_pinterest_sess', 'csrftoken'],
+    uidCookies: ['_auth'],
+  },
+  threads: {
+    label: 'Threads',
+    sessionCookies: ['sessionid', 'ds_user_id', 'csrftoken'],
+    uidCookies: ['ds_user_id'],
+  },
+  tiktok: {
+    label: 'TikTok',
+    sessionCookies: ['sessionid', 'sessionid_ss', 'sid_tt', 'passport_csrf_token'],
+    uidCookies: ['uid_tt', 'uid_tt_ss', 'passport_auth_status'],
+  },
+  twitter: {
+    label: 'Twitter / X',
+    sessionCookies: ['auth_token', 'ct0', 'twid'],
+    uidCookies: ['twid'],
+  },
+  wxGzh: {
+    label: '微信公众号',
+    sessionCookies: ['slave_user', 'slave_sid', 'bizuin'],
+    uidCookies: ['bizuin', 'slave_user'],
+  },
+  wxSph: {
+    label: '视频号',
+    sessionCookies: ['sessionid', 'wxuin', 'token'],
+    uidCookies: ['wxuin'],
+  },
+  xhs: {
+    label: '小红书',
+    sessionCookies: [
+      'web_session',
+      'access-token-creator.xiaohongshu.com',
+      'customer-sso-sid',
+      'galaxy_creator_session_id',
+    ],
+    uidCookies: [
+      'x-user-id-creator.xiaohongshu.com',
+      'x-user-id-pro.xiaohongshu.com',
+      'x-user-id-ad-market.xiaohongshu.com',
+      'webId',
+    ],
+  },
+  youtube: {
+    label: 'YouTube',
+    sessionCookies: ['LOGIN_INFO', 'SID', 'HSID', 'SSID', 'SAPISID'],
+    uidCookies: ['VISITOR_INFO1_LIVE'],
+  },
+}
+
 async function login(platformInput) {
   const platform = normalizePlatform(platformInput)
-  if (!['xhs', 'douyin'].includes(platform)) {
+  const loginConfig = loginCookieConfig[platform]
+  if (!loginConfig) {
     return {
       success: false,
       error: `暂不支持平台：${platformInput}`,
@@ -215,21 +426,10 @@ async function login(platformInput) {
   const tabs = await queryPlatformTabs(platform)
   const activeTab = tabs.find(tab => tab.active) || tabs[0]
   const pageState = activeTab?.id ? await readPlatformPageState(activeTab.id, platform) : null
+  const session = pickCookie(cookies, loginConfig.sessionCookies)
+  const userId = pickCookie(cookies, loginConfig.uidCookies)
 
   if (platform === 'xhs') {
-    const session = pickCookie(cookies, [
-      'web_session',
-      'access-token-creator.xiaohongshu.com',
-      'customer-sso-sid',
-      'galaxy_creator_session_id',
-    ])
-    const userId = pickCookie(cookies, [
-      'x-user-id-creator.xiaohongshu.com',
-      'x-user-id-pro.xiaohongshu.com',
-      'x-user-id-ad-market.xiaohongshu.com',
-      'webId',
-    ])
-
     if (pageState?.isLoginWall || (!session && !pageState?.isLikelyLoggedIn)) {
       return {
         success: false,
@@ -254,14 +454,13 @@ async function login(platformInput) {
     }
   }
 
-  const session = pickCookie(cookies, ['sessionid', 'sessionid_ss', 'sid_tt', 'passport_csrf_token'])
-  const uid = pickCookie(cookies, ['uid_tt', 'uid_tt_ss', 'passport_auth_status'])
-
-  if (!session && !pageState?.isLikelyLoggedIn) {
+  if (pageState?.isLoginWall || (!session && !pageState?.isLikelyLoggedIn)) {
     return {
       success: false,
-      error: '未检测到抖音登录态，请先登录抖音或创作者中心',
-      code: 'DOUYIN_NOT_LOGGED_IN',
+      error: pageState?.isLoginWall
+        ? `${loginConfig.label}页面要求登录，请先在打开的${loginConfig.label}页面完成登录`
+        : `未检测到${loginConfig.label}登录态，请先登录${loginConfig.label}页面`,
+      code: `${platform.toUpperCase()}_NOT_LOGGED_IN`,
       data: { tabs: tabs.map(tab => tab.url), cookieNames: cookies.map(cookie => cookie.name) },
     }
   }
@@ -269,11 +468,11 @@ async function login(platformInput) {
   return {
     success: true,
     data: {
-      account: pageState?.nickname || '抖音账号',
+      account: pageState?.nickname || `${loginConfig.label}账号`,
       cookieReady: Boolean(session),
-      nickname: pageState?.nickname || '抖音账号',
-      platform: 'douyin',
-      uid: uid?.value || session?.value?.slice(0, 16) || 'douyin-current-user',
+      nickname: pageState?.nickname || `${loginConfig.label}账号`,
+      platform,
+      uid: userId?.value || session?.value?.slice(0, 16) || `${platform}-current-user`,
     },
   }
 }
@@ -439,7 +638,7 @@ async function runPlatformInteraction(platformInput, params = {}) {
   if (!tab?.id) {
     return {
       success: false,
-      error: `未找到已打开的${platform === 'xhs' ? '小红书' : '抖音'}页面`,
+      error: `未找到已打开的${getPlatformLabel(platform)}页面`,
       code: 'PLATFORM_TAB_NOT_FOUND',
     }
   }
@@ -448,6 +647,83 @@ async function runPlatformInteraction(platformInput, params = {}) {
   return response || {
     success: false,
     error: '平台执行失败',
+  }
+}
+
+async function runRemoteAutomation(params = {}) {
+  if (!params.url || !/^https?:\/\//i.test(params.url)) {
+    return {
+      success: false,
+      error: '远程页面自动化缺少有效 URL',
+      code: 'REMOTE_URL_REQUIRED',
+    }
+  }
+
+  if (!params.code || typeof params.code !== 'string') {
+    return {
+      success: false,
+      error: '远程页面自动化缺少执行代码',
+      code: 'REMOTE_CODE_REQUIRED',
+    }
+  }
+
+  const timeout = Math.max(5000, Number(params.timeout || 45000))
+  const startedAt = Date.now()
+  const tab = await chrome.tabs.create({ active: true, url: params.url })
+  if (!tab?.id) {
+    return {
+      success: false,
+      error: '无法打开目标页面',
+      code: 'REMOTE_TAB_CREATE_FAILED',
+    }
+  }
+
+  await waitForTabComplete(tab.id, Math.min(timeout, 20000))
+
+  try {
+    const [injection] = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      world: 'MAIN',
+      func: async (code) => {
+        try {
+          const runner = new Function(`return (async () => {\n${code}\n})()`)
+          return {
+            result: await runner(),
+            success: true,
+          }
+        }
+        catch (error) {
+          return {
+            error: error?.message || '页面执行失败',
+            success: false,
+          }
+        }
+      },
+      args: [params.code],
+    })
+
+    const payload = injection?.result
+    if (!payload?.success) {
+      return {
+        success: false,
+        error: payload?.error || '页面执行失败',
+        executionTime: Date.now() - startedAt,
+      }
+    }
+
+    return {
+      success: payload.result?.success !== false,
+      message: payload.result?.message,
+      result: payload.result,
+      executionTime: Date.now() - startedAt,
+    }
+  }
+  catch (error) {
+    return {
+      success: false,
+      error: error?.message || '远程页面自动化执行失败',
+      executionTime: Date.now() - startedAt,
+    }
   }
 }
 
@@ -493,10 +769,12 @@ async function handleMessage(message) {
       return runPlatformInteraction('douyin', { ...message.payload, action: 'directMessage' })
     case RuntimeAction.UNIFIED_INTERACTION:
       return runPlatformInteraction(message.payload?.platform, message.payload)
+    case RuntimeAction.REMOTE_AUTOMATION_RUN:
+      return runRemoteAutomation(message.payload)
     case RuntimeAction.PUBLISH:
       return {
         success: false,
-        error: '巨鲸插件 MVP 暂未接入内容发布；当前优先支持客户雷达登录检测和评论链路',
+        error: '巨鲸插件 MVP 暂未接入内容发布；当前只作为客户雷达页面执行器使用，频道账号绑定请走官方授权',
         code: 'PUBLISH_NOT_ENABLED',
       }
     default:

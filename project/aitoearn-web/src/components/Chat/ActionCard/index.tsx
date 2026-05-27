@@ -245,7 +245,7 @@ export function ActionCard({ action, className }: IActionCardProps) {
         router.push(`/${lng}/accounts?loginChannel=${platform}`)
         break
       case 'navigateToPublish': { // 构建发布参数
-        // 检查是否是插件平台（小红书、抖音）
+        // 检查是否是插件发布平台（当前仅小红书）
         if (platform === 'xhs') {
           const pluginStatus = usePluginStore.getState().status
           if (pluginStatus === PluginStatus.READY) {

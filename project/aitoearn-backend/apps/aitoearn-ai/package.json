@@ -38,6 +38,7 @@
     "bullmq": "^5.71.0",
     "data-urls": "^5.0.0",
     "dayjs": "^1.11.14",
+    "execa": "^9.6.1",
     "express": "5.1.0",
     "image-size": "^1.1.1",
     "ioredis": "5.9.3",

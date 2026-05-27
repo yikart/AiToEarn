@@ -44,6 +44,7 @@ export type {
   PermissionCheckResult,
   PlatAccountInfo,
   PlatformPublishTask,
+  PluginAccountPlatformType,
   PluginPlatformType,
   PluginStore,
   ProgressCallback,
@@ -54,7 +55,12 @@ export type {
   PublishTaskListConfig,
 } from './types/baseTypes'
 
-export { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS, PluginStatus } from './types/baseTypes'
+export {
+  PlatformTaskStatus,
+  PLUGIN_ACCOUNT_AUTH_PLATFORMS,
+  PLUGIN_SUPPORTED_PLATFORMS,
+  PluginStatus,
+} from './types/baseTypes'
 // Utils
 export {
   formatFileSize,

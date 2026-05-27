@@ -1,9 +1,18 @@
 const REQUEST_TIMEOUT_MS = 120000
 const PAGE_SOURCE = 'aitoearn-web'
 
-const allowedWebHostnames = ['localhost', '127.0.0.1', 'aitoearn.cn', 'www.aitoearn.cn', 'aitoearn.ai', 'www.aitoearn.ai']
+const allowedWebHostnames = [
+  'localhost',
+  '127.0.0.1',
+  'nasnas.vip',
+  'www.nasnas.vip',
+  'aitoearn.cn',
+  'www.aitoearn.cn',
+  'aitoearn.ai',
+  'www.aitoearn.ai',
+]
 
-if (!allowedWebHostnames.includes(location.hostname) && !location.hostname.endsWith('.aitoearn.cn') && !location.hostname.endsWith('.aitoearn.ai')) {
+if (!allowedWebHostnames.includes(location.hostname) && !location.hostname.endsWith('.nasnas.vip') && !location.hostname.endsWith('.aitoearn.cn') && !location.hostname.endsWith('.aitoearn.ai')) {
   console.info('[巨鲸插件] 当前页面不是巨鲸网络 Web 入口，跳过桥接注入')
 }
 else {
@@ -18,6 +27,8 @@ const MessageType = {
   PUBLISH_REQUEST: 'PUBLISH_REQUEST',
   PUBLISH_COMPLETE: 'PUBLISH_COMPLETE',
   PUBLISH_ERROR: 'PUBLISH_ERROR',
+  REMOTE_AUTOMATION_RUN: 'REMOTE_AUTOMATION_RUN',
+  REMOTE_AUTOMATION_RUN_RESPONSE: 'REMOTE_AUTOMATION_RUN_RESPONSE',
   XHS_REQUEST: 'XHS_REQUEST',
   XHS_REQUEST_RESPONSE: 'XHS_REQUEST_RESPONSE',
   DOUYIN_REQUEST: 'DOUYIN_REQUEST',
@@ -39,6 +50,7 @@ const RuntimeAction = {
   DOUYIN_INTERACTION: 'JUJING_DOUYIN_INTERACTION',
   DOUYIN_DIRECT_MESSAGE: 'JUJING_DOUYIN_DIRECT_MESSAGE',
   UNIFIED_INTERACTION: 'JUJING_UNIFIED_INTERACTION',
+  REMOTE_AUTOMATION_RUN: 'JUJING_REMOTE_AUTOMATION_RUN',
   PUBLISH: 'JUJING_PUBLISH',
 }
 
@@ -51,6 +63,7 @@ const runtimeActionByType = {
   [MessageType.DOUYIN_INTERACTION]: RuntimeAction.DOUYIN_INTERACTION,
   [MessageType.DOUYIN_DIRECT_MESSAGE]: RuntimeAction.DOUYIN_DIRECT_MESSAGE,
   [MessageType.UNIFIED_INTERACTION]: RuntimeAction.UNIFIED_INTERACTION,
+  [MessageType.REMOTE_AUTOMATION_RUN]: RuntimeAction.REMOTE_AUTOMATION_RUN,
   [MessageType.PUBLISH_REQUEST]: RuntimeAction.PUBLISH,
 }
 
@@ -63,6 +76,7 @@ const responseTypeByType = {
   [MessageType.DOUYIN_INTERACTION]: MessageType.DOUYIN_INTERACTION_RESPONSE,
   [MessageType.DOUYIN_DIRECT_MESSAGE]: MessageType.DOUYIN_DIRECT_MESSAGE_RESPONSE,
   [MessageType.UNIFIED_INTERACTION]: MessageType.UNIFIED_INTERACTION_RESPONSE,
+  [MessageType.REMOTE_AUTOMATION_RUN]: MessageType.REMOTE_AUTOMATION_RUN_RESPONSE,
 }
 
 function injectWebApi() {

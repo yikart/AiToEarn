@@ -16,6 +16,7 @@ export interface CustomerRadarWorkspaceDto {
   leads: Record<string, unknown>[]
   liveExecutionEnabled?: boolean
   ownedPostWorkId?: string
+  ownedPostPlatform?: string
   ownedPostXsecToken?: string
   platformCapabilities: Record<string, unknown>[]
   profile: Record<string, unknown>

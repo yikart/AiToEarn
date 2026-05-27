@@ -9,6 +9,8 @@ export const MessageType = {
   LOGIN_RESPONSE: 'LOGIN_RESPONSE',
   PUBLISH_REQUEST: 'PUBLISH_REQUEST',
   PUBLISH_PROGRESS: 'PUBLISH_PROGRESS',
+  REMOTE_AUTOMATION_RUN: 'REMOTE_AUTOMATION_RUN',
+  REMOTE_AUTOMATION_RUN_RESPONSE: 'REMOTE_AUTOMATION_RUN_RESPONSE',
   PUBLISH_COMPLETE: 'PUBLISH_COMPLETE',
   PUBLISH_ERROR: 'PUBLISH_ERROR',
   XHS_REQUEST: 'XHS_REQUEST',
@@ -32,12 +34,25 @@ export const RuntimeAction = {
   DOUYIN_INTERACTION: 'JUJING_DOUYIN_INTERACTION',
   DOUYIN_DIRECT_MESSAGE: 'JUJING_DOUYIN_DIRECT_MESSAGE',
   UNIFIED_INTERACTION: 'JUJING_UNIFIED_INTERACTION',
+  REMOTE_AUTOMATION_RUN: 'JUJING_REMOTE_AUTOMATION_RUN',
   PUBLISH: 'JUJING_PUBLISH',
 }
 
 export const PLATFORM_ORIGINS = {
+  bilibili: 'https://www.bilibili.com',
   douyin: 'https://www.douyin.com',
+  facebook: 'https://www.facebook.com',
+  instagram: 'https://www.instagram.com',
+  kwai: 'https://www.kuaishou.com',
+  linkedin: 'https://www.linkedin.com',
+  pinterest: 'https://www.pinterest.com',
+  threads: 'https://www.threads.net',
+  tiktok: 'https://www.tiktok.com',
+  twitter: 'https://x.com',
+  wxGzh: 'https://weixin.sogou.com',
+  wxSph: 'https://channels.weixin.qq.com',
   xhs: 'https://edith.xiaohongshu.com',
+  youtube: 'https://www.youtube.com',
 }
 
 export const REQUIRED_PERMISSIONS = ['cookies', 'tabs', 'storage']

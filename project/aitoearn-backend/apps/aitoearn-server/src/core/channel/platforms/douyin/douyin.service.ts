@@ -36,6 +36,32 @@ export class DouyinService extends PlatformBaseService {
     return config.channel.douyin
   }
 
+  private assertDouyinOAuthConfigured() {
+    const douyinConfig = config.channel.douyin
+    const missing = [
+      ['DOYIN_CLIENT_ID', douyinConfig.id],
+      ['DOYIN_CLIENT_SECRET', douyinConfig.secret],
+      ['APP_DOMAIN', config.appDomain],
+      ['douyin.authBackHost', douyinConfig.authBackHost],
+    ]
+      .filter(([, value]) => !String(value || '').trim())
+      .map(([name]) => name)
+
+    if (missing.length) {
+      throw new AppException(
+        ResponseCode.ValidationFailed,
+        `抖音官方授权未配置完整：${missing.join('、')}。请先配置抖音开放平台应用信息后再连接抖音频道。`,
+      )
+    }
+
+    if (/^https:\/\/(?:localhost|127\.0\.0\.1)(?::\d+)?\//i.test(douyinConfig.authBackHost)) {
+      throw new AppException(
+        ResponseCode.ValidationFailed,
+        '抖音官方授权回调地址不能使用 localhost。请把 APP_DOMAIN 配置为可被抖音开放平台访问的 HTTPS 域名，并在抖音开放平台后台配置同一个回调地址。',
+      )
+    }
+  }
+
   /**
    * 创建用户授权任务
    * @param data
@@ -52,6 +78,7 @@ export class DouyinService extends PlatformBaseService {
     if (!config.channel.douyin.id && config.relay) {
       throw new RelayAuthException()
     }
+    this.assertDouyinOAuthConfigured()
     const taskId = uuidv4()
     const urlInfo = await this.getAuthUrl(taskId)
     const rRes = await this.redisService.setJson<AuthTaskInfo<DouyinAuthInfo>>(

@@ -1,8 +1,25 @@
 import type { Type } from '@nestjs/common'
 import type { SchemaObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface'
-import { SchemaObjectFactory } from '@nestjs/swagger/dist/services/schema-object-factory'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
 import { z } from 'zod'
 import { isZodDto } from './zod-dto.util'
+
+interface SchemaObjectFactoryInstance {
+  exploreModelSchema: (type: unknown, schemas: Record<string, SchemaObject>, schemaRefsStack?: string[]) => string
+  isLazyTypeFunc: (type: unknown) => boolean
+  __patchedWithLoveByNestjsZod?: boolean
+}
+
+const requireFromHere = createRequire(__filename)
+const swaggerPackageJsonPath = requireFromHere.resolve('@nestjs/swagger/package.json')
+const { SchemaObjectFactory } = requireFromHere(
+  join(dirname(swaggerPackageJsonPath), 'dist/services/schema-object-factory.js'),
+) as {
+  SchemaObjectFactory: {
+    prototype: SchemaObjectFactoryInstance
+  }
+}
 
 export const zodToJsonSchemaOptions: Parameters<typeof z.toJSONSchema>[1] = {
   uri: id => `#/components/schemas/${id}`,
@@ -25,7 +42,7 @@ export function patchNestJsSwagger() {
   const defaultExplore = SchemaObjectFactory.prototype.exploreModelSchema
 
   SchemaObjectFactory.prototype.exploreModelSchema = function (
-    this: SchemaObjectFactory | undefined,
+    this: SchemaObjectFactoryInstance | undefined,
     type,
     schemas,
     schemaRefsStack,
@@ -42,6 +59,5 @@ export function patchNestJsSwagger() {
     schemas[type.name] = z.toJSONSchema(type.schema, zodToJsonSchemaOptions) as SchemaObject
     return type.name
   }
-  // @ts-expect-error set __patchedWithLoveByNestjsZod to true
   SchemaObjectFactory.prototype.__patchedWithLoveByNestjsZod = true
 }

@@ -22,6 +22,7 @@ export type UpsertCustomerRadarWorkspaceData = Pick<
   | 'leads'
   | 'liveExecutionEnabled'
   | 'ownedPostWorkId'
+  | 'ownedPostPlatform'
   | 'ownedPostXsecToken'
   | 'platformCapabilities'
   | 'profile'

@@ -5,6 +5,7 @@
 import type {
   PlatAccountInfo,
   PlatformPublishTask,
+  PluginAccountPlatformType,
   PluginPlatformType,
   ProgressCallback,
   ProgressEvent,
@@ -31,7 +32,7 @@ import { DEFAULT_POLLING_INTERVAL } from './constants'
 import { calculateOverallStatus, createInitialPlatformAccounts, generateId } from './plugin.utils'
 import {
   PlatformTaskStatus,
-  PLUGIN_SUPPORTED_PLATFORMS,
+  PLUGIN_ACCOUNT_AUTH_PLATFORMS,
   PluginStatus as Status,
 } from './types/baseTypes'
 
@@ -89,7 +90,7 @@ export interface ExecutePluginPublishParams {
 }
 
 /** 平台账号信息映射 */
-export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | null>
+export type PlatformAccountsMap = Record<PluginAccountPlatformType, PlatAccountInfo | null>
 
 /** 错误消息 */
 const ERROR_MESSAGES = {
@@ -318,7 +319,7 @@ export const usePluginStore = create(
         const accounts: Partial<PlatformAccountsMap> = {}
 
         await Promise.all(
-          PLUGIN_SUPPORTED_PLATFORMS.map(async (platform) => {
+          PLUGIN_ACCOUNT_AUTH_PLATFORMS.map(async (platform) => {
             try {
               accounts[platform] = await withTimeout(plugin.login(platform), 10000, `${platform}插件账号同步`)
             }
@@ -332,7 +333,7 @@ export const usePluginStore = create(
       },
 
       /** 同步插件账号到数据库 */
-      async syncAccountToDatabase(platform: PluginPlatformType, groupId?: string) {
+      async syncAccountToDatabase(platform: PluginAccountPlatformType, groupId?: string) {
         const { platformAccounts } = get()
         const account = platformAccounts[platform]
 
@@ -376,7 +377,7 @@ export const usePluginStore = create(
       },
 
       /** 登录到指定平台 */
-      async login(platform: PluginPlatformType) {
+      async login(platform: PluginAccountPlatformType) {
         const { status, platformAccounts } = get()
 
         if (status === Status.NOT_INSTALLED)

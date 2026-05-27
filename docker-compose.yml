@@ -187,7 +187,7 @@ services:
       NODE_ENV: production
       APP_ENV: production
       APP_NAME: aitoearn-server
-      APP_DOMAIN: localhost
+      APP_DOMAIN: ${APP_DOMAIN:-localhost}
 
       MONGODB_HOST: mongodb
       MONGODB_PORT: 27017
@@ -251,7 +251,7 @@ services:
       # Relay (optional)
       RELAY_SERVER_URL: https://aitoearn.ai/api
       RELAY_API_KEY: ""
-      RELAY_CALLBACK_URL: http://127.0.0.1:8080/api/plat/relay-callback
+      RELAY_CALLBACK_URL: ${RELAY_CALLBACK_URL:-http://127.0.0.1:8080/api/plat/relay-callback}
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:3002/health', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"]
       interval: 30s
