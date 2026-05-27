@@ -1,6 +1,6 @@
 import { PLATFORM_ORIGINS, REQUIRED_PERMISSIONS, RuntimeAction } from './shared.js'
 
-const EXTENSION_VERSION = '0.1.3'
+const EXTENSION_VERSION = '0.1.4'
 
 const platformCookieUrls = {
   bilibili: ['https://www.bilibili.com'],
@@ -350,7 +350,7 @@ function isTrustedLoggedInPage(platform, pageState) {
   if (platform === 'kwai')
     return href.includes('cp.kuaishou.com')
   if (platform === 'douyin')
-    return href.includes('creator.douyin.com')
+    return href.includes('douyin.com')
   if (platform === 'xhs')
     return href.includes('creator.xiaohongshu.com') || href.includes('xiaohongshu.com')
   return true
@@ -458,9 +458,9 @@ async function login(platformInput) {
   const userId = pickCookie(cookies, loginConfig.uidCookies)
   const nickname = typeof pageState?.nickname === 'string' ? pageState.nickname.trim() : ''
   const uid = userId?.value?.trim()
-  const pageVerified = Boolean(session && nickname && isTrustedLoggedInPage(platform, pageState))
-  const hasVerifiedAccount = Boolean(session && (uid || pageVerified || loginConfig.uidCookies.length === 0))
-  const resolvedUid = uid || (nickname ? `page:${platform}:${hashText(nickname)}` : `browser:${platform}:${session?.name || 'session'}`)
+  const pageVerified = isTrustedLoggedInPage(platform, pageState)
+  const hasVerifiedAccount = Boolean(uid || pageVerified || (session && loginConfig.uidCookies.length === 0))
+  const resolvedUid = uid || (nickname ? `page:${platform}:${hashText(nickname)}` : `browser:${platform}:${hashText(pageState?.href || session?.name || 'session')}`)
 
   if (platform === 'xhs') {
     if (pageState?.isLoginWall || !hasVerifiedAccount) {
@@ -478,7 +478,7 @@ async function login(platformInput) {
       success: true,
       data: {
         account: nickname || uid,
-        cookieReady: Boolean(session),
+        cookieReady: Boolean(session || pageVerified),
         creatorReady: cookies.some(cookie => cookie.name.includes('creator')),
         nickname: nickname || uid,
         platform: 'xhs',
@@ -502,7 +502,7 @@ async function login(platformInput) {
     success: true,
     data: {
       account: nickname || uid || `${loginConfig.label}（浏览器已登录）`,
-      cookieReady: Boolean(session),
+      cookieReady: Boolean(session || pageVerified),
       nickname: nickname || uid || `${loginConfig.label}（浏览器已登录）`,
       platform,
       uid: resolvedUid,
