@@ -57,21 +57,23 @@ export class OpenaiService {
       'max_tokens', 'max_completion_tokens', 'presence_penalty', 'frequency_penalty',
       'logit_bias', 'user', 'tools', 'tool_choice', 'parallel_tool_calls',
       'response_format', 'seed', 'stream_options', 'reasoning_effort',
+      'logprobs', 'top_logprobs',
       'metadata', 'store', 'service_tier', 'prediction', 'modalities', 'audio',
     ])
     const cleanOptions = Object.fromEntries(
       Object.entries(options).filter(([key, value]) => allowedKeys.has(key) && value !== undefined),
-    )
+    ) as any
 
     const model = String(cleanOptions.model || '')
-    if (model === 'gpt-5' || model.startsWith('gpt-5-')) {
+    const isReasoningOrGpt5 = /^o\d/.test(model) || model === 'gpt-5' || model.startsWith('gpt-5-')
+    if (isReasoningOrGpt5) {
       if (cleanOptions.max_tokens !== undefined && cleanOptions.max_completion_tokens === undefined) {
         cleanOptions.max_completion_tokens = cleanOptions.max_tokens
       }
       delete cleanOptions.max_tokens
     }
 
-    return this.openAI.chat.completions.create(cleanOptions)
+    return this.openAI.chat.completions.create(cleanOptions as OpenAI.Chat.ChatCompletionCreateParamsStreaming)
   }
 
   async createChatCompletion(options: Partial<OpenAIChatInput> & {
