@@ -52,7 +52,26 @@ export class OpenaiService {
   }
 
   async createRawStream(options: OpenAI.Chat.ChatCompletionCreateParamsStreaming) {
-    return this.openAI.chat.completions.create(options)
+    const allowedKeys = new Set([
+      'model', 'messages', 'stream', 'temperature', 'top_p', 'n', 'stop',
+      'max_tokens', 'max_completion_tokens', 'presence_penalty', 'frequency_penalty',
+      'logit_bias', 'user', 'tools', 'tool_choice', 'parallel_tool_calls',
+      'response_format', 'seed', 'stream_options', 'reasoning_effort',
+      'metadata', 'store', 'service_tier', 'prediction', 'modalities', 'audio',
+    ])
+    const cleanOptions = Object.fromEntries(
+      Object.entries(options).filter(([key, value]) => allowedKeys.has(key) && value !== undefined),
+    )
+
+    const model = String(cleanOptions.model || '')
+    if (model === 'gpt-5' || model.startsWith('gpt-5-')) {
+      if (cleanOptions.max_tokens !== undefined && cleanOptions.max_completion_tokens === undefined) {
+        cleanOptions.max_completion_tokens = cleanOptions.max_tokens
+      }
+      delete cleanOptions.max_tokens
+    }
+
+    return this.openAI.chat.completions.create(cleanOptions)
   }
 
   async createChatCompletion(options: Partial<OpenAIChatInput> & {

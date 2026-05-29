@@ -81,7 +81,7 @@ export const aiModelsConfigSchema = z.object({
     tags: z.array(i18nObjectSchema).default([]),
     mainTag: z.string().optional(),
     channel: z.enum(AiLogChannel),
-    scenes: z.string().array().optional(),
+    scenes: z.array(z.string()).default([]),
     inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     pricing: chatPricingSchema,

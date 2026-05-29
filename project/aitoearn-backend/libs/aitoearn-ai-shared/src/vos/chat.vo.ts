@@ -84,7 +84,7 @@ export const chatModelSchema = z.object({
   tags: z.array(zodI18nString()).default([]),
   mainTag: z.string().optional(),
   channel: z.enum(AiLogChannel).describe('渠道'),
-  scenes: z.string().array().optional().describe('适用场景'),
+  scenes: z.array(z.string()).default([]).describe('适用场景'),
   inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   pricing: z.union([
