@@ -1,5 +1,5 @@
 import { useUserStore } from '@/store/user';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 import Navigation from './Navigation';
 import styles from './layoutBody.module.scss';
@@ -9,6 +9,8 @@ import { useBellMessageStroe } from '../store/bellMessageStroe';
 
 export const LayoutBody = () => {
   const userStore = useUserStore();
+  // Feature: State to toggle navigation visibility via keyboard shortcut
+  const [isNavVisible, setIsNavVisible] = useState(true);
 
   // 查询用户信息
   const queryUserInfo = async () => {
@@ -30,10 +32,33 @@ export const LayoutBody = () => {
     }
   }, []);
 
-  // 添加键盘事件监听
+  // 添加键盘事件监听 (Completed with cleanup)
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.ctrlKey && event.code === 'KeyI') {
+        event.preventDefault(); // Prevent default browser behavior if any
+        setIsNavVisible((prev) => !prev); // Toggle navigation
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown); // Cleanup to prevent memory leaks
+  }, []);
+
+  // Redirect to login if no token exists
+  if (!userStore.token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return (
+    <div className={styles.layoutContainer}>
+      {isNavVisible && <Navigation />}
+      <div className={styles.mainContent}>
+        <Outlet />
+      </div>
+    </div>
+  );
+};
         event.preventDefault();
         window.ipcRenderer.invoke('OPEN_DEV_TOOLS', 'right');
       }
