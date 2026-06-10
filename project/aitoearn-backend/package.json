@@ -14,6 +14,7 @@
     "@xdevplatform/xdk": "0.5.0",
     "apify-client": "2.23.0",
     "commander": "14.0.3",
+    "fast-xml-parser": "5.3.5",
     "reflect-metadata": "0.2.2",
     "tslib": "2.8.1",
     "yaml": "2.8.3",
@@ -57,7 +58,7 @@
   },
   "pnpm": {
     "overrides": {
-      "fast-xml-parser": "5.3.4"
+      "fast-xml-parser": "5.3.5"
     }
   },
   "nx": {
