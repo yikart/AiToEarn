@@ -63,24 +63,24 @@ const ModalContent = memo(({ onOpenChange, item, onApplyPrompt }: ModalContentPr
 
   return (
     <Dialog open onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[90vh] w-[min(900px,95vw)] flex-col overflow-hidden p-0">
-        <DialogHeader className="shrink-0 border-b px-4 py-3 sm:px-6 sm:py-4">
-          <DialogTitle>{item.title}</DialogTitle>
+      <DialogContent className="flex max-h-[calc(100dvh-24px)] w-[calc(100vw-24px)] max-w-[900px] flex-col overflow-hidden p-0 sm:max-h-[calc(100dvh-48px)] sm:w-[calc(100vw-48px)]">
+        <DialogHeader className="shrink-0 border-b px-4 py-3 pr-12 sm:px-6 sm:py-4 sm:pr-14">
+          <DialogTitle className="break-words leading-snug">{item.title}</DialogTitle>
         </DialogHeader>
 
         {/* 内容区域：移动端上下布局，PC 左右布局 */}
-        <div className={cn('flex min-h-0 flex-1 flex-col overflow-hidden sm:flex-row')}>
+        <div className={cn('flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden sm:flex-row')}>
           {/* 左侧/上方：视频播放 */}
           <div
             className={cn(
-              'shrink-0 sm:w-1/2 sm:shrink',
+              'min-h-0 min-w-0 shrink-0 sm:basis-1/2 sm:shrink',
               'flex items-center justify-center',
               'bg-gradient-to-br from-muted/50 to-muted',
               'p-1 sm:p-2',
               'max-h-[40vh] sm:max-h-none',
             )}
           >
-            <div className="relative w-full sm:h-full max-h-[40vh] sm:max-h-[calc(90vh-120px)] overflow-hidden rounded-lg shadow-lg">
+            <div className="relative flex max-h-[40vh] min-h-0 w-full min-w-0 items-center justify-center overflow-hidden rounded-lg shadow-lg sm:h-full sm:max-h-[calc(100dvh-168px)]">
               <video
                 src={item.video}
                 poster={item.cover}
@@ -94,7 +94,7 @@ const ModalContent = memo(({ onOpenChange, item, onApplyPrompt }: ModalContentPr
           </div>
 
           {/* 右侧/下方：提示词内容 */}
-          <div className={cn('flex min-h-0 flex-col flex-1 overflow-hidden', 'sm:w-1/2')}>
+          <div className={cn('flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden', 'sm:basis-1/2')}>
             {/* 提示词标签和复制按钮 - 固定高度 */}
             <div className="flex shrink-0 items-center justify-between border-b px-4 py-3">
               <span className="text-sm font-medium text-muted-foreground">

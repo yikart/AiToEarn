@@ -208,6 +208,20 @@ export type GeminiVideoAiLogRequest = AiLogObject<{
   groupId?: string
 }>
 
+export type MiniMaxVideoAiLogRequest = AiLogObject<{
+  model: string
+  providerModel?: string
+  mode?: string
+  prompt: string
+  image?: string
+  imageTail?: string
+  duration?: number
+  resolution?: string
+  promptOptimizer?: boolean
+  fastPretreatment?: boolean
+  groupId?: string
+}>
+
 export type VideoAiLogRequest
   = | UserVideoGenerationAiLogRequest
     | VolcengineVideoAiLogRequest
@@ -216,6 +230,7 @@ export type VideoAiLogRequest
     | GrokVideoAiLogRequest
     | DashscopeVideoAiLogRequest
     | GeminiVideoAiLogRequest
+    | MiniMaxVideoAiLogRequest
 
 export type VideoAiLogResponse = AiLogObject<{
   id?: string

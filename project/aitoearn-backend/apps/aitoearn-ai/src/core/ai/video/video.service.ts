@@ -17,6 +17,7 @@ import { ModelsConfigService } from '../models-config'
 import { DashscopeVideoService } from './dashscope'
 import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
+import { MiniMaxVideoService } from './minimax'
 import { OpenAIVideoService } from './openai'
 import { VideoAiLog } from './video-ai-log.interface'
 import {
@@ -45,6 +46,7 @@ export class VideoService {
     private readonly grokVideoService: GrokVideoService,
     private readonly geminiVideoService: GeminiVideoService,
     private readonly dashscopeVideoService: DashscopeVideoService,
+    private readonly minimaxVideoService: MiniMaxVideoService,
   ) {}
 
   async calculateVideoGenerationPrice(params: {
@@ -72,6 +74,8 @@ export class VideoService {
         return this.geminiVideoService.calculatePrice(params)
       case AiLogChannel.Dashscope:
         return this.dashscopeVideoService.calculatePrice(params)
+      case AiLogChannel.MiniMax:
+        return this.minimaxVideoService.calculatePrice(params)
       default:
         throw new AppException(ResponseCode.InvalidModel)
     }
@@ -110,6 +114,9 @@ export class VideoService {
       case AiLogChannel.Dashscope:
         response = await this.dashscopeVideoService.createFromRequest(request)
         break
+      case AiLogChannel.MiniMax:
+        response = await this.minimaxVideoService.createFromRequest(request)
+        break
       default:
         throw new AppException(ResponseCode.InvalidModel)
     }
@@ -146,6 +153,9 @@ export class VideoService {
         break
       case AiLogChannel.Dashscope:
         input = this.dashscopeVideoService.extractInput(aiLog.request)
+        break
+      case AiLogChannel.MiniMax:
+        input = this.minimaxVideoService.extractInput(aiLog.request)
         break
       default:
         input = { prompt: '' }
@@ -215,6 +225,7 @@ export class VideoService {
       case AiLogChannel.Grok:
       case AiLogChannel.Gemini:
       case AiLogChannel.Dashscope:
+      case AiLogChannel.MiniMax:
         await this.ensureSavedVideoMedia(aiLog as VideoAiLog)
     }
   }
@@ -235,6 +246,8 @@ export class VideoService {
         return this.geminiVideoService.getTaskResult(aiLog.response)
       case AiLogChannel.Dashscope:
         return this.dashscopeVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.MiniMax:
+        return this.minimaxVideoService.getTaskResult(aiLog.response)
       default:
         throw new AppException(ResponseCode.InvalidAiTaskId)
     }
@@ -258,6 +271,7 @@ export class VideoService {
       case AiLogChannel.Grok:
       case AiLogChannel.Gemini:
       case AiLogChannel.Dashscope:
+      case AiLogChannel.MiniMax:
         return this.transformToCommonResponse(aiLog as VideoAiLog)
       default:
         throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -278,6 +292,7 @@ export class VideoService {
           case AiLogChannel.Grok:
           case AiLogChannel.Gemini:
           case AiLogChannel.Dashscope:
+          case AiLogChannel.MiniMax:
             return this.transformToCommonResponse(log as VideoAiLog)
           default:
             throw new AppException(ResponseCode.InvalidAiTaskId)

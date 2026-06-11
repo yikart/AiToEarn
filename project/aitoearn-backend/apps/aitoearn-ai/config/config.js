@@ -36,6 +36,8 @@ const {
   GEMINI_BASE_URL,
   DASHSCOPE_API_KEY,
   DASHSCOPE_BASE_URL,
+  MINIMAX_API_KEY,
+  MINIMAX_BASE_URL,
 } = process.env
 
 const {
@@ -64,6 +66,80 @@ const GPT_IMAGE_2_SIZES = [
 ]
 
 const GPT_IMAGE_2_ASPECT_RATIOS = ['1:1', '3:2', '2:3', '4:3', '3:4', '5:4', '4:5', '16:9', '9:16']
+
+function normalizeBaseUrl(url) {
+  return url ? url.replace(/\/+$/, '') : url
+}
+
+function isMiniMaxBaseUrl(url) {
+  return /api\.minimax(?:i)?\.com$|api\.minimax\.io$/i.test(normalizeBaseUrl(url)?.replace(/\/v1$/, '') || '')
+}
+
+function resolveMiniMaxBaseUrl() {
+  if (MINIMAX_BASE_URL) {
+    return normalizeBaseUrl(MINIMAX_BASE_URL).replace(/\/v1$/, '')
+  }
+
+  if (isMiniMaxBaseUrl(OPENAI_BASE_URL)) {
+    return normalizeBaseUrl(OPENAI_BASE_URL).replace(/\/v1$/, '')
+  }
+
+  return 'https://api.minimax.io'
+}
+
+function resolveMiniMaxApiKey() {
+  if (MINIMAX_API_KEY) {
+    return MINIMAX_API_KEY
+  }
+
+  if (isMiniMaxBaseUrl(OPENAI_BASE_URL)) {
+    return OPENAI_API_KEY
+  }
+
+  return ''
+}
+
+function appendAnthropicMessagesEndpoint(url) {
+  const baseUrl = normalizeBaseUrl(url)
+
+  if (!baseUrl) {
+    return baseUrl
+  }
+
+  if (/\/v1\/messages$/i.test(baseUrl)) {
+    return baseUrl
+  }
+
+  if (/\/v1$/i.test(baseUrl)) {
+    return `${baseUrl}/messages`
+  }
+
+  return `${baseUrl}/v1/messages`
+}
+
+function resolveAnthropicCompatibleBaseUrl() {
+  if (isMiniMaxBaseUrl(OPENAI_BASE_URL)) {
+    return appendAnthropicMessagesEndpoint(`${normalizeBaseUrl(OPENAI_BASE_URL).replace(/\/v1$/, '')}/anthropic`)
+  }
+
+  if (ANTHROPIC_BASE_URL) {
+    return appendAnthropicMessagesEndpoint(ANTHROPIC_BASE_URL)
+  }
+
+  if (!OPENAI_BASE_URL) {
+    return OPENAI_BASE_URL
+  }
+
+  return `${normalizeBaseUrl(OPENAI_BASE_URL)}/messages`
+}
+
+function resolveAgentApiKey() {
+  if (isMiniMaxBaseUrl(OPENAI_BASE_URL)) {
+    return OPENAI_API_KEY
+  }
+
+  return ANTHROPIC_API_KEY || OPENAI_API_KEY
+}
 
 function parseGeminiKeyPairs() {
   if (!GEMINI_KEY_PAIRS) {
@@ -156,6 +232,10 @@ module.exports = {
     dashscope: {
       apiKey: DASHSCOPE_API_KEY || '',
       ...(DASHSCOPE_BASE_URL && { baseUrl: DASHSCOPE_BASE_URL }),
+    },
+    minimax: {
+      apiKey: resolveMiniMaxApiKey(),
+      baseUrl: resolveMiniMaxBaseUrl(),
     },
     aideo: {
       vCreative: {
@@ -293,33 +373,33 @@ module.exports = {
           },
         },
         {
-          name: 'gpt-5.4',
-          description: 'GPT 5.4',
+          name: 'MiniMax-M2.7',
+          description: 'MiniMax M2.7',
           channel: 'openai',
-          scenes: ['plugin', 'comment'],
-          inputModalities: ['text', 'image'],
+          scenes: ['web', 'plugin', 'comment'],
+          inputModalities: ['text'],
           outputModalities: ['text'],
           pricing: {
             tiers: [
               {
-                input: { text: '0.075' },
-                output: { text: '0.45' },
+                input: { text: '0' },
+                output: { text: '0' },
               },
             ],
           },
         },
         {
-          name: 'gpt-5.5',
-          description: 'GPT 5.5',
+          name: 'MiniMax-M3',
+          description: 'MiniMax M3',
           channel: 'openai',
           scenes: ['web', 'plugin', 'comment', 'draft-generation'],
-          inputModalities: ['text', 'image'],
+          inputModalities: ['text', 'image', 'video'],
           outputModalities: ['text'],
           pricing: {
             tiers: [
               {
-                input: { text: '0.075' },
-                output: { text: '0.45' },
+                input: { text: '0', image: '0', video: '0' },
+                output: { text: '0' },
               },
             ],
           },
@@ -362,6 +442,17 @@ module.exports = {
             styles: [],
             pricing: '1',
           },
+          {
+            name: 'minimax-image-01',
+            description: 'MiniMax Image 01',
+            channel: 'minimax',
+            runtimeModel: 'image-01',
+            tags: [],
+            sizes: ['1024x1024', '1280x720', '1152x864', '1248x832', '832x1248', '864x1152', '720x1280', '1344x576'],
+            qualities: ['standard'],
+            styles: [],
+            pricing: '0.35',
+          },
         ],
         edit: [
           {
@@ -389,6 +480,56 @@ module.exports = {
       },
       video: {
         generation: [
+          {
+            name: 'minimax-hailuo-2.3',
+            description: 'MiniMax Hailuo 2.3',
+            channel: 'minimax',
+            modes: ['text2video', 'image2video', 'flf2video'],
+            modeMappings: {
+              'text2video': 'MiniMax-Hailuo-2.3',
+              'image2video': 'MiniMax-Hailuo-2.3',
+              'flf2video': 'MiniMax-Hailuo-2.3',
+            },
+            resolutions: ['768P', '1080P'],
+            durations: [6, 10],
+            maxInputImages: 2,
+            aspectRatios: ['adaptive'],
+            tags: [],
+            defaults: {
+              resolution: '768P',
+              aspectRatio: 'adaptive',
+              duration: 6,
+            },
+            pricing: [
+              { resolution: '768P', duration: 6, price: 28 },
+              { resolution: '768P', duration: 10, price: 56 },
+              { resolution: '1080P', duration: 6, price: 49 },
+            ],
+          },
+          {
+            name: 'minimax-hailuo-2.3-fast',
+            description: 'MiniMax Hailuo 2.3 Fast',
+            channel: 'minimax',
+            modes: ['image2video'],
+            modeMappings: {
+              'image2video': 'MiniMax-Hailuo-2.3-Fast',
+            },
+            resolutions: ['768P', '1080P'],
+            durations: [6, 10],
+            maxInputImages: 1,
+            aspectRatios: ['adaptive'],
+            tags: [],
+            defaults: {
+              resolution: '768P',
+              aspectRatio: 'adaptive',
+              duration: 6,
+            },
+            pricing: [
+              { resolution: '768P', duration: 6, price: 19 },
+              { resolution: '768P', duration: 10, price: 32 },
+              { resolution: '1080P', duration: 6, price: 33 },
+            ],
+          },
           {
             name: 'happyhorse-1.0',
             description: 'HappyHorse 1.0',
@@ -578,7 +719,7 @@ module.exports = {
     },
     draftGeneration: {
       planner: {
-        defaultModel: 'gpt-5.5',
+        defaultModel: 'MiniMax-M3',
       },
       queue: {
         lowPriorityMinPriority: 1000,
@@ -609,12 +750,24 @@ module.exports = {
             { resolution: '1K', pricePerImage: 1, originPrice: 21.1 },
           ],
         },
+        {
+          model: 'minimax-image-01',
+          displayName: 'MiniMax Image 01',
+          runtimeModel: 'image-01',
+          queuePriority: 10,
+          tags: [],
+          supportedAspectRatios: ['1:1', '16:9', '4:3', '3:2', '2:3', '3:4', '9:16', '21:9'],
+          maxInputImages: 1,
+          pricing: [
+            { resolution: '1K', pricePerImage: 0.0035 },
+          ],
+        },
       ],
     },
   },
   agent: {
-    baseUrl: `${OPENAI_BASE_URL}/messages`,
-    apiKey: OPENAI_API_KEY,
+    baseUrl: resolveAnthropicCompatibleBaseUrl(),
+    apiKey: resolveAgentApiKey(),
     analysis: {
       model: 'gemini-3.1-pro-preview',
       apiKey: OPENAI_API_KEY,

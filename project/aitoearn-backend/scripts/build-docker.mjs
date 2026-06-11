@@ -1,8 +1,14 @@
 #!/usr/bin/env node
 
 import { arch } from 'node:os'
+import { pathToFileURL } from 'node:url'
 import { Command } from 'commander'
 import { $, chalk, fs, path } from 'zx'
+
+if (process.platform === 'win32') {
+  $.shell = 'powershell.exe'
+  $.prefix = ''
+}
 
 function getDefaultPlatform() {
   const a = arch()
@@ -387,7 +393,7 @@ async function generateConfig(projects, graph, contextDir, verbose = false) {
     console.info(chalk.green('Monorepo 配置生成完成'))
 }
 
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   const program = new Command()
 
   program

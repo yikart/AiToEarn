@@ -425,6 +425,61 @@ GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","keyFile":"/
 
 </details>
 
+#### MiniMax
+
+| 变量 | 说明 | 默认值 |
+|------|------|--------|
+| `MINIMAX_API_KEY` | MiniMax API Key | |
+| `MINIMAX_BASE_URL` | MiniMax API 地址；可选，未配置时使用官方地址 | `https://api.minimax.io` |
+
+如果 `OPENAI_BASE_URL` 已指向 MiniMax 兼容地址（例如 `https://api.minimaxi.com/v1`），且未单独配置 `MINIMAX_API_KEY`，系统会复用 `OPENAI_API_KEY` 调用 MiniMax 文本与媒体能力。
+
+**内置模型：**
+
+| 模型 ID | 类型 | 说明 |
+|---------|------|------|
+| `MiniMax-M3` | 对话 | MiniMax M3，多模态对话模型 |
+| `minimax-image-01` | 图片生成 / 草稿生成 | 文生图，支持常见比例与自定义尺寸 |
+| `minimax-hailuo-2.3` | 视频生成 | text/image/首尾帧 → video，支持 768P/1080P |
+| `minimax-hailuo-2.3-fast` | 视频生成 | image → video，快速模式 |
+
+<details>
+<summary>模型配置示例</summary>
+
+```js
+// 图片模型 → ai.models.image.generation
+{
+  name: 'minimax-image-01',
+  description: 'MiniMax Image 01',
+  channel: 'minimax',
+  runtimeModel: 'image-01',
+  sizes: ['1024x1024', '1280x720', '720x1280'],
+  qualities: ['standard'],
+  styles: [],
+  pricing: '0.35',
+},
+
+// 视频模型 → ai.models.video.generation
+{
+  name: 'minimax-hailuo-2.3',
+  description: 'MiniMax Hailuo 2.3',
+  channel: 'minimax',
+  modes: ['text2video', 'image2video', 'flf2video'],
+  resolutions: ['768P', '1080P'],
+  durations: [6, 10],
+  maxInputImages: 2,
+  aspectRatios: ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3', '21:9'],
+  defaults: { duration: 6, aspectRatio: '9:16', resolution: '768P' },
+  pricing: [
+    { resolution: '768P', duration: 6, price: 28 },
+    { resolution: '768P', duration: 10, price: 56 },
+    { resolution: '1080P', duration: 6, price: 49 },
+  ],
+},
+```
+
+</details>
+
 #### xAI (Grok)
 
 | 变量 | 说明 |

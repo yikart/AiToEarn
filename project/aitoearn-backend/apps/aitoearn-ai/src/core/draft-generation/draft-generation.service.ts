@@ -375,7 +375,7 @@ export class DraftGenerationService {
     if (generationModel) {
       return {
         mode: 'openai-generation',
-        channel: AiLogChannel.NewApi,
+        channel: (generationModel as { channel?: AiLogChannel }).channel ?? AiLogChannel.NewApi,
         referenceHandling: referenceImageUrls.length > 0 ? ImageExecutionReferenceHandling.Ignored : ImageExecutionReferenceHandling.None,
         resolvedSize,
       }
