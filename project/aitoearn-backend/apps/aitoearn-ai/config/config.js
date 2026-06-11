@@ -66,6 +66,7 @@ const GPT_IMAGE_2_SIZES = [
 ]
 
 const GPT_IMAGE_2_ASPECT_RATIOS = ['1:1', '3:2', '2:3', '4:3', '3:4', '5:4', '4:5', '16:9', '9:16']
+const GEMINI_IMAGE_BASE_URL = 'https://generativelanguage.googleapis.com'
 
 function normalizeBaseUrl(url) {
   return url ? url.replace(/\/+$/, '') : url
@@ -227,7 +228,7 @@ module.exports = {
       keyPairs: parseGeminiKeyPairs(),
       location: GEMINI_LOCATION || 'us-central1',
       apiKey: GEMINI_API_KEY,
-      baseUrl: GEMINI_BASE_URL,
+      baseUrl: GEMINI_BASE_URL || GEMINI_IMAGE_BASE_URL,
     },
     dashscope: {
       apiKey: DASHSCOPE_API_KEY || '',
