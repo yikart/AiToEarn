@@ -121,7 +121,7 @@ services:
       redis:
         condition: service_healthy
     volumes:
-      - ./project/aitoearn-backend/apps/aitoearn-ai/config/config.js:/app/config.js:ro
+      - ./project/aitoearn-backend/apps/aitoearn-ai/config/config.yaml:/app/config.yaml:rw
     networks:
       - aitoearn-network
     environment:
@@ -179,7 +179,7 @@ services:
       aitoearn-ai:
         condition: service_healthy
     volumes:
-      - ./project/aitoearn-backend/apps/aitoearn-server/config/config.js:/app/config.js:ro
+      - ./project/aitoearn-backend/apps/aitoearn-server/config/config.yaml:/app/config.yaml:rw
     networks:
       - aitoearn-network
     environment:
