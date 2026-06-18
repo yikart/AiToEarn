@@ -6,8 +6,9 @@ import {
   Modality,
   ModalityTokenCount,
 } from '@google/genai'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AiAvailabilityService } from '../../../ai-availability'
+import { RelayMediaResolverService } from '../../relay-media'
 import { GeminiConfig } from './gemini.config'
 import {
   GeminiGeneratedImage,
@@ -26,6 +27,7 @@ export class GeminiService {
   constructor(
     private readonly config: GeminiConfig,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {
     const baseUrl = config.proxyUrl
       ? `${config.proxyUrl}/${config.baseUrl}`
@@ -48,12 +50,13 @@ export class GeminiService {
     const model = request.model || 'gemini-3.1-flash-image-preview'
     return this.withAvailability('generateImage', async () => {
       const { prompt, imageUrls = [], imageSize, aspectRatio } = request
+      const resolvedImageUrls = await Promise.all(imageUrls.map(url => this.resolveRelayText(url)))
 
-      this.logger.debug({ prompt, imageUrlsCount: imageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
+      this.logger.debug({ prompt, imageUrlsCount: resolvedImageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
 
       const parts: Array<{ text: string } | { inlineData: { mimeType: string, data: string } }> = []
 
-      for (const url of imageUrls) {
+      for (const url of resolvedImageUrls) {
         const imageData = await this.fetchImageAsBase64(url)
         parts.push({
           inlineData: {
@@ -213,11 +216,27 @@ export class GeminiService {
 
   async generateContent(params: GenerateContentParameters): Promise<GenerateContentResponse> {
     return this.withAvailability('generateContent', async () => {
-      return await this.genAiClient.models.generateContent(params)
+      const resolvedParams = await this.resolveRelayJson(params)
+      return await this.genAiClient.models.generateContent(resolvedParams)
     }, params.model)
   }
 
   async generateContentStream(params: GenerateContentParameters): Promise<AsyncGenerator<GenerateContentResponse>> {
-    return await this.genAiClient.models.generateContentStream(params)
+    const resolvedParams = await this.resolveRelayJson(params)
+    return await this.genAiClient.models.generateContentStream(resolvedParams)
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
+  }
+
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
+    }
+    return await this.relayMediaResolver.resolveText(text)
   }
 }

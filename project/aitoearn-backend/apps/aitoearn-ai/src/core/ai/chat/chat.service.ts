@@ -3,7 +3,7 @@ import { RawMessageStreamEvent } from '@anthropic-ai/sdk/resources'
 import { GenerateContentResponse, GenerateContentResponseUsageMetadata } from '@google/genai'
 import { BaseMessage, ChatMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
 import { AppException, getErrorMessage, getErrorStack, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
@@ -15,6 +15,7 @@ import { AiAvailabilityService } from '../../ai-availability'
 import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
+import { RelayMediaResolverService } from '../relay-media'
 import {
   ChatCompletionDto,
   ChatModelsQueryDto,
@@ -55,6 +56,7 @@ export class ChatService {
     private readonly assetsService: AssetsService,
     private readonly geminiService: GeminiService,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   /**
@@ -335,7 +337,8 @@ export class ChatService {
 
     const startedAt = new Date()
 
-    const stream = this.anthropic.messages.stream(body as Anthropic.MessageStreamParams)
+    const resolvedBody = await this.resolveRelayJson(body)
+    const stream = this.anthropic.messages.stream(resolvedBody as Anthropic.MessageStreamParams)
 
     const stream$ = from(stream).pipe(
       share(),
@@ -487,6 +490,13 @@ export class ChatService {
       input_token_details: inputTokenDetails,
       output_token_details: outputTokenDetails,
     }
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
   }
 
   extractGeminiTokenDetails(details: GenerateContentResponseUsageMetadata['promptTokensDetails']): TokenUsageDetails | undefined {

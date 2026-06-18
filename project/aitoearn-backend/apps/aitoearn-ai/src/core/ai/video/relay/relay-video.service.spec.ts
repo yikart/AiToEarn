@@ -2,18 +2,34 @@ import type { AiLog, AiLogRepository } from '@yikart/mongodb'
 import type { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import type { RelayLibService } from '../../libs/relay'
 import type { ModelsConfigService } from '../../models-config'
+import type { RelayMediaResolverService } from '../../relay-media'
 import { UserType } from '@yikart/common'
 import { AiLogChannel, AiLogStatus, AiLogType } from '@yikart/mongodb'
-import { vi } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RelayVideoService } from './relay-video.service'
 
 vi.mock('../../models-config', () => ({ ModelsConfigService: class ModelsConfigService {} }))
+vi.mock('@yikart/mongodb', () => ({
+  AiLogChannel: {
+    Relay: 'relay',
+  },
+  AiLogRepository: class AiLogRepository {},
+  AiLogStatus: {
+    Generating: 'generating',
+    Success: 'success',
+    Failed: 'failed',
+  },
+  AiLogType: {
+    Video: 'video',
+  },
+}))
 
 describe('relayVideoService', () => {
   let service: RelayVideoService
   let mockRelayLibService: vi.Mocked<Pick<RelayLibService, 'createVideo'>>
   let mockAiLogRepo: vi.Mocked<Pick<AiLogRepository, 'create' | 'getByTaskId' | 'updateByIdAndStatus'>>
   let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'executeAsync' | 'recordAsyncComplete'>>
+  let mockRelayMediaResolver: vi.Mocked<Pick<RelayMediaResolverService, 'resolveJson'>>
 
   const relayModel = {
     name: 'relay-video-model',
@@ -42,12 +58,16 @@ describe('relayVideoService', () => {
       executeAsync: vi.fn((_context, execute) => execute()),
       recordAsyncComplete: vi.fn().mockResolvedValue(undefined),
     } as never
+    mockRelayMediaResolver = {
+      resolveJson: vi.fn(async value => value),
+    }
 
     service = new RelayVideoService(
       mockRelayLibService as RelayLibService,
       mockAiLogRepo as AiLogRepository,
       { config: { video: { generation: [relayModel] } } } as unknown as ModelsConfigService,
       mockAiAvailability as AiAvailabilityService,
+      mockRelayMediaResolver as RelayMediaResolverService,
     )
   })
 
@@ -83,7 +103,6 @@ describe('relayVideoService', () => {
       request: {
         model: 'relay-video-model',
         prompt: 'A vertical product video',
-        remoteTaskId: 'relay-task-1',
       },
       response: {
         id: 'relay-task-1',
@@ -132,7 +151,38 @@ describe('relayVideoService', () => {
     const createdLog = mockAiLogRepo.create.mock.calls[0][0]
     expect(createdLog.request).toMatchObject({
       groupId: 'local-group-1',
-      remoteTaskId: 'relay-task-1',
+    })
+  })
+
+  it('uploads local media references before forwarding relay payload while keeping local log input unchanged', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: 'https://relay.example.com/assets/start.png',
+      images: ['https://relay.example.com/assets/ref.png'],
+    }) as never)
+
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video with references',
+      image: 'images/start.png',
+      images: ['images/ref.png'],
+    })
+
+    expect(mockRelayMediaResolver.resolveJson).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'images/start.png',
+      images: ['images/ref.png'],
+    }))
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'https://relay.example.com/assets/start.png',
+      images: ['https://relay.example.com/assets/ref.png'],
+    }))
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog.request).toMatchObject({
+      image: 'images/start.png',
+      images: ['images/ref.png'],
     })
   })
 

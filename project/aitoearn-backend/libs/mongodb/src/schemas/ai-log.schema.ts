@@ -212,7 +212,6 @@ export type RelayVideoAiLogRequest = AiLogObject<{
   tools?: Array<{ type: string }>
   metadata?: Record<string, unknown>
   source?: string
-  remoteTaskId?: string
 }>
 
 export type VideoAiLogRequest

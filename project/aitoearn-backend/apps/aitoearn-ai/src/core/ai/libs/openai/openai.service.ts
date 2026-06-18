@@ -1,8 +1,9 @@
 import { AIMessageChunk, BaseMessage } from '@langchain/core/messages'
 import { ChatOpenAI, OpenAIChatInput } from '@langchain/openai'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import OpenAI from 'openai'
 import { AiAvailabilityService } from '../../../ai-availability'
+import { RelayMediaResolverService } from '../../relay-media'
 import { OpenaiConfig } from './openai.config'
 import { SoraCharacterResponse, SoraCreateCharacterRequest } from './openai.interface'
 
@@ -15,6 +16,7 @@ export class OpenaiService {
   constructor(
     private readonly config: OpenaiConfig,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {
     this.openAI = this._createOpenAIClient()
     this.chatOpenAI = this._createChatModel({})
@@ -62,13 +64,15 @@ export class OpenaiService {
 
   async createRawStream(options: OpenAI.Chat.ChatCompletionCreateParamsStreaming) {
     return this.withAvailability('createRawStream', async () => {
-      return this.openAI.chat.completions.create(options)
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.chat.completions.create(resolvedOptions)
     }, options.model)
   }
 
   async createRawCompletion(options: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming): Promise<OpenAI.Chat.ChatCompletion> {
     return this.withAvailability('createRawCompletion', async () => {
-      return this.openAI.chat.completions.create(options)
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.chat.completions.create(resolvedOptions)
     }, options.model)
   }
 
@@ -95,7 +99,8 @@ export class OpenaiService {
 
   async createImageGeneration(options: Omit<OpenAI.Images.ImageGenerateParams, 'user' | 'stream'>): Promise<OpenAI.Images.ImagesResponse> {
     return this.withAvailability('createImageGeneration', async () => {
-      return this.openAI.images.generate(options)
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.images.generate(resolvedOptions)
     }, options.model ?? undefined)
   }
 
@@ -176,5 +181,12 @@ export class OpenaiService {
       const response = await this.openAI.videos.retrieve(characterId)
       return response as unknown as SoraCharacterResponse
     })
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
   }
 }
