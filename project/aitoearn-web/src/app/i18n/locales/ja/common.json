@@ -23,9 +23,6 @@
   "creatorBalance": "クリエイター残高",
   "withdrawable": "出金可",
   "plugin": "拡張機能",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "インストール",
     "noPermission": "未承認",

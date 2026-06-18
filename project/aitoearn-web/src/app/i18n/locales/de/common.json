@@ -23,9 +23,6 @@
   "creatorBalance": "Creator-Guthaben",
   "withdrawable": "Auszahlbar",
   "plugin": "Erweiterung",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "Installieren",
     "noPermission": "Nicht autorisiert",

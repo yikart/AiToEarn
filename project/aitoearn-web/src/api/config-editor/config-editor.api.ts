@@ -1,20 +1,26 @@
 import type { ConfigEditorConfigDto, ConfigEditorConfigVo } from './config-editor.types'
 import http from '@/utils/request'
+import { ConfigEditorServiceTarget } from './config-editor.types'
 
-export function getConfigEditorConfigApi(silent = true) {
-  return http.get<ConfigEditorConfigVo>('config', undefined, silent)
+function getConfigEditorRoute(target: ConfigEditorServiceTarget, path = '') {
+  const baseRoute = target === ConfigEditorServiceTarget.Ai ? 'ai/config' : 'config'
+  return path ? `${baseRoute}/${path}` : baseRoute
 }
 
-export function validateConfigEditorConfigApi(data: ConfigEditorConfigDto, silent = true) {
-  return http.post<void>('config/validate', data, silent)
+export function getConfigEditorConfigApi(target = ConfigEditorServiceTarget.Server, silent = true) {
+  return http.get<ConfigEditorConfigVo>(getConfigEditorRoute(target), undefined, silent)
 }
 
-export function saveConfigEditorConfigApi(data: ConfigEditorConfigDto, silent = true) {
-  return http.put<void>('config', data, silent)
+export function validateConfigEditorConfigApi(data: ConfigEditorConfigDto, target = ConfigEditorServiceTarget.Server, silent = true) {
+  return http.post<void>(getConfigEditorRoute(target, 'validate'), data, silent)
 }
 
-export function restartConfigEditorServiceApi(silent = true) {
-  return http.post<void>('config/restart', undefined, silent)
+export function saveConfigEditorConfigApi(data: ConfigEditorConfigDto, target = ConfigEditorServiceTarget.Server, silent = true) {
+  return http.put<void>(getConfigEditorRoute(target), data, silent)
+}
+
+export function restartConfigEditorServiceApi(target = ConfigEditorServiceTarget.Server, silent = true) {
+  return http.post<void>(getConfigEditorRoute(target, 'restart'), undefined, silent)
 }
 
 function getHealthCheckUrl() {
@@ -52,4 +58,16 @@ export async function checkConfigEditorServiceHealthApi(timeoutMs = 2500) {
   finally {
     clearTimeout(timeoutId)
   }
+}
+
+export async function checkConfigEditorConfigReadyApi(target = ConfigEditorServiceTarget.Server, timeoutMs = 2500) {
+  if (target === ConfigEditorServiceTarget.Server)
+    return checkConfigEditorServiceHealthApi(timeoutMs)
+
+  const timeout = new Promise<false>(resolve => setTimeout(() => resolve(false), timeoutMs))
+  const readiness = getConfigEditorConfigApi(target, true)
+    .then(response => !!response && response.code === 0)
+    .catch(() => false)
+
+  return Promise.race([readiness, timeout])
 }

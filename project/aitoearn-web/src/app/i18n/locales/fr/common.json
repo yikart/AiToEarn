@@ -23,9 +23,6 @@
   "creatorBalance": "Solde créateur",
   "withdrawable": "Retirable",
   "plugin": "Extension",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "Installer",
     "noPermission": "Non autorisé",

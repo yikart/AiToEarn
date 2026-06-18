@@ -24,9 +24,6 @@
   "withdrawable": "Withdrawable",
   "plugin": "Extension",
   "advertiser": "AI Check-in",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "Install",
     "noPermission": "Not Authorized",

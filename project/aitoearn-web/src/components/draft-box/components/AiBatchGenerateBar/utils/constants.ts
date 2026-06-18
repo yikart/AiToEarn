@@ -140,7 +140,7 @@ export function getVideoModelResolutions(model?: VideoModelInfo): string[] {
   if (resolutions.length > 0)
     return resolutions
 
-  return getUniqueStrings(model?.pricing.map(item => item.resolution).filter((item): item is string => !!item) ?? [])
+  return getUniqueStrings(model?.pricing?.map(item => item.resolution).filter((item): item is string => !!item) ?? [])
 }
 
 export function getVideoModelsCommonResolutions(models: VideoModelInfo[]): string[] {
@@ -237,14 +237,15 @@ export function getVideoModelDurationLimits(
 
 /** 按模式与分辨率过滤视频定价；模型无分辨率定价时复用通用价格 */
 export function filterVideoPricingByResolution(
-  pricing: VideoModelPricing[],
+  pricing: VideoModelPricing[] | undefined,
   resolution: string,
   isVideoEditMode: boolean,
 ): VideoModelPricing[] {
+  const pricingItems = pricing ?? []
   const modePricing = isVideoEditMode
-    ? pricing.filter(item => item.mode === 'video2video')
-    : pricing.filter(item => !item.mode)
-  const effectiveModePricing = modePricing.length > 0 ? modePricing : pricing.filter(item => !item.mode)
+    ? pricingItems.filter(item => item.mode === 'video2video')
+    : pricingItems.filter(item => !item.mode)
+  const effectiveModePricing = modePricing.length > 0 ? modePricing : pricingItems.filter(item => !item.mode)
 
   if (resolution) {
     const resolutionPricing = effectiveModePricing.filter(item => item.resolution?.toLowerCase() === resolution.toLowerCase())

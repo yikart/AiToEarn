@@ -1,13 +1,14 @@
 /**
  * ConfigField - 配置字段递归表单控件
- * 将配置对象转换成可编辑表单，避免直接暴露 JSON。
+ * 将配置对象转换成设置列表，降低参数区视觉噪音。
  */
 'use client'
 
-import type { ConfigFieldProps, ConfigPath } from '../../types'
-import { ChevronDown, Plus, Trash2 } from 'lucide-react'
-import { useMemo } from 'react'
+import type { ConfigFieldProps, ConfigPath, ConfigValue } from '../../types'
+import { Braces, ChevronDown, Eye, EyeOff, Plus, Trash2 } from 'lucide-react'
+import { useEffect, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
 import { Input } from '@/components/ui/input'
@@ -17,225 +18,736 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/utils/className'
-import { createEmptyValue, formatConfigKey, isRecord, joinPath } from '../../utils/configPath'
+import {
+  countLeafFields,
+  countModifiedLeafFields,
+  getConfigFieldLabel,
+  getLastStringSegment,
+  isConfigValueModified,
+  isSensitiveConfigPath,
+} from '../../utils/configFieldMeta'
+import { createEmptyValue, isRecord, joinPath } from '../../utils/configPath'
 
 const selectOptions: Record<string, string[]> = {
   environment: ['development', 'production'],
 }
 
-function getLastStringSegment(path: ConfigPath, fallback: string) {
-  const segment = [...path].reverse().find(item => typeof item === 'string')
-  return typeof segment === 'string' ? segment : fallback
-}
-
-function translateWithFallback(t: (key: string) => string, key: string, fallback: string) {
-  const translated = t(key)
-  return translated === key ? fallback : translated
-}
-
-function getFieldLabel(t: (key: string) => string, path: ConfigPath, fieldKey: string) {
-  const key = getLastStringSegment(path, fieldKey)
-  return translateWithFallback(t, `fields.${key}`, formatConfigKey(key))
-}
-
-function getFieldDescription(t: (key: string) => string, path: ConfigPath) {
-  const pathKey = path.filter(item => typeof item === 'string').join('.')
-  if (!pathKey)
-    return ''
-  return translateWithFallback(t, `fieldDescriptions.${pathKey}`, '')
-}
+const compactControlClassName = 'h-7 min-h-7 w-full rounded-sm border-transparent bg-transparent px-2 py-0 text-sm shadow-none group-hover/config-item:border-input group-hover/config-item:bg-background hover:border-input hover:bg-background focus:border-ring focus:bg-background focus:ring-1 focus:ring-ring focus:ring-offset-0 focus-visible:border-ring focus-visible:bg-background focus-visible:ring-1 focus-visible:ring-ring'
+const compactBadgeClassName = 'h-5 shrink-0 whitespace-nowrap px-1.5 py-0 text-[10px] font-normal leading-none'
+const nodeTriggerClassName = 'group/config-item flex min-h-8 w-full cursor-pointer items-center justify-between gap-2 py-1 pr-2 text-left outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring'
 
 function shouldUseTextarea(value: string) {
   return value.includes('\n') || value.length > 96
 }
 
-function PrimitiveField({ path, fieldKey, value, disabled, onValueChange }: ConfigFieldProps) {
-  const { t } = useTransClient('configManager')
-  const label = getFieldLabel(t, path, fieldKey)
-  const description = getFieldDescription(t, path)
-  const pathKey = joinPath(path)
-  const lastKey = getLastStringSegment(path, fieldKey)
-  const options = selectOptions[lastKey]
+function getInputId(pathKey: string) {
+  return `config-field-${pathKey.replace(/[^\w-]/g, '-')}`
+}
 
-  const inputId = `config-field-${pathKey.replace(/[^\w-]/g, '-')}`
+function isPathPrefix(path: ConfigPath, targetPath: ConfigPath | null) {
+  if (!targetPath || path.length > targetPath.length)
+    return false
+  return path.every((segment, index) => segment === targetPath[index])
+}
+
+function getPathHighlightClassName(pathKey: string, highlightedPathKey: string) {
+  return pathKey === highlightedPathKey && 'animate-pulse bg-primary/10 ring-2 ring-inset ring-primary/45'
+}
+
+function ExpandIcon({ open }: { open: boolean }) {
+  return (
+    <ChevronDown
+      className={cn('h-3.5 w-3.5 transition-transform duration-150', !open && '-rotate-90')}
+    />
+  )
+}
+
+function PathJumpButton({ path, onNavigateToJson }: {
+  path: ConfigPath
+  onNavigateToJson: (path: ConfigPath) => void
+}) {
+  const { t } = useTransClient('configManager')
 
   return (
-    <div className="grid gap-2 rounded-lg px-2 py-2 transition-colors hover:bg-muted/40 focus-within:bg-muted/40 sm:grid-cols-[minmax(150px,210px)_1fr] sm:items-start">
-      <div className="min-w-0 space-y-1">
-        <Label htmlFor={inputId} className="text-sm font-medium text-foreground">
-          {label}
-        </Label>
-        <div className="break-all text-xs text-muted-foreground">{pathKey}</div>
-        {description && <p className="text-xs leading-5 text-muted-foreground">{description}</p>}
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      className="h-5 w-5 shrink-0 cursor-pointer text-muted-foreground opacity-0 transition-opacity hover:bg-background/80 hover:text-foreground group-hover/config-item:opacity-100 focus-visible:opacity-100"
+      aria-label={t('actions.goToJsonField')}
+      onMouseDown={event => event.preventDefault()}
+      onClick={(event) => {
+        event.stopPropagation()
+        onNavigateToJson([...path])
+      }}
+    >
+      <Braces className="h-3.5 w-3.5" />
+    </Button>
+  )
+}
+
+function SettingLabel({
+  inputId,
+  label,
+  modified,
+  depth,
+  path,
+  onNavigateToJson,
+}: {
+  inputId?: string
+  label: string
+  modified: boolean
+  depth: number
+  path: ConfigPath
+  onNavigateToJson: (path: ConfigPath) => void
+}) {
+  const { t } = useTransClient('configManager')
+  const labelClassName = cn(
+    'block truncate text-foreground',
+    depth === 0 && 'text-sm font-semibold tracking-tight',
+    depth === 1 && 'text-[13px] font-semibold',
+    depth >= 2 && 'text-xs font-medium',
+  )
+  const markerClassName = cn(
+    'shrink-0',
+    depth === 0 && 'h-2 w-2 rounded-sm bg-primary',
+    depth === 1 && 'h-1.5 w-1.5 rounded-full bg-muted-foreground/70',
+    depth >= 2 && 'hidden',
+  )
+
+  return (
+    <div className="min-w-0">
+      <div className="flex min-w-0 items-center gap-1.5">
+        <span className={markerClassName} aria-hidden />
+        {inputId
+          ? (
+              <Label htmlFor={inputId} className={labelClassName}>
+                {label}
+              </Label>
+            )
+          : <div className={labelClassName}>{label}</div>}
+        {modified && (
+          <Badge variant="outline" className={cn(compactBadgeClassName, 'border-warning/30 bg-warning/10 text-warning')}>
+            {t('status.modified')}
+          </Badge>
+        )}
+        <PathJumpButton path={path} onNavigateToJson={onNavigateToJson} />
       </div>
-
-      {typeof value === 'boolean' && (
-        <div className="flex min-h-9 items-center justify-between gap-3 rounded-md border border-input bg-background px-3 py-2 shadow-sm">
-          <span className="text-sm text-muted-foreground">
-            {value ? t('common.enabled') : t('common.disabled')}
-          </span>
-          <Switch
-            id={inputId}
-            checked={value}
-            disabled={disabled}
-            onCheckedChange={checked => onValueChange(path, checked)}
-          />
-        </div>
-      )}
-
-      {typeof value === 'number' && (
-        <NumberInput
-          id={inputId}
-          value={value}
-          disabled={disabled}
-          onValueChange={nextValue => onValueChange(path, nextValue ?? 0)}
-        />
-      )}
-
-      {typeof value === 'string' && options && (
-        <Select value={value} disabled={disabled} onValueChange={nextValue => onValueChange(path, nextValue)}>
-          <SelectTrigger id={inputId}>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            {options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
-          </SelectContent>
-        </Select>
-      )}
-
-      {typeof value === 'string' && !options && shouldUseTextarea(value) && (
-        <Textarea
-          id={inputId}
-          value={value}
-          disabled={disabled}
-          rows={4}
-          onChange={event => onValueChange(path, event.target.value)}
-        />
-      )}
-
-      {typeof value === 'string' && !options && !shouldUseTextarea(value) && (
-        <Input
-          id={inputId}
-          value={value}
-          disabled={disabled}
-          onChange={event => onValueChange(path, event.target.value)}
-        />
-      )}
-
-      {(value == null) && (
-        <Input
-          id={inputId}
-          value=""
-          disabled={disabled}
-          placeholder={t('common.emptyValue')}
-          onChange={event => onValueChange(path, event.target.value)}
-        />
-      )}
     </div>
   )
 }
 
-function ArrayField({ path, fieldKey, value, disabled, depth = 0, onValueChange }: ConfigFieldProps & { value: unknown[] }) {
+function getTreeIndentStyle(depth: number) {
+  return { paddingLeft: `${Math.min(depth, 6) * 12 + 10}px` }
+}
+
+function getNodeClassName(depth: number, modified: boolean) {
+  return cn(
+    'transition-colors',
+    depth === 0 && 'bg-muted/55 hover:bg-muted/75',
+    depth === 1 && 'bg-muted/20 hover:bg-muted/35',
+    depth >= 2 && 'bg-background hover:bg-muted/20',
+    modified && 'ring-1 ring-inset ring-warning/20',
+  )
+}
+
+function PrimitiveField({
+  path,
+  fieldKey,
+  value,
+  originalValue,
+  disabled,
+  depth = 0,
+  focusPath,
+  highlightedPathKey,
+  onValueChange,
+  onNavigateToJson,
+}: ConfigFieldProps) {
   const { t } = useTransClient('configManager')
-  const label = getFieldLabel(t, path, fieldKey)
+  const [showSensitiveValue, setShowSensitiveValue] = useState(false)
+  const label = getConfigFieldLabel(t, path, fieldKey)
   const pathKey = joinPath(path)
-  const sampleValue = value[0] ?? ''
-  const canRemove = value.length > 0
+  const inputId = getInputId(pathKey)
+  const lastKey = getLastStringSegment(path, fieldKey)
+  const options = selectOptions[lastKey]
+  const modified = isConfigValueModified(value, originalValue)
+  const sensitive = isSensitiveConfigPath(path)
 
   return (
-    <Collapsible defaultOpen={depth < 2} className="rounded-lg border border-border/80 bg-background">
-      <CollapsibleTrigger className="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left hover:bg-muted/50">
-        <div className="min-w-0">
-          <div className="text-sm font-medium text-foreground">{label}</div>
-          <div className="break-all text-xs text-muted-foreground">{pathKey}</div>
-        </div>
-        <div className="flex items-center gap-2 text-xs text-muted-foreground">
-          <span>{t('common.itemCount', { count: value.length })}</span>
-          <ChevronDown className="h-4 w-4" />
-        </div>
-      </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2 border-t border-border/70 p-2">
-        {value.length === 0 && (
-          <div className="rounded-lg border border-dashed border-border bg-background px-3 py-4 text-center text-sm text-muted-foreground">
-            {t('common.emptyArray')}
-          </div>
-        )}
-        {value.map((item, index) => (
-          <div key={`${pathKey}-${index}`} className="rounded-lg border border-border/70 bg-muted/20 p-2">
-            <div className="mb-2 flex items-center justify-between gap-3">
-              <div className="text-xs font-medium text-muted-foreground">
-                {t('common.arrayItem', { index: index + 1 })}
-              </div>
-              <Button
-                type="button"
-                variant="ghost"
-                size="sm"
-                disabled={disabled || !canRemove}
-                className="h-7 px-2 text-muted-foreground hover:text-destructive"
-                onClick={() => onValueChange(path, value.filter((_, itemIndex) => itemIndex !== index))}
-              >
-                <Trash2 className="h-3.5 w-3.5" />
-                {t('actions.remove')}
-              </Button>
-            </div>
-            <ConfigField
-              path={[...path, index]}
-              fieldKey={`${fieldKey}.${index}`}
-              value={item}
+    <div
+      data-config-path-key={pathKey}
+      className={cn(
+        'group/config-item grid min-h-8 gap-2 py-0.5 pr-2 lg:grid-cols-[minmax(120px,180px)_minmax(0,1fr)] lg:items-center',
+        getNodeClassName(depth, modified),
+        getPathHighlightClassName(pathKey, highlightedPathKey),
+      )}
+      style={getTreeIndentStyle(depth)}
+    >
+      <SettingLabel
+        inputId={inputId}
+        label={label}
+        modified={modified}
+        depth={depth}
+        path={path}
+        onNavigateToJson={onNavigateToJson}
+      />
+
+      <div className="min-w-0">
+        {typeof value === 'boolean' && (
+          <div className="flex h-7 w-full items-center justify-between gap-3 rounded-sm border border-transparent bg-transparent px-2 shadow-none group-hover/config-item:border-input group-hover/config-item:bg-background hover:border-input hover:bg-background">
+            <span className="text-sm text-muted-foreground">
+              {value ? t('common.enabled') : t('common.disabled')}
+            </span>
+            <Switch
+              id={inputId}
+              checked={value}
               disabled={disabled}
-              depth={depth + 1}
-              onValueChange={onValueChange}
+              onCheckedChange={checked => onValueChange(path, checked)}
             />
           </div>
-        ))}
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          disabled={disabled}
-          className="w-full"
-          onClick={() => onValueChange(path, [...value, createEmptyValue(sampleValue)])}
-        >
-          <Plus className="h-4 w-4" />
-          {t('actions.addItem')}
-        </Button>
+        )}
+
+        {typeof value === 'number' && (
+          <NumberInput
+            id={inputId}
+            value={value}
+            disabled={disabled}
+            className={compactControlClassName}
+            onValueChange={nextValue => onValueChange(path, nextValue ?? 0)}
+          />
+        )}
+
+        {typeof value === 'string' && options && (
+          <Select value={value} disabled={disabled} onValueChange={nextValue => onValueChange(path, nextValue)}>
+            <SelectTrigger id={inputId} className={compactControlClassName}>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {options.map(option => <SelectItem key={option} value={option}>{option}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        )}
+
+        {typeof value === 'string' && !options && sensitive && (
+          <div className="relative">
+            <Input
+              id={inputId}
+              value={value}
+              disabled={disabled}
+              autoComplete="off"
+              data-lpignore="true"
+              data-form-type="other"
+              className={cn(compactControlClassName, 'pr-8', !showSensitiveValue && '[-webkit-text-security:disc]')}
+              onChange={event => onValueChange(path, event.target.value)}
+            />
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              disabled={disabled}
+              className="absolute right-1 top-1/2 h-5 w-5 -translate-y-1/2 cursor-pointer text-muted-foreground hover:bg-transparent hover:text-foreground"
+              aria-label={showSensitiveValue ? t('actions.hideSensitiveValue') : t('actions.showSensitiveValue')}
+              onClick={() => setShowSensitiveValue(current => !current)}
+            >
+              {showSensitiveValue ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />}
+            </Button>
+          </div>
+        )}
+
+        {typeof value === 'string' && !options && !sensitive && shouldUseTextarea(value) && (
+          <Textarea
+            id={inputId}
+            value={value}
+            disabled={disabled}
+            rows={3}
+            className="min-h-20 text-sm shadow-sm"
+            onChange={event => onValueChange(path, event.target.value)}
+          />
+        )}
+
+        {typeof value === 'string' && !options && !sensitive && !shouldUseTextarea(value) && (
+          <Input
+            id={inputId}
+            value={value}
+            disabled={disabled}
+            className={compactControlClassName}
+            onChange={event => onValueChange(path, event.target.value)}
+          />
+        )}
+
+        {value == null && (
+          <Input
+            id={inputId}
+            value=""
+            disabled={disabled}
+            placeholder={t('common.emptyValue')}
+            className={compactControlClassName}
+            onChange={event => onValueChange(path, event.target.value)}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+function getArrayItemDisplayValue(value: unknown) {
+  if (typeof value === 'string')
+    return value.trim()
+  if (typeof value === 'number' || typeof value === 'boolean')
+    return String(value)
+  return ''
+}
+
+function getArrayItemTitle(item: unknown, fallback: string) {
+  if (!isRecord(item)) {
+    const value = getArrayItemDisplayValue(item)
+    return value || fallback
+  }
+
+  const titleKeys = ['displayName', 'name', 'model', 'channel', 'id', 'key']
+  for (const key of titleKeys) {
+    const value = getArrayItemDisplayValue(item[key])
+    if (value)
+      return value
+  }
+
+  return fallback
+}
+
+function ArrayItemRemoveButton({ disabled, onRemove }: {
+  disabled: boolean
+  onRemove: () => void
+}) {
+  const { t } = useTransClient('configManager')
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      disabled={disabled}
+      className="h-5 w-5 shrink-0 cursor-pointer text-muted-foreground opacity-0 transition-opacity hover:bg-destructive/10 hover:text-destructive group-hover/config-item:opacity-100 focus-visible:opacity-100"
+      aria-label={t('actions.remove')}
+      onMouseDown={event => event.preventDefault()}
+      onClick={(event) => {
+        event.stopPropagation()
+        onRemove()
+      }}
+    >
+      <Trash2 className="h-3.5 w-3.5" />
+    </Button>
+  )
+}
+
+function ArrayItemAddButton({ disabled, onAdd }: {
+  disabled: boolean
+  onAdd: () => void
+}) {
+  const { t } = useTransClient('configManager')
+
+  return (
+    <Button
+      type="button"
+      variant="ghost"
+      size="icon"
+      disabled={disabled}
+      className="h-5 w-5 shrink-0 cursor-pointer text-muted-foreground transition-colors hover:bg-background/80 hover:text-foreground"
+      aria-label={t('actions.addItem')}
+      onMouseDown={event => event.preventDefault()}
+      onClick={(event) => {
+        event.stopPropagation()
+        onAdd()
+      }}
+    >
+      <Plus className="h-3.5 w-3.5" />
+    </Button>
+  )
+}
+
+function PrimitiveArrayItem({
+  parentPath,
+  index,
+  value,
+  originalValue,
+  disabled,
+  depth,
+  highlightedPathKey,
+  onValueChange,
+  onNavigateToJson,
+  onRemove,
+}: {
+  parentPath: ConfigPath
+  index: number
+  value: unknown
+  originalValue: unknown
+  disabled: boolean
+  depth: number
+  highlightedPathKey: string
+  onValueChange: (path: ConfigPath, value: ConfigValue) => void
+  onNavigateToJson: (path: ConfigPath) => void
+  onRemove: () => void
+}) {
+  const { t } = useTransClient('configManager')
+  const itemPath = [...parentPath, index]
+  const pathKey = joinPath(itemPath)
+  const inputId = getInputId(pathKey)
+  const modified = isConfigValueModified(value, originalValue)
+
+  return (
+    <div
+      data-config-path-key={pathKey}
+      className={cn(
+        'group/config-item grid min-h-8 gap-2 border-b border-border/70 py-0.5 pr-2 last:border-b-0 lg:grid-cols-[minmax(96px,140px)_minmax(0,1fr)] lg:items-center',
+        getNodeClassName(depth, modified),
+        getPathHighlightClassName(pathKey, highlightedPathKey),
+      )}
+      style={getTreeIndentStyle(depth)}
+    >
+      <div className="flex min-w-0 items-center gap-1.5">
+        <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+          #
+          {index + 1}
+        </span>
+        {modified && (
+          <Badge variant="outline" className={cn(compactBadgeClassName, 'border-warning/30 bg-warning/10 text-warning')}>
+            {t('status.modified')}
+          </Badge>
+        )}
+        <PathJumpButton path={itemPath} onNavigateToJson={onNavigateToJson} />
+      </div>
+
+      <div className="flex min-w-0 items-center gap-1">
+        {typeof value === 'boolean' && (
+          <div className="flex h-7 min-w-0 flex-1 items-center justify-between gap-3 rounded-sm border border-transparent bg-transparent px-2 shadow-none group-hover/config-item:border-input group-hover/config-item:bg-background hover:border-input hover:bg-background">
+            <span className="text-sm text-muted-foreground">
+              {value ? t('common.enabled') : t('common.disabled')}
+            </span>
+            <Switch checked={value} disabled={disabled} onCheckedChange={checked => onValueChange(itemPath, checked)} />
+          </div>
+        )}
+
+        {typeof value === 'number' && (
+          <NumberInput
+            id={inputId}
+            value={value}
+            disabled={disabled}
+            className={compactControlClassName}
+            onValueChange={nextValue => onValueChange(itemPath, nextValue ?? 0)}
+          />
+        )}
+
+        {typeof value === 'string' && (
+          <Input
+            id={inputId}
+            value={value}
+            disabled={disabled}
+            className={compactControlClassName}
+            onChange={event => onValueChange(itemPath, event.target.value)}
+          />
+        )}
+
+        {value == null && (
+          <Input
+            id={inputId}
+            value=""
+            disabled={disabled}
+            placeholder={t('common.emptyValue')}
+            className={compactControlClassName}
+            onChange={event => onValueChange(itemPath, event.target.value)}
+          />
+        )}
+
+        <ArrayItemRemoveButton disabled={disabled} onRemove={onRemove} />
+      </div>
+    </div>
+  )
+}
+
+function ObjectArrayItem({
+  parentPath,
+  fieldKey,
+  index,
+  value,
+  originalValue,
+  disabled,
+  depth,
+  focusPath,
+  highlightedPathKey,
+  onValueChange,
+  onNavigateToJson,
+  onRemove,
+}: {
+  parentPath: ConfigPath
+  fieldKey: string
+  index: number
+  value: Record<string, unknown>
+  originalValue: unknown
+  disabled: boolean
+  depth: number
+  focusPath: ConfigPath | null
+  highlightedPathKey: string
+  onValueChange: (path: ConfigPath, value: ConfigValue) => void
+  onNavigateToJson: (path: ConfigPath) => void
+  onRemove: () => void
+}) {
+  const { t } = useTransClient('configManager')
+  const itemPath = [...parentPath, index]
+  const pathKey = joinPath(itemPath)
+  const originalRecord = isRecord(originalValue) ? originalValue : {}
+  const modifiedCount = countModifiedLeafFields(value, originalValue)
+  const modified = modifiedCount > 0
+  const leafCount = countLeafFields(value)
+  const fallbackTitle = t('common.arrayItem', { index: index + 1 })
+  const title = getArrayItemTitle(value, fallbackTitle)
+  const [open, setOpen] = useState(false)
+  const focusPathKey = focusPath ? joinPath(focusPath) : ''
+
+  useEffect(() => {
+    if (isPathPrefix(itemPath, focusPath))
+      setOpen(true)
+  }, [focusPath, focusPathKey, pathKey])
+
+  return (
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+      data-config-path-key={pathKey}
+      className={cn('border-b border-border/70 last:border-b-0', getPathHighlightClassName(pathKey, highlightedPathKey))}
+    >
+      <CollapsibleTrigger
+        className={cn(nodeTriggerClassName, getNodeClassName(depth, modified))}
+        style={getTreeIndentStyle(depth)}
+      >
+        <div className="flex min-w-0 flex-1 items-center gap-1.5">
+          <span className="shrink-0 font-mono text-[11px] text-muted-foreground">
+            #
+            {index + 1}
+          </span>
+          <span className="truncate text-xs font-semibold text-foreground">{title}</span>
+          {modified && (
+            <Badge variant="outline" className={cn(compactBadgeClassName, 'border-warning/30 bg-warning/10 text-warning')}>
+              {modifiedCount}
+            </Badge>
+          )}
+          <PathJumpButton path={itemPath} onNavigateToJson={onNavigateToJson} />
+        </div>
+        <div className="flex shrink-0 items-center gap-1 text-[11px] text-muted-foreground">
+          <Badge variant="outline" className={compactBadgeClassName}>{t('panel.fieldSummary', { count: leafCount })}</Badge>
+          <ArrayItemRemoveButton disabled={disabled} onRemove={onRemove} />
+          <ExpandIcon open={open} />
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="border-t border-border/70 bg-background">
+        <div className="divide-y divide-border/70">
+          {Object.entries(value).map(([key, itemValue]) => (
+            <ConfigField
+              key={`${pathKey}.${key}`}
+              path={[...itemPath, key]}
+              fieldKey={key}
+              value={itemValue}
+              originalValue={originalRecord[key]}
+              disabled={disabled}
+              depth={depth + 1}
+              focusPath={focusPath}
+              highlightedPathKey={highlightedPathKey}
+              onValueChange={onValueChange}
+              onNavigateToJson={onNavigateToJson}
+            />
+          ))}
+        </div>
       </CollapsibleContent>
     </Collapsible>
   )
 }
 
-function ObjectField({ path, fieldKey, value, disabled, depth = 0, onValueChange }: ConfigFieldProps & { value: Record<string, unknown> }) {
+function ArrayField({
+  path,
+  fieldKey,
+  value,
+  originalValue,
+  disabled,
+  depth = 0,
+  focusPath,
+  highlightedPathKey,
+  onValueChange,
+  onNavigateToJson,
+}: ConfigFieldProps & { value: unknown[] }) {
   const { t } = useTransClient('configManager')
-  const label = getFieldLabel(t, path, fieldKey)
-  const entries = useMemo(() => Object.entries(value), [value])
+  const label = getConfigFieldLabel(t, path, fieldKey)
   const pathKey = joinPath(path)
+  const sampleValue = value[0] ?? ''
+  const originalArray = Array.isArray(originalValue) ? originalValue : []
+  const modifiedCount = countModifiedLeafFields(value, originalValue)
+  const modified = modifiedCount > 0
+  const leafCount = countLeafFields(value)
+  const [open, setOpen] = useState(depth < 2)
+  const focusPathKey = focusPath ? joinPath(focusPath) : ''
+
+  useEffect(() => {
+    if (isPathPrefix(path, focusPath))
+      setOpen(true)
+  }, [focusPath, focusPathKey, pathKey])
 
   return (
-    <Collapsible defaultOpen={depth < 2} className={cn('rounded-lg border border-border/80', depth === 0 ? 'bg-background' : 'bg-muted/20')}>
-      <CollapsibleTrigger className="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left hover:bg-muted/50">
-        <div className="min-w-0">
-          <div className="text-sm font-medium text-foreground">{label}</div>
-          <div className="break-all text-xs text-muted-foreground">{pathKey}</div>
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+      data-config-path-key={pathKey}
+      className={cn('group/config-node', getNodeClassName(depth, modified), getPathHighlightClassName(pathKey, highlightedPathKey))}
+    >
+      <CollapsibleTrigger
+        className={nodeTriggerClassName}
+        style={getTreeIndentStyle(depth)}
+      >
+        <SettingLabel label={label} modified={modified} depth={depth} path={path} onNavigateToJson={onNavigateToJson} />
+        <div className="flex shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Badge variant="secondary" className={compactBadgeClassName}>{t('common.itemCount', { count: value.length })}</Badge>
+          <Badge variant="outline" className={compactBadgeClassName}>{t('panel.fieldSummary', { count: leafCount })}</Badge>
+          <ArrayItemAddButton
+            disabled={disabled}
+            onAdd={() => onValueChange(path, [...value, createEmptyValue(sampleValue)])}
+          />
+          <ExpandIcon open={open} />
         </div>
-        <ChevronDown className="h-4 w-4 text-muted-foreground" />
       </CollapsibleTrigger>
-      <CollapsibleContent className="space-y-2 border-t border-border/70 p-2">
+      <CollapsibleContent className="border-t border-border/70 bg-muted/10">
+        {value.length === 0 && (
+          <div className="m-2 rounded-md border border-dashed border-border bg-background px-3 py-3 text-center text-sm text-muted-foreground">
+            {t('common.emptyArray')}
+          </div>
+        )}
+        {value.map((item, index) => {
+          const itemPathKey = `${pathKey}-${index}`
+          const removeItem = () => onValueChange(path, value.filter((_, itemIndex) => itemIndex !== index))
+
+          if (isRecord(item)) {
+            return (
+              <ObjectArrayItem
+                key={itemPathKey}
+                parentPath={path}
+                fieldKey={fieldKey}
+                index={index}
+                value={item}
+                originalValue={originalArray[index]}
+                disabled={disabled}
+                depth={depth + 1}
+                focusPath={focusPath}
+                highlightedPathKey={highlightedPathKey}
+                onValueChange={onValueChange}
+                onNavigateToJson={onNavigateToJson}
+                onRemove={removeItem}
+              />
+            )
+          }
+
+          if (!Array.isArray(item)) {
+            return (
+              <PrimitiveArrayItem
+                key={itemPathKey}
+                parentPath={path}
+                index={index}
+                value={item}
+                originalValue={originalArray[index]}
+                disabled={disabled}
+                depth={depth + 1}
+                highlightedPathKey={highlightedPathKey}
+                onValueChange={onValueChange}
+                onNavigateToJson={onNavigateToJson}
+                onRemove={removeItem}
+              />
+            )
+          }
+
+          return (
+            <ConfigField
+              key={itemPathKey}
+              path={[...path, index]}
+              fieldKey={`${fieldKey}.${index}`}
+              value={item}
+              originalValue={originalArray[index]}
+              disabled={disabled}
+              depth={depth + 1}
+              focusPath={focusPath}
+              highlightedPathKey={highlightedPathKey}
+              onValueChange={onValueChange}
+              onNavigateToJson={onNavigateToJson}
+            />
+          )
+        })}
+      </CollapsibleContent>
+    </Collapsible>
+  )
+}
+
+function ObjectField({
+  path,
+  fieldKey,
+  value,
+  originalValue,
+  disabled,
+  depth = 0,
+  focusPath,
+  highlightedPathKey,
+  onValueChange,
+  onNavigateToJson,
+}: ConfigFieldProps & { value: Record<string, unknown> }) {
+  const { t } = useTransClient('configManager')
+  const label = getConfigFieldLabel(t, path, fieldKey)
+  const entries = useMemo(() => Object.entries(value), [value])
+  const originalRecord = isRecord(originalValue) ? originalValue : {}
+  const pathKey = joinPath(path)
+  const modifiedCount = countModifiedLeafFields(value, originalValue)
+  const modified = modifiedCount > 0
+  const leafCount = countLeafFields(value)
+  const [open, setOpen] = useState(depth < 2)
+  const focusPathKey = focusPath ? joinPath(focusPath) : ''
+
+  useEffect(() => {
+    if (isPathPrefix(path, focusPath))
+      setOpen(true)
+  }, [focusPath, focusPathKey, pathKey])
+
+  return (
+    <Collapsible
+      open={open}
+      onOpenChange={setOpen}
+      data-config-path-key={pathKey}
+      className={cn('group/config-node', getNodeClassName(depth, modified), getPathHighlightClassName(pathKey, highlightedPathKey))}
+    >
+      <CollapsibleTrigger
+        className={nodeTriggerClassName}
+        style={getTreeIndentStyle(depth)}
+      >
+        <SettingLabel label={label} modified={modified} depth={depth} path={path} onNavigateToJson={onNavigateToJson} />
+        <div className="flex shrink-0 items-center gap-1.5 text-[11px] text-muted-foreground">
+          <Badge variant="secondary" className={compactBadgeClassName}>{t('panel.fieldSummary', { count: leafCount })}</Badge>
+          {modifiedCount > 0 && <Badge variant="outline" className={cn(compactBadgeClassName, 'border-warning/30 bg-warning/10 text-warning')}>{modifiedCount}</Badge>}
+          <ExpandIcon open={open} />
+        </div>
+      </CollapsibleTrigger>
+      <CollapsibleContent className="border-t border-border/70">
         {entries.length === 0 && (
-          <div className="rounded-lg border border-dashed border-border bg-background px-3 py-4 text-center text-sm text-muted-foreground">
+          <div className="m-2 rounded-md border border-dashed border-border bg-background px-3 py-3 text-center text-sm text-muted-foreground">
             {t('common.emptyObject')}
           </div>
         )}
-        {entries.map(([key, itemValue]) => (
-          <ConfigField
-            key={`${pathKey}.${key}`}
-            path={[...path, key]}
-            fieldKey={key}
-            value={itemValue}
-            disabled={disabled}
-            depth={depth + 1}
-            onValueChange={onValueChange}
-          />
-        ))}
+        <div className="divide-y divide-border/70">
+          {entries.map(([key, itemValue]) => (
+            <ConfigField
+              key={`${pathKey}.${key}`}
+              path={[...path, key]}
+              fieldKey={key}
+              value={itemValue}
+              originalValue={originalRecord[key]}
+              disabled={disabled}
+              depth={depth + 1}
+              focusPath={focusPath}
+              highlightedPathKey={highlightedPathKey}
+              onValueChange={onValueChange}
+              onNavigateToJson={onNavigateToJson}
+            />
+          ))}
+        </div>
       </CollapsibleContent>
     </Collapsible>
   )

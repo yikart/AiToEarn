@@ -16,6 +16,27 @@ const globalPricingCache = globalThis as typeof globalThis & {
   __draftGenerationPricingCache?: DraftGenerationPricingCache
 }
 
+function normalizePricingData(data: DraftGenerationPricingVo): DraftGenerationPricingVo {
+  return {
+    ...data,
+    imageModels: (data.imageModels ?? []).map(model => ({
+      ...model,
+      pricing: model.pricing ?? [],
+      tags: model.tags ?? [],
+    })),
+    videoModels: (data.videoModels ?? []).map(model => ({
+      ...model,
+      modes: model.modes ?? [],
+      resolutions: model.resolutions ?? [],
+      durations: model.durations ?? [],
+      aspectRatios: model.aspectRatios ?? [],
+      tags: model.tags ?? [],
+      defaults: model.defaults ?? {},
+      pricing: model.pricing ?? [],
+    })),
+  }
+}
+
 function getPricingCache() {
   if (!globalPricingCache.__draftGenerationPricingCache) {
     globalPricingCache.__draftGenerationPricingCache = {
@@ -39,7 +60,7 @@ async function fetchPricing(): Promise<DraftGenerationPricingVo | null> {
   cache.promise = apiGetDraftGenerationPricing()
     .then((res) => {
       if (res?.data) {
-        cache.data = res.data
+        cache.data = normalizePricingData(res.data)
         return cache.data
       }
       return null

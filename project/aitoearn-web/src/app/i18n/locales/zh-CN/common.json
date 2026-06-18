@@ -24,9 +24,6 @@
   "withdrawable": "可提现",
   "plugin": "浏览器插件",
   "advertiser": "AI打卡",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "未安装",
     "noPermission": "未授权",

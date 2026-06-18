@@ -23,9 +23,6 @@
   "creatorBalance": "크리에이터 잔액",
   "withdrawable": "출금 가능",
   "plugin": "확장 프로그램",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "설치",
     "noPermission": "권한 없음",

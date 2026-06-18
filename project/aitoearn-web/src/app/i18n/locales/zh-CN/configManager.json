@@ -2,6 +2,10 @@
   "title": "配置管理",
   "description": "管理系统运行配置，保存后需要重启服务才能生效。",
   "sections": {
+    "relay": {
+      "label": "Relay 中转",
+      "description": "服务中转、API Key、回调和 AI Relay 出站配置。"
+    },
     "basic": {
       "label": "基础配置",
       "description": "运行环境、端口、接口前缀、日志和 OpenAPI 设置。"
@@ -32,11 +36,28 @@
     },
     "channels": {
       "label": "渠道平台",
-      "description": "社交平台、短链、中转和发布渠道配置。"
+      "description": "社交平台、短链、中转和发布渠道配置。",
+      "relayConfiguredDescription": "已配置 Relay 中转，通常不建议再修改渠道平台；仅在绕过 Relay 或排查平台凭证时调整。"
     },
     "advanced": {
       "label": "高级配置",
       "description": "未匹配到标准分组的其它配置项。"
+    },
+    "aiProviders": {
+      "label": "模型服务商",
+      "description": "OpenAI、火山引擎、Grok、通义千问、Gemini、Anthropic 等服务商密钥与地址。"
+    },
+    "aiModels": {
+      "label": "模型目录",
+      "description": "Chat、Image、Video 模型能力、规格、约束和默认参数。"
+    },
+    "aiDraft": {
+      "label": "草稿生成",
+      "description": "草稿生成使用的模型、比例、队列优先级和价格配置。"
+    },
+    "aiClient": {
+      "label": "服务客户端",
+      "description": "Server 服务与 AI 服务之间的客户端调用配置。"
     }
   },
   "fields": {
@@ -151,14 +172,44 @@
     "volcengine": "火山引擎",
     "grok": "Grok",
     "dashscope": "通义千问",
-    "gemini": "Gemini"
+    "gemini": "Gemini",
+    "url": "URL",
+    "timeout": "超时时间",
+    "appDomain": "应用域名",
+    "secretAccessKey": "Secret access key",
+    "internalToken": "内部令牌",
+    "encodingAESKey": "Encoding AES key",
+    "redirectUri": "回调 URI",
+    "graphApiVersion": "Graph API 版本",
+    "webhookVerifyToken": "Webhook 校验令牌",
+    "webhookSecret": "Webhook 密钥",
+    "status": "状态",
+    "sandbox": "沙箱模式",
+    "authType": "授权类型",
+    "miniApp": "小程序",
+    "channels": "视频号",
+    "pullFromUrlAllowedPrefixes": "允许拉取 URL 前缀",
+    "spaceName": "空间名称",
+    "playbackBaseUrl": "播放基础地址",
+    "urlAuthPrimaryKey": "URL 鉴权主密钥",
+    "generation": "生成模型",
+    "edit": "编辑模型",
+    "chat": "对话模型",
+    "video": "视频",
+    "image": "图片",
+    "pricing": "价格配置"
   },
   "fieldDescriptions": {
     "environment": "选择开发或生产运行模式。",
     "port": "当前服务监听的端口。",
     "globalPrefix": "后端接口使用的全局路径前缀。",
     "agent.models": "Agent 可用模型名称列表，默认模型必须包含在这里。",
-    "agent.taskTimeoutMs": "Agent 任务最大运行时间，单位为毫秒。"
+    "agent.taskTimeoutMs": "Agent 任务最大运行时间，单位为毫秒。",
+    "appDomain": "应用对外访问域名，通常用于回调、短链或资源访问。",
+    "ai.models": "AI 模型能力目录，包含对话、图片和视频模型。",
+    "ai.draftGeneration": "AI 草稿生成的模型映射与默认运行配置。",
+    "channel": "各平台 OAuth、回调、Logo、Scopes 与平台专属参数。",
+    "assets": "对象存储桶、访问密钥、公开访问地址与上传限制。"
   },
   "status": {
     "unknown": "未知",
@@ -166,7 +217,9 @@
     "restarting": "重启中",
     "failed": "检查失败",
     "dirty": "有未保存修改",
-    "format": "{{format}} 文件"
+    "format": "{{format}} 文件",
+    "modified": "已修改",
+    "notRecommended": "不推荐"
   },
   "actions": {
     "reload": "重新加载",
@@ -176,7 +229,12 @@
     "saveAndRestart": "保存并重启",
     "locate": "定位",
     "addItem": "新增项",
-    "remove": "移除"
+    "remove": "移除",
+    "copyValue": "复制值",
+    "showSensitiveValue": "显示敏感值",
+    "hideSensitiveValue": "隐藏敏感值",
+    "goToJsonField": "前往 JSON 字段",
+    "goToVisualField": "前往可视化字段"
   },
   "messages": {
     "validateSuccess": "配置校验通过",
@@ -185,7 +243,9 @@
     "dirtyHint": "当前有未保存修改。",
     "cleanHint": "配置已是最新状态。",
     "healthChecking": "正在检查服务健康状态 {{current}}/{{total}}...",
-    "jsonHint": "JSON 配置会按对象提交，格式错误时不会保存。"
+    "jsonHint": "JSON 配置会按对象提交，格式错误时不会保存。",
+    "copyValueSuccess": "配置值已复制",
+    "copyFailed": "复制失败，请手动复制"
   },
   "errors": {
     "loadFailed": "配置加载失败",
@@ -208,6 +268,15 @@
   },
   "tabs": {
     "visual": "可视化配置",
-    "json": "JSON 配置"
+    "json": "JSON 配置",
+    "modeSwitch": "配置编辑模式"
+  },
+  "services": {
+    "server": "Server 服务",
+    "ai": "AI 服务"
+  },
+  "panel": {
+    "fieldSummary": "{{count}} 个字段",
+    "modifiedSummary": "{{count}} 处修改"
   }
 }

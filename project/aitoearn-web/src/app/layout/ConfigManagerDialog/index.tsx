@@ -4,16 +4,17 @@
  */
 'use client'
 
-import type { ConfigEditorStatus, ConfigPath, ConfigValue } from './types'
-import { AlertCircle, Braces, CheckCircle2, FileSliders, Loader2, RefreshCw, RotateCcw, Save, ShieldCheck, SlidersHorizontal } from 'lucide-react'
+import type { ConfigEditorStatus, ConfigPath, ConfigPathFocusRequest, ConfigValue } from './types'
+import { AlertCircle, Bot, Braces, CheckCircle2, FileSliders, Loader2, RefreshCw, RotateCcw, Save, Server, ShieldCheck, SlidersHorizontal } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  checkConfigEditorServiceHealthApi,
+  checkConfigEditorConfigReadyApi,
   getConfigEditorConfigApi,
   restartConfigEditorServiceApi,
   saveConfigEditorConfigApi,
   validateConfigEditorConfigApi,
 } from '@/api/config-editor/config-editor.api'
+import { ConfigEditorServiceTarget } from '@/api/config-editor/config-editor.types'
 import { useTransClient } from '@/app/i18n/client'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Badge } from '@/components/ui/badge'
@@ -21,12 +22,12 @@ import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Textarea } from '@/components/ui/textarea'
 import { toast } from '@/utils/ui/toast'
 import { ConfigFormPanel } from './components/ConfigFormPanel'
+import { ConfigJsonPanel } from './components/ConfigJsonPanel'
 import { ConfigSectionNav } from './components/ConfigSectionNav'
 import { useConfigSectionSpy } from './hooks/useConfigSectionSpy'
-import { setValueAtPath, stableStringify } from './utils/configPath'
+import { getValueAtPath, isRecord, joinPath, setValueAtPath, stableStringify } from './utils/configPath'
 import { buildConfigSections } from './utils/configSections'
 
 export interface ConfigManagerDialogProps {
@@ -44,6 +45,22 @@ interface ConfigManagerError {
 
 const healthCheckIntervalMs = 1600
 const healthCheckMaxAttempts = 30
+const serverRelayPath: ConfigPath = ['relay']
+const aiRelayPath: ConfigPath = ['ai', 'relay']
+const serverRelayDefaultConfig: Record<string, unknown> = {
+  serverUrl: '',
+  apiKey: '',
+  callbackUrl: '',
+}
+const aiRelayDefaultConfig: Record<string, unknown> = {
+  url: '',
+  apiKey: '',
+  timeout: 300000,
+}
+
+function isConfigEditorServiceTarget(value: string): value is ConfigEditorServiceTarget {
+  return value === ConfigEditorServiceTarget.Server || value === ConfigEditorServiceTarget.Ai
+}
 
 function getErrorMessage(error: unknown) {
   return error instanceof Error ? error.message : String(error)
@@ -55,6 +72,83 @@ function getResponseMessage(response: { message?: string } | null | undefined) {
 
 function formatJsonConfig(config: Record<string, unknown>) {
   return JSON.stringify(config, null, 2)
+}
+
+function getRelayPath(serviceTarget: ConfigEditorServiceTarget): ConfigPath {
+  return serviceTarget === ConfigEditorServiceTarget.Ai ? aiRelayPath : serverRelayPath
+}
+
+function getRelayDefaultConfig(serviceTarget: ConfigEditorServiceTarget) {
+  return serviceTarget === ConfigEditorServiceTarget.Ai
+    ? { ...aiRelayDefaultConfig }
+    : { ...serverRelayDefaultConfig }
+}
+
+function ensureRelayConfig(config: Record<string, unknown>, serviceTarget: ConfigEditorServiceTarget) {
+  const relayPath = getRelayPath(serviceTarget)
+  if (getValueAtPath(config, relayPath) !== undefined) {
+    return { config, insertedRelayPath: null }
+  }
+
+  if (serviceTarget === ConfigEditorServiceTarget.Ai) {
+    const aiConfig = config.ai
+    if (!isRecord(aiConfig)) {
+      return { config, insertedRelayPath: null }
+    }
+
+    return {
+      config: {
+        ...config,
+        ai: {
+          ...aiConfig,
+          relay: getRelayDefaultConfig(serviceTarget),
+        },
+      },
+      insertedRelayPath: relayPath,
+    }
+  }
+
+  return {
+    config: {
+      ...config,
+      relay: getRelayDefaultConfig(serviceTarget),
+    },
+    insertedRelayPath: relayPath,
+  }
+}
+
+function removeValueAtPath(source: Record<string, unknown>, path: ConfigPath): Record<string, unknown> {
+  const [segment, ...remainingPath] = path
+  if (typeof segment !== 'string')
+    return source
+
+  const nextSource = { ...source }
+  if (remainingPath.length === 0) {
+    delete nextSource[segment]
+    return nextSource
+  }
+
+  const nestedValue = nextSource[segment]
+  if (!isRecord(nestedValue))
+    return nextSource
+
+  nextSource[segment] = removeValueAtPath(nestedValue, remainingPath)
+  return nextSource
+}
+
+function stripInsertedRelayPlaceholder(
+  config: Record<string, unknown>,
+  insertedRelayPath: ConfigPath | null,
+  serviceTarget: ConfigEditorServiceTarget,
+) {
+  if (!insertedRelayPath)
+    return config
+
+  const relayValue = getValueAtPath(config, insertedRelayPath)
+  if (stableStringify(relayValue) !== stableStringify(getRelayDefaultConfig(serviceTarget)))
+    return config
+
+  return removeValueAtPath(config, insertedRelayPath)
 }
 
 function StatusBadge({ status }: { status: ConfigEditorStatus }) {
@@ -120,9 +214,20 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
   const [successMessage, setSuccessMessage] = useState('')
   const [healthAttempts, setHealthAttempts] = useState(0)
   const [serviceStatus, setServiceStatus] = useState<ConfigEditorStatus['service']>('unknown')
+  const [serviceTarget, setServiceTarget] = useState(ConfigEditorServiceTarget.Server)
+  const [insertedRelayPath, setInsertedRelayPath] = useState<ConfigPath | null>(null)
   const [editMode, setEditMode] = useState<ConfigEditMode>('visual')
   const [jsonText, setJsonText] = useState('')
+  const [visualFocusRequest, setVisualFocusRequest] = useState<ConfigPathFocusRequest | null>(null)
+  const [jsonFocusRequest, setJsonFocusRequest] = useState<ConfigPathFocusRequest | null>(null)
+  const [highlightedVisualPathKey, setHighlightedVisualPathKey] = useState('')
+  const [highlightedJsonPathKey, setHighlightedJsonPathKey] = useState('')
+  const [jsonScrollTop, setJsonScrollTop] = useState(0)
   const scrollContainerRef = useRef<HTMLDivElement | null>(null)
+  const visualScrollTopRef = useRef(0)
+  const focusRequestIdRef = useRef(0)
+  const visualHighlightTimerRef = useRef<number | null>(null)
+  const jsonHighlightTimerRef = useRef<number | null>(null)
 
   const dirty = useMemo(() => {
     if (!config || !originalConfig)
@@ -132,9 +237,35 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     return stableStringify(config) !== stableStringify(originalConfig)
   }, [config, editMode, jsonText, originalConfig])
 
-  const sections = useMemo(() => config ? buildConfigSections(config, t) : [], [config, t])
+  const sections = useMemo(
+    () => config ? buildConfigSections(config, originalConfig, serviceTarget, t) : [],
+    [config, originalConfig, serviceTarget, t],
+  )
   const { activeSectionId, scrollToSection } = useConfigSectionSpy(scrollContainerRef, sections)
   const disabled = !!loadingAction || serviceStatus === 'restarting'
+  const serverServiceDisabled = disabled || (dirty && serviceTarget !== ConfigEditorServiceTarget.Server)
+  const aiServiceDisabled = disabled || (dirty && serviceTarget !== ConfigEditorServiceTarget.Ai)
+
+  const clearVisualHighlightLater = useCallback(() => {
+    if (visualHighlightTimerRef.current !== null)
+      window.clearTimeout(visualHighlightTimerRef.current)
+    visualHighlightTimerRef.current = window.setTimeout(() => setHighlightedVisualPathKey(''), 1800)
+  }, [])
+
+  const clearJsonHighlightLater = useCallback(() => {
+    if (jsonHighlightTimerRef.current !== null)
+      window.clearTimeout(jsonHighlightTimerRef.current)
+    jsonHighlightTimerRef.current = window.setTimeout(() => setHighlightedJsonPathKey(''), 1800)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (visualHighlightTimerRef.current !== null)
+        window.clearTimeout(visualHighlightTimerRef.current)
+      if (jsonHighlightTimerRef.current !== null)
+        window.clearTimeout(jsonHighlightTimerRef.current)
+    }
+  }, [])
 
   const loadConfig = useCallback(async () => {
     setLoadingAction('load')
@@ -142,14 +273,22 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     setSuccessMessage('')
 
     try {
-      const response = await getConfigEditorConfigApi(true)
+      const response = await getConfigEditorConfigApi(serviceTarget, true)
       if (!response || response.code !== 0 || !response.data?.config) {
         throw new Error(getResponseMessage(response) || t('errors.loadFailed'))
       }
 
-      setConfig(response.data.config)
-      setOriginalConfig(response.data.config)
-      setJsonText(formatJsonConfig(response.data.config))
+      const normalizedConfig = ensureRelayConfig(response.data.config, serviceTarget)
+      setConfig(normalizedConfig.config)
+      setOriginalConfig(normalizedConfig.config)
+      setJsonText(formatJsonConfig(normalizedConfig.config))
+      setVisualFocusRequest(null)
+      setJsonFocusRequest(null)
+      setHighlightedVisualPathKey('')
+      setHighlightedJsonPathKey('')
+      visualScrollTopRef.current = 0
+      setJsonScrollTop(0)
+      setInsertedRelayPath(normalizedConfig.insertedRelayPath)
       setFormat(response.data.format)
       setServiceStatus('running')
       setHealthAttempts(0)
@@ -161,13 +300,37 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     finally {
       setLoadingAction(null)
     }
-  }, [t])
+  }, [serviceTarget, t])
 
   useEffect(() => {
     if (!open)
       return
     loadConfig()
   }, [open, loadConfig])
+
+  const handleServiceTargetChange = useCallback((value: string) => {
+    if (!isConfigEditorServiceTarget(value))
+      return
+
+    setServiceTarget(value)
+    setLoadingAction('load')
+    setConfig(null)
+    setOriginalConfig(null)
+    setJsonText('')
+    setInsertedRelayPath(null)
+    setFormat(undefined)
+    setHealthAttempts(0)
+    setServiceStatus('unknown')
+    setEditMode('visual')
+    setVisualFocusRequest(null)
+    setJsonFocusRequest(null)
+    setHighlightedVisualPathKey('')
+    setHighlightedJsonPathKey('')
+    visualScrollTopRef.current = 0
+    setJsonScrollTop(0)
+    setError(null)
+    setSuccessMessage('')
+  }, [])
 
   const handleValueChange = useCallback((path: ConfigPath, value: ConfigValue) => {
     setConfig((current) => {
@@ -197,9 +360,22 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     }
   }, [jsonText, t])
 
+  const handleVisualScrollTopChange = useCallback((scrollTop: number) => {
+    visualScrollTopRef.current = scrollTop
+  }, [])
+
+  const rememberVisualScrollTop = useCallback(() => {
+    const currentScrollTop = scrollContainerRef.current?.scrollTop
+    if (typeof currentScrollTop === 'number')
+      visualScrollTopRef.current = currentScrollTop
+  }, [])
+
   const handleEditModeChange = useCallback((value: string) => {
     if (value !== 'visual' && value !== 'json')
       return
+
+    if (value === 'json' && editMode === 'visual')
+      rememberVisualScrollTop()
 
     if (value === 'visual' && editMode === 'json') {
       const parsedConfig = parseJsonText()
@@ -212,10 +388,64 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     if (value === 'json' && config)
       setJsonText(formatJsonConfig(config))
 
+    setVisualFocusRequest(null)
+    setJsonFocusRequest(null)
+    setHighlightedVisualPathKey('')
+    setHighlightedJsonPathKey('')
     setError(null)
     setSuccessMessage('')
     setEditMode(value)
-  }, [config, editMode, parseJsonText])
+  }, [config, editMode, parseJsonText, rememberVisualScrollTop])
+
+  const handleNavigateToJson = useCallback((path: ConfigPath) => {
+    rememberVisualScrollTop()
+
+    if (config)
+      setJsonText(formatJsonConfig(config))
+
+    focusRequestIdRef.current += 1
+    setJsonFocusRequest({ id: focusRequestIdRef.current, path: [...path] })
+    setHighlightedJsonPathKey(joinPath(path))
+    clearJsonHighlightLater()
+    setError(null)
+    setSuccessMessage('')
+    setEditMode('json')
+  }, [clearJsonHighlightLater, config, rememberVisualScrollTop])
+
+  const handleNavigateToVisual = useCallback((path: ConfigPath) => {
+    const nextConfig = editMode === 'json' ? parseJsonText() : config
+    if (!nextConfig)
+      return
+
+    if (editMode === 'json') {
+      setConfig(nextConfig)
+      setJsonText(formatJsonConfig(nextConfig))
+    }
+
+    focusRequestIdRef.current += 1
+    setVisualFocusRequest({ id: focusRequestIdRef.current, path: [...path] })
+    setHighlightedVisualPathKey(joinPath(path))
+    setJsonFocusRequest(null)
+    setHighlightedJsonPathKey('')
+    clearVisualHighlightLater()
+    setError(null)
+    setSuccessMessage('')
+    setEditMode('visual')
+  }, [clearVisualHighlightLater, config, editMode, parseJsonText])
+
+  const handleJsonTextChange = useCallback((value: string) => {
+    setJsonText(value)
+    setError(null)
+    setSuccessMessage('')
+  }, [])
+
+  const handleJsonFocusRequestHandled = useCallback((requestId: number) => {
+    setJsonFocusRequest(current => current?.id === requestId ? null : current)
+  }, [])
+
+  const handleVisualFocusRequestHandled = useCallback((requestId: number) => {
+    setVisualFocusRequest(current => current?.id === requestId ? null : current)
+  }, [])
 
   const getEditableConfig = useCallback(() => {
     if (editMode === 'visual')
@@ -227,17 +457,18 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     return parsedConfig
   }, [config, editMode, parseJsonText])
 
-  const validateConfig = useCallback(async (action: LoadingAction = 'validate') => {
-    const editableConfig = getEditableConfig()
+  const validateConfig = useCallback(async (action: LoadingAction = 'validate', configOverride?: Record<string, unknown>) => {
+    const editableConfig = configOverride ?? getEditableConfig()
     if (!editableConfig)
       return false
+    const submittableConfig = stripInsertedRelayPlaceholder(editableConfig, insertedRelayPath, serviceTarget)
 
     setLoadingAction(action)
     setError(null)
     setSuccessMessage('')
 
     try {
-      const response = await validateConfigEditorConfigApi({ config: editableConfig }, true)
+      const response = await validateConfigEditorConfigApi({ config: submittableConfig }, serviceTarget, true)
       if (!response || response.code !== 0) {
         throw new Error(getResponseMessage(response) || t('errors.validateFailed'))
       }
@@ -255,30 +486,33 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
       if (action === 'validate')
         setLoadingAction(null)
     }
-  }, [getEditableConfig, t])
+  }, [getEditableConfig, insertedRelayPath, serviceTarget, t])
 
   const saveConfig = useCallback(async (action: LoadingAction = 'save') => {
     const editableConfig = getEditableConfig()
     if (!editableConfig)
       return false
+    const submittableConfig = stripInsertedRelayPlaceholder(editableConfig, insertedRelayPath, serviceTarget)
 
     setLoadingAction(action)
     setError(null)
     setSuccessMessage('')
 
     try {
-      const valid = await validateConfig(action)
+      const valid = await validateConfig(action, editableConfig)
       if (!valid)
         return false
 
-      const response = await saveConfigEditorConfigApi({ config: editableConfig }, true)
+      const response = await saveConfigEditorConfigApi({ config: submittableConfig }, serviceTarget, true)
       if (!response || response.code !== 0) {
         throw new Error(getResponseMessage(response) || t('errors.saveFailed'))
       }
 
-      setConfig(editableConfig)
-      setOriginalConfig(editableConfig)
-      setJsonText(formatJsonConfig(editableConfig))
+      const normalizedConfig = ensureRelayConfig(submittableConfig, serviceTarget)
+      setConfig(normalizedConfig.config)
+      setOriginalConfig(normalizedConfig.config)
+      setJsonText(formatJsonConfig(normalizedConfig.config))
+      setInsertedRelayPath(normalizedConfig.insertedRelayPath)
       if (action === 'save') {
         setSuccessMessage(t('messages.saveSuccess'))
         toast.success(t('messages.saveSuccess'))
@@ -293,7 +527,7 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
       if (action === 'save')
         setLoadingAction(null)
     }
-  }, [getEditableConfig, t, validateConfig])
+  }, [getEditableConfig, insertedRelayPath, serviceTarget, t, validateConfig])
 
   const waitForHealth = useCallback(async () => {
     setServiceStatus('restarting')
@@ -302,7 +536,7 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     for (let attempt = 1; attempt <= healthCheckMaxAttempts; attempt += 1) {
       setHealthAttempts(attempt)
       await new Promise(resolve => window.setTimeout(resolve, healthCheckIntervalMs))
-      const healthy = await checkConfigEditorServiceHealthApi()
+      const healthy = await checkConfigEditorConfigReadyApi(serviceTarget)
       if (healthy) {
         setServiceStatus('running')
         setSuccessMessage(t('messages.restartSuccess'))
@@ -314,7 +548,7 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     setServiceStatus('failed')
     setError({ title: t('errors.healthTimeout'), description: t('errors.healthTimeoutDescription') })
     return false
-  }, [t])
+  }, [serviceTarget, t])
 
   const restartService = useCallback(async (action: LoadingAction = 'restart') => {
     setLoadingAction(action)
@@ -322,7 +556,7 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     setSuccessMessage('')
 
     try {
-      const response = await restartConfigEditorServiceApi(true)
+      const response = await restartConfigEditorServiceApi(serviceTarget, true)
       if (!response || response.code !== 0) {
         throw new Error(getResponseMessage(response) || t('errors.restartFailed'))
       }
@@ -336,7 +570,7 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
     finally {
       setLoadingAction(null)
     }
-  }, [t, waitForHealth])
+  }, [serviceTarget, t, waitForHealth])
 
   const handleSaveAndRestart = useCallback(async () => {
     const saved = await saveConfig('saveRestart')
@@ -387,22 +621,46 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
             ? <LoadingSkeleton />
             : (
                 <div className="flex min-h-0 flex-1 flex-col">
-                  <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-2">
-                    <Tabs value={editMode} onValueChange={handleEditModeChange}>
+                  <div className="flex shrink-0 flex-col gap-2 border-b border-border px-4 py-2 md:flex-row md:items-center md:justify-between">
+                    <Tabs value={serviceTarget} onValueChange={handleServiceTargetChange}>
                       <TabsList className="h-9">
-                        <TabsTrigger value="visual" className="gap-1.5 text-xs">
-                          <SlidersHorizontal className="h-3.5 w-3.5" />
-                          {t('tabs.visual')}
+                        <TabsTrigger value={ConfigEditorServiceTarget.Server} disabled={serverServiceDisabled} className="gap-1.5 text-xs">
+                          <Server className="h-3.5 w-3.5" />
+                          {t('services.server')}
                         </TabsTrigger>
-                        <TabsTrigger value="json" className="gap-1.5 text-xs">
-                          <Braces className="h-3.5 w-3.5" />
-                          {t('tabs.json')}
+                        <TabsTrigger value={ConfigEditorServiceTarget.Ai} disabled={aiServiceDisabled} className="gap-1.5 text-xs">
+                          <Bot className="h-3.5 w-3.5" />
+                          {t('services.ai')}
                         </TabsTrigger>
                       </TabsList>
                     </Tabs>
-                    {editMode === 'json' && (
-                      <span className="text-xs text-muted-foreground">{t('messages.jsonHint')}</span>
-                    )}
+                    <div className="flex items-center gap-2 self-end md:self-auto">
+                      {editMode === 'json' && (
+                        <span className="hidden text-xs text-muted-foreground sm:inline">{t('messages.jsonHint')}</span>
+                      )}
+                      <Tabs value={editMode} onValueChange={handleEditModeChange}>
+                        <TabsList className="h-8 rounded-lg border border-border bg-background p-0.5 shadow-sm" aria-label={t('tabs.modeSwitch')}>
+                          <TabsTrigger
+                            value="visual"
+                            className="h-7 w-8 rounded-md px-0 data-[state=active]:bg-muted data-[state=active]:shadow-none"
+                            title={t('tabs.visual')}
+                            aria-label={t('tabs.visual')}
+                          >
+                            <SlidersHorizontal className="h-3.5 w-3.5" />
+                            <span className="sr-only">{t('tabs.visual')}</span>
+                          </TabsTrigger>
+                          <TabsTrigger
+                            value="json"
+                            className="h-7 w-8 rounded-md px-0 data-[state=active]:bg-muted data-[state=active]:shadow-none"
+                            title={t('tabs.json')}
+                            aria-label={t('tabs.json')}
+                          >
+                            <Braces className="h-3.5 w-3.5" />
+                            <span className="sr-only">{t('tabs.json')}</span>
+                          </TabsTrigger>
+                        </TabsList>
+                      </Tabs>
+                    </div>
                   </div>
 
                   {editMode === 'visual'
@@ -423,9 +681,16 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
                                   <ConfigFormPanel
                                     sections={sections}
                                     config={config}
+                                    originalConfig={originalConfig}
                                     disabled={disabled}
                                     scrollContainerRef={scrollContainerRef}
+                                    focusRequest={visualFocusRequest}
+                                    highlightedPathKey={highlightedVisualPathKey}
+                                    initialScrollTop={visualScrollTopRef.current}
+                                    onFocusRequestHandled={handleVisualFocusRequestHandled}
                                     onValueChange={handleValueChange}
+                                    onNavigateToJson={handleNavigateToJson}
+                                    onScrollTopChange={handleVisualScrollTopChange}
                                     onSectionClick={scrollToSection}
                                   />
                                 )
@@ -445,16 +710,17 @@ export function ConfigManagerDialog({ open, onClose }: ConfigManagerDialogProps)
                       )
                     : (
                         <div className="min-h-0 flex-1 bg-background p-4">
-                          <Textarea
-                            value={jsonText}
-                            disabled={disabled || !config}
-                            spellCheck={false}
-                            className="h-full min-h-[420px] resize-none border-border bg-muted/30 font-mono text-sm leading-6 shadow-none"
-                            onChange={(event) => {
-                              setJsonText(event.target.value)
-                              setError(null)
-                              setSuccessMessage('')
-                            }}
+                          <ConfigJsonPanel
+                            jsonText={jsonText}
+                            disabled={disabled}
+                            hasConfig={!!config}
+                            focusRequest={jsonFocusRequest}
+                            highlightedPathKey={highlightedJsonPathKey}
+                            initialScrollTop={jsonScrollTop}
+                            onFocusRequestHandled={handleJsonFocusRequestHandled}
+                            onJsonTextChange={handleJsonTextChange}
+                            onScrollTopChange={setJsonScrollTop}
+                            onNavigateToVisual={handleNavigateToVisual}
                           />
                         </div>
                       )}

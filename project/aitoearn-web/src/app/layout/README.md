@@ -9,7 +9,6 @@
 | `LayoutSidebar/`       | 桌面端左侧侧边栏组件。                                                                               |
 | `MobileNav/`           | 移动端底部导航组件（BottomBar + 抽屉）。                                                             |
 | `MainContent/`         | 页面主滚动容器，主滚动元素为 `id="main-content"`。                                                   |
-| `FilingRecord/`        | 中文环境底部公安备案信息。                                                                           |
 | `LoginDialog/`         | 全局登录弹窗，状态在 `src/store/login-dialog`。                                                      |
 | `SettingsModal/`       | 全局设置弹窗，仅由 layout/Provider 挂载；跨页面控制状态放在 `src/store/settingsModal.ts`。           |
 | `ConfigManagerDialog/` | 全局配置管理弹窗，仅由 layout/Provider 挂载；跨页面控制状态放在 `src/store/configManagerDialog.ts`。 |
@@ -64,10 +63,6 @@ import { useConfigManagerDialogStore } from '@/store/configManagerDialog'
 - UI 实现在 `src/app/layout/ConfigManagerDialog/`。
 - 弹框内将后端配置对象转换为可编辑表单，不直接暴露 JSON 编辑。
 - 保存后可重启服务，并通过 `/health` 健康检查确认服务恢复。
-
-## FilingRecord - 备案信息
-
-仅在当前语言为中文时显示，挂载在 `MainContent` 的主滚动区域末尾，展示公安备案图标和备案号链接。
 
 ## routerData - 导航数据配置
 
