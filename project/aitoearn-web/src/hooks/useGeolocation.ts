@@ -5,9 +5,6 @@
 
 import { useCallback, useEffect, useState } from 'react'
 
-export type GeolocationStatus = 'idle' | 'loading' | 'granted' | 'denied' | 'error' | 'unsupported'
-export type GeolocationErrorCode = 'permission_denied' | 'position_unavailable' | 'timeout' | 'unsupported' | 'unknown'
-
 export interface GeolocationState {
   /** 纬度 */
   latitude: number | null
@@ -17,12 +14,8 @@ export interface GeolocationState {
   accuracy: number | null
   /** 错误信息 */
   error: string | null
-  /** 错误码 */
-  errorCode: GeolocationErrorCode | null
   /** 是否正在加载 */
   loading: boolean
-  /** 当前定位状态 */
-  status: GeolocationStatus
 }
 
 export interface UseGeolocationOptions {
@@ -59,100 +52,60 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
     longitude: null,
     accuracy: null,
     error: null,
-    errorCode: null,
     loading: false,
-    status: 'idle',
   })
 
-  const getPositionAsync = useCallback(() => {
-    return new Promise<GeolocationState>((resolve) => {
-      // 检查浏览器是否支持 Geolocation
-      if (!navigator.geolocation) {
-        const nextState: GeolocationState = {
-          latitude: null,
-          longitude: null,
-          accuracy: null,
-          error: 'Geolocation is not supported by this browser',
-          errorCode: 'unsupported',
-          loading: false,
-          status: 'unsupported',
-        }
-        setState(nextState)
-        resolve(nextState)
-        return
-      }
-
+  const getPosition = useCallback(() => {
+    // 检查浏览器是否支持 Geolocation
+    if (!navigator.geolocation) {
       setState(prev => ({
         ...prev,
-        loading: true,
-        error: null,
-        errorCode: null,
-        status: 'loading',
+        error: 'Geolocation is not supported by this browser',
+        loading: false,
       }))
+      return
+    }
 
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const nextState: GeolocationState = {
-            latitude: position.coords.latitude,
-            longitude: position.coords.longitude,
-            accuracy: position.coords.accuracy,
-            error: null,
-            errorCode: null,
-            loading: false,
-            status: 'granted',
-          }
-          setState(nextState)
-          resolve(nextState)
-        },
-        (error) => {
-          let errorMessage: string
-          let errorCode: GeolocationErrorCode
-          let status: GeolocationStatus
-          switch (error.code) {
-            case error.PERMISSION_DENIED:
-              errorMessage = 'User denied the request for geolocation'
-              errorCode = 'permission_denied'
-              status = 'denied'
-              break
-            case error.POSITION_UNAVAILABLE:
-              errorMessage = 'Location information is unavailable'
-              errorCode = 'position_unavailable'
-              status = 'error'
-              break
-            case error.TIMEOUT:
-              errorMessage = 'The request to get user location timed out'
-              errorCode = 'timeout'
-              status = 'error'
-              break
-            default:
-              errorMessage = 'An unknown error occurred'
-              errorCode = 'unknown'
-              status = 'error'
-          }
-          const nextState: GeolocationState = {
-            latitude: null,
-            longitude: null,
-            accuracy: null,
-            error: errorMessage,
-            errorCode,
-            loading: false,
-            status,
-          }
-          setState(nextState)
-          resolve(nextState)
-        },
-        {
-          enableHighAccuracy,
-          timeout,
-          maximumAge,
-        },
-      )
-    })
+    setState(prev => ({ ...prev, loading: true, error: null }))
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setState({
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude,
+          accuracy: position.coords.accuracy,
+          error: null,
+          loading: false,
+        })
+      },
+      (error) => {
+        let errorMessage: string
+        switch (error.code) {
+          case error.PERMISSION_DENIED:
+            errorMessage = 'User denied the request for geolocation'
+            break
+          case error.POSITION_UNAVAILABLE:
+            errorMessage = 'Location information is unavailable'
+            break
+          case error.TIMEOUT:
+            errorMessage = 'The request to get user location timed out'
+            break
+          default:
+            errorMessage = 'An unknown error occurred'
+        }
+        setState(prev => ({
+          ...prev,
+          error: errorMessage,
+          loading: false,
+        }))
+      },
+      {
+        enableHighAccuracy,
+        timeout,
+        maximumAge,
+      },
+    )
   }, [enableHighAccuracy, timeout, maximumAge])
-
-  const getPosition = useCallback(() => {
-    void getPositionAsync()
-  }, [getPositionAsync])
 
   // 挂载时自动获取位置
   useEffect(() => {
@@ -165,7 +118,5 @@ export function useGeolocation(options: UseGeolocationOptions = {}) {
     ...state,
     /** 刷新位置 */
     refresh: getPosition,
-    /** 刷新位置并等待本次定位结果 */
-    refreshAsync: getPositionAsync,
   }
 }

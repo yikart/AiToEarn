@@ -8,7 +8,7 @@ import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
 import { useCallback, useRef } from 'react'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/lib/toast'
+import { toast } from '@/utils/ui/toast'
 
 interface ImgChooseProps {
   // 单选就使用单选方法，多选就使用单选方法

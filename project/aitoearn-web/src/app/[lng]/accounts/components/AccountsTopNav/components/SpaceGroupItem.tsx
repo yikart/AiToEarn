@@ -1,10 +1,10 @@
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { AccountGroup } from '@/store/account'
 import { DownOutlined, RightOutlined } from '@ant-design/icons'
 import { Check } from 'lucide-react'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import AccountItem from './AccountItem'
 
 interface SpaceGroupItemProps {

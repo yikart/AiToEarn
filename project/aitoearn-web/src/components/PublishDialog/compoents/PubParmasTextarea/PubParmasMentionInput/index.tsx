@@ -25,6 +25,7 @@ import {
 } from 'lexical-beautiful-mentions'
 import React, { forwardRef, memo, useCallback, useEffect, useRef } from 'react'
 
+import { getDouyinTopicsApi } from '@/api/analytics/analytics.api'
 import {
   Menu,
   MenuItem,
@@ -34,6 +35,7 @@ import {
   InitialValuePlugin,
   PasteTopicsPlugin,
 } from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasMentionInput/utils/editor-utils'
+import { hasInvalidDescTopicFormat } from '@/components/PublishDialog/PublishDialog.util'
 
 export interface IPubParmasMentionInputRef {}
 
@@ -110,6 +112,7 @@ const PubParmasMentionInput = memo(
       const comboboxAnchor = useRef<HTMLDivElement>(null)
       // 记录编辑器最近一次通过 onChange 输出的值，用于 InitialValuePlugin 判断回传
       const lastOutputValueRef = useRef<string>('')
+      const hasInvalidTopicFormat = hasInvalidDescTopicFormat(value)
 
       const handleChange = useCallback(
         (editorState: EditorState, editor: LexicalEditor) => {
@@ -127,9 +130,20 @@ const PubParmasMentionInput = memo(
         [onChange],
       )
 
-      const handleSearch = useCallback(async (_trigger: string, _queryString?: string | null) => {
-        return []
-      }, [])
+      const handleSearch = useCallback(async (trigger: string, queryString?: string | null) => {
+        if (hasInvalidTopicFormat)
+          return []
+
+        if (!queryString)
+          return []
+        try {
+          const res = await getDouyinTopicsApi(queryString!)
+          return res?.data ?? []
+        }
+        catch {
+          return []
+        }
+      }, [hasInvalidTopicFormat])
 
       // @ts-ignore
       const beautifulMentionsProps: any = {
@@ -137,9 +151,10 @@ const PubParmasMentionInput = memo(
         items: mentionItems,
         triggers: ['#'],
         autoSpace: true,
-        creatable: {
+        creatable: hasInvalidTopicFormat ? false : {
           '#': 'Add tag "{{name}}"',
         },
+        showCurrentMentionsAsSuggestions: !hasInvalidTopicFormat,
         menuComponent: Menu,
         menuItemComponent: MenuItem,
         emptyComponent: undefined,

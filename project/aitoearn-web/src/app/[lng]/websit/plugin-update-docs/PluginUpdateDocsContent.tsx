@@ -24,8 +24,8 @@ import { MediaPreview } from '@/components/common/MediaPreview'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
 import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
+import { cn } from '@/utils/className'
 
 interface PublicImageAsset {
   src: string

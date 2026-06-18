@@ -4,7 +4,7 @@ import type { MobileMyChannelsButtonProps } from '../types'
  */
 import { Tv } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export function MobileMyChannelsButton({
   onClose,

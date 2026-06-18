@@ -5,7 +5,6 @@
   "docs": "帮助文档",
   "login": "登录",
   "support": "支持",
-  "notifications": "消息通知",
   "settings": "设置",
   "vip": "会员",
   "vip.tier": {
@@ -22,16 +21,16 @@
   "recharge": "充值",
   "adBalance": "广告主余额",
   "creatorBalance": "创作者余额",
+  "withdrawable": "可提现",
   "plugin": "浏览器插件",
-  "affiliates": "推广赚钱",
   "advertiser": "AI打卡",
-  "goToWebsite": "前往官网",
   "filing": {
     "policeRecord": "京公网安备11010502060417号"
   },
   "pluginStatus": {
     "notInstalled": "未安装",
     "noPermission": "未授权",
+    "siteAccessRequired": "需站点访问权限",
     "ready": "已就绪",
     "checking": "检测中",
     "updateAvailable": "可更新"
@@ -39,17 +38,16 @@
   "contactUs": "联系我们",
   "apiErrorContactTip": "您有任何问题请",
   "wechat": "微信",
-  "scanToAdd": "扫码添加",
+  "scanToAdd": "扫码添加客服",
+  "wechatLinkTip": "也可点击链接前往微信",
   "documents": "文档",
   "helpDocs": "帮助文档",
   "pluginGuide": "插件安装和使用教程",
   "pluginUpdateGuide": "插件更新教程",
   "privacyPolicy": "隐私政策",
   "termsOfService": "服务条款",
-  "noNotifications": "暂无消息",
   "markAllAsRead": "全部标记为已读",
   "markAsRead": "标记为已读",
-  "unreadCount": "未读消息",
   "viewAll": "查看全部",
   "cancel": "取消",
   "confirm": "确认",
@@ -59,15 +57,7 @@
   "yes": "是",
   "no": "否",
   "calendar": {
-    "weekDaysShort": [
-      "日",
-      "一",
-      "二",
-      "三",
-      "四",
-      "五",
-      "六"
-    ],
+    "weekDaysShort": ["日", "一", "二", "三", "四", "五", "六"],
     "monthSuffix": "月"
   },
   "actions": {
@@ -95,16 +85,13 @@
     "jumpTo": "跳至",
     "page": "页"
   },
-  "notificationTypes": {
-    "system": "系统通知",
-    "user": "用户通知",
-    "material": "素材通知",
-    "other": "其他通知"
-  },
   "header": {
     "messages": "消息通知",
+    "income": "收入记录",
+    "wallet": "钱包账户",
     "materialLibrary": "素材库",
     "draftBox": "内容管理",
+    "agentAssets": "AI 生成素材",
     "draftBoxSeoTitle": "内容管理 - AI批量创作与草稿编辑",
     "draftBoxSeoDescription": "在一个地方管理所有内容草稿。使用AI批量生成社媒帖子，发布前编辑草稿，用AiToEarn组织多平台分发内容。",
     "draftBoxSeoKeywords": "内容管理, 草稿编辑, AI内容生成, 批量创作, 社媒草稿, 内容排期, AiToEarn",
@@ -203,10 +190,15 @@
       "importantNoteContent": "数据删除后无法恢复，请谨慎操作。某些法律要求保留的数据可能无法删除。"
     }
   },
+  "lowBalanceAlert": {
+    "title": "余额不足提醒",
+    "content": "您的积分余额不足，请及时充值以继续使用",
+    "neverRemind": "不再提示"
+  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 低至0.03美元/秒",
-    "videoPromo": "gpt-image-2 价格低至0.007元每张图",
-    "videoPromoFallback": "gpt-image-2 价格低至0.007元每张图"
+    "videoPromo": "限时优惠：seedance价格低至0.36元每秒，gpt-image-2价格低至0.07元每张图",
+    "videoPromoFallback": "限时优惠：seedance价格低至0.36元每秒，gpt-image-2价格低至0.07元每张图"
   },
   "chinaDomainPrompt": {
     "title": "切换到中国区域",
@@ -254,6 +246,13 @@
   },
   "switchToInternational": "前往「国际版」",
   "switchToChina": "前往「中国版」",
+  "platformRegionPrompt": {
+    "title": "平台区域限制",
+    "chinaContent": "{{platform}} 仅在国内站支持，是否跳转到国内站？",
+    "abroadContent": "{{platform}} 仅在国际站支持，是否跳转到国际站？",
+    "ok": "前往",
+    "cancel": "取消"
+  },
   "noMore": "没有更多了",
   "comingSoon": "开发中，敬请期待",
   "datePicker": {
@@ -271,9 +270,11 @@
     "bubbleLine1": "点击右上角选择",
     "bubbleLine2": "在浏览器中打开",
     "openInBrowser": "在浏览器中打开",
-    "description": "微信内打开可能影响发布和跳转，请切换到系统浏览器继续。"
+    "description": "微信或支付宝内打开可能影响发布和跳转，请切换到系统浏览器继续。"
   },
-  "contact": "需要帮助？请联系支持：",
-  "networkBusy": "网络繁忙，请稍后再试！",
-  "networkError": "网络错误，请稍后再试！"
+  "seedanceCredits": "Seedance专用积分",
+  "seedanceCreditsRecharge": "充值Seedance专用积分",
+  "configManagement": "配置管理",
+  "apiErrorConfigTip": "请检查您的配置是否正确。",
+  "apiErrorConfigAction": "点击查看配置"
 }

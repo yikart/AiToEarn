@@ -2,7 +2,7 @@ import { Layers } from 'lucide-react'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface AllChannelsItemProps {
   isActive: boolean

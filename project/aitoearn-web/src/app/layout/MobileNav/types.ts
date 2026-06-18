@@ -1,4 +1,4 @@
-import type { SettingsTab } from '@/components/SettingsModal'
+import type { SettingsTab } from '@/store/settingsModal'
 
 /** 抽屉关闭回调 */
 export interface MobileCloseProps {
@@ -8,7 +8,6 @@ export interface MobileCloseProps {
 /** 顶部栏 Props */
 export interface MobileTopBarProps {
   onOpen: () => void
-  unreadCount: number
 }
 
 /** 底部导航栏 Props */
@@ -20,6 +19,7 @@ export interface MobileBottomBarProps {
 /** 导航项 Props */
 export interface MobileNavItemProps extends MobileCloseProps {
   path: string
+  href?: string
   translationKey: string
   icon?: React.ReactNode
   isActive: boolean

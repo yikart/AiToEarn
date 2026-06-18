@@ -1,17 +1,18 @@
 import { useCallback } from 'react'
 import { useShallow } from 'zustand/react/shallow'
+import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import { toast } from '@/lib/toast'
+import { toast } from '@/utils/ui/toast'
 
 export function useValidatedPublishTrigger(onPublish: () => void) {
-  const { step, pubListChoosed, errParamsMap, setExpandedPubItem } = usePublishDialog(
+  const { step, pubListChoosed, setExpandedPubItem } = usePublishDialog(
     useShallow(state => ({
       step: state.step,
       pubListChoosed: state.pubListChoosed,
-      errParamsMap: state.errParamsMap,
       setExpandedPubItem: state.setExpandedPubItem,
     })),
   )
+  const { errParamsMap } = usePubParamsVerify(pubListChoosed)
 
   const triggerPublish = useCallback(() => {
     if (errParamsMap) {

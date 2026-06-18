@@ -49,9 +49,7 @@
         "prefix": "注：从 Latest China Download 和 Latest GitHub Channel Download 渠道下载的用户，不需要担心更新问题，它会遵循 Chrome Web Store 的自动更新机制。如果您等不及审核，也可以手动更新，手动更新文档见",
         "linkText": "插件更新文档",
         "suffix": "。"
-      },
-      "noteItem1": "推荐通过 Chrome 应用商店安装插件。",
-      "noteItem2": "如果你在中国无法访问 Chrome 应用商店，可以通过 Latest China Download (zip) 下载插件。新功能发布后，Chrome 应用商店审核可能需要一些时间，因此该渠道的插件有时会比 Chrome 应用商店版本更新。"
+      }
     },
     "step3": {
       "title": "第三步：检查安装状态",
@@ -133,8 +131,7 @@
     "step6": {
       "title": "关闭开发者模式",
       "content": "安装完成后可以关闭开发者模式。"
-    },
-    "tipContent": "如果你已从 Chrome 应用商店成功安装插件，可以跳过本节，直接前往授权插件章节。"
+    }
   },
   "faq": {
     "title": "常见问题",

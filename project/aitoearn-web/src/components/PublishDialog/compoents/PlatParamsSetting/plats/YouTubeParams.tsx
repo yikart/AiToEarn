@@ -23,24 +23,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
+
+const youtubeOptionItemClassName
+  = 'flex min-h-9 items-center gap-2 rounded-md px-2 transition-colors hover:bg-accent'
+const youtubeCheckboxClassName
+  = 'h-4 w-4 rounded border-border bg-background text-primary shadow-none data-[state=checked]:border-primary/70 data-[state=checked]:bg-background data-[state=checked]:text-primary'
+const youtubeOptionLabelClassName = 'cursor-pointer text-sm leading-5 text-foreground'
 
 const YouTubeParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
+      const { t: tCommon } = useTransClient('common')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
-      const { getYouTubeCategories, youTubeCategories } = usePublishDialogData(
+      const youtubeNotifyId = `youtube-notify-${pubItem.account.id}`
+      const youtubeEmbedId = `youtube-embed-${pubItem.account.id}`
+      const youtubeKidsId = `youtube-kids-${pubItem.account.id}`
+      const { getYouTubeCategories, youTubeCategories, youTubeCategoriesLoading } = usePublishDialogData(
         useShallow(state => ({
           getYouTubeCategories: state.getYouTubeCategories,
           youTubeCategories: state.youTubeCategories,
+          youTubeCategoriesLoading: state.youTubeCategoriesLoading,
         })),
       )
 
@@ -86,16 +96,16 @@ const YouTubeParams = memo(
           option.youtube.license = 'youtube'
           needsUpdate = true
         }
-        if ((option.youtube as any).notifySubscribers === undefined) {
-          ;(option.youtube as any).notifySubscribers = true
+        if (option.youtube.notifySubscribers === undefined) {
+          option.youtube.notifySubscribers = true
           needsUpdate = true
         }
-        if ((option.youtube as any).embeddable === undefined) {
-          ;(option.youtube as any).embeddable = true
+        if (option.youtube.embeddable === undefined) {
+          option.youtube.embeddable = true
           needsUpdate = true
         }
-        if ((option.youtube as any).selfDeclaredMadeForKids === undefined) {
-          ;(option.youtube as any).selfDeclaredMadeForKids = false
+        if (option.youtube.selfDeclaredMadeForKids === undefined) {
+          option.youtube.selfDeclaredMadeForKids = false
           needsUpdate = true
         }
 
@@ -165,6 +175,8 @@ const YouTubeParams = memo(
                       placeholder={t('form.categoryPlaceholder')}
                       searchPlaceholder={t('form.searchPlaceholder')}
                       emptyText={t('form.noResults')}
+                      loading={youTubeCategoriesLoading}
+                      loadingText={tCommon('actions.loading')}
                       className="flex-1"
                     />
                   </div>
@@ -201,7 +213,7 @@ const YouTubeParams = memo(
                       }}
                     >
                       <SelectTrigger className="w-full h-8">
-                        <SelectValue placeholder="请选择隐私状态" />
+                        <SelectValue placeholder={t('form.selectPrivacyStatus')} />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="public">{t('form.public')}</SelectItem>
@@ -219,7 +231,7 @@ const YouTubeParams = memo(
                   <div
                     className={cn('shrink-0', isMobile ? 'text-sm font-medium' : 'w-[90px] mr-2.5')}
                   >
-                    {t('form.license' as any)}
+                    {t('form.license')}
                   </div>
                   <Select
                     value={pubItem.params.option.youtube?.license ?? ''}
@@ -238,14 +250,14 @@ const YouTubeParams = memo(
                     }}
                   >
                     <SelectTrigger className="w-full h-8">
-                      <SelectValue placeholder={t('form.licensePlaceholder' as any)} />
+                      <SelectValue placeholder={t('form.licensePlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="youtube">
-                        {t('form.standardYouTubeLicense' as any)}
+                        {t('form.standardYouTubeLicense')}
                       </SelectItem>
                       <SelectItem value="creativeCommon">
-                        {t('form.creativeCommonsLicense' as any)}
+                        {t('form.creativeCommonsLicense')}
                       </SelectItem>
                     </SelectContent>
                   </Select>
@@ -254,79 +266,96 @@ const YouTubeParams = memo(
                 {/* YouTube 复选框选项 */}
                 <div
                   className={cn(
-                    'flex mt-5 flex-wrap gap-2',
-                    isMobile ? 'flex-col' : 'flex-row items-center justify-between',
+                    'flex mt-2.5',
+                    isMobile ? 'flex-col gap-1.5' : 'items-start',
                   )}
                 >
-                  {!isMobile && <div className="w-10" />}
-
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="youtube-notify"
-                      checked={!!(pubItem.params.option.youtube as any)?.notifySubscribers}
-                      onCheckedChange={(checked) => {
-                        const option = pubItem.params.option
-                        if (!option.youtube) {
-                          option.youtube = {}
-                        }
-                        ;(option.youtube as any).notifySubscribers = checked
-                        setOnePubParams(
-                          {
-                            option,
-                          },
-                          pubItem.account.id,
-                        )
-                      }}
-                    />
-                    <Label htmlFor="youtube-notify" className="cursor-pointer text-sm">
-                      Notify Subscribers
-                    </Label>
+                  <div
+                    className={cn(
+                      'shrink-0',
+                      isMobile ? 'text-sm font-medium' : 'w-[90px] mr-2.5 pt-2',
+                    )}
+                  >
+                    {t('form.youtubeOptions')}
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="youtube-embed"
-                      checked={!!(pubItem.params.option.youtube as any)?.embeddable}
-                      onCheckedChange={(checked) => {
-                        const option = pubItem.params.option
-                        if (!option.youtube) {
-                          option.youtube = {}
-                        }
-                        ;(option.youtube as any).embeddable = checked
-                        setOnePubParams(
-                          {
-                            option,
-                          },
-                          pubItem.account.id,
-                        )
-                      }}
-                    />
-                    <Label htmlFor="youtube-embed" className="cursor-pointer text-sm">
-                      Allow Embedding
-                    </Label>
-                  </div>
+                  <div
+                    className={cn(
+                      'grid flex-1 gap-2 rounded-md border border-border bg-background p-2',
+                      isMobile ? 'grid-cols-1' : 'grid-cols-3',
+                    )}
+                  >
+                    <div className={youtubeOptionItemClassName}>
+                      <Checkbox
+                        id={youtubeNotifyId}
+                        checked={!!pubItem.params.option.youtube?.notifySubscribers}
+                        className={youtubeCheckboxClassName}
+                        onCheckedChange={(checked) => {
+                          const option = pubItem.params.option
+                          if (!option.youtube) {
+                            option.youtube = {}
+                          }
+                          option.youtube.notifySubscribers = checked === true
+                          setOnePubParams(
+                            {
+                              option,
+                            },
+                            pubItem.account.id,
+                          )
+                        }}
+                      />
+                      <Label htmlFor={youtubeNotifyId} className={youtubeOptionLabelClassName}>
+                        {t('form.notifySubscribers')}
+                      </Label>
+                    </div>
 
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="youtube-kids"
-                      checked={!!(pubItem.params.option.youtube as any)?.selfDeclaredMadeForKids}
-                      onCheckedChange={(checked) => {
-                        const option = pubItem.params.option
-                        if (!option.youtube) {
-                          option.youtube = {}
-                        }
-                        ;(option.youtube as any).selfDeclaredMadeForKids = checked
-                        setOnePubParams(
-                          {
-                            option,
-                          },
-                          pubItem.account.id,
-                        )
-                      }}
-                    />
-                    <Label htmlFor="youtube-kids" className="cursor-pointer text-sm">
-                      Made for Kids
-                    </Label>
+                    <div className={youtubeOptionItemClassName}>
+                      <Checkbox
+                        id={youtubeEmbedId}
+                        checked={!!pubItem.params.option.youtube?.embeddable}
+                        className={youtubeCheckboxClassName}
+                        onCheckedChange={(checked) => {
+                          const option = pubItem.params.option
+                          if (!option.youtube) {
+                            option.youtube = {}
+                          }
+                          option.youtube.embeddable = checked === true
+                          setOnePubParams(
+                            {
+                              option,
+                            },
+                            pubItem.account.id,
+                          )
+                        }}
+                      />
+                      <Label htmlFor={youtubeEmbedId} className={youtubeOptionLabelClassName}>
+                        {t('form.allowEmbedding')}
+                      </Label>
+                    </div>
+
+                    <div className={youtubeOptionItemClassName}>
+                      <Checkbox
+                        id={youtubeKidsId}
+                        checked={!!pubItem.params.option.youtube?.selfDeclaredMadeForKids}
+                        className={youtubeCheckboxClassName}
+                        onCheckedChange={(checked) => {
+                          const option = pubItem.params.option
+                          if (!option.youtube) {
+                            option.youtube = {}
+                          }
+                          option.youtube.selfDeclaredMadeForKids = checked === true
+                          setOnePubParams(
+                            {
+                              option,
+                            },
+                            pubItem.account.id,
+                          )
+                        }}
+                      />
+                      <Label htmlFor={youtubeKidsId} className={youtubeOptionLabelClassName}>
+                        {t('form.madeForKids')}
+                      </Label>
+                    </div>
                   </div>
                 </div>
               </>

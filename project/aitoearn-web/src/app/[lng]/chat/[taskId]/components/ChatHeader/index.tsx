@@ -8,9 +8,9 @@ import { ArrowLeft, Bot, Heart, Loader2, Pencil, Share2, Star, X } from 'lucide-
 import React, { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import RatingModal from '@/components/Chat/Rating'
-import ShareModal from '@/components/Share/ShareModal'
+import ShareModal from '@/components/Chat/Share/ShareModal'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import styles from '../../../layout.module.css'
 
 const STORAGE_KEY = 'chat-announcement-dismissed'

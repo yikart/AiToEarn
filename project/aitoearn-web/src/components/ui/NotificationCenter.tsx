@@ -7,7 +7,7 @@
 
 import { AlertCircle, CheckCircle2, Info, Loader2, X, XCircle } from 'lucide-react'
 import React, { useEffect, useRef, useState } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 type NotificationType = 'success' | 'error' | 'warning' | 'info' | 'loading'
 
@@ -168,30 +168,27 @@ export const NotificationCenter: React.FC = () => {
           delete timeoutsRef.current[uid]
         }
         setItems(prev => prev.map(it => (it.uid === uid ? { ...it, visible: false } : it)))
-        setTimeout(() => setItems(prev => prev.filter(it => it.uid !== uid)), 300)
-        return
+        setTimeout(() => {
+          setItems(prev => prev.filter(it => it.uid !== uid))
+          delete remainingRef.current[uid]
+          delete animationStartRef.current[uid]
+        }, 300)
       }
       if (key) {
-        let removed = false
-        let removedUid: string | null = null
-        setItems(prev =>
-          prev.map((it) => {
-            if (!removed && it.key === key) {
-              removed = true
-              removedUid = it.uid
-              return { ...it, visible: false }
-            }
-            return it
-          }),
-        )
+        setItems(prev => prev.map(it => (it.key === key ? { ...it, visible: false } : it)))
         setTimeout(() => {
-          if (removedUid) {
-            if (timeoutsRef.current[removedUid]) {
-              clearTimeout(timeoutsRef.current[removedUid])
-              delete timeoutsRef.current[removedUid]
+          setItems(prev => prev.filter((it) => {
+            if (it.key === key) {
+              if (timeoutsRef.current[it.uid]) {
+                clearTimeout(timeoutsRef.current[it.uid])
+                delete timeoutsRef.current[it.uid]
+              }
+              delete remainingRef.current[it.uid]
+              delete animationStartRef.current[it.uid]
+              return false
             }
-          }
-          setItems(prev => prev.filter(it => it.uid !== removedUid))
+            return true
+          }))
         }, 300)
       }
     }

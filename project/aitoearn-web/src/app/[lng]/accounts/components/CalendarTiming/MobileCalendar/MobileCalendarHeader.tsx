@@ -13,11 +13,11 @@ import dayjs from 'dayjs'
 import { CalendarDays, ChevronDown, ChevronLeft, ChevronRight, Grid3X3 } from 'lucide-react'
 import { memo, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
+import { getDayjsLocale } from '@/app/i18n/languageConfig'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { getDayjsLocale } from '@/lib/i18n/languageConfig'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import 'dayjs/locale/zh-cn'
 import 'dayjs/locale/en'
 
@@ -116,7 +116,7 @@ const MobileCalendarHeader = memo<IMobileCalendarHeaderProps>(
                     'h-9 cursor-pointer',
                     pickerYear === currentYear
                     && month === currentMonth
-                    && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+                    && 'bg-gradient-back text-gradient-foreground shadow-sm shadow-primary/20 hover:text-gradient-foreground hover:shadow-md hover:shadow-primary/25',
                   )}
                   onClick={() => handleMonthSelect(month)}
                 >

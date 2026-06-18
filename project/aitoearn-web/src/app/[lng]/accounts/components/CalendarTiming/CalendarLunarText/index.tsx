@@ -9,7 +9,7 @@
 import type { CalendarLunarInfo } from '../calendarFestival.utils'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export interface ICalendarLunarTextProps {
   lunar: CalendarLunarInfo | null

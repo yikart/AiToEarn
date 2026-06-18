@@ -1,7 +1,5 @@
 {
   "home": "首页",
-  "header.draftBox": "内容管理",
-  "header.agentAssets": "Agent 素材",
   "tasksHistory": "任务记录",
   "accounts": "发布",
   "publish": "发布",
@@ -21,8 +19,15 @@
   "sidebar.more": "更多",
   "mobileBottom.content": "内容",
   "mobileBottom.checkIn": "打卡",
+  "mobileBottom.gold": "淘金",
   "mobileBottom.publish": "发布",
   "mobileBottom.interaction": "互动",
   "aiSocial": "AI发布",
-  "xhsData": "小红书数据"
+  "myTasks": "我的任务",
+  "createTask": "创建任务",
+  "pricing": "定价",
+  "myStore": "我的店铺",
+  "tiktokShop": "TikTok Shop",
+  "xhsData": "AI互动",
+  "groundPromotion": "地推管理"
 }

@@ -1,10 +1,81 @@
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 import dayjs from 'dayjs'
 import timezone from 'dayjs/plugin/timezone'
 import utc from 'dayjs/plugin/utc'
-import { getDayjsLocale } from '@/lib/i18n/languageConfig'
+import { PublishStatus } from '@/api/platforms/publish.constants'
+import { getDayjsLocale } from '@/app/i18n/languageConfig'
 
 dayjs.extend(utc)
 dayjs.extend(timezone)
+
+const publishNowStatuses = new Set<PublishStatus>([
+  PublishStatus.UNPUBLISH,
+  PublishStatus.QUEUED,
+])
+
+const PUBLISH_MIN_LEAD_MINUTES = 10
+
+const cancelableStatuses = new Set<PublishStatus>([
+  PublishStatus.UNPUBLISH,
+  PublishStatus.QUEUED,
+  PublishStatus.PLATFORM_SCHEDULED,
+  PublishStatus.WAITING_FOR_USER_ACTION,
+])
+
+const deletableStatuses = new Set<PublishStatus>([
+  PublishStatus.CANCELED,
+  PublishStatus.RELEASED,
+  PublishStatus.FAIL,
+])
+
+const retryableStatuses = new Set<PublishStatus>([
+  PublishStatus.FAIL,
+])
+
+export function canPublishRecordNow(status: PublishStatus, publishTime?: dayjs.ConfigType) {
+  if (!publishNowStatuses.has(status)) {
+    return false
+  }
+
+  return hasPublishMinLeadTime(publishTime)
+}
+
+export function hasPublishMinLeadTime(publishTime?: dayjs.ConfigType) {
+  if (!publishTime) {
+    return true
+  }
+
+  return dayjs(publishTime).diff(dayjs(), 'minute', true) > PUBLISH_MIN_LEAD_MINUTES
+}
+
+export function isPublishTimeWithinMinLeadTime(publishTime?: dayjs.ConfigType) {
+  if (!publishTime) {
+    return false
+  }
+
+  const minutesUntilPublish = dayjs(publishTime).diff(dayjs(), 'minute', true)
+  return minutesUntilPublish > 0 && minutesUntilPublish <= PUBLISH_MIN_LEAD_MINUTES
+}
+
+export function canCancelPublishRecord(status: PublishStatus) {
+  return cancelableStatuses.has(status)
+}
+
+export function canDeletePublishRecord(status: PublishStatus) {
+  return deletableStatuses.has(status)
+}
+
+export function canRetryPublishRecord(status: PublishStatus) {
+  return retryableStatuses.has(status)
+}
+
+export function canReschedulePublishRecord(status: PublishStatus, publishTime?: dayjs.ConfigType) {
+  return publishNowStatuses.has(status) && hasPublishMinLeadTime(publishTime)
+}
+
+export function getPublishRecordTaskId(record: PublishRecordItem) {
+  return record.taskId || record.id
+}
 
 // 日历国际化
 export function getFullCalendarLang(lang: string) {

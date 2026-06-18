@@ -5,9 +5,9 @@
     "stop": "停止",
     "uploading": "上传中...",
     "upload": "上传",
-    "linkPromotionPlan": "链接推广计划（让agent操作您的推广计划）",
-    "selectPromotionPlan": "选择推广计划",
-    "noPromotionPlan": "暂无推广计划",
+    "linkPromotionPlan": "链接草稿箱（让agent操作您的草稿箱）",
+    "selectPromotionPlan": "选择草稿箱",
+    "noPromotionPlan": "暂无草稿箱",
     "clearSelection": "清除选择"
   },
   "message": {
@@ -22,6 +22,13 @@
       "content": "您的 Agent 积分不足，请开通会员",
       "okText": "确定"
     }
+  },
+  "agentNotice": {
+    "title": "温馨提示",
+    "description": "该 Agent 目前仍在测试阶段，功能和生成效果还在持续优化中，可能会出现结果不稳定或不完全符合预期的情况。相关积分会根据实际使用情况正常消耗，暂无法因生成结果差异提供积分退还或补偿。建议您先少量体验后再决定是否继续使用，感谢您的理解与支持。",
+    "doNotShowAgain": "不再提示",
+    "cancel": "取消",
+    "confirm": "继续使用"
   },
   "task": {
     "newChat": "新对话",
@@ -62,7 +69,7 @@
     "affiliateReward": "赚 $716.4",
     "imageMaterial": "图片素材",
     "videoMaterial": "视频素材",
-    "agentAssets": "Agent 素材",
+    "agentAssets": "AI 生成素材",
     "noData": "暂无数据"
   },
   "history": {
@@ -121,9 +128,7 @@
     "favoriteOnly": "我的收藏",
     "emptyFavorites": "暂无收藏的任务",
     "emptySearch": "未找到匹配的任务",
-    "clearFilters": "清除筛选",
-    "downloadVideo": "下载视频",
-    "playVideo": "播放视频"
+    "clearFilters": "清除筛选"
   },
   "rating": {
     "title": "评分与评价",
@@ -152,10 +157,11 @@
     "video": "视频",
     "image": "图片",
     "document": "文档",
+    "audio": "音频",
+    "edit": "编辑媒体",
+    "remove": "移除媒体",
     "uploadFailed": "上传失败，请重试",
-    "uploadCancelled": "上传已取消",
-    "edit": "编辑",
-    "remove": "移除"
+    "uploadCancelled": "上传已取消"
   },
   "workflow": {
     "toolCallCompleted": "工具调用完成",
@@ -188,9 +194,7 @@
     "rechargeCredits": "充值积分",
     "action": "操作",
     "actionDesc": "请完成以下操作",
-    "continue": "继续",
-    "error": "生成失败",
-    "errorDesc": "生成失败，请稍后重试。"
+    "continue": "继续"
   },
   "publishDetail": {
     "title": "发布详情",
@@ -227,8 +231,5 @@
       "publish": "正在发布...",
       "complete": "发布完成"
     }
-  },
-  "plugin": {
-    "platformNeedsPlugin": "该平台需要使用浏览器插件，请先授权插件。"
   }
 }

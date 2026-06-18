@@ -10,8 +10,8 @@ import { useTransClient } from '@/app/i18n/client'
 import { DOCS_URL, GITHUB_REPO } from '@/app/layout/shared/constants'
 import { useGitHubStars } from '@/app/layout/shared/hooks/useGitHubStars'
 import { useVisibleRouterData } from '@/app/layout/shared/hooks/useVisibleRouterData'
-import { cn } from '@/lib/utils'
 import { useSystemStore } from '@/store/system'
+import { cn } from '@/utils/className'
 import { MobileMyChannelsButton } from './MobileMyChannelsButton'
 import { MobileNavItem } from './MobileNavItem'
 
@@ -91,6 +91,7 @@ export function MobileNavList({ currentRoute, onClose, onOpenMyChannels }: Mobil
 
           {/* 我的频道 */}
           <MobileMyChannelsButton onClose={onClose} onOpenMyChannels={onOpenMyChannels} />
+
         </div>
       )}
 

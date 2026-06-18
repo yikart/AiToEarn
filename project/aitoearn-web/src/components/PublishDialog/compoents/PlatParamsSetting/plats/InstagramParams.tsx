@@ -6,53 +6,27 @@ import type {
   IPlatsParamsProps,
   IPlatsParamsRef,
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
-import { forwardRef, memo, useEffect } from 'react'
+import { forwardRef, memo } from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 const InstagramParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
       const defaultContentCategory = pubItem.params.video ? 'reel' : 'post'
-
-      // 初始化Instagram参数
-      useEffect(() => {
-        const option = pubItem.params.option
-        const currentCategory = option.instagram?.content_category
-        const nextCategory
-          = pubItem.params.video
-            ? (currentCategory === 'reel' ? undefined : 'reel')
-            : (!currentCategory ? 'post' : undefined)
-
-        if (nextCategory) {
-          setOnePubParams(
-            {
-              option: {
-                ...option,
-                instagram: {
-                  ...option.instagram,
-                  content_category: nextCategory,
-                },
-              },
-            },
-            pubItem.account.id,
-          )
-        }
-      }, [pubItem.account.id, pubItem.params.option, pubItem.params.video, setOnePubParams])
 
       return (
         <>

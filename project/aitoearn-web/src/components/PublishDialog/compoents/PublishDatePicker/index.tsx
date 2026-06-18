@@ -9,29 +9,45 @@
 import type { Dayjs } from 'dayjs'
 import type { ForwardedRef } from 'react'
 import dayjs from 'dayjs'
-import { Check, ChevronDown, Clock, Send } from 'lucide-react'
-import { forwardRef, memo, useMemo, useState } from 'react'
+import { Check, ChevronDown, Clock, Loader2, Send } from 'lucide-react'
+import { forwardRef, memo, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { DateTimePicker } from './DateTimePicker'
 
 export interface IPublishDatePickerRef {}
 
 export interface IPublishDatePickerProps {
   loading: boolean
-  onClick: () => void
+  onClick: (pubTime?: string) => unknown | Promise<unknown>
   // 是否为移动端
   isMobile?: boolean
+  value?: string
+  onValueChange?: (pubTime?: string) => void
+  inline?: boolean
+  showNowButton?: boolean
+  submitText?: string
+  minLeadMinutes?: number
 }
 
 const PublishDatePicker = memo(
   forwardRef(
     (
-      { loading, onClick, isMobile }: IPublishDatePickerProps,
+      {
+        loading,
+        onClick,
+        isMobile,
+        value,
+        onValueChange,
+        inline = false,
+        showNowButton = true,
+        submitText,
+        minLeadMinutes = 20,
+      }: IPublishDatePickerProps,
       ref: ForwardedRef<IPublishDatePickerRef>,
     ) => {
       const { t } = useTransClient('publish')
@@ -43,6 +59,8 @@ const PublishDatePicker = memo(
           setPubTime: state.setPubTime,
         })),
       )
+      const currentPubTime = onValueChange ? value : pubTime
+      const updatePubTime = onValueChange ?? setPubTime
 
       const handleCalendarChange = (date: Dayjs) => {
         setTempDate(date)
@@ -51,15 +69,19 @@ const PublishDatePicker = memo(
       // 点击 Now 按钮 - 选择立即发布模式
       const handleNowClick = (e: React.MouseEvent) => {
         e.stopPropagation()
-        setPubTime(undefined)
+        updatePubTime(undefined)
         setMenuOpen(false)
       }
 
       // 点击 Confirm 按钮 - 确认定时发布时间
-      const handleScheduleConfirm = (e: React.MouseEvent) => {
+      const handleScheduleConfirm = async (e: React.MouseEvent) => {
         e.stopPropagation()
-        setPubTime(tempDate ? tempDate.format() : undefined)
+        const nextPubTime = tempDate ? tempDate.format() : undefined
+        updatePubTime(nextPubTime)
         setMenuOpen(false)
+        if (inline) {
+          await onClick(nextPubTime)
+        }
       }
 
       // 禁用今天之前的日期
@@ -73,7 +95,7 @@ const PublishDatePicker = memo(
           return {}
 
         const now = dayjs()
-        const minTime = now.add(20, 'minute')
+        const minTime = now.add(minLeadMinutes, 'minute')
 
         // 只对今天限制
         if (current.isSame(now, 'day')) {
@@ -117,11 +139,17 @@ const PublishDatePicker = memo(
       }
 
       const pubTimeValue = useMemo(() => {
-        if (pubTime) {
-          return dayjs(pubTime)
+        if (currentPubTime) {
+          return dayjs(currentPubTime)
         }
         return null
-      }, [pubTime])
+      }, [currentPubTime])
+
+      useEffect(() => {
+        if (inline) {
+          setTempDate(pubTimeValue || dayjs().add(30, 'minute'))
+        }
+      }, [inline, pubTimeValue])
 
       // 当打开弹窗时，初始化临时日期
       const handleOpenChange = (open: boolean) => {
@@ -144,30 +172,41 @@ const PublishDatePicker = memo(
           />
 
           <div className="flex items-center justify-between py-2.5 px-4 border-t border-border">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleNowClick}
-              className="gap-2 cursor-pointer"
-              data-testid="publish-now-button"
-            >
-              <Send className="w-4 h-4" />
-              {t('buttons.publishNow')}
-            </Button>
+            {showNowButton ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleNowClick}
+                className="gap-2 cursor-pointer"
+                data-testid="publish-now-button"
+              >
+                <Send className="w-4 h-4" />
+                {t('buttons.publishNow')}
+              </Button>
+            ) : <span />}
 
             <Button
               variant="ghost"
               size="sm"
               onClick={handleScheduleConfirm}
               className="gap-2 cursor-pointer"
+              disabled={loading || !tempDate}
               data-testid="publish-schedule-confirm-button"
             >
-              <Check className="w-4 h-4" />
-              {t('buttons.confirm')}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
+              {submitText ?? t('buttons.confirm')}
             </Button>
           </div>
         </div>
       )
+
+      if (inline) {
+        return (
+          <div className={cn('w-full', isMobile && 'w-full')} data-testid="publish-date-picker">
+            {datePickerContent}
+          </div>
+        )
+      }
 
       return (
         <div className={cn('flex gap-0', isMobile && 'w-full')} data-testid="publish-date-picker">
@@ -202,33 +241,10 @@ const PublishDatePicker = memo(
           <Button
             className={cn('rounded-l-none h-10 px-6 cursor-pointer', isMobile && 'shrink-0')}
             disabled={loading}
-            onClick={() => onClick()}
+            onClick={() => onClick(currentPubTime)}
             data-testid="publish-submit-btn"
           >
-            {loading && (
-              <svg
-                className="animate-spin -ml-1 mr-2 h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                >
-                </circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                >
-                </path>
-              </svg>
-            )}
+            {loading && <Loader2 className="-ml-1 mr-2 h-4 w-4 animate-spin" />}
             {t('publish')}
           </Button>
         </div>

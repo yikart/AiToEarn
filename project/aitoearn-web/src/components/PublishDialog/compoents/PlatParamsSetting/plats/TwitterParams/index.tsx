@@ -3,11 +3,11 @@
  * 重写为独立模块，统一管理回复权限、AI 标记、投票与媒体增强。
  */
 import type { ForwardedRef } from 'react'
+import type { TwitterOption } from './types'
 import type {
   IPlatsParamsProps,
   IPlatsParamsRef,
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
-import type { IPlatOption } from '@/components/PublishDialog/publishDialog.type'
 import { forwardRef, memo, useEffect } from 'react'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
@@ -16,17 +16,14 @@ import TwitterMediaSection from './TwitterMediaSection'
 import TwitterPollSection from './TwitterPollSection'
 import { useTwitterPublishOption } from './useTwitterPublishOption'
 
-type TwitterOption = NonNullable<IPlatOption['twitter']>
-
 const TwitterParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
       const { twitterOption, updateTwitterOption } = useTwitterPublishOption(pubItem, setOnePubParams)
@@ -63,7 +60,7 @@ const TwitterParams = memo(
         <PubParmasTextarea
           {...pubParmasTextareaCommonParams}
           extend={(
-            <div className="space-y-3 border-t border-border bg-muted/20 p-3">
+            <div className="overflow-hidden rounded-lg border border-border bg-background shadow-sm divide-y divide-border">
               <TwitterBaseSection option={twitterOption} onChange={updateTwitterOption} />
               <TwitterPollSection option={twitterOption} hasMedia={hasMedia} onChange={updateTwitterOption} />
               <TwitterMediaSection

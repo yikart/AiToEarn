@@ -2,10 +2,21 @@
   "title": "Settings",
   "tabs": {
     "profile": "Profile",
+    "agent": "Agent",
+    "wallet": "Wallet",
+    "income": "Income",
+    "balance": "Balance",
+    "subscription": "Credits",
+    "membership": "Bills",
+    "shopifyStores": "Shopify Stores",
     "general": "General",
-    "agent": "Agent"
+    "ticket": "Tickets",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Seedance Credits"
   },
   "profile": {
+    "totalIncome": "Balance",
+    "currentBalance": "Current Credits",
     "logout": "Logout",
     "edit": "Edit",
     "editName": "Edit nickname",
@@ -30,7 +41,215 @@
     "zoomOut": "Zoom Out",
     "imageLoading": "Loading image...",
     "processing": "Processing...",
-    "githubStars": "GitHub Stars"
+    "githubStars": "GitHub Stars",
+    "viewMembershipBenefits": "View membership benefits",
+    "redeemCodeTitle": "Redeem enterprise membership activation code",
+    "redeemCodeDescription": "Redeem successfully to activate enterprise membership and receive the corresponding credits benefits.",
+    "redeemCodePlaceholder": "Enter the enterprise membership activation code",
+    "redeemCodeButton": "Redeem now",
+    "redeemCodeRequired": "Please enter the enterprise membership activation code",
+    "redeemCodeSuccess": "Enterprise membership activation code redeemed successfully",
+    "redeemCodeFailed": "Failed to redeem the enterprise membership activation code",
+    "redeemCodeContactPrefix": "Don't have an activation code? ",
+    "redeemCodeContactSuffix": " to get an enterprise membership activation code."
+  },
+  "income": {
+    "balance": "Advertiser Balance",
+    "withdrawableBalance": "Creator Balance",
+    "incomeRecords": "Income Records",
+    "balanceRecords": "Balance Records",
+    "withdrawRecords": "Withdrawal Records",
+    "incomeId": "Income ID",
+    "withdrawId": "Withdrawal ID",
+    "amount": "Amount",
+    "type": "Type",
+    "statusLabel": "Status",
+    "description": "Description",
+    "createTime": "Created At",
+    "updateTime": "Updated At",
+    "all": "All",
+    "incomeDetail": "Income Details",
+    "noWallet": "No wallet added",
+    "noWalletTip": "Please add a wallet in the Wallet tab first",
+    "manageWallets": "Manage Wallets",
+    "addWallet": "Add Wallet",
+    "withdrawButton": "Withdraw",
+    "withdrawNotice": "Withdrawal requests will be processed within 15 business days. Please be patient. If you have any questions, please ",
+    "rechargeButton": "Recharge",
+    "noIncomeRecords": "No income records",
+    "noBalanceRecords": "No balance records",
+    "noWithdrawRecords": "No withdrawal records",
+    "balanceAfter": "Balance After",
+    "balanceAfterType": {
+      "advertiser": "Advertiser Balance After",
+      "creator": "Creator Balance After"
+    },
+    "currencyFilter": "Currency",
+    "typeFilter": "Type",
+    "balanceTypes": {
+      "task_creation": "Task Creation",
+      "manual_deduct": "Manual Deduction",
+      "refund": "Refund",
+      "recharge": "Recharge",
+      "manual_add": "Manual Addition",
+      "task_refund": "Task Refund",
+      "task_stopped": "Task Stopped",
+      "withdraw": "Withdraw",
+      "withdraw_refund": "Withdraw Refund",
+      "cpm_cpe_deposit": "CPM/CPE Deposit",
+      "cpm_cpe_deposit_refund": "CPM/CPE Deposit Refund",
+      "task": "Task Income",
+      "commission": "Commission",
+      "manual": "Manual Adjustment",
+      "balance_transfer_out": "Balance Transfer Out",
+      "balance_transfer_in": "Balance Transfer In",
+      "debt_payment": "Debt Payment",
+      "sample_budget_deposit": "Sample Budget Deposit",
+      "sample_budget_refund": "Sample Budget Refund",
+      "sample_subsidy_payout": "Sample Subsidy Payout",
+      "sample_subsidy_clawback": "Sample Subsidy Clawback",
+      "koc_deposit_deduct": "KOC Deposit Deduction",
+      "koc_deposit_return": "KOC Deposit Return",
+      "commission_refund": "Commission Refund",
+      "challenge_refund": "Challenge Refund",
+      "task_reward_clawback": "Task Reward Clawback",
+      "task_work_deleted_refund": "Deleted Work Refund"
+    },
+    "types": {
+      "task": "Task Income",
+      "task_back": "Task Refund",
+      "reward_back": "Reward Refund",
+      "taskBack": "Task Refund",
+      "rewardBack": "Reward Refund",
+      "taskWithdraw": "Task Withdrawal",
+      "task_withdraw": "Task Withdrawal"
+    },
+    "status": {
+      "pending": "Pending",
+      "withdrawn": "Withdrawn"
+    },
+    "withdraw": {
+      "cancel": "Cancel",
+      "cancelConfirmTitle": "Cancel Withdrawal",
+      "cancelConfirmDesc": "Are you sure you want to cancel this withdrawal request?",
+      "type": {
+        "task": "Task",
+        "reward": "Reward"
+      },
+      "walletAccount": "Wallet",
+      "adminNote": "Note",
+      "paidAt": "Paid At",
+      "screenshots": "Screenshots",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "paid": "Paid",
+        "failed": "Failed",
+        "rejected": "Rejected"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "Processing",
+      "success": "Success",
+      "fail": "Failed",
+      "task_withdraw": "Task Withdrawal",
+      "unknown": "Unknown"
+    },
+    "messages": {
+      "getIncomeRecordsFailed": "Failed to get income records",
+      "getBalanceRecordsFailed": "Failed to get balance records",
+      "getIncomeDetailFailed": "Failed to get income details",
+      "getWithdrawRecordsFailed": "Failed to get withdrawal records",
+      "cancelWithdrawSuccess": "Withdrawal cancelled successfully",
+      "cancelWithdrawFailed": "Failed to cancel withdrawal",
+      "noIncomeRecords": "No income records",
+      "noWithdrawRecords": "No withdrawal records",
+      "noIncomeDetail": "No income details",
+      "loading": "Loading...",
+      "totalRecords": "Total {{total}} records"
+    },
+    "balanceTooltip": "Advertiser Balance is mainly used to publish tasks, pay creator rewards, and cover task-related deductions.",
+    "creatorBalanceTooltip": "Completing tasks is the main way to earn Creator Balance. Creator Balance can be withdrawn.",
+    "transfer": {
+      "title": "Transfer Balance",
+      "amount": "Transfer Amount",
+      "amountPlaceholder": "Enter transfer amount",
+      "availableBalance": "Available to transfer: {{amount}}",
+      "transferIn": "Transfer In",
+      "submit": "Confirm Transfer",
+      "to": "Transfer to",
+      "success": "Transfer successful",
+      "failed": "Transfer failed",
+      "amountInvalid": "Please enter a transfer amount greater than 0",
+      "amountExceedsBalance": "Transfer amount cannot exceed the available balance",
+      "balanceType": {
+        "advertiser": "Advertiser Balance",
+        "creator": "Creator Balance"
+      },
+      "balanceToWithdrawable": "Advertiser Balance to Creator Balance",
+      "withdrawableToBalance": "Creator Balance to Advertiser Balance"
+    }
+  },
+  "subscription": {
+    "currentPlan": "Current Plan",
+    "upgrade": "Recharge",
+    "manage": "Manage Subscription",
+    "balance": "Credits",
+    "usageRecords": "Usage Records",
+    "detail": "Detail",
+    "date": "Date",
+    "amount": "Amount",
+    "amountChange": "Amount Change",
+    "noRecords": "No usage records yet",
+    "loading": "Loading...",
+    "loadMore": "Load More",
+    "browserPluginAgent": "Browser plugin agent",
+    "types": {
+      "register_bonus": "Registration Bonus",
+      "purchase": "Purchase",
+      "vip_monthly": "VIP Monthly",
+      "ai_service": "AI Service",
+      "twitter_api": "X/Twitter API",
+      "note_comment_search": "Note Comment Search",
+      "video_style_transfer": "Video Style Transfer",
+      "drama_recap": "Drama Recap",
+      "publish": "Publish",
+      "expired": "Expired",
+      "manual": "Manual Adjustment",
+      "refund": "Refund",
+      "fan_check_in": "Fan Check-in",
+      "fan_lottery": "Fan Lottery"
+    },
+    "descriptions": {
+      "User registered successfully, earned credits": "User registered successfully, earned credits",
+      "Note comment search first page": "Note comment search first page",
+      "Note comment search page": "Note comment search page",
+      "Note comment search export": "Note comment search export"
+    },
+    "filters": {
+      "direction": "Direction",
+      "type": "Type",
+      "source": "Source",
+      "allDirections": "All directions",
+      "allTypes": "All types",
+      "allSources": "All sources",
+      "reset": "Reset"
+    },
+    "directions": {
+      "income": "Income",
+      "expense": "Expense"
+    },
+    "sources": {
+      "ai_chat": "AI Chat",
+      "plugin": "Browser Plugin",
+      "ai_image": "AI Image",
+      "ai_video": "AI Video",
+      "ai_agent": "AI Agent",
+      "ai_draft_generation": "AI Draft Generation",
+      "ai_material_adaptation": "AI Material Adaptation",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "AI Video Editing"
+    }
   },
   "general": {
     "language": "Website Language",
@@ -40,10 +259,63 @@
     "themeLight": "Light",
     "themeDark": "Dark",
     "themeSystem": "System",
-    "notifications": "Email Notifications",
-    "notificationsDesc": "Manage your email notification preferences",
-    "editNotifications": "Edit Notification Settings",
     "changingLanguage": "Switching..."
+  },
+  "ticket": {
+    "title": "Tickets",
+    "description": "View and follow up on task tickets you submitted to operations.",
+    "loading": "Loading tickets...",
+    "loadFailed": "Failed to load tickets",
+    "refresh": "Refresh",
+    "emptyTitle": "No ticket records",
+    "emptyDescription": "Tickets are currently submitted from accepted task detail pages. After submission, you can follow the handling status in the related task.",
+    "goToMyTasks": "Go to My Tasks",
+    "viewTask": "View task",
+    "viewTimeline": "Handling records",
+    "createdAt": "Submitted at",
+    "updatedAt": "Updated at",
+    "paginationTotal": "{{start}}-{{end}} of {{total}}",
+    "status": {
+      "open": "Open",
+      "in_progress": "In progress",
+      "resolved": "Resolved",
+      "closed": "Closed"
+    },
+    "timeline": {
+      "title": "Handling records",
+      "untitled": "Untitled ticket",
+      "loading": "Loading handling records...",
+      "loadFailed": "Failed to load handling records",
+      "empty": "No handling records yet",
+      "activityType": {
+        "create": "Ticket created",
+        "assign": "Ticket assigned",
+        "status_change": "Status changed",
+        "comment": "Comment added",
+        "link_takeover_action": "Takeover action linked"
+      },
+      "back": "Back to tickets",
+      "description": "Review operation updates and notes for this ticket."
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify Stores",
+    "description": "View the Shopify stores connected to this account and their billing status.",
+    "refresh": "Refresh",
+    "active": "Connected",
+    "inactive": "Disabled",
+    "platformFeeRate": "Platform fee rate",
+    "boundAt": "Connected at",
+    "emptyTitle": "No Shopify store connected",
+    "emptyDesc": "Install the AiToEarn Shopify App and the store will sync here automatically.",
+    "installApp": "Install AiToEarn App",
+    "openShopifyApp": "Open Shopify App",
+    "billingStatus": {
+      "none": "Billing not enabled",
+      "pending": "Pending",
+      "active": "Billing active",
+      "cancelled": "Billing cancelled"
+    }
   },
   "agent": {
     "title": "Agent",
@@ -57,5 +329,36 @@
     "saving": "Saving...",
     "saveSuccess": "Saved successfully",
     "saveFailed": "Failed to save"
+  },
+  "apiKeys": {
+    "title": "API Key Management",
+    "description": "Create and manage API Keys for programmatic access",
+    "create": "Create",
+    "name": "Name",
+    "namePlaceholder": "Enter API Key name",
+    "nameRequired": "Please enter a name",
+    "createdAt": "Created",
+    "lastUsedAt": "Last Used",
+    "neverUsed": "Never",
+    "deleteConfirmTitle": "Delete API Key",
+    "deleteConfirmDesc": "Are you sure you want to delete this API Key? This action cannot be undone.",
+    "createSuccess": "API Key created successfully",
+    "deleteSuccess": "API Key deleted successfully",
+    "copySuccess": "Copied to clipboard",
+    "copyTip": "Please copy and save your API Key now. It will not be shown again.",
+    "dismiss": "Dismiss",
+    "empty": "No API Keys yet",
+    "emptyDesc": "Create an API Key to get started",
+    "cancel": "Cancel"
+  },
+  "seedanceCredits": {
+    "balance": "Seedance Credits",
+    "availableBalance": "Available Seedance Credits",
+    "availableBalanceTip": "Available credits = Seedance credits + regular credits remaining after estimated regular model usage, usable for seedance-beta models.",
+    "refundNotice": "Seedance credits are only for seedance-beta models on AiToEarn. If AiToEarn prevents you from using those models, the unused portion is fully refundable.",
+    "faceUploadTip": "Clear real frontal faces may have a lower pass rate. Masking or blurring key facial areas such as the eyes before upload can significantly improve success.",
+    "recharge": "Recharge",
+    "use": "Go use",
+    "info": "View Seedance credits notes"
   }
 }

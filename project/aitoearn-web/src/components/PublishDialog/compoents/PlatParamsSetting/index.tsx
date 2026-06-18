@@ -3,12 +3,13 @@
  * 根据平台类型显示对应的参数设置表单
  */
 import type { CSSProperties, ForwardedRef } from 'react'
-import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { forwardRef, memo, useMemo } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { PlatformIcon } from '@/components/common/PlatformIcon'
 import BilibParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/BilibParams'
 import FacebookParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/FacebookParams'
 import InstagramParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/InstagramParams'
@@ -19,7 +20,8 @@ import TikTokParams from '@/components/PublishDialog/compoents/PlatParamsSetting
 import WxGzhParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/WxGzhParams'
 import YouTubeParams from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/YouTubeParams'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import { cn } from '@/lib/utils'
+import { usePlatformInfo } from '@/hooks/usePlatformMetadata'
+import { cn } from '@/utils/className'
 import DouyinParams from './plats/DouyinParams'
 import TwitterParams from './plats/TwitterParams'
 import WxSphParams from './plats/WxSphParams'
@@ -30,7 +32,6 @@ export interface IPlatParamsSettingRef {}
 export interface IPlatParamsSettingProps {
   pubItem: PubItem
   style?: CSSProperties
-  onImageToImage?: (imageFile: IImgFile) => void
   // 是否为移动端
   isMobile?: boolean
 }
@@ -38,7 +39,7 @@ export interface IPlatParamsSettingProps {
 const PlatParamsSetting = memo(
   forwardRef(
     (
-      { pubItem, style, onImageToImage, isMobile }: IPlatParamsSettingProps,
+      { pubItem, style, isMobile }: IPlatParamsSettingProps,
       ref: ForwardedRef<IPlatParamsSettingRef>,
     ) => {
       const { expandedPubItem, step, setExpandedPubItem } = usePublishDialog(
@@ -49,30 +50,26 @@ const PlatParamsSetting = memo(
         })),
       )
       const { t } = useTransClient('publish')
-
-      const platConfig = useMemo(() => {
-        return AccountPlatInfoMap.get(pubItem.account.type)!
-      }, [pubItem])
+      const platConfig = usePlatformInfo(pubItem.account.type)
 
       const PlatItemComp = useMemo(() => {
         switch (pubItem.account.type) {
           case PlatType.KWAI:
             return (
-              <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <KwaiParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.BILIBILI:
             return (
-              <BilibParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <BilibParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.WxGzh:
             return (
-              <WxGzhParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <WxGzhParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.Facebook:
             return (
               <FacebookParams
                 pubItem={pubItem}
-                onImageToImage={onImageToImage}
                 isMobile={isMobile}
               />
             )
@@ -80,7 +77,6 @@ const PlatParamsSetting = memo(
             return (
               <InstagramParams
                 pubItem={pubItem}
-                onImageToImage={onImageToImage}
                 isMobile={isMobile}
               />
             )
@@ -88,7 +84,6 @@ const PlatParamsSetting = memo(
             return (
               <YouTubeParams
                 pubItem={pubItem}
-                onImageToImage={onImageToImage}
                 isMobile={isMobile}
               />
             )
@@ -96,44 +91,42 @@ const PlatParamsSetting = memo(
             return (
               <PinterestParams
                 pubItem={pubItem}
-                onImageToImage={onImageToImage}
                 isMobile={isMobile}
               />
             )
           case PlatType.Tiktok:
             return (
-              <TikTokParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <TikTokParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.Threads:
             return (
               <ThreadsParams
                 pubItem={pubItem}
-                onImageToImage={onImageToImage}
                 isMobile={isMobile}
               />
             )
           case PlatType.Douyin:
             return (
-              <DouyinParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <DouyinParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.Xhs:
             return (
-              <XhsParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <XhsParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.WxSph:
             return (
-              <WxSphParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <WxSphParams pubItem={pubItem} isMobile={isMobile} />
             )
           case PlatType.Twitter:
             return (
-              <TwitterParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <TwitterParams pubItem={pubItem} isMobile={isMobile} />
             )
           default:
             return (
-              <KwaiParams pubItem={pubItem} onImageToImage={onImageToImage} isMobile={isMobile} />
+              <KwaiParams pubItem={pubItem} isMobile={isMobile} />
             )
         }
-      }, [pubItem, onImageToImage, isMobile])
+      }, [pubItem, isMobile])
 
       // true=展开当前账号的参数设置 false=不展开
       const isExpand = useMemo(() => {
@@ -143,7 +136,7 @@ const PlatParamsSetting = memo(
       }, [expandedPubItem, pubItem, step])
 
       // 检查描述是否超过最大长度
-      const isTextOverflow = platConfig.commonPubParamsConfig.desMax < pubItem.params.des.length
+      const isTextOverflow = Boolean(platConfig && platConfig.commonPubParamsConfig.desMax < pubItem.params.des.length)
 
       return (
         <div
@@ -154,10 +147,11 @@ const PlatParamsSetting = memo(
           <div className="flex w-full min-w-0">
             {/* 平台图标 */}
             <div className="mt-[5px] mr-2.5 shrink-0">
-              <img
-                src={platConfig.icon}
+              <PlatformIcon
+                platform={pubItem.account.type}
                 className="w-[25px] h-[25px] rounded-full"
-                alt={platConfig.name}
+                width={25}
+                height={25}
               />
             </div>
 

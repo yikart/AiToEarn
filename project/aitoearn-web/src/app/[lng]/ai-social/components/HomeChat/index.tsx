@@ -5,22 +5,22 @@
 
 'use client'
 
-import Image from 'next/image'
-
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoArr } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { useChannelManagerStore } from '@/components/ChannelManager'
 import { ChatInput } from '@/components/Chat/ChatInput'
+import { PlatformIcon } from '@/components/common/PlatformIcon'
 import { useMediaUpload } from '@/hooks/useMediaUpload'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
-
+import { usePlatformInfoList } from '@/hooks/usePlatformMetadata'
+import { useAccountStore } from '@/store/account'
 import { useAgentStore } from '@/store/agent'
 import { useUserStore } from '@/store/user'
+
 import { navigateToLogin } from '@/utils/auth'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 import './style.css'
 
 export interface IHomeChatProps {
@@ -52,6 +52,7 @@ export const HomeChat = forwardRef<IHomeChatRef, IHomeChatProps>(
     const { t } = useTransClient('chat')
     const { t: tHome } = useTransClient('home')
     const router = useRouter()
+    const platformList = usePlatformInfoList('publish')
     const { lng } = useParams()
     const token = useUserStore(state => state.token)
 
@@ -255,6 +256,13 @@ export const HomeChat = forwardRef<IHomeChatRef, IHomeChatProps>(
         return
       }
 
+      // 余额不足检查 - 阈值 50（美分）与 LowBalanceAlertProvider 中的 BALANCE_THRESHOLD 一致
+      const creditsBalance = useUserStore.getState().creditsBalance
+      if (creditsBalance < 50) {
+        useAccountStore.getState().setLowBalanceAlertOpen(true)
+        return
+      }
+
       // 执行发送逻辑
       doSend()
     }, [token, doSend, inputValue, defaultPrompt, medias, lng])
@@ -293,15 +301,14 @@ export const HomeChat = forwardRef<IHomeChatRef, IHomeChatProps>(
             {t('home.connectTools')}
           </span>
           <div className="flex items-center gap-1.5 flex-wrap">
-            {AccountPlatInfoArr.map(([key, value]) => (
-              <Image
-                key={key}
-                src={value.icon}
-                alt={value.name}
+            {platformList.map(platformInfo => (
+              <PlatformIcon
+                platform={platformInfo.type}
+                key={platformInfo.type}
                 width={24}
                 height={24}
                 className="w-6 h-6 rounded-full object-contain hover:scale-110 hover:opacity-80 transition-all"
-                title={value.name}
+                title={platformInfo.name}
               />
             ))}
           </div>

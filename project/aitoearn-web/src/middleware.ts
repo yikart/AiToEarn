@@ -20,16 +20,13 @@ export function middleware(req: NextRequest) {
       '/robots.txt',
       '/sitemap.xml',
       '/sitemap',
+      '/health',
       '/healthz',
       '/js/xhs_sign_init.js',
       '/js/xhs_web_sign.js',
       '/js/xhs_sign_core.js',
       '/js/xhs_sign_inject.js',
-      '/js/xhs-sdk.js',
-      '/task-sitemap.xml',
-      '/task-sitemap/',
       '/shortLink',
-      '/tinymce',
       '/downloads',
     ].find(v => req.nextUrl.pathname.includes(v!))
   ) {

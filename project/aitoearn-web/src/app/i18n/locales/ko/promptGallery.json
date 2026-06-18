@@ -24,9 +24,7 @@
   "tryOtherKeywords": "다른 키워드로 검색해 보세요",
   "modal": {
     "promptLabel": "프롬프트:",
-    "applyButton": "지금 적용",
-    "materialsHint": "These materials will be added to your input when applied",
-    "materialsLabel": "Reference Materials"
+    "applyButton": "지금 적용"
   },
   "badges": {
     "edit": "편집",
@@ -153,7 +151,5 @@
         "desc": "주제 및 타겟팅을 안내하는 오디언스 프로필 및 콘텐츠 선호도 분석 제공"
       }
     }
-  },
-  "copiedSuccess": "복사됨",
-  "copyFailed": "복사 실패"
+  }
 }

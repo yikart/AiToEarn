@@ -9,7 +9,7 @@ import type {
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { uploadToOss } from '@/api/oss'
+import { uploadToOss } from '@/api/materials/material.api'
 import {
   computeFileMd5,
   createTaskId,

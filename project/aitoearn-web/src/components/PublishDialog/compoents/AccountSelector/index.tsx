@@ -3,35 +3,25 @@
  * 显示所有可选账户，支持选中/取消选中
  */
 
-import type { SocialAccount } from '@/api/types/account.type'
+import type { CSSProperties } from 'react'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import type { PlatType } from '@/app/config/platConfig'
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 
 import { Plus } from 'lucide-react'
-import { memo, useCallback, useEffect } from 'react'
+import { memo, useCallback, useEffect, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import AvatarPlat from '@/components/AvatarPlat'
 import { useChannelManagerStore } from '@/components/ChannelManager/channelManagerStore'
+import AvatarPlat from '@/components/common/AvatarPlat'
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
-import { debugPublishDialog } from '@/components/PublishDialog/PublishDialog.util'
+import { getPlatformAccountBorderColor } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { usePlatformInfoMap } from '@/hooks/usePlatformMetadata'
 import { useAccountStore } from '@/store/account'
-
-function getPubItemDebugInfo(pubItem: PubItem) {
-  return {
-    account: pubItem.account.account,
-    id: pubItem.account.id,
-    imagesCount: pubItem.params.images?.length ?? 0,
-    status: pubItem.account.status,
-    textLength: pubItem.params.des?.length ?? 0,
-    type: pubItem.account.type,
-    uid: pubItem.account.uid,
-    video: !!pubItem.params.video,
-  }
-}
+import { isPlatformEnabledSync } from '@/store/platformMetadata'
 
 interface AccountSelectorProps {
   // 外部回调
@@ -40,12 +30,23 @@ interface AccountSelectorProps {
   pubList?: PubItem[]
 }
 
+type AccountBorderStyle = CSSProperties & {
+  '--publish-account-platform-border': string
+}
+
+function getPlatformAccountBorderStyle(platType: PlatType): AccountBorderStyle {
+  return {
+    '--publish-account-platform-border': getPlatformAccountBorderColor(platType),
+  }
+}
+
 /**
  * 账户选择器组件
  */
 export const AccountSelector = memo(
   ({ onOfflineClick, pubList: externalPubList }: AccountSelectorProps) => {
     const { t } = useTransClient('publish')
+    const platformInfoMap = usePlatformInfoMap()
 
     // ============ 从 Store 获取状态 ============
 
@@ -71,6 +72,10 @@ export const AccountSelector = memo(
     // 注意：如果 externalPubList 是空数组，也应该使用它（表示筛选后没有账户）
     // 只有当 externalPubList 是 undefined 时才使用 storePubList
     const pubList = externalPubList !== undefined ? externalPubList : storePubList
+    const visiblePubList = useMemo(
+      () => pubList.filter(pubItem => platformInfoMap.has(pubItem.account.type) && isPlatformEnabledSync(pubItem.account.type)),
+      [platformInfoMap, pubList],
+    )
 
     // ============ Custom Hooks ============
 
@@ -95,15 +100,6 @@ export const AccountSelector = memo(
         syncAccounts,
       } = usePublishDialog.getState()
 
-      debugPublishDialog('channelAuth:success', {
-        authedAccount: {
-          account: account.account,
-          id: account.id,
-          status: account.status,
-          type: account.type,
-          uid: account.uid,
-        },
-      })
       syncAccounts([...currentPubList.map(pubItem => pubItem.account), account])
       useChannelManagerStore.getState().setOnAuthSuccess(null)
     }, [])
@@ -126,23 +122,25 @@ export const AccountSelector = memo(
 
     return (
       <div className="flex flex-wrap items-center gap-2.5" data-testid="publish-account-selector">
-        {pubList.map((pubItem) => {
-          const platConfig = AccountPlatInfoMap.get(pubItem.account.type)!
+        {visiblePubList.map((pubItem) => {
+          const platConfig = platformInfoMap.get(pubItem.account.type)
+          if (!platConfig)
+            return null
           const isChoosed = pubListChoosed.find(v => v.account.id === pubItem.account.id)
           const isOffline = pubItem.account.status === 0
-          const isPcNotSupported = platConfig && platConfig.pcNoThis === true
+          const platformBorderStyle = getPlatformAccountBorderStyle(pubItem.account.type)
 
           return (
             <TooltipProvider key={pubItem.account.id}>
               <Tooltip>
                 <TooltipTrigger asChild>
                   <div
-                    className={`border-2 rounded-full transition-all duration-300 ${
-                      isChoosed ? '' : 'border-transparent'
-                    } ${isChoosed ? 'active:border-primary' : ''}`}
-                    style={{
-                      borderColor: isChoosed ? platConfig.themeColor : 'transparent',
-                    }}
+                    className={`border-2 rounded-full ${
+                      isChoosed
+                        ? 'border-(--publish-account-platform-border) active:border-(--publish-account-platform-border)'
+                        : 'border-transparent'
+                    }`}
+                    style={platformBorderStyle}
                     data-testid={`publish-account-item-${pubItem.account.id}`}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -150,61 +148,39 @@ export const AccountSelector = memo(
                       if (isOffline) {
                         return
                       }
-                      if (isPcNotSupported) {
-                        return
-                      }
                       handleAccountClick(pubItem)
                     }}
                   >
-                    {/* 账号头像：离线、PC不支持或区域限制显示遮罩并禁用 */}
+                    {/* 账号头像：离线显示遮罩并禁用 */}
                     <div className="relative flex">
                       <AvatarPlat
-                        className={`cursor-pointer transition-all duration-300 p-[1px] ${
-                          isChoosed && !isOffline && !isPcNotSupported
+                        className={`cursor-pointer p-[1px] ${
+                          isChoosed && !isOffline
                             ? '[&>img]:grayscale-0'
                             : '[&>img]:grayscale hover:[&>img]:grayscale-0'
                         }`}
                         account={pubItem.account}
                         size="large"
-                        disabled={isOffline || !isChoosed || isPcNotSupported}
+                        disabled={isOffline || !isChoosed}
                       />
                       {isOffline && (
                         <div
                           onClick={(e) => {
                             e.stopPropagation()
-                            const publishDialogState = usePublishDialog.getState()
-                            debugPublishDialog('accountSelector:offlineClick', {
-                              clicked: getPubItemDebugInfo(pubItem),
-                              expandedId: publishDialogState.expandedPubItem?.account.id,
-                              pubList: publishDialogState.pubList.map(getPubItemDebugInfo),
-                              selected: publishDialogState.pubListChoosed.map(getPubItemDebugInfo),
-                              step: publishDialogState.step,
-                            })
                             // 离线账户统一复用频道管理授权流程
                             onOfflineClick(pubItem.account)
-                            debugPublishDialog('accountSelector:offlineClickAfterOnOfflineClick', {
-                              authState: useChannelManagerStore.getState().authState,
-                              channelManagerOpen: useChannelManagerStore.getState().open,
-                              currentView: useChannelManagerStore.getState().currentView,
-                              onAuthSuccessRegistered: !!useChannelManagerStore.getState().onAuthSuccess,
-                            })
                           }}
                           className="absolute inset-0 bg-black/45 rounded-full flex items-center justify-center text-white text-xs font-semibold pointer-events-auto cursor-pointer"
                         >
                           {t('badges.offline')}
                         </div>
                       )}
-                      {isPcNotSupported && !isOffline && (
-                        <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-none text-center leading-tight">
-                          APP
-                        </div>
-                      )}
                     </div>
                   </div>
                 </TooltipTrigger>
-                {(isPcNotSupported || isOffline) && (
+                {isOffline && (
                   <TooltipContent>
-                    {isPcNotSupported ? t('tips.pcNotSupported') : t('tips.accountOffline')}
+                    {t('tips.accountOffline')}
                   </TooltipContent>
                 )}
               </Tooltip>
@@ -212,7 +188,7 @@ export const AccountSelector = memo(
           )
         })}
 
-        {pubList.length > 0 && (
+        {visiblePubList.length > 0 && (
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>

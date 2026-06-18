@@ -1,10 +1,11 @@
-import type { SocialAccount } from '@/api/types/account.type'
-import Image from 'next/image'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import { memo } from 'react'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { OssImage } from '@/components/common/OssImage'
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { cn } from '@/lib/utils'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import AccountStatusView from './AccountStatusView'
 
@@ -17,7 +18,7 @@ interface AccountItemProps {
 
 const AccountItem = memo(({ account, isActive, onSelect, indent = false }: AccountItemProps) => {
   const { t } = useTransClient('account')
-  const platInfo = AccountPlatInfoMap.get(account.type)
+  const platInfo = getPlatformInfoSync(account.type)
 
   return (
     <div
@@ -32,14 +33,14 @@ const AccountItem = memo(({ account, isActive, onSelect, indent = false }: Accou
     >
       <Avatar className="h-8 w-8 shrink-0">
         <AvatarImage src={getOssUrl(account.avatar)} alt={account.nickname} />
-        <AvatarFallback>{account.nickname?.[0] || account.account?.[0]}</AvatarFallback>
+        <AvatarFallback>{account.nickname?.[0]}</AvatarFallback>
       </Avatar>
 
       <div className="flex-1 min-w-0">
-        <div className="text-sm font-medium truncate">{account.nickname || account.account}</div>
+        <div className="text-sm font-medium truncate">{account.nickname}</div>
         <div className="flex items-center gap-2 mt-1 flex-wrap">
           {platInfo?.icon && (
-            <Image
+            <OssImage
               src={platInfo.icon}
               alt={platInfo.name}
               width={16}

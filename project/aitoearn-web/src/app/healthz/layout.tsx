@@ -1,3 +1,5 @@
+import { WechatBrowserOverlay } from '@/components/common/WechatBrowserOverlay'
+
 export const metadata = {
   title: 'AiToEarn',
   description: 'AiToEarn',
@@ -6,7 +8,10 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <WechatBrowserOverlay variant="standalone" />
+        {children}
+      </body>
     </html>
   )
 }

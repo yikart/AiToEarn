@@ -5,12 +5,12 @@
 
 'use client'
 
-import { FileText, Loader2, Pencil, Plus, X } from 'lucide-react'
+import { FileText, Loader2, Music, Pencil, Plus, X } from 'lucide-react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { MediaPreview } from '@/components/common/MediaPreview'
 import { BrushEditor } from '@/components/common/MediaPreview/BrushEditor'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 
 /** 上传的媒体文件类型 */
@@ -18,12 +18,12 @@ export interface IUploadedMedia {
   /** 唯一标识（用于进度、删除等场景的精确匹配） */
   id?: string
   url: string
-  type: 'image' | 'video' | 'document'
+  type: 'image' | 'video' | 'audio' | 'document'
   /** 上传进度 0-100，undefined 表示上传完成 */
   progress?: number
   /** 本地文件对象，用于预览 */
   file?: File
-  /** 文档名称（document 类型使用） */
+  /** 文件名称（document/audio 类型使用） */
   name?: string
   /** 缓存控制（可选） */
   cache_control?: {
@@ -156,7 +156,7 @@ export function MediaUpload({
     const media = medias[index]
     if (!media)
       return
-    if (media.type === 'document')
+    if (media.type === 'document' || media.type === 'audio')
       return
     setPreviewIndex(index)
   }
@@ -206,20 +206,20 @@ export function MediaUpload({
             key={`${media.url}-${index}`}
             className={cn(
               'relative group rounded-lg overflow-hidden border border-border bg-muted',
-              media.type === 'document' || media.type === 'video'
+              media.type === 'document' || media.type === 'video' || media.type === 'audio'
                 ? 'min-w-[220px] h-14'
                 : 'w-14 h-14',
             )}
           >
             {/* 媒体预览 */}
-            {media.type === 'document' ? (
+            {media.type === 'document' || media.type === 'audio' ? (
               <div className="flex items-center gap-3 h-full px-3 bg-background">
-                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-red-500/10 text-red-500">
-                  <FileText className="w-4 h-4" />
+                <div className="flex items-center justify-center w-7 h-7 rounded-md bg-primary/10 text-primary">
+                  {media.type === 'audio' ? <Music className="w-4 h-4" /> : <FileText className="w-4 h-4" />}
                 </div>
                 <div className="flex flex-col justify-center min-w-0">
                   <span className="text-xs font-medium text-foreground truncate max-w-[160px]">
-                    {media.name || media.file?.name || t('media.document' as any)}
+                    {media.name || media.file?.name || (media.type === 'audio' ? t('media.audio') : t('media.document'))}
                   </span>
                   {media.file && (
                     <span className="text-[11px] text-muted-foreground mt-0.5">
@@ -271,9 +271,9 @@ export function MediaUpload({
                 className={cn(
                   'absolute bottom-1 right-1 z-10 w-4 h-4 rounded-full flex items-center justify-center cursor-pointer',
                   'bg-background/95 text-muted-foreground shadow-sm border border-border/70',
-                  'hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors',
+                  'hover:border-transparent hover:bg-gradient-back hover:text-gradient-foreground hover:shadow-primary/20 transition-colors',
                 )}
-                aria-label={t('media.edit' as any)}
+                aria-label={t('media.edit')}
                 type="button"
               >
                 <Pencil className="w-2.5 h-2.5" />
@@ -325,7 +325,7 @@ export function MediaUpload({
                   'bg-background/95 text-muted-foreground shadow-sm border border-border/70',
                   'hover:bg-destructive hover:text-destructive-foreground hover:border-destructive transition-colors',
                 )}
-                aria-label={t('media.remove' as any)}
+                aria-label={t('media.remove')}
                 type="button"
               >
                 <X className="w-3 h-3" />

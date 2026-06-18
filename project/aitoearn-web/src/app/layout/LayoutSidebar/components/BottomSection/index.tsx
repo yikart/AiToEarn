@@ -1,12 +1,12 @@
 /**
  * BottomSection - 底部功能区容器
- * 包含插件入口
+ * 开源版仅保留浏览器插件入口。
  */
 
 'use client'
 
 import type { BottomSectionProps } from '../../types'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { PluginEntry } from './PluginEntry'
 
 export function BottomSection({ collapsed }: BottomSectionProps) {
@@ -17,11 +17,9 @@ export function BottomSection({ collapsed }: BottomSectionProps) {
         collapsed && 'items-center',
       )}
     >
-      {/* 浏览器插件入口 */}
       <PluginEntry collapsed={collapsed} />
     </div>
   )
 }
 
-// 导出子组件
 export { PluginEntry } from './PluginEntry'

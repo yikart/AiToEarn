@@ -32,6 +32,5 @@
   "termsOfService": "服务条款",
   "and": "和",
   "privacyPolicy": "隐私政策",
-  "newUserPromotion": "新用户登录就送14天会员，免费用！",
-  "manualLoginDisabledNotice": "当前环境无需手动登录。若仍无法访问，请检查配置。"
+  "newUserPromotion": "新用户登录就送14天会员，免费用！"
 }

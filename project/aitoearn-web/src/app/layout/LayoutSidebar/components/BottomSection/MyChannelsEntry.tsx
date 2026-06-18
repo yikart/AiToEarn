@@ -9,7 +9,7 @@ import { Tv } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { useChannelManagerStore } from '@/components/ChannelManager'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export function MyChannelsEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('account')

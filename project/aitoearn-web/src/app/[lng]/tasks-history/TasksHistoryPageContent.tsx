@@ -5,21 +5,21 @@
  */
 'use client'
 
-import type { TaskListItem } from '@/api/agent'
+import type { TaskListItem } from '@/api/ai/ai.types'
 import { ArrowLeft, FileText, FileVideo, History, RefreshCw, Search, Star, X } from 'lucide-react'
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { agentApi } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { TaskCardSkeleton } from '@/components/Chat'
 import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Pagination } from '@/components/ui/pagination'
-import UserLogsModal from '@/components/UserLogsModal'
-import VideoHistoryModal from '@/components/VideoHistoryModal'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
+import UserLogsModal from './components/UserLogsModal'
+import VideoHistoryModal from './components/VideoHistoryModal'
 
 export function TasksHistoryPageContent() {
   const { t } = useTransClient('chat')
@@ -79,7 +79,7 @@ export function TasksHistoryPageContent() {
   /** 初始加载 */
   useEffect(() => {
     loadTasks(1, searchKeyword, favoriteOnly)
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [])
 
   /** 搜索防抖处理 */
   const handleSearchChange = (value: string) => {

@@ -8,14 +8,14 @@ import Cropper from 'cropperjs'
 import { Loader2, Upload } from 'lucide-react'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { toast } from 'sonner'
-import { uploadToOss } from '@/api/oss'
+import { uploadToOss } from '@/api/materials/material.api'
 import { useTransClient } from '@/app/i18n/client'
 import ImgChoose from '@/components/PublishDialog/compoents/Choose/ImgChoose'
 import { formatImg, VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import { Button } from '@/components/ui/button'
 import { Modal } from '@/components/ui/modal'
 import { Slider } from '@/components/ui/slider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import 'cropperjs/dist/cropper.css'
 
@@ -82,13 +82,6 @@ const VideoCoverSeting = memo(
       getVideoCover(0)
     }, [videoCoverSetingModal])
 
-    // 图片变化时重新初始化裁剪器
-    useEffect(() => {
-      if (!imgFile)
-        return
-      initCropper()
-    }, [imgFile, aspectRatio])
-
     /** 获取视频截帧封面 */
     const getVideoCover = useCallback(
       async (n: number) => {
@@ -115,18 +108,25 @@ const VideoCoverSeting = memo(
       onClose()
     }, [onClose])
 
+    /** 销毁裁剪工具 */
+    const destroyCropper = useCallback(() => {
+      if (!cropper.current)
+        return
+
+      cropper.current.destroy()
+      cropper.current = undefined
+    }, [])
+
     /** 初始化裁剪工具 */
     const initCropper = useCallback(() => {
-      if (!cropperImg.current)
+      const image = cropperImg.current
+      if (!image || !imgFile?.imgUrl || !image.complete || image.naturalWidth === 0)
         return
 
       // 销毁旧的裁剪器实例
-      if (cropper.current) {
-        cropper.current.destroy()
-        cropper.current = undefined
-      }
+      destroyCropper()
 
-      cropper.current = new Cropper(cropperImg.current, {
+      cropper.current = new Cropper(image, {
         viewMode: 1,
         autoCropArea: 1,
         responsive: true,
@@ -138,7 +138,30 @@ const VideoCoverSeting = memo(
         minCropBoxWidth: 50,
         minCropBoxHeight: 50,
       })
-    }, [aspectRatio])
+    }, [aspectRatio, destroyCropper, imgFile?.imgUrl])
+
+    // 图片加载完成后初始化裁剪器，避免首次进入时图片尺寸未就绪
+    useEffect(() => {
+      if (!videoCoverSetingModal)
+        return
+      initCropper()
+    }, [imgFile?.imgUrl, initCropper, videoCoverSetingModal])
+
+    // 弹框关闭或组件卸载时清理裁剪器实例
+    useEffect(() => {
+      if (videoCoverSetingModal)
+        return
+      destroyCropper()
+    }, [destroyCropper, videoCoverSetingModal])
+
+    useEffect(() => destroyCropper, [destroyCropper])
+
+    /** 图片加载完成 */
+    const handleImageLoad = useCallback(() => {
+      if (!videoCoverSetingModal)
+        return
+      initCropper()
+    }, [initCropper, videoCoverSetingModal])
 
     /** 切换裁剪比例 */
     const handleAspectRatioChange = useCallback((ratio: number | undefined) => {
@@ -252,6 +275,7 @@ const VideoCoverSeting = memo(
                 src={imgFile?.imgUrl || '/'}
                 alt={t('videoCover.coverPreview')}
                 className={cn('max-h-full max-w-full', !imgFile?.imgUrl && 'opacity-0')}
+                onLoad={handleImageLoad}
               />
             </div>
           </div>

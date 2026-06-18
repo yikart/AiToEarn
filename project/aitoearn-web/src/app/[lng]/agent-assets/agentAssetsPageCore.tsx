@@ -1,6 +1,6 @@
 /**
- * AgentAssetsPageCore - Agent 素材详情页核心组件
- * 展示 Agent 生成的所有图片和视频素材
+ * AgentAssetsPageCore - AI 生成素材详情页核心组件
+ * 展示 AI 生成的所有图片和视频素材
  * 特点：
  * - 只读模式（无上传、删除功能）
  * - 瀑布流布局 + 无限滚动
@@ -13,15 +13,15 @@ import type { MediaPreviewItem } from '@/components/common/MediaPreview'
 import type { AssetVo } from '@/types/agent-asset'
 import { Bot, Loader2 } from 'lucide-react'
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
-import { getAgentAssets } from '@/api/ai'
+import { getAgentAssets } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { MediaPreview } from '@/components/common/MediaPreview'
 import { Button } from '@/components/ui/button'
 import { useDocumentTitle } from '@/hooks'
-import { getAssetMediaType } from '@/utils/agent-asset'
+import { getAssetMediaType } from '@/utils/agent/asset'
 import { getOssUrl } from '@/utils/oss'
 import { AgentAssetCard } from './components/AgentAssetCard'
 import { AgentAssetCardSkeleton } from './components/AgentAssetCard/AgentAssetCardSkeleton'
@@ -45,7 +45,6 @@ const MASONRY_BREAKPOINTS = {
 
 export function AgentAssetsPageCore() {
   const { t } = useTransClient('material')
-  const scrollContainerRef = useRef<HTMLDivElement>(null)
 
   // 动态更新页面标题
   useDocumentTitle(t('agentAssets.title'))
@@ -139,7 +138,7 @@ export function AgentAssetsPageCore() {
   /**
    * 获取预览项列表
    */
-  const getPreviewItems = useCallback((): MediaPreviewItem[] => {
+  const previewItems = useMemo<MediaPreviewItem[]>(() => {
     return assets.map((asset) => {
       const mediaType = getAssetMediaType(asset)
       return {
@@ -151,22 +150,18 @@ export function AgentAssetsPageCore() {
   }, [assets])
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
+    <div className="min-h-full bg-background">
       {/* 顶部导航 */}
       <AgentAssetsHeader total={total} />
 
       {/* 主内容区 */}
-      <main
-        id="agent-assets-scroll-container"
-        ref={scrollContainerRef}
-        className="flex-1 px-4 py-6 overflow-y-auto"
-      >
+      <main className="px-4 py-6">
         <div className="w-full mx-auto">
           {isLoading ? (
             // 加载骨架屏
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
               {Array.from({ length: PAGE_SIZE }).map((_, index) => (
-                <AgentAssetCardSkeleton key={index} />
+                <AgentAssetCardSkeleton key={index} index={index} />
               ))}
             </div>
           ) : assets.length === 0 ? (
@@ -208,7 +203,7 @@ export function AgentAssetsPageCore() {
                   </div>
                 )
               }
-              scrollableTarget="agent-assets-scroll-container"
+              scrollableTarget="main-content"
             >
               <Masonry
                 breakpointCols={MASONRY_BREAKPOINTS}
@@ -217,7 +212,11 @@ export function AgentAssetsPageCore() {
               >
                 {assets.map(asset => (
                   <div key={asset.id} className="mb-4">
-                    <AgentAssetCard asset={asset} onClick={handleAssetClick} />
+                    <AgentAssetCard
+                      asset={asset}
+                      previewLabel={t('agentAssets.previewAsset')}
+                      onClick={handleAssetClick}
+                    />
                   </div>
                 ))}
               </Masonry>
@@ -229,7 +228,7 @@ export function AgentAssetsPageCore() {
       {/* 媒体预览弹窗 */}
       <MediaPreview
         open={previewOpen}
-        items={getPreviewItems()}
+        items={previewItems}
         initialIndex={previewIndex}
         onClose={() => setPreviewOpen(false)}
       />

@@ -5,7 +5,7 @@
 
 'use client'
 
-import type { GoogleLoginParams } from '@/api/apiReq'
+import type { GoogleLoginParams } from '@/api/auth/auth.types'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { GoogleLogin } from '@react-oauth/google'
 import { Loader2 } from 'lucide-react'
@@ -14,13 +14,14 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { googleLoginApi } from '@/api/apiReq'
-import { emailCodeLoginApi, sendEmailCodeApi } from '@/api/auth'
+import { emailCodeLoginApi, googleLoginApi, sendEmailCodeApi } from '@/api/auth/auth.api'
+
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/lib/toast'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { useUserStore } from '@/store/user'
+import { toast } from '@/utils/ui/toast'
 
 import { useCountdown } from './useCountdown'
 
@@ -50,7 +51,8 @@ export function EmailLoginForm({
   const searchParams = useSearchParams()
   const redirect = redirectUrl ?? searchParams.get('redirect')
   const { setToken, setUserInfo } = useUserStore()
-  const { t, i18n } = useTransClient('login')
+  const { t } = useTransClient('login')
+  const lng = useGetClientLng()
   const { countdown, isCounting, start: startCountdown } = useCountdown()
   const [sendingCode, setSendingCode] = useState(false)
   const googleContainerRef = useRef<HTMLDivElement>(null)
@@ -186,14 +188,14 @@ export function EmailLoginForm({
           <div ref={googleContainerRef} className="space-y-3">
             {googleBtnWidth > 0 && (
               <GoogleLogin
-                key={`${i18n.language}-${googleBtnWidth}`}
+                key={`${lng}-${googleBtnWidth}`}
                 onSuccess={handleGoogleSuccess}
                 onError={() => toast.error(t('googleLoginFailed'))}
                 useOneTap={false}
                 theme="outline"
                 shape="rectangular"
                 text="continue_with"
-                locale={i18n.language.replace('-', '_')}
+                locale={lng.replace('-', '_')}
                 size="large"
                 width={String(googleBtnWidth)}
               />

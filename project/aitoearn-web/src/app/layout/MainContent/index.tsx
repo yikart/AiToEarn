@@ -5,7 +5,7 @@
 'use client'
 
 import { useNavigationLogic } from '@/app/layout/shared/hooks/useNavigationLogic'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { FilingRecord } from '../FilingRecord'
 
 interface MainContentProps {

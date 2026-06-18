@@ -11,7 +11,8 @@ import { memo, useCallback, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { useGetClientLng } from '@/hooks/useSystem'
+import { cn } from '@/utils/className'
 
 interface CalendarDay {
   date: dayjs.Dayjs
@@ -43,7 +44,8 @@ export const DateRangeCalendar = memo(({
   hideFooter,
   className,
 }: DateRangeCalendarProps) => {
-  const { t, i18n } = useTransClient('common')
+  const { t } = useTransClient('common')
+  const lng = useGetClientLng()
   const [currentMonth, setCurrentMonth] = useState(() =>
     startDate ? dayjs(startDate) : dayjs(),
   )
@@ -57,10 +59,10 @@ export const DateRangeCalendar = memo(({
   const weekDays = useMemo(() => {
     const days: string[] = []
     for (let i = 0; i < 7; i++) {
-      days.push(dayjs().day(i).locale(i18n.language).format('dd'))
+      days.push(dayjs().day(i).locale(lng).format('dd'))
     }
     return days
-  }, [i18n.language])
+  }, [lng])
 
   const calendarDays = useMemo((): CalendarDay[] => {
     const days: CalendarDay[] = []
@@ -149,7 +151,7 @@ export const DateRangeCalendar = memo(({
           <ChevronLeft className="size-4" />
         </Button>
         <span className="text-sm font-medium">
-          {currentMonth.locale(i18n.language).format('YYYY MMMM')}
+          {currentMonth.locale(lng).format('YYYY MMMM')}
         </span>
         <Button
           variant="ghost"
@@ -176,15 +178,16 @@ export const DateRangeCalendar = memo(({
           const dateStr = item.date.format('YYYY-MM-DD')
           const { isStart, isEnd, isToday, inRange, inPreview } = getDayState(dateStr)
           const isSelected = isStart || isEnd
+          const isRangeMiddle = inRange || inPreview
 
           return (
             <div
               key={i}
               className={cn(
                 'relative flex items-center justify-center h-9',
-                (inRange || inPreview) && 'bg-primary/10',
-                isStart && endDate && 'rounded-l-full bg-primary/10',
-                isEnd && startDate && 'rounded-r-full bg-primary/10',
+                isRangeMiddle && 'bg-primary/15',
+                isStart && endDate && 'rounded-l-full bg-primary/15',
+                isEnd && startDate && 'rounded-r-full bg-primary/15',
                 isStart && !endDate && !inPreview && 'bg-transparent',
                 isEnd && !startDate && 'bg-transparent',
               )}
@@ -197,8 +200,9 @@ export const DateRangeCalendar = memo(({
                 className={cn(
                   'relative size-9 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer',
                   !item.isCurrentMonth && 'opacity-40',
-                  item.isCurrentMonth && !isSelected && 'hover:bg-accent',
-                  isSelected && 'bg-primary text-primary-foreground hover:bg-primary/90',
+                  item.isCurrentMonth && !isSelected && !isRangeMiddle && 'hover:bg-accent',
+                  item.isCurrentMonth && !isSelected && isRangeMiddle && 'text-primary hover:bg-primary/10',
+                  isSelected && 'bg-primary text-gradient-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:text-gradient-foreground',
                   isToday && !isSelected && 'border border-primary',
                 )}
               >

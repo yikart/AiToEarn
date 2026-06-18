@@ -8,14 +8,14 @@
 import type { ActionType, IActionContext, IMediaItem, ITaskData } from '../agent.types'
 import type { PluginPublishItem } from '@/store/plugin/store'
 import { driver } from 'driver.js'
-import { MediaType } from '@/api/agent'
-import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/material'
+import { MediaType } from '@/api/ai/ai.constants'
+import { apiCreateMaterial, apiGetMaterialGroupList } from '@/api/materials/material.api'
 import { PubType } from '@/app/config/publishConfig'
-import { confirm } from '@/lib/confirm'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
+import { confirm } from '@/utils/ui/confirm'
+import { toast } from '@/utils/ui/toast'
 
 // ============ Action Handler 接口 ============
 

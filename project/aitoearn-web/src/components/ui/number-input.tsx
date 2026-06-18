@@ -7,7 +7,7 @@
 import type { NumericFormatProps } from 'react-number-format'
 import * as React from 'react'
 import { NumericFormat } from 'react-number-format'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 // 基础样式，与 src/components/ui/input.tsx 保持一致
 const inputBaseClass

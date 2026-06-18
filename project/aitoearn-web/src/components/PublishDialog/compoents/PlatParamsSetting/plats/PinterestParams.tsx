@@ -9,8 +9,7 @@ import type {
 import { Loader2, Pin, Plus, Search } from 'lucide-react'
 import { forwardRef, memo, useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { createPinterestBoardApi } from '@/api/pinterest'
-import { PlatType } from '@/app/config/platConfig'
+import { createPinterestBoardApi } from '@/api/platforms/pinterest.api'
 import { useTransClient } from '@/app/i18n/client'
 import CommonTitleInput from '@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
@@ -20,20 +19,18 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
-import { useAccountStore } from '@/store/account'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 
 const PinterestParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('pinterest')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
       const { getPinterestBoards, pinterestBoards } = usePublishDialogData(
@@ -101,21 +98,11 @@ const PinterestParams = memo(
           return
         }
 
-        const pinterestAccount = useAccountStore
-          .getState()
-          .accountList
-          .find(v => v.type === PlatType.Pinterest)
-
-        if (!pinterestAccount) {
-          toast.error(t('messages.noAccountFound'))
-          return
-        }
-
         try {
           setCreatingBoard(true)
           const response = await createPinterestBoardApi(
             { name: newBoardName.trim() },
-            pinterestAccount.id,
+            pubItem.account.id,
           )
 
           if (response?.code === 0) {

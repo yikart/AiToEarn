@@ -3,7 +3,7 @@
  */
 import type { ForwardedRef } from 'react'
 import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
-import { Image, Pencil, X } from 'lucide-react'
+import { Pencil, X } from 'lucide-react'
 import React, { forwardRef, memo } from 'react'
 import { useTranslation } from 'react-i18next'
 import PublishUploadProgress from '@/components/PublishDialog/compoents/PublishManageUpload/PublishUploadProgress'
@@ -17,7 +17,6 @@ export interface IPubParmasTextuploadImageProps {
   onClick: () => void
   imageFile: IImgFile
   onEditClick: () => void
-  onImageToImageClick?: () => void
 }
 
 const PubParmasTextuploadImage = memo(
@@ -28,7 +27,6 @@ const PubParmasTextuploadImage = memo(
         onClose,
         imageFile,
         onEditClick,
-        onImageToImageClick,
       }: IPubParmasTextuploadImageProps,
       ref: ForwardedRef<IPubParmasTextuploadImageRef>,
     ) => {
@@ -36,7 +34,7 @@ const PubParmasTextuploadImage = memo(
 
       return (
         <div
-          className="h-[110px] border border-border rounded cursor-pointer relative overflow-hidden"
+          className="h-[124px] w-full border border-border rounded cursor-pointer relative overflow-hidden"
           onClick={onClick}
         >
           {/* 关闭按钮 */}
@@ -84,29 +82,6 @@ const PubParmasTextuploadImage = memo(
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-
-            {onImageToImageClick && (
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      variant="secondary"
-                      size="sm"
-                      className="min-w-0 p-1 h-6 cursor-pointer"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onImageToImageClick()
-                      }}
-                    >
-                      <Image className="h-3 w-3" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{t('aiFeatures.imageToImage')}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            )}
           </div>
 
           {/* 上传进度 */}

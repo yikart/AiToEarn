@@ -1,6 +1,6 @@
 /**
  * 草稿箱核心组件
- * 通过 PlanTabBar 管理多推广计划切换，展示内容管理模块
+ * 通过 PlanTabBar 管理多草稿箱切换，展示内容管理模块
  */
 
 'use client'
@@ -9,14 +9,14 @@ import { Loader2, Plus, Sparkles } from 'lucide-react'
 import { usePathname, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { useBrandPromotionStore } from '@/app/[lng]/brand-promotion/brandPromotionStore'
-import CreatePlanModal from '@/app/[lng]/brand-promotion/components/CreatePlanModal'
-import PlanTabBar from '@/app/[lng]/brand-promotion/components/PlanTabBar'
-import { usePlanDetailStore } from '@/app/[lng]/brand-promotion/planDetailStore'
-import { usePlanTabStore } from '@/app/[lng]/brand-promotion/planTabStore'
 import { useTransClient } from '@/app/i18n/client'
+import CreatePlanModal from '@/components/draft-box/components/CreatePlanModal'
+import DraftContentModule from '@/components/draft-box/components/DraftContentModule'
+import PlanTabBar from '@/components/draft-box/components/PlanTabBar'
 import { Button } from '@/components/ui/button'
-import DraftContentModule from './components/DraftContentModule'
+import { useBrandPromotionStore } from '@/store/draft-box/brandPromotionStore'
+import { usePlanDetailStore } from '@/store/draft-box/planDetailStore'
+import { usePlanTabStore } from '@/store/draft-box/planTabStore'
 
 export default function DraftBoxCore() {
   const { t } = useTransClient('brandPromotion')
@@ -27,15 +27,15 @@ export default function DraftBoxCore() {
 
   const {
     tabPlans,
-    tabPlansLoading,
     selectedPlanId,
     initialized,
+    planTabHydrated,
   } = usePlanTabStore(
     useShallow(state => ({
       tabPlans: state.tabPlans,
-      tabPlansLoading: state.tabPlansLoading,
       selectedPlanId: state.selectedPlanId,
       initialized: state.initialized,
+      planTabHydrated: state._hasHydrated,
     })),
   )
 
@@ -47,24 +47,34 @@ export default function DraftBoxCore() {
 
   const initContentData = usePlanDetailStore(state => state.initContentData)
   const urlPlanExists = !!urlPlanId && tabPlans.some(plan => plan.id === urlPlanId)
+  const selectedPlanExists = !!selectedPlanId && tabPlans.some(plan => plan.id === selectedPlanId)
+  const initialUrlPlanProcessedRef = useRef(false)
   const prevSelectedPlanIdRef = useRef<string | null>(selectedPlanId)
   const prevUrlPlanIdRef = useRef<string | null>(urlPlanId)
   const selectedPlanChanged = prevSelectedPlanIdRef.current !== selectedPlanId
   const urlPlanChanged = prevUrlPlanIdRef.current !== urlPlanId
   const shouldApplyUrlPlan = !!(
-    initialized
+    planTabHydrated
+    && initialized
     && urlPlanId
     && urlPlanExists
     && selectedPlanId !== urlPlanId
-    && urlPlanChanged
+    && (!initialUrlPlanProcessedRef.current || urlPlanChanged)
   )
   const shouldSyncSelectedToUrl = !!(
-    initialized
+    planTabHydrated
+    && initialized
     && selectedPlanId
+    && selectedPlanExists
     && (
       !urlPlanId
       || !urlPlanExists
-      || (selectedPlanId !== urlPlanId && selectedPlanChanged && !urlPlanChanged)
+      || (
+        selectedPlanId !== urlPlanId
+        && initialUrlPlanProcessedRef.current
+        && selectedPlanChanged
+        && !urlPlanChanged
+      )
     )
   )
 
@@ -77,8 +87,14 @@ export default function DraftBoxCore() {
 
   // 初始化 Tab 列表
   useEffect(() => {
-    initTabs(urlPlanId)
-  }, [initTabs, urlPlanId])
+    if (!planTabHydrated) {
+      return
+    }
+
+    void initTabs(urlPlanId).finally(() => {
+      const state = usePlanTabStore.getState()
+    })
+  }, [initTabs, planTabHydrated, urlPlanId])
 
   // URL 参数激活对应 Tab
   useEffect(() => {
@@ -92,6 +108,7 @@ export default function DraftBoxCore() {
     if (!selectedPlanId || !shouldSyncSelectedToUrl) {
       return
     }
+
     const nextUrl = buildPlanUrl(selectedPlanId)
     const currentUrl = `${window.location.pathname}${window.location.search}`
     if (nextUrl !== currentUrl) {
@@ -102,21 +119,26 @@ export default function DraftBoxCore() {
   // 仅在 URL 已经完成应用，或当前就是 store 主导的切换时初始化，避免首屏默认计划与 URL 计划双请求
   useEffect(() => {
     if (selectedPlanId && !shouldApplyUrlPlan) {
-      initContentData(selectedPlanId, false, { skipMaterials: true })
+      void initContentData(selectedPlanId, false, { skipMaterials: true }).finally(() => {
+      })
     }
   }, [initContentData, selectedPlanId, shouldApplyUrlPlan])
 
   useEffect(() => {
+    if (planTabHydrated && initialized) {
+      initialUrlPlanProcessedRef.current = true
+    }
     prevSelectedPlanIdRef.current = selectedPlanId
     prevUrlPlanIdRef.current = urlPlanId
-  }, [selectedPlanId, urlPlanId])
+  }, [initialized, planTabHydrated, selectedPlanId, urlPlanId])
 
   // Tab 切换回调
   const handlePlanChange = useCallback((planId: string) => {
-    initContentData(planId, true, { skipMaterials: true })
+    void initContentData(planId, true, { skipMaterials: true }).finally(() => {
+    })
   }, [initContentData])
 
-  const loading = !initialized
+  const loading = !planTabHydrated || !initialized
   const showEmpty = initialized && tabPlans.length === 0
 
   if (loading) {
@@ -172,7 +194,7 @@ export default function DraftBoxCore() {
     <div className="flex flex-col h-full">
       {/* Tab 栏 */}
       <div data-testid="draftbox-plan-tabs">
-        <PlanTabBar onPlanChange={handlePlanChange} syncUrlQuery />
+        <PlanTabBar onPlanChange={handlePlanChange} />
       </div>
       <div className="flex-1 min-h-0">
         <div className="flex flex-col h-full bg-background">
@@ -181,7 +203,7 @@ export default function DraftBoxCore() {
           </div>
         </div>
       </div>
-      {/* 创建/编辑推广计划弹窗 */}
+      {/* 创建/编辑草稿箱弹窗 */}
       <CreatePlanModal />
     </div>
   )

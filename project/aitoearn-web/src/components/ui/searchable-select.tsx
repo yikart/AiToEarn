@@ -5,7 +5,7 @@
 
 'use client'
 
-import { Check, ChevronsUpDown, X } from 'lucide-react'
+import { Check, ChevronsUpDown, Loader2, X } from 'lucide-react'
 import * as React from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
@@ -19,7 +19,7 @@ import {
   CommandList,
 } from '@/components/ui/command'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export interface SearchableSelectOption {
   value: string
@@ -43,6 +43,10 @@ export interface SearchableSelectProps {
   emptyText?: string
   /** 是否禁用 */
   disabled?: boolean
+  /** 是否处于加载中 */
+  loading?: boolean
+  /** 加载中文案 */
+  loadingText?: string
   /** 自定义类名 */
   className?: string
   /** 触发器高度，默认 h-8 */
@@ -61,6 +65,8 @@ function SearchableSelect({
   searchPlaceholder,
   emptyText,
   disabled = false,
+  loading = false,
+  loadingText,
   className,
   triggerClassName,
   clearable,
@@ -73,6 +79,8 @@ function SearchableSelect({
   const placeholderText = placeholder || t('select.placeholder')
   const searchPlaceholderText = searchPlaceholder || t('select.searchPlaceholder')
   const emptyTextDisplay = emptyText || t('select.noResults')
+  const loadingTextDisplay = loadingText || t('actions.loading')
+  const isDisabled = disabled || loading
 
   // 获取当前选中项
   const selectedOption = React.useMemo(() => {
@@ -101,6 +109,12 @@ function SearchableSelect({
     })
   }, [open, selectedLabel])
 
+  React.useEffect(() => {
+    if (loading) {
+      setOpen(false)
+    }
+  }, [loading])
+
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
       <PopoverTrigger asChild>
@@ -108,7 +122,8 @@ function SearchableSelect({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          disabled={disabled}
+          aria-busy={loading || undefined}
+          disabled={isDisabled}
           className={cn(
             'w-full justify-between font-normal h-8 cursor-pointer',
             !value && 'text-muted-foreground',
@@ -120,9 +135,13 @@ function SearchableSelect({
             {selectedOption?.icon && (
               <img src={selectedOption.icon} alt="" className="w-5 h-5 rounded-sm object-contain shrink-0" />
             )}
-            <span className="truncate" style={{ color: selectedOption?.color }}>{selectedLabel || placeholderText}</span>
+            <span className="truncate" style={{ color: selectedOption?.color }}>
+              {loading ? loadingTextDisplay : selectedLabel || placeholderText}
+            </span>
           </div>
-          {clearable && !disabled && onClear ? (
+          {loading ? (
+            <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-70" />
+          ) : clearable && !isDisabled && onClear ? (
             <span
               role="button"
               className="ml-2 shrink-0 opacity-50 hover:opacity-100 transition-opacity"

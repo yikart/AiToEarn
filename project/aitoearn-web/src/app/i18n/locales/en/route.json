@@ -1,7 +1,5 @@
 {
   "home": "Home",
-  "header.draftBox": "Content Management",
-  "header.agentAssets": "Agent Assets",
   "tasksHistory": "Task History",
   "accounts": "Publish",
   "publish": "Publish",
@@ -20,9 +18,15 @@
   "sidebar.more": "More",
   "mobileBottom.content": "Content",
   "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.gold": "Gold",
   "mobileBottom.publish": "Publish",
   "mobileBottom.interaction": "Interact",
   "aiSocial": "AI Publish",
-  "xhsData": "XHS Data",
-  "download": "Download"
+  "myTasks": "My Tasks",
+  "createTask": "Create Task",
+  "pricing": "Pricing",
+  "myStore": "My Store",
+  "tiktokShop": "TikTok Shop",
+  "xhsData": "AI Interaction",
+  "groundPromotion": "Ground Promotion"
 }

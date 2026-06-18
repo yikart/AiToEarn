@@ -5,11 +5,12 @@
 
 'use client'
 
-import type { MediaItem } from '@/api/types/media'
+import type { MediaItem } from '@/api/materials/material.types'
 import { Image as ImageIcon, Play, Video } from 'lucide-react'
 import Image from 'next/image'
 import { useVideoThumbnail } from '@/hooks/useVideoThumbnail'
-import { cn, formatRelativeTime } from '@/lib/utils'
+import { cn } from '@/utils/className'
+import { formatRelativeTime } from '@/utils/format'
 import { getOssUrl } from '@/utils/oss'
 
 export interface MediaPreviewCardProps {

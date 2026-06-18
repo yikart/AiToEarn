@@ -1,4 +1,4 @@
-import { fallbackLng, languages } from '@/lib/i18n/languageConfig'
+import { fallbackLng, languages } from '@/app/i18n/languageConfig'
 
 export { fallbackLng, languages }
 export const defaultNS = 'common'

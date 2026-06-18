@@ -1,0 +1,158 @@
+{
+  "remoteAutomation": {
+    "title": "リモート自動化デバッグ",
+    "description": "固定フロー: ページを開く、Web から渡された JavaScript を実行する、スクリーンショットを撮る、結果を返す。",
+    "status": {
+      "connected": "プラグイン接続済み",
+      "disconnected": "プラグイン未接続"
+    },
+    "form": {
+      "title": "実行パラメータ",
+      "urlLabel": "対象ページ URL",
+      "urlPlaceholder": "https://example.com",
+      "codeLabel": "実行コード",
+      "codePlaceholder": "実行する JavaScript コードを入力",
+      "codeHint": "コードは対象ページのメインワールドで実行されます。関数本体を直接記述してください。例: `return document.title`",
+      "timeoutLabel": "実行タイムアウト (ms)",
+      "screenshotLabel": "実行後にスクリーンショット",
+      "screenshotHint": "ウィンドウを閉じる前に現在のページを撮影します",
+      "run": "実行開始"
+    },
+    "validation": {
+      "urlRequired": "対象ページ URL を入力してください",
+      "codeRequired": "実行する JavaScript コードを入力してください"
+    },
+    "result": {
+      "title": "実行結果",
+      "empty": "まだ実行履歴がありません",
+      "emptyValue": "(空)",
+      "pluginUnsupported": "プラグインが未インストールか、現在のバージョンで remoteAutomationRun メソッドをサポートしていません",
+      "executionError": "実行エラー",
+      "success": "成功",
+      "failed": "失敗",
+      "executionTime": "実行時間 {{value}} ms",
+      "url": "URL: ",
+      "message": "メッセージ: ",
+      "payload": "実行結果",
+      "screenshot": "スクリーンショット",
+      "screenshotAlt": "実行スクリーンショット"
+    }
+  },
+  "proxyRequest": {
+    "title": "プラグインプロキシリクエストデバッグ",
+    "description": "ブラウザ拡張の Background 経由で任意の URL をリクエストし、生のレスポンス本文、ステータス、ヘッダーをサイトへ返します。",
+    "status": {
+      "connected": "プラグイン接続済み",
+      "disconnected": "プラグイン未接続"
+    },
+    "form": {
+      "title": "リクエストパラメータ",
+      "urlLabel": "対象 URL",
+      "urlPlaceholder": "https://example.com/api",
+      "headersLabel": "ヘッダー (JSON)",
+      "headersPlaceholder": "{\n  \"accept\": \"application/json\"\n}",
+      "headersHint": "JSON オブジェクトを入力してください。ヘッダー値は送信前に文字列へ変換されます。",
+      "bodyLabel": "本文",
+      "bodyPlaceholder": "{\n  \"hello\": \"world\"\n}",
+      "bodyHint": "有効な JSON は JSON として送信され、無効な JSON は生の文字列として送信されます。",
+      "methodLabel": "推定メソッド",
+      "methodGet": "GET",
+      "methodPost": "POST",
+      "methodHint": "プラグインはこのリクエストを {{method}} として送信します。",
+      "credentialsHint": "対象サイトが許可している場合、拡張機能はブラウザ Cookie を含めてリクエストします。",
+      "bodyIgnoredHint": "GET モードではリクエスト本文を送信しません。本文を送りたい場合は POST に切り替えてください。",
+      "submit": "リクエスト送信"
+    },
+    "validation": {
+      "urlRequired": "対象 URL を入力してください",
+      "headersInvalid": "ヘッダーは有効な JSON オブジェクトである必要があります"
+    },
+    "result": {
+      "title": "リクエスト結果",
+      "empty": "まだプロキシリクエストの履歴がありません",
+      "emptyValue": "(空)",
+      "pluginUnsupported": "プラグインが未インストールか、現在のバージョンで proxyRequest メソッドをサポートしていません",
+      "requestFailed": "プロキシリクエストに失敗しました",
+      "success": "成功",
+      "failed": "失敗",
+      "status": "ステータス {{status}} {{statusText}}",
+      "url": "リクエスト URL: ",
+      "finalUrl": "最終 URL: ",
+      "message": "メッセージ: ",
+      "requestHeaders": "リクエストヘッダー",
+      "responseHeaders": "レスポンスヘッダー",
+      "requestBody": "リクエスト本文",
+      "responseBody": "レスポンス本文",
+      "clear": "クリア"
+    }
+  },
+  "wxSphPublish": {
+    "title": "WeChat Channels Publish Debug",
+    "description": "Use the browser extension to publish a video through WeChat Channels web requests and debug login state, video/cover upload, scheduling, and location parameters.",
+    "status": {
+      "connected": "Plugin Connected",
+      "disconnected": "Plugin Disconnected"
+    },
+    "permission": {
+      "title": "Permission Check",
+      "check": "Check Plugin Permission",
+      "granted": "Plugin permissions are ready",
+      "denied": "Plugin permissions are not fully granted",
+      "failed": "Permission check failed"
+    },
+    "login": {
+      "title": "WeChat Channels Login",
+      "button": "Read Login State",
+      "empty": "Log in to channels.weixin.qq.com first, then read the login state.",
+      "failed": "WeChat Channels login failed",
+      "uid": "UID: {{uid}}"
+    },
+    "form": {
+      "title": "Publish Parameters",
+      "video": "Video File",
+      "cover": "Cover Image",
+      "videoMetadata": "Video: {{width}}×{{height}}, {{duration}}s, about {{size}} MB",
+      "workTitle": "Title",
+      "workTitlePlaceholder": "Optional, used as extra description text",
+      "topics": "Topics",
+      "topicsPlaceholder": "Separate by comma or newline, e.g. food, coffee",
+      "desc": "Description",
+      "descPlaceholder": "Enter the WeChat Channels description",
+      "scheduledTime": "Scheduled Time",
+      "publish": "Publish to WeChat Channels"
+    },
+    "location": {
+      "title": "Location",
+      "hint": "This version only debugs location parameters. If poiId is filled, it will be submitted with the post.",
+      "poiId": "POI ID",
+      "poiIdPlaceholder": "For example, uid returned by helper_search_location",
+      "poiName": "Location Name",
+      "poiNamePlaceholder": "Example: Coffee Shop",
+      "latitude": "Latitude",
+      "latitudePlaceholder": "39.904200",
+      "longitude": "Longitude",
+      "longitudePlaceholder": "116.407400",
+      "city": "City",
+      "cityPlaceholder": "Beijing",
+      "address": "Address",
+      "addressPlaceholder": "Detailed address"
+    },
+    "validation": {
+      "videoRequired": "Please select a video file",
+      "coverRequired": "Please select a cover image",
+      "videoMetadataRequired": "Video metadata is not ready. Please select the video again.",
+      "videoMetadataFailed": "Failed to read video metadata"
+    },
+    "result": {
+      "title": "Publish Result",
+      "pluginMissing": "The plugin is not installed or AIToEarnPlugin is not injected",
+      "publishFailed": "Publish failed",
+      "success": "Published successfully",
+      "failed": "Publish failed"
+    },
+    "progress": {
+      "title": "Publish Progress",
+      "empty": "No publish progress yet"
+    }
+  }
+}

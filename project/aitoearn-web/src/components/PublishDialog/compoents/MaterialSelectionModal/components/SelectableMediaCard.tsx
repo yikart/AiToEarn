@@ -11,7 +11,7 @@ import { motion } from 'framer-motion'
 import { Check, Image as ImageIcon, Play, Video } from 'lucide-react'
 import Image from 'next/image'
 import { useVideoThumbnail } from '@/hooks/useVideoThumbnail'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 
 export function SelectableMediaCard({

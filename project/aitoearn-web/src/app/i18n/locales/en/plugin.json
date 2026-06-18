@@ -26,8 +26,7 @@
     "platforms": "Platforms",
     "status": "Status",
     "time": "Time",
-    "viewDetail": "View Detail",
-    "untitled": "Untitled"
+    "viewDetail": "View Detail"
   },
   "publishDetail": {
     "title": "Publish Detail",
@@ -42,14 +41,41 @@
     "close": "Close",
     "minimize": "Minimize",
     "unknownAccount": "Unknown Account",
-    "creatingRecord": "Creating publish record..."
+    "creatingRecord": "Creating publish record...",
+    "progressTitle": "Publishing Progress",
+    "completeTitle": "Publish Complete",
+    "sectionUserAction": "Action Needed",
+    "sectionAuto": "Auto Publish",
+    "sectionTask": "Publish Tasks",
+    "actionRequired": "Action needed",
+    "userActionTitle": "Waiting to finish on {{platform}}",
+    "userActionDesc": "Your content is ready. Go to the platform to complete the final step.",
+    "preparingUserAction": "Preparing the {{platform}} publish entry...",
+    "openPlatform": "Open {{platform}}",
+    "openPlatformFailed": "Failed to open {{platform}}. Copy the short link and open it manually.",
+    "copyShortLink": "Copy short link",
+    "shortLinkCopied": "Short link copied",
+    "shortLinkCopyFailed": "Copy failed",
+    "taskCreated": "Task created",
+    "autoPendingDesc": "Waiting for auto publish to start. Keep this page open.",
+    "sectionTitleWithCount": "{{title}} ({{count}})",
+    "userActionQrDesc": "Your content is ready. Scan the QR code with your phone to finish publishing.",
+    "userActionMobileDesc": "Your content is ready. Tap the button below to open {{platform}} and finish publishing.",
+    "userActionPolling": "Checking whether publishing succeeded...",
+    "userActionPublished": "Published successfully",
+    "userActionFailed": "Publishing failed. Please publish again.",
+    "cancelPublish": "Cancel publish",
+    "cancelPublishConfirmTitle": "Cancel publish?",
+    "cancelPublishConfirmContent": "After cancellation, this content will stop waiting for QR-code publishing. You can start publishing again later.",
+    "cancelPublishSuccess": "Publish canceled",
+    "cancelPublishFailed": "Failed to cancel publish. Please try again."
   },
   "publishFloating": {
     "xhsPublishing": "RedNote is publishing",
-    "pluginPublishing": "Plugin publishing in progress",
-    "openDetail": "Click to view details",
-    "completed": "Plugin publishing completed",
-    "failed": "Plugin publishing failed. View details."
+    "pluginPublishing": "Auto publish in progress",
+    "openDetail": "Click to view publishing progress",
+    "completed": "Auto publish completed",
+    "failed": "Auto publish failed. View progress."
   },
   "common": {
     "confirm": "Confirm",
@@ -61,6 +87,7 @@
     "publishing": "Publishing",
     "completed": "Completed",
     "error": "Error",
+    "canceled": "Canceled",
     "action": "Action",
     "total": "Total",
     "items": "items",
@@ -71,7 +98,8 @@
     "PENDING": "Pending",
     "PUBLISHING": "Publishing",
     "COMPLETED": "Completed",
-    "ERROR": "Error"
+    "ERROR": "Error",
+    "CANCELED": "Canceled"
   },
   "header": {
     "pluginActive": "Plugin Active",
@@ -97,6 +125,10 @@
     "viewPublishList": "View Publish List",
     "permissionRequired": "Permission Required",
     "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
+    "siteAccessRequiredTitle": "Site access permission is required",
+    "siteAccessRequiredDescription": "Site access is not granted, so the extension cannot work on AiToEarn pages. You can fix it in either way:",
+    "siteAccessStepReauthorize": "Log out and authorize the extension again.",
+    "siteAccessStepExtensionSettings": "Open your browser extension manager, find “AiToEarn Extension”, click “Details”, then set “Site access” to “On all sites”.",
     "checkPermission": "Check Permission Again",
     "sync": "Sync",
     "syncToAccount": "Sync to Account Manager",

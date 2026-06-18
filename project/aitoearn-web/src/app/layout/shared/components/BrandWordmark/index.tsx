@@ -2,7 +2,7 @@
  * BrandWordmark - 布局区域复用的品牌字标
  */
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export const BRAND_TITLE = 'AitoEarn'
 

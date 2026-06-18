@@ -8,18 +8,16 @@
 
 'use client'
 
-import type { SocialAccount } from '@/api/types/account.type'
-import { BarChart3, Bot, SquarePen, UserPlus } from 'lucide-react'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import { Bot, SquarePen, UserPlus } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
-import { PlatType } from '@/app/config/platConfig'
+import { apiUpdateAccountGroupSortRank } from '@/api/accounts/account.api'
 import { useTransClient } from '@/app/i18n/client'
-import TwitterExploreDialog from '@/components/twitter/TwitterAnalyticsDialog'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { toast } from '@/utils/ui/toast'
 import AccountSelector from './components/AccountSelector'
 
 export interface IAccountsTopNavProps {
@@ -34,7 +32,6 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
   const [collapsedSpaces, setCollapsedSpaces] = useState<Set<string>>(new Set())
   const [sortLoading, setSortLoading] = useState<string | null>(null)
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
-  const [analyticsOpen, setAnalyticsOpen] = useState(false)
 
   const {
     accountList,
@@ -62,7 +59,7 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
       accountList.filter(
         account =>
           account.nickname?.toLowerCase().includes(accountSearchText.toLowerCase())
-          || account.account?.toLowerCase().includes(accountSearchText.toLowerCase()),
+          || account.uid?.toLowerCase().includes(accountSearchText.toLowerCase()),
       ),
     [accountList, accountSearchText],
   )
@@ -205,32 +202,7 @@ const AccountsTopNav = memo<IAccountsTopNavProps>(({ onNewWork, onAddAccount }) 
             <Bot className="h-4 w-4" />
             <span>{t('agentCreate')}</span>
           </Button>
-
-          {/* Twitter 数据分析入口 */}
-          {accountActive?.type === PlatType.Twitter && (
-            <>
-              <div className="border-l border-border h-6 mx-1 md:mx-2 hidden md:block" />
-              <Button
-                variant="outline"
-                onClick={() => setAnalyticsOpen(true)}
-                className="h-8 md:h-9 gap-1 md:gap-2 px-2 md:px-4 cursor-pointer"
-              >
-                <BarChart3 className="h-4 w-4" />
-                <span>{t('explore')}</span>
-              </Button>
-            </>
-          )}
         </div>
-
-        {/* Twitter 数据分析弹窗 */}
-        {accountActive?.type === PlatType.Twitter && (
-          <TwitterExploreDialog
-            open={analyticsOpen}
-            onOpenChange={setAnalyticsOpen}
-            accountId={accountActive.id}
-            username={accountActive.account}
-          />
-        )}
 
         {/* 右侧: 频道选择器(按空间分组) */}
         <AccountSelector

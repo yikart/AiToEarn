@@ -2,10 +2,20 @@
   "title": "설정",
   "tabs": {
     "profile": "프로필",
+    "agent": "에이전트",
+    "income": "수입",
+    "balance": "잔액",
+    "subscription": "크레딧",
+    "membership": "청구서",
+    "shopifyStores": "Shopify Stores",
     "general": "일반",
-    "agent": "에이전트"
+    "ticket": "티켓",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Seedance 전용 크레딧"
   },
   "profile": {
+    "totalIncome": "잔액",
+    "currentBalance": "현재 크레딧",
     "logout": "로그아웃",
     "edit": "편집",
     "editName": "닉네임 편집",
@@ -30,7 +40,206 @@
     "zoomOut": "축소",
     "imageLoading": "이미지 로딩 중...",
     "processing": "처리 중...",
-    "githubStars": "GitHub 스타"
+    "githubStars": "GitHub 스타",
+    "viewMembershipBenefits": "멤버십 혜택 보기",
+    "redeemCodeTitle": "기업 멤버십 활성화 코드를 교환하세요",
+    "redeemCodeDescription": "교환에 성공하면 기업 멤버십이 활성화되고 해당 크레딧 혜택이 지급됩니다.",
+    "redeemCodePlaceholder": "기업 멤버십 활성화 코드를 입력하세요",
+    "redeemCodeButton": "지금 교환",
+    "redeemCodeRequired": "기업 멤버십 활성화 코드를 입력하세요",
+    "redeemCodeSuccess": "기업 멤버십 활성화 코드 교환에 성공했습니다",
+    "redeemCodeFailed": "기업 멤버십 활성화 코드 교환에 실패했습니다",
+    "redeemCodeContactPrefix": "활성화 코드가 없으신가요? ",
+    "redeemCodeContactSuffix": "에서 기업 멤버십 활성화 코드를 받으세요."
+  },
+  "income": {
+    "balance": "광고주 잔액",
+    "withdrawableBalance": "크리에이터 잔액",
+    "incomeRecords": "수입 내역",
+    "balanceRecords": "잔액 내역",
+    "withdrawRecords": "출금 내역",
+    "incomeId": "수입 ID",
+    "withdrawId": "출금 ID",
+    "amount": "금액",
+    "type": "유형",
+    "statusLabel": "상태",
+    "description": "설명",
+    "createTime": "생성일",
+    "updateTime": "수정일",
+    "all": "전체",
+    "incomeDetail": "수입 상세",
+    "noBalanceRecords": "잔액 내역이 없습니다",
+    "balanceAfter": "거래 후 잔액",
+    "balanceAfterType": {
+      "advertiser": "거래 후 광고주 잔액",
+      "creator": "거래 후 크리에이터 잔액"
+    },
+    "currencyFilter": "통화",
+    "typeFilter": "유형",
+    "balanceTypes": {
+      "task_creation": "태스크 생성",
+      "manual_deduct": "수동 차감",
+      "refund": "환불",
+      "recharge": "충전",
+      "manual_add": "수동 추가",
+      "task_refund": "태스크 환불",
+      "task_stopped": "태스크 중지",
+      "withdraw": "출금",
+      "withdraw_refund": "출금 환불",
+      "cpm_cpe_deposit": "CPM/CPE 보증금",
+      "cpm_cpe_deposit_refund": "CPM/CPE 보증금 환불",
+      "task": "태스크 수입",
+      "commission": "커미션",
+      "manual": "수동 조정",
+      "balance_transfer_out": "잔액 이체 출금",
+      "balance_transfer_in": "잔액 이체 입금",
+      "debt_payment": "미납금 결제",
+      "sample_budget_deposit": "샘플 예산 예치",
+      "sample_budget_refund": "샘플 예산 환불",
+      "sample_subsidy_payout": "샘플 보조금 지급",
+      "sample_subsidy_clawback": "샘플 보조금 회수",
+      "koc_deposit_deduct": "KOC 보증금 차감",
+      "koc_deposit_return": "KOC 보증금 반환",
+      "commission_refund": "커미션 환불",
+      "challenge_refund": "챌린지 달성 환불",
+      "task_reward_clawback": "태스크 보상 회수",
+      "task_work_deleted_refund": "삭제된 작품 환불"
+    },
+    "types": {
+      "task": "태스크 수입",
+      "task_back": "태스크 환불",
+      "reward_back": "보상 환불",
+      "task_withdraw": "태스크 출금"
+    },
+    "status": {
+      "pending": "대기 중",
+      "withdrawn": "출금 완료"
+    },
+    "noWallet": "지갑이 없습니다",
+    "noWalletTip": "먼저 지갑 탭에서 지갑을 추가해주세요",
+    "manageWallets": "지갑 관리",
+    "addWallet": "지갑 추가",
+    "withdrawButton": "출금",
+    "withdrawNotice": "출금 신청은 15영업일 이내에 처리됩니다. 잠시만 기다려 주세요. 문의 사항이 있으시면 ",
+    "rechargeButton": "충전",
+    "noIncomeRecords": "수입 내역이 없습니다",
+    "noWithdrawRecords": "출금 내역이 없습니다",
+    "withdraw": {
+      "cancel": "취소",
+      "cancelConfirmTitle": "출금 취소",
+      "cancelConfirmDesc": "이 출금 신청을 취소하시겠습니까?",
+      "type": {
+        "task": "태스크",
+        "reward": "보상"
+      },
+      "walletAccount": "지갑",
+      "adminNote": "비고",
+      "paidAt": "결제 시간",
+      "screenshots": "스크린샷",
+      "status": {
+        "pending": "대기 중",
+        "approved": "승인됨",
+        "paid": "결제 완료",
+        "failed": "실패",
+        "rejected": "거부됨"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "처리 중",
+      "success": "성공",
+      "fail": "실패",
+      "task_withdraw": "태스크 출금",
+      "unknown": "알 수 없음"
+    },
+    "messages": {
+      "cancelWithdrawSuccess": "출금이 취소되었습니다",
+      "cancelWithdrawFailed": "출금 취소에 실패했습니다",
+      "getIncomeRecordsFailed": "수입 내역을 가져오지 못했습니다",
+      "getBalanceRecordsFailed": "잔액 내역을 가져오지 못했습니다",
+      "getIncomeDetailFailed": "수입 상세를 가져오지 못했습니다",
+      "getWithdrawRecordsFailed": "출금 내역을 가져오지 못했습니다",
+      "noIncomeRecords": "수입 내역이 없습니다",
+      "noWithdrawRecords": "출금 내역이 없습니다",
+      "noIncomeDetail": "수입 상세가 없습니다",
+      "loading": "로딩 중...",
+      "totalRecords": "총 {{total}}개 기록"
+    },
+    "balanceTooltip": "광고주 잔액은 주로 작업 게시, 크리에이터 보상 지급, 작업 관련 차감에 사용됩니다.",
+    "creatorBalanceTooltip": "작업 수행은 크리에이터 잔액을 얻는 주요 방법입니다. 크리에이터 잔액은 출금할 수 있습니다.",
+    "transfer": {
+      "title": "잔액 이체",
+      "amount": "이체 금액",
+      "amountPlaceholder": "이체 금액을 입력하세요",
+      "availableBalance": "현재 이체 가능: {{amount}}",
+      "transferIn": "이체",
+      "submit": "이체 확인",
+      "to": "이체 대상",
+      "success": "이체 성공",
+      "failed": "이체 실패",
+      "amountInvalid": "0보다 큰 이체 금액을 입력하세요",
+      "amountExceedsBalance": "이체 금액은 사용 가능 잔액을 초과할 수 없습니다",
+      "balanceType": {
+        "advertiser": "광고주 잔액",
+        "creator": "크리에이터 잔액"
+      },
+      "balanceToWithdrawable": "광고주 잔액에서 크리에이터 잔액으로",
+      "withdrawableToBalance": "크리에이터 잔액에서 광고주 잔액으로"
+    }
+  },
+  "subscription": {
+    "currentPlan": "현재 플랜",
+    "upgrade": "충전",
+    "manage": "구독 관리",
+    "balance": "크레딧",
+    "usageRecords": "사용 기록",
+    "detail": "상세",
+    "date": "날짜",
+    "amount": "금액",
+    "amountChange": "금액 변동",
+    "noRecords": "사용 기록 없음",
+    "loading": "로딩 중...",
+    "loadMore": "더 불러오기",
+    "browserPluginAgent": "브라우저 플러그인 에이전트",
+    "types": {
+      "register_bonus": "가입 보너스",
+      "purchase": "구매",
+      "vip_monthly": "VIP 월간",
+      "ai_service": "AI 서비스",
+      "video_style_transfer": "동영상 스타일 전환",
+      "publish": "게시",
+      "expired": "만료",
+      "manual": "수동 조정",
+      "fan_check_in": "팬 체크인",
+      "fan_lottery": "팬 추첨",
+      "twitter_api": "X/Twitter API",
+      "note_comment_search": "노트 댓글 검색",
+      "drama_recap": "드라마 요약",
+      "refund": "환불"
+    },
+    "filters": {
+      "direction": "수지 방향",
+      "type": "변동 유형",
+      "source": "소비 출처",
+      "allDirections": "전체 수지",
+      "allTypes": "전체 유형",
+      "allSources": "전체 출처",
+      "reset": "초기화"
+    },
+    "directions": {
+      "income": "수입",
+      "expense": "지출"
+    },
+    "sources": {
+      "ai_chat": "AI 채팅",
+      "plugin": "브라우저 플러그인",
+      "ai_image": "AI 이미지",
+      "ai_video": "AI 비디오",
+      "ai_agent": "AI Agent",
+      "ai_draft_generation": "AI 초안 생성",
+      "ai_material_adaptation": "AI 소재 각색",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "AI 비디오 편집"
+    }
   },
   "general": {
     "language": "웹사이트 언어",
@@ -39,11 +248,62 @@
     "themeDesc": "선호하는 테마 모드 선택",
     "themeLight": "라이트",
     "themeDark": "다크",
-    "themeSystem": "시스템",
-    "notifications": "이메일 알림",
-    "notificationsDesc": "이메일 알림 환경설정 관리",
-    "editNotifications": "알림 설정 편집",
-    "changingLanguage": "Switching..."
+    "themeSystem": "시스템"
+  },
+  "ticket": {
+    "title": "티켓",
+    "description": "운영팀에 제출한 작업 티켓을 확인하고 추적합니다.",
+    "loading": "티켓을 불러오는 중...",
+    "loadFailed": "티켓을 불러오지 못했습니다",
+    "refresh": "새로고침",
+    "emptyTitle": "티켓 기록이 없습니다",
+    "emptyDescription": "현재 티켓은 수락한 작업 상세 페이지에서 제출할 수 있습니다. 제출 후 관련 작업에서 처리 상태를 확인할 수 있습니다.",
+    "goToMyTasks": "내 작업으로 이동",
+    "viewTask": "작업 보기",
+    "createdAt": "제출 시간",
+    "updatedAt": "업데이트 시간",
+    "paginationTotal": "총 {{total}}개 중 {{start}}-{{end}}",
+    "status": {
+      "open": "대기 중",
+      "in_progress": "처리 중",
+      "resolved": "해결됨",
+      "closed": "종료됨"
+    },
+    "viewTimeline": "처리 기록",
+    "timeline": {
+      "title": "처리 기록",
+      "untitled": "제목 없는 티켓",
+      "loading": "처리 기록을 불러오는 중...",
+      "loadFailed": "처리 기록을 불러오지 못했습니다",
+      "empty": "아직 처리 기록이 없습니다",
+      "back": "티켓으로 돌아가기",
+      "description": "이 티켓에 대한 운영팀의 처리 진행 상황과 메모를 확인합니다.",
+      "activityType": {
+        "create": "티켓 생성됨",
+        "assign": "티켓 배정됨",
+        "status_change": "상태 변경",
+        "comment": "댓글 추가",
+        "link_takeover_action": "인계 작업 연결됨"
+      }
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify Stores",
+    "description": "View the Shopify stores connected to this account and their billing status.",
+    "refresh": "Refresh",
+    "active": "Connected",
+    "inactive": "Disabled",
+    "platformFeeRate": "Platform fee rate",
+    "boundAt": "Connected at",
+    "emptyTitle": "No Shopify store connected",
+    "emptyDesc": "Install the AiToEarn Shopify App and the store will sync here automatically.",
+    "installApp": "Install AiToEarn App",
+    "billingStatus": {
+      "none": "Billing not enabled",
+      "pending": "Pending",
+      "active": "Billing active",
+      "cancelled": "Billing cancelled"
+    }
   },
   "agent": {
     "title": "에이전트",
@@ -57,5 +317,36 @@
     "saving": "저장 중...",
     "saveSuccess": "성공적으로 저장되었습니다",
     "saveFailed": "저장 실패"
+  },
+  "apiKeys": {
+    "title": "API Key 관리",
+    "description": "프로그래밍 방식 접근을 위한 API Key 생성 및 관리",
+    "create": "생성",
+    "name": "이름",
+    "namePlaceholder": "API Key 이름 입력",
+    "nameRequired": "이름을 입력해 주세요",
+    "createdAt": "생성일",
+    "lastUsedAt": "마지막 사용",
+    "neverUsed": "사용 안 함",
+    "deleteConfirmTitle": "API Key 삭제",
+    "deleteConfirmDesc": "이 API Key를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.",
+    "createSuccess": "API Key가 생성되었습니다",
+    "deleteSuccess": "API Key가 삭제되었습니다",
+    "copySuccess": "클립보드에 복사되었습니다",
+    "copyTip": "지금 API Key를 복사하여 저장하세요. 다시 표시되지 않습니다.",
+    "dismiss": "닫기",
+    "empty": "API Key가 없습니다",
+    "emptyDesc": "API Key를 생성하여 시작하세요",
+    "cancel": "취소"
+  },
+  "seedanceCredits": {
+    "balance": "Seedance 전용 크레딧",
+    "availableBalance": "사용 가능한 Seedance 크레딧",
+    "availableBalanceTip": "사용 가능 크레딧 = Seedance 전용 크레딧 + 일반 모델 예상 사용량을 제외한 일반 크레딧이며 seedance-beta 모델에 사용할 수 있습니다.",
+    "refundNotice": "Seedance 전용 크레딧은 AiToEarn의 seedance-beta 모델에만 사용됩니다. AiToEarn 사유로 해당 모델을 사용할 수 없으면 미사용분은 전액 환불 가능합니다.",
+    "faceUploadTip": "선명한 실제 정면 얼굴은 통과율이 낮을 수 있습니다. 업로드 전에 눈 등 핵심 부위를 가리거나 블러 처리하면 성공률을 크게 높일 수 있습니다.",
+    "recharge": "충전",
+    "use": "사용하러 가기",
+    "info": "Seedance 전용 크레딧 안내 보기"
   }
 }

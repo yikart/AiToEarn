@@ -9,6 +9,7 @@ import type {
 import type { IPlatOption } from '@/components/PublishDialog/publishDialog.type'
 import { AlertTriangle } from 'lucide-react'
 import { forwardRef, memo, useEffect, useState } from 'react'
+import { getAccountDetailApi } from '@/api/accounts/account.api'
 import { useTransClient } from '@/app/i18n/client'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
@@ -24,8 +25,13 @@ import {
 } from '@/components/ui/select'
 import { Switch } from '@/components/ui/switch'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
-import http from '@/utils/request'
+import { cn } from '@/utils/className'
+
+const TIKTOK_PRIVACY_LEVEL_OPTIONS = [
+  'PUBLIC_TO_EVERYONE',
+  'MUTUAL_FOLLOW_FRIENDS',
+  'SELF_ONLY',
+]
 
 const DEFAULT_TIKTOK_OPTION = {
   privacy_level: 'PUBLIC_TO_EVERYONE',
@@ -46,9 +52,8 @@ function ensureTiktokOption(option: IPlatOption): IPlatOption & { tiktok: NonNul
   return newOption as IPlatOption & { tiktok: NonNullable<IPlatOption['tiktok']> }
 }
 
-// TikTok Creator Info 接口类型
+// TikTok 账号信息展示类型
 interface TikTokCreatorInfo {
-  max_video_post_duration_sec: number
   privacy_level_options: string[]
   stitch_disabled: boolean
   comment_disabled: boolean
@@ -61,35 +66,40 @@ interface TikTokCreatorInfo {
 const TikTokParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
 
       const [creatorInfo, setCreatorInfo] = useState<TikTokCreatorInfo | null>(null)
       const [loading, setLoading] = useState(false)
 
-      // 获取 TikTok Creator Info
+      // 获取 TikTok 账号信息
       const fetchCreatorInfo = async () => {
         if (pubItem.account.id.includes('material-fake-tiktok-'))
           return
 
         try {
           setLoading(true)
-          const response = await http.get<TikTokCreatorInfo>(
-            `plat/tiktok/creator/info/${pubItem.account.id}`,
-          )
-          if (response && response.code === 0) {
-            setCreatorInfo(response.data as TikTokCreatorInfo)
+          const response = await getAccountDetailApi(pubItem.account.id)
+          if (response?.code === 0 && response.data) {
+            setCreatorInfo({
+              privacy_level_options: TIKTOK_PRIVACY_LEVEL_OPTIONS,
+              stitch_disabled: false,
+              comment_disabled: false,
+              creator_avatar_url: response.data.avatar,
+              creator_nickname: response.data.nickname,
+              creator_username: response.data.uid,
+              duet_disabled: false,
+            })
           }
         }
         catch (error) {
-          console.error('Failed to fetch TikTok creator info:', error)
+          console.error('Failed to fetch TikTok account info:', error)
         }
         finally {
           setLoading(false)
@@ -104,7 +114,7 @@ const TikTokParams = memo(
           setOnePubParams({ option }, pubItem.account.id)
         }
         fetchCreatorInfo()
-      }, [pubItem.account.id, pubItem.account.account])
+      }, [pubItem.account.id, pubItem.account.uid])
 
       // 隐私级别选项映射
       const getPrivacyLevelLabel = (value: string) => {
@@ -240,11 +250,7 @@ const TikTokParams = memo(
                         <SelectValue placeholder={t('tiktok.privacy.placeholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {(creatorInfo?.privacy_level_options || [
-                          'PUBLIC_TO_EVERYONE',
-                          'MUTUAL_FOLLOW_FRIENDS',
-                          'SELF_ONLY',
-                        ]).map((level) => {
+                        {(creatorInfo?.privacy_level_options || TIKTOK_PRIVACY_LEVEL_OPTIONS).map((level) => {
                           // 当已选择品牌内容时，禁用私密选项
                           const isOptionDisabled = level === 'SELF_ONLY' && hasBrandedContent
                           return (

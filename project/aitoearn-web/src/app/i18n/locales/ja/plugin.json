@@ -26,8 +26,7 @@
     "platforms": "プラットフォーム",
     "status": "ステータス",
     "time": "時間",
-    "viewDetail": "詳細を見る",
-    "untitled": "無題"
+    "viewDetail": "詳細を見る"
   },
   "publishDetail": {
     "title": "公開詳細",
@@ -42,14 +41,41 @@
     "close": "閉じる",
     "minimize": "最小化",
     "unknownAccount": "不明なアカウント",
-    "creatingRecord": "公開レコード作成中..."
+    "creatingRecord": "公開レコード作成中...",
+    "progressTitle": "公開の進行状況",
+    "completeTitle": "公開完了",
+    "sectionUserAction": "要対応",
+    "sectionAuto": "自動公開",
+    "sectionTask": "公開タスク",
+    "actionRequired": "要対応",
+    "userActionTitle": "{{platform}} での完了を待っています",
+    "userActionDesc": "コンテンツは準備できています。プラットフォームで最後の手順を完了してください。",
+    "preparingUserAction": "{{platform}} の公開入口を準備中...",
+    "openPlatform": "{{platform}} を開く",
+    "openPlatformFailed": "{{platform}} を開けませんでした。短縮リンクをコピーして手動で開いてください。",
+    "copyShortLink": "短縮リンクをコピー",
+    "shortLinkCopied": "短縮リンクをコピーしました",
+    "shortLinkCopyFailed": "コピーに失敗しました",
+    "taskCreated": "タスク作成済み",
+    "autoPendingDesc": "自動公開の開始を待っています。このページを開いたままにしてください。",
+    "sectionTitleWithCount": "{{title}}（{{count}}）",
+    "userActionQrDesc": "コンテンツは準備できています。スマートフォンでQRコードを読み取り、公開を完了してください。",
+    "userActionMobileDesc": "コンテンツは準備できています。下のボタンから {{platform}} を開いて公開を完了してください。",
+    "userActionPolling": "公開が成功したか確認しています...",
+    "userActionPublished": "公開しました",
+    "userActionFailed": "公開に失敗しました。もう一度公開してください。",
+    "cancelPublish": "公開をキャンセル",
+    "cancelPublishConfirmTitle": "公開をキャンセルしますか？",
+    "cancelPublishConfirmContent": "キャンセルすると、このコンテンツはQRコード公開待ちを停止します。後で再度公開できます。",
+    "cancelPublishSuccess": "公開をキャンセルしました",
+    "cancelPublishFailed": "公開のキャンセルに失敗しました。もう一度お試しください。"
   },
   "publishFloating": {
     "xhsPublishing": "RedNote is publishing",
-    "pluginPublishing": "Plugin publishing in progress",
-    "openDetail": "Click to view details",
-    "completed": "Plugin publishing completed",
-    "failed": "Plugin publishing failed. View details."
+    "pluginPublishing": "自動公開中",
+    "openDetail": "クリックして公開の進行状況を表示",
+    "completed": "自動公開が完了しました",
+    "failed": "自動公開に失敗しました。進行状況を確認してください。"
   },
   "common": {
     "confirm": "確認",
@@ -71,7 +97,9 @@
     "PENDING": "保留中",
     "PUBLISHING": "公開中",
     "COMPLETED": "完了",
-    "ERROR": "エラー"
+    "ERROR": "エラー",
+    "canceled": "キャンセル済み",
+    "CANCELED": "キャンセル済み"
   },
   "header": {
     "pluginActive": "プラグイン有効",

@@ -4,7 +4,7 @@
  */
 import { useEffect } from 'react'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { getPageTitle } from '@/utils/general'
+import { getPageTitle } from '@/utils/title'
 
 /**
  * 动态更新浏览器页面标题

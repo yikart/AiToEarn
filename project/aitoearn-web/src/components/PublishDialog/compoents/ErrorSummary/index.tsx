@@ -17,11 +17,11 @@ import type {
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { AlertTriangle, ChevronDown, ChevronRight, Info } from 'lucide-react'
 import { memo, useMemo, useState } from 'react'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import AvatarPlat from '@/components/AvatarPlat'
+import AvatarPlat from '@/components/common/AvatarPlat'
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible'
-import { cn } from '@/lib/utils'
+import { usePlatformInfoMap } from '@/hooks/usePlatformMetadata'
+import { cn } from '@/utils/className'
 
 export interface IErrorSummaryProps {
   // 选中的发布列表
@@ -45,6 +45,7 @@ const ErrorSummary = memo(
   ({ pubListChoosed, errParamsMap, warningParamsMap, onAccountClick }: IErrorSummaryProps) => {
     const { t } = useTransClient('publish')
     const [isOpen, setIsOpen] = useState(false)
+    const platformInfoMap = usePlatformInfoMap()
 
     // 筛选出有错误或警告的账号列表
     const accountsWithIssues = useMemo(() => {
@@ -96,7 +97,7 @@ const ErrorSummary = memo(
         <CollapsibleContent className="border border-t-0 border-yellow-200 dark:border-yellow-800 rounded-b-md overflow-hidden">
           <div className="divide-y divide-yellow-200 dark:divide-yellow-800">
             {accountsWithIssues.map(({ pubItem, errors, warnings }) => {
-              const platConfig = AccountPlatInfoMap.get(pubItem.account.type)
+              const platConfig = platformInfoMap.get(pubItem.account.type)
 
               return (
                 <div
@@ -112,7 +113,7 @@ const ErrorSummary = memo(
                   <div className="flex items-center gap-2 mb-2">
                     <AvatarPlat account={pubItem.account} size="small" />
                     <span className="text-sm font-medium text-yellow-800 dark:text-yellow-200 truncate">
-                      {pubItem.account.nickname || pubItem.account.account}
+                      {pubItem.account.nickname}
                     </span>
                     {platConfig && (
                       <span className="text-xs text-yellow-600 dark:text-yellow-400 shrink-0">

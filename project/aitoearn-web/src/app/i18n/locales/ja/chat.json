@@ -3,12 +3,7 @@
     "placeholder": "新しい寿司盛り合わせの8秒縦型プロモーション動画を作成してください。アップテンポなジャズ音楽、新鮮なサーモンのクローズアップ、字幕を生成、最後にロゴを表示。",
     "send": "送信",
     "stop": "停止",
-    "uploading": "アップロード中...",
-    "clearSelection": "Clear Selection",
-    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
-    "noPromotionPlan": "No promotion plans",
-    "selectPromotionPlan": "Select Promotion Plan",
-    "upload": "Upload"
+    "uploading": "アップロード中..."
   },
   "message": {
     "thinking": "考え中...",
@@ -23,6 +18,13 @@
       "okText": "OK"
     }
   },
+  "agentNotice": {
+    "title": "ご案内",
+    "description": "この Agent は現在もテスト段階です。機能と生成品質は継続的に改善中のため、結果が不安定になったり、期待と完全には一致しない場合があります。関連するクレジットは実際の使用状況に応じて通常どおり消費され、生成結果の差異によるクレジットの返還や補償は現在できません。まずは少量でお試しいただき、継続利用をご判断ください。ご理解とご協力に感謝いたします。",
+    "doNotShowAgain": "今後表示しない",
+    "cancel": "キャンセル",
+    "confirm": "続行"
+  },
   "task": {
     "newChat": "新規チャット",
     "delete": "削除",
@@ -36,14 +38,7 @@
       "failed": "失敗"
     },
     "rate": "評価",
-    "share": "シェア",
-    "editTitle": "Edit Title",
-    "favorite": "Favorite",
-    "moreActions": "More",
-    "titleLabel": "Task Title",
-    "titlePlaceholder": "Enter task title",
-    "titleUpdated": "Title updated",
-    "unfavorite": "Unfavorite"
+    "share": "シェア"
   },
   "home": {
     "title": "何かお手伝いできますか？",
@@ -62,7 +57,7 @@
     "affiliateReward": "$716.4を獲得",
     "imageMaterial": "画像",
     "videoMaterial": "動画",
-    "agentAssets": "Agent素材",
+    "agentAssets": "AI生成素材",
     "noData": "データがありません"
   },
   "history": {
@@ -152,10 +147,11 @@
     "video": "動画",
     "image": "画像",
     "document": "ドキュメント",
+    "audio": "音声",
+    "edit": "メディアを編集",
+    "remove": "メディアを削除",
     "uploadFailed": "アップロードに失敗しました。もう一度お試しください",
-    "uploadCancelled": "アップロードがキャンセルされました",
-    "edit": "編集",
-    "remove": "削除"
+    "uploadCancelled": "アップロードがキャンセルされました"
   },
   "workflow": {
     "toolCallCompleted": "ツール呼び出し完了",
@@ -183,9 +179,7 @@
     "rechargeCredits": "クレジットをチャージ",
     "action": "アクション",
     "actionDesc": "以下のアクションを完了してください",
-    "continue": "続ける",
-    "error": "失敗",
-    "errorDesc": "生成に失敗しました。後でもう一度お試しください。"
+    "continue": "続ける"
   },
   "publishDetail": {
     "title": "公開詳細",
@@ -216,19 +210,6 @@
       "upload": "アップロード中...",
       "publish": "公開中...",
       "complete": "公開完了"
-    },
-    "goLogin": "Go Login",
-    "installPlugin": "Click to install plugin",
-    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
-    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
-    "retry": "Retry"
-  },
-  "toolDetail": {
-    "input": "Input Parameters",
-    "noResult": "No result yet",
-    "output": "Execution Result"
-  },
-  "plugin": {
-    "platformNeedsPlugin": "このプラットフォームではブラウザ拡張機能が必要です。先に拡張機能を認証してください。"
+    }
   }
 }

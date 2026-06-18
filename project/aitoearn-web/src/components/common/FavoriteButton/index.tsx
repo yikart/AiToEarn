@@ -8,7 +8,7 @@
 import { Heart, Loader2 } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export interface IFavoriteButtonProps {
   /** 是否已收藏 */

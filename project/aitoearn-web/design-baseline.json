@@ -1,0 +1,92 @@
+{
+  "date": "2026-03-19",
+  "url": "https://dev.aitoearn.ai/",
+  "designScore": "B",
+  "aiSlopScore": "C",
+  "categoryGrades": {
+    "hierarchy": "B",
+    "typography": "C",
+    "spacing": "B",
+    "color": "B",
+    "interaction": "D",
+    "responsive": "C",
+    "motion": "D",
+    "content": "B",
+    "aiSlop": "C",
+    "performance": "C"
+  },
+  "findings": [
+    {
+      "id": "FINDING-001",
+      "title": "Mobile homepage is a different product",
+      "impact": "high",
+      "category": "responsive"
+    },
+    {
+      "id": "FINDING-002",
+      "title": "No hover state on task cards",
+      "impact": "high",
+      "category": "interaction"
+    },
+    {
+      "id": "FINDING-003",
+      "title": "transition: all on 289 elements",
+      "impact": "high",
+      "category": "motion"
+    },
+    {
+      "id": "FINDING-004",
+      "title": "Heading hierarchy is broken",
+      "impact": "medium",
+      "category": "typography"
+    },
+    {
+      "id": "FINDING-005",
+      "title": "outline: none without replacement",
+      "impact": "medium",
+      "category": "interaction"
+    },
+    {
+      "id": "FINDING-006",
+      "title": "Pure black text used",
+      "impact": "medium",
+      "category": "color"
+    },
+    {
+      "id": "FINDING-007",
+      "title": "Touch targets below 44px",
+      "impact": "medium",
+      "category": "interaction"
+    },
+    {
+      "id": "FINDING-008",
+      "title": "DIN font missing font-display",
+      "impact": "medium",
+      "category": "performance"
+    },
+    {
+      "id": "FINDING-009",
+      "title": "Mobile purple gradient triggers AI slop",
+      "impact": "medium",
+      "category": "aiSlop"
+    },
+    {
+      "id": "FINDING-010",
+      "title": "Line-height ratio 1.0 on some elements",
+      "impact": "polish",
+      "category": "typography"
+    },
+    {
+      "id": "FINDING-011",
+      "title": "Task detail page wastes below-fold space",
+      "impact": "polish",
+      "category": "hierarchy"
+    },
+    {
+      "id": "FINDING-012",
+      "title": "Login modal blocks content pages",
+      "impact": "polish",
+      "category": "content"
+    }
+  ]
+}

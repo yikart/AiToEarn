@@ -4,7 +4,7 @@
  * 功能描述: 移动端日历组件的类型定义
  */
 
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 
 /** 视图类型 */
 export type ViewType = 'week' | 'month'

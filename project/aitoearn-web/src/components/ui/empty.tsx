@@ -5,7 +5,7 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface EmptyProps {
   /** 描述文字 */

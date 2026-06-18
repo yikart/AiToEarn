@@ -1,11 +1,10 @@
 /**
  * 发布作品弹框
- * 支持多平台内容发布，包含 AI 助手、内容编辑、预览等功能
+ * 支持多平台内容发布，包含内容管理、发布编辑等功能
  */
 
 import type { ForwardedRef } from 'react'
-import type { SocialAccount } from '@/api/types/account.type'
-import type { IPublishDialogAiRef } from '@/components/PublishDialog/compoents/PublishDialogAi'
+import type { SocialAccount } from '@/api/accounts/account.types'
 
 import {
   forwardRef,
@@ -13,19 +12,19 @@ import {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
-  useState,
 } from 'react'
+import { DndProvider } from 'react-dnd'
+import { HTML5Backend } from 'react-dnd-html5-backend'
 import { useShallow } from 'zustand/react/shallow'
 
-import { getChatModels } from '@/api/ai'
 import { useTransClient } from '@/app/i18n/client'
 import DesktopPublishContent from '@/components/PublishDialog/compoents/DesktopPublishContent'
 import MobilePublishContent from '@/components/PublishDialog/compoents/mobile/MobilePublishContent'
 import { PublishDialogSkeleton } from '@/components/PublishDialog/compoents/PublishDialogSkeleton'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import PublishModals from '@/components/PublishDialog/compoents/PublishModals'
-import { useAISync } from '@/components/PublishDialog/hooks/useAISync'
 import { useAutoPublishOnReady } from '@/components/PublishDialog/hooks/useAutoPublishOnReady'
 import { useCloseDialog } from '@/components/PublishDialog/hooks/useCloseDialog'
 import { usePublishActions } from '@/components/PublishDialog/hooks/usePublishActions'
@@ -36,13 +35,11 @@ import {
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { useUploadSync } from '@/components/PublishDialog/hooks/useUploadSync'
 import { useValidatedPublishTrigger } from '@/components/PublishDialog/hooks/useValidatedPublishTrigger'
-import { debugPublishDialog } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
 import { Modal } from '@/components/ui/modal'
 import { useIsMobile } from '@/hooks/useIsMobile'
-
-import './publishDialogTransition.css'
+import { useAccountStore } from '@/store/account'
 
 // ============ 类型定义 ============
 
@@ -63,6 +60,8 @@ export interface IPublishDialogProps {
   suppressAutoPublish?: boolean
   // 关联的任务ID（如果是从任务流程打开）
   taskIdForPublish?: string
+  // 关联的素材组 ID（如果是从任务流程打开）
+  materialGroupIdForPublish?: string
   // 关联的草稿素材 ID（如果是从任务流程打开且存在推荐草稿）
   materialIdForPublish?: string
   // 发布确认回调（发布完成时触发，并携带 taskIdForPublish）
@@ -90,6 +89,7 @@ const PublishDialog = memo(
         defaultAccountIds,
         suppressAutoPublish,
         taskIdForPublish,
+        materialGroupIdForPublish,
         materialIdForPublish,
         onPublishConfirmed,
         onPublishStart,
@@ -100,9 +100,28 @@ const PublishDialog = memo(
       ref: ForwardedRef<IPublishDialogRef>,
     ) => {
       const isMobile = useIsMobile()
-      const { t } = useTransClient('publish')
+      const { t, ready: publishI18nReady } = useTransClient('publish', {
+        useSuspense: false,
+      })
+      const {} = useTransClient('brandPromotion', {
+        useSuspense: false,
+      })
 
       // ============ Store Hooks ============
+
+      const {
+        latestAccountMap,
+        accountPluginAuthLoading,
+      } = useAccountStore(
+        useShallow(state => ({
+          latestAccountMap: state.accountMap,
+          accountPluginAuthLoading: state.accountPluginAuthLoading,
+        })),
+      )
+      const latestAccounts = useMemo(
+        () => accounts.map(account => latestAccountMap.get(account.id) ?? account),
+        [accounts, latestAccountMap],
+      )
 
       // 持久化存储
       const { setPubData, restorePubData, _hasHydrated, setPubListData }
@@ -124,18 +143,12 @@ const PublishDialog = memo(
         clear,
         pubList,
         setStep,
-        step,
-        commonPubParams,
         setExpandedPubItem,
         expandedPubItem,
         setErrParamsMap,
         setPubTime,
         pubTime,
-        setOnePubParams,
         setWarningParamsMap,
-        setOpenLeft,
-        openLeft,
-        setAccountAllParams,
         prefillLoading,
       } = usePublishDialog(
         useShallow(state => ({
@@ -146,28 +159,21 @@ const PublishDialog = memo(
           clear: state.clear,
           pubList: state.pubList,
           setStep: state.setStep,
-          step: state.step,
-          commonPubParams: state.commonPubParams,
           setExpandedPubItem: state.setExpandedPubItem,
           expandedPubItem: state.expandedPubItem,
           setErrParamsMap: state.setErrParamsMap,
           setWarningParamsMap: state.setWarningParamsMap,
           setPubTime: state.setPubTime,
           pubTime: state.pubTime,
-          setOnePubParams: state.setOnePubParams,
-          openLeft: state.openLeft,
-          setOpenLeft: state.setOpenLeft,
-          setAccountAllParams: state.setAccountAllParams,
           prefillLoading: state.prefillLoading,
         })),
       )
 
       // 上传管理
-      const { tasks, md5Cache, enqueueUpload } = usePublishManageUpload(
+      const { tasks, md5Cache } = usePublishManageUpload(
         useShallow(state => ({
           tasks: state.tasks,
           md5Cache: state.md5Cache,
-          enqueueUpload: state.enqueueUpload,
         })),
       )
 
@@ -183,18 +189,15 @@ const PublishDialog = memo(
         modalState.setCurrentPublishTaskId,
       )
 
-      // 聊天模型列表
-      const [chatModels, setChatModels] = useState<any[]>([])
-
-      // AI 助手 ref
-      const aiAssistantRef = useRef<IPublishDialogAiRef>(null)
-
       // 控制标记
       const isClear = useRef(true)
       const isInit = useRef(false)
       const hasInitRef = useRef(false)
+      const hasAppliedDefaultSelectionRef = useRef(false)
+      const hasRequestedRestoreRef = useRef(false)
       const previousOpenRef = useRef(open)
-      const dialogLoading = accountListInitialLoading || prefillLoading
+      const publishPluginLoading = open && !accountListInitialLoading && accountPluginAuthLoading
+      const dialogLoading = accountListInitialLoading || publishPluginLoading || prefillLoading || !publishI18nReady
 
       // ============ Custom Hooks ============
 
@@ -202,17 +205,15 @@ const PublishDialog = memo(
       const { pubClick } = usePublishActions({
         pubListChoosed,
         pubTime,
-        isMobile,
         suppressAutoPublish,
         taskIdForPublish,
+        materialGroupIdForPublish,
         materialIdForPublish,
         onPublishConfirmed,
         onPublishStart,
         onClose,
         onPubSuccess,
         setCreateLoading: modalState.setCreateLoading,
-        setDouyinPermalink: modalState.setDouyinPermalink,
-        setDouyinQRCodeVisible: modalState.setDouyinQRCodeVisible,
         setCurrentPublishTaskId: modalState.setCurrentPublishTaskId,
         setPublishDetailVisible: modalState.setPublishDetailVisible,
         t,
@@ -227,25 +228,6 @@ const PublishDialog = memo(
         triggerPublish,
       })
 
-      // AI 同步
-      const { handleTextSelection, handleImageToImage, handleSyncToEditor } = useAISync({
-        pubListChoosed,
-        step,
-        commonPubParams,
-        expandedPubItem,
-        openLeft,
-        aiAssistantRef,
-        setOpenLeft,
-        setOnePubParams,
-        setAccountAllParams,
-        enqueueUpload: params =>
-          enqueueUpload({
-            file: params.file,
-            fileName: params.fileName,
-            type: params.type,
-          }),
-      })
-
       // 上传结果同步
       useUploadSync({
         pubListChoosed,
@@ -258,19 +240,41 @@ const PublishDialog = memo(
 
       // 同步错误和警告到 store
       useEffect(() => {
+        if (!open) {
+          return
+        }
+
         setErrParamsMap(errParamsMap)
-      }, [errParamsMap, setErrParamsMap])
+      }, [errParamsMap, open, setErrParamsMap])
 
       useEffect(() => {
+        if (!open) {
+          return
+        }
+
         setWarningParamsMap(warningParamsMap)
-      }, [warningParamsMap, setWarningParamsMap])
+      }, [open, setWarningParamsMap, warningParamsMap])
 
       // 恢复持久化数据
       useEffect(() => {
-        if (open && _hasHydrated) {
-          restorePubData()
+        if (!open) {
+          hasRequestedRestoreRef.current = false
+          return
         }
-      }, [open, _hasHydrated, restorePubData])
+
+        if (
+          !_hasHydrated
+          || accountListInitialLoading
+          || pubList.length === 0
+          || hasRequestedRestoreRef.current
+        ) {
+          return
+        }
+
+        hasRequestedRestoreRef.current = true
+        isClear.current = true
+        restorePubData()
+      }, [accountListInitialLoading, open, pubList.length, _hasHydrated, restorePubData])
 
       // 实时保存数据
       useEffect(() => {
@@ -303,72 +307,29 @@ const PublishDialog = memo(
       // 弹窗打开/关闭逻辑
       useEffect(() => {
         const wasOpen = previousOpenRef.current
-        debugPublishDialog('publishDialog:openEffect', {
-          accountsCount: accounts.length,
-          defaultAccountIds,
-          hasInit: hasInitRef.current,
-          open,
-          storePubListCount: usePublishDialog.getState().pubList.length,
-          storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
-          wasOpen,
-        })
 
         if (open) {
           previousOpenRef.current = true
           if (hasInitRef.current) {
-            debugPublishDialog('publishDialog:syncOnOpenEffect', {
-              accountsCount: accounts.length,
-              storePubListCount: usePublishDialog.getState().pubList.length,
-              storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
+            const hasSelected = syncAccounts(latestAccounts, defaultAccountIds, {
+              applyDefaultWhenEmpty: !hasAppliedDefaultSelectionRef.current,
             })
-            syncAccounts(accounts)
+            if (hasSelected) {
+              hasAppliedDefaultSelectionRef.current = true
+            }
             return // 已初始化，跳过重复 init
           }
           hasInitRef.current = true
           isInit.current = true
-          debugPublishDialog('publishDialog:initOnOpenEffect', {
-            accountsCount: accounts.length,
-            defaultAccountIds,
-          })
-          init(accounts, defaultAccountIds)
-
-          // 获取聊天模型列表（使用 sessionStorage 缓存）
-          const cachedModels = sessionStorage.getItem('ai_chat_models')
-          if (cachedModels) {
-            try {
-              setChatModels(JSON.parse(cachedModels))
-            }
-            catch (error) {
-              console.error(t('messages.parseCachedChatModelsFailed'), error)
-            }
-          }
-          else {
-            getChatModels()
-              .then((res) => {
-                if (res?.code === 0 && res.data && Array.isArray(res.data)) {
-                  setChatModels(res.data)
-                  sessionStorage.setItem('ai_chat_models', JSON.stringify(res.data))
-                }
-              })
-              .catch((error) => {
-                console.error(t('messages.getChatModelsFailed'), error)
-              })
-          }
+          hasAppliedDefaultSelectionRef.current = init(latestAccounts, defaultAccountIds)
         }
         else {
           previousOpenRef.current = false
           if (!wasOpen) {
-            debugPublishDialog('publishDialog:skipClearBecauseAlreadyClosed', {
-              storePubListCount: usePublishDialog.getState().pubList.length,
-              storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
-            })
             return
           }
-          debugPublishDialog('publishDialog:clearOnCloseEffect', {
-            storePubListCount: usePublishDialog.getState().pubList.length,
-            storeSelectedCount: usePublishDialog.getState().pubListChoosed.length,
-          })
           hasInitRef.current = false // 关闭时重置，下次打开可重新 init
+          hasAppliedDefaultSelectionRef.current = false
           isClear.current = true
           setPubListChoosed([])
           setStep(0)
@@ -377,7 +338,7 @@ const PublishDialog = memo(
         }
       }, [
         open,
-        accounts,
+        latestAccounts,
         defaultAccountIds,
         init,
         syncAccounts,
@@ -385,18 +346,12 @@ const PublishDialog = memo(
         setPubListChoosed,
         setStep,
         setExpandedPubItem,
-        t,
       ])
 
       // ============ Callbacks ============
 
       // 关闭弹窗确认
       const { closeDialog } = useCloseDialog({ onClose, t })
-
-      // Facebook 页面选择成功
-      const handleFacebookPagesSuccess = useCallback(() => {
-        modalState.setShowFacebookPagesModal(false)
-      }, [modalState])
 
       // 处理下一步
       const handleNextStep = useCallback(() => {
@@ -412,49 +367,72 @@ const PublishDialog = memo(
 
       // ============ Render ============
 
+      const publishModalsNode = (
+        <PublishModals
+          douyinQRCodeVisible={modalState.douyinQRCodeVisible}
+          setDouyinQRCodeVisible={modalState.setDouyinQRCodeVisible}
+          douyinPermalink={modalState.douyinPermalink}
+          publishDetailVisible={modalState.publishDetailVisible}
+          onPublishDetailClose={closePublishDetailModal}
+          currentPublishTaskId={modalState.currentPublishTaskId}
+          autoCloseOnComplete={autoCloseOnComplete}
+        />
+      )
+
+      const hasOpenChildModal = modalState.douyinQRCodeVisible
+        || modalState.publishDetailVisible
+
+      if (!open && !hasOpenChildModal) {
+        return null
+      }
+
+      if (!open) {
+        return publishModalsNode
+      }
+
       // 移动端渲染
       if (isMobile) {
         return (
           <>
             <Modal
-              className="!w-full !h-full !max-w-none !max-h-none !m-0 !rounded-none !p-0 !bg-transparent !border-none !shadow-none [&>div]:!p-0 [&>div]:!rounded-none"
-              bodyClassName="!p-4 !h-full"
+              className="!inset-0 !left-0 !top-0 !h-[100dvh] !w-[100dvw] !max-w-none !max-h-none !m-0 !translate-x-0 !translate-y-0 !rounded-none !p-0 !bg-background !border-none !shadow-none !duration-300 data-[state=open]:!animate-in data-[state=closed]:!animate-out data-[state=open]:!fade-in-0 data-[state=closed]:!fade-out-0 data-[state=open]:!zoom-in-95 data-[state=closed]:!zoom-out-95 [&>div]:!p-0 [&>div]:!rounded-none"
+              bodyClassName="!m-0 !h-full !w-full !p-4"
               closable={false}
+              maskClosable={false}
               open={open}
               onCancel={closeDialog}
               footer={null}
               width="auto"
+              modal={false}
+              disableFocusTrap
+              overlayClassName="hidden"
             >
-              <div className="relative h-full">
-                <MobilePublishContent
-                  open={open}
-                  accounts={accounts}
-                  onClose={onClose}
-                  onPubSuccess={onPubSuccess}
-                  defaultAccountIds={defaultAccountIds}
-                  suppressAutoPublish={suppressAutoPublish}
-                  taskIdForPublish={taskIdForPublish}
-                  materialIdForPublish={materialIdForPublish}
-                  onPublishConfirmed={onPublishConfirmed}
-                  onPublishStart={onPublishStart}
-                  autoPublishOnReady={autoPublishOnReady}
-                />
+              <div className="relative h-full w-full">
+                {publishI18nReady && (
+                  <MobilePublishContent
+                    open={open}
+                    accounts={accounts}
+                    onClose={onClose}
+                    onPubSuccess={onPubSuccess}
+                    defaultAccountIds={defaultAccountIds}
+                    suppressAutoPublish={suppressAutoPublish}
+                    taskIdForPublish={taskIdForPublish}
+                    materialGroupIdForPublish={materialGroupIdForPublish}
+                    materialIdForPublish={materialIdForPublish}
+                    onPublishConfirmed={onPublishConfirmed}
+                    onPublishStart={onPublishStart}
+                    autoPublishOnReady={autoPublishOnReady}
+                    createLoading={modalState.createLoading}
+                    setCreateLoading={modalState.setCreateLoading}
+                    setCurrentPublishTaskId={modalState.setCurrentPublishTaskId}
+                    setPublishDetailVisible={modalState.setPublishDetailVisible}
+                  />
+                )}
                 {dialogLoading && <PublishDialogSkeleton isMobile />}
               </div>
             </Modal>
 
-            <PublishModals
-              showFacebookPagesModal={modalState.showFacebookPagesModal}
-              setShowFacebookPagesModal={modalState.setShowFacebookPagesModal}
-              onFacebookPagesSuccess={handleFacebookPagesSuccess}
-              douyinQRCodeVisible={modalState.douyinQRCodeVisible}
-              setDouyinQRCodeVisible={modalState.setDouyinQRCodeVisible}
-              douyinPermalink={modalState.douyinPermalink}
-              publishDetailVisible={modalState.publishDetailVisible}
-              onPublishDetailClose={closePublishDetailModal}
-              currentPublishTaskId={modalState.currentPublishTaskId}
-              autoCloseOnComplete={autoCloseOnComplete}
-            />
+            {publishModalsNode}
           </>
         )
       }
@@ -463,40 +441,43 @@ const PublishDialog = memo(
       return (
         <>
           <Modal
-            className="!w-auto !max-w-none !max-h-none !p-0 !bg-transparent !border-none !shadow-none flex justify-center gap-0 !overflow-visible [&>div]:!p-0 [&>div]:!overflow-visible"
-            bodyClassName="!p-0 !overflow-visible"
+            className="!inset-0 !left-0 !top-0 !h-[100dvh] !w-[100dvw] !min-h-0 !max-h-none !max-w-none !translate-x-0 !translate-y-0 !gap-0 !overflow-hidden !rounded-none !border-none !bg-background !p-0 !shadow-none !duration-300 data-[state=open]:!animate-in data-[state=closed]:!animate-out data-[state=open]:!fade-in-0 data-[state=closed]:!fade-out-0 data-[state=open]:!zoom-in-95 data-[state=closed]:!zoom-out-95 [&>div]:!m-0 [&>div]:!overflow-hidden [&>div]:!p-0"
+            bodyClassName="!m-0 !h-full !min-h-0 !w-full !overflow-hidden !p-0"
             closable={false}
+            maskClosable={false}
             open={open}
             onCancel={closeDialog}
             footer={null}
             width="auto"
+            contentStyle={{
+              bottom: 0,
+              height: '100dvh',
+              left: 0,
+              maxHeight: 'none',
+              maxWidth: 'none',
+              right: 0,
+              top: 0,
+              width: '100dvw',
+            }}
+            modal={false}
+            disableFocusTrap
+            overlayClassName="hidden"
           >
-            <div className="relative">
-              <DesktopPublishContent
-                onClose={closeDialog}
-                chatModels={chatModels}
-                aiAssistantRef={aiAssistantRef}
-                onSyncToEditor={handleSyncToEditor}
-                onTextSelection={handleTextSelection}
-                onImageToImage={handleImageToImage}
-                createLoading={modalState.createLoading}
-                onPublish={pubClick}
-              />
+            <div className="relative h-full min-h-0 w-full">
+              {publishI18nReady && (
+                <DndProvider backend={HTML5Backend}>
+                  <DesktopPublishContent
+                    onClose={closeDialog}
+                    createLoading={modalState.createLoading}
+                    onPublish={pubClick}
+                  />
+                </DndProvider>
+              )}
               {dialogLoading && <PublishDialogSkeleton isMobile={false} />}
             </div>
           </Modal>
 
-          <PublishModals
-            showFacebookPagesModal={modalState.showFacebookPagesModal}
-            setShowFacebookPagesModal={modalState.setShowFacebookPagesModal}
-            onFacebookPagesSuccess={handleFacebookPagesSuccess}
-            douyinQRCodeVisible={modalState.douyinQRCodeVisible}
-            setDouyinQRCodeVisible={modalState.setDouyinQRCodeVisible}
-            douyinPermalink={modalState.douyinPermalink}
-            publishDetailVisible={modalState.publishDetailVisible}
-            onPublishDetailClose={closePublishDetailModal}
-            currentPublishTaskId={modalState.currentPublishTaskId}
-          />
+          {publishModalsNode}
         </>
       )
     },

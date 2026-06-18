@@ -49,9 +49,7 @@
         "prefix": "Note: users who install from Latest China Download or Latest GitHub Channel Download will still receive Chrome Web Store auto-updates after review. If you need the update sooner, please see",
         "linkText": "the manual update guide",
         "suffix": "."
-      },
-      "noteItem1": "We recommend installing the extension from the Chrome Web Store.",
-      "noteItem2": "If you cannot access the Chrome Web Store in China, download the extension from Latest China Download (zip). When new features are released, Chrome Web Store review can take some time, so this channel may occasionally be newer than the Chrome Web Store version."
+      }
     },
     "step3": {
       "title": "Step 3: Check Installation Status",
@@ -133,8 +131,7 @@
     "step6": {
       "title": "Turn Off Developer Mode",
       "content": "After the installation is complete, you can turn off Developer mode."
-    },
-    "tipContent": "If you installed the extension from the Chrome Web Store, you can skip this section and go directly to Authorize the extension."
+    }
   },
   "faq": {
     "title": "FAQ",

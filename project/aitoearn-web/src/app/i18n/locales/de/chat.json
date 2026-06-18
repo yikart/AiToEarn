@@ -3,12 +3,7 @@
     "placeholder": "Erstellen Sie ein 8-Sekunden-Hochformat-Werbevideo für unsere neue Sushi-Platte. Verwenden Sie fröhliche Jazzmusik, Nahaufnahmen von frischem Lachs, generieren Sie Untertitel und enden Sie mit unserem Logo.",
     "send": "Senden",
     "stop": "Stoppen",
-    "uploading": "Wird hochgeladen...",
-    "clearSelection": "Clear Selection",
-    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
-    "noPromotionPlan": "No promotion plans",
-    "selectPromotionPlan": "Select Promotion Plan",
-    "upload": "Upload"
+    "uploading": "Wird hochgeladen..."
   },
   "message": {
     "thinking": "Denke nach...",
@@ -23,6 +18,13 @@
       "okText": "OK"
     }
   },
+  "agentNotice": {
+    "title": "Hinweis",
+    "description": "Dieser Agent befindet sich derzeit noch in der Testphase. Funktionen und Generierungsqualität werden fortlaufend optimiert, daher können Ergebnisse instabil sein oder nicht vollständig den Erwartungen entsprechen. Die entsprechenden Guthaben werden je nach tatsächlicher Nutzung normal verbraucht; Rückerstattungen oder Entschädigungen aufgrund unterschiedlicher Generierungsergebnisse sind derzeit nicht möglich. Wir empfehlen, zunächst in kleinem Umfang zu testen, bevor Sie über die weitere Nutzung entscheiden. Vielen Dank für Ihr Verständnis und Ihre Unterstützung.",
+    "doNotShowAgain": "Nicht mehr anzeigen",
+    "cancel": "Abbrechen",
+    "confirm": "Fortfahren"
+  },
   "task": {
     "newChat": "Neuer Chat",
     "delete": "Löschen",
@@ -36,14 +38,7 @@
       "failed": "Fehlgeschlagen"
     },
     "rate": "Bewerten",
-    "share": "Teilen",
-    "editTitle": "Edit Title",
-    "favorite": "Favorite",
-    "moreActions": "More",
-    "titleLabel": "Task Title",
-    "titlePlaceholder": "Enter task title",
-    "titleUpdated": "Title updated",
-    "unfavorite": "Unfavorite"
+    "share": "Teilen"
   },
   "home": {
     "title": "Wie kann ich Ihnen helfen?",
@@ -62,7 +57,7 @@
     "affiliateReward": "68,40 $ verdienen",
     "imageMaterial": "Bilder",
     "videoMaterial": "Videos",
-    "agentAssets": "Agent-Assets",
+    "agentAssets": "KI-generierte Assets",
     "noData": "Keine Daten"
   },
   "history": {
@@ -152,10 +147,11 @@
     "video": "Video",
     "image": "Bild",
     "document": "Dokument",
+    "audio": "Audio",
+    "edit": "Medium bearbeiten",
+    "remove": "Medium entfernen",
     "uploadFailed": "Upload fehlgeschlagen, bitte erneut versuchen",
-    "uploadCancelled": "Upload abgebrochen",
-    "edit": "Bearbeiten",
-    "remove": "Entfernen"
+    "uploadCancelled": "Upload abgebrochen"
   },
   "workflow": {
     "toolCallCompleted": "Tool-Aufrufe abgeschlossen",
@@ -183,9 +179,7 @@
     "rechargeCredits": "Guthaben aufladen",
     "action": "Aktion",
     "actionDesc": "Bitte führen Sie die folgende Aktion aus",
-    "continue": "Fortfahren",
-    "error": "Fehlgeschlagen",
-    "errorDesc": "Generierung fehlgeschlagen. Bitte versuchen Sie es später erneut."
+    "continue": "Fortfahren"
   },
   "publishDetail": {
     "title": "Veröffentlichungsdetails",
@@ -216,19 +210,6 @@
       "upload": "Wird hochgeladen...",
       "publish": "Wird veröffentlicht...",
       "complete": "Veröffentlicht"
-    },
-    "goLogin": "Go Login",
-    "installPlugin": "Click to install plugin",
-    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
-    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
-    "retry": "Retry"
-  },
-  "toolDetail": {
-    "input": "Input Parameters",
-    "noResult": "No result yet",
-    "output": "Execution Result"
-  },
-  "plugin": {
-    "platformNeedsPlugin": "Diese Plattform benötigt die Browsererweiterung. Bitte autorisieren Sie zuerst die Erweiterung."
+    }
   }
 }

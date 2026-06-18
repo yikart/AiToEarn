@@ -7,15 +7,15 @@
 
 import { useParams, useRouter } from 'next/navigation'
 import { useCallback, useEffect, useState } from 'react'
-import { agentApi } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { ChatInput } from '@/components/Chat/ChatInput'
 import EditTitleModal from '@/components/common/EditTitleModal'
 import { PublishDetailModal } from '@/components/Plugin/PublishDetailModal'
 import { useDocumentTitle, useMediaUpload } from '@/hooks'
-import { toast } from '@/lib/toast'
 import { useAgentStore } from '@/store/agent'
 import { usePluginStore } from '@/store/plugin'
+import { toast } from '@/utils/ui/toast'
 
 // 页面私有组件
 import { ChatHeader, ChatLoadingSkeleton, ChatMessageList } from './components'

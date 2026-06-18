@@ -13,7 +13,7 @@ interface EmptyStateProps {
   type: 'group' | 'media'
   /** 媒体类型 */
   mediaType?: 'video' | 'img'
-  /** 是否是 Agent 分组 */
+  /** 是否是 AI 生成素材分组 */
   isAgentGroup?: boolean
 }
 
@@ -24,7 +24,7 @@ export function EmptyState({ type, mediaType, isAgentGroup }: EmptyStateProps) {
     if (type === 'group') {
       return <FolderOpen className="w-12 h-12 text-muted-foreground/40" />
     }
-    // Agent 分组使用 Bot 图标
+    // AI 生成素材分组使用 Bot 图标
     if (isAgentGroup) {
       return <Bot className="w-12 h-12 text-muted-foreground/40" />
     }
@@ -38,7 +38,7 @@ export function EmptyState({ type, mediaType, isAgentGroup }: EmptyStateProps) {
     if (type === 'group') {
       return t('mediaManagement.noGroups')
     }
-    // Agent 分组空状态标题
+    // AI 生成素材分组空状态标题
     if (isAgentGroup) {
       return t('agentAssets.noAssets')
     }
@@ -49,7 +49,7 @@ export function EmptyState({ type, mediaType, isAgentGroup }: EmptyStateProps) {
     if (type === 'group') {
       return t('mediaManagement.noGroupsDesc')
     }
-    // Agent 分组空状态描述
+    // AI 生成素材分组空状态描述
     if (isAgentGroup) {
       return t('agentAssets.noAssetsDesc')
     }

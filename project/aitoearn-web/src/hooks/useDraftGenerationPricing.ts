@@ -3,43 +3,66 @@
  * 复用 ai/draft-generation/pricing 接口，提供模块级缓存与防重复请求
  */
 
-import type { DraftGenerationPricingVo } from '@/api/types/draftGeneration'
+import type { DraftGenerationPricingVo } from '@/api/ai/ai.types'
 import { useEffect, useState } from 'react'
-import { apiGetDraftGenerationPricing } from '@/api/draftGeneration'
+import { apiGetDraftGenerationPricing } from '@/api/ai/ai.api'
 
-let cachedData: DraftGenerationPricingVo | null = null
-let fetchPromise: Promise<DraftGenerationPricingVo | null> | null = null
+interface DraftGenerationPricingCache {
+  data: DraftGenerationPricingVo | null
+  promise: Promise<DraftGenerationPricingVo | null> | null
+}
+
+const globalPricingCache = globalThis as typeof globalThis & {
+  __draftGenerationPricingCache?: DraftGenerationPricingCache
+}
+
+function getPricingCache() {
+  if (!globalPricingCache.__draftGenerationPricingCache) {
+    globalPricingCache.__draftGenerationPricingCache = {
+      data: null,
+      promise: null,
+    }
+  }
+
+  return globalPricingCache.__draftGenerationPricingCache
+}
 
 async function fetchPricing(): Promise<DraftGenerationPricingVo | null> {
-  if (cachedData)
-    return cachedData
-  if (fetchPromise)
-    return fetchPromise
+  const cache = getPricingCache()
+  if (cache.data) {
+    return cache.data
+  }
+  if (cache.promise) {
+    return cache.promise
+  }
 
-  fetchPromise = apiGetDraftGenerationPricing()
+  cache.promise = apiGetDraftGenerationPricing()
     .then((res) => {
       if (res?.data) {
-        cachedData = res.data
-        return cachedData
+        cache.data = res.data
+        return cache.data
       }
       return null
     })
-    .catch(() => null)
+    .catch(() => {
+      return null
+    })
     .finally(() => {
-      fetchPromise = null
+      cache.promise = null
     })
 
-  return fetchPromise
+  return cache.promise
 }
 
 export function useDraftGenerationPricing() {
-  const [pricingData, setPricingData] = useState<DraftGenerationPricingVo | null>(cachedData)
-  const [isLoading, setIsLoading] = useState(!cachedData)
+  const [pricingData, setPricingData] = useState<DraftGenerationPricingVo | null>(() => getPricingCache().data)
+  const [isLoading, setIsLoading] = useState(() => !getPricingCache().data)
   const [error, setError] = useState(false)
 
   useEffect(() => {
-    if (cachedData) {
-      setPricingData(cachedData)
+    const cache = getPricingCache()
+    if (cache.data) {
+      setPricingData(cache.data)
       setIsLoading(false)
       return
     }
@@ -48,8 +71,9 @@ export function useDraftGenerationPricing() {
     setIsLoading(true)
 
     fetchPricing().then((data) => {
-      if (cancelled)
+      if (cancelled) {
         return
+      }
 
       if (data) {
         setPricingData(data)

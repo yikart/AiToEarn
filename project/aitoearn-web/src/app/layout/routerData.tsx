@@ -1,7 +1,8 @@
 /**
  * 路由/导航数据配置
- * 包含导航项的图标、路径、翻译键等信息
+ * 包含开源版保留导航项的图标、路径、翻译键等信息。
  */
+
 import {
   Bot,
   History,
@@ -48,7 +49,6 @@ export const routerData: IRouterDataItem[] = [
     path: '/accounts',
     icon: <Upload size={20} />,
   },
-  // Tasks moved to notification panel
   {
     name: 'Agent Assets',
     translationKey: 'header.agentAssets',

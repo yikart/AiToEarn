@@ -13,7 +13,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { BRUSH_SIZE, PRESET_COLORS } from './useBrushEditor'
 import { CROP_RATIOS } from './useCropEditor'
 

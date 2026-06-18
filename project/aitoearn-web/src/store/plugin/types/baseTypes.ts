@@ -4,7 +4,6 @@
 
 import type {
   PublishParams as BasePublishParams,
-  PlatformPublishTask,
   ProgressEvent,
   PublishTask,
   PublishTaskListConfig,
@@ -13,7 +12,14 @@ import type { PlatAccountInfo, WxSphLoginStatus, XhsLoginStatus } from './plat.t
 import { PlatType } from '@/app/config/platConfig'
 
 // 导出任务相关类型
-export type { PlatformPublishTask, PublishTask, PublishTaskListConfig }
+export type {
+  PlatformPublishMode,
+  PlatformPublishTask,
+  PlatformPublishUserAction,
+  PublishTask,
+  PublishTaskListConfig,
+  UnifiedPublishParams,
+} from './publishTask.types'
 export { PlatformTaskStatus } from './publishTask.types'
 
 /**
@@ -104,6 +110,8 @@ export type ProgressCallback = (event: ProgressEvent) => void
 export interface PermissionCheckResult {
   /** 是否已授予所有必需权限 */
   granted: boolean
+  /** 是否已授予站点访问权限 */
+  hostAccess?: boolean
   /** 已授予的权限列表 */
   permissions?: string[]
 }

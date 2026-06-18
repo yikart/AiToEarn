@@ -1,7 +1,5 @@
 {
   "home": "홈",
-  "header.draftBox": "콘텐츠 관리",
-  "header.agentAssets": "Agent 소재",
   "tasksHistory": "작업 기록",
   "accounts": "게시",
   "publish": "게시",
@@ -20,9 +18,10 @@
   "sidebar.more": "더 보기",
   "mobileBottom.content": "콘텐츠",
   "mobileBottom.checkIn": "체크인",
+  "mobileBottom.gold": "골드",
   "mobileBottom.publish": "게시",
   "mobileBottom.interaction": "상호작용",
-  "aiSocial": "AI Publish",
-  "download": "Download",
-  "xhsData": "XHS Data"
+  "pricing": "요금",
+  "xhsData": "AI 상호작용",
+  "groundPromotion": "Ground Promotion"
 }

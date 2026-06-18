@@ -17,8 +17,10 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { useSystemStore } from '@/store/system'
+import { cn } from '@/utils/className'
 import { MediaUpload } from '../MediaUpload'
+import { AgentTestingNoticeDialog } from './AgentTestingNoticeDialog'
 
 export interface IChatInputProps {
   /** 输入内容 */
@@ -82,6 +84,9 @@ export function ChatInput({
   const { t } = useTransClient('chat')
   const textareaRef = useRef<HTMLTextAreaElement>(null)
   const [isFocused, setIsFocused] = useState(false)
+  const [noticeOpen, setNoticeOpen] = useState(false)
+  const disableAgentTestingNotice = useSystemStore(state => state.disableAgentTestingNotice)
+  const setDisableAgentTestingNotice = useSystemStore(state => state.setDisableAgentTestingNotice)
 
   /** 当前字符数 */
   const currentLength = value.length
@@ -153,9 +158,29 @@ export function ChatInput({
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault()
       if (!disabled && !isGenerating && !isUploading && (allowEmptySubmit || value.trim())) {
-        onSend()
+        handleSendRequest()
       }
     }
+  }
+
+  /** 请求发送：提交前展示 Agent 测试阶段提示 */
+  const handleSendRequest = () => {
+    if (disableAgentTestingNotice) {
+      onSend()
+      return
+    }
+
+    setNoticeOpen(true)
+  }
+
+  /** 确认提示后继续发送 */
+  const handleNoticeConfirm = (doNotShowAgain: boolean) => {
+    if (doNotShowAgain) {
+      setDisableAgentTestingNotice(true)
+    }
+
+    setNoticeOpen(false)
+    onSend()
   }
 
   /** 处理发送/停止按钮点击 */
@@ -164,7 +189,7 @@ export function ChatInput({
       onStop?.()
     }
     else if (canSend) {
-      onSend()
+      handleSendRequest()
     }
   }
 
@@ -172,115 +197,123 @@ export function ChatInput({
   const canSend = !disabled && !isUploading && !isGenerating && (allowEmptySubmit || value.trim())
 
   return (
-    <div
-      style={{
-        position: 'relative',
-        zIndex: 2,
-      }}
-      className={cn(
-        'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
-        mode === 'large' ? 'p-4' : 'p-3',
-        // 详情页（compact 模式）允许输入区域根据父容器拉伸
-        mode === 'compact' && 'h-full flex flex-col',
-        className,
-      )}
-    >
-      {/* 第一层：媒体预览区域（只有有媒体时展示） */}
-      {medias.length > 0 && (
-        <div className="mb-3">
-          <MediaUpload
-            medias={medias}
-            isUploading={isUploading}
+    <>
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 2,
+        }}
+        className={cn(
+          'w-full rounded-2xl border bg-card transition-all duration-300 border-border shadow-sm hover:border-border/80 hover:shadow-md',
+          mode === 'large' ? 'p-4' : 'p-3',
+          // 详情页（compact 模式）允许输入区域根据父容器拉伸
+          mode === 'compact' && 'h-full flex flex-col',
+          className,
+        )}
+      >
+        {/* 第一层：媒体预览区域（只有有媒体时展示） */}
+        {medias.length > 0 && (
+          <div className="mb-3">
+            <MediaUpload
+              medias={medias}
+              isUploading={isUploading}
+              disabled={disabled || isGenerating}
+              onFilesChange={onMediasChange}
+              onRemove={onMediaRemove}
+              onMediaUpdate={onMediaUpdate}
+              maxCount={maxMediaCount}
+              showUploadButton={false}
+            />
+          </div>
+        )}
+
+        {/* 第二层：文本输入区域 */}
+        <div className={cn('flex-1', mode === 'compact' && 'w-full')}>
+          <textarea
+            ref={textareaRef}
+            value={value}
+            onChange={e => onChange(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onPaste={handlePaste}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
+            placeholder={placeholder}
             disabled={disabled || isGenerating}
-            onFilesChange={onMediasChange}
-            onRemove={onMediaRemove}
-            onMediaUpdate={onMediaUpdate}
-            maxCount={maxMediaCount}
-            showUploadButton={false}
+            rows={mode === 'large' ? 3 : 1}
+            className={cn(
+              'w-full resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
+              'disabled:opacity-50 disabled:cursor-not-allowed',
+              mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[40px]',
+            )}
           />
         </div>
-      )}
 
-      {/* 第二层：文本输入区域 */}
-      <div className={cn('flex-1', mode === 'compact' && 'w-full')}>
-        <textarea
-          ref={textareaRef}
-          value={value}
-          onChange={e => onChange(e.target.value)}
-          onKeyDown={handleKeyDown}
-          onPaste={handlePaste}
-          onFocus={() => setIsFocused(true)}
-          onBlur={() => setIsFocused(false)}
-          placeholder={placeholder}
-          disabled={disabled || isGenerating}
-          rows={mode === 'large' ? 3 : 1}
-          className={cn(
-            'w-full resize-none border-none outline-none focus:outline-none bg-transparent text-foreground placeholder:text-muted-foreground',
-            'disabled:opacity-50 disabled:cursor-not-allowed',
-            mode === 'large' ? 'text-base min-h-[80px]' : 'text-sm min-h-[40px]',
-          )}
-        />
-      </div>
+        {/* 第三层：操作栏（左侧其他操作，右侧发送按钮） */}
+        <div className="mt-3 flex items-center justify-between gap-2">
+          {/* 左侧：其它操作（上传按钮 + 字数提示） */}
+          <div className="flex items-center gap-2">
+            {/* 上传按钮（包裹 Tooltip） */}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div>
+                    <MediaUpload
+                      medias={medias}
+                      isUploading={isUploading}
+                      disabled={disabled || isGenerating}
+                      onFilesChange={onMediasChange}
+                      onRemove={onMediaRemove}
+                      maxCount={maxMediaCount}
+                      showList={false}
+                      buttonVariant="icon"
+                    />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent side="top">
+                  {t('input.upload')}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+            {/* 字数限制提示：只在超出时显示并标红 */}
+            {isOverLimit && (
+              <div className="text-xs text-destructive">
+                {currentLength}
+                /
+                {maxLength}
+              </div>
+            )}
+          </div>
 
-      {/* 第三层：操作栏（左侧其他操作，右侧发送按钮） */}
-      <div className="mt-3 flex items-center justify-between gap-2">
-        {/* 左侧：其它操作（上传按钮 + 字数提示） */}
-        <div className="flex items-center gap-2">
-          {/* 上传按钮（包裹 Tooltip） */}
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div>
-                  <MediaUpload
-                    medias={medias}
-                    isUploading={isUploading}
-                    disabled={disabled || isGenerating}
-                    onFilesChange={onMediasChange}
-                    onRemove={onMediaRemove}
-                    maxCount={maxMediaCount}
-                    showList={false}
-                    buttonVariant="icon"
-                  />
-                </div>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                {t('input.upload')}
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
-          {/* 字数限制提示：只在超出时显示并标红 */}
-          {isOverLimit && (
-            <div className="text-xs text-destructive">
-              {currentLength}
-              /
-              {maxLength}
-            </div>
-          )}
+          {/* 右侧：发送/停止按钮 */}
+          <button
+            onClick={handleButtonClick}
+            disabled={!isGenerating && !canSend}
+            className={cn(
+              'shrink-0 flex items-center justify-center rounded-full transition-all',
+              mode === 'large' ? 'w-10 h-10' : 'w-8 h-8',
+              // 生成中或无法发送时都显示灰色
+              !isGenerating && !canSend
+                ? 'bg-muted text-muted-foreground cursor-not-allowed'
+                : 'bg-gradient-back text-gradient-foreground shadow-sm shadow-primary/20 hover:shadow-md hover:shadow-primary/25 active:scale-95',
+            )}
+          >
+            {isGenerating ? (
+              <Square className={cn(mode === 'large' ? 'w-4 h-4' : 'w-3 h-3')} fill="currentColor" />
+            ) : isUploading ? (
+              <Loader2 className={cn('animate-spin', mode === 'large' ? 'w-5 h-5' : 'w-4 h-4')} />
+            ) : (
+              <ArrowUp className={cn(mode === 'large' ? 'w-5 h-5' : 'w-4 h-4')} />
+            )}
+          </button>
         </div>
-
-        {/* 右侧：发送/停止按钮 */}
-        <button
-          onClick={handleButtonClick}
-          disabled={!isGenerating && !canSend}
-          className={cn(
-            'shrink-0 flex items-center justify-center rounded-full transition-all',
-            mode === 'large' ? 'w-10 h-10' : 'w-8 h-8',
-            // 生成中或无法发送时都显示灰色
-            !isGenerating && !canSend
-              ? 'bg-muted text-muted-foreground cursor-not-allowed'
-              : 'bg-primary hover:bg-primary/90 text-primary-foreground',
-          )}
-        >
-          {isGenerating ? (
-            <Square className={cn(mode === 'large' ? 'w-4 h-4' : 'w-3 h-3')} fill="currentColor" />
-          ) : isUploading ? (
-            <Loader2 className={cn('animate-spin', mode === 'large' ? 'w-5 h-5' : 'w-4 h-4')} />
-          ) : (
-            <ArrowUp className={cn(mode === 'large' ? 'w-5 h-5' : 'w-4 h-4')} />
-          )}
-        </button>
       </div>
-    </div>
+
+      <AgentTestingNoticeDialog
+        open={noticeOpen}
+        onOpenChange={setNoticeOpen}
+        onConfirm={handleNoticeConfirm}
+      />
+    </>
   )
 }
 

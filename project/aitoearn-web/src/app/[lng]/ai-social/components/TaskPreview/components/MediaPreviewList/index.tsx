@@ -5,9 +5,9 @@
 
 'use client'
 
-import type { MediaItem } from '@/api/types/media'
+import type { MediaItem } from '@/api/materials/material.types'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { MediaPreviewCard } from '../MediaPreviewCard'
 import { MediaPreviewCardSkeleton } from '../MediaPreviewCard/MediaPreviewCardSkeleton'
 

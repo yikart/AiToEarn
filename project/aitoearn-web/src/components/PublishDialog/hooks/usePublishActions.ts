@@ -3,43 +3,62 @@
  * 处理发布内容的核心逻辑
  */
 
+import type { ChannelPublishUserActionVo } from '@/api/channels/channel.types'
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
-
 import type {
+  PlatformPublishMode,
   PlatformPublishTask,
   PluginPlatformType,
   PublishParams as PluginPublishParams,
+  UnifiedPublishParams,
 } from '@/store/plugin'
-import lodash from 'lodash'
 import { useCallback } from 'react'
-import { apiCreatePublish } from '@/api/plat/publish'
+import { createChannelPublishFlowApi, getChannelPublishUserActionApi } from '@/api/channels/channel.api'
+import { getPublishRecordDetailById } from '@/api/platforms/publish.api'
+import { PublishStatus } from '@/api/platforms/publish.constants'
 import {
   getDays,
   getUtcDays,
 } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
 import { AccountStatus } from '@/app/config/accountConfig'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-import { PubType } from '@/app/config/publishConfig'
+import { PlatType } from '@/app/config/platConfig'
+import {
+  buildChannelPublishFlowParams,
+  getPublishRecordIdFromFlow,
+  isPublishTitleSupported,
+} from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
-import { toast } from '@/lib/toast'
+import { getPlatformInfoSync, isPlatformDisabledSync, isPlatformEnabledSync } from '@/store/platformMetadata'
 import { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS, usePluginStore } from '@/store/plugin'
-import { generateUUID } from '@/utils'
+import { sleep } from '@/utils/common'
+import { toast } from '@/utils/ui/toast'
+
+const DOUYIN_RECORD_POLL_INTERVAL_MS = 5000
+const DOUYIN_RECORD_POLL_MAX_COUNT = 36
+const douyinRecordPollingStatuses: readonly number[] = [
+  PublishStatus.UNPUBLISH,
+  PublishStatus.PUB_LOADING,
+  PublishStatus.QUEUED,
+]
+const douyinRecordFailedStatuses: readonly number[] = [
+  PublishStatus.FAIL,
+  PublishStatus.UPDATED_FAILED,
+  PublishStatus.CANCELED,
+]
 
 interface UsePublishActionsParams {
   pubListChoosed: PubItem[]
   pubTime?: string
-  isMobile: boolean
   suppressAutoPublish?: boolean
   taskIdForPublish?: string
+  materialGroupIdForPublish?: string
   materialIdForPublish?: string
   onPublishConfirmed?: (taskId?: string, publishRecordId?: string) => void
   onPublishStart?: () => void
   onClose: () => void
   onPubSuccess?: () => void
   setCreateLoading: (loading: boolean) => void
-  setDouyinPermalink: (permalink: string) => void
-  setDouyinQRCodeVisible: (visible: boolean) => void
   setCurrentPublishTaskId: (taskId: string | undefined) => void
   setPublishDetailVisible: (visible: boolean) => void
   t: (key: string, params?: Record<string, string>) => string
@@ -52,36 +71,86 @@ export function isPluginSupportedPlatform(platType: PlatType | string): boolean 
   return PLUGIN_SUPPORTED_PLATFORMS.includes(platType as PluginPlatformType)
 }
 
-function normalizePublishOption(item: PubItem) {
-  const option = lodash.cloneDeep(item.params.option)
+function getPlatformTaskId(item: PubItem, publishMode: PlatformPublishMode) {
+  return `${publishMode}-${item.account.type}-${item.account.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
+}
 
-  if (item.account.type === PlatType.Instagram && item.params.video) {
-    option.instagram = {
-      ...option.instagram,
-      content_category: 'reel',
-    }
-  }
-  else if (item.account.type === PlatType.Instagram && !option.instagram?.content_category) {
-    option.instagram = {
-      ...option.instagram,
-      content_category: 'post',
-    }
+function buildTaskPublishParams(item: PubItem): UnifiedPublishParams {
+  const params: UnifiedPublishParams = {
+    platform: item.account.type as PlatType,
+    accountId: item.account.id,
+    type: item.params.video ? 'video' : 'image',
+    desc: item.params.des || '',
+    topics: item.params.topics || [],
   }
 
-  if (item.account.type === PlatType.Facebook && item.params.video) {
-    option.facebook = {
-      ...option.facebook,
-      content_category: 'reel',
-    }
+  if (isPublishTitleSupported(item.account.type))
+    params.title = item.params.title || ''
+
+  return params
+}
+
+function buildUnifiedPlatformTask(item: PubItem, publishMode: PlatformPublishMode): PlatformPublishTask {
+  return {
+    id: getPlatformTaskId(item, publishMode),
+    platform: item.account.type as PlatType,
+    accountId: item.account.id,
+    publishMode,
+    params: buildTaskPublishParams(item),
+    status: PlatformTaskStatus.PENDING,
+    progress: null,
+    result: null,
+    startTime: null,
+    endTime: null,
+    error: null,
   }
-  else if (item.account.type === PlatType.Facebook && !option.facebook?.content_category) {
-    option.facebook = {
-      ...option.facebook,
-      content_category: 'post',
-    }
+}
+
+function hasDouyinUserAction(
+  data: ChannelPublishUserActionVo | null | undefined,
+): data is ChannelPublishUserActionVo & { schemeUrl: string, shortLink: string } {
+  return !!data?.schemeUrl && !!data.shortLink
+}
+
+function normalizePublishStatus(status: string | number | undefined) {
+  const normalized = Number(status)
+  return Number.isFinite(normalized) ? normalized : undefined
+}
+
+function isDouyinUserActionReadyStatus(status: string | number | undefined) {
+  return normalizePublishStatus(status) === PublishStatus.WAITING_FOR_USER_ACTION
+}
+
+function shouldPollDouyinRecord(status: string | number | undefined) {
+  const normalized = normalizePublishStatus(status)
+  return normalized !== undefined && douyinRecordPollingStatuses.includes(normalized)
+}
+
+function isDouyinRecordFailedStatus(status: string | number | undefined) {
+  const normalized = normalizePublishStatus(status)
+  return normalized !== undefined && douyinRecordFailedStatuses.includes(normalized)
+}
+
+async function pollDouyinRecordUntilUserActionReady(publishRecordId: string) {
+  let latestRes: Awaited<ReturnType<typeof getPublishRecordDetailById>> | null = null
+
+  for (let pollIndex = 0; pollIndex < DOUYIN_RECORD_POLL_MAX_COUNT; pollIndex++) {
+    if (pollIndex > 0)
+      await sleep(DOUYIN_RECORD_POLL_INTERVAL_MS)
+
+    latestRes = await getPublishRecordDetailById(publishRecordId)
+    const record = latestRes?.data
+    if (!record)
+      continue
+
+    if (isDouyinUserActionReadyStatus(record.status))
+      return latestRes
+
+    if (isDouyinRecordFailedStatus(record.status) || !shouldPollDouyinRecord(record.status))
+      return latestRes
   }
 
-  return option
+  return latestRes
 }
 
 /**
@@ -90,26 +159,24 @@ function normalizePublishOption(item: PubItem) {
 export function usePublishActions({
   pubListChoosed,
   pubTime,
-  isMobile,
   suppressAutoPublish,
   taskIdForPublish,
+  materialGroupIdForPublish,
   materialIdForPublish,
   onPublishConfirmed,
   onPublishStart,
   onClose,
   onPubSuccess,
   setCreateLoading,
-  setDouyinPermalink,
-  setDouyinQRCodeVisible,
   setCurrentPublishTaskId,
   setPublishDetailVisible,
   t,
 }: UsePublishActionsParams) {
   /**
    * 执行发布
-   * 1. 先执行 API 发布（非插件支持平台）
-   * 2. 再执行插件发布（插件支持平台）
-   * 3. 显示发布详情弹框
+   * 1. API 发布与插件发布共用一个详情任务
+   * 2. 插件发布立即启动，不等待 API 发布
+   * 3. API 发布后台执行，只更新自己的平台任务状态
    */
   const pubClick = useCallback(async () => {
     const offlineItem = pubListChoosed.find(item => item.account.status === AccountStatus.DISABLE)
@@ -118,12 +185,32 @@ export function usePublishActions({
       return
     }
 
+    const disabledItem = pubListChoosed.find(item => isPlatformDisabledSync(item.account.type))
+    if (disabledItem) {
+      toast.error(
+        t('tips.platformComingSoon', {
+          platform: getPlatformInfoSync(disabledItem.account.type)?.name || disabledItem.account.type,
+        }),
+      )
+      return
+    }
+
+    const restrictedItem = pubListChoosed.find(item => !isPlatformEnabledSync(item.account.type))
+    if (restrictedItem) {
+      toast.error(
+        t('tips.regionRestricted', {
+          platform: getPlatformInfoSync(restrictedItem.account.type)?.name || restrictedItem.account.type,
+        }),
+      )
+      return
+    }
+
     setCreateLoading(true)
     onPublishStart?.()
 
     const publishTime = getUtcDays(pubTime || getDays().add(5, 'second')).format()
 
-    // 分离 API 发布列表和插件发布列表
+    // 分离发布任务和自动发布列表
     const apiPublishItems = pubListChoosed.filter(
       item => !isPluginSupportedPlatform(item.account.type),
     )
@@ -131,135 +218,137 @@ export function usePublishActions({
       isPluginSupportedPlatform(item.account.type),
     )
 
-    // 如果有插件发布项，创建发布任务并显示详情弹框
-    let taskId: string | null = null
-    // 存储每个发布项对应的平台任务ID，用于后续精确更新
+    const pluginPlatformTasks: PlatformPublishTask[] = []
+    const apiPlatformTaskMap = new Map<string, PlatformPublishTask>()
     const platformTaskIdMap = new Map<string, string>()
 
-    if (pluginPublishItems.length > 0) {
-      const { addPublishTask } = usePluginStore.getState()
+    pluginPublishItems.forEach((item) => {
+      const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
+      platformTaskIdMap.set(item.account.id, requestId)
 
-      // 创建平台任务列表，为每个任务生成唯一ID和requestId
-      const platformTasks: PlatformPublishTask[] = pluginPublishItems.map((item) => {
-        // 使用账号ID生成唯一的平台任务ID
-        const platformTaskId = `${item.account.type}-${
-          item.account.id
-        }-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-        // 生成唯一的 requestId，用于插件回调匹配
-        const requestId = `req-${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-        // 保存映射关系，用于后续更新（保存 requestId 而非 platformTaskId）
-        platformTaskIdMap.set(item.account.id, requestId)
+      const pluginPublishParams: PluginPublishParams = {
+        platform: item.account.type as PluginPlatformType,
+        type: item.params.video ? 'video' : 'image',
+        desc: item.params.des || '',
+        topics: item.params.topics || [],
+      }
+      if (isPublishTitleSupported(item.account.type))
+        pluginPublishParams.title = item.params.title || ''
 
-        return {
-          id: platformTaskId,
-          requestId,
-          platform: item.account.type as PluginPlatformType,
-          accountId: item.account.id,
-          params: {
-            platform: item.account.type as PluginPlatformType,
-            type: item.params.video ? 'video' : 'image',
-            title: item.params.title || '',
-            desc: item.params.des || '',
-            topics: item.params.topics || [],
-          } as PluginPublishParams,
+      pluginPlatformTasks.push({
+        ...buildUnifiedPlatformTask(item, 'auto'),
+        requestId,
+        params: pluginPublishParams,
+      })
+    })
+
+    apiPublishItems.forEach((item) => {
+      const publishMode: PlatformPublishMode = item.account.type === PlatType.Douyin ? 'user_action' : 'task'
+      apiPlatformTaskMap.set(item.account.id, {
+        ...buildUnifiedPlatformTask(item, publishMode),
+        status: PlatformTaskStatus.PUBLISHING,
+        startTime: Date.now(),
+      })
+    })
+
+    const { addPublishTask, updatePlatformTask } = usePluginStore.getState()
+    const taskTitle = pubListChoosed[0]?.params.title
+      || pubListChoosed[0]?.params.des?.slice(0, 20)
+      || t('title')
+    const taskDescription = pubListChoosed[0]?.params.des?.slice(0, 100)
+    const platformTasks = [
+      ...pluginPlatformTasks,
+      ...Array.from(apiPlatformTaskMap.values()),
+    ]
+
+    if (platformTasks.length === 0) {
+      setCreateLoading(false)
+      return
+    }
+
+    const taskId = addPublishTask({
+      title: taskTitle,
+      description: taskDescription,
+      platformTasks,
+    })
+
+    setCurrentPublishTaskId(taskId)
+    setPublishDetailVisible(true)
+    onClose()
+
+    const updateApiTask = (item: PubItem, updates: Partial<PlatformPublishTask>) => {
+      const platformTask = apiPlatformTaskMap.get(item.account.id)
+      if (!platformTask)
+        return
+
+      updatePlatformTask(taskId, platformTask.id, updates)
+    }
+
+    const updateDouyinUserActionError = (item: PubItem, publishRecordId: string, message?: string) => {
+      const errorMessage = message || t('messages.userActionFetchFailed')
+      updateApiTask(item, {
+        status: PlatformTaskStatus.ERROR,
+        publishRecordId,
+        error: errorMessage,
+        endTime: Date.now(),
+        result: {
+          success: false,
+          failReason: errorMessage,
+        },
+      })
+    }
+
+    const fetchAndUpdateDouyinUserAction = async (item: PubItem, publishRecordId: string) => {
+      try {
+        const recordRes = await pollDouyinRecordUntilUserActionReady(publishRecordId)
+        const record = recordRes?.data
+        if (!record || !isDouyinUserActionReadyStatus(record.status)) {
+          updateDouyinUserActionError(item, publishRecordId, record?.errorMsg || recordRes?.message)
+          return
+        }
+
+        await useCalendarTiming.getState().refreshPubRecordDetail(publishRecordId)
+
+        const userActionRes = await getChannelPublishUserActionApi(publishRecordId)
+        if (userActionRes?.code !== 0 || !hasDouyinUserAction(userActionRes.data)) {
+          updateDouyinUserActionError(item, publishRecordId, userActionRes?.message)
+          return
+        }
+
+        const userActionPublishRecordId = userActionRes.data.recordId || publishRecordId
+        updateApiTask(item, {
           status: PlatformTaskStatus.PENDING,
+          publishRecordId: userActionPublishRecordId,
+          userAction: {
+            schemeUrl: userActionRes.data.schemeUrl,
+            shortLink: userActionRes.data.shortLink,
+            expiresAt: userActionRes.data.expiresAt,
+          },
           progress: null,
           result: null,
-          startTime: null,
-          endTime: null,
-          error: null,
-        }
-      })
-
-      // 添加发布任务
-      taskId = addPublishTask({
-        title:
-          pubListChoosed[0]?.params.title
-          || pubListChoosed[0]?.params.des?.slice(0, 20)
-          || t('title'),
-        description: pubListChoosed[0]?.params.des?.slice(0, 100),
-        platformTasks,
-      })
-
-      // 设置任务ID并显示弹框
-      setCurrentPublishTaskId(taskId)
-      setPublishDetailVisible(true)
+          endTime: Date.now(),
+        })
+      }
+      catch {
+        updateDouyinUserActionError(item, publishRecordId)
+      }
     }
 
-    // 记录首次 API 发布产生的记录 ID
     let firstPublishRecordId: string | undefined
-
-    // 1. 先执行 API 发布（非插件支持平台）
-    for (const item of apiPublishItems) {
-      const normalizedOption = normalizePublishOption(item)
-      const res = await apiCreatePublish({
-        topics: item.params.topics ?? [],
-        flowId: generateUUID(),
-        type: item.params.video?.cover.ossUrl ? PubType.VIDEO : PubType.ImageText,
-        title: item.params.title || '',
-        desc: item.params.des,
-        accountId: item.account.id,
-        accountType: item.account.type,
-        userTaskId: taskIdForPublish,
-        ...(materialIdForPublish ? { materialId: materialIdForPublish } : {}),
-        videoUrl: item.params.video?.ossUrl,
-        coverUrl:
-          item.params.video?.cover.ossUrl
-          || (item.params.images && item.params.images.length > 0
-            ? item.params.images[0].ossUrl
-            : undefined),
-        imgUrlList:
-          item.params.images
-            ?.map(v => v.ossUrl)
-            .filter((url): url is string => url !== undefined) || [],
-        publishTime,
-        option: normalizedOption,
-      })
-
-      if (res?.code !== 0) {
-        setCreateLoading(false)
-        return
-      }
-
-      if (!firstPublishRecordId && res?.data?.id) {
-        firstPublishRecordId = res.data.id
-      }
-
-      // 检查是否是抖音平台，且返回了 permalink
-      if (res?.data && typeof res.data === 'object') {
-        const resData = res.data as any
-        if (
-          resData.accountType === 'douyin'
-          && resData.permalink
-          && typeof resData.permalink === 'string'
-        ) {
-          if (!isMobile) {
-            // PC端：显示二维码弹窗，优先使用 shortLink（标准 HTTPS URL，扫码兼容性更好）
-            setDouyinPermalink(`/shortLink?apiLink=${encodeURIComponent(resData.shortLink)}`)
-          }
-          else {
-            // 移动端：显示引导弹窗，用户点击按钮后唤起抖音 App
-            setDouyinPermalink(resData.permalink)
-          }
-          setDouyinQRCodeVisible(true)
-        }
-      }
-    }
-
-    // 2. 再执行插件发布（插件支持平台）
     const hasPluginItems = pluginPublishItems.length > 0
+
+    // 插件发布与 API 发布分线执行：插件发布不等待 API 发布任务创建结果
     if (hasPluginItems) {
-      // 异步执行插件发布，不阻塞主流程
-      usePluginStore.getState().executePluginPublish({
+      void usePluginStore.getState().executePluginPublish({
         items: pluginPublishItems,
         platformTaskIdMap,
         publishTime,
         userTaskId: taskIdForPublish, // 传递任务ID用于关联发布记录
+        ...(materialGroupIdForPublish ? { materialGroupId: materialGroupIdForPublish } : {}),
         ...(materialIdForPublish ? { materialId: materialIdForPublish } : {}),
+        skipAddTask: true,
         onComplete: (pluginPublishRecordId) => {
-          // 发布完成后刷新发布记录
           useCalendarTiming.getState().getPubRecord()
-          // 插件发布完成后，触发 onPublishConfirmed（仅在有插件项且抑制自动发布时）
           if (suppressAutoPublish && onPublishConfirmed) {
             try {
               onPublishConfirmed(taskIdForPublish, pluginPublishRecordId || firstPublishRecordId)
@@ -272,8 +361,116 @@ export function usePublishActions({
       })
     }
 
-    // 如果抑制自动发布（来自任务流程），不要自动调用平台 API，但仍需通知外部父组件
-    // 有插件项时，由 onComplete 回调触发；无插件项时，立即调用
+    const executeApiPublish = async () => {
+      if (apiPublishItems.length === 0)
+        return true
+
+      const flowParams = buildChannelPublishFlowParams(apiPublishItems, {
+        publishAt: publishTime,
+        userTaskId: taskIdForPublish,
+        materialGroupId: materialGroupIdForPublish,
+        materialId: materialIdForPublish,
+        source: 'web',
+      })
+
+      if (!flowParams) {
+        apiPublishItems.forEach(item => updateApiTask(item, {
+          status: PlatformTaskStatus.ERROR,
+          error: t('messages.publishFailed'),
+          endTime: Date.now(),
+          result: {
+            success: false,
+            failReason: t('messages.publishFailed'),
+          },
+        }))
+        return false
+      }
+
+      let res: Awaited<ReturnType<typeof createChannelPublishFlowApi>>
+      try {
+        res = await createChannelPublishFlowApi(flowParams)
+      }
+      catch {
+        apiPublishItems.forEach(item => updateApiTask(item, {
+          status: PlatformTaskStatus.ERROR,
+          error: t('messages.publishFailed'),
+          endTime: Date.now(),
+          result: {
+            success: false,
+            failReason: t('messages.publishFailed'),
+          },
+        }))
+        return false
+      }
+
+      if (res?.code !== 0) {
+        apiPublishItems.forEach(item => updateApiTask(item, {
+          status: PlatformTaskStatus.ERROR,
+          error: res?.message || t('messages.publishFailed'),
+          endTime: Date.now(),
+          result: {
+            success: false,
+            failReason: res?.message || t('messages.publishFailed'),
+          },
+        }))
+        return false
+      }
+
+      firstPublishRecordId = getPublishRecordIdFromFlow(res.data)
+
+      apiPublishItems.forEach((item) => {
+        const publishRecordId = getPublishRecordIdFromFlow(res.data, item.account.id)
+        if (!publishRecordId) {
+          updateApiTask(item, {
+            status: PlatformTaskStatus.ERROR,
+            error: t('messages.publishFailed'),
+            endTime: Date.now(),
+            result: {
+              success: false,
+              failReason: t('messages.publishFailed'),
+            },
+          })
+          return
+        }
+
+        if (item.account.type === PlatType.Douyin) {
+          updateApiTask(item, { publishRecordId })
+          void fetchAndUpdateDouyinUserAction(item, publishRecordId)
+          return
+        }
+
+        updateApiTask(item, {
+          status: PlatformTaskStatus.COMPLETED,
+          publishRecordId,
+          progress: {
+            stage: 'complete',
+            progress: 100,
+            message: t('messages.publishTaskCreated'),
+            timestamp: Date.now(),
+          },
+          result: {
+            success: true,
+            workId: publishRecordId,
+          },
+          endTime: Date.now(),
+        })
+      })
+
+      return true
+    }
+
+    const apiPublishPromise = executeApiPublish()
+    if (!hasPluginItems) {
+      const apiPublishSuccess = await apiPublishPromise
+      if (!apiPublishSuccess) {
+        setCreateLoading(false)
+        return
+      }
+    }
+    else {
+      void apiPublishPromise
+    }
+
     if (suppressAutoPublish) {
       if (!hasPluginItems && onPublishConfirmed) {
         try {
@@ -284,33 +481,7 @@ export function usePublishActions({
         }
       }
     }
-    else {
-      const douyinItems = pubListChoosed.filter(item => item.account!.type === 'douyin')
-      const otherItems = pubListChoosed.filter(item => item.account!.type !== 'douyin')
 
-      // 非抖音平台的通用提示
-      if (otherItems.length > 0) {
-        toast.success(
-          t('messages.publishSubmitted', {
-            platform: otherItems
-              .map(item => AccountPlatInfoMap.get(item.account!.type)!.name)
-              .join(', '),
-          }),
-          { key: 'publish_submitted', duration: 3 },
-        )
-      }
-
-      // 抖音单独提示：需要扫码发布
-      if (douyinItems.length > 0) {
-        toast.success(
-          t('messages.douyinScanPublish'),
-          { key: 'douyin_scan_publish', duration: 5 },
-        )
-      }
-    }
-
-    // 关闭发布弹框
-    onClose()
     setCreateLoading(false)
     if (onPubSuccess) {
       onPubSuccess()
@@ -319,17 +490,15 @@ export function usePublishActions({
   }, [
     pubListChoosed,
     pubTime,
-    isMobile,
     suppressAutoPublish,
     taskIdForPublish,
+    materialGroupIdForPublish,
     materialIdForPublish,
     onPublishConfirmed,
     onPublishStart,
     onClose,
     onPubSuccess,
     setCreateLoading,
-    setDouyinPermalink,
-    setDouyinQRCodeVisible,
     setCurrentPublishTaskId,
     setPublishDetailVisible,
     t,

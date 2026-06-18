@@ -5,70 +5,78 @@
 
 'use client'
 
+import type { PlatformMetadataVo } from '@/api/channels/channel.types'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ThemeProvider } from 'next-themes'
 import { usePathname } from 'next/navigation'
-import { useEffect, useLayoutEffect, useRef } from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useRef } from 'react'
 import { useShallow } from 'zustand/shallow'
-import { useTransClient } from '@/app/i18n/client'
+import ConfigManagerDialog from '@/app/layout/ConfigManagerDialog'
 import LoginDialog from '@/app/layout/LoginDialog'
-import { useLoginDialogStore } from '@/app/layout/LoginDialog/store'
-import SettingsModal from '@/components/SettingsModal'
-import { useSettingsModalStore } from '@/components/SettingsModal/store'
+import SettingsModal from '@/app/layout/SettingsModal'
+import { isPublicPage } from '@/app/layout/shared/utils/routeUtils'
+import { WechatBrowserOverlay } from '@/components/common/WechatBrowserOverlay'
+import { PluginPublishingFloatButton } from '@/components/Plugin'
 import NotificationCenter from '@/components/ui/NotificationCenter'
 import { Toaster } from '@/components/ui/sonner'
-import { toast } from '@/lib/toast'
+import { useConfigManagerDialogStore } from '@/store/configManagerDialog'
+import { useLoginDialogStore } from '@/store/login-dialog'
+import { usePlatformMetadataStore } from '@/store/platformMetadata'
+import { useSettingsModalStore } from '@/store/settingsModal'
 import { useUserStore } from '@/store/user'
-import { isPublicPage } from '@/utils/route'
 
-export function Providers({ children, lng, autoLoginToken }: { children: React.ReactNode, lng: string, autoLoginToken?: string }) {
+const PublicRouteContext = createContext(false)
+
+export function usePublicRoute() {
+  return useContext(PublicRouteContext)
+}
+
+export function Providers({
+  children,
+  lng,
+  platformMetadata,
+}: {
+  children: React.ReactNode
+  lng: string
+  platformMetadata: PlatformMetadataVo[]
+}) {
   const pathname = usePathname()
-  const manualLoginDisabled = Boolean(autoLoginToken)
-  const { t, ready: isLoginI18nReady } = useTransClient('login')
+  const publicRoute = isPublicPage(pathname)
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
 
-  const { _hasHydrated, token, isQueryTokenLoginPending } = useUserStore(
+  const { _hasHydrated, token } = useUserStore(
     useShallow(state => ({
       _hasHydrated: state._hasHydrated,
       token: state.token,
-      isQueryTokenLoginPending: state.isQueryTokenLoginPending,
     })),
   )
 
+  useLayoutEffect(() => {
+    if (platformMetadata.length === 0)
+      return
+    if (usePlatformMetadataStore.getState().loadedLng === lng)
+      return
+    usePlatformMetadataStore.getState().setPlatformMetadata(platformMetadata, lng)
+  }, [lng, platformMetadata])
+
+  useEffect(() => {
+    if (usePlatformMetadataStore.getState().loadedLng === lng)
+      return
+    usePlatformMetadataStore.getState().ensureLoaded(lng)
+  }, [lng])
+
   // 全局设置弹框状态
   const { settingsVisible, settingsDefaultTab, closeSettings } = useSettingsModalStore()
-  const manualLoginDisabledNoticeSeq = useLoginDialogStore(state => state.manualLoginDisabledNoticeSeq)
-
-  useLayoutEffect(() => {
-    useLoginDialogStore.getState().setManualLoginDisabled(manualLoginDisabled)
-  }, [manualLoginDisabled])
+  const { open: configManagerOpen, closeDialog: closeConfigManagerDialog } = useConfigManagerDialogStore()
 
   useEffect(() => {
-    if (manualLoginDisabledNoticeSeq === 0)
+    if (!_hasHydrated) {
       return
-
-    if (!isLoginI18nReady)
-      return
-
-    toast.info(t('manualLoginDisabledNotice'))
-  }, [isLoginI18nReady, manualLoginDisabledNoticeSeq, t])
-
-  useEffect(() => {
-    if (!_hasHydrated)
-      return
-
-    const hasQueryToken = new URLSearchParams(window.location.search).has('token')
-
-    // 自动登录：无 token 时使用环境变量注入的 token
-    if (!hasQueryToken && !useUserStore.getState().token && autoLoginToken) {
-      useUserStore.getState().setToken(autoLoginToken)
-      useLoginDialogStore.getState().closeLoginDialog()
-      hasPromptedRef.current = false
     }
 
     useUserStore.getState().appInit()
-  }, [_hasHydrated, autoLoginToken])
+  }, [_hasHydrated])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
@@ -81,31 +89,15 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
       return
     }
 
-    const hasQueryToken = new URLSearchParams(window.location.search).has('token')
-    if (isQueryTokenLoginPending || hasQueryToken) {
-      return
-    }
-
-    const currentToken = token || useUserStore.getState().token
-
     // 已登录用户不需要跳转
-    if (currentToken) {
+    if (token) {
       hasPromptedRef.current = false
-      useLoginDialogStore.getState().closeLoginDialog()
       return
     }
 
     // 公开页面不需要跳转
-    if (isPublicPage(pathname)) {
+    if (publicRoute) {
       hasPromptedRef.current = false
-      return
-    }
-
-    if (manualLoginDisabled) {
-      if (!hasPromptedRef.current) {
-        hasPromptedRef.current = true
-        useLoginDialogStore.getState().requestManualLoginDisabledNotice()
-      }
       return
     }
 
@@ -117,7 +109,7 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, isQueryTokenLoginPending, token, pathname, manualLoginDisabled])
+  }, [_hasHydrated, token, pathname, publicRoute])
 
   // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
   useLayoutEffect(() => {
@@ -138,14 +130,18 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
   }, [lng])
 
   return (
-    <>
+    <PublicRouteContext.Provider value={publicRoute}>
       <ThemeProvider attribute="class" defaultTheme="light" enableSystem disableTransitionOnChange>
         <GoogleOAuthProvider clientId="1094109734611-flskoscgp609mecqk9ablvc6i3205vqk.apps.googleusercontent.com">
           <Toaster position="top-center" richColors />
           {/* 专用右上角通知中心（不影响现有 toast） */}
           <NotificationCenter />
+          <PluginPublishingFloatButton />
+          <WechatBrowserOverlay />
           {/* 全局登录弹框 */}
-          <LoginDialog manualLoginDisabled={manualLoginDisabled} />
+          <LoginDialog />
+          {/* 全局配置管理弹框 */}
+          <ConfigManagerDialog open={configManagerOpen} onClose={closeConfigManagerDialog} />
           {/* 全局设置弹框 - 统一在此渲染，避免多处重复 */}
           <SettingsModal
             open={settingsVisible}
@@ -155,6 +151,6 @@ export function Providers({ children, lng, autoLoginToken }: { children: React.R
           {children}
         </GoogleOAuthProvider>
       </ThemeProvider>
-    </>
+    </PublicRouteContext.Provider>
   )
 }

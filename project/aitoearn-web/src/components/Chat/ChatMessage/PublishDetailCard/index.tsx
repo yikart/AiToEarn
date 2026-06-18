@@ -5,7 +5,7 @@
 
 'use client'
 
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 import type { PlatType } from '@/app/config/platConfig'
 import type { IMediaItem } from '@/store/agent'
 import {
@@ -22,14 +22,16 @@ import {
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { PublishStatus } from '@/api/plat/types/publish.types'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { PublishStatus } from '@/api/platforms/publish.constants'
+
 import { useTransClient } from '@/app/i18n/client'
-import AvatarPlat from '@/components/AvatarPlat'
+import AvatarPlat from '@/components/common/AvatarPlat'
+import { OssImage } from '@/components/common/OssImage'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
 import { usePublishDetailCache } from '@/store/publishDetailCache'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import PublishDetailSkeleton from './PublishDetailSkeleton'
 
@@ -116,9 +118,9 @@ const PublishDetailCard = memo(
 
     // 获取平台信息
     const platInfo = platform
-      ? AccountPlatInfoMap.get(platform as PlatType)
+      ? getPlatformInfoSync(platform as PlatType)
       : detail?.accountType
-        ? AccountPlatInfoMap.get(detail.accountType)
+        ? getPlatformInfoSync(detail.accountType)
         : null
 
     // 获取账户信息
@@ -287,7 +289,7 @@ const PublishDetailCard = memo(
               )}
             </div>
             {platInfo && (
-              <Image
+              <OssImage
                 src={platInfo.icon}
                 alt={platInfo.name}
                 width={16}

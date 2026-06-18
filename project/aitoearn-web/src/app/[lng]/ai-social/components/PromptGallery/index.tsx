@@ -7,7 +7,7 @@
 import type { PromptGalleryItem } from './types'
 import { memo, useCallback, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { VideoCard, VideoDetailModal } from './components'
 import { promptGalleryAssets } from './data'
 

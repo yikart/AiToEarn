@@ -9,7 +9,7 @@
 import type { CalendarFestivalInfo, CalendarLunarInfo } from '../calendarFestival.utils'
 import { memo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getCalendarFestivalName, getCalendarFestivalTitle } from '../calendarFestival.utils'
 
 export interface ICalendarHolidayBadgeProps {
@@ -62,7 +62,7 @@ function getStatusTone(festival: CalendarFestivalInfo, selected: boolean) {
   }
 
   if (festival.type === 'solarTerm') {
-    return 'bg-brand-cyan text-primary-foreground'
+    return 'bg-gradient-back text-gradient-foreground'
   }
 
   return 'bg-gradient-back text-gradient-foreground'

@@ -7,18 +7,19 @@
 
 import Image from 'next/image'
 import { useTransClient } from '@/app/i18n/client'
+import { isChineseLanguage } from '@/app/i18n/languageConfig'
 import beianPoliceIcon from '@/app/layout/images/beian-police.png'
 import { useNavigationLogic } from '@/app/layout/shared/hooks/useNavigationLogic'
-import { isChineseLanguage } from '@/lib/i18n/languageConfig'
+import { useGetClientLng } from '@/hooks/useSystem'
 
 const POLICE_BEIAN_URL = 'https://beian.mps.gov.cn/#/query/webSearch?code=11010502060417'
-const HIDDEN_FILING_ROUTES = new Set(['draft-box', 'accounts', 'brand-promotion'])
+const HIDDEN_FILING_ROUTES = new Set(['accounts', 'chat'])
 
 export function FilingRecord() {
-  const { t, i18n } = useTransClient('common')
+  const { t } = useTransClient('common')
+  const lng = useGetClientLng()
   const { route } = useNavigationLogic()
-
-  if (!isChineseLanguage(i18n.language) || HIDDEN_FILING_ROUTES.has(route[0] ?? ''))
+  if (!isChineseLanguage(lng) || HIDDEN_FILING_ROUTES.has(route[0] ?? ''))
     return null
 
   return (

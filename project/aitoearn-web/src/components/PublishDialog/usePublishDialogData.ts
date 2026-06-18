@@ -1,4 +1,5 @@
-import type { FacebookPageItem } from '@/api/plat/facebook'
+import type { PublishOptionValueItem } from '@/api/channels/channel.types'
+import type { PinterestBoardItem } from '@/api/platforms/pinterest.types'
 import type {
   BiblPartItem,
   YouTubeCategoryItem,
@@ -6,40 +7,53 @@ import type {
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { getPinterestBoardListApi } from '@/api/pinterest'
-import { apiGetBilibiliPartitions } from '@/api/plat/bilibili'
-import { apiGetFacebookPages } from '@/api/plat/facebook'
-import { apiGetYouTubeCategories, apiGetYouTubeRegions } from '@/api/plat/youtube'
+import { apiGetBilibiliPartitions } from '@/api/platforms/bilibili.api'
+import { getPinterestBoardListApi } from '@/api/platforms/pinterest.api'
+import { apiGetYouTubeCategories } from '@/api/platforms/youtube.api'
 import { PlatType } from '@/app/config/platConfig'
 import { useAccountStore } from '@/store/account'
 
 export interface IPublishDialogDataStore {
   // b站分区列表
   bilibiliPartitions: BiblPartItem[]
-  // Facebook页面列表
-  facebookPages: FacebookPageItem[]
+  // b站分区加载状态
+  bilibiliPartitionsLoading: boolean
   // YouTube视频分类列表
   youTubeCategories: YouTubeCategoryItem[]
-  // YouTube国区列表
-  youTubeRegions: string[]
+  // YouTube视频分类加载状态
+  youTubeCategoriesLoading: boolean
   // Pinterest Board列表
-  pinterestBoards: Array<{
-    id: string
-    name: string
-    description?: string
-  }>
+  pinterestBoards: PinterestBoardItem[]
 }
 
 const store: IPublishDialogDataStore = {
   bilibiliPartitions: [],
-  facebookPages: [],
+  bilibiliPartitionsLoading: false,
   youTubeCategories: [],
-  youTubeRegions: [],
+  youTubeCategoriesLoading: false,
   pinterestBoards: [],
 }
 
 function getStore() {
   return lodash.cloneDeep(store)
+}
+
+function mapYouTubeCategory(item: PublishOptionValueItem): YouTubeCategoryItem {
+  return {
+    id: item.value,
+    snippet: {
+      title: item.label,
+      description: item.description,
+    },
+  }
+}
+
+function mapPinterestBoard(item: PublishOptionValueItem): PinterestBoardItem {
+  return {
+    id: item.value,
+    name: item.label,
+    description: item.description,
+  }
 }
 
 /**
@@ -56,83 +70,30 @@ export const usePublishDialogData = create(
         // 获取b站分区列表
         async getBilibiliPartitions() {
           if (get().bilibiliPartitions.length !== 0)
-            return
-          const res = await apiGetBilibiliPartitions(
-            useAccountStore.getState().accountList.find(v => v.type === PlatType.BILIBILI)!.id,
-          )
-          set({
-            bilibiliPartitions: res?.data,
-          })
-          return res?.data
-        },
-        // 获取Facebook页面列表
-        async getFacebookPages(accountId?: string) {
-          if (get().facebookPages.length !== 0)
-            return
+            return get().bilibiliPartitions
+          if (get().bilibiliPartitionsLoading)
+            return get().bilibiliPartitions
 
-          let facebookAccount
-
-          if (accountId) {
-            // 如果提供了账户ID，使用指定的账户
-            facebookAccount = useAccountStore
-              .getState()
-              .accountList
-              .find(v => v.id === accountId && v.type === PlatType.Facebook)
+          set({ bilibiliPartitionsLoading: true })
+          try {
+            const res = await apiGetBilibiliPartitions(
+              useAccountStore.getState().accountList.find(v => v.type === PlatType.BILIBILI)!.id,
+            )
+            const partitions = res?.data ?? []
+            set({
+              bilibiliPartitions: partitions,
+            })
+            return partitions
           }
-          else {
-            // 如果没有提供账户ID，使用第一个找到的Facebook账户（保持向后兼容）
-            facebookAccount = useAccountStore
-              .getState()
-              .accountList
-              .find(v => v.type === PlatType.Facebook)
+          finally {
+            set({ bilibiliPartitionsLoading: false })
           }
-
-          if (!facebookAccount) {
-            console.warn('没有找到Facebook账户')
-            return
-          }
-
-          const res: any = await apiGetFacebookPages(facebookAccount.account)
-          set({
-            facebookPages: res?.data || [],
-          })
-          return res?.data
-        },
-        // 获取YouTube国区列表
-        async getYouTubeRegions(accountId?: string) {
-          if (get().youTubeRegions.length !== 0)
-            return
-
-          let youtubeAccount
-
-          if (accountId) {
-            // 如果提供了账户ID，使用指定的账户
-            youtubeAccount = useAccountStore
-              .getState()
-              .accountList
-              .find(v => v.id === accountId && v.type === PlatType.YouTube)
-          }
-          else {
-            // 如果没有提供账户ID，使用第一个找到的YouTube账户（保持向后兼容）
-            youtubeAccount = useAccountStore
-              .getState()
-              .accountList
-              .find(v => v.type === PlatType.YouTube)
-          }
-
-          if (!youtubeAccount) {
-            console.warn('没有找到YouTube账户')
-            return
-          }
-
-          const res: any = await apiGetYouTubeRegions(youtubeAccount.id)
-          set({
-            youTubeRegions: res?.data?.regionCode || [],
-          })
-          return res?.data?.regionCode
         },
         // 获取YouTube视频分类
         async getYouTubeCategories(accountId?: string, regionCode?: string) {
+          if (get().youTubeCategoriesLoading)
+            return get().youTubeCategories
+
           let youtubeAccount
 
           if (accountId) {
@@ -158,14 +119,21 @@ export const usePublishDialogData = create(
           // 如果没有提供 regionCode，使用默认值 "US"
           const defaultRegionCode = regionCode || 'US'
 
-          const res: any = await apiGetYouTubeCategories(
-            youtubeAccount?.id || '',
-            defaultRegionCode,
-          )
-          set({
-            youTubeCategories: res?.data.items || [],
-          })
-          return res?.data
+          set({ youTubeCategoriesLoading: true })
+          try {
+            const res = await apiGetYouTubeCategories(
+              youtubeAccount?.id || '',
+              defaultRegionCode,
+            )
+            const categories = res?.data?.items.map(mapYouTubeCategory) || []
+            set({
+              youTubeCategories: categories,
+            })
+            return categories
+          }
+          finally {
+            set({ youTubeCategoriesLoading: false })
+          }
         },
         // 获取Pinterest Board列表
         async getPinterestBoards(forceRefresh = false, accountId?: string) {
@@ -194,14 +162,15 @@ export const usePublishDialogData = create(
             return
           }
 
-          const res: any = await getPinterestBoardListApi(
-            { page: 1, size: 100 },
-            pinterestAccount.id,
-          )
+          const res = await getPinterestBoardListApi(pinterestAccount.id)
+          const pinterestBoards = res?.code === 0
+            ? res.data.items.map(mapPinterestBoard)
+            : []
+
           set({
-            pinterestBoards: res?.data?.list || [],
+            pinterestBoards,
           })
-          return res?.data?.list
+          return pinterestBoards
         },
       }
 

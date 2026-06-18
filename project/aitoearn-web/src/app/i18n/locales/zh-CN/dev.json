@@ -1,0 +1,187 @@
+{
+  "remoteAutomation": {
+    "title": "远程自动化调试",
+    "description": "固定流程：打开页面、执行 web 传入的 JavaScript、截图并返回结果。",
+    "status": {
+      "connected": "插件已连接",
+      "disconnected": "插件未连接"
+    },
+    "form": {
+      "title": "执行参数",
+      "urlLabel": "目标页面 URL",
+      "urlPlaceholder": "https://example.com",
+      "codeLabel": "执行代码",
+      "codePlaceholder": "输入要执行的 JavaScript 代码",
+      "codeHint": "代码会在目标页面主世界执行，直接写函数体即可，例如 `return document.title`",
+      "timeoutLabel": "执行超时（毫秒）",
+      "screenshotLabel": "执行后截图",
+      "screenshotHint": "关闭窗口前抓取当前页面截图",
+      "run": "开始执行"
+    },
+    "validation": {
+      "urlRequired": "请输入目标页面 URL",
+      "codeRequired": "请输入需要执行的 JavaScript 代码"
+    },
+    "result": {
+      "title": "执行结果",
+      "empty": "还没有执行记录",
+      "emptyValue": "（空）",
+      "pluginUnsupported": "插件未安装或当前插件版本不支持 remoteAutomationRun 方法",
+      "executionError": "执行异常",
+      "success": "成功",
+      "failed": "失败",
+      "executionTime": "执行耗时 {{value}} ms",
+      "url": "URL：",
+      "message": "消息：",
+      "payload": "执行结果",
+      "screenshot": "截图",
+      "screenshotAlt": "执行截图"
+    }
+  },
+  "proxyRequest": {
+    "title": "插件代理请求调试",
+    "description": "通过浏览器插件 Background 请求任意 URL，并把原始响应体、状态码和响应头返回给网站。",
+    "status": {
+      "connected": "插件已连接",
+      "disconnected": "插件未连接"
+    },
+    "form": {
+      "title": "请求参数",
+      "urlLabel": "目标 URL",
+      "urlPlaceholder": "https://example.com/api",
+      "headersLabel": "请求头（JSON）",
+      "headersPlaceholder": "{\n  \"accept\": \"application/json\"\n}",
+      "headersHint": "请输入 JSON 对象，发送前会将 header value 统一转成字符串。",
+      "bodyLabel": "请求体",
+      "bodyPlaceholder": "{\n  \"hello\": \"world\"\n}",
+      "bodyHint": "如果是合法 JSON 会按 JSON 发送；否则会按原始字符串发送。",
+      "methodLabel": "推导请求方法",
+      "methodGet": "GET",
+      "methodPost": "POST",
+      "methodHint": "插件会按 {{method}} 发起这次请求。",
+      "credentialsHint": "插件会默认携带浏览器中的站点 Cookie（前提是目标站点允许）。",
+      "bodyIgnoredHint": "GET 模式不会发送请求体，如需传 body 请切换到 POST。",
+      "submit": "发送请求"
+    },
+    "validation": {
+      "urlRequired": "请输入目标 URL",
+      "headersInvalid": "请求头必须是合法的 JSON 对象"
+    },
+    "result": {
+      "title": "请求结果",
+      "empty": "还没有代理请求记录",
+      "emptyValue": "（空）",
+      "pluginUnsupported": "插件未安装或当前插件版本不支持 proxyRequest 方法",
+      "requestFailed": "代理请求失败",
+      "success": "成功",
+      "failed": "失败",
+      "status": "状态 {{status}} {{statusText}}",
+      "url": "请求 URL：",
+      "finalUrl": "最终 URL：",
+      "message": "消息：",
+      "requestHeaders": "请求头",
+      "responseHeaders": "响应头",
+      "requestBody": "请求体",
+      "responseBody": "响应体",
+      "clear": "清空"
+    }
+  },
+  "wxSphPublish": {
+    "title": "视频号发布调试",
+    "description": "通过浏览器插件调用微信视频号 Web 请求发布视频，调试登录态、视频/封面上传、定时发布和地理位置、活动、链接和声明原创参数。",
+    "status": {
+      "connected": "插件已连接",
+      "disconnected": "插件未连接"
+    },
+    "permission": {
+      "title": "权限检查",
+      "check": "检查插件权限",
+      "granted": "插件权限正常",
+      "denied": "插件权限未完整授权",
+      "failed": "权限检查失败"
+    },
+    "login": {
+      "title": "视频号登录",
+      "button": "读取视频号登录态",
+      "empty": "请先登录 channels.weixin.qq.com，再点击读取登录态。",
+      "failed": "视频号登录失败",
+      "uid": "UID：{{uid}}"
+    },
+    "form": {
+      "title": "发布参数",
+      "video": "视频文件",
+      "cover": "封面图片",
+      "videoMetadata": "视频：{{width}}×{{height}}，{{duration}} 秒，约 {{size}} MB",
+      "workTitle": "标题",
+      "workTitlePlaceholder": "可选，作为视频号描述补充",
+      "topics": "话题",
+      "topicsPlaceholder": "用逗号或换行分隔，例如：美食, 探店",
+      "desc": "描述",
+      "descPlaceholder": "输入视频号描述内容",
+      "scheduledTime": "定时发布时间",
+      "publish": "发布到视频号"
+    },
+    "location": {
+      "title": "地理位置",
+      "hint": "输入关键词搜索视频号位置，选择后会随作品一起提交。",
+      "poiId": "POI ID",
+      "poiIdPlaceholder": "例如 helper_search_location 返回的 uid",
+      "poiName": "位置名称",
+      "poiNamePlaceholder": "例如：某某咖啡店",
+      "latitude": "纬度",
+      "latitudePlaceholder": "39.904200",
+      "longitude": "经度",
+      "longitudePlaceholder": "116.407400",
+      "city": "城市",
+      "cityPlaceholder": "北京",
+      "address": "地址",
+      "addressPlaceholder": "位置详细地址",
+      "searchPlaceholder": "搜索并选择地理位置",
+      "empty": "未找到相关位置",
+      "searchFailed": "位置搜索失败",
+      "selected": "已选择：{{name}}",
+      "clear": "清空",
+      "addressEmpty": "暂无地址信息"
+    },
+    "validation": {
+      "videoRequired": "请选择视频文件",
+      "coverRequired": "请选择封面图片",
+      "videoMetadataRequired": "视频元信息未读取完成，请重新选择视频",
+      "videoMetadataFailed": "读取视频元信息失败"
+    },
+    "result": {
+      "title": "发布结果",
+      "pluginMissing": "插件未安装或未注入 AIToEarnPlugin",
+      "publishFailed": "发布失败",
+      "success": "发布成功",
+      "failed": "发布失败"
+    },
+    "progress": {
+      "title": "发布进度",
+      "empty": "还没有发布进度"
+    },
+    "search": {
+      "loading": "搜索中...",
+      "minKeyword": "请输入至少 2 个字符搜索",
+      "pluginUnsupported": "当前插件版本不支持视频号搜索，请更新插件后重试。"
+    },
+    "activity": {
+      "title": "活动",
+      "hint": "输入关键词搜索视频号活动，选择后作品会参与该活动。",
+      "clear": "清空",
+      "searchPlaceholder": "搜索并选择活动",
+      "searchFailed": "活动搜索失败",
+      "empty": "未找到相关活动",
+      "selected": "已选择：{{name}}"
+    },
+    "extLink": {
+      "title": "链接",
+      "placeholder": "粘贴扩展链接",
+      "hint": "可选；发布时会透传给视频号扩展阅读字段。"
+    },
+    "original": {
+      "title": "声明原创",
+      "hint": "声明后作品将展示原创标记，有机会获得广告收入。"
+    }
+  }
+}

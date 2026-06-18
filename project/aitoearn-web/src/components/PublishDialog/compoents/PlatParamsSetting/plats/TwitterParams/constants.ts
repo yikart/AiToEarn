@@ -1,4 +1,4 @@
-import type { TwitterReplySettings } from '@/api/types/twitter'
+import type { TwitterReplySettings } from './types'
 
 export const TWITTER_REPLY_SETTINGS: TwitterReplySettings[] = [
   'following',

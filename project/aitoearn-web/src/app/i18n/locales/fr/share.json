@@ -47,9 +47,5 @@
   "viewOnly": "Lecture seule",
   "linkExpiredDesc": "Ce lien de partage a expiré. Veuillez contacter le partageur pour un nouveau lien.",
   "linkNotFoundDesc": "Ce lien de partage n'existe pas ou a été supprimé.",
-  "backToHome": "Retour à l'accueil",
-  "publishShareFailed": "Impossible de préparer la publication",
-  "noImagesToShare": "Aucune image à partager",
-  "uploadFailed": "Échec du téléchargement",
-  "noPreview": "Aucun aperçu disponible"
+  "backToHome": "Retour à l'accueil"
 }

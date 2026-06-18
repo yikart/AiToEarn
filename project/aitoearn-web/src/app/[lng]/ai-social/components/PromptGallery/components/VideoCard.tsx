@@ -8,7 +8,7 @@ import type { VideoCardProps } from '../types'
 import { Play } from 'lucide-react'
 import Image from 'next/image'
 import { memo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export const VideoCard = memo(({ item, onClick, size = 'horizontal' }: VideoCardProps) => {
   return (

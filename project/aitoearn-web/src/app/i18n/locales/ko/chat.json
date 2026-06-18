@@ -3,12 +3,7 @@
     "placeholder": "새로운 스시 플래터를 위한 8초 세로형 홍보 영상을 만들어주세요. 경쾌한 재즈 음악, 신선한 연어 클로즈업, 자막 생성, 마지막에 로고를 표시해주세요.",
     "send": "전송",
     "stop": "중지",
-    "uploading": "업로드 중...",
-    "clearSelection": "Clear Selection",
-    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
-    "noPromotionPlan": "No promotion plans",
-    "selectPromotionPlan": "Select Promotion Plan",
-    "upload": "Upload"
+    "uploading": "업로드 중..."
   },
   "message": {
     "thinking": "생각 중...",
@@ -23,6 +18,13 @@
       "okText": "확인"
     }
   },
+  "agentNotice": {
+    "title": "안내",
+    "description": "이 Agent는 현재 테스트 단계입니다. 기능과 생성 품질은 계속 개선 중이므로 결과가 불안정하거나 기대와 완전히 다를 수 있습니다. 관련 크레딧은 실제 사용량에 따라 정상 차감되며, 생성 결과 차이로 인한 크레딧 환불이나 보상은 현재 제공되지 않습니다. 먼저 소량으로 체험한 뒤 계속 사용할지 결정하시길 권장드립니다. 이해와 성원에 감사드립니다.",
+    "doNotShowAgain": "다시 표시하지 않기",
+    "cancel": "취소",
+    "confirm": "계속"
+  },
   "task": {
     "newChat": "새 채팅",
     "delete": "삭제",
@@ -36,14 +38,7 @@
       "failed": "실패"
     },
     "rate": "평가",
-    "share": "공유",
-    "editTitle": "Edit Title",
-    "favorite": "Favorite",
-    "moreActions": "More",
-    "titleLabel": "Task Title",
-    "titlePlaceholder": "Enter task title",
-    "titleUpdated": "Title updated",
-    "unfavorite": "Unfavorite"
+    "share": "공유"
   },
   "home": {
     "title": "무엇을 도와드릴까요?",
@@ -62,7 +57,7 @@
     "affiliateReward": "$716.4 적립",
     "imageMaterial": "이미지",
     "videoMaterial": "동영상",
-    "agentAssets": "Agent 소재",
+    "agentAssets": "AI 생성 소재",
     "noData": "데이터 없음"
   },
   "history": {
@@ -152,10 +147,11 @@
     "video": "동영상",
     "image": "이미지",
     "document": "문서",
+    "audio": "오디오",
+    "edit": "미디어 편집",
+    "remove": "미디어 제거",
     "uploadFailed": "업로드 실패, 다시 시도해 주세요",
-    "uploadCancelled": "업로드 취소됨",
-    "edit": "편집",
-    "remove": "제거"
+    "uploadCancelled": "업로드 취소됨"
   },
   "workflow": {
     "toolCallCompleted": "도구 호출 완료",
@@ -183,9 +179,7 @@
     "rechargeCredits": "크레딧 충전",
     "action": "작업",
     "actionDesc": "다음 작업을 완료해 주세요",
-    "continue": "계속",
-    "error": "실패",
-    "errorDesc": "생성에 실패했습니다. 나중에 다시 시도해 주세요."
+    "continue": "계속"
   },
   "publishDetail": {
     "title": "게시 상세",
@@ -216,19 +210,6 @@
       "upload": "업로드 중...",
       "publish": "게시 중...",
       "complete": "게시 완료"
-    },
-    "goLogin": "Go Login",
-    "installPlugin": "Click to install plugin",
-    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
-    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
-    "retry": "Retry"
-  },
-  "toolDetail": {
-    "input": "Input Parameters",
-    "noResult": "No result yet",
-    "output": "Execution Result"
-  },
-  "plugin": {
-    "platformNeedsPlugin": "이 플랫폼은 브라우저 확장 프로그램이 필요합니다. 먼저 확장 프로그램을 인증해 주세요."
+    }
   }
 }

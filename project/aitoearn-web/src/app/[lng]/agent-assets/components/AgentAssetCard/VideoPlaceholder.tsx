@@ -5,7 +5,7 @@
 
 import { Video } from 'lucide-react'
 import { memo } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface VideoPlaceholderProps {
   /** 自定义类名 */

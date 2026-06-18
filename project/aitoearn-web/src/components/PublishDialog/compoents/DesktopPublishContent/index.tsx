@@ -1,33 +1,32 @@
 /**
  * PC端发布弹框主内容组件
- * 包含账户选择、内容编辑、预览等核心功能
+ * 包含 AI 内容创作、账户选择、内容编辑等核心功能
  */
 
-import type { RefObject } from 'react'
-import type {
-  AIAction,
-  IPublishDialogAiRef,
-} from '@/components/PublishDialog/compoents/PublishDialogAi'
-import type { IImgFile } from '@/components/PublishDialog/publishDialog.type'
+import type { IImgFile, IVideoFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { PublishDialogDragItem } from '@/components/PublishDialog/PublishDialog.util'
 
-import { ChevronDown, FolderOpen, Layers, Plus, X } from 'lucide-react'
+import { ChevronDown, FolderOpen, Layers, PanelLeftClose, PanelLeftOpen, Plus, UploadCloud, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef } from 'react'
-import { CSSTransition } from 'react-transition-group'
-import { useWindowSize } from 'react-use'
+import { useDrop } from 'react-dnd'
 import { useShallow } from 'zustand/react/shallow'
-import { PlatType } from '@/app/config/platConfig'
+import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { useChannelManagerStore } from '@/components/ChannelManager/channelManagerStore'
 import AccountSelector from '@/components/PublishDialog/compoents/AccountSelector'
 import ErrorSummary from '@/components/PublishDialog/compoents/ErrorSummary'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
-import PublishDialogAi from '@/components/PublishDialog/compoents/PublishDialogAi'
-import PublishDialogPreview from '@/components/PublishDialog/compoents/PublishDialogPreview'
+import CommonTitleInput from '@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput'
 import PublishFooter from '@/components/PublishDialog/compoents/PublishFooter'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
-import TextSelectionToolbar from '@/components/PublishDialog/compoents/TextSelectionToolbar'
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
 import { usePlatformAuth } from '@/components/PublishDialog/hooks/usePlatformAuth'
+import {
+  buildPublishParamsFromDraft,
+  buildPublishParamsFromMedia,
+  getCommonPublishTitleMax,
+  PUBLISH_DIALOG_DND_TYPE,
+} from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,9 +37,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { usePlatformInfoMap } from '@/hooks/usePlatformMetadata'
 import { useAccountStore } from '@/store/account'
-import { parseTopicString } from '@/utils'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
+import { cn } from '@/utils/className'
+import { parseTopicString } from '@/utils/common'
+import { notification } from '@/utils/ui/notification'
+import PublishDialogDraftPanel from './PublishDialogDraftPanel'
+import { PublishDialogDragPreviewLayer } from './PublishDialogDragPreviewLayer'
+import { useDesktopPublishLayout } from './useDesktopPublishLayout'
 
 /**
  * 外部必须传入的 props（无法从 store 获取的）
@@ -48,15 +54,39 @@ import { parseTopicString } from '@/utils'
 interface DesktopPublishContentProps {
   // 外部回调
   onClose: () => void
-  // AI 相关
-  chatModels: any[]
-  aiAssistantRef: RefObject<IPublishDialogAiRef>
-  onSyncToEditor: (content: string, images?: IImgFile[], video?: any, append?: boolean) => void
-  onTextSelection: (action: AIAction, selectedText: string) => void
-  onImageToImage: (imageFile: IImgFile) => void
   createLoading: boolean
   // 发布
   onPublish: () => void
+}
+
+const DRAG_UNSUPPORTED_NOTIFICATION_ID = 'publish-dialog-drag-unsupported'
+
+function getDragItemPubType(item: PublishDialogDragItem) {
+  if (item.kind === 'media')
+    return item.media.type === 'video' ? PubType.VIDEO : PubType.ImageText
+
+  const mediaList = item.material.mediaList || []
+  if (mediaList.some(media => media.type === 'video'))
+    return PubType.VIDEO
+  if (mediaList.some(media => media.type === 'img'))
+    return PubType.ImageText
+
+  return undefined
+}
+
+function getPublishDropTargetItems(pubListChoosed: PubItem[], pubList: PubItem[]) {
+  return pubListChoosed.length > 0 ? pubListChoosed : pubList
+}
+
+function getUnsupportedTargetPlatformNames(pubItems: PubItem[], pubType: PubType) {
+  return pubItems.reduce<string[]>((names, pubItem) => {
+    const platformInfo = getPlatformInfoSync(pubItem.account.type)
+    if (platformInfo?.pubTypes.has(pubType))
+      return names
+
+    names.push(platformInfo?.name || pubItem.account.type)
+    return names
+  }, [])
 }
 
 /**
@@ -65,17 +95,20 @@ interface DesktopPublishContentProps {
 export const DesktopPublishContent = memo(
   ({
     onClose,
-    chatModels,
-    aiAssistantRef,
-    onSyncToEditor,
-    onTextSelection,
-    onImageToImage,
     createLoading,
     onPublish,
   }: DesktopPublishContentProps) => {
     const { t } = useTransClient('publish')
-    const { width } = useWindowSize()
-    const aiPanelBreakpoint = 1550
+    const platformInfoMap = usePlatformInfoMap()
+    const {
+      containerRef,
+      layout,
+      resizeHandleWidth,
+      isDraftPanelOpen,
+      isResizing,
+      setDraftPanelOpen,
+      handleResizeStart,
+    } = useDesktopPublishLayout()
 
     // ============ 从 Store 获取状态（不再通过 props 传递）============
 
@@ -87,8 +120,6 @@ export const DesktopPublishContent = memo(
       expandedPubItem,
       errParamsMap,
       warningParamsMap,
-      openLeft,
-      setOpenLeft,
       setExpandedPubItem,
       setStep,
       setPubListChoosed,
@@ -102,8 +133,6 @@ export const DesktopPublishContent = memo(
         expandedPubItem: state.expandedPubItem,
         errParamsMap: state.errParamsMap,
         warningParamsMap: state.warningParamsMap,
-        openLeft: state.openLeft,
-        setOpenLeft: state.setOpenLeft,
         setExpandedPubItem: state.setExpandedPubItem,
         setStep: state.setStep,
         setPubListChoosed: state.setPubListChoosed,
@@ -137,11 +166,6 @@ export const DesktopPublishContent = memo(
     // 平台授权
     const { handleOfflineAvatarClick } = usePlatformAuth()
 
-    // ============ Local State & Refs ============
-
-    // 中间内容区域ref，用于划词功能
-    const contentAreaRef = useRef<HTMLDivElement>(null)
-
     // 追踪是否是用户主动切换频道（而非初始化或数据变化）
     const isUserSwitchingSpace = useRef(false)
     const appliedAccountActiveIdRef = useRef<string | undefined>(undefined)
@@ -155,22 +179,70 @@ export const DesktopPublishContent = memo(
       return accountGroupList.find(g => g.id === activeSpaceId)
     }, [activeSpaceId, accountGroupList])
 
-    // 是否打开右侧预览
-    const openRight = useMemo(() => {
-      if (step === 0) {
-        return pubListChoosed.length !== 0
-      }
-      else {
-        return expandedPubItem !== undefined
-      }
-    }, [pubListChoosed, expandedPubItem, step])
+    const handlePublishDrop = useCallback(async (item: PublishDialogDragItem) => {
+      const publishDialogStore = usePublishDialog.getState()
 
-    // 是否打开左侧AI助手
-    const openLeftSide = useMemo(() => {
-      if (!openLeft)
-        return false
-      return true
-    }, [openLeft])
+      const targetPubType = getDragItemPubType(item)
+      const targetPubItems = getPublishDropTargetItems(
+        publishDialogStore.pubListChoosed,
+        publishDialogStore.pubList,
+      )
+
+      if (targetPubType && targetPubItems.length > 0) {
+        const unsupportedPlatformNames = getUnsupportedTargetPlatformNames(targetPubItems, targetPubType)
+        if (unsupportedPlatformNames.length > 0) {
+          const allUnsupported = unsupportedPlatformNames.length === targetPubItems.length
+          const platformNames = unsupportedPlatformNames.join(', ')
+          const warningText = targetPubType === PubType.ImageText
+            ? t(allUnsupported ? 'validation.dragImageUnsupported' : 'validation.dragImagePartiallyUnsupported', { platformNames })
+            : t(allUnsupported ? 'validation.dragVideoUnsupported' : 'validation.dragVideoPartiallyUnsupported', { platformNames })
+
+          notification.warning({
+            key: DRAG_UNSUPPORTED_NOTIFICATION_ID,
+            duration: 5,
+            content: (
+              <div className="space-y-1">
+                <p className="text-sm font-semibold text-foreground">
+                  {t('validation.dragUnsupportedTitle')}
+                </p>
+                <p className="text-sm font-normal text-muted-foreground">
+                  {warningText}
+                </p>
+              </div>
+            ),
+          })
+
+          if (allUnsupported)
+            return
+        }
+      }
+
+      publishDialogStore.setPublishContentLoading(true)
+      try {
+        const params = item.kind === 'draft'
+          ? await buildPublishParamsFromDraft(item.material)
+          : await buildPublishParamsFromMedia(item.media, publishDialogStore.commonPubParams.images || [])
+
+        publishDialogStore.setAccountAllParams(params)
+      }
+      finally {
+        usePublishDialog.getState().setPublishContentLoading(false)
+      }
+    }, [t])
+
+    const [{ isOver, canDrop }, drop] = useDrop(
+      () => ({
+        accept: PUBLISH_DIALOG_DND_TYPE,
+        drop: (item: PublishDialogDragItem) => {
+          void handlePublishDrop(item)
+        },
+        collect: monitor => ({
+          isOver: monitor.isOver({ shallow: true }),
+          canDrop: monitor.canDrop(),
+        }),
+      }),
+      [handlePublishDrop],
+    )
 
     // ============ Handlers ============
 
@@ -195,7 +267,7 @@ export const DesktopPublishContent = memo(
 
     // 处理参数变更
     const handleParamsChange = useCallback(
-      (values: { value?: string, imgs?: IImgFile[], video?: any }) => {
+      (values: { value?: string, imgs?: IImgFile[], video?: IVideoFile }) => {
         const { topics } = parseTopicString(values.value || '')
         setAccountAllParams({
           des: values.value,
@@ -206,6 +278,10 @@ export const DesktopPublishContent = memo(
       },
       [setAccountAllParams],
     )
+
+    const commonTitleMax = useMemo(() => {
+      return getCommonPublishTitleMax(pubListChoosed)
+    }, [platformInfoMap, pubListChoosed])
 
     // ============ Effects ============
 
@@ -284,35 +360,96 @@ export const DesktopPublishContent = memo(
     // ============ Render ============
 
     return (
-      <div className="flex-1 flex max-h-[calc(100vh-80px)]" data-testid="publish-dialog-container">
-        {/* 左侧 AI 助手（宽屏时） */}
-        {width >= aiPanelBreakpoint && (
-          <CSSTransition in={openLeftSide} timeout={300} classNames="left" unmountOnExit>
-            <PublishDialogAi
-              ref={aiAssistantRef}
-              onClose={() => setOpenLeft(false)}
-              onSyncToEditor={onSyncToEditor}
-              chatModels={chatModels}
-            />
-          </CSSTransition>
-        )}
+      <div
+        ref={containerRef}
+        className="flex h-full min-h-0 w-full overflow-hidden bg-background"
+        data-testid="publish-dialog-container"
+      >
+        <PublishDialogDragPreviewLayer />
 
-        {/* 中间主内容区域 */}
+        {/* 左侧 AI 内容创作区域 */}
         <div
-          className="bg-background relative z-10 rounded-lg w-[720px] flex flex-col min-h-0"
+          className={cn(
+            'min-h-0 shrink-0 overflow-hidden border-r border-border bg-background',
+            isResizing ? 'transition-none' : 'transition-[width,opacity] duration-300 ease-in-out',
+            isDraftPanelOpen ? 'opacity-100' : 'pointer-events-none opacity-0',
+          )}
+          style={{ width: isDraftPanelOpen ? layout?.draftPanelWidth ?? '52%' : 0 }}
+          aria-hidden={!isDraftPanelOpen}
+        >
+          <div className="h-full min-w-[320px]">
+            <PublishDialogDraftPanel />
+          </div>
+        </div>
+
+        {/* 双栏拖拽条 */}
+        <div
+          role="separator"
+          aria-orientation="vertical"
+          className={cn(
+            'group relative shrink-0 overflow-hidden bg-border/60 transition-[width,background-color] duration-300 ease-in-out hover:bg-primary/30',
+            isResizing && 'transition-none',
+            isDraftPanelOpen ? 'cursor-col-resize' : 'cursor-default',
+          )}
+          style={{ width: isDraftPanelOpen ? resizeHandleWidth : 0 }}
+          onPointerDown={handleResizeStart}
+        >
+          <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-border transition-colors group-hover:bg-primary" />
+        </div>
+
+        {/* 右侧发布内容区域 */}
+        <div
+          ref={(node) => {
+            drop(node)
+          }}
+          className={cn(
+            'relative z-10 flex min-h-0 min-w-0 flex-1 flex-col bg-background transition-colors',
+            isOver && canDrop && 'bg-primary/5 ring-2 ring-inset ring-primary/50',
+          )}
           onClick={() => {
             if (step === 1) {
               setExpandedPubItem(undefined)
             }
           }}
         >
-          {/* 划词工具栏 */}
-          <TextSelectionToolbar onAction={onTextSelection} />
+          {isOver && canDrop && (
+            <div className="pointer-events-none absolute inset-0 z-50 flex items-center justify-center bg-background/70 backdrop-blur-sm">
+              <div className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-primary bg-card px-8 py-6 shadow-xl">
+                <UploadCloud className="h-10 w-10 text-primary" />
+                <p className="text-base font-medium text-foreground">
+                  {t('upload.dropPublishContent')}
+                </p>
+              </div>
+            </div>
+          )}
 
-          <div className="box-border p-5 flex-1 min-h-0 overflow-auto" ref={contentAreaRef}>
+          <div className="box-border p-5 flex-1 min-h-0 overflow-auto">
             {/* 头部标题和频道选择器 */}
             <div className="flex items-center justify-between mb-5">
               <div className="flex items-center gap-3">
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="gap-1.5 shadow-sm"
+                        aria-label={isDraftPanelOpen
+                          ? t('layout.hideContentManagement')
+                          : t('layout.showContentManagement')}
+                        onClick={() => setDraftPanelOpen(!isDraftPanelOpen)}
+                      >
+                        {isDraftPanelOpen
+                          ? <PanelLeftClose className="h-4 w-4" />
+                          : <PanelLeftOpen className="h-4 w-4" />}
+                        {t('layout.showContentManagement')}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom" align="start" className="max-w-72 text-xs leading-relaxed">
+                      {t('layout.contentManagementTooltip')}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
                 <span className="font-semibold text-base">{t('title')}</span>
 
                 {/* 频道选择器下拉菜单 */}
@@ -385,11 +522,17 @@ export const DesktopPublishContent = memo(
                 </DropdownMenu>
               </div>
 
-              <X
+              <Button
+                variant="outline"
+                size="icon"
                 onClick={onClose}
-                className="h-4 w-4 cursor-pointer text-muted-foreground hover:text-foreground transition-colors"
+                className="h-9 w-9 rounded-full bg-background shadow-sm hover:border-destructive/40 hover:bg-destructive/10 hover:text-destructive"
+                aria-label={t('layout.closeDialog')}
+                title={t('layout.closeDialog')}
                 data-testid="publish-close-button"
-              />
+              >
+                <X className="h-5 w-5" />
+              </Button>
             </div>
 
             {/* 账户选择器 */}
@@ -412,7 +555,6 @@ export const DesktopPublishContent = memo(
                   {pubListChoosed.length === 1 && (
                     <PlatParamsSetting
                       pubItem={pubListChoosed[0]}
-                      onImageToImage={onImageToImage}
                     />
                   )}
                   {pubListChoosed.length >= 2 && (
@@ -420,13 +562,19 @@ export const DesktopPublishContent = memo(
                       key={`${commonPubParams.images?.length || 0}-${
                         commonPubParams.video ? 'video' : 'no-video'
                       }`}
-                      platType={PlatType.Instagram}
+                      platType={pubListChoosed[0].account.type}
                       rows={16}
                       desValue={commonPubParams.des}
                       videoFileValue={commonPubParams.video}
                       imageFileListValue={commonPubParams.images}
                       onChange={handleParamsChange}
-                      onImageToImage={onImageToImage}
+                      extend={commonTitleMax !== undefined && (
+                        <CommonTitleInput
+                          titleValue={commonPubParams.title || ''}
+                          titleMax={commonTitleMax}
+                          onTitleChange={title => setAccountAllParams({ title })}
+                        />
+                      )}
                     />
                   )}
                 </>
@@ -437,7 +585,6 @@ export const DesktopPublishContent = memo(
                       key={v.account.id}
                       pubItem={v}
                       style={{ marginBottom: '12px' }}
-                      onImageToImage={onImageToImage}
                     />
                   ))}
                 </>
@@ -485,23 +632,6 @@ export const DesktopPublishContent = memo(
           />
         </div>
 
-        {/* 右侧预览和AI助手（窄屏时） */}
-        <div className="flex relative [&>#publishDialogAi]:absolute [&>#publishDialogAi]:top-0 [&>#publishDialogAi]:h-full [&>#publishDialogAi]:z-20">
-          {/* 屏幕宽度不够时，AI助手绝对定位覆盖在预览上方 */}
-          {width < aiPanelBreakpoint && (
-            <CSSTransition in={openLeftSide} timeout={300} classNames="left" unmountOnExit>
-              <PublishDialogAi
-                ref={aiAssistantRef}
-                onClose={() => setOpenLeft(false)}
-                onSyncToEditor={onSyncToEditor}
-                chatModels={chatModels}
-              />
-            </CSSTransition>
-          )}
-          <CSSTransition in={openRight} timeout={300} classNames="right" unmountOnExit>
-            <PublishDialogPreview />
-          </CSSTransition>
-        </div>
       </div>
     )
   },

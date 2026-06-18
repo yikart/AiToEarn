@@ -10,7 +10,7 @@ import { Check, ChevronDown, ChevronUp, X } from 'lucide-react'
 import * as React from 'react'
 
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface SelectProps extends React.ComponentPropsWithoutRef<typeof SelectPrimitive.Root> {
   clearable?: boolean

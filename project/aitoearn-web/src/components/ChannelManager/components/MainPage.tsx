@@ -5,22 +5,24 @@
 
 'use client'
 
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { PlatType } from '@/app/config/platConfig'
 import { Plus } from 'lucide-react'
 import { useCallback, useMemo, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/account'
-import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
+import { apiUpdateAccountGroupSortRank, deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/accounts/account.api'
+
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { toast } from '@/utils/ui/toast'
 import { useChannelManagerStore } from '../channelManagerStore'
+import { useFansRefresh } from '../hooks/useFansRefresh'
 import { ChannelSidebar } from './ChannelSidebar'
 import { CreateSpaceSection } from './CreateSpaceSection'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
+import { FansRefreshActions } from './FansRefreshActions'
 import { SpaceItem } from './SpaceItem'
 import { SpaceListSkeleton } from './SpaceListSkeleton'
 
@@ -46,6 +48,8 @@ export function MainPage() {
         getAccountList: state.getAccountList,
       })),
     )
+
+  const { refreshingTarget, refreshProgress, refreshAllFans, refreshPlatformFans } = useFansRefresh()
 
   // UI状态
   const [editingSpace, setEditingSpace] = useState<string | null>(null)
@@ -260,6 +264,12 @@ export function MainPage() {
           </div>
         ) : (
           <div className="flex flex-1 flex-col gap-4 overflow-hidden p-4 md:p-0">
+            <FansRefreshActions
+              refreshingTarget={refreshingTarget}
+              refreshProgress={refreshProgress}
+              onRefreshAll={refreshAllFans}
+            />
+
             {/* 添加新空间 */}
             <CreateSpaceSection onSpaceCreated={getAccountGroup} />
 
@@ -284,6 +294,7 @@ export function MainPage() {
                       editingSpaceLoading={editingSpaceLoading}
                       deleteLoading={deleteLoading}
                       sortingLoading={sortingSpaceLoading}
+                      fansRefreshTarget={refreshingTarget}
                       onToggleCollapse={() => toggleSpaceCollapse(space.id)}
                       onStartEdit={() => startEditingSpace(space.id, space.name)}
                       onEditNameChange={setEditSpaceName}
@@ -305,6 +316,7 @@ export function MainPage() {
                           id: channel.id,
                           name: channel.nickname,
                         })}
+                      onChannelFansRefresh={refreshPlatformFans}
                       onRefresh={getAccountGroup}
                       onAddChannel={() => handleAddChannel(space.id)}
                     />

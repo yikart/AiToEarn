@@ -6,10 +6,10 @@
 'use client'
 
 import { Loader2 } from 'lucide-react'
-import Image from 'next/image'
 import { useCallback, useState } from 'react'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+import { PlatformIcon } from '@/components/common/PlatformIcon'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { openApp } from '@/utils/appLaunch'
@@ -24,7 +24,6 @@ interface DouyinLaunchModalProps {
 
 export function DouyinLaunchModal({ open, permalink, onClose }: DouyinLaunchModalProps) {
   const { t } = useTransClient('publish')
-  const douyinConfig = AccountPlatInfoMap.get(PlatType.Douyin)
   const [launchState, setLaunchState] = useState<LaunchState>('idle')
 
   const handleLaunch = useCallback(() => {
@@ -52,15 +51,7 @@ export function DouyinLaunchModal({ open, permalink, onClose }: DouyinLaunchModa
         </DialogHeader>
 
         <div className="flex flex-col items-center gap-5 py-4">
-          {douyinConfig?.icon && (
-            <Image
-              src={douyinConfig.icon}
-              alt="Douyin"
-              width={64}
-              height={64}
-              className="rounded-xl"
-            />
-          )}
+          <PlatformIcon platform={PlatType.Douyin} width={64} height={64} className="rounded-xl" />
 
           <p className="text-sm text-muted-foreground text-center px-2">
             {isFailed ? t('douyin.launchFailed') : t('douyin.mobileLaunchDesc')}

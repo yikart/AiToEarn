@@ -8,7 +8,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
-import { useLoginDialogStore } from '@/app/layout/LoginDialog/store'
+import { useLoginDialogStore } from '@/store/login-dialog'
 import { useUserStore } from '@/store/user'
 
 export default function AuthRedirect() {

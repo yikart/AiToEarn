@@ -5,11 +5,12 @@
 
 'use client'
 
-import { AlertTriangle, BookOpen, RefreshCw } from 'lucide-react'
+import { AlertTriangle, BookOpen, Loader2 } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useChannelManagerStore } from '@/components/ChannelManager'
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import { usePluginStore } from '@/store/plugin'
 
@@ -19,6 +20,7 @@ import { usePluginStore } from '@/store/plugin'
 export function PluginNoPermission() {
   const { t } = useTranslation('plugin')
   const init = usePluginStore(state => state.init)
+  const hostAccessGranted = usePluginStore(state => state.hostAccessGranted)
   const closePluginModal = usePluginStore(state => state.closePluginModal)
   const closeChannelManager = useChannelManagerStore(state => state.closeModal)
   const [checking, setChecking] = useState(false)
@@ -56,9 +58,25 @@ export function PluginNoPermission() {
         {t('header.permissionDescription')}
       </p>
 
+      {hostAccessGranted === false && (
+        <Alert className="mb-6 max-w-sm border-warning/30 bg-warning/10 text-foreground [&>svg]:text-warning">
+          <AlertTriangle className="h-4 w-4" />
+          <div>
+            <AlertTitle>{t('header.siteAccessRequiredTitle')}</AlertTitle>
+            <AlertDescription>
+              <p>{t('header.siteAccessRequiredDescription')}</p>
+              <ol className="mt-3 list-decimal space-y-2 pl-5">
+                <li>{t('header.siteAccessStepReauthorize')}</li>
+                <li>{t('header.siteAccessStepExtensionSettings')}</li>
+              </ol>
+            </AlertDescription>
+          </div>
+        </Alert>
+      )}
+
       {/* 检查权限按钮 */}
-      <Button onClick={handleCheckPermission} disabled={checking} className="gap-2">
-        {checking && <RefreshCw className="h-4 w-4 animate-spin" />}
+      <Button onClick={handleCheckPermission} disabled={checking} className="cursor-pointer gap-2">
+        {checking && <Loader2 className="h-4 w-4 animate-spin" />}
         {t('header.checkPermission')}
       </Button>
 
@@ -66,7 +84,7 @@ export function PluginNoPermission() {
       <Link
         href="/websit/plugin-guide#authorize"
         onClick={handleViewGuide}
-        className="mt-6 flex items-center justify-center gap-2 w-full max-w-xs px-4 py-3 rounded-lg bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-950/50 transition-colors cursor-pointer"
+        className="mt-6 flex w-full max-w-xs cursor-pointer items-center justify-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-warning transition-colors hover:bg-warning/15"
       >
         <BookOpen className="h-5 w-5" />
         <span className="font-medium">{t('header.viewGuide')}</span>

@@ -12,7 +12,7 @@ import { FolderOpen } from 'lucide-react'
 import Image from 'next/image'
 import { useTransClient } from '@/app/i18n/client'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 
 export function GroupCard({ group, onClick }: GroupCardProps) {

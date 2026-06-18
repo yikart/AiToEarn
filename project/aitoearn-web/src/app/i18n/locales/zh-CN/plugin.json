@@ -26,8 +26,7 @@
     "platforms": "平台",
     "status": "状态",
     "time": "时间",
-    "viewDetail": "查看详情",
-    "untitled": "未命名"
+    "viewDetail": "查看详情"
   },
   "publishDetail": {
     "title": "发布详情",
@@ -42,14 +41,41 @@
     "close": "关闭",
     "minimize": "最小化",
     "unknownAccount": "未知账号",
-    "creatingRecord": "创建发布记录中..."
+    "creatingRecord": "创建发布记录中...",
+    "progressTitle": "发布进度",
+    "completeTitle": "发布完成",
+    "sectionUserAction": "需你完成",
+    "sectionAuto": "自动发布",
+    "sectionTask": "发布任务",
+    "actionRequired": "需你完成",
+    "userActionTitle": "等待在 {{platform}} 完成发布",
+    "userActionDesc": "内容已准备好，请前往平台完成最后一步。",
+    "preparingUserAction": "正在准备 {{platform}} 发布入口...",
+    "openPlatform": "打开 {{platform}}",
+    "openPlatformFailed": "打开 {{platform}} 失败，请复制短链接后手动打开。",
+    "copyShortLink": "复制短链接",
+    "shortLinkCopied": "短链接已复制",
+    "shortLinkCopyFailed": "复制失败",
+    "taskCreated": "任务已创建",
+    "autoPendingDesc": "正在等待自动发布开始，请保持当前页面打开。",
+    "sectionTitleWithCount": "{{title}}（{{count}}）",
+    "userActionQrDesc": "内容已准备好，请使用手机扫码二维码完成发布。",
+    "userActionMobileDesc": "内容已准备好，点击下方按钮打开 {{platform}} 完成发布。",
+    "userActionPolling": "正在确认是否发布成功...",
+    "userActionPublished": "发布成功",
+    "userActionFailed": "发布失败，请重新发布。",
+    "cancelPublish": "取消发布",
+    "cancelPublishConfirmTitle": "取消发布？",
+    "cancelPublishConfirmContent": "取消后该内容不会继续等待扫码发布，可稍后重新发起。",
+    "cancelPublishSuccess": "已取消发布",
+    "cancelPublishFailed": "取消发布失败，请重试。"
   },
   "publishFloating": {
     "xhsPublishing": "小红书正在发布",
-    "pluginPublishing": "插件正在发布",
-    "openDetail": "点击查看发布详情",
-    "completed": "插件发布已完成",
-    "failed": "插件发布失败，请查看发布详情"
+    "pluginPublishing": "自动发布中",
+    "openDetail": "点击查看发布进度",
+    "completed": "自动发布已完成",
+    "failed": "自动发布失败，请查看发布进度"
   },
   "common": {
     "confirm": "确定",
@@ -61,6 +87,7 @@
     "publishing": "发布中",
     "completed": "已完成",
     "error": "失败",
+    "canceled": "已取消",
     "action": "操作",
     "total": "共",
     "items": "条",
@@ -71,7 +98,8 @@
     "PENDING": "待发布",
     "PUBLISHING": "发布中",
     "COMPLETED": "已完成",
-    "ERROR": "失败"
+    "ERROR": "失败",
+    "CANCELED": "已取消"
   },
   "header": {
     "pluginActive": "插件已激活",
@@ -97,6 +125,10 @@
     "viewPublishList": "查看发布列表",
     "permissionRequired": "需要授权",
     "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
+    "siteAccessRequiredTitle": "需要授予站点访问权限",
+    "siteAccessRequiredDescription": "当前未授予站点访问权限，插件无法在 AiToEarn 页面正常使用。你可以通过以下方式处理：",
+    "siteAccessStepReauthorize": "退出登录后重新授权插件。",
+    "siteAccessStepExtensionSettings": "进入浏览器管理扩展，找到 “AiToEarn Extension”，点击 “详细信息”，在 “站点访问权限” 中选择 “在所有站点上”。",
     "checkPermission": "重新检查权限",
     "sync": "同步",
     "syncToAccount": "同步到账号管理",

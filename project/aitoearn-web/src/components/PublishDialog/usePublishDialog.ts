@@ -1,17 +1,15 @@
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { ErrPubParamsMapType } from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import type { IPlatOption, IPubParams, PubItem } from '@/components/PublishDialog/publishDialog.type'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
 import { AccountStatus } from '@/app/config/accountConfig'
-import {
-  AccountPlatInfoMap,
-  PlatType,
-} from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
-import { debugPublishDialog, getSocialAccountIdentityKeys, isSameSocialAccount } from '@/components/PublishDialog/PublishDialog.util'
+import { getSocialAccountIdentityKeys, isPublishTitleSupported, isSameSocialAccount } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialogStorageStore } from '@/components/PublishDialog/usePublishDialogStorageStore'
+import { getPlatformInfoSync, isPlatformEnabledSync } from '@/store/platformMetadata'
 
 export interface IPublishDialogStore {
   // 选择的发布列表
@@ -29,9 +27,10 @@ export interface IPublishDialogStore {
   warningParamsMap?: ErrPubParamsMapType
   // 发布时间，为空则为立即发布
   pubTime?: string
-  openLeft: boolean
   // 预填内容加载中
   prefillLoading: boolean
+  // 发布内容添加加载中（草稿/素材拖拽导入）
+  publishContentLoading: boolean
 }
 
 const store: IPublishDialogStore = {
@@ -51,7 +50,7 @@ const store: IPublishDialogStore = {
         source: '',
       },
       facebook: {
-        page_id: undefined,
+        content_category: undefined,
       },
       xhs: {},
       instagram: {
@@ -62,8 +61,12 @@ const store: IPublishDialogStore = {
   expandedPubItem: undefined,
   errParamsMap: undefined,
   warningParamsMap: undefined,
-  openLeft: false,
   prefillLoading: false,
+  publishContentLoading: false,
+}
+
+interface SyncAccountsOptions {
+  applyDefaultWhenEmpty?: boolean
 }
 
 function getStore() {
@@ -72,6 +75,17 @@ function getStore() {
 
 function getDefaultContentCategory(params: Pick<IPubParams, 'video'>) {
   return params.video ? 'reel' : 'post'
+}
+
+function getNormalizedContentCategory(currentCategory: string | undefined, params: Pick<IPubParams, 'video'>) {
+  if (params.video)
+    return 'reel'
+
+  return currentCategory || getDefaultContentCategory(params)
+}
+
+function getVisiblePublishAccounts(account: SocialAccount[]) {
+  return account.filter(v => isPlatformEnabledSync(v.type))
 }
 
 function dedupePublishAccounts(accounts: SocialAccount[]) {
@@ -89,23 +103,27 @@ function dedupePublishAccounts(accounts: SocialAccount[]) {
 
 function normalizePlatformOptions(accountType: SocialAccount['type'], params: IPubParams): IPubParams {
   const option = { ...params.option }
+  const nextParams = { ...params }
 
-  if (accountType === PlatType.Instagram && !option.instagram?.content_category) {
+  if (!isPublishTitleSupported(accountType))
+    delete nextParams.title
+
+  if (accountType === PlatType.Instagram) {
     option.instagram = {
       ...option.instagram,
-      content_category: getDefaultContentCategory(params),
+      content_category: getNormalizedContentCategory(option.instagram?.content_category, params),
     }
   }
 
-  if (accountType === PlatType.Facebook && !option.facebook?.content_category) {
+  if (accountType === PlatType.Facebook) {
     option.facebook = {
       ...option.facebook,
-      content_category: getDefaultContentCategory(params),
+      content_category: getNormalizedContentCategory(option.facebook?.content_category, params),
     }
   }
 
   return {
-    ...params,
+    ...nextParams,
     option,
   }
 }
@@ -148,6 +166,31 @@ function removeUndefinedOptionFields(target: IPlatOption, patch: IPlatOption) {
   }
 }
 
+function normalizePubItem(pubItem: PubItem): PubItem {
+  return {
+    ...pubItem,
+    params: normalizePlatformOptions(pubItem.account.type, pubItem.params),
+  }
+}
+
+function mergePublishOptions(currentOption: IPlatOption, patchOption: IPlatOption) {
+  const mergedOption = lodash.mergeWith(
+    {},
+    currentOption,
+    patchOption,
+    (_targetValue, patchValue) => {
+      if (Array.isArray(patchValue))
+        return [...patchValue]
+
+      return undefined
+    },
+  ) as IPlatOption
+
+  removeUndefinedOptionFields(mergedOption, patchOption)
+
+  return mergedOption
+}
+
 function setPubItemIdentityMap(target: Map<string, PubItem>, pubItem: PubItem) {
   getSocialAccountIdentityKeys(pubItem.account).forEach((key) => {
     if (!target.has(key)) {
@@ -166,6 +209,18 @@ function getPubItemByAccount(target: Map<string, PubItem>, account: SocialAccoun
   return undefined
 }
 
+function getDefaultChosenPubItems(pubList: PubItem[], defaultAccountIds?: string[]) {
+  const defaultAccountIdSet = defaultAccountIds && defaultAccountIds.length > 0
+    ? new Set(defaultAccountIds)
+    : undefined
+
+  return pubList.filter(pubItem => (
+    (!defaultAccountIdSet || defaultAccountIdSet.has(pubItem.account.id))
+    && pubItem.account.status !== AccountStatus.DISABLE
+    && isPlatformEnabledSync(pubItem.account.type)
+  ))
+}
+
 export const usePublishDialog = create(
   combine(
     {
@@ -176,22 +231,24 @@ export const usePublishDialog = create(
         setPrefillLoading(prefillLoading: boolean) {
           set({ prefillLoading })
         },
-        setOpenLeft(openLeft: boolean) {
-          set({
-            openLeft,
-          })
+        setPublishContentLoading(publishContentLoading: boolean) {
+          set({ publishContentLoading })
         },
         setPubListChoosed(pubListChoosed: PubItem[]) {
           set({
-            pubListChoosed,
+            pubListChoosed: pubListChoosed.map(normalizePubItem),
           })
         },
         setExpandedPubItem(expandedPubItem: PubItem | undefined) {
-          if (!expandedPubItem)
+          if (!expandedPubItem) {
+            usePublishDialogStorageStore.getState().setExpandedPubItem(undefined)
+            set({ expandedPubItem: undefined })
             return
-          usePublishDialogStorageStore.getState().setExpandedPubItem(expandedPubItem)
+          }
+          const normalizedExpandedPubItem = normalizePubItem(expandedPubItem)
+          usePublishDialogStorageStore.getState().setExpandedPubItem(normalizedExpandedPubItem)
           set({
-            expandedPubItem,
+            expandedPubItem: normalizedExpandedPubItem,
           })
         },
         setErrParamsMap(errParamsMap: ErrPubParamsMapType) {
@@ -211,22 +268,20 @@ export const usePublishDialog = create(
           set({ pubTime })
         },
         setPubList(pubList: PubItem[]) {
-          set({ pubList })
+          set({ pubList: pubList.map(normalizePubItem) })
         },
 
         // 清空所有数据
         clear() {
-          debugPublishDialog('store:clear', {
-            stack: new Error('PublishDialog store clear').stack,
-          })
           set({
             ...getStore(),
           })
         },
 
         // 初始化发布参数
-        pubParamsInit(): IPubParams {
-          return lodash.cloneDeep(get().commonPubParams)
+        pubParamsInit(accountType?: SocialAccount['type']): IPubParams {
+          const params = lodash.cloneDeep(get().commonPubParams)
+          return accountType ? normalizePlatformOptions(accountType, params) : params
         },
 
         /**
@@ -236,26 +291,22 @@ export const usePublishDialog = create(
          */
         init(account: SocialAccount[], defaultAccountIds?: string[]) {
           const pubList: PubItem[] = []
+          let hasSelected = false
 
           // 国外版过滤隐藏平台的账号
-          const filteredAccounts = account
+          const filteredAccounts = getVisiblePublishAccounts(account)
 
           filteredAccounts.map((v) => {
             pubList.push({
               account: v,
-              params: methods.pubParamsInit(),
+              params: methods.pubParamsInit(v.type),
             })
           })
 
-          if (defaultAccountIds && defaultAccountIds.length > 0) {
-            // 过滤掉离线账号（status === 0）和区域不可用的平台
-            const validIds = defaultAccountIds.filter((id) => {
-              const acc = filteredAccounts.find(a => a.id === id)
-              return acc && acc.status !== AccountStatus.DISABLE
-            })
-
-            const chosen = pubList.filter(p => validIds.includes(p.account.id))
+          const chosen = getDefaultChosenPubItems(pubList, defaultAccountIds)
+          if (chosen.length > 0) {
             methods.setPubListChoosed(chosen)
+            hasSelected = chosen.length > 0
 
             // 如果只有一个，设置为 expandedPubItem
             if (chosen.length === 1) {
@@ -266,36 +317,16 @@ export const usePublishDialog = create(
           set({
             pubList,
           })
+
+          return hasSelected
         },
 
         // 同步外部账号刷新结果，保留已编辑的发布参数
-        syncAccounts(account: SocialAccount[]) {
-          const filteredAccounts = dedupePublishAccounts(account)
+        syncAccounts(account: SocialAccount[], defaultAccountIds?: string[], options?: SyncAccountsOptions) {
+          const filteredAccounts = dedupePublishAccounts(getVisiblePublishAccounts(account))
           const currentPubList = get().pubList
-          debugPublishDialog('syncAccounts:start', {
-            incomingAccounts: filteredAccounts.map(accountItem => ({
-              account: accountItem.account,
-              id: accountItem.id,
-              status: accountItem.status,
-              type: accountItem.type,
-              uid: accountItem.uid,
-            })),
-            pubList: currentPubList.map(pubItem => ({
-              account: pubItem.account.account,
-              id: pubItem.account.id,
-              status: pubItem.account.status,
-              type: pubItem.account.type,
-              uid: pubItem.account.uid,
-              hasContent: !!(
-                pubItem.params.des
-                || pubItem.params.video
-                || pubItem.params.images?.length
-              ),
-            })),
-            selectedIds: get().pubListChoosed.map(pubItem => pubItem.account.id),
-          })
           if (filteredAccounts.length === 0 && currentPubList.length > 0) {
-            return
+            return get().pubListChoosed.length > 0
           }
 
           const currentPubListChoosed = get().pubListChoosed
@@ -316,48 +347,40 @@ export const usePublishDialog = create(
             if (!currentPubItem) {
               return {
                 account: accountItem,
-                params: methods.pubParamsInit(),
+                params: methods.pubParamsInit(accountItem.type),
               }
             }
 
             return {
               ...currentPubItem,
               account: accountItem,
+              params: normalizePlatformOptions(accountItem.type, currentPubItem.params),
             }
           })
           const nextPubItemMap = new Map<string, PubItem>()
           nextPubList.forEach((pubItem) => {
             setPubItemIdentityMap(nextPubItemMap, pubItem)
           })
-          const nextPubListChoosed = currentPubListChoosed
+          let nextPubListChoosed = currentPubListChoosed
             .map(pubItem => getPubItemByAccount(nextPubItemMap, pubItem.account))
             .filter((pubItem): pubItem is PubItem => Boolean(pubItem))
-          const nextExpandedPubItem = currentExpandedPubItem
-            ? getPubItemByAccount(nextPubItemMap, currentExpandedPubItem.account)
-            : undefined
+          if (options?.applyDefaultWhenEmpty && nextPubListChoosed.length === 0) {
+            nextPubListChoosed = getDefaultChosenPubItems(nextPubList, defaultAccountIds)
+          }
 
-          debugPublishDialog('syncAccounts:next', {
-            nextPubList: nextPubList.map(pubItem => ({
-              account: pubItem.account.account,
-              id: pubItem.account.id,
-              status: pubItem.account.status,
-              type: pubItem.account.type,
-              uid: pubItem.account.uid,
-              hasContent: !!(
-                pubItem.params.des
-                || pubItem.params.video
-                || pubItem.params.images?.length
-              ),
-            })),
-            nextSelectedIds: nextPubListChoosed.map(pubItem => pubItem.account.id),
-            nextExpandedId: nextExpandedPubItem?.account.id,
-          })
+          const nextExpandedPubItem = nextPubListChoosed.length === 1
+            ? nextPubListChoosed[0]
+            : currentExpandedPubItem
+              ? getPubItemByAccount(nextPubItemMap, currentExpandedPubItem.account)
+              : undefined
 
           set({
             pubList: nextPubList,
             pubListChoosed: nextPubListChoosed,
             expandedPubItem: nextExpandedPubItem,
           })
+
+          return nextPubListChoosed.length > 0
         },
 
         // 参数设置到所有账户
@@ -372,7 +395,9 @@ export const usePublishDialog = create(
           // 更新所有账户的参数（创建新对象引用，避免 memo 缓存导致 UI 不更新）
           for (let i = 0; i < pubList.length; i++) {
             const v = pubList[i]
-            const platConfig = AccountPlatInfoMap.get(v.account.type)!
+            const platConfig = getPlatformInfoSync(v.account.type)
+            if (!platConfig)
+              continue
             const newParams = { ...v.params }
             let needUpdate = false
 
@@ -383,7 +408,7 @@ export const usePublishDialog = create(
             }
 
             // 更新标题
-            if (pubParmas.title !== undefined) {
+            if (pubParmas.title !== undefined && isPublishTitleSupported(v.account.type)) {
               newParams.title = pubParmas.title
               needUpdate = true
             }
@@ -402,7 +427,7 @@ export const usePublishDialog = create(
 
             // 更新选项
             if (pubParmas.option) {
-              newParams.option = lodash.merge({}, v.params.option, pubParmas.option)
+              newParams.option = mergePublishOptions(v.params.option, pubParmas.option)
               needUpdate = true
             }
 
@@ -446,12 +471,8 @@ export const usePublishDialog = create(
           const oldItem = pubList[index]
           const newParams = { ...oldItem.params }
 
-          // 使用lodash的merge来正确处理嵌套对象
           if (pubParmas.option) {
-            newParams.option = lodash.merge({}, oldItem.params.option, pubParmas.option)
-            // lodash.merge跳过undefined值，需要手动清除显式设为undefined的属性
-            // 例如删除投票时 poll: undefined
-            removeUndefinedOptionFields(newParams.option, pubParmas.option)
+            newParams.option = mergePublishOptions(oldItem.params.option, pubParmas.option)
           }
 
           const { option: _option, ...paramPatch } = pubParmas
@@ -467,7 +488,9 @@ export const usePublishDialog = create(
             if (i === index)
               continue
             const v = pubList[i]
-            const platConfig = AccountPlatInfoMap.get(v.account.type)!
+            const platConfig = getPlatformInfoSync(v.account.type)
+            if (!platConfig)
+              continue
             if (!pubListChoosed.some(k => k.account.id === v.account.id)) {
               const updatedParams = { ...v.params }
               let needUpdate = false

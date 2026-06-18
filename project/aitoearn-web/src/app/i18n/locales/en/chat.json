@@ -5,9 +5,9 @@
     "stop": "Stop",
     "uploading": "Uploading...",
     "upload": "Upload",
-    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
-    "selectPromotionPlan": "Select Promotion Plan",
-    "noPromotionPlan": "No promotion plans",
+    "linkPromotionPlan": "Link Draft Box (let agent operate your draft box)",
+    "selectPromotionPlan": "Select Draft Box",
+    "noPromotionPlan": "No draft boxes",
     "clearSelection": "Clear Selection"
   },
   "message": {
@@ -22,6 +22,13 @@
       "content": "Your Agent credits are insufficient, please subscribe to a membership",
       "okText": "OK"
     }
+  },
+  "agentNotice": {
+    "title": "Friendly Reminder",
+    "description": "This Agent is still in testing. Its features and generation quality are being continuously improved, so results may be unstable or not fully meet expectations. Credits will be consumed normally based on actual usage, and refunds or compensation are not currently available for differences in generated results. We recommend trying a small amount first before deciding whether to continue. Thank you for your understanding and support.",
+    "doNotShowAgain": "Do not show again",
+    "cancel": "Cancel",
+    "confirm": "Continue"
   },
   "task": {
     "newChat": "New Chat",
@@ -62,7 +69,7 @@
     "affiliateReward": "Earn $716.4",
     "imageMaterial": "Images",
     "videoMaterial": "Videos",
-    "agentAssets": "Agent Assets",
+    "agentAssets": "AI Generated Assets",
     "noData": "No data"
   },
   "history": {
@@ -152,10 +159,11 @@
     "video": "Video",
     "image": "Image",
     "document": "Document",
+    "audio": "Audio",
+    "edit": "Edit media",
+    "remove": "Remove media",
     "uploadFailed": "Upload failed, please try again",
-    "uploadCancelled": "Upload cancelled",
-    "edit": "Edit",
-    "remove": "Remove"
+    "uploadCancelled": "Upload cancelled"
   },
   "workflow": {
     "toolCallCompleted": "Tool Calls Completed",
@@ -188,9 +196,7 @@
     "rechargeCredits": "Recharge Credits",
     "action": "Action",
     "actionDesc": "Please complete the following action",
-    "continue": "Continue",
-    "error": "Failed",
-    "errorDesc": "Generation failed. Please try again later."
+    "continue": "Continue"
   },
   "publishDetail": {
     "title": "Publish Details",
@@ -227,8 +233,5 @@
       "publish": "Publishing...",
       "complete": "Published"
     }
-  },
-  "plugin": {
-    "platformNeedsPlugin": "This platform requires the browser extension. Please authorize the extension first."
   }
 }

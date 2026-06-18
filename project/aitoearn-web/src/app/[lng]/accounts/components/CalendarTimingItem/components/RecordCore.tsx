@@ -6,36 +6,63 @@
  * - 移动端：使用全屏 Dialog 显示详情
  */
 
+import type { LucideIcon } from 'lucide-react'
 import type { ForwardedRef } from 'react'
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { ChannelPublishUserActionVo, ChannelWorkMetricsSnapshot } from '@/api/channels/channel.types'
+import type { PublishRecordEngagement, PublishRecordItem } from '@/api/platforms/publish.types'
+import type { PlatformPublishTask } from '@/store/plugin/types/baseTypes'
 import dayjs from 'dayjs'
 import {
   Calendar,
+  CalendarClock,
   CheckCircle2,
+  CircleOff,
   Clock,
   ExternalLink,
   Eye,
   Heart,
+  Info,
   Loader2,
   MessageCircle,
   MoreVertical,
+  RotateCcw,
   Send,
   Share2,
+  Trash2,
   XCircle,
 } from 'lucide-react'
 import Image from 'next/image'
-import { forwardRef, memo, useMemo, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { deletePlatWorkApi, deletePublishRecordApi, nowPubTaskApi } from '@/api/plat/publish'
-import { PublishStatus } from '@/api/plat/types/publish.types'
+import {
+  cancelChannelPublishTaskApi,
+  deleteChannelPublishRecordApi,
+  getChannelPublishUserActionApi,
+  publishChannelTaskNowApi,
+  retryChannelPublishTaskApi,
+  updateChannelPublishAtApi,
+} from '@/api/channels/channel.api'
+import { PublishStatus } from '@/api/platforms/publish.constants'
 import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
-import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
+import {
+  canCancelPublishRecord,
+  canDeletePublishRecord,
+  canPublishRecordNow,
+  canReschedulePublishRecord,
+  canRetryPublishRecord,
+  getDays,
+  getPublishRecordTaskId,
+  getUtcDays,
+} from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useCalendarTiming } from '@/app/[lng]/accounts/components/CalendarTiming/useCalendarTiming'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { useAccountsWorkAnalyticsCacheStore } from '@/app/[lng]/accounts/workAnalyticsCacheStore'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import AvatarPlat from '@/components/AvatarPlat'
+import AvatarPlat from '@/components/common/AvatarPlat'
 import { MediaPreview } from '@/components/common/MediaPreview'
-import ScrollButtonContainer from '@/components/ScrollButtonContainer'
+import { OssImage } from '@/components/common/OssImage'
+import { PublishDetailModal } from '@/components/Plugin/PublishDetailModal'
+import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
@@ -46,69 +73,198 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
+import { usePluginStore } from '@/store/plugin'
+import { PlatformTaskStatus } from '@/store/plugin/types/baseTypes'
 import { useSystemStore } from '@/store/system'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
+import { confirm } from '@/utils/ui/confirm'
+import { toast } from '@/utils/ui/toast'
+import ScrollButtonContainer from './ScrollButtonContainer'
 
-export interface IRecordCoreRef {}
+export interface IRecordCoreRef {
+  closeDetail: () => void
+}
 
 export interface IRecordCoreProps {
   publishRecord: PublishRecordItem
+  dragPreviewWidth?: number
+}
+
+interface PublishStatusMeta {
+  labelKey: string
+  icon: LucideIcon
+  className?: string
+  spin?: boolean
+  destructive?: boolean
+}
+
+const statusBadgeClassName = {
+  info: 'border-info/25 bg-info/10 text-info',
+  success: 'border-success/25 bg-success/10 text-success',
+  warning: 'border-warning/25 bg-warning/10 text-warning',
+  muted: 'bg-muted text-muted-foreground border-border',
+}
+
+const cancelPublishMenuItemClassName = 'cursor-pointer text-warning focus:bg-warning/10 focus:text-warning'
+const deleteRecordMenuItemClassName = 'cursor-pointer text-destructive focus:bg-destructive/10 focus:text-destructive'
+
+function hasDouyinUserAction(
+  data: ChannelPublishUserActionVo | null | undefined,
+): data is ChannelPublishUserActionVo & { schemeUrl: string, shortLink: string } {
+  return !!data?.schemeUrl && !!data.shortLink
+}
+
+function buildUserActionPlatformTask(
+  record: PublishRecordItem,
+  publishRecordId: string,
+  userAction: ChannelPublishUserActionVo & { schemeUrl: string, shortLink: string },
+): PlatformPublishTask {
+  return {
+    id: `record-user-action-${publishRecordId}`,
+    platform: record.accountType,
+    accountId: record.accountId,
+    publishMode: 'user_action',
+    publishRecordId,
+    userAction: {
+      schemeUrl: userAction.schemeUrl,
+      shortLink: userAction.shortLink,
+      expiresAt: userAction.expiresAt,
+    },
+    params: {
+      type: record.videoUrl ? 'video' : 'image',
+      title: record.title,
+      desc: record.desc,
+      accountId: record.accountId,
+      platform: record.accountType,
+      video: record.videoUrl,
+      cover: record.coverUrl,
+      images: record.imgUrlList,
+      topics: record.topics,
+      scheduledTime: getDays(record.publishTime).valueOf(),
+      platformConfig: record.option,
+    },
+    status: PlatformTaskStatus.PENDING,
+    progress: null,
+    result: null,
+    startTime: null,
+    endTime: Date.now(),
+    error: null,
+  }
+}
+
+function normalizeWorkMetrics(metrics?: ChannelWorkMetricsSnapshot): PublishRecordEngagement | undefined {
+  if (!metrics || !Object.values(metrics).some(value => typeof value === 'number' && Number.isFinite(value))) {
+    return undefined
+  }
+  return {
+    viewCount: metrics.viewCount ?? metrics.playCount ?? 0,
+    commentCount: metrics.commentCount ?? 0,
+    likeCount: metrics.likeCount ?? 0,
+    shareCount: metrics.shareCount ?? 0,
+    clickCount: metrics.clickCount ?? 0,
+    impressionCount: metrics.impressionCount ?? 0,
+    favoriteCount: metrics.collectCount ?? metrics.saveCount ?? 0,
+  }
+}
+
+const publishStatusMetaMap: Partial<Record<PublishStatus, PublishStatusMeta>> = {
+  [PublishStatus.FAIL]: {
+    labelKey: 'status.publishFailed',
+    icon: XCircle,
+    destructive: true,
+  },
+  [PublishStatus.PUB_LOADING]: {
+    labelKey: 'status.publishing',
+    icon: Loader2,
+    className: statusBadgeClassName.info,
+    spin: true,
+  },
+  [PublishStatus.RELEASED]: {
+    labelKey: 'status.publishSuccess',
+    icon: CheckCircle2,
+    className: statusBadgeClassName.success,
+  },
+  [PublishStatus.UNPUBLISH]: {
+    labelKey: 'status.waitingPublish',
+    icon: Clock,
+    className: statusBadgeClassName.muted,
+  },
+  [PublishStatus.WAITING_FOR_UPDATE]: {
+    labelKey: 'status.waitingUpdate',
+    icon: Clock,
+    className: statusBadgeClassName.muted,
+  },
+  [PublishStatus.UPDATING]: {
+    labelKey: 'status.updating',
+    icon: Loader2,
+    className: statusBadgeClassName.info,
+    spin: true,
+  },
+  [PublishStatus.UPDATED_FAILED]: {
+    labelKey: 'status.updateFailed',
+    icon: XCircle,
+    destructive: true,
+  },
+  [PublishStatus.QUEUED]: {
+    labelKey: 'status.queued',
+    icon: Clock,
+    className: statusBadgeClassName.warning,
+  },
+  [PublishStatus.PLATFORM_SCHEDULED]: {
+    labelKey: 'status.platformScheduled',
+    icon: Calendar,
+    className: statusBadgeClassName.muted,
+  },
+  [PublishStatus.WAITING_FOR_USER_ACTION]: {
+    labelKey: 'status.waitingUserAction',
+    icon: Clock,
+    className: statusBadgeClassName.warning,
+  },
+  [PublishStatus.CANCELED]: {
+    labelKey: 'status.canceled',
+    icon: XCircle,
+    className: statusBadgeClassName.muted,
+  },
 }
 
 // 发布状态组件
 function PubStatus({ status }: { status: PublishStatus }) {
   const { t } = useTransClient('publish')
+  const meta = publishStatusMetaMap[status] ?? {
+    labelKey: 'status.unknown',
+    icon: Clock,
+    className: statusBadgeClassName.muted,
+  }
+  const Icon = meta.icon
 
   return (
     <div className="inline-flex items-center">
-      {status === PublishStatus.FAIL ? (
-        <Badge variant="destructive" className="gap-1.5">
-          {t('status.publishFailed')}
-          <XCircle className="h-3 w-3" />
-        </Badge>
-      ) : status === PublishStatus.PUB_LOADING ? (
-        <Badge
-          variant="secondary"
-          className="gap-1.5 bg-cyan-100 text-cyan-800 border-cyan-200 dark:bg-cyan-900 dark:text-cyan-200 dark:border-cyan-700"
-        >
-          {t('status.publishing')}
-          <Loader2 className="h-3 w-3 animate-spin" />
-        </Badge>
-      ) : status === PublishStatus.RELEASED ? (
-        <Badge
-          variant="secondary"
-          className="gap-1.5 bg-green-100 text-green-800 border-green-200 dark:bg-green-900 dark:text-green-200 dark:border-green-700"
-        >
-          {t('status.publishSuccess')}
-          <CheckCircle2 className="h-3 w-3" />
-        </Badge>
-      ) : status === PublishStatus.UNPUBLISH ? (
-        <Badge
-          variant="secondary"
-          className="gap-1.5 bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900 dark:text-blue-200 dark:border-blue-700"
-        >
-          {t('status.waitingPublish')}
-          <Clock className="h-3 w-3" />
-        </Badge>
-      ) : (
-        <></>
-      )}
+      <Badge
+        variant={meta.destructive ? 'destructive' : 'secondary'}
+        className={cn('gap-1.5', meta.className)}
+      >
+        {t(meta.labelKey)}
+        <Icon className={cn('h-3 w-3', meta.spin && 'animate-spin')} />
+      </Badge>
     </div>
   )
 }
 
 const RecordCore = memo(
-  forwardRef(({ publishRecord }: IRecordCoreProps, ref: ForwardedRef<IRecordCoreRef>) => {
+  forwardRef(({ publishRecord, dragPreviewWidth }: IRecordCoreProps, ref: ForwardedRef<IRecordCoreRef>) => {
     const isMobile = useIsMobile()
-    const { calendarCallWidth, setListLoading, getPubRecord } = useCalendarTiming(
+    const { calendarCallWidth, refreshCurrentPubRecords, refreshPubRecordDetail, removePubRecord } = useCalendarTiming(
       useShallow(state => ({
         calendarCallWidth: state.calendarCallWidth,
-        setListLoading: state.setListLoading,
-        getPubRecord: state.getPubRecord,
+        refreshCurrentPubRecords: state.refreshCurrentPubRecords,
+        refreshPubRecordDetail: state.refreshPubRecordDetail,
+        removePubRecord: state.removePubRecord,
       })),
     )
     const { calendarViewType } = useSystemStore(
@@ -124,56 +280,110 @@ const RecordCore = memo(
     const [popoverOpen, setPopoverOpen] = useState(false)
     const { t } = useTransClient('publish')
     const [nowPubLoading, setNowPubLoading] = useState(false)
+    const [retryLoading, setRetryLoading] = useState(false)
+    const [rescheduleDialogOpen, setRescheduleDialogOpen] = useState(false)
+    const [rescheduleLoading, setRescheduleLoading] = useState(false)
+    const [reschedulePubTime, setReschedulePubTime] = useState<string>()
     const [mediaPreviewOpen, setMediaPreviewOpen] = useState(false)
     const [mediaPreviewIndex, setMediaPreviewIndex] = useState(0)
+    const [workEngagement, setWorkEngagement] = useState<PublishRecordEngagement | null>()
+    const [workMetricsFetchedAt, setWorkMetricsFetchedAt] = useState<string | null>()
+    const [workMetricsLoading, setWorkMetricsLoading] = useState(false)
+    const [continuePublishLoading, setContinuePublishLoading] = useState(false)
+    const [publishDetailTaskId, setPublishDetailTaskId] = useState<string>()
+    const workMetricsRequestIdRef = useRef(0)
+    const activeRecord = publishRecord
+    const activeEngagement = activeRecord.status === PublishStatus.RELEASED
+      ? (workEngagement === undefined ? activeRecord.engagement : workEngagement)
+      : null
+
+    useEffect(() => {
+      workMetricsRequestIdRef.current += 1
+      setWorkEngagement(undefined)
+      setWorkMetricsFetchedAt(undefined)
+      setWorkMetricsLoading(false)
+    }, [publishRecord.id])
+
+    const loadWorkMetrics = useCallback(async (record: PublishRecordItem, requestId: number) => {
+      if (record.status !== PublishStatus.RELEASED || !record.platformWorkId || !record.accountId) {
+        setWorkEngagement(null)
+        setWorkMetricsFetchedAt(null)
+        return
+      }
+
+      const cacheStore = useAccountsWorkAnalyticsCacheStore.getState()
+      const cachedAnalytics = cacheStore.getAnalytics(record.accountType, record.platformWorkId, record.accountId)
+      if (cachedAnalytics) {
+        if (workMetricsRequestIdRef.current === requestId) {
+          setWorkEngagement(normalizeWorkMetrics(cachedAnalytics.metrics) ?? null)
+          setWorkMetricsFetchedAt(cachedAnalytics.fetchedAt ?? null)
+        }
+        return
+      }
+
+      setWorkMetricsLoading(true)
+      try {
+        const data = await cacheStore.fetchAnalytics(record.accountType, record.platformWorkId, record.accountId)
+        if (workMetricsRequestIdRef.current === requestId) {
+          setWorkEngagement(normalizeWorkMetrics(data?.metrics) ?? null)
+          setWorkMetricsFetchedAt(data?.fetchedAt ?? null)
+        }
+      }
+      catch {
+        if (workMetricsRequestIdRef.current === requestId) {
+          setWorkEngagement(null)
+          setWorkMetricsFetchedAt(null)
+        }
+      }
+      finally {
+        if (workMetricsRequestIdRef.current === requestId) {
+          setWorkMetricsLoading(false)
+        }
+      }
+    }, [])
+
+    const handlePopoverOpenChange = useCallback((open: boolean) => {
+      setPopoverOpen(open)
+      if (open) {
+        const requestId = workMetricsRequestIdRef.current + 1
+        workMetricsRequestIdRef.current = requestId
+        setWorkEngagement(undefined)
+        setWorkMetricsFetchedAt(undefined)
+        void loadWorkMetrics(publishRecord, requestId)
+      }
+      else {
+        workMetricsRequestIdRef.current += 1
+        setWorkMetricsLoading(false)
+      }
+    }, [loadWorkMetrics, publishRecord])
+
+    useImperativeHandle(ref, () => ({
+      closeDetail: () => {
+        handlePopoverOpenChange(false)
+        setRescheduleDialogOpen(false)
+      },
+    }))
 
     /**
-     * 删除按钮显示逻辑
+     * 取消发布按钮显示逻辑
      */
-    const shouldShowDelete = useMemo(() => {
-      if (
-        publishRecord.status === PublishStatus.UNPUBLISH
-        || publishRecord.status === PublishStatus.FAIL
-      ) {
-        return true
-      }
-
-      if (publishRecord.status === PublishStatus.RELEASED) {
-        const noDeletablePlats = [
-          PlatType.Xhs,
-          PlatType.Douyin,
-          PlatType.WxSph,
-          PlatType.Instagram,
-          PlatType.Tiktok,
-        ]
-
-        if (noDeletablePlats.includes(publishRecord.accountType)) {
-          return false
-        }
-
-        if (publishRecord.accountType === PlatType.Facebook) {
-          return publishRecord.option?.facebook?.content_category === 'post'
-        }
-
-        return true
-      }
-
-      return false
-    }, [publishRecord])
+    const shouldShowCancelPublish = useMemo(() => {
+      return canCancelPublishRecord(activeRecord.status)
+    }, [activeRecord.status])
 
     const days = useMemo(() => {
-      return getDays(publishRecord.publishTime)
-    }, [publishRecord])
+      return getDays(activeRecord.publishTime)
+    }, [activeRecord])
 
     const account = useMemo(() => {
-      return accountMap.get(publishRecord?.accountId ?? '')
-    }, [accountMap, publishRecord.accountId])
+      return accountMap.get(activeRecord?.accountId ?? '')
+    }, [accountMap, activeRecord.accountId])
 
     const platIcon = useMemo(() => {
-      return AccountPlatInfoMap.get(publishRecord?.accountType ?? PlatType.Xhs)?.icon
-    }, [publishRecord])
+      return getPlatformInfoSync(activeRecord?.accountType ?? PlatType.Xhs)?.icon
+    }, [activeRecord])
 
-    const isWxSphRecord = publishRecord.accountType === PlatType.WxSph
+    const isWxSphRecord = activeRecord.accountType === PlatType.WxSph
 
     const getClientTypeLabel = (clientType?: ClientType) => {
       if (!clientType)
@@ -213,21 +423,22 @@ const RecordCore = memo(
     }, [t])
 
     const desc = useMemo(() => {
-      return `${publishRecord.desc} ${publishRecord.topics ? publishRecord.topics?.map(v => `#${v}`).join(' ') : ''}`
-    }, [publishRecord])
+      return `${activeRecord.desc} ${activeRecord.topics ? activeRecord.topics?.map(v => `#${v}`).join(' ') : ''}`
+    }, [activeRecord])
+    const coverThumbnailSrc = activeRecord.coverUrl || activeRecord.imgUrlList?.[0] || ''
 
     const mediaPreviewItems = useMemo(() => {
       const items: Array<{ type: 'image' | 'video', src: string }> = []
 
-      if (publishRecord.videoUrl) {
+      if (activeRecord.videoUrl) {
         items.push({
           type: 'video',
-          src: getOssUrl(publishRecord.videoUrl),
+          src: getOssUrl(activeRecord.videoUrl),
         })
       }
 
-      if (publishRecord.imgUrlList && publishRecord.imgUrlList.length > 0) {
-        publishRecord.imgUrlList.forEach((imgUrl) => {
+      if (activeRecord.imgUrlList && activeRecord.imgUrlList.length > 0) {
+        activeRecord.imgUrlList.forEach((imgUrl) => {
           items.push({
             type: 'image',
             src: getOssUrl(imgUrl),
@@ -235,15 +446,15 @@ const RecordCore = memo(
         })
       }
 
-      if (items.length === 0 && publishRecord.coverUrl) {
+      if (items.length === 0 && activeRecord.coverUrl) {
         items.push({
           type: 'image',
-          src: getOssUrl(publishRecord.coverUrl),
+          src: getOssUrl(activeRecord.coverUrl),
         })
       }
 
       return items
-    }, [publishRecord])
+    }, [activeRecord])
 
     const handleCoverClick = (e: React.MouseEvent) => {
       e.stopPropagation()
@@ -259,24 +470,182 @@ const RecordCore = memo(
     }
 
     const handleViewWork = () => {
-      if (!publishRecord.workLink)
+      if (!activeRecord.workLink)
         return
 
-      window.open(publishRecord.workLink, '_blank')
+      window.open(activeRecord.workLink, '_blank')
     }
 
     const handleCopyWorkLink = async () => {
-      if (!publishRecord.workLink)
+      if (!activeRecord.workLink)
         return
 
-      await navigator.clipboard.writeText(publishRecord.workLink)
+      await navigator.clipboard.writeText(activeRecord.workLink)
     }
 
-    const shouldShowViewWork = !!publishRecord.workLink
+    const shouldShowViewWork = !!activeRecord.workLink
+    const shouldShowDeleteRecord = canDeletePublishRecord(activeRecord.status)
+    const shouldShowRetryPublish = canRetryPublishRecord(activeRecord.status)
+    const shouldShowReschedulePublish = canReschedulePublishRecord(activeRecord.status, activeRecord.publishTime)
+    const shouldShowContinueUserActionPublish
+      = activeRecord.accountType === PlatType.Douyin && activeRecord.status === PublishStatus.WAITING_FOR_USER_ACTION
+    const shouldShowMoreActions
+      = shouldShowViewWork || shouldShowCancelPublish || shouldShowDeleteRecord || shouldShowReschedulePublish
     const shouldShowWxSphReviewPending
-      = isWxSphRecord && publishRecord.status === PublishStatus.RELEASED && !publishRecord.workLink
-    const wxSphReviewPendingTooltip = publishRecord.linkError || t('record.wxSphReviewPendingDesc')
-    const shouldShowRecordMetrics = !isWxSphRecord
+      = isWxSphRecord && activeRecord.status === PublishStatus.RELEASED && !activeRecord.workLink
+    const wxSphReviewPendingTooltip = activeRecord.linkError || t('record.wxSphReviewPendingDesc')
+    const handleCancelPublish = async () => {
+      await confirm({
+        title: t('record.cancelPublishConfirmTitle'),
+        content: t('record.cancelPublishConfirmContent'),
+        okText: t('buttons.cancelPublish'),
+        icon: <CircleOff className="h-4 w-4 text-warning" />,
+        onOk: async () => {
+          setPopoverOpen(false)
+          const res = await cancelChannelPublishTaskApi(getPublishRecordTaskId(activeRecord))
+          if (!res || res.code !== 0) {
+            return
+          }
+          await refreshPubRecordDetail(activeRecord.id)
+          toast.success(t('record.cancelPublishSuccess'))
+        },
+      })
+    }
+
+    const handleDeleteRecord = async () => {
+      if (!canDeletePublishRecord(activeRecord.status)) {
+        return
+      }
+
+      await confirm({
+        title: t('record.deleteConfirmTitle'),
+        content: t('record.deleteConfirmContent'),
+        okText: t('buttons.delete'),
+        okType: 'destructive',
+        onOk: async () => {
+          setPopoverOpen(false)
+          const res = await deleteChannelPublishRecordApi(activeRecord.id)
+          if (!res || res.code !== 0) {
+            return
+          }
+          toast.success(t('record.deleteSuccess'))
+          removePubRecord(activeRecord.id)
+        },
+      })
+    }
+
+    const handleOpenRescheduleDialog = () => {
+      setReschedulePubTime(getDays(activeRecord.publishTime).format())
+      setRescheduleDialogOpen(true)
+    }
+
+    const handleReschedulePublish = async (nextPubTime?: string) => {
+      if (!nextPubTime || !canReschedulePublishRecord(activeRecord.status, activeRecord.publishTime)) {
+        return
+      }
+
+      setRescheduleLoading(true)
+      try {
+        const res = await updateChannelPublishAtApi(
+          getPublishRecordTaskId(activeRecord),
+          getUtcDays(nextPubTime).format(),
+        )
+        if (!res || res.code !== 0) {
+          return
+        }
+
+        setRescheduleDialogOpen(false)
+        setPopoverOpen(false)
+        await refreshPubRecordDetail(activeRecord.id)
+        toast.success(t('record.rescheduleSuccess'))
+      }
+      finally {
+        setRescheduleLoading(false)
+      }
+    }
+
+    const handlePublishNow = async () => {
+      setNowPubLoading(true)
+      try {
+        const res = await publishChannelTaskNowApi(getPublishRecordTaskId(activeRecord))
+        if (!res || res.code !== 0) {
+          return
+        }
+        await refreshPubRecordDetail(activeRecord.id)
+        toast.success(t('record.publishNowSuccess'))
+      }
+      finally {
+        setNowPubLoading(false)
+      }
+    }
+
+    const handleContinueUserActionPublish = async () => {
+      if (!shouldShowContinueUserActionPublish)
+        return
+
+      setContinuePublishLoading(true)
+      try {
+        const existingTask = usePluginStore.getState().publishTasks.find(task => task.platformTasks.some(platformTask => (
+          platformTask.publishMode === 'user_action'
+          && platformTask.publishRecordId === activeRecord.id
+          && platformTask.status === PlatformTaskStatus.PENDING
+        )))
+
+        if (existingTask) {
+          setPublishDetailTaskId(existingTask.id)
+          setPopoverOpen(false)
+          return
+        }
+
+        const res = await getChannelPublishUserActionApi(activeRecord.id)
+        if (res?.code !== 0 || !hasDouyinUserAction(res.data)) {
+          toast.error(res?.message || t('messages.userActionFetchFailed'))
+          return
+        }
+
+        const publishRecordId = res.data.recordId || activeRecord.id
+        const taskId = usePluginStore.getState().addPublishTask({
+          title: activeRecord.title,
+          description: activeRecord.desc,
+          platformTasks: [buildUserActionPlatformTask(activeRecord, publishRecordId, res.data)],
+        })
+        setPublishDetailTaskId(taskId)
+        setPopoverOpen(false)
+      }
+      finally {
+        setContinuePublishLoading(false)
+      }
+    }
+
+    const handleRetryPublish = async () => {
+      if (!canRetryPublishRecord(activeRecord.status)) {
+        return
+      }
+
+      setRetryLoading(true)
+      try {
+        const res = await retryChannelPublishTaskApi(getPublishRecordTaskId(activeRecord))
+        if (!res || res.code !== 0) {
+          return
+        }
+
+        if (isMobile) {
+          setPopoverOpen(false)
+          setRetryLoading(false)
+          await refreshCurrentPubRecords()
+          toast.success(t('record.retryPublishSuccess'))
+          return
+        }
+
+        await refreshPubRecordDetail(activeRecord.id)
+        toast.success(t('record.retryPublishSuccess'))
+      }
+      finally {
+        setRetryLoading(false)
+      }
+    }
+
+    const shouldShowRecordMetrics = !isWxSphRecord && (workMetricsLoading || !!activeEngagement)
 
     // 触发按钮
     const TriggerButton = (
@@ -292,8 +661,9 @@ const RecordCore = memo(
           'shadow-none cursor-pointer',
         )}
         style={{
-          width: isMobile || calendarViewType === 'week' ? '100%' : `${calendarCallWidth}px`,
+          width: dragPreviewWidth ?? (isMobile || calendarViewType === 'week' ? '100%' : `${calendarCallWidth}px`),
         }}
+        disabled={retryLoading}
       >
         <div className={cn('flex items-center', isMobile ? 'gap-2.5' : 'gap-1.5')}>
           <Image
@@ -308,15 +678,18 @@ const RecordCore = memo(
             {days.format('HH:mm')}
           </div>
         </div>
-        {publishRecord.coverUrl && (
+        {retryLoading ? (
+          <Loader2 className="h-4 w-4 shrink-0 animate-spin text-primary" />
+        ) : coverThumbnailSrc && (
           <div className="flex items-center">
-            <Image
-              src={getOssUrl(publishRecord.coverUrl || '')}
+            <OssImage
+              src={coverThumbnailSrc}
               width={32}
               height={32}
+              sizes={isMobile ? '32px' : '24px'}
+              thumbnailSize={64}
               className={cn('rounded object-cover', isMobile ? 'w-8 h-8' : 'w-6 h-6')}
               alt="cover"
-              unoptimized
             />
           </div>
         )}
@@ -343,11 +716,11 @@ const RecordCore = memo(
               <Calendar className="h-3.5 w-3.5 md:h-4 md:w-4" />
             </div>
             {/* 更新时间 */}
-            {publishRecord.updatedAt && (
+            {workMetricsFetchedAt && (
               <div className="text-xs text-muted-foreground flex items-center gap-1.5">
-                {t('record.updatedAt')}
+                {t('record.analyticsUpdatedAt')}
                 ：
-                {dayjs(publishRecord.updatedAt).format('YYYY-MM-DD HH:mm')}
+                {dayjs(workMetricsFetchedAt).format('YYYY-MM-DD HH:mm')}
               </div>
             )}
           </div>
@@ -386,17 +759,17 @@ const RecordCore = memo(
               {desc}
             </div>
             <div className="mt-3 md:mt-4">
-              {publishRecord && <span data-testid="record-status-badge"><PubStatus status={publishRecord.status} /></span>}
+              <span data-testid="record-status-badge"><PubStatus status={activeRecord.status} /></span>
             </div>
-            {publishRecord.errorMsg && (
-              <div title={publishRecord.errorMsg} className="mt-1 text-xs text-destructive">
-                {publishRecord.errorMsg}
+            {activeRecord.errorMsg && (
+              <div title={activeRecord.errorMsg} className="mt-1 text-xs text-destructive">
+                {activeRecord.errorMsg}
               </div>
             )}
           </div>
 
           {/* 媒体预览 */}
-          {mediaPreviewItems.length > 0 && (
+          {mediaPreviewItems.length > 0 && coverThumbnailSrc && (
             <div
               className={cn('shrink-0', isMobile ? 'w-full' : '')}
               onClick={e => e.stopPropagation()}
@@ -418,13 +791,15 @@ const RecordCore = memo(
                   isMobile ? 'w-full aspect-video' : 'w-[145px] h-[145px]',
                 )}
               >
-                <Image
-                  src={getOssUrl(publishRecord.coverUrl || publishRecord.imgUrlList?.[0] || '')}
+                <OssImage
+                  src={coverThumbnailSrc}
                   width={290}
                   height={290}
+                  sizes={isMobile ? 'calc(100vw - 48px)' : '145px'}
+                  thumbnailWidth={isMobile ? 720 : 320}
+                  thumbnailHeight={isMobile ? 405 : 320}
                   className="w-full h-full object-cover pointer-events-none"
                   alt="cover"
-                  unoptimized
                 />
               </div>
             </div>
@@ -435,19 +810,29 @@ const RecordCore = memo(
         {shouldShowRecordMetrics && (
           <ScrollButtonContainer>
             <div className="flex gap-3 md:gap-4 p-2 md:p-2.5 border-b border-border overflow-x-auto">
-              {recordInfo.map(v => (
-                <div key={v.label} className="flex-shrink-0 md:flex-1 min-w-[60px] md:min-w-0">
-                  <div className="flex items-center gap-1 md:gap-1.5">
-                    {v.icon}
-                    <span className="text-xs text-muted-foreground whitespace-nowrap">{v.label}</span>
-                  </div>
-                  {publishRecord.engagement && (
-                    <div className="text-sm md:text-base font-semibold mt-0.5 md:mt-1">
-                      {publishRecord.engagement[v.key as 'viewCount'] ?? 0}
+              {workMetricsLoading
+                ? recordInfo.map(v => (
+                    <div key={v.label} className="flex-shrink-0 md:flex-1 min-w-[60px] md:min-w-0">
+                      <div className="flex items-center gap-1 md:gap-1.5">
+                        <Skeleton className="h-4 w-4 rounded-full" />
+                        <Skeleton className="h-3 w-12" />
+                      </div>
+                      <Skeleton className="mt-2 h-4 w-10" />
                     </div>
-                  )}
-                </div>
-              ))}
+                  ))
+                : recordInfo.map(v => (
+                    <div key={v.label} className="flex-shrink-0 md:flex-1 min-w-[60px] md:min-w-0">
+                      <div className="flex items-center gap-1 md:gap-1.5">
+                        {v.icon}
+                        <span className="text-xs text-muted-foreground whitespace-nowrap">{v.label}</span>
+                      </div>
+                      {activeEngagement && (
+                        <div className="text-sm md:text-base font-semibold mt-0.5 md:mt-1">
+                          {activeEngagement[v.key as 'viewCount'] ?? 0}
+                        </div>
+                      )}
+                    </div>
+                  ))}
             </div>
           </ScrollButtonContainer>
         )}
@@ -461,7 +846,7 @@ const RecordCore = memo(
           )}
         >
           {/* 移动端：查看作品 + 更多操作 同一排 */}
-          {isMobile && (shouldShowViewWork || shouldShowDelete) ? (
+          {isMobile && (shouldShowViewWork || shouldShowRetryPublish || shouldShowMoreActions) ? (
             <div className="flex gap-2 w-full">
               {shouldShowViewWork && (
                 <Button
@@ -473,43 +858,65 @@ const RecordCore = memo(
                   {t('record.viewWork')}
                 </Button>
               )}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button data-testid="record-more-btn" variant="outline" size="icon" className="cursor-pointer shrink-0">
-                    <MoreVertical className="h-4 w-4" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {shouldShowViewWork && (
-                    <DropdownMenuItem onClick={handleCopyWorkLink}>
-                      {t('buttons.copyLink')}
-                    </DropdownMenuItem>
+              {shouldShowRetryPublish && (
+                <Button
+                  data-testid="record-retry-btn"
+                  variant="outline"
+                  className={cn(
+                    'cursor-pointer border-primary/30 text-primary hover:bg-primary/10 hover:text-primary',
+                    shouldShowViewWork ? 'shrink-0' : 'flex-1',
                   )}
-                  {shouldShowDelete && (
-                    <DropdownMenuItem
-                      className="text-destructive focus:text-destructive"
-                      onClick={async () => {
-                        setPopoverOpen(false)
-                        setListLoading(true)
-                        if (publishRecord.status === PublishStatus.RELEASED) {
-                          const res = await deletePlatWorkApi(
-                            publishRecord.accountId!,
-                            publishRecord.dataId,
-                          )
-                          if (!res) {
-                            setListLoading(false)
-                            return
-                          }
-                        }
-                        await deletePublishRecordApi(publishRecord.id)
-                        getPubRecord()
-                      }}
-                    >
-                      {t('buttons.delete')}
-                    </DropdownMenuItem>
+                  disabled={retryLoading}
+                  onClick={handleRetryPublish}
+                >
+                  {retryLoading ? (
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  ) : (
+                    <RotateCcw className="mr-2 h-4 w-4" />
                   )}
-                </DropdownMenuContent>
-              </DropdownMenu>
+                  {t('buttons.retryPublish')}
+                </Button>
+              )}
+              {shouldShowMoreActions && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button data-testid="record-more-btn" variant="outline" size="icon" className="cursor-pointer shrink-0">
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {shouldShowViewWork && (
+                      <DropdownMenuItem onClick={handleCopyWorkLink}>
+                        {t('buttons.copyLink')}
+                      </DropdownMenuItem>
+                    )}
+                    {shouldShowReschedulePublish && (
+                      <DropdownMenuItem onClick={handleOpenRescheduleDialog}>
+                        <CalendarClock className="h-4 w-4" />
+                        {t('buttons.reschedulePublish')}
+                      </DropdownMenuItem>
+                    )}
+                    {shouldShowCancelPublish && (
+                      <DropdownMenuItem
+                        className={cancelPublishMenuItemClassName}
+                        onClick={handleCancelPublish}
+                      >
+                        <CircleOff className="h-4 w-4" />
+                        {t('buttons.cancelPublish')}
+                      </DropdownMenuItem>
+                    )}
+                    {shouldShowDeleteRecord && (
+                      <DropdownMenuItem
+                        className={deleteRecordMenuItemClassName}
+                        onClick={handleDeleteRecord}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                        {t('buttons.delete')}
+                      </DropdownMenuItem>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           ) : (
             // 桌面端或移动端无更多操作时
@@ -525,45 +932,6 @@ const RecordCore = memo(
                 </Button>
               )}
 
-              {!isMobile && (shouldShowViewWork || shouldShowDelete) && (
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button data-testid="record-more-btn" variant="outline" size="icon" className="cursor-pointer">
-                      <MoreVertical className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    {shouldShowViewWork && (
-                      <DropdownMenuItem onClick={handleCopyWorkLink}>
-                        {t('buttons.copyLink')}
-                      </DropdownMenuItem>
-                    )}
-                    {shouldShowDelete && (
-                      <DropdownMenuItem
-                        className="text-destructive focus:text-destructive"
-                        onClick={async () => {
-                          setPopoverOpen(false)
-                          setListLoading(true)
-                          if (publishRecord.status === PublishStatus.RELEASED) {
-                            const res = await deletePlatWorkApi(
-                              publishRecord.accountId!,
-                              publishRecord.dataId,
-                            )
-                            if (!res) {
-                              setListLoading(false)
-                              return
-                            }
-                          }
-                          await deletePublishRecordApi(publishRecord.id)
-                          getPubRecord()
-                        }}
-                      >
-                        {t('buttons.delete')}
-                      </DropdownMenuItem>
-                    )}
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              )}
             </>
           )}
 
@@ -593,27 +961,95 @@ const RecordCore = memo(
             </TooltipProvider>
           )}
 
-          {publishRecord.status !== PublishStatus.RELEASED
-            && publishRecord.status !== PublishStatus.PUB_LOADING ? (
-                <Button
-                  data-testid="record-publish-now-btn"
-                  className={cn('cursor-pointer', isMobile && 'w-full')}
-                  disabled={nowPubLoading}
-                  onClick={async () => {
-                    setNowPubLoading(true)
-                    await nowPubTaskApi(publishRecord.id)
-                    getPubRecord()
-                    setNowPubLoading(false)
-                  }}
-                >
-                  {nowPubLoading ? (
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  ) : (
-                    <Send className="mr-2 h-4 w-4" />
-                  )}
-                  {t('buttons.publishNow')}
+          {shouldShowContinueUserActionPublish && (
+            <Button
+              data-testid="record-continue-publish-btn"
+              className={cn('cursor-pointer', isMobile && 'w-full')}
+              disabled={continuePublishLoading}
+              onClick={handleContinueUserActionPublish}
+            >
+              {continuePublishLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="mr-2 h-4 w-4" />
+              )}
+              {t('record.continuePublish')}
+            </Button>
+          )}
+
+          {canPublishRecordNow(activeRecord.status, activeRecord.publishTime) ? (
+            <Button
+              data-testid="record-publish-now-btn"
+              className={cn('cursor-pointer', isMobile && 'w-full')}
+              disabled={nowPubLoading}
+              onClick={handlePublishNow}
+            >
+              {nowPubLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <Send className="mr-2 h-4 w-4" />
+              )}
+              {t('buttons.publishNow')}
+            </Button>
+          ) : null}
+
+          {!isMobile && shouldShowRetryPublish && (
+            <Button
+              data-testid="record-retry-btn"
+              variant="outline"
+              className="cursor-pointer border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+              disabled={retryLoading}
+              onClick={handleRetryPublish}
+            >
+              {retryLoading ? (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              ) : (
+                <RotateCcw className="mr-2 h-4 w-4" />
+              )}
+              {t('buttons.retryPublish')}
+            </Button>
+          )}
+
+          {!isMobile && shouldShowMoreActions && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button data-testid="record-more-btn" variant="outline" size="icon" className="cursor-pointer">
+                  <MoreVertical className="h-4 w-4" />
                 </Button>
-              ) : null}
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {shouldShowViewWork && (
+                  <DropdownMenuItem onClick={handleCopyWorkLink}>
+                    {t('buttons.copyLink')}
+                  </DropdownMenuItem>
+                )}
+                {shouldShowReschedulePublish && (
+                  <DropdownMenuItem onClick={handleOpenRescheduleDialog}>
+                    <CalendarClock className="h-4 w-4" />
+                    {t('buttons.reschedulePublish')}
+                  </DropdownMenuItem>
+                )}
+                {shouldShowCancelPublish && (
+                  <DropdownMenuItem
+                    className={cancelPublishMenuItemClassName}
+                    onClick={handleCancelPublish}
+                  >
+                    <CircleOff className="h-4 w-4" />
+                    {t('buttons.cancelPublish')}
+                  </DropdownMenuItem>
+                )}
+                {shouldShowDeleteRecord && (
+                  <DropdownMenuItem
+                    className={deleteRecordMenuItemClassName}
+                    onClick={handleDeleteRecord}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    {t('buttons.delete')}
+                  </DropdownMenuItem>
+                )}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </div>
     )
@@ -623,8 +1059,8 @@ const RecordCore = memo(
         {isMobile ? (
           // 移动端：全屏 Dialog
           <>
-            <div onClick={() => setPopoverOpen(true)}>{TriggerButton}</div>
-            <Dialog open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <div onClick={() => handlePopoverOpenChange(true)}>{TriggerButton}</div>
+            <Dialog open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
               <DialogContent
                 data-testid="record-detail-dialog"
                 className="w-[calc(100%-24px)] max-h-[85vh] max-w-full p-0 flex flex-col overflow-hidden"
@@ -641,7 +1077,7 @@ const RecordCore = memo(
           </>
         ) : (
           // 桌面端：Popover
-          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+          <Popover open={popoverOpen} onOpenChange={handlePopoverOpenChange}>
             <PopoverTrigger asChild>{TriggerButton}</PopoverTrigger>
             <PopoverContent
               data-testid="record-detail-popover"
@@ -674,12 +1110,41 @@ const RecordCore = memo(
           </Popover>
         )}
 
+        <Dialog open={rescheduleDialogOpen} onOpenChange={setRescheduleDialogOpen}>
+          <DialogContent className="w-[calc(100%-24px)] max-w-[400px] gap-0 p-0 sm:p-0 overflow-hidden">
+            <DialogTitle className="px-4 pt-4 text-base font-semibold">
+              {t('record.rescheduleTitle')}
+            </DialogTitle>
+            <div className="mx-4 mt-3 flex items-start gap-2 rounded-lg border border-info/20 bg-info/10 px-3 py-2 text-xs text-info">
+              <Info className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+              <span>{t('record.dragToRescheduleTip')}</span>
+            </div>
+            <PublishDatePicker
+              inline
+              showNowButton={false}
+              loading={rescheduleLoading}
+              value={reschedulePubTime}
+              onValueChange={setReschedulePubTime}
+              onClick={handleReschedulePublish}
+              submitText={t('buttons.confirm')}
+              minLeadMinutes={10}
+              isMobile={isMobile}
+            />
+          </DialogContent>
+        </Dialog>
+
         {/* 媒体预览 */}
         <MediaPreview
           open={mediaPreviewOpen}
           items={mediaPreviewItems}
           initialIndex={mediaPreviewIndex}
           onClose={() => setMediaPreviewOpen(false)}
+        />
+
+        <PublishDetailModal
+          visible={!!publishDetailTaskId}
+          taskId={publishDetailTaskId}
+          onClose={() => setPublishDetailTaskId(undefined)}
         />
       </>
     )

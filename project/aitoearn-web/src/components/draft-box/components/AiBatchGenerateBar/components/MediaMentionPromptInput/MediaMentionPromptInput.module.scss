@@ -1,0 +1,344 @@
+.root {
+  position: relative;
+  width: 100%;
+}
+
+.editorContent {
+  position: relative;
+  z-index: 1;
+  min-height: calc(var(--media-mention-min-rows, 3) * 1.5rem + 0.5rem);
+  width: 100%;
+  color: var(--foreground);
+  outline: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.editorContent p {
+  margin: 0;
+}
+
+.placeholder {
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: var(--muted-foreground);
+}
+
+.mentionChip {
+  display: inline-flex;
+  max-width: min(240px, calc(100% - 4px));
+  line-height: inherit;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.editorContent span[data-lexical-decorator='true'] {
+  display: inline-flex;
+  max-width: min(240px, calc(100% - 4px));
+  line-height: inherit;
+  vertical-align: middle;
+  margin-right: 4px;
+}
+
+.mentionChipFocused {
+  outline: none;
+}
+
+.mentionChipButton {
+  display: flex;
+  max-width: 100%;
+  box-sizing: border-box;
+  cursor: pointer;
+  align-items: center;
+  gap: 4px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--muted);
+  padding: 0.03em 0.28em 0.03em 0.1em;
+  color: var(--foreground);
+  font: inherit;
+  line-height: 1.25;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.mentionChipButton:hover {
+  border-color: var(--border);
+  background: var(--accent);
+}
+
+.mentionChipButton:focus-visible {
+  border-color: var(--ring);
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--ring) 18%, transparent);
+}
+
+.mentionChipMissing {
+  cursor: default;
+  opacity: 0.55;
+}
+
+.mentionChipMissing:hover {
+  border-color: transparent;
+  background: var(--muted);
+}
+
+.mentionTrigger {
+  color: var(--brand-purple);
+  font-weight: 600;
+}
+
+.mentionValue {
+  color: var(--foreground);
+  font-weight: 500;
+}
+
+.mentionThumb {
+  position: relative;
+  display: inline-flex;
+  height: 1.5em;
+  width: 1.5em;
+  flex: 0 0 1.5em;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+
+.mentionThumbIcon {
+  height: 1em;
+  width: 1em;
+}
+
+.audioThumb {
+  background: url('/assets/draft-box/video-back.svg') center / cover no-repeat;
+  color: var(--gradient-foreground);
+}
+
+.mentionName {
+  min-width: 0;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.menu {
+  position: absolute;
+  z-index: 1000;
+  margin: 4px 0 0;
+  max-height: 280px;
+  min-width: 260px;
+  max-width: min(360px, calc(100vw - 24px));
+  overflow: auto;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--popover);
+  padding: 4px;
+  color: var(--popover-foreground);
+  box-shadow: 0 12px 32px color-mix(in oklch, var(--foreground) 12%, transparent);
+  list-style: none;
+}
+
+.menuItem {
+  display: flex;
+  width: 100%;
+  max-width: 352px;
+  box-sizing: border-box;
+  cursor: pointer;
+  align-items: center;
+  gap: 8px;
+  border-radius: 8px;
+  padding: 7px;
+  outline: none;
+  transition:
+    background-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.menuItem:hover,
+.menuItemSelected {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.menuEmptyItem {
+  cursor: default;
+  list-style: none;
+  outline: none;
+}
+
+.menuEmptyItem .menuEmpty {
+  position: static;
+  margin-top: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.menuThumb {
+  position: relative;
+  display: flex;
+  height: 34px;
+  width: 34px;
+  flex: 0 0 34px;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--muted);
+  color: var(--muted-foreground);
+}
+
+.menuThumbIcon {
+  height: 16px;
+  width: 16px;
+}
+
+.menuText {
+  display: flex;
+  min-width: 0;
+  flex: 1;
+  max-width: calc(100% - 42px);
+  flex-direction: column;
+  gap: 2px;
+}
+
+.menuName {
+  display: block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.25;
+  color: var(--popover-foreground);
+}
+
+.menuToken {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 11px;
+  line-height: 1.2;
+  color: var(--muted-foreground);
+}
+
+.menuLoading,
+.menuEmpty {
+  position: absolute;
+  z-index: 1000;
+  margin-top: 4px;
+  min-width: 220px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--popover);
+  color: var(--muted-foreground);
+  box-shadow: 0 12px 32px color-mix(in oklch, var(--foreground) 12%, transparent);
+  font-size: 12px;
+}
+
+.menuLoading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+}
+
+.menuEmpty {
+  width: 260px;
+  padding: 12px;
+}
+
+.menuEmptyHint {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.menuEmptyBody {
+  display: flex;
+  min-height: 150px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 14px 0 4px;
+  text-align: center;
+}
+
+.menuEmptyIcon {
+  position: relative;
+  height: 54px;
+  width: 66px;
+  color: var(--muted-foreground);
+}
+
+.menuEmptyIconBack,
+.menuEmptyIconFront {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  border: 1px solid color-mix(in oklch, var(--border) 72%, transparent);
+  background: var(--popover);
+}
+
+.menuEmptyIconBack {
+  inset: 11px 21px 7px 5px;
+  transform: rotate(-22deg);
+}
+
+.menuEmptyIconFront {
+  inset: 15px 6px 3px 22px;
+  transform: rotate(-7deg);
+}
+
+.menuEmptyUploadIcon {
+  height: 20px;
+  width: 20px;
+}
+
+.menuEmptyText {
+  margin: 0;
+  color: var(--muted-foreground);
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.menuEmptyButton {
+  display: inline-flex;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 7px;
+  border: 1px solid var(--border);
+  background: var(--secondary);
+  padding: 7px 14px;
+  color: var(--foreground);
+  font-size: 13px;
+  line-height: 1.2;
+  transition:
+    background-color 0.16s ease,
+    border-color 0.16s ease,
+    color 0.16s ease;
+}
+
+.menuEmptyButton:hover {
+  border-color: var(--primary);
+  background: var(--accent);
+}
+
+.menuEmptyButton:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}

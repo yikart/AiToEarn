@@ -1,4 +1,4 @@
-import type { AccountGroupItem, SocialAccount } from '@/api/types/account.type'
+import type { AccountGroupItem, SocialAccount } from '@/api/accounts/account.types'
 
 import { ChevronDown, ChevronUp, Trash2 } from 'lucide-react'
 import { memo, useEffect } from 'react'

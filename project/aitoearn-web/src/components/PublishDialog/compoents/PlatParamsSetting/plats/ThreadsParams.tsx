@@ -2,7 +2,7 @@
  * ThreadsParams - Threads 平台参数设置
  */
 import type { ForwardedRef } from 'react'
-import type { ThreadsLocationItem } from '@/api/plat/threads'
+import type { ThreadsLocationItem } from '@/api/platforms/threads.types'
 import type {
   IPlatsParamsProps,
   IPlatsParamsRef,
@@ -10,7 +10,7 @@ import type {
 import { debounce } from 'lodash'
 import { Loader2 } from 'lucide-react'
 import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
-import { apiGetThreadsLocations } from '@/api/plat/threads'
+import { apiGetThreadsLocations } from '@/api/platforms/threads.api'
 import { useTransClient } from '@/app/i18n/client'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
@@ -22,18 +22,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 const ThreadsParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
 

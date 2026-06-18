@@ -1,7 +1,6 @@
+import type { TwitterOption } from './types'
 import type { IPlatOption, PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { useCallback } from 'react'
-
-type TwitterOption = NonNullable<IPlatOption['twitter']>
 
 export function useTwitterPublishOption(
   pubItem: PubItem,

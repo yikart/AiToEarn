@@ -26,8 +26,7 @@
     "platforms": "Plattformen",
     "status": "Status",
     "time": "Zeit",
-    "viewDetail": "Details anzeigen",
-    "untitled": "Unbenannt"
+    "viewDetail": "Details anzeigen"
   },
   "publishDetail": {
     "title": "Veröffentlichungsdetails",
@@ -42,14 +41,41 @@
     "close": "Schließen",
     "minimize": "Minimieren",
     "unknownAccount": "Unbekanntes Konto",
-    "creatingRecord": "Veröffentlichungsdatensatz wird erstellt..."
+    "creatingRecord": "Veröffentlichungsdatensatz wird erstellt...",
+    "progressTitle": "Veröffentlichungsfortschritt",
+    "completeTitle": "Veröffentlichung abgeschlossen",
+    "sectionUserAction": "Aktion erforderlich",
+    "sectionAuto": "Automatische Veröffentlichung",
+    "sectionTask": "Veröffentlichungsaufgaben",
+    "actionRequired": "Aktion erforderlich",
+    "userActionTitle": "Warten auf Abschluss in {{platform}}",
+    "userActionDesc": "Ihr Inhalt ist bereit. Öffnen Sie die Plattform, um den letzten Schritt abzuschließen.",
+    "preparingUserAction": "Veröffentlichungseinstieg für {{platform}} wird vorbereitet...",
+    "openPlatform": "{{platform}} öffnen",
+    "openPlatformFailed": "{{platform}} konnte nicht geöffnet werden. Kopieren Sie den Kurzlink und öffnen Sie ihn manuell.",
+    "copyShortLink": "Kurzlink kopieren",
+    "shortLinkCopied": "Kurzlink kopiert",
+    "shortLinkCopyFailed": "Kopieren fehlgeschlagen",
+    "taskCreated": "Aufgabe erstellt",
+    "autoPendingDesc": "Warten auf den Start der automatischen Veröffentlichung. Bitte halten Sie diese Seite geöffnet.",
+    "sectionTitleWithCount": "{{title}} ({{count}})",
+    "userActionQrDesc": "Ihr Inhalt ist bereit. Scannen Sie den QR-Code mit Ihrem Smartphone, um die Veröffentlichung abzuschließen.",
+    "userActionMobileDesc": "Ihr Inhalt ist bereit. Tippen Sie unten, um {{platform}} zu öffnen und die Veröffentlichung abzuschließen.",
+    "userActionPolling": "Veröffentlichungserfolg wird geprüft...",
+    "userActionPublished": "Erfolgreich veröffentlicht",
+    "userActionFailed": "Veröffentlichung fehlgeschlagen. Bitte erneut veröffentlichen.",
+    "cancelPublish": "Veröffentlichung abbrechen",
+    "cancelPublishConfirmTitle": "Veröffentlichung abbrechen?",
+    "cancelPublishConfirmContent": "Nach dem Abbrechen wartet dieser Inhalt nicht weiter auf die QR-Code-Veröffentlichung. Sie können später erneut veröffentlichen.",
+    "cancelPublishSuccess": "Veröffentlichung abgebrochen",
+    "cancelPublishFailed": "Veröffentlichung konnte nicht abgebrochen werden. Bitte erneut versuchen."
   },
   "publishFloating": {
     "xhsPublishing": "RedNote is publishing",
-    "pluginPublishing": "Plugin publishing in progress",
-    "openDetail": "Click to view details",
-    "completed": "Plugin publishing completed",
-    "failed": "Plugin publishing failed. View details."
+    "pluginPublishing": "Automatische Veröffentlichung läuft",
+    "openDetail": "Klicken, um den Veröffentlichungsfortschritt anzuzeigen",
+    "completed": "Automatische Veröffentlichung abgeschlossen",
+    "failed": "Automatische Veröffentlichung fehlgeschlagen. Fortschritt anzeigen."
   },
   "common": {
     "confirm": "Bestätigen",
@@ -71,7 +97,9 @@
     "PENDING": "Ausstehend",
     "PUBLISHING": "Wird veröffentlicht",
     "COMPLETED": "Abgeschlossen",
-    "ERROR": "Fehler"
+    "ERROR": "Fehler",
+    "canceled": "Abgebrochen",
+    "CANCELED": "Abgebrochen"
   },
   "header": {
     "pluginActive": "Plugin aktiv",

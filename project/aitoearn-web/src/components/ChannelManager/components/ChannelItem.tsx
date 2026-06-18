@@ -9,37 +9,50 @@
 
 'use client'
 
-import type { SocialAccount } from '@/api/types/account.type'
-import { BarChart3, Loader2, RefreshCw, Trash2 } from 'lucide-react'
-import Image from 'next/image'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import { Loader2, RefreshCw, Trash2 } from 'lucide-react'
 
 import { useState } from 'react'
 import AccountStatusView from '@/app/[lng]/accounts/components/AccountsTopNav/components/AccountStatusView'
 import { AccountStatus } from '@/app/config/accountConfig'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import TwitterExploreDialog from '@/components/twitter/TwitterAnalyticsDialog'
+import { PlatformIcon } from '@/components/common/PlatformIcon'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { usePlatformInfo } from '@/hooks/usePlatformMetadata'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
-import { shouldShowFansSyncNotice } from '@/utils/socialAccount'
+import { shouldShowFansSyncNotice } from '@/utils/social/account'
 import { useChannelManagerStore } from '../channelManagerStore'
+import { isPlatformFansRefreshSupported } from '../utils/fansRefreshSupport'
 
 interface ChannelItemProps {
   channel: SocialAccount
   onDelete: (channel: SocialAccount) => void
   deleteLoading?: string | null
+  fansRefreshTarget?: 'all' | PlatType | null
+  onRefreshFans?: (platform: PlatType) => void
 }
 
-export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemProps) {
-  const platInfo = AccountPlatInfoMap.get(channel.type)
+export function ChannelItem({
+  channel,
+  onDelete,
+  deleteLoading,
+  fansRefreshTarget,
+  onRefreshFans,
+}: ChannelItemProps) {
+  const platInfo = usePlatformInfo(channel.type)
   const isDeleting = deleteLoading === channel.id
   const isOffline = channel.status !== AccountStatus.USABLE
-  const showFansSyncNotice = shouldShowFansSyncNotice(channel.type, channel.fansCount)
+  const isFansRefreshing = fansRefreshTarget === 'all' || fansRefreshTarget === channel.type
+  const supportsFansRefresh = isPlatformFansRefreshSupported(channel.type, platInfo)
+  const showFansSyncNotice = channel.type === PlatType.Douyin && shouldShowFansSyncNotice(channel.type, channel.fansCount)
+  const showXhsFansAsyncNotice = channel.type === PlatType.Xhs && channel.fansCount === 0
   const { t } = useTransClient('account')
   const openAndAuth = useChannelManagerStore(state => state.openAndAuth)
-  const [analyticsOpen, setAnalyticsOpen] = useState(false)
+  const [refreshTooltipOpen, setRefreshTooltipOpen] = useState(false)
 
   // 处理重新授权
   const handleReauth = () => {
@@ -58,26 +71,19 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
       <Avatar className={cn('h-12 w-12 shrink-0 border border-border/70 shadow-sm', isOffline && 'grayscale')}>
         <AvatarImage src={getOssUrl(channel.avatar)} alt={channel.nickname} />
         <AvatarFallback className="bg-muted text-sm font-semibold text-foreground">
-          {channel.nickname?.[0] || channel.account?.[0]}
+          {channel.nickname?.[0]}
         </AvatarFallback>
       </Avatar>
 
       <div className="min-w-0 flex-1">
         <div data-testid="cm-channel-name" className={cn('truncate text-base font-semibold leading-5 text-foreground', isOffline && 'text-muted-foreground')}>
-          {channel.nickname || channel.account}
+          {channel.nickname}
         </div>
         <div className="mt-1.5 flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1.5">
-          {channel.account && channel.nickname && (
-            <div className="inline-flex max-w-[240px] min-w-0 shrink items-center gap-1 rounded-md border border-border/70 bg-muted/40 px-2 py-0.5 text-[11px] text-muted-foreground">
-              <span className="shrink-0 text-[10px] font-medium uppercase tracking-[0.08em] text-muted-foreground/80">ID</span>
-              <span className="truncate font-mono text-[11px] text-foreground/80">{channel.account}</span>
-            </div>
-          )}
           {platInfo?.icon && (
             <span className="inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
-              <Image
-                src={platInfo.icon}
-                alt={platInfo.name}
+              <PlatformIcon
+                platform={channel.type}
                 width={16}
                 height={16}
                 className={cn('shrink-0 rounded-sm', isOffline && 'grayscale')}
@@ -90,6 +96,10 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
             <span className="shrink-0 text-xs text-muted-foreground">
               {t('channelManager.fansSyncNotice')}
             </span>
+          ) : showXhsFansAsyncNotice ? (
+            <span className="shrink-0 text-xs text-muted-foreground">
+              {t('channelManager.xhsFansAsyncNotice')}
+            </span>
           ) : channel.fansCount !== undefined && channel.fansCount !== null && (
             <span className="shrink-0 text-xs text-muted-foreground">
               {t('channelManager.fans', { count: channel.fansCount })}
@@ -97,28 +107,6 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
           )}
         </div>
       </div>
-
-      {/* Twitter 账号显示查看数据按钮 */}
-      {channel.type === PlatType.Twitter && !isOffline && !isDeleting && (
-        <>
-          <Button
-            data-testid="cm-channel-analytics-btn"
-            variant="outline"
-            size="sm"
-            className="h-7 cursor-pointer shrink-0 px-2 sm:px-3"
-            onClick={() => setAnalyticsOpen(true)}
-          >
-            <BarChart3 className="h-3 w-3 sm:mr-1" />
-            <span className="hidden sm:inline">{t('channelManager.viewExplore')}</span>
-          </Button>
-          <TwitterExploreDialog
-            open={analyticsOpen}
-            onOpenChange={setAnalyticsOpen}
-            accountId={channel.id}
-            username={channel.account}
-          />
-        </>
-      )}
 
       {/* 离线状态显示重新授权按钮 */}
       {isOffline && !isDeleting && (
@@ -132,6 +120,37 @@ export function ChannelItem({ channel, onDelete, deleteLoading }: ChannelItemPro
           <RefreshCw className="h-3 w-3 sm:mr-1" />
           <span className="hidden sm:inline">{t('channelManager.reauth')}</span>
         </Button>
+      )}
+
+      {!isOffline && !isDeleting && onRefreshFans && supportsFansRefresh && (
+        <TooltipProvider delayDuration={0}>
+          <Tooltip open={refreshTooltipOpen} onOpenChange={setRefreshTooltipOpen}>
+            <TooltipTrigger asChild>
+              <Button
+                data-testid="cm-channel-refresh-fans-btn"
+                type="button"
+                variant="outline"
+                size="sm"
+                aria-label={t('channelManager.refreshFansAction')}
+                disabled={!!fansRefreshTarget}
+                className="h-8 w-8 shrink-0 cursor-pointer rounded-lg border-primary/35 bg-background p-0 text-primary hover:border-primary/65 hover:bg-primary/5 hover:text-primary disabled:cursor-not-allowed"
+                onClick={() => {
+                  setRefreshTooltipOpen(false)
+                  onRefreshFans(channel.type)
+                }}
+              >
+                {isFansRefreshing ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <RefreshCw className="h-4 w-4" />
+                )}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              {t('channelManager.refreshFansAction')}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       )}
 
       {isDeleting ? (

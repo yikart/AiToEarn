@@ -1,26 +1,26 @@
 /**
  * TaskPreview - 任务预览组件
- * 功能：显示最近的任务卡片列表、Agent 素材，支持 Tab 切换和"浏览全部"跳转
+ * 功能：显示最近的任务卡片列表、AI 生成素材，支持 Tab 切换和"浏览全部"跳转
  */
 
 'use client'
 
-import type { TaskListItem } from '@/api/agent'
-import type { MediaItem } from '@/api/types/media'
+import type { TaskListItem } from '@/api/ai/ai.types'
+import type { MediaItem } from '@/api/materials/material.types'
 import type { MediaPreviewItem } from '@/components/common/MediaPreview'
 import { ArrowRight, Bot, History } from 'lucide-react'
 import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { startTransition, useCallback, useEffect, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { agentApi } from '@/api/agent'
-import { getAgentAssets } from '@/api/ai'
+import { agentApi, getAgentAssets } from '@/api/ai/ai.api'
+
 import { useTransClient } from '@/app/i18n/client'
 import TaskHistoryList from '@/components/Chat/TaskHistoryList'
 import { MediaPreview } from '@/components/common/MediaPreview'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { useUserStore } from '@/store'
-import { convertAssetToMediaItem } from '@/utils/agent-asset'
+import { convertAssetToMediaItem } from '@/utils/agent/asset'
 import { getOssUrl } from '@/utils/oss'
 import { MediaPreviewList } from './components/MediaPreviewList'
 
@@ -60,7 +60,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     isLoading: true,
   })
 
-  // Agent 素材状态
+  // AI 生成素材状态
   const [agentState, setAgentState] = useState<{
     mediaList: MediaItem[]
     isLoading: boolean
@@ -100,7 +100,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     }
   }, [limit])
 
-  /** 加载 Agent 素材 */
+  /** 加载 AI 生成素材 */
   const loadAgentAssets = useCallback(async () => {
     try {
       const result = await getAgentAssets({ page: 1, pageSize: limit })
@@ -128,11 +128,11 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     }
   }, [limit])
 
-  /** 处理 Agent 素材点击 - 打开预览弹窗 */
+  /** 处理 AI 生成素材点击 - 打开预览弹窗 */
   const handleAgentAssetClick = useCallback(
     (index: number) => {
       const items: MediaPreviewItem[] = agentState.mediaList.map((media) => {
-        // Agent 素材可能是视频或图片
+        // AI 生成素材可能是视频或图片
         const isVideo = media.type === 'video'
         return {
           type: isVideo ? ('video' as const) : ('image' as const),
@@ -155,7 +155,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
     if (token) {
       // 加载任务列表
       loadTasks()
-      // 加载 Agent 素材
+      // 加载 AI 生成素材
       loadAgentAssets()
     }
     else {
@@ -248,7 +248,7 @@ export function TaskPreview({ limit = 4, className }: ITaskPreviewProps) {
               />
             </TabsContent>
 
-            {/* Agent 素材 */}
+            {/* AI 生成素材 */}
             <TabsContent value="agent" className="mt-0">
               <MediaPreviewList
                 mediaList={agentState.mediaList}

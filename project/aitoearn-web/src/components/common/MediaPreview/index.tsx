@@ -1,7 +1,7 @@
 /**
  * MediaPreview - 媒体预览组件
- * 用于预览图片和视频，支持多媒体轮播
- * 支持图片缩放、旋转、下载、画笔编辑，视频播放
+ * 用于预览图片、视频和音频，支持多媒体轮播
+ * 支持图片缩放、旋转、下载、画笔编辑，视频/音频播放
  */
 'use client'
 
@@ -12,6 +12,7 @@ import {
   Download,
   Loader2,
   Minus,
+  Music,
   Pencil,
   Plus,
   RotateCw,
@@ -22,8 +23,24 @@ import { createPortal } from 'react-dom'
 import { getOssProxyPath } from '@/utils/oss'
 import { BrushEditor } from './BrushEditor'
 
+const MIN_SCALE = 0.25
+const MAX_SCALE = 5
+const ZOOM_BUTTON_STEP = 0.25
+const WHEEL_ZOOM_SENSITIVITY = 0.002
+const WHEEL_ZOOM_MAX_STEP = 0.18
+const WHEEL_TRANSITION_DELAY = 120
+
+interface PreviewPoint {
+  x: number
+  y: number
+}
+
+function clampScale(value: number) {
+  return Math.min(MAX_SCALE, Math.max(MIN_SCALE, value))
+}
+
 export interface MediaPreviewItem {
-  type: 'image' | 'video'
+  type: 'image' | 'video' | 'audio'
   src: string
   title?: string
 }
@@ -53,21 +70,97 @@ export function MediaPreview({
   const [loading, setLoading] = useState(true)
   const [position, setPosition] = useState({ x: 0, y: 0 })
   const [isDragging, setIsDragging] = useState(false)
+  const [isWheelZooming, setIsWheelZooming] = useState(false)
   const [isEditorOpen, setIsEditorOpen] = useState(false)
   const dragStart = useRef({ x: 0, y: 0 })
   const containerRef = useRef<HTMLDivElement>(null)
+  const mediaAreaRef = useRef<HTMLDivElement>(null)
+  const imageRef = useRef<HTMLImageElement>(null)
+  const scaleRef = useRef(scale)
+  const positionRef = useRef(position)
+  const wheelZoomTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const hasMultiple = items.length > 1
   const current = items[index]
   const isImage = current?.type === 'image'
+  const isAudio = current?.type === 'audio'
+
+  const updateScaleState = useCallback((nextScale: number) => {
+    scaleRef.current = nextScale
+    setScale(nextScale)
+  }, [])
+
+  const updatePositionState = useCallback((nextPosition: PreviewPoint) => {
+    positionRef.current = nextPosition
+    setPosition(nextPosition)
+  }, [])
+
+  const getImageCenter = useCallback(() => {
+    const image = imageRef.current
+    if (!image)
+      return null
+
+    const rect = image.getBoundingClientRect()
+    return {
+      x: rect.left + rect.width / 2,
+      y: rect.top + rect.height / 2,
+    }
+  }, [])
+
+  const zoomToScale = useCallback(
+    (nextScaleValue: number, anchorPoint?: PreviewPoint) => {
+      const previousScale = scaleRef.current
+      const nextScale = clampScale(nextScaleValue)
+
+      if (nextScale === previousScale)
+        return
+
+      const previousPosition = positionRef.current
+      let nextPosition = previousPosition
+
+      if (nextScale <= 1) {
+        nextPosition = { x: 0, y: 0 }
+      }
+      else {
+        const imageCenter = getImageCenter()
+        const anchor = anchorPoint ?? imageCenter
+
+        if (anchor && imageCenter) {
+          const scaleRatio = nextScale / previousScale
+          nextPosition = {
+            x: previousPosition.x + (anchor.x - imageCenter.x) * (1 - scaleRatio),
+            y: previousPosition.y + (anchor.y - imageCenter.y) * (1 - scaleRatio),
+          }
+        }
+      }
+
+      updateScaleState(nextScale)
+      updatePositionState(nextPosition)
+    },
+    [getImageCenter, updatePositionState, updateScaleState],
+  )
+
+  const markWheelZooming = useCallback(() => {
+    setIsWheelZooming(true)
+
+    if (wheelZoomTimeoutRef.current) {
+      clearTimeout(wheelZoomTimeoutRef.current)
+    }
+
+    wheelZoomTimeoutRef.current = setTimeout(() => {
+      setIsWheelZooming(false)
+      wheelZoomTimeoutRef.current = null
+    }, WHEEL_TRANSITION_DELAY)
+  }, [])
 
   // 重置状态
   const resetState = useCallback(() => {
-    setScale(1)
+    updateScaleState(1)
     setRotate(0)
-    setPosition({ x: 0, y: 0 })
+    updatePositionState({ x: 0, y: 0 })
     setLoading(true)
-  }, [])
+    setIsDragging(false)
+  }, [updatePositionState, updateScaleState])
 
   const handlePrev = useCallback(() => {
     if (!hasMultiple)
@@ -81,8 +174,8 @@ export function MediaPreview({
     setIndex(prev => (prev + 1) % items.length)
   }, [hasMultiple, items.length])
 
-  const handleZoomIn = useCallback(() => setScale(s => Math.min(s + 0.25, 5)), [])
-  const handleZoomOut = useCallback(() => setScale(s => Math.max(s - 0.25, 0.25)), [])
+  const handleZoomIn = useCallback(() => zoomToScale(scaleRef.current + ZOOM_BUTTON_STEP), [zoomToScale])
+  const handleZoomOut = useCallback(() => zoomToScale(scaleRef.current - ZOOM_BUTTON_STEP), [zoomToScale])
 
   useEffect(() => {
     if (open) {
@@ -101,6 +194,43 @@ export function MediaPreview({
   useEffect(() => {
     resetState()
   }, [index, resetState])
+
+  useEffect(() => {
+    return () => {
+      if (wheelZoomTimeoutRef.current) {
+        clearTimeout(wheelZoomTimeoutRef.current)
+      }
+    }
+  }, [])
+
+  useEffect(() => {
+    if (!open || !isImage)
+      return
+
+    const mediaArea = mediaAreaRef.current
+    if (!mediaArea)
+      return
+
+    const handleWheel = (event: WheelEvent) => {
+      event.preventDefault()
+      event.stopPropagation()
+      markWheelZooming()
+
+      const scaleStep = Math.min(
+        WHEEL_ZOOM_MAX_STEP,
+        Math.max(-WHEEL_ZOOM_MAX_STEP, -event.deltaY * WHEEL_ZOOM_SENSITIVITY),
+      )
+      const zoomFactor = 1 + scaleStep
+
+      zoomToScale(scaleRef.current * zoomFactor, {
+        x: event.clientX,
+        y: event.clientY,
+      })
+    }
+
+    mediaArea.addEventListener('wheel', handleWheel, { passive: false })
+    return () => mediaArea.removeEventListener('wheel', handleWheel)
+  }, [isImage, markWheelZooming, open, zoomToScale])
 
   useEffect(() => {
     if (!open)
@@ -170,48 +300,39 @@ export function MediaPreview({
     document.body.removeChild(link)
   }
 
-  const handleWheel = useCallback(
-    (e: React.WheelEvent) => {
-      if (!isImage)
-        return
-      e.preventDefault()
-      const delta = e.deltaY > 0 ? -0.1 : 0.1
-      setScale(s => Math.max(0.25, Math.min(5, s + delta)))
-    },
-    [isImage],
-  )
-
   const handleMouseDown = (e: React.MouseEvent) => {
-    if (!isImage || scale <= 1)
+    if (!isImage || scaleRef.current <= 1)
       return
     e.preventDefault()
     setIsDragging(true)
-    dragStart.current = { x: e.clientX - position.x, y: e.clientY - position.y }
+    dragStart.current = {
+      x: e.clientX - positionRef.current.x,
+      y: e.clientY - positionRef.current.y,
+    }
   }
 
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
       if (!isDragging)
         return
-      setPosition({
+      updatePositionState({
         x: e.clientX - dragStart.current.x,
         y: e.clientY - dragStart.current.y,
       })
     },
-    [isDragging],
+    [isDragging, updatePositionState],
   )
 
   const handleMouseUp = () => setIsDragging(false)
 
-  const handleDoubleClick = () => {
+  const handleDoubleClick = (e: React.MouseEvent<HTMLImageElement>) => {
     if (!isImage)
       return
-    if (scale === 1) {
-      setScale(2)
+    if (scaleRef.current <= 1) {
+      zoomToScale(2, { x: e.clientX, y: e.clientY })
     }
     else {
-      setScale(1)
-      setPosition({ x: 0, y: 0 })
+      zoomToScale(1)
     }
   }
 
@@ -329,8 +450,8 @@ export function MediaPreview({
           {/* 媒体内容区域 */}
           <div
             className="relative flex items-center justify-center w-full h-full pt-14 pb-12"
-            onWheel={handleWheel}
             onClick={handleBackdropClick}
+            ref={mediaAreaRef}
           >
             <AnimatePresence mode="wait">
               <motion.div
@@ -350,6 +471,7 @@ export function MediaPreview({
 
                 {isImage ? (
                   <img
+                    ref={imageRef}
                     src={current.src}
                     alt={current.title || 'preview'}
                     onLoad={() => setLoading(false)}
@@ -362,12 +484,34 @@ export function MediaPreview({
                       maxWidth: '90vw',
                       maxHeight: 'calc(100vh - 120px)',
                       objectFit: 'contain',
-                      transform: `scale(${scale}) rotate(${rotate}deg) translate(${position.x / scale}px, ${position.y / scale}px)`,
-                      transition: isDragging ? 'none' : 'transform 0.15s ease-out',
+                      transform: `translate(${position.x}px, ${position.y}px) rotate(${rotate}deg) scale(${scale})`,
+                      transformOrigin: 'center center',
+                      transition: isDragging || isWheelZooming ? 'none' : 'transform 0.15s ease-out',
                       cursor: scale > 1 ? (isDragging ? 'grabbing' : 'grab') : 'default',
                       opacity: loading ? 0 : 1,
                     }}
                   />
+                ) : isAudio ? (
+                  <div className="flex w-[min(90vw,420px)] max-w-[90vw] flex-col items-center gap-4 rounded-xl border border-border bg-card p-6 text-card-foreground shadow-sm">
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-primary/10 text-primary">
+                      <Music size={28} />
+                    </div>
+                    {current.title && (
+                      <div className="max-w-full truncate text-sm font-medium">
+                        {current.title}
+                      </div>
+                    )}
+                    <audio
+                      src={current.src}
+                      controls
+                      autoPlay
+                      preload="metadata"
+                      onLoadedMetadata={() => setLoading(false)}
+                      onCanPlay={() => setLoading(false)}
+                      onError={() => setLoading(false)}
+                      className="w-full"
+                    />
+                  </div>
                 ) : (
                   <video
                     src={current.src}
@@ -447,7 +591,7 @@ export function MediaPreview({
       {portalContent}
 
       {/* 画笔编辑器 */}
-      {editable && current && (
+      {editable && isImage && current && (
         <BrushEditor
           open={isEditorOpen}
           imageUrl={current.src}

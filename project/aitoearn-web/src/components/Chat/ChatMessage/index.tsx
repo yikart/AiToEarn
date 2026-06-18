@@ -19,14 +19,14 @@ import { useTransClient } from '@/app/i18n/client'
 import MediaGallery from '@/components/Chat/ChatMessage/MediaGallery'
 import WorkflowSection from '@/components/Chat/ChatMessage/WorkflowComponents'
 import MediaPreview from '@/components/common/MediaPreview'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import { ActionCard } from '../ActionCard'
 import styles from './ChatMessage.module.scss'
 import PluginPublishCard from './PluginPublishCard'
 import PublishDetailCard from './PublishDetailCard'
 
-/** 过滤用户消息中的系统追加信息（推广计划等） */
+/** 过滤用户消息中的系统追加信息（草稿箱等） */
 function filterSystemPromoInfo(content: string): string {
   return content.replace(/<<<SYSTEM_PROMO>>>[\s\S]*?<<<END_PROMO>>>/g, '').trim()
 }

@@ -5,7 +5,6 @@
   "docs": "ドキュメント",
   "login": "ログイン",
   "support": "サポート",
-  "notifications": "通知",
   "settings": "設定",
   "vip": "Plus",
   "vip.tier": {
@@ -22,9 +21,8 @@
   "recharge": "チャージ",
   "adBalance": "広告主残高",
   "creatorBalance": "クリエイター残高",
+  "withdrawable": "出金可",
   "plugin": "拡張機能",
-  "affiliates": "アフィリエイト",
-  "goToWebsite": "公式サイトへ",
   "filing": {
     "policeRecord": "京公网安备11010502060417号"
   },
@@ -39,16 +37,15 @@
   "apiErrorContactTip": "ご不明な点がございましたら、",
   "wechat": "WeChat",
   "scanToAdd": "QRコードをスキャンして追加",
+  "wechatLinkTip": "このリンクからもWeChatを開けます",
   "documents": "ドキュメント",
   "helpDocs": "ヘルプドキュメント",
   "pluginGuide": "プラグインのインストールと利用ガイド",
   "pluginUpdateGuide": "プラグイン更新ガイド",
   "privacyPolicy": "プライバシーポリシー",
   "termsOfService": "利用規約",
-  "noNotifications": "通知はありません",
   "markAllAsRead": "すべて既読にする",
   "markAsRead": "既読にする",
-  "unreadCount": "未読メッセージ",
   "viewAll": "すべて表示",
   "cancel": "キャンセル",
   "confirm": "確認",
@@ -58,15 +55,7 @@
   "yes": "はい",
   "no": "いいえ",
   "calendar": {
-    "weekDaysShort": [
-      "日",
-      "月",
-      "火",
-      "水",
-      "木",
-      "金",
-      "土"
-    ],
+    "weekDaysShort": ["日", "月", "火", "水", "木", "金", "土"],
     "monthSuffix": "月"
   },
   "actions": {
@@ -94,20 +83,16 @@
     "jumpTo": "移動先",
     "page": "ページ"
   },
-  "notificationTypes": {
-    "system": "システム通知",
-    "user": "ユーザー通知",
-    "material": "素材通知",
-    "other": "その他の通知"
-  },
   "header": {
     "messages": "メッセージ",
+    "income": "収入記録",
+    "wallet": "マイウォレット",
     "materialLibrary": "ライブラリ",
     "draftBox": "コンテンツ管理",
+    "agentAssets": "AI生成素材",
     "draftBoxSeoTitle": "コンテンツ管理 - AIバッチ作成と下書きエディタ",
     "draftBoxSeoDescription": "すべてのコンテンツ下書きを一か所で管理。AIで一括生成、投稿前に編集、AiToEarnでマルチプラットフォーム配信を整理。",
-    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn",
-    "brandPromotion": "AI Check-in"
+    "draftBoxSeoKeywords": "コンテンツ管理, 下書きエディタ, AIコンテンツ生成, 一括作成, SNS下書き, コンテンツスケジュール, AiToEarn"
   },
   "tasks": "マーケットプレイス",
   "signIn": {
@@ -205,10 +190,14 @@
       "importantNoteContent": "データは削除後に復元できません。慎重に操作してください。法律で要求される一部のデータは削除できない場合があります。"
     }
   },
+  "lowBalanceAlert": {
+    "title": "残高不足の警告",
+    "content": "クレジット残高が不足しています。引き続きご利用いただくために、チャージしてください。",
+    "neverRemind": "今後表示しない"
+  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 最低0.03ドル/秒",
-    "videoPromo": "gpt-image-2 は1枚あたり0.007元から",
-    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
+    "videoPromo": "期間限定セール：seedanceは1秒あたり0.36元から、gpt-image-2は1枚あたり0.07元から"
   },
   "chinaDomainPrompt": {
     "title": "中国リージョンに切り替え",
@@ -256,6 +245,13 @@
   },
   "switchToInternational": "「国際版」へ",
   "switchToChina": "「中国版」へ",
+  "platformRegionPrompt": {
+    "title": "プラットフォーム地域制限",
+    "chinaContent": "{{platform}} は中国サイトでのみ利用可能です。中国サイトに移動しますか？",
+    "abroadContent": "{{platform}} は国際サイトでのみ利用可能です。国際サイトに移動しますか？",
+    "ok": "移動",
+    "cancel": "キャンセル"
+  },
   "noMore": "これ以上データはありません",
   "comingSoon": "開発中です、お楽しみに",
   "enterpriseSurvey": {
@@ -267,13 +263,11 @@
     "bubbleLine1": "右上のメニューから",
     "bubbleLine2": "\"ブラウザで開く\" を選択",
     "openInBrowser": "ブラウザで開く",
-    "description": "WeChat 内では投稿やリダイレクトが制限される場合があります。ブラウザで続行してください。"
+    "description": "WeChat または Alipay 内では投稿やリダイレクトが制限される場合があります。ブラウザで続行してください。"
   },
-  "advertiser": "AI Check-in",
-  "datePicker": {
-    "clear": "Clear",
-    "confirm": "Confirm",
-    "selectDate": "Select date",
-    "selectDateRange": "Select date range"
-  }
+  "seedanceCredits": "Seedance専用クレジット",
+  "seedanceCreditsRecharge": "Seedance専用クレジットをチャージ",
+  "configManagement": "設定管理",
+  "apiErrorConfigTip": "設定が正しいか確認してください。",
+  "apiErrorConfigAction": "設定を確認"
 }

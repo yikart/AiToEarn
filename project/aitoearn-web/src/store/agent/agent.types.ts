@@ -11,7 +11,7 @@ import type { AppRouterInstance } from 'next/dist/shared/lib/app-router-context.
 /** 上传的媒体文件类型 */
 export interface IUploadedMedia {
   url: string
-  type: 'image' | 'video' | 'document'
+  type: 'image' | 'video' | 'audio' | 'document'
   /** 上传进度 (0-100) */
   progress?: number
   /** 原始文件（上传中时使用） */
@@ -25,7 +25,7 @@ export interface IUploadedMedia {
 }
 
 /** Claude Prompt 内容项类型 */
-export type PromptContentType = 'text' | 'image' | 'video' | 'document'
+export type PromptContentType = 'text' | 'image' | 'video' | 'audio' | 'document'
 
 /** Claude Prompt 内容项 */
 export interface IPromptContentItem {
@@ -254,6 +254,12 @@ export interface IAgentState {
   currentCost: number
   /** 待处理的任务（从首页跳转时设置） */
   pendingTask: IPendingTask | null
+
+  // === Debug 模式状态 ===
+  /** Debug 模式文件列表（按顺序对应第 N 次消息） */
+  debugFiles: string[]
+  /** Debug 模式当前消息索引 */
+  debugMessageIndex: number
 }
 
 // ============ Action Handler 相关类型 ============

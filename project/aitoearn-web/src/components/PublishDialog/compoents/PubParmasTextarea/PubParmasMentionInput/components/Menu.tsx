@@ -7,7 +7,7 @@ import type {
 } from 'lexical-beautiful-mentions'
 import { Loader2 } from 'lucide-react'
 import { forwardRef } from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 /**
  * Menu component for the BeautifulMentionsPlugin.

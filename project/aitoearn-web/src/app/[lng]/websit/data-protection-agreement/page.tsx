@@ -5,7 +5,7 @@
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/metadata'
 import DataProtectionContent from './DataProtectionContent'
 
 export async function generateMetadata({

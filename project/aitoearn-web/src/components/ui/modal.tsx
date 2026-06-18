@@ -15,7 +15,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export interface ModalProps {
   /** 是否显示模态框 */
@@ -48,10 +48,20 @@ export interface ModalProps {
   onOk?: () => void
   /** 自定义类名 */
   className?: string
+  /** 内容弹层样式 */
+  contentStyle?: React.CSSProperties
   /** 内容区域类名 */
   bodyClassName?: string
+  /** 遮罩层类名 */
+  overlayClassName?: string
+  /** 遮罩层样式 */
+  overlayStyle?: React.CSSProperties
   /** z-index */
   zIndex?: number
+  /** 是否启用 Radix modal 模式 */
+  modal?: boolean
+  /** 禁用焦点自动捕获与外部交互事件 */
+  disableFocusTrap?: boolean
 }
 
 /**
@@ -87,8 +97,13 @@ export const Modal: React.FC<ModalProps> = ({
   onCancel,
   onOk,
   className,
+  contentStyle,
   bodyClassName,
+  overlayClassName,
+  overlayStyle,
   zIndex,
+  modal = true,
+  disableFocusTrap,
 }) => {
   // 处理宽度 - 'auto' 或 undefined 时不设置内联宽度，让 CSS 控制
   // 使用 CSS 变量来允许媒体查询覆盖
@@ -124,9 +139,15 @@ export const Modal: React.FC<ModalProps> = ({
 
   // 计算 overlay 的 z-index（比 content 小 1）
   const overlayZIndex = zIndex ? zIndex - 1 : undefined
+  const mergedOverlayStyle = overlayStyle || overlayZIndex
+    ? {
+        ...overlayStyle,
+        ...(overlayZIndex ? { zIndex: overlayZIndex } : {}),
+      }
+    : undefined
 
   return (
-    <Dialog open={open} onOpenChange={handleOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange} modal={modal}>
       <DialogContent
         className={cn(
           'max-h-[90vh] overflow-hidden flex flex-col',
@@ -144,9 +165,12 @@ export const Modal: React.FC<ModalProps> = ({
               ? 'min(var(--modal-width), calc(100vw - 24px))'
               : undefined,
             ...(zIndex ? { zIndex } : {}),
+            ...contentStyle,
           } as React.CSSProperties
         }
-        overlayStyle={overlayZIndex ? { zIndex: overlayZIndex } : undefined}
+        overlayClassName={overlayClassName}
+        overlayStyle={mergedOverlayStyle}
+        disableFocusTrap={disableFocusTrap}
         onInteractOutside={handleInteractOutside}
         onEscapeKeyDown={!closable ? e => e.preventDefault() : undefined}
       >

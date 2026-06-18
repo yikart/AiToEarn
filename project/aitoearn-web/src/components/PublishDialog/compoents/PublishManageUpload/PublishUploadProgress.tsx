@@ -7,7 +7,7 @@ import { forwardRef, memo, useMemo } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { UploadTaskStatusEnum } from './publishManageUpload.enum'
 
 export type IPublishUploadProgressRef = HTMLDivElement

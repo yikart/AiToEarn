@@ -17,9 +17,9 @@ import type {
 import type { ITaskInstanceContext, ISSECallbacks as ITaskSSECallbacks } from './task-instance'
 import type { MessageUtils } from './utils/message'
 import type { IAgentRefs } from './utils/refs'
-import { agentApi } from '@/api/agent'
-import { toast } from '@/lib/toast'
+import { agentApi } from '@/api/ai/ai.api'
 import { useUserStore } from '@/store/user'
+import { toast } from '@/utils/ui/toast'
 import { getDefaultTaskData, getInitialState } from './agent.state'
 import { TaskInstance } from './task-instance'
 import { buildPromptForAPI } from './utils/buildPrompt'
@@ -266,6 +266,9 @@ export function createStoreMethods(ctx: IMethodsContext) {
           onError: (error) => {
             console.error('[AgentStore] TaskInstance SSE Error:', error)
           },
+          onComplete: () => {
+            useUserStore.getState().fetchCreditsBalance()
+          },
         }
 
         // 创建任务（SSE）- SSE 消息通过 TaskInstance 处理
@@ -291,6 +294,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
             instance.setIsGenerating(false)
             instance.clearWorkflowSteps()
             refs.sseAbort.value = null
+            useUserStore.getState().fetchCreditsBalance()
           },
         )
 
@@ -431,6 +435,9 @@ export function createStoreMethods(ctx: IMethodsContext) {
           onError: (error) => {
             console.error('[AgentStore] TaskInstance SSE Error:', error)
           },
+          onComplete: () => {
+            useUserStore.getState().fetchCreditsBalance()
+          },
         }
 
         // 创建任务（SSE）- SSE 消息通过 TaskInstance 处理
@@ -452,6 +459,7 @@ export function createStoreMethods(ctx: IMethodsContext) {
             instance!.setIsGenerating(false)
             instance!.clearWorkflowSteps()
             refs.sseAbort.value = null
+            useUserStore.getState().fetchCreditsBalance()
           },
         )
 
@@ -535,6 +543,66 @@ export function createStoreMethods(ctx: IMethodsContext) {
     /** 获取 Action 上下文 */
     getActionContext(): IActionContext | null {
       return refs.actionContext.value
+    },
+
+    // ============ Debug 模式管理 ============
+
+    /**
+     * 设置 debug 文件列表
+     * @param files debug 文件名数组（如 ['sse1.txt', 'sse2.txt']）
+     */
+    setDebugFiles(files: string[]) {
+      set({
+        debugFiles: files,
+        debugMessageIndex: 0,
+      })
+    },
+
+    /**
+     * 获取下一个 debug 文件路径并递增索引
+     * @returns 文件路径（如 '/en/debug/sse1.txt'）或 null（没有更多文件）
+     */
+    consumeDebugFile(): string | null {
+      const state = get()
+      const { debugFiles, debugMessageIndex } = state
+
+      if (debugMessageIndex >= debugFiles.length) {
+        return null
+      }
+
+      const fileName = debugFiles[debugMessageIndex]
+      const filePath = `/en/debug/${fileName}`
+
+      // 递增索引
+      set({ debugMessageIndex: debugMessageIndex + 1 })
+
+      return filePath
+    },
+
+    /**
+     * 检查是否处于 debug 模式
+     */
+    isDebugMode(): boolean {
+      const state = get()
+      return state.debugFiles.length > 0
+    },
+
+    /**
+     * 检查是否还有更多 debug 文件可用
+     */
+    hasMoreDebugFiles(): boolean {
+      const state = get()
+      return state.debugMessageIndex < state.debugFiles.length
+    },
+
+    /**
+     * 清除 debug 模式
+     */
+    clearDebugMode() {
+      set({
+        debugFiles: [],
+        debugMessageIndex: 0,
+      })
     },
   }
 }

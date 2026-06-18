@@ -9,7 +9,7 @@ import type { Variants } from 'framer-motion'
 import { AnimatePresence, motion } from 'framer-motion'
 import { memo, useEffect, useId, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 // 图标 SVG 路径数据（从 Lucide 提取）
 const ICONS = [

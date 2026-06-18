@@ -1,5 +1,15 @@
+import type { PluginPlatformType } from './types/baseTypes'
 import type { PlatAccountInfo } from './types/plat.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import { AccountStatus } from '@/app/config/accountConfig'
 import { PlatType } from '@/app/config/platConfig'
+import { PLUGIN_SUPPORTED_PLATFORMS } from './types/baseTypes'
+
+export type PluginAccountStatusMap = Partial<Record<PluginPlatformType, PlatAccountInfo | null>>
+
+export function isPluginSupportedPlatform(platform: PlatType): platform is PluginPlatformType {
+  return PLUGIN_SUPPORTED_PLATFORMS.includes(platform as PluginPlatformType)
+}
 
 export function getXhsLoginStatus(account?: PlatAccountInfo | null) {
   if (!account || account.type !== PlatType.Xhs) {
@@ -32,4 +42,38 @@ export function isPluginPlatformAccountReady(account?: PlatAccountInfo | null): 
   }
 
   return true
+}
+
+export function mergePluginAccountStatus(
+  accountList: SocialAccount[],
+  platformAccounts: PluginAccountStatusMap,
+) {
+  const accountMap = new Map<string, SocialAccount>()
+
+  const mergedAccountList = accountList.map((account) => {
+    if (!isPluginSupportedPlatform(account.type)) {
+      accountMap.set(account.id, account)
+      return account
+    }
+
+    if (!Object.hasOwn(platformAccounts, account.type)) {
+      accountMap.set(account.id, account)
+      return account
+    }
+
+    const platformAccount = platformAccounts[account.type]
+    const shouldBeOnline = !!platformAccount
+      && isPluginPlatformAccountReady(platformAccount)
+      && platformAccount.uid === account.uid
+    const status = shouldBeOnline ? AccountStatus.USABLE : AccountStatus.DISABLE
+    const mergedAccount = account.status === status ? account : { ...account, status }
+
+    accountMap.set(mergedAccount.id, mergedAccount)
+    return mergedAccount
+  })
+
+  return {
+    accountList: mergedAccountList,
+    accountMap,
+  }
 }

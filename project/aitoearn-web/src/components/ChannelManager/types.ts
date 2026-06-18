@@ -3,7 +3,7 @@
  * 包含三页面视图状态、授权状态、侧边栏状态等类型
  */
 
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { PlatType } from '@/app/config/platConfig'
 import type { PluginPlatformType } from '@/store/plugin'
 
@@ -14,10 +14,16 @@ export type ChannelManagerView = 'main' | 'connect-list' | 'auth-loading'
 export interface AuthState {
   /** 正在授权的平台 */
   platform: PlatType | null
-  /** 授权任务ID */
-  taskId: string | null
+  /** 授权 Session ID */
+  sessionId: string | null
   /** 授权URL */
   authUrl: string | null
+  /** Authorization mode */
+  authMode?: 'oauth' | 'miniappQr'
+  /** Mini app QR code image for authorization */
+  qrCodeDataUrl?: string | null
+  /** Mini app QR code embedded page path */
+  qrCodePath?: string | null
   /** 倒计时秒数（默认300秒 = 5分钟） */
   countdown: number
   /** 是否正在轮询 */
@@ -85,7 +91,8 @@ export interface ChannelManagerMethods {
 /** 授权URL响应 */
 export interface AuthUrlResponse {
   url: string
-  taskId: string
+  sessionId: string
+  expiresAt?: string
 }
 
 /** 默认授权倒计时时间（秒） */

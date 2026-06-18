@@ -109,14 +109,6 @@ const CalendarTiming = memo(
       setCalendarRef(calendarRef.current!)
       window.addEventListener('resize', handleResize)
 
-      // 根据视图类型决定是否传入日期范围
-      if (calendarViewType === 'week') {
-        getPubRecord({ dateRange: getWeekDateRange(currentDate) })
-      }
-      else {
-        getPubRecord({ dateRange: getMonthDateRange(currentDate) })
-      }
-
       setTimeout(() => {
         handleResize()
       }, 1)
@@ -256,22 +248,15 @@ const CalendarTiming = memo(
     const handleViewTypeChange = useCallback(
       (type: CalendarViewType) => {
         setCalendarViewType(type)
-        // 切换视图时重新获取数据
-        setTimeout(() => {
-          if (type === 'week') {
-            getPubRecord({ dateRange: getWeekDateRange(currentDate) })
-          }
-          else {
-            getPubRecord({ dateRange: getMonthDateRange(currentDate) })
-            // 切换到月视图时，需要重新计算日历单元格宽度
-            // 延迟执行，等待 DOM 渲染完成
-            setTimeout(() => {
-              handleResize()
-            }, 50)
-          }
-        }, 100)
+        if (type === 'month') {
+          // 切换到月视图时，需要重新计算日历单元格宽度
+          // 延迟执行，等待 DOM 渲染完成
+          setTimeout(() => {
+            handleResize()
+          }, 150)
+        }
       },
-      [setCalendarViewType, getPubRecord, currentDate, handleResize],
+      [setCalendarViewType, handleResize],
     )
 
     // FullCalendar 内容（移动端不包裹 DndProvider）
@@ -289,7 +274,6 @@ const CalendarTiming = memo(
           return (
             <CalendarTimingItem
               key={dateStr}
-              records={recordMap.get(dateStr)}
               loading={listLoading}
               arg={arg}
               onClickPub={date => openNewWork({ date })}
