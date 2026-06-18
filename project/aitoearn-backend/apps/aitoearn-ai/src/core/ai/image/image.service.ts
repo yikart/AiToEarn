@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, NotFoundException, Optional } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService } from '@yikart/assets'
 import { AppException, getErrorMessage, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
@@ -10,6 +10,7 @@ import { runWithAiGenerationRetry } from '../ai-generation-retry.util'
 import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
+import { RelayMediaResolverService } from '../relay-media'
 import {
   GeminiImageGenerationDto,
   ImageEditDto,
@@ -34,6 +35,7 @@ export class ImageService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly modelsConfigService: ModelsConfigService,
     private readonly queueService: QueueService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) { }
 
   private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
@@ -80,6 +82,13 @@ export class ImageService {
       return await this.getUploadableByUrl(urlOrDataUri)
     }
     return this.getUploadableByDataUri(urlOrDataUri, filename)
+  }
+
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
+    }
+    return await this.relayMediaResolver.resolveText(text)
   }
 
   /**
@@ -156,15 +165,15 @@ export class ImageService {
 
     let imageFile: Uploadable | Uploadable[]
     if (Array.isArray(image)) {
-      imageFile = await Promise.all(image.map((img, index) =>
-        this.getUploadableByUrlOrDataUri(img, `image-${index}`),
+      imageFile = await Promise.all(image.map(async (img, index) =>
+        this.getUploadableByUrlOrDataUri(await this.resolveRelayText(img), `image-${index}`),
       ))
     }
     else {
-      imageFile = await this.getUploadableByUrlOrDataUri(image, 'image')
+      imageFile = await this.getUploadableByUrlOrDataUri(await this.resolveRelayText(image), 'image')
     }
 
-    const maskFile = mask ? await this.getUploadableByUrlOrDataUri(mask, 'mask') : undefined
+    const maskFile = mask ? await this.getUploadableByUrlOrDataUri(await this.resolveRelayText(mask), 'mask') : undefined
 
     if (runtimeModel === 'gpt-image-1') {
       delete params.response_format

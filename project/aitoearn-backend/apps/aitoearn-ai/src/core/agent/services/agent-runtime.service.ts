@@ -13,7 +13,7 @@ import {
   SpawnOptions,
 } from '@anthropic-ai/claude-agent-sdk'
 import { ContentBlockParam } from '@anthropic-ai/sdk/resources'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { StorageProvider } from '@yikart/assets'
 import {
   AppException,
@@ -39,8 +39,9 @@ import { z } from 'zod'
 import { RedlockKey } from '../../../common/enums'
 import { config } from '../../../config'
 import { AiAvailabilityService } from '../../ai-availability'
+import { RelayMediaResolverService } from '../../ai/relay-media'
 import { ChannelsToolName, CLAUDE_CODE_ROUTER_PROVIDER_NAME, McpServerName, POLLING_TASK_AGENT_PROMPT, SKILL_ANALYZER_AGENT_PROMPT, SYSTEM_PROMPT } from '../agent.constants'
-import { CreateContentGenerationTaskDto } from '../agent.dto'
+import { ContentBlock, CreateContentGenerationTaskDto } from '../agent.dto'
 import { enhancePrompt, filterHeaders, normalizePrompt, sanitizeMessage, shouldFilterSyntheticMessage } from '../agent.utils'
 import {
   AgentMessageType,
@@ -106,6 +107,7 @@ export class AgentRuntimeService {
     private readonly imageEditMcp: ImageEditMcp,
     private readonly subtitleMcp: SubtitleMcp,
     private readonly storageProvider: StorageProvider,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   private getTaskCwd(taskId: string): string {
@@ -300,9 +302,9 @@ export class AgentRuntimeService {
                   this.logger.debug({ input }, 'Received PostToolUse hook')
                   const response = input.tool_response
                   if (Array.isArray(response)) {
-                    const updatedResponse = response.map<ContentBlockParam>((block) => {
+                    const updatedResponse = await Promise.all(response.map<Promise<ContentBlockParam>>(async (block) => {
                       if (block.type === 'text' && typeof block.text === 'string' && block.text.startsWith('[Resource link: Image')) {
-                        const url = block.text.split('] ')[1]
+                        const url = await this.resolveRelayText(block.text.split('] ')[1])
                         return {
                           type: 'image',
                           source: {
@@ -312,7 +314,7 @@ export class AgentRuntimeService {
                         }
                       }
                       return block
-                    })
+                    }))
                     return {
                       hookSpecificOutput: {
                         hookEventName: 'PostToolUse',
@@ -454,6 +456,8 @@ export class AgentRuntimeService {
         }
         this.runningTasks.set(taskId, taskInfo)
 
+        let completeTitleUpdate: (() => void) | undefined
+
         abortController.signal.addEventListener('abort', () => {
           this.logger.warn({
             taskId,
@@ -463,143 +467,142 @@ export class AgentRuntimeService {
           void this.contentGenerateRepository.updateStatus(taskId, ContentGenerationTaskStatus.Aborted)
         })
 
-        const normalizedContent = normalizePrompt(dto.prompt)
-        const enhancedContent = enhancePrompt(normalizedContent)
+        return from(this.prepareAgentPrompt(dto)).pipe(
+          mergeMap(({ normalizedContent, enhancedContent, systemPromptContent }) => {
+            const userMessage = {
+              type: 'user',
+              content: normalizedContent,
+            }
 
-        const userMessage = {
-          type: 'user',
-          content: normalizedContent,
-        }
+            void this.contentGenerateRepository.updateMessage(taskId, userMessage)
 
-        void this.contentGenerateRepository.updateMessage(taskId, userMessage)
+            let taskResult: TaskResult | undefined
 
-        const systemPromptContent = this.buildSystemPromptContent()
+            const outputTaskResultTool = wrapTool(
+              this.logger,
+              UtilToolName.OutputTaskResult,
+              'output task result JSON, the result will be included in the completion message.',
+              ContentGenerationTaskResultSchema.shape,
+              async (args) => {
+                taskResult = args.result
+                return successResult('Task result submitted successfully')
+              },
+              this.aiAvailability,
+            )
 
-        let taskResult: TaskResult | undefined
+            const [setTitleTool, titleUpdate$, completeTitleUpdateFn] = this.utilMcp.createSetTitleTool(taskId)
+            completeTitleUpdate = completeTitleUpdateFn
 
-        const outputTaskResultTool = wrapTool(
-          this.logger,
-          UtilToolName.OutputTaskResult,
-          'output task result JSON, the result will be included in the completion message.',
-          ContentGenerationTaskResultSchema.shape,
-          async (args) => {
-            taskResult = args.result
-            return successResult('Task result submitted successfully')
-          },
-          this.aiAvailability,
-        )
-
-        const [setTitleTool, titleUpdate$, completeTitleUpdate] = this.utilMcp.createSetTitleTool(taskId)
-
-        const sessionToolsMcp = createSdkMcpServer({
-          name: McpServerName.SessionTools,
-          version: '1.0.0',
-          tools: [outputTaskResultTool, setTitleTool],
-        })
-
-        const queryGenerator = this.claudeQuery(
-          systemPromptContent,
-          enhancedContent,
-          abortController,
-          {
-            includePartialMessages: dto.includePartialMessages ?? false,
-            sessionId,
-            model: dto.model,
-            taskId,
-          },
-          {
-            [McpServerName.SessionTools]: sessionToolsMcp,
-            ...mcpServers,
-          },
-          (options: SpawnOptions): SpawnedProcess => {
-            const childProcess = spawn(options.command, options.args, {
-              cwd: options.cwd,
-              env: options.env,
-              signal: abortController.signal,
-              stdio: ['pipe', 'pipe', 'pipe'],
-              windowsHide: true,
-            })
-            childProcess.stderr.on('data', (data) => {
-              this.logger.debug({ taskId, sessionId }, `Received Claude DEBUG Log: ${data}`)
-            })
-            childProcess.on('exit', (code) => {
-              this.logger.debug({ taskId, sessionId, code }, `Claude Code process exited with code ${code}`)
+            const sessionToolsMcp = createSdkMcpServer({
+              name: McpServerName.SessionTools,
+              version: '1.0.0',
+              tools: [outputTaskResultTool, setTitleTool],
             })
 
-            taskInfo.claudeCodeProcess = childProcess
-
-            return childProcess
-          },
-        )
-
-        const messageStream$ = this.createMessageStream(queryGenerator).pipe(share())
-
-        const firstMessage$ = messageStream$.pipe(
-          first(),
-          concatMap(async (chunk) => {
-            const extractedSessionId = 'session_id' in chunk ? chunk.session_id : undefined
-
-            this.logger.debug({ taskId, chunk }, `Task ${taskId} first message received`)
-
-            if (extractedSessionId) {
-              await this.contentGenerateRepository.updateById(taskId, {
-                sessionId: extractedSessionId,
-              })
-              sessionId = extractedSessionId
-              taskInfo.sessionId = extractedSessionId
-
-              taskInfo.completionPromise
-                .then(() => {
-                  this.logger.log({ taskId: taskInfo.taskId, sessionId }, `Task ${taskInfo.taskId} completed during shutdown`)
+            const queryGenerator = this.claudeQuery(
+              systemPromptContent,
+              enhancedContent,
+              abortController,
+              {
+                includePartialMessages: dto.includePartialMessages ?? false,
+                sessionId,
+                model: dto.model,
+                taskId,
+              },
+              {
+                [McpServerName.SessionTools]: sessionToolsMcp,
+                ...mcpServers,
+              },
+              (options: SpawnOptions): SpawnedProcess => {
+                const childProcess = spawn(options.command, options.args, {
+                  cwd: options.cwd,
+                  env: options.env,
+                  signal: abortController.signal,
+                  stdio: ['pipe', 'pipe', 'pipe'],
+                  windowsHide: true,
                 })
-              this.logger.debug({ taskId, sessionId: extractedSessionId }, `Task ${taskId} sessionId saved: ${extractedSessionId}`)
-            }
+                childProcess.stderr.on('data', (data) => {
+                  this.logger.debug({ taskId, sessionId }, `Received Claude DEBUG Log: ${data}`)
+                })
+                childProcess.on('exit', (code) => {
+                  this.logger.debug({ taskId, sessionId, code }, `Claude Code process exited with code ${code}`)
+                })
 
-            return ContentGenerationTaskInitChunkVo.create({
-              type: AgentMessageType.Init,
-              taskId,
-              messages: undefined,
+                taskInfo.claudeCodeProcess = childProcess
+
+                return childProcess
+              },
+            )
+
+            const messageStream$ = this.createMessageStream(queryGenerator).pipe(share())
+
+            const firstMessage$ = messageStream$.pipe(
+              first(),
+              concatMap(async (chunk) => {
+                const extractedSessionId = 'session_id' in chunk ? chunk.session_id : undefined
+
+                this.logger.debug({ taskId, chunk }, `Task ${taskId} first message received`)
+
+                if (extractedSessionId) {
+                  await this.contentGenerateRepository.updateById(taskId, {
+                    sessionId: extractedSessionId,
+                  })
+                  sessionId = extractedSessionId
+                  taskInfo.sessionId = extractedSessionId
+
+                  taskInfo.completionPromise
+                    .then(() => {
+                      this.logger.log({ taskId: taskInfo.taskId, sessionId }, `Task ${taskInfo.taskId} completed during shutdown`)
+                    })
+                  this.logger.debug({ taskId, sessionId: extractedSessionId }, `Task ${taskId} sessionId saved: ${extractedSessionId}`)
+                }
+
+                return ContentGenerationTaskInitChunkVo.create({
+                  type: AgentMessageType.Init,
+                  taskId,
+                  messages: undefined,
+                })
+              }),
+            )
+
+            const restMessages$ = messageStream$.pipe(
+              tap((chunk) => {
+                if (chunk.type !== 'stream_event') {
+                  this.logger.debug({ taskId, sessionId, chunk: sanitizeMessage(chunk) }, `Received message for task ${taskId}`)
+                }
+              }),
+              skip(1),
+              filter(chunk => !shouldFilterSyntheticMessage(chunk)),
+              concatMap(async (chunk) => {
+                return this.transformMessage(chunk, taskId, userId, userType, taskResult, sessionId)
+              }),
+            )
+
+            const completionSignal$ = new Observable<null>((subscriber) => {
+              messageStream$.subscribe({
+                complete: () => subscriber.next(null),
+                error: () => subscriber.next(null),
+              })
             })
+
+            const keepAlive$ = interval(5000).pipe(
+              map(() => ContentGenerationTaskKeepAliveChunkVo.create({
+                type: AgentMessageType.KeepAlive,
+              })),
+              takeUntil(completionSignal$),
+            )
+
+            const titleUpdateStream$ = titleUpdate$.pipe(
+              takeUntil(completionSignal$),
+            )
+
+            return merge(
+              firstMessage$,
+              restMessages$,
+              keepAlive$,
+              titleUpdateStream$,
+            )
           }),
-        )
-
-        const restMessages$ = messageStream$.pipe(
-          tap((chunk) => {
-            if (chunk.type !== 'stream_event') {
-              this.logger.debug({ taskId, sessionId, chunk: sanitizeMessage(chunk) }, `Received message for task ${taskId}`)
-            }
-          }),
-          skip(1),
-          filter(chunk => !shouldFilterSyntheticMessage(chunk)),
-          concatMap(async (chunk) => {
-            return this.transformMessage(chunk, taskId, userId, userType, taskResult, sessionId)
-          }),
-        )
-
-        const completionSignal$ = new Observable<null>((subscriber) => {
-          messageStream$.subscribe({
-            complete: () => subscriber.next(null),
-            error: () => subscriber.next(null),
-          })
-        })
-
-        const keepAlive$ = interval(5000).pipe(
-          map(() => ContentGenerationTaskKeepAliveChunkVo.create({
-            type: AgentMessageType.KeepAlive,
-          })),
-          takeUntil(completionSignal$),
-        )
-
-        const titleUpdateStream$ = titleUpdate$.pipe(
-          takeUntil(completionSignal$),
-        )
-
-        return merge(
-          firstMessage$,
-          restMessages$,
-          keepAlive$,
-          titleUpdateStream$,
-        ).pipe(
           catchError((error) => {
             this.logger.error(Object.assign(error, { taskId, sessionId }), `Error in task ${taskId}, session ${sessionId}`)
             if (error instanceof AbortError) {
@@ -621,7 +624,9 @@ export class AgentRuntimeService {
             return of(errorChunk)
           }),
           finalize(async () => {
-            completeTitleUpdate()
+            if (completeTitleUpdate) {
+              completeTitleUpdate()
+            }
 
             if (!res.closed) {
               res.end()
@@ -880,6 +885,34 @@ export class AgentRuntimeService {
       type: this.getMessageType(chunk),
       message: messageVo,
     })
+  }
+
+  private async prepareAgentPrompt(dto: CreateContentGenerationTaskDto): Promise<{
+    normalizedContent: ContentBlock[]
+    enhancedContent: ContentBlockParam[]
+    systemPromptContent: ContentBlockParam[]
+  }> {
+    const normalizedContent = normalizePrompt(dto.prompt)
+    const relayContent = await this.resolveRelayJson(normalizedContent)
+    return {
+      normalizedContent,
+      enhancedContent: enhancePrompt(relayContent),
+      systemPromptContent: this.buildSystemPromptContent(),
+    }
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
+  }
+
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
+    }
+    return await this.relayMediaResolver.resolveText(text)
   }
 
   private buildSystemPromptContent(): ContentBlockParam[] {

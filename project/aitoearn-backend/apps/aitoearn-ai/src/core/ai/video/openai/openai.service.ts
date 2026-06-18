@@ -1,12 +1,13 @@
 import type { OpenAIVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
-import { BadRequestException, Injectable, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger, Optional } from '@nestjs/common'
 import { AssetsService, StorageProvider } from '@yikart/assets'
 import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import { OpenaiService as OpenaiLibService } from '../../libs/openai'
+import { RelayMediaResolverService } from '../../relay-media'
 import {
   OpenAIVideoCallbackDto,
   SoraCharacterCallbackDto,
@@ -25,6 +26,7 @@ export class OpenAIVideoService {
     private readonly assetsService: AssetsService,
     private readonly storageProvider: StorageProvider,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   private async toAccessibleUrl(url: string | undefined): Promise<string | undefined> {
@@ -36,6 +38,13 @@ export class OpenAIVideoService {
       return url
     }
     return this.storageProvider.toPresignedUrl(url)
+  }
+
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
+    }
+    return await this.relayMediaResolver.resolveText(text)
   }
 
   async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
@@ -67,7 +76,8 @@ export class OpenAIVideoService {
     // 如果 input_reference 是 URL，需要先 fetch 后传入 Response
     let inputReferenceUploadable: Response | undefined
     if (input_reference) {
-      const response = await fetch(input_reference)
+      const resolvedInputReference = await this.resolveRelayText(input_reference)
+      const response = await fetch(resolvedInputReference)
       if (!response.ok) {
         throw new AppException(ResponseCode.S3DownloadFileFailed)
       }

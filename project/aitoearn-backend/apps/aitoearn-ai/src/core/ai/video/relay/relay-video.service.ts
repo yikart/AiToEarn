@@ -2,13 +2,14 @@ import type { RelayVideoCallbackDto, RelayVideoGenerationRequest, RelayVideoSubm
 import type { RelayVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
 import type { VideoTaskInput } from '../video.vo'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Optional } from '@nestjs/common'
 import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import { RelayLibService } from '../../libs/relay'
 import { ModelsConfigService } from '../../models-config'
+import { RelayMediaResolverService } from '../../relay-media'
 
 @Injectable()
 export class RelayVideoService {
@@ -17,7 +18,15 @@ export class RelayVideoService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly modelsConfigService: ModelsConfigService,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
+  }
 
   async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
     const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === request.model)
@@ -34,9 +43,11 @@ export class RelayVideoService {
     delete payload.userType
     delete payload.groupId
 
+    const relayPayload = await this.resolveRelayJson(payload)
+
     const result = await this.aiAvailability.executeAsync<RelayVideoSubmitResponse>(
       { provider: 'relay', operation: 'videoGeneration', model: request.model },
-      () => this.relayLibService.createVideo(payload),
+      () => this.relayLibService.createVideo(relayPayload),
       response => response.id || '',
     )
 
@@ -47,7 +58,6 @@ export class RelayVideoService {
 
     const logRequest: RelayVideoAiLog['request'] = {
       ...payload,
-      remoteTaskId,
     }
     if (request.groupId) {
       logRequest.groupId = request.groupId

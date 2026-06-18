@@ -1,7 +1,7 @@
 import type { LanguageModel, ModelMessage, UserContent } from 'ai'
 import { createGoogleGenerativeAI } from '@ai-sdk/google'
 import { createOpenAI } from '@ai-sdk/openai'
-import { Injectable } from '@nestjs/common'
+import { Injectable, Optional } from '@nestjs/common'
 import { DraftGenerationMemoryContentType } from '@yikart/aitoearn-ai-shared'
 import { AppException, FileUtil, ResponseCode } from '@yikart/common'
 import { AiLogChannel } from '@yikart/mongodb'
@@ -9,6 +9,7 @@ import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import { config } from '../../config'
 import { AiAvailabilityService } from '../ai-availability'
+import { RelayMediaResolverService } from '../ai/relay-media'
 
 export const VideoDraftPlanResultSchema = z.object({
   title: z.string().max(200).describe('Post title'),
@@ -69,6 +70,7 @@ export type AutoMemoryResult = z.infer<typeof AutoMemoryResultSchema>
 export class DraftGenerationPlannerService {
   constructor(
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   async planVideo(input: VideoPlanInput): Promise<{ plan: VideoDraftPlanResult, model: string }> {
@@ -77,8 +79,9 @@ export class DraftGenerationPlannerService {
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const prompt = this.buildVideoPrompt(input)
-    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, VideoDraftPlanResultSchema, input.referenceImageUrls)
+    const resolvedInput = await this.resolveReferenceUrls(input)
+    const prompt = this.buildVideoPrompt(resolvedInput)
+    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, VideoDraftPlanResultSchema, resolvedInput.referenceImageUrls)
     return { plan, model: modelConfig.name }
   }
 
@@ -88,8 +91,9 @@ export class DraftGenerationPlannerService {
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const prompt = this.buildImageTextPrompt(input)
-    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, ImageTextDraftPlanResultSchema, input.referenceImageUrls)
+    const resolvedInput = await this.resolveReferenceUrls(input)
+    const prompt = this.buildImageTextPrompt(resolvedInput)
+    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, ImageTextDraftPlanResultSchema, resolvedInput.referenceImageUrls)
     if (plan.imagePrompts.length !== input.imageCount) {
       plan.imagePrompts = Array.from({ length: input.imageCount }, (_, index) => plan.imagePrompts[index] ?? plan.imagePrompts[0] ?? input.userPrompt ?? '')
     }
@@ -281,6 +285,29 @@ ${this.formatList(input.memoryItems)}
       return 'None'
     }
     return items.map((item, index) => `${index + 1}. ${item}`).join('\n')
+  }
+
+  private async resolveReferenceUrls<T extends BasePlanInput>(input: T): Promise<T> {
+    return {
+      ...input,
+      referenceImageUrls: await this.resolveUrls(input.referenceImageUrls),
+      referenceVideoUrls: await this.resolveUrls(input.referenceVideoUrls),
+      referenceAudioUrls: await this.resolveUrls(input.referenceAudioUrls),
+    }
+  }
+
+  private async resolveUrls(urls: string[] | undefined): Promise<string[] | undefined> {
+    if (!urls) {
+      return undefined
+    }
+    return await Promise.all(urls.map(url => this.resolveRelayText(url)))
+  }
+
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
+    }
+    return await this.relayMediaResolver.resolveText(text)
   }
 
   private async invokeStructuredPlanner<T extends Record<string, unknown>>(

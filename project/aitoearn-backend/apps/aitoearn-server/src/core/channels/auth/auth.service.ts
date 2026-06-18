@@ -851,10 +851,11 @@ export class AuthService {
 
   private getBackendAuthIntegration(platform: AccountType) {
     if (!this.registry.has(platform)) {
-      if (this.relayClientService?.enabled) {
-        throw new RelayAuthException()
-      }
       throw new AppException(ResponseCode.PlatformNotSupported, { platform })
+    }
+
+    if (this.relayClientService?.enabled) {
+      throw new RelayAuthException()
     }
 
     const integration = this.registry.get(platform)
@@ -862,9 +863,6 @@ export class AuthService {
       throw new AppException(ResponseCode.PlatformNotSupported, { platform })
     }
     if (!integration.auth) {
-      if (this.relayClientService?.enabled) {
-        throw new RelayAuthException()
-      }
       throw new AppException(ResponseCode.PlatformNotSupported, { platform, capability: 'auth' })
     }
     return integration
