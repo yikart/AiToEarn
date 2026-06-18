@@ -189,6 +189,9 @@ importers:
       '@yikart/common':
         specifier: workspace:*
         version: link:../../libs/common
+      '@yikart/config-editor':
+        specifier: workspace:*
+        version: link:../../libs/config-editor
       '@yikart/mongodb':
         specifier: workspace:*
         version: link:../../libs/mongodb
@@ -340,6 +343,9 @@ importers:
       '@yikart/common':
         specifier: workspace:*
         version: link:../../libs/common
+      '@yikart/config-editor':
+        specifier: workspace:*
+        version: link:../../libs/config-editor
       '@yikart/mongodb':
         specifier: workspace:*
         version: link:../../libs/mongodb

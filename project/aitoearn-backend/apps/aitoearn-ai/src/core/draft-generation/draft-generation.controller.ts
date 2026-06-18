@@ -1,6 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
-import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
+import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
 import { DraftGenerationMemoryService } from './draft-generation-memory.service'
 import {
@@ -24,6 +24,7 @@ import {
   CreateDraftFromVideoUrlVo,
   CreateDraftGenerationVo,
   DraftGenerationMemoryVo,
+  DraftGenerationPricingVo,
   DraftGenerationStatsVo,
   DraftGenerationTaskListVo,
   DraftGenerationTaskVo,
@@ -78,6 +79,17 @@ export class DraftGenerationController {
   ): Promise<DraftGenerationTaskVo[]> {
     const tasks = await this.draftGenerationService.listTasks(body, token.id, UserType.User)
     return tasks.map(task => DraftGenerationTaskVo.create(task))
+  }
+
+  @Public()
+  @ApiDoc({
+    summary: '获取草稿生成模型价格',
+    description: '获取图片生成和视频生成模型的价格信息',
+    response: DraftGenerationPricingVo,
+  })
+  @Get('/pricing')
+  getPricing(): DraftGenerationPricingVo {
+    return this.draftGenerationService.getDraftGenerationPricing()
   }
 
   @ApiDoc({

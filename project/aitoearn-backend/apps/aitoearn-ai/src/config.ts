@@ -148,6 +148,9 @@ export const aiConfigSchema = z.object({
       tags: z.array(i18nObjectSchema).default([]),
       supportedAspectRatios: z.array(z.string()).describe('支持的图片宽高比列表'),
       maxInputImages: z.number().int().min(1).describe('最多可输入的参考图片数量'),
+      pricing: z.array(z.object({
+        resolution: z.string().describe('分辨率，如 1K, 2K, 4K'),
+      })),
     })),
   }),
 })

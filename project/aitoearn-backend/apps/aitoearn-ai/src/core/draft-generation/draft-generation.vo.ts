@@ -7,13 +7,19 @@ export {
   DraftGenerationMemoryItemVoSchema,
   DraftGenerationMemoryVo,
   DraftGenerationMemoryVoSchema,
+  DraftGenerationPricingVo,
+  DraftGenerationPricingVoSchema,
   DraftGenerationStatsVo,
   DraftGenerationStatsVoSchema,
   DraftGenerationTaskListVo,
   DraftGenerationTaskVo,
   DraftGenerationTaskVoSchema,
+  ImageModelPricingVoSchema,
+  ImageModelVoSchema,
+  VideoModelVoSchema,
 } from '@yikart/aitoearn-ai-shared'
 
 export type {
   CreateDraftFromVideoUrlVoInput,
+  DraftGenerationPricingVoInput,
 } from '@yikart/aitoearn-ai-shared'

@@ -128,9 +128,6 @@ importers:
       '@tanstack/react-virtual':
         specifier: ^3.13.18
         version: 3.13.18(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tinymce/tinymce-react':
-        specifier: ^6.3.0
-        version: 6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.4.0)
       '@tiptap/extension-image':
         specifier: ^3.22.3
         version: 3.22.3(@tiptap/core@3.22.3(@tiptap/pm@3.22.3))
@@ -167,6 +164,9 @@ importers:
       blueimp-md5:
         specifier: ^2.19.0
         version: 2.19.0
+      browser-image-compression:
+        specifier: ^2.0.2
+        version: 2.0.2
       chinese-days:
         specifier: 1.5.7
         version: 1.5.7
@@ -338,9 +338,6 @@ importers:
       tailwind-merge:
         specifier: ^3.4.0
         version: 3.4.0
-      tinymce:
-        specifier: ^8.4.0
-        version: 8.4.0
       zod:
         specifier: ^3.25.76
         version: 3.25.76
@@ -351,6 +348,15 @@ importers:
       '@antfu/eslint-config':
         specifier: ^6.2.0
         version: 6.7.3(@next/eslint-plugin-next@15.5.9)(@vue/compiler-sfc@3.5.26)(eslint-plugin-format@1.1.0(eslint@9.39.2(jiti@2.6.1)))(eslint-plugin-react-hooks@7.0.1(eslint@9.39.2(jiti@2.6.1)))(eslint@9.39.2(jiti@2.6.1))(typescript@5.9.3)
+      '@csstools/postcss-cascade-layers':
+        specifier: ^6.0.0
+        version: 6.0.0(postcss@8.5.6)
+      '@csstools/postcss-color-mix-function':
+        specifier: ^4.0.4
+        version: 4.0.5(postcss@8.5.6)
+      '@csstools/postcss-oklab-function':
+        specifier: ^5.0.4
+        version: 5.0.5(postcss@8.5.6)
       '@eslint/eslintrc':
         specifier: ^3
         version: 3.3.3
@@ -1150,6 +1156,70 @@ packages:
 
   '@clack/prompts@0.11.0':
     resolution: {integrity: sha512-pMN5FcrEw9hUkZA4f+zLlzivQSeQf5dRGJjSUbvVYDLvpKCdQx5OaknvKzgbtXOizhP+SJJJjqEbOe55uKKfAw==}
+
+  '@csstools/color-helpers@6.0.2':
+    resolution: {integrity: sha512-LMGQLS9EuADloEFkcTBR3BwV/CGHV7zyDxVRtVDTwdI2Ca4it0CCVTT9wCkxSgokjE5Ho41hEPgb8OEUwoXr6Q==}
+    engines: {node: '>=20.19.0'}
+
+  '@csstools/css-calc@3.2.1':
+    resolution: {integrity: sha512-DtdHlgXh5ZkA43cwBcAm+huzgJiwx3ZTWVjBs94kwz2xKqSimDA3lBgCjphYgwgVUMWatSM0pDd8TILB1yrVVg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-parser-algorithms': ^4.0.0
+      '@csstools/css-tokenizer': ^4.0.0
+
+  '@csstools/css-color-parser@4.1.7':
+    resolution: {integrity: sha512-CmjJFQTFQx/U/xNJhSjCQ0ilpesPmNQ8+eOUeM/+kDOVW33qsIjeOXc27vrQDdWVkf83ZSWwtg7kXSUvKDJ8cQ==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-parser-algorithms': ^4.0.0
+      '@csstools/css-tokenizer': ^4.0.0
+
+  '@csstools/css-parser-algorithms@4.0.0':
+    resolution: {integrity: sha512-+B87qS7fIG3L5h3qwJ/IFbjoVoOe/bpOdh9hAjXbvx0o8ImEmUsGXN0inFOnk2ChCFgqkkGFQ+TpM5rbhkKe4w==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      '@csstools/css-tokenizer': ^4.0.0
+
+  '@csstools/css-tokenizer@4.0.0':
+    resolution: {integrity: sha512-QxULHAm7cNu72w97JUNCBFODFaXpbDg+dP8b/oWFAZ2MTRppA3U00Y2L1HqaS4J6yBqxwa/Y3nMBaxVKbB/NsA==}
+    engines: {node: '>=20.19.0'}
+
+  '@csstools/postcss-cascade-layers@6.0.0':
+    resolution: {integrity: sha512-WhsECqmrEZQGqaPlBA7JkmF/CJ2/+wetL4fkL9sOPccKd32PQ1qToFM6gqSI5rkpmYqubvbxjEJhyMTHYK0vZQ==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
+  '@csstools/postcss-color-mix-function@4.0.5':
+    resolution: {integrity: sha512-eBrrzTKudOlDl2XOJzW/pzHPIkC8tGkcGpNiFO/vmevb08U1huYEINhlxr8iz4OzSqs1GtiJx4d2v5iHFOZjNw==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
+  '@csstools/postcss-oklab-function@5.0.5':
+    resolution: {integrity: sha512-A+Nkzj2ODvQboM5FlqEcp0iqilyVo78f9FMx/3cHrRrEBqCymSXvf8sa1cTY54lJoUVI3Sn9XysgvYaVIAuIYg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
+  '@csstools/postcss-progressive-custom-properties@5.1.0':
+    resolution: {integrity: sha512-lt/4yHy2GdKcGVpK4OGhBdSIq+z2PXynSusSRggn/T4y7uFurYAhdHqo/aYM+xI37vNb8rJlEKchqKKvVCXROQ==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
+
+  '@csstools/selector-specificity@6.0.0':
+    resolution: {integrity: sha512-4sSgl78OtOXEX/2d++8A83zHNTgwCJMaR24FvsYL7Uf/VS8HZk9PTwR51elTbGqMuwH3szLvvOXEaVnqn0Z3zA==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss-selector-parser: ^7.1.1
+
+  '@csstools/utilities@3.0.0':
+    resolution: {integrity: sha512-etDqA/4jYvOGBM6yfKCOsEXfH96BKztZdgGmGqKi2xHnDe0ILIBraRspwgYatJH9JsCZ5HCGoCst8w18EKOAdg==}
+    engines: {node: '>=20.19.0'}
+    peerDependencies:
+      postcss: ^8.4
 
   '@dprint/formatter@0.3.0':
     resolution: {integrity: sha512-N9fxCxbaBOrDkteSOzaCqwWjso5iAe+WJPsHC021JfHNj2ThInPNEF13ORDKta3llq5D1TlclODCvOvipH7bWQ==}
@@ -2828,16 +2898,6 @@ packages:
   '@tanstack/virtual-core@3.13.18':
     resolution: {integrity: sha512-Mx86Hqu1k39icq2Zusq+Ey2J6dDWTjDvEv43PJtRCoEYTLyfaPnxIQ6iy7YAOK0NV/qOEmZQ/uCufrppZxTgcg==}
 
-  '@tinymce/tinymce-react@6.3.0':
-    resolution: {integrity: sha512-E++xnn0XzDzpKr40jno2Kj7umfAE6XfINZULEBBeNjTMvbACWzA6CjiR6V8eTDc9yVmdVhIPqVzV4PqD5TZ/4g==}
-    peerDependencies:
-      react: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
-      react-dom: ^19.0.0 || ^18.0.0 || ^17.0.1 || ^16.7.0
-      tinymce: ^8.0.0 || ^7.0.0 || ^6.0.0 || ^5.5.1
-    peerDependenciesMeta:
-      tinymce:
-        optional: true
-
   '@tiptap/core@3.22.3':
     resolution: {integrity: sha512-Dv9MKK5BDWCF0N2l6/Pxv3JNCce2kwuWf2cKMBc2bEetx0Pn6o7zlFmSxMvYK4UtG1Tw9Yg/ZHi6QOFWK0Zm9Q==}
     peerDependencies:
@@ -3451,6 +3511,9 @@ packages:
   braces@3.0.3:
     resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
     engines: {node: '>=8'}
+
+  browser-image-compression@2.0.2:
+    resolution: {integrity: sha512-pBLlQyUf6yB8SmmngrcOw3EoS4RpQ1BcylI3T9Yqn7+4nrQTXJD4sJDe5ODnJdrvNMaio5OicFo75rDyJD2Ucw==}
 
   browserslist@4.28.1:
     resolution: {integrity: sha512-ZC5Bd0LgJXgwGqUknZY/vkUQ04r8NXnJZ3yYi4vDmSiZmC/pdSN0NbNRPxZpbtO4uAfDUAFffO8IZoM3Gj8IkA==}
@@ -6608,9 +6671,6 @@ packages:
     resolution: {integrity: sha512-j2Zq4NyQYG5XMST4cbs02Ak8iJUdxRM0XI5QyxXuZOzKOINmWurp3smXu3y5wDcJrptwpSjgXHzIQxR0omXljQ==}
     engines: {node: '>=12.0.0'}
 
-  tinymce@8.4.0:
-    resolution: {integrity: sha512-Q/0/iLycB7hgSkOBoRqfceOz/7Obs9zIo0DwTRuvrReLxb6qdz/1vI7aVJMcW2BAuW80QqZiTyYdVM2amBkqIg==}
-
   tmexchange@2.0.5:
     resolution: {integrity: sha512-fJQcBIY/ebEYDagOA0IY2PKYs2OJtBo0UGO+O2huyTkL9h+1Fg75DKw0JHkzXA1C56ejQdLW7S9YS/IL9rOpmQ==}
 
@@ -6783,6 +6843,9 @@ packages:
     resolution: {integrity: sha512-Qo+uWgilfSmAhXCMav1uYFynlQO7fMFiMVZsQqZRMIXp0O7rR7qjkj+cPvBHLgBqi960QCoo/PH2/6ZtVqKvrg==}
     hasBin: true
 
+  uzip@0.20201231.0:
+    resolution: {integrity: sha512-OZeJfZP+R0z9D6TmBgLq2LHzSSptGMGDGigGiEe0pr8UBe/7fdflgHlHBNDASTXB5jnFuxHpNaJywSg8YFeGng==}
+
   vfile-location@5.0.3:
     resolution: {integrity: sha512-5yXvWDEgqeiYiBe1lbxYF7UMAIm/IcopxMHrMQDq3nvKcjPKIhZklUKL+AE7J7uApI4kwe2snsK+eI6UTj9EHg==}
 
@@ -6880,7 +6943,7 @@ packages:
     resolution: {integrity: sha512-uLdfmBHCG4ftZdgLHhzP7qFTt8/pOv4Hpr1lWcX0HKLZdvhu5f7zThLlPFHnXH7mHbFT+6LCaf82UB3zbLpweQ==}
 
   xlsx@https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz:
-    resolution: {tarball: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz}
+    resolution: {integrity: sha512-oLDq3jw7AcLqKWH2AhCpVTZl8mf6X2YReP+Neh0SJUzV/BdZYjth94tG5toiMB1PPrYtxOCfaoUCkvtuH+3AJA==, tarball: https://cdn.sheetjs.com/xlsx-0.20.3/xlsx-0.20.3.tgz}
     version: 0.20.3
     engines: {node: '>=0.8'}
     hasBin: true
@@ -7886,6 +7949,63 @@ snapshots:
       '@clack/core': 0.5.0
       picocolors: 1.1.1
       sisteransi: 1.0.5
+
+  '@csstools/color-helpers@6.0.2': {}
+
+  '@csstools/css-calc@3.2.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+    dependencies:
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
+
+  '@csstools/css-color-parser@4.1.7(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)':
+    dependencies:
+      '@csstools/color-helpers': 6.0.2
+      '@csstools/css-calc': 3.2.1(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
+
+  '@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0)':
+    dependencies:
+      '@csstools/css-tokenizer': 4.0.0
+
+  '@csstools/css-tokenizer@4.0.0': {}
+
+  '@csstools/postcss-cascade-layers@6.0.0(postcss@8.5.6)':
+    dependencies:
+      '@csstools/selector-specificity': 6.0.0(postcss-selector-parser@7.1.1)
+      postcss: 8.5.6
+      postcss-selector-parser: 7.1.1
+
+  '@csstools/postcss-color-mix-function@4.0.5(postcss@8.5.6)':
+    dependencies:
+      '@csstools/css-color-parser': 4.1.7(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
+      '@csstools/postcss-progressive-custom-properties': 5.1.0(postcss@8.5.6)
+      '@csstools/utilities': 3.0.0(postcss@8.5.6)
+      postcss: 8.5.6
+
+  '@csstools/postcss-oklab-function@5.0.5(postcss@8.5.6)':
+    dependencies:
+      '@csstools/css-color-parser': 4.1.7(@csstools/css-parser-algorithms@4.0.0(@csstools/css-tokenizer@4.0.0))(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-parser-algorithms': 4.0.0(@csstools/css-tokenizer@4.0.0)
+      '@csstools/css-tokenizer': 4.0.0
+      '@csstools/postcss-progressive-custom-properties': 5.1.0(postcss@8.5.6)
+      '@csstools/utilities': 3.0.0(postcss@8.5.6)
+      postcss: 8.5.6
+
+  '@csstools/postcss-progressive-custom-properties@5.1.0(postcss@8.5.6)':
+    dependencies:
+      postcss: 8.5.6
+      postcss-value-parser: 4.2.0
+
+  '@csstools/selector-specificity@6.0.0(postcss-selector-parser@7.1.1)':
+    dependencies:
+      postcss-selector-parser: 7.1.1
+
+  '@csstools/utilities@3.0.0(postcss@8.5.6)':
+    dependencies:
+      postcss: 8.5.6
 
   '@dprint/formatter@0.3.0': {}
 
@@ -9579,14 +9699,6 @@ snapshots:
 
   '@tanstack/virtual-core@3.13.18': {}
 
-  '@tinymce/tinymce-react@6.3.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(tinymce@8.4.0)':
-    dependencies:
-      prop-types: 15.8.1
-      react: 18.3.1
-      react-dom: 18.3.1(react@18.3.1)
-    optionalDependencies:
-      tinymce: 8.4.0
-
   '@tiptap/core@3.22.3(@tiptap/pm@3.22.3)':
     dependencies:
       '@tiptap/pm': 3.22.3
@@ -10358,6 +10470,10 @@ snapshots:
   braces@3.0.3:
     dependencies:
       fill-range: 7.1.1
+
+  browser-image-compression@2.0.2:
+    dependencies:
+      uzip: 0.20201231.0
 
   browserslist@4.28.1:
     dependencies:
@@ -14134,8 +14250,6 @@ snapshots:
       fdir: 6.5.0(picomatch@4.0.3)
       picomatch: 4.0.3
 
-  tinymce@8.4.0: {}
-
   tmexchange@2.0.5:
     dependencies:
       xml2js: 0.5.0
@@ -14317,6 +14431,8 @@ snapshots:
       base64-arraybuffer: 1.0.2
 
   uuid@14.0.0: {}
+
+  uzip@0.20201231.0: {}
 
   vfile-location@5.0.3:
     dependencies:

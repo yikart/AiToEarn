@@ -24,7 +24,7 @@
     "@yikart/aws-s3": "workspace:*",
     "@yikart/channel-db": "workspace:*",
     "@yikart/common": "workspace:*",
-    "@yikart/config-editor": "0.0.1",
+    "@yikart/config-editor": "workspace:*",
     "@yikart/mongodb": "workspace:*",
     "@yikart/nest-mcp": "workspace:*",
     "@yikart/redis": "workspace:*",

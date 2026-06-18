@@ -469,6 +469,10 @@ ai:
           - 16:9
           - 9:16
         maxInputImages: 16
+        pricing:
+          - resolution: 1K
+          - resolution: 2K
+          - resolution: 4K
 agent:
   baseUrl: https://api.openai.com/v1/messages
   apiKey: sk-placeholder

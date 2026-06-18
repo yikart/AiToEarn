@@ -38,6 +38,7 @@ import {
   ListDraftGenerationTasksDto,
   QueryDraftGenerationTasksDto,
 } from './draft-generation.dto'
+import { DraftGenerationPricingVo } from './draft-generation.vo'
 
 export class DraftGenerationError extends Error {
   constructor(
@@ -713,6 +714,12 @@ export class DraftGenerationService {
   }
 
   // ==================== 图文草稿生成 ====================
+
+  getDraftGenerationPricing(): ReturnType<typeof DraftGenerationPricingVo.create> {
+    const imageModels = config.ai.draftGeneration.imageModels
+
+    return DraftGenerationPricingVo.create({ imageModels, videoModels: config.ai.models.video.generation })
+  }
 
   /**
    * 创建图文草稿生成任务（同步阶段）
