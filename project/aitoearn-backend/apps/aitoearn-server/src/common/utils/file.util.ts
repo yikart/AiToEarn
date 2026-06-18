@@ -11,6 +11,24 @@ enum Type {
   OTHER = '其他',
 }
 
+function getResponseHeader(
+  response: AxiosResponse<unknown>,
+  headerName: string,
+): string | undefined {
+  const value = response.headers[headerName]
+
+  if (value == null)
+    return undefined
+
+  if (Array.isArray(value))
+    return value.join(', ')
+
+  if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean')
+    return String(value)
+
+  return undefined
+}
+
 export function getFileType(extName: string) {
   const documents = 'txt doc pdf ppt pps xlsx xls docx'
   const music = 'mp3 wav wma mpa ram ra aac aif m4a'
@@ -78,7 +96,7 @@ export async function urlToBlob(url: string): Promise<Blob> {
     responseType: 'arraybuffer',
   })
 
-  return new Blob([response.data], { type: response.headers['content-type'] })
+  return new Blob([response.data], { type: getResponseHeader(response, 'content-type') })
 }
 
 export async function fileUrlToBase64(url: string): Promise<string> {
@@ -101,7 +119,7 @@ export async function fileUrlToBlob(url: string): Promise<{ blob: Blob, fileName
     })
 
     const contentType
-      = response.headers['content-type'] || 'application/octet-stream'
+      = getResponseHeader(response, 'content-type') || 'application/octet-stream'
     const blob = new Blob([response.data], { type: contentType })
     return {
       blob,
@@ -123,7 +141,7 @@ export async function getFileSizeFromUrl(url: string): Promise<number> {
   try {
     const headResponse: AxiosResponse<unknown> = await axios.head(url)
     const contentLength = Number.parseInt(
-      headResponse.headers['content-length'],
+      getResponseHeader(headResponse, 'content-length') || '',
       10,
     )
     return contentLength
@@ -157,7 +175,10 @@ export async function getRemoteFileSize(url: string): Promise<number> {
     if (!response.headers['content-length']) {
       throw new Error('Content-Length header is missing')
     }
-    const contentLength = Number.parseInt(response.headers['content-length'], 10)
+    const contentLength = Number.parseInt(
+      getResponseHeader(response, 'content-length') || '',
+      10,
+    )
     return contentLength
   }
   catch (error) {
@@ -183,8 +204,8 @@ export async function probeRemoteFile(url: string): Promise<{
 
     return {
       finalUrl: response.request?.res?.responseUrl || url,
-      contentType: response.headers['content-type'],
-      contentLength: response.headers['content-length'],
+      contentType: getResponseHeader(response, 'content-type'),
+      contentLength: getResponseHeader(response, 'content-length'),
       status: response.status,
     }
   }

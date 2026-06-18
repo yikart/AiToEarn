@@ -17,8 +17,8 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, FileUtil, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
-import { Media } from '@yikart/mongodb'
+import { ApiDoc, AppException, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
+import { MediaListVo, MediaVo } from './content.vo'
 import { MaterialGroupService } from './material-group.service'
 import { MediaGroupService } from './media-group.service'
 import {
@@ -40,15 +40,6 @@ export class MediaController {
     private readonly materialGroupService: MaterialGroupService,
   ) { }
 
-  private processMediaFiles(mediaList: Media[]) {
-    mediaList.forEach((media) => {
-      media.url = FileUtil.buildUrl(media.url)
-      if (media.thumbUrl) {
-        media.thumbUrl = FileUtil.buildUrl(media.thumbUrl)
-      }
-    })
-  }
-
   @ApiDoc({
     summary: '创建媒体资源',
     description: '创建媒体资源，包含元数据和文件URL。',
@@ -60,8 +51,7 @@ export class MediaController {
     @Body() body: CreateMediaDto,
   ) {
     const res = await this.mediaService.create(token.id, body)
-    this.processMediaFiles([res])
-    return res
+    return MediaVo.create(res)
   }
 
   @ApiDoc({
@@ -131,7 +121,7 @@ export class MediaController {
   @Get('info/:id')
   async getInfo(@Param('id', ParseObjectIdPipe) id: string) {
     const res = await this.mediaService.getInfo(id)
-    return res
+    return res ? MediaVo.create(res) : res
   }
 
   @Get('list/:pageNo/:pageSize')
@@ -149,8 +139,7 @@ export class MediaController {
       userId: token.id,
       ...query,
     })
-    this.processMediaFiles(res.list)
-    return res
+    return MediaListVo.create(res)
   }
 
   @ApiDoc({

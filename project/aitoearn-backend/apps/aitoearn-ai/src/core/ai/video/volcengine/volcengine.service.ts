@@ -1,17 +1,9 @@
-import type { AiLogSettlementMetadata } from '@yikart/aitoearn-ai-shared'
 import type { VolcengineVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import {
-  AiLogSettlementBillingMode,
-  AiLogSettlementSettledBy,
-} from '@yikart/aitoearn-ai-shared'
-import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, StorageProvider } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
-import { BigNumber } from 'bignumber.js'
+import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
 import { config } from '../../../../config'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
@@ -29,8 +21,6 @@ import {
   VolcengineService as VolcengineLibService,
   TaskStatus as VolcTaskStatus,
 } from '../../libs/volcengine'
-import { ModelsConfigService } from '../../models-config'
-import { AsyncSettlementService } from '../../settlement'
 import { UserVolcengineGenerationRequestDto, VolcengineCallbackDto } from './volcengine.dto'
 
 @Injectable()
@@ -42,53 +32,8 @@ export class VolcengineVideoService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
     private readonly storageProvider: StorageProvider,
-    private readonly modelsConfigService: ModelsConfigService,
-    private readonly creditsHelper: CreditsHelperService,
-    private readonly queueService: QueueService,
     private readonly aiAvailability: AiAvailabilityService,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) {}
-
-  /**
-   * 异步处理AI任务失败退款
-   */
-  private async enqueueTaskRefund(aiLog: AiLog): Promise<void> {
-    await this.asyncSettlementService.markFailed(aiLog.id, {
-      channel: aiLog.channel,
-      action: aiLog.action,
-      settledBy: AiLogSettlementSettledBy.VolcengineCallback,
-    })
-
-    if (aiLog.userType !== UserType.User) {
-      return
-    }
-
-    if (!aiLog.taskId) {
-      this.logger.error(
-        { aiLogId: aiLog.id, userId: aiLog.userId },
-        'Cannot enqueue refund: missing taskId',
-      )
-      return
-    }
-
-    await this.queueService.addAiTaskRefundJob({
-      userId: aiLog.userId,
-      taskId: aiLog.id,
-      amount: aiLog.points,
-      description: aiLog.model,
-      expiredAt: null,
-      metadata: {
-        channel: aiLog.channel,
-        action: aiLog.action,
-        failedAt: new Date().toISOString(),
-      },
-    })
-
-    this.logger.log(
-      { userId: aiLog.userId, taskId: aiLog.taskId, amount: aiLog.points },
-      'Enqueued AI task refund',
-    )
-  }
 
   private async toAccessibleUrl(url: string | undefined): Promise<string | undefined> {
     if (!url) {
@@ -101,7 +46,7 @@ export class VolcengineVideoService {
     return this.storageProvider.toPresignedUrl(url)
   }
 
-  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string, points: number }> {
+  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
     const content: Content[] = []
     const legacyFrameImage = !Array.isArray(request.image) ? request.image : undefined
     const additionalReferenceImages = [...(Array.isArray(request.image) ? request.image : []), ...(request.images || [])]
@@ -175,133 +120,13 @@ export class VolcengineVideoService {
       seed: request.seed,
       watermark: request.watermark,
       tools: request.tools?.map(tool => ({ type: tool.type === 'web_search' ? ToolType.WebSearch : tool.type })),
-      source: request.source,
     })
 
-    return { id: result.id, points: result.points }
-  }
-
-  async calculatePrice(params: {
-    model: string
-    userId?: string
-    userType?: UserType
-    aspectRatio?: string
-    resolution?: string
-    duration?: number
-  }): Promise<number> {
-    const { model, aspectRatio, resolution, duration } = params
-
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    const defaults = modelConfig.defaults || {}
-    const finalAspectRatio = aspectRatio || defaults.aspectRatio
-    const finalResolution = resolution || defaults.resolution
-    const finalDuration = duration || defaults.duration
-
-    const pricingConfig = modelConfig.pricing.find((pricing) => {
-      const aspectRatioMatch = !pricing.aspectRatio || !finalAspectRatio || pricing.aspectRatio === finalAspectRatio
-      const resolutionMatch = !pricing.resolution || !finalResolution || pricing.resolution === finalResolution
-      const durationMatch = !pricing.duration || !finalDuration || pricing.duration === finalDuration
-      return aspectRatioMatch && resolutionMatch && durationMatch
-    })
-
-    if (!pricingConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    return pricingConfig.price
+    return { id: result.id }
   }
 
   private buildSafetyIdentifier(userId: string, userType: UserType): string {
     return `${userType}:${userId}`
-  }
-
-  private hasVideoInput(content: Content[]): boolean {
-    return content.some(item => item.type === ContentType.VideoUrl)
-  }
-
-  private getModelConfig(model: string) {
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-    return modelConfig
-  }
-
-  private getBillingMode(model: string): AiLogSettlementBillingMode {
-    return this.getModelConfig(model).settlement
-      ? AiLogSettlementBillingMode.Token
-      : AiLogSettlementBillingMode.Fixed
-  }
-
-  private getTokenBillingRate(model: string, hasVideoInput: boolean): string {
-    const modelConfig = this.getModelConfig(model)
-    if (!modelConfig.settlement) {
-      throw new BadRequestException(`Token billing config not found for model: ${model}`)
-    }
-
-    const rate = hasVideoInput
-      ? modelConfig.settlement.withVideo
-      : modelConfig.settlement.withoutVideo
-
-    if (rate == null) {
-      throw new BadRequestException(`Token billing rate not found for model: ${model}`)
-    }
-
-    return rate
-  }
-
-  private calculateActualPoints(aiLog: VolcengineVideoAiLog, callbackData: VolcengineCallbackDto): {
-    actualPoints: number
-    billingMode: AiLogSettlementBillingMode
-    hasVideoInput: boolean
-    tokenPrice?: string
-    totalTokens?: number
-    usageMissing: boolean
-  } {
-    const requestContent = aiLog.request.content as Content[]
-    const hasVideoInput = this.hasVideoInput(requestContent)
-    const billingMode = this.getBillingMode(aiLog.model)
-    if (billingMode !== AiLogSettlementBillingMode.Token) {
-      return {
-        actualPoints: this.asyncSettlementService.getPrepaidPoints(aiLog),
-        billingMode,
-        hasVideoInput,
-        usageMissing: false,
-      }
-    }
-
-    const totalTokens = callbackData.usage?.total_tokens
-    if (totalTokens == null || totalTokens <= 0) {
-      this.logger.warn(
-        { aiLogId: aiLog.id, taskId: aiLog.taskId, model: aiLog.model },
-        'Volcengine callback missing or invalid usage.total_tokens, fallback to prepaid points',
-      )
-
-      return {
-        actualPoints: this.asyncSettlementService.getPrepaidPoints(aiLog),
-        billingMode,
-        hasVideoInput,
-        usageMissing: true,
-      }
-    }
-
-    const rate = this.getTokenBillingRate(aiLog.model, hasVideoInput)
-
-    return {
-      actualPoints: new BigNumber(totalTokens)
-        .div(1000)
-        .times(rate)
-        .toNumber(),
-      billingMode,
-      hasVideoInput,
-      tokenPrice: rate,
-      totalTokens,
-      usageMissing: false,
-    }
   }
 
   private getFailureMessage(status: VolcTaskStatus, callbackData: VolcengineCallbackDto): string | undefined {
@@ -403,7 +228,7 @@ export class VolcengineVideoService {
 
     const requestBody: CreateVideoGenerationTaskRequest = {
       ...aiLogRequest,
-      callback_url: config.ai.volcengine.callbackUrl,
+      callback_url: config.ai.volcengine?.callbackUrl,
       safety_identifier: this.buildSafetyIdentifier(request.userId, request.userType),
     }
 
@@ -418,17 +243,8 @@ export class VolcengineVideoService {
    * Volcengine视频生成
    */
   async create(request: UserVolcengineGenerationRequestDto) {
-    const { userId, userType, model, source = CreditsConsumptionSource.AiVideo } = request
+    const { userId, userType, model } = request
     const normalized = this.normalizeRequest(request)
-
-    const pricing = await this.calculatePrice({
-      userId,
-      userType,
-      aspectRatio: normalized.requestBody.ratio,
-      resolution: normalized.requestBody.resolution,
-      duration: normalized.requestBody.duration,
-      model,
-    })
 
     const startedAt = new Date()
     const result = await this.aiAvailability.executeAsync(
@@ -436,16 +252,6 @@ export class VolcengineVideoService {
       () => this.volcengineLibService.createVideoGenerationTask(normalized.requestBody),
       r => r.id,
     )
-
-    if (userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId,
-        amount: pricing,
-        type: CreditsType.AiService,
-        source,
-        description: model,
-      })
-    }
 
     const aiLog = await this.aiLogRepo.create({
       userId,
@@ -455,11 +261,6 @@ export class VolcengineVideoService {
       channel: AiLogChannel.Volcengine,
       startedAt,
       type: AiLogType.Video,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
-        billingMode: this.getBillingMode(model),
-        source,
-      }),
       request: normalized.aiLogRequest,
       status: AiLogStatus.Generating,
     })
@@ -467,8 +268,7 @@ export class VolcengineVideoService {
     return {
       ...result,
       id: aiLog.id,
-      points: pricing,
-    } as CreateVideoGenerationTaskResponse & { points: number }
+    } as CreateVideoGenerationTaskResponse
   }
 
   /**
@@ -509,10 +309,6 @@ export class VolcengineVideoService {
         break
     }
 
-    const settlementResult = aiLogStatus === AiLogStatus.Success
-      ? this.calculateActualPoints(volcengineAiLog, callbackData as VolcengineCallbackDto)
-      : null
-
     if (content) {
       if (content.last_frame_url) {
         const result = await this.assetsService.uploadFromUrl(volcengineAiLog.userId, {
@@ -532,29 +328,17 @@ export class VolcengineVideoService {
     const duration = (updated_at * 1000) - volcengineAiLog.startedAt.getTime()
     const failureMessage = this.getFailureMessage(status, callbackData)
 
-    await this.aiLogRepo.updateById(volcengineAiLog.id, {
-      status: aiLogStatus,
-      response: callbackData,
-      duration,
-      errorMessage: failureMessage,
+    const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(volcengineAiLog.id, AiLogStatus.Generating, {
+      $set: {
+        status: aiLogStatus,
+        response: callbackData,
+        duration,
+        errorMessage: failureMessage,
+      },
     })
 
-    if (aiLogStatus === AiLogStatus.Success && settlementResult) {
-      const settlementMetadata: AiLogSettlementMetadata = {
-        channel: volcengineAiLog.channel,
-        settledBy: AiLogSettlementSettledBy.VolcengineCallback,
-        billingMode: settlementResult.billingMode,
-        totalTokens: settlementResult.totalTokens,
-        tokenPrice: settlementResult.tokenPrice,
-        hasVideoInput: settlementResult.hasVideoInput,
-        usageMissing: settlementResult.usageMissing,
-      }
-
-      await this.asyncSettlementService.settleSuccess(volcengineAiLog.id, settlementResult.actualPoints, settlementMetadata)
-    }
-
-    if (aiLogStatus === AiLogStatus.Failed) {
-      await this.enqueueTaskRefund(volcengineAiLog)
+    if (!updatedAiLog) {
+      return
     }
 
     if (aiLogStatus === AiLogStatus.Success || aiLogStatus === AiLogStatus.Failed) {

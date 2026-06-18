@@ -1,16 +1,22 @@
+/*
+ * @Author: nevin
+ * @Date: 2024-06-17 19:19:20
+ * @LastEditTime: 2024-12-23 12:45:22
+ * @LastEditors: nevin
+ * @Description: 草稿组
+ */
 import {
   Body,
   Controller,
   Delete,
   Get,
-  Logger,
   Param,
   Post,
   Query,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, ResponseCode, TableDto } from '@yikart/common'
+import { ApiDoc, AppException, ParseObjectIdPipe, ResponseCode, TableDto } from '@yikart/common'
 import { CreateMaterialGroupDto, MaterialGroupFilterDto, MaterialGroupFilterSchema, UpdateMaterialGroupDto } from './material-group.dto'
 
 import { MaterialGroupService } from './material-group.service'
@@ -19,8 +25,6 @@ import { MaterialGroupVo } from './material-group.vo'
 @ApiTags('Me/MaterialGroup')
 @Controller('material/group')
 export class MaterialGroupController {
-  private readonly logger = new Logger(MaterialGroupController.name)
-
   constructor(
     private readonly materialGroupService: MaterialGroupService,
   ) { }
@@ -48,7 +52,7 @@ export class MaterialGroupController {
   @Delete(':id')
   async delGroup(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
   ) {
     const materialGroup = await this.materialGroupService.getGroupInfo(id)
     if (!materialGroup || materialGroup.userId !== token.id) {
@@ -68,7 +72,7 @@ export class MaterialGroupController {
   @Post('info/:id')
   async updateGroupInfo(
     @GetToken() token: TokenInfo,
-    @Param('id') id: string,
+    @Param('id', ParseObjectIdPipe) id: string,
     @Body() body: UpdateMaterialGroupDto,
   ) {
     const materialGroup = await this.materialGroupService.getGroupInfo(id)
@@ -83,7 +87,7 @@ export class MaterialGroupController {
     description: '根据ID获取草稿分组详情。',
   })
   @Get('info/:id')
-  async getGroupInfo(@Param('id') id: string) {
+  async getGroupInfo(@Param('id', ParseObjectIdPipe) id: string) {
     return this.materialGroupService.getGroupInfo(id)
   }
 

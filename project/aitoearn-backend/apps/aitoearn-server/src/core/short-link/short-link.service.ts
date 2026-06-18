@@ -1,18 +1,15 @@
 import crypto from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
-import { RedisService } from '@yikart/redis'
+import { ServerRedisService } from '../../common/redis'
 import { config } from '../../config'
-
-const SHORT_LINK_PREFIX = 'server:shortLink:'
-const DEFAULT_EXPIRE_SECONDS = 60 * 60 * 24 * 1 // 7 days
 
 @Injectable()
 export class ShortLinkService {
   private readonly logger = new Logger(ShortLinkService.name)
 
   constructor(
-    private readonly redisService: RedisService,
+    private readonly redisService: ServerRedisService,
   ) {}
 
   private generateCode(length = 8): string {
@@ -25,30 +22,16 @@ export class ShortLinkService {
     return result
   }
 
-  private getCacheKey(code: string): string {
-    return `${SHORT_LINK_PREFIX}${code}`
-  }
-
-  async create(
-    originalUrl: string,
-    options?: {
-      expiresInSeconds?: number
-    },
-  ): Promise<string> {
+  async create(originalUrl: string): Promise<string> {
     const code = this.generateCode()
-    const expireSeconds = options?.expiresInSeconds ?? DEFAULT_EXPIRE_SECONDS
 
-    await this.redisService.set(
-      this.getCacheKey(code),
-      originalUrl,
-      expireSeconds,
-    )
+    await this.redisService.saveShortLink(code, originalUrl)
 
     return `${config.channel.shortLink.baseUrl}${code}`
   }
 
   async getByCode(code: string): Promise<string> {
-    const originalUrl = await this.redisService.get(this.getCacheKey(code))
+    const originalUrl = await this.redisService.getShortLink(code)
 
     if (!originalUrl) {
       throw new AppException(ResponseCode.ShortLinkNotFound)

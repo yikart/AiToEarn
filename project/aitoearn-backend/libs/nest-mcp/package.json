@@ -13,11 +13,10 @@
   },
   "peerDependencies": {
     "@modelcontextprotocol/sdk": "1.27.1",
-    "@nestjs/common": "11.1.17",
-    "@nestjs/core": "11.1.17",
+    "@nestjs/common": "11.1.24",
+    "@nestjs/core": "11.1.24",
     "@nestjs/testing": "11.1.19",
     "@yikart/common": "workspace:*",
-    "@yikart/helpers": "workspace:*",
     "@yikart/mongodb": "workspace:*",
     "express": "5.1.0",
     "path-to-regexp": "8.3.0",

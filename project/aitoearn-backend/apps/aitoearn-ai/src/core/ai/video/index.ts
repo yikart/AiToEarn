@@ -1,5 +1,4 @@
 export * from './dashscope'
-export * from './gemini'
 export * from './grok'
 export * from './openai'
 export * from './video.controller'

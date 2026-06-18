@@ -10,18 +10,18 @@ interface PlatformLimitRule {
 }
 
 const PLATFORM_LIMIT_RULES: Record<string, PlatformLimitRule> = {
-  [AccountType.TIKTOK]: { descMaxLength: 2200, topicsMaxCount: 5 },
-  [AccountType.INSTAGRAM]: { descMaxLength: 2200 },
+  [AccountType.TikTok]: { descMaxLength: 2200, topicsMaxCount: 5 },
+  [AccountType.Instagram]: { descMaxLength: 2200 },
   [AccountType.Douyin]: { titleMaxLength: 30, topicsMaxCount: 5 },
-  [AccountType.BILIBILI]: { titleMaxLength: 80, titleRequired: true, descMaxLength: 250, topicsMaxCount: 10, topicsMinCount: 1 },
-  [AccountType.YOUTUBE]: { titleMaxLength: 100, titleRequired: true, descMaxLength: 5000, descRequired: true },
-  [AccountType.TWITTER]: { descMaxLength: 280, descRequired: true },
-  [AccountType.FACEBOOK]: { descMaxLength: 5000 },
-  [AccountType.THREADS]: { descMaxLength: 500, descRequired: true },
-  [AccountType.PINTEREST]: { titleRequired: true },
-  [AccountType.KWAI]: { topicsMaxCount: 4 },
-  [AccountType.Xhs]: { descMaxLength: 1000 },
-  [AccountType.LINKEDIN]: { titleMaxLength: 200, descMaxLength: 3000 },
+  [AccountType.Bilibili]: { titleMaxLength: 80, titleRequired: true, descMaxLength: 250, topicsMaxCount: 10, topicsMinCount: 1 },
+  [AccountType.YouTube]: { titleMaxLength: 100, titleRequired: true, descMaxLength: 5000, descRequired: true },
+  [AccountType.Twitter]: { descMaxLength: 280, descRequired: true },
+  [AccountType.Facebook]: { descMaxLength: 5000 },
+  [AccountType.Threads]: { descMaxLength: 500, descRequired: true },
+  [AccountType.Pinterest]: { titleRequired: true },
+  [AccountType.Kwai]: { topicsMaxCount: 4 },
+  [AccountType.RedNote]: { descMaxLength: 1000 },
+  [AccountType.LinkedIn]: { titleMaxLength: 200, descMaxLength: 3000 },
 }
 
 function checkPlatformLimits(
@@ -62,11 +62,11 @@ interface PlatformMediaConstraints {
 }
 
 const PLATFORM_MEDIA_CONSTRAINTS: Partial<Record<AccountType, PlatformMediaConstraints>> = {
-  [AccountType.TIKTOK]: {
+  [AccountType.TikTok]: {
     video: { minDuration: 3, maxDuration: 600 },
     image: { maxCount: 10 },
   },
-  [AccountType.INSTAGRAM]: {
+  [AccountType.Instagram]: {
     video: { minDuration: 5, maxDuration: 900 },
     image: { maxCount: 10 },
   },
@@ -74,41 +74,41 @@ const PLATFORM_MEDIA_CONSTRAINTS: Partial<Record<AccountType, PlatformMediaConst
     video: { maxDuration: 900, supportedRatios: ['9:16', '16:9', '1:1'] },
     image: { maxCount: 9 },
   },
-  [AccountType.BILIBILI]: {
+  [AccountType.Bilibili]: {
     video: {},
   },
-  [AccountType.YOUTUBE]: {
+  [AccountType.YouTube]: {
     video: { maxDuration: 43200 },
   },
-  [AccountType.TWITTER]: {
+  [AccountType.Twitter]: {
     image: { maxCount: 4 },
   },
-  [AccountType.FACEBOOK]: {
+  [AccountType.Facebook]: {
     video: { minDuration: 3, maxDuration: 14400 },
     image: { maxCount: 10 },
   },
-  [AccountType.THREADS]: {
+  [AccountType.Threads]: {
     video: { maxDuration: 300 },
     image: { maxCount: 20 },
   },
-  [AccountType.PINTEREST]: {
+  [AccountType.Pinterest]: {
     video: { minDuration: 4, maxDuration: 15 },
     image: {},
   },
-  [AccountType.KWAI]: {
+  [AccountType.Kwai]: {
     video: { minDuration: 15, maxDuration: 180, supportedRatios: ['9:16'] },
   },
-  [AccountType.Xhs]: {
+  [AccountType.RedNote]: {
     video: { maxDuration: 900, supportedRatios: ['9:16', '3:4', '1:1', '16:9'] },
     image: { maxCount: 9 },
   },
-  [AccountType.WxGzh]: {
+  [AccountType.WeChatOfficial]: {
     image: {},
   },
-  [AccountType.WxSph]: {
+  [AccountType.WeChatChannels]: {
     video: {},
   },
-  [AccountType.LINKEDIN]: {
+  [AccountType.LinkedIn]: {
     video: {},
     image: {},
   },

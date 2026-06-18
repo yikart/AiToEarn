@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { AppException, ResponseCode } from '@yikart/common'
 import { ApiKeyRepository } from '@yikart/mongodb'
 import { customAlphabet } from 'nanoid'
+import { config } from '../../config'
 
 const generateId = customAlphabet('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', 48)
 
@@ -13,7 +14,7 @@ export class ApiKeyService {
   ) {}
 
   async create(userId: string, name: string) {
-    const rawKey = `ak_${generateId()}`
+    const rawKey = `${config.apiKey.prefix}${generateId()}`
     const keyHash = this.hashKey(rawKey)
 
     const apiKey = await this.apiKeyRepository.create({

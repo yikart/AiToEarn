@@ -1,5 +1,7 @@
 import type { DynamicModule } from '@nestjs/common'
 import { Cluster, Redis } from 'ioredis'
+import { EventStreamExplorer } from './event-stream.explorer'
+import { EventStreamService } from './event-stream.service'
 import { RedisPubSubService } from './pub-sub.service'
 import { RedisConfig } from './redis.config'
 import { RedisService } from './redis.service'
@@ -49,8 +51,14 @@ export class RedisModule {
           useFactory: (subscriber: Redis, publisher: Redis) => new RedisPubSubService(subscriber, publisher),
           inject: [REDIS_PUBSUB_SUBSCRIBER, REDIS_PUBSUB_PUBLISHER],
         },
+        {
+          provide: EventStreamService,
+          useFactory: (client: Redis) => new EventStreamService(client),
+          inject: [Redis],
+        },
+        EventStreamExplorer,
       ],
-      exports: [RedisService, RedisPubSubService, Redis],
+      exports: [RedisService, RedisPubSubService, EventStreamService, Redis],
       global: true,
     }
   }

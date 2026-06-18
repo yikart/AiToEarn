@@ -58,19 +58,15 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
       let targetBody: unknown
 
       if (exception instanceof RelayAccountException) {
-        const { originalAccountId, relayAccountRef } = exception
-        targetUrl = `${relayConfig.serverUrl}${request.originalUrl}`.replaceAll(
-          originalAccountId,
-          relayAccountRef,
-        )
-        targetBody = request.body
-          ? JSON.parse(
-              JSON.stringify(request.body).replaceAll(
-                originalAccountId,
-                relayAccountRef,
-              ),
-            )
-          : undefined
+        targetUrl = `${relayConfig.serverUrl}${request.originalUrl}`
+        let targetBodyText = request.body ? JSON.stringify(request.body) : undefined
+        for (const [originalAccountId, relayAccountRef] of exception.accountIdMap) {
+          targetUrl = targetUrl.replaceAll(originalAccountId, relayAccountRef)
+          if (targetBodyText) {
+            targetBodyText = targetBodyText.replaceAll(originalAccountId, relayAccountRef)
+          }
+        }
+        targetBody = targetBodyText ? JSON.parse(targetBodyText) : undefined
 
         targetBody = await this.replaceLocalUrls(targetBody)
       }
@@ -86,7 +82,6 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
         if (isGet) {
           const url = new URL(`${relayConfig.serverUrl}${request.originalUrl}`)
           url.searchParams.set('callbackUrl', callbackUrlStr)
-          url.searchParams.set('callbackMethod', 'POST')
           targetUrl = url.toString()
           targetBody = undefined
         }
@@ -95,7 +90,6 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
           targetBody = {
             ...request.body,
             callbackUrl: callbackUrlStr,
-            callbackMethod: 'POST',
           }
         }
       }

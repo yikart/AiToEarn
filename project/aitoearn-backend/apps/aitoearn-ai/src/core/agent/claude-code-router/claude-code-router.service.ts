@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, unlinkSync, watch, writeFileSync } from 'node:fs
 import { join } from 'node:path'
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
 import { config } from '../../../config'
+import { CLAUDE_CODE_ROUTER_PROVIDER_NAME } from '../agent.constants'
 
 interface TransformerConfig {
   use: Array<string | [string, Record<string, unknown>] | Record<string, TransformerConfig>>
@@ -78,34 +79,29 @@ export class ClaudeCodeRouterService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private generateConfigFile(routerConfig: { baseUrl: string, apiKey: string }) {
+  private generateConfigFile(routerConfig: typeof config.agent) {
     if (!existsSync(this.configDir)) {
       mkdirSync(this.configDir, { recursive: true })
       this.logger.debug(`创建配置目录: ${this.configDir}`)
     }
 
-    const routerConfigFile: ClaudeCodeRouterConfig = {
+    const routerConfigFile = this.buildConfigFile(routerConfig)
+
+    writeFileSync(this.configPath, JSON.stringify(routerConfigFile, null, 2), 'utf-8')
+    this.logger.debug(`配置文件已生成: ${this.configPath}`)
+  }
+
+  private buildConfigFile(routerConfig: typeof config.agent): ClaudeCodeRouterConfig {
+    return {
       PORT: 3456,
       APIKEY: 'ccr',
       NON_INTERACTIVE_MODE: true,
       Providers: [
         {
-          name: 'new',
+          name: CLAUDE_CODE_ROUTER_PROVIDER_NAME,
           api_base_url: routerConfig.baseUrl,
           api_key: routerConfig.apiKey,
-          models: [
-            'claude-opus-4-6',
-            'claude-haiku-4-5-20251001-thinking',
-            'claude-opus-4-5-20251101-thinking',
-            'claude-opus-4-5-20251101',
-            'claude-sonnet-4-5-20250929-thinking',
-            'claude-haiku-4-5-20251001',
-            'claude-opus-4-1-20250805',
-            'claude-opus-4-1-20250805-thinking',
-            'claude-sonnet-4-5-20250929',
-            'claude-opus-4-6',
-            'claude-opus-4-6-thinking',
-          ],
+          models: routerConfig.models,
           transformer: {
             use: [
               'Anthropic',
@@ -114,14 +110,11 @@ export class ClaudeCodeRouterService implements OnModuleInit, OnModuleDestroy {
         },
       ],
       Router: {
-        default: 'new,claude-opus-4-6',
-        background: 'new,claude-haiku-4-5-20251001',
-        think: 'new,claude-opus-4-6',
+        default: `${CLAUDE_CODE_ROUTER_PROVIDER_NAME},${routerConfig.defaultModel}`,
+        background: `${CLAUDE_CODE_ROUTER_PROVIDER_NAME},${routerConfig.backgroundModel}`,
+        think: `${CLAUDE_CODE_ROUTER_PROVIDER_NAME},${routerConfig.thinkModel}`,
       },
     }
-
-    writeFileSync(this.configPath, JSON.stringify(routerConfigFile, null, 2), 'utf-8')
-    this.logger.debug(`配置文件已生成: ${this.configPath}`)
   }
 
   private startChildProcess(cliPath: string) {

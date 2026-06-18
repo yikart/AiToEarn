@@ -5,8 +5,8 @@
   "main": "./src/index.js",
   "types": "./src/index.d.ts",
   "dependencies": {
-    "@nestjs/common": "11.1.17",
-    "@nestjs/core": "11.1.17",
+    "@nestjs/common": "11.1.24",
+    "@nestjs/core": "11.1.24",
     "@nestjs/mongoose": "11.0.4",
     "@yikart/aitoearn-ai-shared": "workspace:*",
     "@yikart/common": "workspace:*",

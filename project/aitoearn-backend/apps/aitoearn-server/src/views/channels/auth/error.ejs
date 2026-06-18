@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<%
+  const pageLocale = typeof locale !== 'undefined' ? locale : 'en-US'
+  const t = typeof messages !== 'undefined' ? messages : {
+    title: 'Authorization',
+    failedTitle: 'Authorization failed',
+    failedDescription: 'Please close this page and try authorizing again.',
+    closeDescription: 'You can close this page now.',
+    errorCode: 'Error code'
+  }
+  const pagePlatformDisplayName = typeof platformDisplayName !== 'undefined' ? platformDisplayName : ''
+  const pagePlatformLogoUrl = typeof platformLogoUrl !== 'undefined' ? platformLogoUrl : ''
+  const pageErrorCode = typeof errorCode !== 'undefined' ? errorCode : ''
+  const pageErrorMessage = typeof errorMessage !== 'undefined' ? errorMessage : t.failedDescription
+%>
+<html lang="<%= pageLocale %>">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= t.failedTitle %></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #f7f8fb;
+      --foreground: #171717;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --danger: #dc2626;
+      --danger-soft: #fee2e2;
+      --muted-bg: #f3f4f6;
+      --card: #fff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Suisseintl, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--foreground);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.08) 1px, transparent 0),
+        var(--background);
+      background-size: 18px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    main {
+      width: min(100%, 520px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      min-width: 0;
+    }
+
+    .platform-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: #991b1b;
+      background: var(--danger-soft);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--danger);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 20px 24px 24px;
+    }
+
+    .error-message {
+      margin: 0 0 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--muted-bg);
+      color: #374151;
+      font-size: 14px;
+      line-height: 1.5;
+      word-break: break-word;
+    }
+
+    .error-code {
+      color: var(--muted);
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    @media (max-width: 520px) {
+      body {
+        align-items: stretch;
+        padding: 12px;
+      }
+
+      header,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="platform">
+        <% if (pagePlatformLogoUrl) { %>
+          <img class="platform-logo" src="<%= pagePlatformLogoUrl %>" alt="" />
+        <% } %>
+        <span class="status"><span class="dot"></span><%= pagePlatformDisplayName || t.title %></span>
+      </div>
+      <h1><%= t.failedTitle %></h1>
+      <p><%= t.failedDescription %></p>
+    </header>
+
+    <div class="content">
+      <p class="error-message"><%= pageErrorMessage %></p>
+      <% if (pageErrorCode !== '') { %>
+        <p class="error-code"><%= t.errorCode %>: <%= pageErrorCode %></p>
+      <% } %>
+    </div>
+  </main>
+</body>
+
+</html>

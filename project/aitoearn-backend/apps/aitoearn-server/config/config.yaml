@@ -1,0 +1,222 @@
+appDomain: localhost
+port: 3002
+environment: production
+enableBadRequestDetails: true
+logger:
+  console:
+    enable: true
+    level: debug
+    pretty: false
+auth:
+  secret: change-this-jwt-secret
+  internalToken: change-this-secret-token
+apiKey:
+  prefix: ai_
+redis:
+  host: redis
+  port: 6379
+  username: default
+  password: password
+mongodb:
+  uri: mongodb://admin:password@mongodb:27017/?authSource=admin&directConnection=true
+  dbName: aitoearn
+redlock:
+  redis:
+    host: redis
+    port: 6379
+    username: default
+    password: password
+assets:
+  provider: s3
+  region: us-east-1
+  bucketName: aitoearn
+  endpoint: http://rustfs.local:9000
+  publicEndpoint: http://localhost:9000
+  cdnEndpoint: http://localhost:8080/oss
+  accessKeyId: rustfsadmin
+  secretAccessKey: rustfsadmin
+  forcePathStyle: true
+aiClient:
+  baseUrl: http://aitoearn-ai:3010
+  token: change-this-secret-token
+channel:
+  channelDb:
+    uri: mongodb://admin:password@mongodb:27017/?authSource=admin&directConnection=true
+    dbName: aitoearn_channel
+  shortLink:
+    baseUrl: https://localhost/api/shortLink/
+  bilibili:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/bilibili/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/bilibili.svg
+  douyin:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/douyin/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/douyin.svg
+    authType: qrcode
+    scopes:
+      - user.info.basic
+      - video.create
+      - video.data
+    miniApp:
+      clientId: douyin-miniapp-client-id
+      clientSecret: douyin-miniapp-client-secret
+      sandbox: false
+  facebook:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/facebook/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/facebook.svg
+    graphApiVersion: v25.0
+    scopes:
+      - public_profile
+      - pages_show_list
+      - pages_manage_posts
+      - pages_read_engagement
+      - pages_read_user_content
+      - pages_manage_engagement
+      - read_insights
+  kwai:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/KWAI/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/kwai.svg
+    scopes:
+      - user_info
+      - user_video_publish
+      - user_video_info
+  instagram:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/instagram/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/instagram.svg
+    graphApiVersion: v25.0
+    scopes:
+      - instagram_business_basic
+      - instagram_business_manage_comments
+      - instagram_business_content_publish
+      - instagram_business_manage_insights
+  linkedin:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/plat/meta/auth/back
+    logoUrl: https://assets.aitoearn.ai/platforms/linkedin.svg
+    restVersion: '202605'
+    scopes:
+      - openid
+      - profile
+      - email
+      - w_member_social
+  googleBusiness:
+    status: hidden
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/google_business/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/google-business.svg
+    scopes:
+      - https://www.googleapis.com/auth/business.manage
+      - https://www.googleapis.com/auth/userinfo.profile
+      - https://www.googleapis.com/auth/userinfo.email
+  pinterest:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/pinterest/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/pinterest.svg
+    baseUrl: https://api.pinterest.com
+    scopes:
+      - boards:read
+      - boards:write
+      - pins:read
+      - pins:write
+      - user_accounts:read
+  rednote:
+    status: available
+    logoUrl: https://assets.aitoearn.ai/platforms/rednote.svg
+    appKey: rednote-app-key
+    appSecret: rednote-app-secret
+    accessTokenUrl: https://edith.xiaohongshu.com/api/sns/v1/ext/access/token
+  threads:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/threads/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/threads.svg
+    scopes:
+      - threads_basic
+      - threads_content_publish
+      - threads_read_replies
+      - threads_manage_replies
+      - threads_manage_insights
+      - threads_location_tagging
+      - threads_delete
+  tiktok:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    logoUrl: https://assets.aitoearn.ai/platforms/tiktok.svg
+    pullFromUrlAllowedPrefixes: []
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/tiktok/callback
+    scopes:
+      - user.info.basic
+      - user.info.profile
+      - user.info.stats
+      - video.upload
+      - video.publish
+      - video.list
+  twitter:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/twitter/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/twitter.svg
+    scopes:
+      - tweet.read
+      - tweet.write
+      - tweet.moderate.write
+      - users.read
+      - offline.access
+      - like.read
+      - like.write
+      - follows.read
+      - follows.write
+      - media.write
+  wechat:
+    official:
+      status: coming_soon
+      appId: production
+      appSecret: f1a36f23d027c969d6c6969423d72eda
+      token: aitoearn
+      encodingAESKey: ''
+      hostUrl: https://platauth.aitoearn.cn
+      redirectUri: https://localhost/api/v2/channels/accounts/auth/wxGzh/callback
+      logoUrl: https://assets.aitoearn.ai/platforms/wechat-official.svg
+      scopes:
+        - snsapi_userinfo
+    channels:
+      status: available
+      appId: ''
+      appSecret: ''
+      token: aitoearn
+      encodingAESKey: ''
+      redirectUri: https://localhost/api/platcallback
+      logoUrl: https://assets.aitoearn.ai/platforms/wechat-channels.svg
+  youtube:
+    status: available
+    clientId: ''
+    clientSecret: ''
+    redirectUri: https://localhost/api/v2/channels/accounts/auth/youtube/callback
+    logoUrl: https://assets.aitoearn.ai/platforms/youtube.svg
+    scopes:
+      - https://www.googleapis.com/auth/youtube
+      - https://www.googleapis.com/auth/youtube.upload
+      - https://www.googleapis.com/auth/userinfo.profile
+      - https://www.googleapis.com/auth/userinfo.email

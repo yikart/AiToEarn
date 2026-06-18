@@ -10,7 +10,7 @@ export default defineConfig(() => ({
     name: 'aitoearn-server',
     watch: false,
     globals: true,
-    environment: 'jsdom',
+    environment: 'node',
     include: ['{src,tests}/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     reporters: ['default'],
     coverage: {

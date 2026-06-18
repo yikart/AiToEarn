@@ -1,6 +1,6 @@
 import { InjectModel } from '@nestjs/mongoose'
 import { Pagination, RangeFilter, UserType } from '@yikart/common'
-import { FilterQuery, Model } from 'mongoose'
+import { FilterQuery, Model, UpdateQuery } from 'mongoose'
 import { AiLogChannel, AiLogStatus, AiLogType } from '../enums'
 import { AiLog } from '../schemas'
 import { BaseRepository } from './base.repository'
@@ -8,22 +8,22 @@ import { BaseRepository } from './base.repository'
 export interface ListAiLogParams extends Pagination {
   userId?: string
   userType?: UserType
-  libraryId?: string
   type?: AiLogType
   status?: AiLogStatus
   model?: string
   channel?: AiLogChannel
+  channels?: AiLogChannel[]
   createdAt?: RangeFilter<Date>
 }
 
 export interface ListAiLogFilter {
   userId?: string
   userType?: UserType
-  libraryId?: string
   type?: AiLogType
   status?: AiLogStatus
   model?: string
   channel?: AiLogChannel
+  channels?: AiLogChannel[]
   createdAt?: RangeFilter<Date>
 }
 
@@ -35,15 +35,13 @@ export class AiLogRepository extends BaseRepository<AiLog> {
   }
 
   async listWithPagination(params: ListAiLogParams) {
-    const { page, pageSize, userId, userType, libraryId, type, status, model, channel, createdAt } = params
+    const { page, pageSize, userId, userType, type, status, model, channel, channels, createdAt } = params
 
     const filter: FilterQuery<AiLog> = {}
     if (userId)
       filter.userId = userId
     if (userType)
       filter.userType = userType
-    if (libraryId)
-      filter.libraryId = libraryId
     if (type)
       filter.type = type
     if (status)
@@ -52,6 +50,8 @@ export class AiLogRepository extends BaseRepository<AiLog> {
       filter.model = model
     if (channel)
       filter.channel = channel
+    else if (channels)
+      filter.channel = { $in: channels }
     if (createdAt) {
       filter.createdAt = {}
       if (createdAt[0])
@@ -69,15 +69,13 @@ export class AiLogRepository extends BaseRepository<AiLog> {
   }
 
   async list(params: ListAiLogFilter) {
-    const { userId, userType, libraryId, type, status, model, channel, createdAt } = params
+    const { userId, userType, type, status, model, channel, channels, createdAt } = params
 
     const filter: FilterQuery<AiLog> = {}
     if (userId)
       filter.userId = userId
     if (userType)
       filter.userType = userType
-    if (libraryId)
-      filter.libraryId = libraryId
     if (type)
       filter.type = type
     if (status)
@@ -86,6 +84,8 @@ export class AiLogRepository extends BaseRepository<AiLog> {
       filter.model = model
     if (channel)
       filter.channel = channel
+    else if (channels)
+      filter.channel = { $in: channels }
     if (createdAt) {
       filter.createdAt = {}
       if (createdAt[0])
@@ -108,6 +108,20 @@ export class AiLogRepository extends BaseRepository<AiLog> {
     return await this.find(filter, { sort: { createdAt: -1 } })
   }
 
+  async listByStatusAndStartedAtBefore(status: AiLogStatus, startedBefore: Date, limit: number) {
+    return await this.find(
+      {
+        status,
+        startedAt: { $lt: startedBefore },
+      },
+      { sort: { startedAt: 1 }, limit },
+    )
+  }
+
+  async updateByIdAndStatus(id: string, status: AiLogStatus, update: UpdateQuery<AiLog>) {
+    return await this.updateOne({ _id: id, status }, update)
+  }
+
   async getByTaskId(taskId: string) {
     return await this.findOne({ taskId })
   }
@@ -125,29 +139,6 @@ export class AiLogRepository extends BaseRepository<AiLog> {
 
   async countByUserIdAndStatus(userId: string, userType: UserType, type: AiLogType, status: AiLogStatus): Promise<number> {
     return this.count({ userId, userType, type, status })
-  }
-
-  async getByIdAndLibraryId(id: string, libraryId: string, userType: UserType): Promise<AiLog | null> {
-    return this.findOne({ _id: id, libraryId, userType })
-  }
-
-  async listByIdsAndLibraryId(ids: string[], libraryId: string, userType: UserType): Promise<AiLog[]> {
-    return this.find(
-      { _id: { $in: ids }, libraryId, userType },
-      { sort: { createdAt: -1 } },
-    )
-  }
-
-  async countByLibraryIdAndStatus(libraryId: string, userType: UserType, type: AiLogType, status: AiLogStatus): Promise<number> {
-    return this.count({ libraryId, userType, type, status })
-  }
-
-  async getSuccessTotalAmount(startDate: Date, endDate: Date) {
-    const result = await this.model.aggregate([
-      { $match: { createdAt: { $gte: startDate, $lte: endDate }, status: AiLogStatus.Success } },
-      { $group: { _id: null, total: { $sum: '$points' } } },
-    ])
-    return result[0]?.total ?? 0
   }
 
   async listByUserIdAndTypeAndStatusAndRequestVersionAndCreatedAt(

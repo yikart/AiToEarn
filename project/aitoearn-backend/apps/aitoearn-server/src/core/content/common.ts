@@ -84,11 +84,6 @@ export interface NewMaterial {
   status: MaterialStatus
   platform?: AccountType
   source?: MaterialSource
-  brandInfo?: {
-    libraryId: string
-    placeId: string
-    photoReference?: string
-  }
   maxUseCount?: number
 }
 

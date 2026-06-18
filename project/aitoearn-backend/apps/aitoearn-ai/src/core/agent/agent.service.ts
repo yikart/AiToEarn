@@ -6,12 +6,9 @@ import {
 } from '@anthropic-ai/claude-agent-sdk'
 import { ContentBlockParam } from '@anthropic-ai/sdk/resources'
 import { Injectable, Logger, OnModuleDestroy, OnModuleInit } from '@nestjs/common'
-import { AitoearnServerClientService } from '@yikart/aitoearn-server-client'
 import {
   AppException,
   getCodeMessage,
-  NotificationMessageKey,
-  NotificationType,
   ResponseCode,
   UserType,
 } from '@yikart/common'
@@ -43,7 +40,6 @@ export class AgentService implements OnModuleInit, OnModuleDestroy {
 
   constructor(
     private readonly contentGenerateRepository: ContentGenerationTaskRepository,
-    private readonly serverClient: AitoearnServerClientService,
     private readonly agentRuntimeService: AgentRuntimeService,
     private readonly redisPubSubService: RedisPubSubService,
   ) { }
@@ -262,15 +258,6 @@ export class AgentService implements OnModuleInit, OnModuleDestroy {
       title: originalTask.title ? `Fwd: ${originalTask.title}` : undefined,
       messages: originalTask.messages || [],
       status: originalTask.status || ContentGenerationTaskStatus.Completed,
-    })
-
-    await this.serverClient.notification.createForUser({
-      userId: targetUserId,
-      userType: UserType.User,
-      messageKey: NotificationMessageKey.AgentResult,
-      vars: { taskId: newTask.id, status: 'forwarded' },
-      type: NotificationType.AgentResult,
-      relatedId: newTask.id,
     })
 
     return { id: newTask.id }

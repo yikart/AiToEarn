@@ -4,6 +4,7 @@ import { AideoModule } from './aideo'
 import { AssetsModule } from './assets'
 import { ChatModule } from './chat'
 import { ImageModule } from './image'
+import { GeminiModule } from './libs/gemini'
 import { OpenaiModule } from './libs/openai'
 import { LogsModule } from './logs'
 import { ModelsConfigModule } from './models-config'
@@ -12,6 +13,7 @@ import { VideoModule } from './video'
 @Module({
   imports: [
     OpenaiModule.forRoot(config.ai.openai),
+    GeminiModule.forRoot(config.ai.gemini),
     ChatModule,
     LogsModule,
     ImageModule,

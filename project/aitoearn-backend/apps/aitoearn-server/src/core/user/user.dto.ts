@@ -1,5 +1,5 @@
 import { createZodDto } from '@yikart/common'
-import { GenderEnum } from '@yikart/mongodb'
+import { UserType } from '@yikart/mongodb'
 /*
  * @Author: nevin
  * @Date: 2024-06-17 20:12:31
@@ -9,17 +9,9 @@ import { GenderEnum } from '@yikart/mongodb'
  */
 import { z } from 'zod'
 
-const ChangePasswordSchema = z.object({
-  password: z.string({ message: '密码' }),
-})
-
-export class ChangePasswordDto extends createZodDto(ChangePasswordSchema) {}
-
 const UpdateUserInfoSchema = z.object({
   name: z.string({ message: '昵称' }).optional(),
   avatar: z.string({ message: '头像' }).optional(),
-  gender: z.enum(GenderEnum, { message: '性别' }).optional(),
-  desc: z.string({ message: '简介' }).optional(),
 })
 
 export class UpdateUserInfoDto extends createZodDto(UpdateUserInfoSchema) {}
@@ -73,4 +65,14 @@ export const UpdateLocaleDtoSchema = z.object({
 export class UpdateLocaleDto extends createZodDto(
   UpdateLocaleDtoSchema,
   'UpdateLocaleDto',
+) {}
+
+export const SwitchUserTypeDtoSchema = z.object({
+  userType: z
+    .enum([UserType.CREATOR, UserType.BUSINESS_OWNER])
+    .describe('目标用户类型'),
+})
+export class SwitchUserTypeDto extends createZodDto(
+  SwitchUserTypeDtoSchema,
+  'SwitchUserTypeDto',
 ) {}

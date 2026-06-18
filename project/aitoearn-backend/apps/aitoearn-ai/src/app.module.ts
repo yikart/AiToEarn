@@ -4,16 +4,14 @@ import { Module, UnauthorizedException } from '@nestjs/common'
 import { ScheduleModule } from '@nestjs/schedule'
 import { AitoearnAuthModule } from '@yikart/aitoearn-auth'
 import { AitoearnQueueModule } from '@yikart/aitoearn-queue'
-import { AitoearnServerClientModule } from '@yikart/aitoearn-server-client'
 import { AssetsModule } from '@yikart/assets'
-import { HelpersModule } from '@yikart/helpers'
+import { ConfigEditorModule } from '@yikart/config-editor'
 import { ApiKeyRepository, MongodbModule, UserRepository, UserStatus } from '@yikart/mongodb'
 import { RedlockModule } from '@yikart/redlock'
-import { config } from './config'
+import { AppConfig, config } from './config'
 import { AgentModule } from './core/agent/agent.module'
 import { AiAvailabilityModule } from './core/ai-availability'
 import { AiModule } from './core/ai/ai.module'
-import { AiTaskRefundModule } from './core/credits/ai-task-refund.module'
 import { DraftGenerationModule } from './core/draft-generation'
 import { InternalModule } from './core/internal'
 
@@ -21,6 +19,11 @@ import { InternalModule } from './core/internal'
   imports: [
     AiAvailabilityModule.forRoot(),
     ScheduleModule.forRoot(),
+    ConfigEditorModule.forRoot({
+      schema: AppConfig,
+      config,
+      routePrefix: 'ai/config',
+    }),
     MongodbModule.forRoot(config.mongodb),
     AitoearnQueueModule.forRoot({
       redis: config.redis,
@@ -52,14 +55,11 @@ import { InternalModule } from './core/internal'
         }
       },
     }),
-    AitoearnServerClientModule.forRoot(config.serverClient),
     AssetsModule.forRoot(config.assets),
-    HelpersModule,
     AiModule,
     AgentModule,
     InternalModule,
     DraftGenerationModule,
-    AiTaskRefundModule,
   ],
   controllers: [],
   providers: [],

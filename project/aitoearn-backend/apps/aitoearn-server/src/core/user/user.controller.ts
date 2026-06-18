@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Put } from '@nestjs/common'
+import { Body, Controller, Get, Patch, Put } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
@@ -7,6 +7,8 @@ import {
   ReportLocationDtoSchema,
   SetAiConfigDto,
   SetAiConfigItemDto,
+  SwitchUserTypeDto,
+  SwitchUserTypeDtoSchema,
   UpdateLocaleDto,
   UpdateLocaleDtoSchema,
   UpdateUserInfoDto,
@@ -20,17 +22,6 @@ export class UserController {
   constructor(
     private readonly userService: UserService,
   ) { }
-
-  @ApiDoc({
-    summary: 'Get User Information by Email',
-    description: 'Retrieve user information by specifying the email address.',
-    response: UserInfoVO,
-  })
-  @Get('info/mail/:mail')
-  async infoByMail(@Param('mail') mail: string) {
-    const res = await this.userService.getUserInfoByMail(mail)
-    return res
-  }
 
   @ApiDoc({
     summary: 'Get Current User Information',
@@ -108,5 +99,32 @@ export class UserController {
     @Body() body: UpdateLocaleDto,
   ) {
     await this.userService.updateLocale(token.id, body.locale)
+  }
+
+  @ApiDoc({
+    summary: '切换用户身份',
+    description: '在创作者和商家身份之间切换',
+    body: SwitchUserTypeDtoSchema,
+  })
+  @Put('type/switch')
+  async switchUserType(
+    @GetToken() token: TokenInfo,
+    @Body() body: SwitchUserTypeDto,
+  ) {
+    const userInfo = await this.userService.getUserInfoById(token.id)
+    if (!userInfo) {
+      throw new AppException(ResponseCode.UserNotFound)
+    }
+
+    if (userInfo.userType === body.userType) {
+      return { userType: body.userType }
+    }
+
+    const success = await this.userService.switchUserType(token.id, body.userType)
+    if (!success) {
+      throw new AppException(ResponseCode.UserNotFound)
+    }
+
+    return { userType: body.userType }
   }
 }

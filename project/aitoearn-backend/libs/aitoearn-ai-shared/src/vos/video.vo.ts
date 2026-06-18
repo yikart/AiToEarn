@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto, zodI18nString } from '@yikart/common'
+import { createPaginationVo, createZodDto, FileUtil, zodI18nString } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogChannel } from '../enums'
 
@@ -33,8 +33,8 @@ const videoTaskStatusResponseSchema = z.object({
   model: z.string().describe('模型名称'),
   status: z.string().describe('任务状态'),
   input: videoTaskInputSchema.describe('输入参数'),
-  videoUrl: z.string().optional().describe('生成的视频 URL'),
-  coverUrl: z.string().optional().describe('生成视频的封面 URL'),
+  videoUrl: FileUtil.zodBuildUrl().nullable().optional().describe('生成的视频 URL'),
+  coverUrl: FileUtil.zodBuildUrl().nullable().optional().describe('生成视频的封面 URL'),
   mediaId: z.string().optional().describe('保存后的素材 ID'),
   groupId: z.string().optional().describe('保存到的素材组 ID'),
   error: z.object({
@@ -49,6 +49,29 @@ export class VideoTaskStatusResponseVo extends createZodDto(videoTaskStatusRespo
 
 export class ListVideoTasksResponseVo extends createPaginationVo(videoTaskStatusResponseSchema) {}
 
+const videoModelInputConstraintSchema = z.object({
+  maxCount: z.number().optional().describe('最大输入数量'),
+  formats: z.array(z.string()).optional().describe('支持的文件格式'),
+  minDuration: z.number().optional().describe('最小时长（秒）'),
+  maxDuration: z.number().optional().describe('单个文件最大时长（秒）'),
+  maxTotalDuration: z.number().optional().describe('总最大时长（秒）'),
+  maxSizeMb: z.number().optional().describe('单个文件最大大小（MB）'),
+  minAspectRatio: z.number().optional().describe('最小宽高比'),
+  maxAspectRatio: z.number().optional().describe('最大宽高比'),
+  minWidth: z.number().optional().describe('最小宽度'),
+  maxWidth: z.number().optional().describe('最大宽度'),
+  minPixels: z.number().optional().describe('最小像素数'),
+  maxPixels: z.number().optional().describe('最大像素数'),
+  minFps: z.number().optional().describe('最小帧率'),
+  maxFps: z.number().optional().describe('最大帧率'),
+})
+
+const videoModelInputConstraintsSchema = z.object({
+  images: videoModelInputConstraintSchema.optional().describe('图片输入约束'),
+  videos: videoModelInputConstraintSchema.optional().describe('视频输入约束'),
+  audios: videoModelInputConstraintSchema.optional().describe('音频输入约束'),
+}).optional().describe('多模态输入约束')
+
 // 视频生成模型参数 VO
 export const videoGenerationModelSchema = z.object({
   name: z.string().describe('模型名称'),
@@ -58,25 +81,17 @@ export const videoGenerationModelSchema = z.object({
   tags: z.array(zodI18nString()).default([]),
   mainTag: z.string().optional(),
   channel: z.enum(AiLogChannel).describe('渠道'),
-  modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'video2video'])).describe('支持的模式'),
+  modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'multi-ref', 'video2video'])).describe('支持的模式'),
   resolutions: z.array(z.string()).describe('支持的尺寸'),
   durations: z.array(z.number()).describe('支持的时长'),
   maxInputImages: z.number().describe('最大输入图片数'),
+  inputConstraints: videoModelInputConstraintsSchema,
   aspectRatios: z.array(z.string()).describe('支持的宽高比列表'),
   defaults: z.object({
     resolution: z.string().optional(),
     aspectRatio: z.string().optional(),
     duration: z.number().optional(),
   }).describe('默认值'),
-  pricing: z.object({
-    resolution: z.string().optional(),
-    aspectRatio: z.string().optional(),
-    mode: z.string().optional(),
-    duration: z.number().optional(),
-    price: z.number(),
-    discount: z.string().optional(),
-    originPrice: z.number().optional(),
-  }).array().describe('价格表'),
 })
 
 export class VideoGenerationModelParamsVo extends createZodDto(videoGenerationModelSchema) {}

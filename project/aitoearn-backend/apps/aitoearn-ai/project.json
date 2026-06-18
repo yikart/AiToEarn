@@ -51,21 +51,21 @@
           "buildTarget": "aitoearn-ai:build:development",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-ai/config/local.config.js"
+            "{workspaceRoot}/apps/aitoearn-ai/config/local.config.yaml"
           ]
         },
         "dev": {
           "buildTarget": "aitoearn-ai:build:development",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-ai/config/dev.config.js"
+            "{workspaceRoot}/apps/aitoearn-ai/config/dev.config.yaml"
           ]
         },
         "prod": {
           "buildTarget": "aitoearn-ai:build:production",
           "args": [
             "-c",
-            "{workspaceRoot}/apps/aitoearn-ai/config/prod.config.js"
+            "{workspaceRoot}/apps/aitoearn-ai/config/prod.config.yaml"
           ]
         }
       }

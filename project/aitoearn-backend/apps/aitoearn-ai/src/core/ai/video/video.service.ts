@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
+import { AppException, FileUtil, ResponseCode } from '@yikart/common'
 import {
   AiLogChannel,
   AiLogRepository,
@@ -15,9 +15,9 @@ import {
 import { TaskStatus } from '../../../common'
 import { ModelsConfigService } from '../models-config'
 import { DashscopeVideoService } from './dashscope'
-import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
 import { OpenAIVideoService } from './openai'
+import { RelayVideoService } from './relay/relay-video.service'
 import { VideoAiLog } from './video-ai-log.interface'
 import {
   UserListVideoTasksQueryDto,
@@ -26,7 +26,7 @@ import {
   VideoGenerationModelsQueryDto,
 } from './video.dto'
 import { VideoTaskInput } from './video.vo'
-import { VolcengineVideoService } from './volcengine'
+import { VolcengineVideoService } from './volcengine/volcengine.service'
 
 @Injectable()
 export class VideoService {
@@ -43,38 +43,15 @@ export class VideoService {
     private readonly volcengineVideoService: VolcengineVideoService,
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly grokVideoService: GrokVideoService,
-    private readonly geminiVideoService: GeminiVideoService,
     private readonly dashscopeVideoService: DashscopeVideoService,
+    @Optional() private readonly relayVideoService?: RelayVideoService,
   ) {}
 
-  async calculateVideoGenerationPrice(params: {
-    model: string
-    userId?: string
-    userType?: UserType
-    resolution?: string
-    aspectRatio?: string
-    mode?: string
-    duration?: number
-  }): Promise<number> {
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === params.model)
-    if (!modelConfig) {
+  private requireChannel<T>(service: T | undefined): T {
+    if (!service) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-
-    switch (modelConfig.channel) {
-      case AiLogChannel.Volcengine:
-        return this.volcengineVideoService.calculatePrice(params)
-      case AiLogChannel.OpenAI:
-        return this.openaiVideoService.calculatePrice(params)
-      case AiLogChannel.Grok:
-        return this.grokVideoService.calculatePrice(params)
-      case AiLogChannel.Gemini:
-        return this.geminiVideoService.calculatePrice(params)
-      case AiLogChannel.Dashscope:
-        return this.dashscopeVideoService.calculatePrice(params)
-      default:
-        throw new AppException(ResponseCode.InvalidModel)
-    }
+    return service
   }
 
   /**
@@ -94,8 +71,11 @@ export class VideoService {
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
+    if (request.mode && !(modelConfig.modes as readonly string[]).includes(request.mode)) {
+      throw new AppException(ResponseCode.InvalidModel)
+    }
 
-    let response: { id: string, points: number }
+    let response: { id: string }
 
     switch (modelConfig.channel) {
       case AiLogChannel.Volcengine:
@@ -109,6 +89,9 @@ export class VideoService {
         break
       case AiLogChannel.Dashscope:
         response = await this.dashscopeVideoService.createFromRequest(request)
+        break
+      case AiLogChannel.Relay:
+        response = await this.requireChannel(this.relayVideoService).createFromRequest(request)
         break
       default:
         throw new AppException(ResponseCode.InvalidModel)
@@ -125,7 +108,6 @@ export class VideoService {
     return {
       id: response.id,
       status: TaskStatus.Submitted,
-      points: response.points,
     }
   }
 
@@ -141,11 +123,11 @@ export class VideoService {
       case AiLogChannel.Grok:
         input = this.grokVideoService.extractInput(aiLog.request)
         break
-      case AiLogChannel.Gemini:
-        input = this.geminiVideoService.extractInput(aiLog.request)
-        break
       case AiLogChannel.Dashscope:
         input = this.dashscopeVideoService.extractInput(aiLog.request)
+        break
+      case AiLogChannel.Relay:
+        input = this.requireChannel(this.relayVideoService).extractInput(aiLog.request)
         break
       default:
         input = { prompt: '' }
@@ -183,13 +165,26 @@ export class VideoService {
       }
     }
 
-    if (!aiLog.response) {
-      throw new AppException(ResponseCode.InvalidAiTaskId)
-    }
-
     const finishedAt = aiLog.duration
       ? new Date(aiLog.startedAt.getTime() + aiLog.duration)
       : undefined
+
+    if (aiLog.status === AiLogStatus.Failed) {
+      return {
+        ...base,
+        status: TaskStatus.Failure,
+        videoUrl: undefined,
+        coverUrl: savedMedia.coverUrl ? FileUtil.buildUrl(savedMedia.coverUrl) : undefined,
+        mediaId: savedMedia.mediaId,
+        groupId: savedMedia.groupId,
+        error: { message: aiLog.errorMessage ?? 'Video task failed' },
+        finishedAt,
+      }
+    }
+
+    if (!aiLog.response) {
+      throw new AppException(ResponseCode.InvalidAiTaskId)
+    }
 
     const channelResult = this.getChannelTaskResult(aiLog)
 
@@ -213,8 +208,8 @@ export class VideoService {
       case AiLogChannel.Volcengine:
       case AiLogChannel.OpenAI:
       case AiLogChannel.Grok:
-      case AiLogChannel.Gemini:
       case AiLogChannel.Dashscope:
+      case AiLogChannel.Relay:
         await this.ensureSavedVideoMedia(aiLog as VideoAiLog)
     }
   }
@@ -231,10 +226,10 @@ export class VideoService {
         return this.openaiVideoService.getTaskResult(aiLog.response)
       case AiLogChannel.Grok:
         return this.grokVideoService.getTaskResult(aiLog.response)
-      case AiLogChannel.Gemini:
-        return this.geminiVideoService.getTaskResult(aiLog.response)
       case AiLogChannel.Dashscope:
         return this.dashscopeVideoService.getTaskResult(aiLog.response)
+      case AiLogChannel.Relay:
+        return this.requireChannel(this.relayVideoService).getTaskResult(aiLog.response)
       default:
         throw new AppException(ResponseCode.InvalidAiTaskId)
     }
@@ -256,8 +251,8 @@ export class VideoService {
       case AiLogChannel.Volcengine:
       case AiLogChannel.OpenAI:
       case AiLogChannel.Grok:
-      case AiLogChannel.Gemini:
       case AiLogChannel.Dashscope:
+      case AiLogChannel.Relay:
         return this.transformToCommonResponse(aiLog as VideoAiLog)
       default:
         throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -268,6 +263,13 @@ export class VideoService {
     const [aiLogs, count] = await this.aiLogRepo.listWithPagination({
       ...request,
       type: AiLogType.Video,
+      channels: [
+        AiLogChannel.Volcengine,
+        AiLogChannel.OpenAI,
+        AiLogChannel.Grok,
+        AiLogChannel.Dashscope,
+        AiLogChannel.Relay,
+      ],
     })
 
     return [
@@ -276,8 +278,8 @@ export class VideoService {
           case AiLogChannel.Volcengine:
           case AiLogChannel.OpenAI:
           case AiLogChannel.Grok:
-          case AiLogChannel.Gemini:
           case AiLogChannel.Dashscope:
+          case AiLogChannel.Relay:
             return this.transformToCommonResponse(log as VideoAiLog)
           default:
             throw new AppException(ResponseCode.InvalidAiTaskId)
@@ -314,7 +316,9 @@ export class VideoService {
 
     const targetGroupId = response.groupId ?? request.groupId
     if (!targetGroupId) {
-      return {}
+      return {
+        coverUrl: existingCoverUrl,
+      }
     }
 
     try {

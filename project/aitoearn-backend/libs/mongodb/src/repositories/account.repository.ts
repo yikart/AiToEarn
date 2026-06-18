@@ -5,6 +5,13 @@ import { Model, RootFilterQuery } from 'mongoose'
 import { Account, AccountStatus } from '../schemas'
 import { BaseRepository } from './base.repository'
 
+export interface AccountIdentity {
+  type: AccountType
+  uid: string
+  account?: string
+  clientType?: Account['clientType']
+}
+
 export class AccountRepository extends BaseRepository<Account> {
   logger = new Logger(AccountRepository.name)
   constructor(
@@ -12,29 +19,28 @@ export class AccountRepository extends BaseRepository<Account> {
     private readonly accountModel: Model<Account>,
   ) { super(accountModel) }
 
-  async createOrUpdateById(
-    account: {
-      type: AccountType
-      uid: string
-    },
+  async getByIdentity(identity: AccountIdentity): Promise<Account | null> {
+    return this.accountModel.findOne(this.getIdentityFilter(identity)).lean({ virtuals: true }).exec()
+  }
+
+  async createByIdentity(identity: AccountIdentity, accountData: Partial<Account>): Promise<Account> {
+    const account = new this.accountModel({
+      _id: this.getIdentityId(identity),
+      ...this.toAccountData(identity, accountData),
+    })
+    const saved = await account.save()
+    return saved.toObject() as Account
+  }
+
+  async updateByIdentity(
+    identity: AccountIdentity,
     accountData: Partial<Account>,
   ): Promise<Account | null> {
-    const { clientType, type, uid } = accountData
-    let _id = `${type}_${uid}`
-    if (
-      [AccountType.Xhs].includes(type as AccountType)
-    ) {
-      _id += `_${clientType}`
-      accountData.clientType = clientType
-    }
-    const res = await this.accountModel.findOneAndUpdate({
-      type: account.type,
-      uid: account.uid,
-    }, {
-      _id,
-      ...accountData,
-    }, { upsert: true, new: true }).lean({ virtuals: true }).exec()
-    return res
+    return this.accountModel.findOneAndUpdate(
+      this.getIdentityFilter(identity),
+      { $set: this.toAccountData(identity, accountData) },
+      { new: true },
+    ).lean({ virtuals: true }).exec()
   }
 
   async update(id: string, updateDto: Partial<Account>): Promise<Account | null> {
@@ -141,6 +147,43 @@ export class AccountRepository extends BaseRepository<Account> {
     return this.accountModel.findOne({ uid, type }).lean({ virtuals: true }).exec()
   }
 
+  async getAccountByUidAndAccount(uid: string, type: AccountType, account: string) {
+    return this.accountModel.findOne({ uid, type, account }).lean({ virtuals: true }).exec()
+  }
+
+  private getIdentityId(identity: AccountIdentity): string {
+    let id = `${identity.type}_${identity.uid}`
+    if (identity.account) {
+      id += `_${identity.account}`
+    }
+    if (identity.type === AccountType.RedNote) {
+      id += `_${identity.clientType}`
+    }
+    return id
+  }
+
+  private getIdentityFilter(identity: AccountIdentity): RootFilterQuery<Account> {
+    return {
+      $or: [
+        { _id: this.getIdentityId(identity) },
+        {
+          type: identity.type,
+          uid: identity.uid,
+          account: identity.account ?? null,
+          ...(identity.type === AccountType.RedNote ? { clientType: identity.clientType } : {}),
+        },
+      ],
+    }
+  }
+
+  private toAccountData(identity: AccountIdentity, accountData: Partial<Account>): Partial<Account> {
+    const data = {
+      ...accountData,
+      ...(identity.type === AccountType.RedNote ? { clientType: identity.clientType } : {}),
+    }
+    return Object.fromEntries(Object.entries(data).filter(([, value]) => value !== undefined)) as Partial<Account>
+  }
+
   /**
    * Get all accounts
    * @param userId
@@ -187,16 +230,10 @@ export class AccountRepository extends BaseRepository<Account> {
     }
   }
 
-  /**
-   * Get account list array by ID array ids
-   * @param userId
-   * @param ids
-   * @returns
-   */
-  async getAccountListByIdsOfUser(userId: string, ids: string[]) {
+  async listByUserIdAndIds(userId: string, ids: string[]) {
     return this.accountModel.find({
       userId,
-      id: { $in: ids },
+      _id: { $in: ids },
     }).lean({ virtuals: true })
   }
 
@@ -289,7 +326,7 @@ export class AccountRepository extends BaseRepository<Account> {
     return res.deletedCount > 0
   }
 
-  async deleteManyByIds(ids: string[], userId: string) {
+  async deleteByUserIdAndIds(userId: string, ids: string[]) {
     const res = await this.accountModel.deleteMany({
       _id: { $in: ids },
       userId,
@@ -312,6 +349,7 @@ export class AccountRepository extends BaseRepository<Account> {
     id: string,
     data: {
       fansCount?: number
+      followingCount?: number
       readCount?: number
       likeCount?: number
       collectCount?: number
@@ -348,6 +386,7 @@ export class AccountRepository extends BaseRepository<Account> {
 
   /**
    * Get account list array by space ID array spaceIds
+   * @param userId
    * @param spaceIds
    * @returns
    */
@@ -381,11 +420,18 @@ export class AccountRepository extends BaseRepository<Account> {
   }
 
   async updateManyRankByIds(userId: string, groupId: string, list: { id: string, rank: number }[]) {
-    const promises = list.map(element =>
-      this.accountModel.updateOne({ userId, groupId, _id: element.id }, { $set: { rank: element.rank } }),
+    if (list.length === 0) {
+      return true
+    }
+    const result = await this.accountModel.bulkWrite(
+      list.map(element => ({
+        updateOne: {
+          filter: { userId, groupId, _id: element.id },
+          update: { $set: { rank: element.rank } },
+        },
+      })),
     )
-    await Promise.all(promises)
-    return true
+    return result.matchedCount === list.length
   }
 
   // Get account cursor for iteration operations

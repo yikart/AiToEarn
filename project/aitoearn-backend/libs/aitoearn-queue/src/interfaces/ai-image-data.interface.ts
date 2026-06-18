@@ -1,4 +1,3 @@
-import type { AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import type { UserType } from '@yikart/common'
 import type { AiLogChannel, AiLogType } from '@yikart/mongodb'
 
@@ -18,10 +17,10 @@ export interface AiImageData {
   channel?: AiLogChannel
   /** 日志类型 */
   type: AiLogType
-  /** 计费 */
-  pricing: number
+  /** 失败后的额外重试次数 */
+  retry?: number
   /** 请求参数 */
   request: unknown
   /** 任务类型 */
-  taskType: AiLogSettlementTaskType
+  taskType: 'generation' | 'edit'
 }

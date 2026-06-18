@@ -1,4 +1,4 @@
-import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 export {
@@ -21,8 +21,6 @@ export const claudeChatProxyDtoSchema = z.looseObject({
   })).min(1),
   model: z.string(),
   max_tokens: z.number().int().min(1).default(32000),
-  billingGroupId: z.string().min(1).optional().describe('计费分组 ID，相同分组的连续 Chat 调用合并扣费日志'),
-  source: z.enum([CreditsConsumptionSource.AiChat, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ClaudeChatProxyDto extends createZodDto(claudeChatProxyDtoSchema, 'ClaudeChatProxyDto') {}
@@ -40,8 +38,6 @@ export const chatStreamProxyDtoSchema = z.looseObject({
     content: z.any(),
   })).min(1),
   model: z.string(),
-  billingGroupId: z.string().min(1).optional().describe('计费分组 ID，相同分组的连续 Chat 调用合并扣费日志'),
-  source: z.enum([CreditsConsumptionSource.AiChat, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ChatStreamProxyDto extends createZodDto(chatStreamProxyDtoSchema, 'ChatStreamProxyDto') {}

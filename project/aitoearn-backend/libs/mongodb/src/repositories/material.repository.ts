@@ -246,6 +246,13 @@ export class MaterialRepository extends BaseRepository<Material> {
     return this.materialModel.find({ _id: { $in: ids }, userId }).lean({ virtuals: true })
   }
 
+  async listByGroupId(groupId: string): Promise<Material[]> {
+    return this.materialModel.find({
+      groupId,
+      status: MaterialStatus.SUCCESS,
+    }).lean({ virtuals: true })
+  }
+
   // 增加草稿的使用次数，返回更新后的文档
   async updateUseCountById(id: string): Promise<Material | null> {
     const res = await this.materialModel.findOneAndUpdate(
@@ -263,24 +270,6 @@ export class MaterialRepository extends BaseRepository<Material> {
       { $inc: { useCount: -1 } },
     )
     return res.modifiedCount > 0
-  }
-
-  /**
-   * 通过 photoReference upsert 素材
-   */
-  async upsertByPhotoReference(newData: Partial<Material>): Promise<Material> {
-    const photoReference = newData.brandInfo?.photoReference
-    if (!photoReference) {
-      throw new Error('photoReference is required for upsert')
-    }
-
-    const result = await this.materialModel.findOneAndUpdate(
-      { 'brandInfo.photoReference': photoReference },
-      { $set: newData },
-      { upsert: true, new: true },
-    ).lean({ virtuals: true })
-
-    return result!
   }
 
   async listByUserIdAndTypeAndSourceAndStatusAndCreatedAt(

@@ -11,24 +11,21 @@ export class AccountGroupRepository extends BaseRepository<AccountGroup> {
 
   // 获取默认用户组, 没有则创建
   async getDefaultGroup(userId: string): Promise<AccountGroup> {
-    const data = await this.accountGroupModel
-      .findOne({
-        userId,
-        isDefault: true,
-      })
+    return await this.accountGroupModel
+      .findOneAndUpdate(
+        { userId, isDefault: true },
+        {
+          $setOnInsert: {
+            isDefault: true,
+            name: 'default',
+            rank: 1,
+            userId,
+          },
+        },
+        { upsert: true, new: true },
+      )
       .lean({ virtuals: true })
       .exec()
-
-    if (data)
-      return data
-
-    // 创建
-    return await this.createAccountGroup({
-      isDefault: true,
-      name: 'default',
-      rank: 1,
-      userId,
-    })
   }
 
   /**
@@ -38,7 +35,8 @@ export class AccountGroupRepository extends BaseRepository<AccountGroup> {
   async createAccountGroup(
     accountGroup: Partial<AccountGroup>,
   ): Promise<AccountGroup> {
-    return this.accountGroupModel.create(accountGroup)
+    const created = await this.accountGroupModel.create(accountGroup)
+    return created.toObject()
   }
 
   /**

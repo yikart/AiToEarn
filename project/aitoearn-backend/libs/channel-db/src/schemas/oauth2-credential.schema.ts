@@ -31,9 +31,8 @@ export class OAuth2Credential extends BaseTemp {
   accessToken: string
 
   @Prop({
-    required: true,
+    required: false,
     type: String,
-    default: '',
   })
   refreshToken: string
 

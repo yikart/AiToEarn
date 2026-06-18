@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<%
+  const pageLocale = typeof locale !== 'undefined' ? locale : 'en-US'
+  const t = typeof messages !== 'undefined' ? messages : {
+    title: 'Authorization',
+    selectTitle: 'Choose accounts to connect',
+    selectDescription: 'Select the accounts you want AiToEarn to manage for publishing and analytics.',
+    accountCount: 'Available accounts',
+    selectedCount: 'Selected',
+    noAccountsTitle: 'No accounts available',
+    noAccountsDescription: 'This authorization did not return any accounts that can be connected.',
+    continueButton: 'Continue',
+    selectRequired: 'Select at least one account to continue.',
+    platformUid: 'Platform ID',
+    account: 'Account'
+  }
+  const pageAccounts = Array.isArray(accounts) ? accounts : []
+  const pagePlatformDisplayName = typeof platformDisplayName !== 'undefined' ? platformDisplayName : ''
+  const pagePlatformLogoUrl = typeof platformLogoUrl !== 'undefined' ? platformLogoUrl : ''
+  const pageEmptyAccountHint = typeof emptyAccountHint !== 'undefined' && emptyAccountHint ? emptyAccountHint : undefined
+  const formAction = '/api/v2/channels/accounts/auth/selections'
+%>
+<html lang="<%= pageLocale %>">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= pagePlatformDisplayName || t.title %></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #f7f8fb;
+      --foreground: #171717;
+      --muted: #6b7280;
+      --muted-bg: #f3f4f6;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --destructive: #dc2626;
+      --card: #fff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Suisseintl, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--foreground);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.08) 1px, transparent 0),
+        var(--background);
+      background-size: 18px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    main {
+      width: min(100%, 720px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px 24px 18px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+      margin-bottom: 14px;
+    }
+
+    .platform-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+      line-height: 1.25;
+    }
+
+    .platform-name {
+      margin: 3px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      min-height: 300px;
+    }
+
+    .summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 18px 24px 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .selected-count {
+      color: var(--foreground);
+      font-weight: 600;
+    }
+
+    .account-list {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin: 0;
+      padding: 0 24px 20px;
+      list-style: none;
+    }
+
+    .account-row {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 70px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px 42px 12px 12px;
+      cursor: pointer;
+      background: #fff;
+      transition: border-color 0.15s ease, background 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .account-row.is-selected {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+      box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.2);
+    }
+
+    .account-row input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--muted-bg);
+      border: 1px solid var(--border);
+      flex: 0 0 auto;
+      object-fit: cover;
+    }
+
+    .account-text {
+      min-width: 0;
+      display: block;
+    }
+
+    .name {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .uid {
+      display: block;
+      margin-top: 3px;
+      font-size: 12px;
+      color: var(--muted);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .checkmark {
+      position: absolute;
+      top: 50%;
+      right: 12px;
+      width: 22px;
+      height: 22px;
+      transform: translateY(-50%);
+      border-radius: 50%;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .account-row.is-selected .checkmark {
+      border-color: var(--primary);
+      background: var(--primary);
+    }
+
+    .empty {
+      margin: 0 24px 20px;
+      padding: 22px;
+      border: 1px dashed var(--border);
+      border-radius: 10px;
+      background: #fafafa;
+      text-align: center;
+    }
+
+    .empty-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+      font-weight: 700;
+    }
+
+    .empty-description {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .empty-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      margin-top: 14px;
+      padding: 0 16px;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    footer {
+      margin-top: auto;
+      border-top: 1px solid var(--border);
+      padding: 16px 24px 20px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+
+    .error {
+      min-height: 18px;
+      margin: 0 0 10px;
+      color: var(--destructive);
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    button {
+      width: 100%;
+      min-height: 44px;
+      border: 0;
+      border-radius: 10px;
+      background: linear-gradient(90deg, #7c3aed 0%, #06b6d4 100%);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.15s ease;
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        align-items: stretch;
+        padding: 12px;
+      }
+
+      main {
+        width: 100%;
+      }
+
+      header,
+      .summary,
+      footer {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .account-list {
+        grid-template-columns: 1fr;
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+
+      .empty {
+        margin-left: 18px;
+        margin-right: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="platform">
+        <% if (pagePlatformLogoUrl) { %>
+          <img class="platform-logo" src="<%= pagePlatformLogoUrl %>" alt="" />
+        <% } %>
+        <div>
+          <h1><%= t.selectTitle %></h1>
+          <p class="platform-name"><%= pagePlatformDisplayName %></p>
+        </div>
+      </div>
+      <p class="description"><%= t.selectDescription %></p>
+    </header>
+
+    <form id="accountForm" method="POST" action="<%= formAction %>">
+      <div class="summary">
+        <span><%= t.accountCount %>: <%= pageAccounts.length %></span>
+        <span class="selected-count"><%= t.selectedCount %>: <span id="selectedCount"><%= pageAccounts.length > 0 ? 1 : 0 %></span></span>
+      </div>
+
+      <% if (pageAccounts.length > 0) { %>
+        <ul class="account-list">
+          <% pageAccounts.forEach(function(account, index) { %>
+            <li>
+              <label class="account-row<%= index === 0 ? ' is-selected' : '' %>">
+                <input type="checkbox" name="selectedAccounts" value="<%= account.platformUid %>" data-platform-uid="<%= account.platformUid %>" <% if (account.account) { %>data-account="<%= account.account %>"<% } %> <%= index === 0 ? 'checked' : '' %> />
+                <% if (account.avatarUrl) { %>
+                  <img class="avatar" src="<%= account.avatarUrl %>" alt="" />
+                <% } else { %>
+                  <span class="avatar"></span>
+                <% } %>
+                <span class="account-text">
+                  <span class="name"><%= account.displayName %></span>
+                  <span class="uid"><%= t.platformUid %>: <%= account.platformUid %></span>
+                  <% if (account.account) { %>
+                    <span class="uid"><%= t.account %>: <%= account.account %></span>
+                  <% } %>
+                </span>
+                <span class="checkmark">&#10003;</span>
+              </label>
+            </li>
+          <% }) %>
+        </ul>
+      <% } else { %>
+        <div class="empty">
+          <p class="empty-title"><%= pageEmptyAccountHint ? pageEmptyAccountHint.title : t.noAccountsTitle %></p>
+          <p class="empty-description"><%= pageEmptyAccountHint ? pageEmptyAccountHint.description : t.noAccountsDescription %></p>
+          <% if (pageEmptyAccountHint && pageEmptyAccountHint.action) { %>
+            <a class="empty-action" href="<%= pageEmptyAccountHint.action.url %>" target="_blank" rel="noopener noreferrer"><%= pageEmptyAccountHint.action.label %></a>
+          <% } %>
+        </div>
+      <% } %>
+
+      <footer>
+        <p id="selectError" class="error"></p>
+        <button id="continueButton" type="submit" <%= pageAccounts.length === 0 ? 'disabled' : '' %>><%= t.continueButton %></button>
+      </footer>
+    </form>
+  </main>
+
+  <script>
+    const form = document.getElementById('accountForm');
+    const selectedCount = document.getElementById('selectedCount');
+    const continueButton = document.getElementById('continueButton');
+    const selectError = document.getElementById('selectError');
+    const requiredMessage = '<%= t.selectRequired %>';
+    const inputs = Array.from(document.querySelectorAll('input[name="selectedAccounts"]'));
+
+    function updateSelection() {
+      const checkedCount = inputs.filter(function(input) {
+        return input.checked;
+      }).length;
+
+      selectedCount.textContent = String(checkedCount);
+      continueButton.disabled = checkedCount === 0;
+      selectError.textContent = checkedCount === 0 && inputs.length > 0 ? requiredMessage : '';
+
+      inputs.forEach(function(input) {
+        input.closest('.account-row').classList.toggle('is-selected', input.checked);
+      });
+    }
+
+    inputs.forEach(function(input) {
+      input.addEventListener('change', updateSelection);
+    });
+
+    form.addEventListener('submit', async function(event) {
+      event.preventDefault();
+      const checkedInputs = inputs.filter(function(input) { return input.checked; });
+      if (checkedInputs.length === 0) {
+        selectError.textContent = requiredMessage;
+        return;
+      }
+
+      const accounts = checkedInputs.map(function(input) {
+        const account = {
+          platformUid: input.dataset.platformUid || input.value
+        };
+        if (input.dataset.account) {
+          account.account = input.dataset.account;
+        }
+        return account;
+      });
+
+      continueButton.disabled = true;
+      selectError.textContent = '';
+
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ accounts })
+        });
+        const html = await response.text();
+        if (!response.ok) {
+          continueButton.disabled = false;
+          selectError.textContent = html || response.statusText || requiredMessage;
+          return;
+        }
+        document.open();
+        document.write(html);
+        document.close();
+      }
+      catch (error) {
+        continueButton.disabled = false;
+        selectError.textContent = error && error.message ? error.message : requiredMessage;
+      }
+    });
+
+    updateSelection();
+  </script>
+</body>
+
+</html>

@@ -1,7 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
 import { AitoearnAiClientConfig } from './aitoearn-ai-client.config'
 import { AitoearnAiClientService } from './aitoearn-ai-client.service'
-import { AgentService } from './clients/agent.service'
 import { AiService } from './clients/ai.service'
 
 @Module({})
@@ -16,10 +15,9 @@ export class AitoearnAiClientModule {
           useValue: options,
         },
         AiService,
-        AgentService,
         AitoearnAiClientService,
       ],
-      exports: [AitoearnAiClientService, AiService, AgentService],
+      exports: [AitoearnAiClientService, AiService],
     }
   }
 }

@@ -9,7 +9,6 @@
 export * from './file.util'
 export * from './ip.util'
 export * from './time.util'
-export * from './ua-parser.util'
 
 /**
  * 封装一个非阻塞的sleep函数，返回一个Promise对象。

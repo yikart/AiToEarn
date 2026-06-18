@@ -12,25 +12,19 @@
     "useDefineForClassFields": false,
     "paths": {
       "@yikart/ali-oss": ["libs/ali-oss/src/index.ts"],
-      "@yikart/ali-sms": ["libs/ali-sms/src/index.ts"],
       "@yikart/aitoearn-ai-client": ["libs/aitoearn-ai-client/src/index.ts"],
       "@yikart/aitoearn-ai-shared": [
         "libs/aitoearn-ai-shared/src/index.ts"
       ],
       "@yikart/aitoearn-auth": ["libs/aitoearn-auth/src/index.ts"],
-      "@yikart/aitoearn-server-client": [
-        "libs/aitoearn-server-client/src/index.ts"
-      ],
       "@yikart/aitoearn-server-shared": [
         "libs/aitoearn-server-shared/src/index.ts"
       ],
       "@yikart/aitoearn-queue": ["libs/aitoearn-queue/src/index.ts"],
       "@yikart/assets": ["libs/assets/src/index.ts"],
       "@yikart/aws-s3": ["libs/aws-s3/src/index.ts"],
-      "@yikart/channel-db": ["libs/channel-db/src/index.ts"],
       "@yikart/common": ["libs/common/src/index.ts"],
-      "@yikart/helpers": ["libs/helpers/src/index.ts"],
-      "@yikart/mail": ["libs/mail/src/index.ts"],
+      "@yikart/config-editor": ["libs/config-editor/src/index.ts"],
       "@yikart/mongodb": ["libs/mongodb/src/index.ts"],
       "@yikart/nest-mcp": ["libs/nest-mcp/src/index.ts"],
       "@yikart/redis": ["libs/redis/src/index.ts"],

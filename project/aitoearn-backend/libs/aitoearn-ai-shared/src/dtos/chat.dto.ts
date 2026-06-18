@@ -1,4 +1,4 @@
-import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogChannel } from '../enums'
 
@@ -44,8 +44,6 @@ export const chatCompletionDtoSchema = z.object({
   modalities: z.enum(['text', 'audio', 'image', 'video']).array().optional(),
   topP: z.number().optional(),
   modelKwargs: z.record(z.string(), z.any()).optional(),
-  billingGroupId: z.string().min(1).optional().describe('计费分组 ID，相同分组的连续 Chat 调用合并为一条计费日志'),
-  source: z.enum([CreditsConsumptionSource.AiChat, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ChatCompletionDto extends createZodDto(chatCompletionDtoSchema) {}

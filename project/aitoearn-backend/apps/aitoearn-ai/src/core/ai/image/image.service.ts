@@ -1,31 +1,24 @@
 import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common'
-import { AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLogChannel, AiLogImageResult, AiLogRepository, AiLogStatus, AiLogType, AssetType, ImageAiLogResponse, Transactional, UserRepository } from '@yikart/mongodb'
+import { AppException, getErrorMessage, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
+import { AiLogChannel, AiLogImageResult, AiLogRepository, AiLogStatus, AiLogType, AssetType, ImageAiLogResponse, Transactional } from '@yikart/mongodb'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
-import QRCode from 'qrcode'
-import sharp from 'sharp'
 
+import { runWithAiGenerationRetry } from '../ai-generation-retry.util'
 import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
-import { calculatePricingPoints, ChatPricing } from '../pricing/pricing-calculator'
-import { AsyncSettlementService } from '../settlement'
 import {
   GeminiImageGenerationDto,
   ImageEditDto,
   ImageEditModelsQueryDto,
   ImageGenerationDto,
   ImageGenerationModelsQueryDto,
-  QrCodeArtDto,
   UserGeminiImageGenerationDto,
   UserImageEditDto,
   UserImageGenerationDto,
-  UserQrCodeArtDto,
 } from './image.dto'
 
 type Uploadable = File | Response
@@ -39,11 +32,8 @@ export class ImageService {
     private readonly openaiService: OpenaiService,
     private readonly geminiService: GeminiService,
     private readonly aiLogRepo: AiLogRepository,
-    private readonly creditsHelper: CreditsHelperService,
     private readonly modelsConfigService: ModelsConfigService,
     private readonly queueService: QueueService,
-    private readonly userRepo: UserRepository,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) { }
 
   private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
@@ -52,6 +42,14 @@ export class ImageService {
       : this.modelsConfigService.config.image.edit.find(item => item.name === model)
 
     return modelConfig?.runtimeModel ?? model
+  }
+
+  private getImageModelRetry(model: string, kind: 'generation' | 'edit'): number {
+    const modelConfig = kind === 'generation'
+      ? this.modelsConfigService.config.image.generation.find(item => item.name === model)
+      : this.modelsConfigService.config.image.edit.find(item => item.name === model)
+
+    return modelConfig?.retry ?? 0
   }
 
   /**
@@ -129,7 +127,7 @@ export class ImageService {
 
     for (const image of result.data || []) {
       if (image.url) {
-        image.url = await this.uploadImageToS3(image.url, user, `ai/images/${request.model}`)
+        image.url = await this.uploadImageToS3(image.url, user, `${request.model}`)
       }
       if (image.b64_json) {
         const mimeType = `image/${result.output_format || 'png'}`
@@ -137,7 +135,7 @@ export class ImageService {
         const uploadResult = await this.assetsService.uploadFromBuffer(user, buffer, {
           type: AssetType.AiImage,
           mimeType,
-        }, `ai/images/${request.model}`)
+        }, `${request.model}`)
         image.url = uploadResult.asset.path
         delete image.b64_json
       }
@@ -181,7 +179,7 @@ export class ImageService {
 
     for (const image of imageResult.data || []) {
       if (image.url) {
-        image.url = await this.uploadImageToS3(image.url, user!, `ai/images/${request.model}`)
+        image.url = await this.uploadImageToS3(image.url, user!, `${request.model}`)
       }
       if (image.b64_json) {
         const mimeType = 'image/png'
@@ -189,7 +187,7 @@ export class ImageService {
         const uploadResult = await this.assetsService.uploadFromBuffer(user!, buffer, {
           type: AssetType.AiImage,
           mimeType,
-        }, `ai/images/${request.model}`)
+        }, `${request.model}`)
         image.url = uploadResult.asset.path
         delete image.b64_json
       }
@@ -220,7 +218,7 @@ export class ImageService {
       const uploadResult = await this.assetsService.uploadFromBuffer(userId, image.imageData, {
         type: AssetType.AiImage,
         mimeType: image.mimeType,
-      }, `ai/images/${model}`)
+      }, `${model}`)
       images.push({ url: uploadResult.asset.path, data: image.imageData.toString('base64'), mimeType: image.mimeType })
     }
 
@@ -231,13 +229,13 @@ export class ImageService {
   }
 
   /**
-   * 用户 Gemini 图片生成（基于 token 计费）
+   * 用户 Gemini 图片生成
    */
   async userGeminiGeneration(request: UserGeminiImageGenerationDto) {
-    const { userId, userType, model: requestedModel, source = CreditsConsumptionSource.AiImage, ...params } = request
+    const { userId, userType, model: requestedModel, ...params } = request
     const model = requestedModel || 'gemini-3.1-flash-image-preview'
 
-    const modelConfig = await this.getGeminiImageModelConfig(userId, userType, model)
+    const modelConfig = await this.getGeminiImageModelConfig(model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
@@ -247,29 +245,6 @@ export class ImageService {
 
     const usage = result.usage || { promptTokenCount: 0, candidatesTokenCount: 0, totalTokenCount: 0 }
 
-    let points: number
-    if (modelConfig.fixedImagePricing && result.images.length > 0) {
-      const imageSize = params.imageSize || '1K'
-      const pricingEntry = modelConfig.fixedImagePricing.find(p => p.resolution === imageSize)
-      const pricePerImage = pricingEntry?.price ?? modelConfig.fixedImagePricing[0].price
-      points = pricePerImage * result.images.length
-    }
-    else {
-      const pricing = modelConfig.pricing as ChatPricing
-      points = calculatePricingPoints(pricing, {
-        input_tokens: usage.promptTokenCount,
-        output_tokens: usage.candidatesTokenCount,
-        input_token_details: usage.inputTokenDetails,
-        output_token_details: usage.outputTokenDetails,
-      })
-    }
-
-    this.logger.debug({ points, usage, imageSize: params.imageSize }, 'Gemini image generation pricing')
-
-    if (points > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, points, model, { ...usage }, source)
-    }
-
     const duration = Date.now() - startedAt.getTime()
 
     await this.aiLogRepo.create({
@@ -278,7 +253,6 @@ export class ImageService {
       model,
       channel: AiLogChannel.Gemini,
       type: AiLogType.Image,
-      points,
       request: params,
       response: { ...result, data: void 0 },
       status: AiLogStatus.Success,
@@ -294,7 +268,6 @@ export class ImageService {
         total_tokens: usage.totalTokenCount,
         input_token_details: usage.inputTokenDetails,
         output_token_details: usage.outputTokenDetails,
-        points,
       },
     }
   }
@@ -303,8 +276,6 @@ export class ImageService {
    * 获取 Gemini 图片模型配置
    */
   private async getGeminiImageModelConfig(
-    userId: string,
-    userType: UserType,
     model: 'gemini-3.1-flash-image-preview' | 'gemini-3-pro-image-preview',
   ) {
     const chatModels = this.modelsConfigService.config.chat
@@ -317,58 +288,7 @@ export class ImageService {
   }
 
   /**
-   * 扣减用户Credits
-   */
-  private async deductUserCredits(
-    userId: string,
-    amount: number,
-    description: string,
-    metadata?: Record<string, unknown>,
-    source = CreditsConsumptionSource.AiImage,
-  ): Promise<void> {
-    await this.creditsHelper.deductCredits({
-      userId,
-      amount,
-      type: CreditsType.AiService,
-      source,
-      description,
-      metadata,
-    })
-  }
-
-  /**
-   * 恢复用户Credits
-   */
-  async addUserCredits(
-    userId: string,
-    amount: number,
-    description: string,
-    metadata?: Record<string, unknown>,
-  ): Promise<void> {
-    await this.creditsHelper.addCredits({
-      userId,
-      amount,
-      type: CreditsType.AiService,
-      description,
-      metadata,
-      expiredAt: null, // 退款Credits永久有效
-    })
-  }
-
-  /**
-   * 获取图片模型价格
-   */
-  private async getImageModelPricing(model: string, kind: 'generation' | 'edit', userId?: string, userType?: UserType): Promise<number> {
-    const list = kind === 'generation' ? await this.generationModelConfig({ userId, userType }) : await this.editModelConfig({ userId, userType })
-    const modelConfig = list.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel, 'model not found')
-    }
-    return Number(modelConfig.pricing)
-  }
-
-  /**
-   * 统一的用户请求处理：校验余额、计费、扣费、日志
+   * 统一的用户请求处理：日志记录和状态更新
    */
   private async handleUserAiAction<T>(opts: {
     userId: string
@@ -376,12 +296,11 @@ export class ImageService {
     model: string
     channel?: AiLogChannel
     type: AiLogType
-    pricing: number
     request: Record<string, unknown>
-    source?: CreditsConsumptionSource
+    retry?: number
     run: () => Promise<T>
   }): Promise<T> {
-    const { userId, userType, model, channel, type, pricing, request, source = CreditsConsumptionSource.AiImage, run } = opts
+    const { userId, userType, model, channel, type, request, retry, run } = opts
     const startedAt = new Date()
 
     const log = await this.aiLogRepo.create({
@@ -390,26 +309,28 @@ export class ImageService {
       model,
       channel: channel ?? AiLogChannel.NewApi,
       type,
-      points: pricing,
       request,
       status: AiLogStatus.Generating,
       startedAt,
     })
 
-    if (pricing > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, pricing, model, undefined, source)
-    }
-
-    const result = await run().catch(async (e) => {
-      if (pricing > 0 && userType === UserType.User) {
-        await this.addUserCredits(userId, pricing, model)
-      }
+    const result = await runWithAiGenerationRetry(
+      run,
+      retry,
+      (error, attempt, maxAttempts) => {
+        this.logger.warn(
+          { error, model, attempt, maxAttempts },
+          'AI image generation failed, retrying',
+        )
+      },
+    ).catch(async (e) => {
       const duration = Date.now() - startedAt.getTime()
+      const errorMessage = getErrorMessage(e)
 
       await this.aiLogRepo.updateById(log.id, {
         duration,
         status: AiLogStatus.Failed,
-        errorMessage: e.message,
+        errorMessage,
       })
       throw e
     })
@@ -428,18 +349,15 @@ export class ImageService {
    * 用户图片生成
    */
   async userGeneration(request: UserImageGenerationDto) {
-    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
-
-    const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
+    const { userId, userType, ...params } = request
 
     return await this.handleUserAiAction({
       userId,
       userType,
       model: params.model,
       type: AiLogType.Image,
-      pricing,
       request: params,
-      source,
+      retry: this.getImageModelRetry(params.model, 'generation'),
       run: () => this.generation({ ...params, user: userId }),
     })
   }
@@ -448,18 +366,15 @@ export class ImageService {
    * 用户图片编辑
    */
   async userEdit(request: UserImageEditDto) {
-    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
-
-    const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
+    const { userId, userType, ...params } = request
 
     return await this.handleUserAiAction({
       userId,
       userType,
       model: params.model,
       type: AiLogType.Image,
-      pricing,
       request: params,
-      source,
+      retry: this.getImageModelRetry(params.model, 'edit'),
       run: () => this.edit({ ...params, user: userId }),
     })
   }
@@ -485,12 +400,7 @@ export class ImageService {
    */
   @Transactional()
   async userGenerationAsync(request: UserImageGenerationDto) {
-    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
-    const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
-
-    if (pricing > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, pricing, params.model, undefined, source)
-    }
+    const { userId, userType, ...params } = request
 
     // 创建 AiLog 记录
     const log = await this.aiLogRepo.create({
@@ -499,11 +409,6 @@ export class ImageService {
       model: params.model,
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
-        taskType: AiLogSettlementTaskType.Generation,
-        source,
-      }),
       request: params,
       status: AiLogStatus.Generating,
       startedAt: new Date(),
@@ -517,9 +422,9 @@ export class ImageService {
       model: params.model,
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
-      pricing,
+      retry: this.getImageModelRetry(params.model, 'generation'),
       request: { ...params, user: userId },
-      taskType: AiLogSettlementTaskType.Generation,
+      taskType: 'generation',
     })
 
     return {
@@ -533,12 +438,7 @@ export class ImageService {
    */
   @Transactional()
   async userEditAsync(request: UserImageEditDto) {
-    const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
-    const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
-
-    if (pricing > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, pricing, params.model, undefined, source)
-    }
+    const { userId, userType, ...params } = request
 
     // 创建 AiLog 记录
     const log = await this.aiLogRepo.create({
@@ -547,11 +447,6 @@ export class ImageService {
       model: params.model,
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
-        taskType: AiLogSettlementTaskType.Edit,
-        source,
-      }),
       request: params,
       status: AiLogStatus.Generating,
       startedAt: new Date(),
@@ -565,157 +460,9 @@ export class ImageService {
       model: params.model,
       channel: AiLogChannel.NewApi,
       type: AiLogType.Image,
-      pricing,
+      retry: this.getImageModelRetry(params.model, 'edit'),
       request: { ...params, user: userId },
-      taskType: AiLogSettlementTaskType.Edit,
-    })
-
-    return {
-      logId: log.id,
-      status: AiLogStatus.Generating,
-    }
-  }
-
-  /**
-   * 生成二维码艺术图
-   * 流程：AI 生成艺术背景 → Gemini 分析最佳叠加位置 → sharp 叠加二维码
-   */
-  async qrCodeArt(userId: string, request: QrCodeArtDto) {
-    // 1. 生成二维码 buffer
-    const qrCodeBuffer = await QRCode.toBuffer(request.content, {
-      width: 512,
-      margin: 1,
-      errorCorrectionLevel: 'H',
-    })
-
-    // 2. 用 AI 生成艺术背景（不包含二维码）
-    let bgResult: Awaited<ReturnType<typeof this.openaiService.createImageEdit>>
-
-    const qrPlacementHint = '要求：图片右下角区域（约占图片面积15%-20%）必须保持简洁、颜色浅淡或留白，用于放置二维码。主要内容和视觉焦点应集中在图片的左侧和上方区域。'
-
-    if (request.referenceImageUrl) {
-      const referenceImage = await this.getUploadableByUrl(request.referenceImageUrl)
-      const bgPrompt = `基于参考图的艺术风格，生成一张美观的艺术背景图。${qrPlacementHint}${request.prompt}`
-
-      bgResult = await this.openaiService.createImageEdit({
-        model: request.model,
-        image: referenceImage,
-        prompt: bgPrompt,
-        size: (request.size as 'auto') || 'auto',
-      })
-    }
-    else {
-      const bgPrompt = `生成一张美观的艺术背景图。${qrPlacementHint}${request.prompt}`
-
-      bgResult = await this.openaiService.createImageGeneration({
-        model: request.model,
-        prompt: bgPrompt,
-        size: (request.size as 'auto') || 'auto',
-      })
-    }
-
-    const bgImage = bgResult.data?.[0]
-    if (!bgImage) {
-      throw new AppException(ResponseCode.AiCallFailed)
-    }
-
-    let bgBuffer: Buffer
-    if (bgImage.b64_json) {
-      bgBuffer = Buffer.from(bgImage.b64_json, 'base64')
-    }
-    else {
-      const bgResponse = await fetch(bgImage.url!)
-      bgBuffer = Buffer.from(await bgResponse.arrayBuffer())
-    }
-
-    // 3. 计算右下角固定位置
-    const bgMetadata = await sharp(bgBuffer).metadata()
-    const bgWidth = bgMetadata.width!
-    const bgHeight = bgMetadata.height!
-
-    const margin = Math.round(Math.min(bgWidth, bgHeight) * 0.04)
-    const qrSize = Math.round(Math.min(bgWidth, bgHeight) * 0.18)
-
-    const resizedQrCode = await sharp(qrCodeBuffer)
-      .resize(qrSize, qrSize, { fit: 'contain' })
-      .toBuffer()
-
-    // 4. 用 sharp 叠加二维码到右下角
-    const composited = await sharp(bgBuffer)
-      .composite([{
-        input: resizedQrCode,
-        left: bgWidth - qrSize - margin,
-        top: bgHeight - qrSize - margin,
-      }])
-      .png()
-      .toBuffer()
-
-    // 5. 上传结果
-    const uploadResult = await this.assetsService.uploadFromBuffer(userId, composited, {
-      type: AssetType.AiImage,
-      mimeType: 'image/png',
-    }, `ai/images/qrcode-art/${request.model}`)
-
-    return { imageUrl: uploadResult.asset.path }
-  }
-
-  /**
-   * 用户二维码艺术图生成（同步）
-   */
-  async userQrCodeArt(request: UserQrCodeArtDto) {
-    const { userId, userType, ...params } = request
-
-    const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
-
-    return await this.handleUserAiAction({
-      userId,
-      userType,
-      model: params.model,
-      type: AiLogType.Image,
-      pricing,
-      request: params,
-      run: () => this.qrCodeArt(userId, params),
-    })
-  }
-
-  /**
-   * 异步二维码艺术图生成
-   */
-  @Transactional()
-  async userQrCodeArtAsync(request: UserQrCodeArtDto) {
-    const { userId, userType, ...params } = request
-    const pricing = await this.getImageModelPricing(params.model, 'edit', userId, userType)
-
-    if (pricing > 0 && userType === UserType.User) {
-      await this.deductUserCredits(userId, pricing, params.model)
-    }
-
-    const log = await this.aiLogRepo.create({
-      userId,
-      userType,
-      model: params.model,
-      channel: AiLogChannel.NewApi,
-      type: AiLogType.Image,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
-        taskType: AiLogSettlementTaskType.QrCodeArt,
-        source: CreditsConsumptionSource.AiImage,
-      }),
-      request: params,
-      status: AiLogStatus.Generating,
-      startedAt: new Date(),
-    })
-
-    await this.queueService.addAiImageAsyncJob({
-      logId: log.id,
-      userId,
-      userType,
-      model: params.model,
-      channel: AiLogChannel.NewApi,
-      type: AiLogType.Image,
-      pricing,
-      request: params,
-      taskType: AiLogSettlementTaskType.QrCodeArt,
+      taskType: 'edit',
     })
 
     return {
@@ -754,7 +501,6 @@ export class ImageService {
       status: log.status,
       startedAt: log.startedAt,
       duration: log.duration,
-      points: log.points,
       request: log.request,
       response,
       images,

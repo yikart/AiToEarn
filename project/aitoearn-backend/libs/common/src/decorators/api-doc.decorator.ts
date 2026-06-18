@@ -140,6 +140,10 @@ export function ApiDoc(options: ApiDocOptions) {
             type: 'string',
             description: '错误消息',
           },
+          requestId: {
+            type: 'string',
+            description: '请求 ID',
+          },
         },
         required: ['data', 'code', 'message'],
       },

@@ -1,7 +1,6 @@
 import { createPaginationVo, createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogChannel, AiLogStatus, AiLogType } from '../enums'
-import { aiLogSettlementSchema } from './settlement.vo'
 
 // 日志基本信息
 const logItemSchema = z.object({
@@ -16,8 +15,6 @@ const logItemSchema = z.object({
   status: z.enum(AiLogStatus).describe('日志状态'),
   startedAt: z.date().describe('开始时间'),
   duration: z.number().optional().describe('持续时间'),
-  points: z.number().describe('用量点数'),
-  settlement: aiLogSettlementSchema.optional().describe('异步结算信息'),
   createdAt: z.date().describe('创建时间'),
   updatedAt: z.date().describe('更新时间'),
 })

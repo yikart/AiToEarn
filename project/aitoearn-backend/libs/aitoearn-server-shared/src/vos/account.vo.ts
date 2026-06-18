@@ -1,7 +1,7 @@
 import { AccountType, createZodDto } from '@yikart/common'
 import { z } from 'zod'
 
-import { AccountStatus, PublishRecordLinkStatus, PublishStatus, PublishType } from '../enums'
+import { AccountStatus, PublishRecordLinkStatus, PublishRecordSource, PublishStatus, PublishType } from '../enums'
 
 // ---------------------------------------------------------------------------
 // Account
@@ -21,7 +21,6 @@ export const AccountSchema = z.object({
   avatar: z.string().optional().describe('头像 URL'),
   nickname: z.string().describe('昵称'),
   status: z.enum(AccountStatus).describe('账号状态'),
-  channelId: z.string().optional().describe('频道 ID'),
 })
 export interface Account extends z.infer<typeof AccountSchema> {}
 
@@ -44,7 +43,6 @@ export class NewAccount {
       nickname: string
       lastStatsTime?: Date
       loginTime?: Date
-      channelId?: string
       status?: AccountStatus
       groupId?: string
     },
@@ -79,6 +77,7 @@ export const PublishRecordSchema = z.object({
   flowId: z.string().optional().describe('流程 ID'),
   materialGroupId: z.string().optional().describe('素材组 ID'),
   materialId: z.string().optional().describe('素材 ID'),
+  taskId: z.string().optional().describe('任务 ID'),
   type: z.enum(PublishType).describe('发布类型'),
   title: z.string().optional().describe('标题'),
   desc: z.string().optional().describe('描述'),
@@ -91,7 +90,14 @@ export const PublishRecordSchema = z.object({
   imgUrlList: z.array(z.string()).optional().describe('图片 URL 列表'),
   publishTime: z.coerce.date().describe('发布时间'),
   status: z.enum(PublishStatus).describe('发布状态'),
+  source: z.enum(PublishRecordSource).optional().describe('发布来源'),
   errorMsg: z.string().optional().describe('错误信息'),
+  errorData: z.object({
+    type: z.string(),
+    code: z.string(),
+    message: z.string(),
+    originalData: z.record(z.string(), z.any()).optional(),
+  }).optional().describe('结构化错误诊断信息'),
   queueId: z.string().optional().describe('队列 ID'),
   inQueue: z.boolean().describe('是否在队列中'),
   option: z.any().optional().describe('额外选项'),
@@ -106,6 +112,10 @@ export const PublishRecordSchema = z.object({
   updatedAt: z.coerce.date().describe('更新时间'),
 })
 export interface PublishRecord extends z.infer<typeof PublishRecordSchema> {}
+
+// ---------------------------------------------------------------------------
+// Existing VOs
+// ---------------------------------------------------------------------------
 
 export const BatchAccountStatusVoSchema = z.object({
   statuses: z.record(z.string(), z.number()).describe('账号 ID → 状态映射'),

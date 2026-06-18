@@ -204,14 +204,4 @@ export class MaterialService {
 
     return true
   }
-
-  /**
-   * 通过 photoReference upsert 素材
-   */
-  async upsertByPhotoReference(newData: NewMaterial): Promise<Material> {
-    if (!newData.brandInfo?.photoReference) {
-      return this.materialRepository.create(newData)
-    }
-    return this.materialRepository.upsertByPhotoReference(newData)
-  }
 }

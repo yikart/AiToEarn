@@ -1,12 +1,11 @@
 import { Module } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { McpModule } from '@yikart/nest-mcp'
-import { AccountMcpController } from '../account/account.mcp.controller'
-import { AccountModule } from '../account/account.module'
-import { PublishMcpController } from '../channel/publish.mcp.controller'
-import { PublishModule as PublishingModule } from '../channel/publishing/publishing.module'
+import { ChannelsModule } from '../channels/channels.module'
+import { ChannelsMcpModule } from '../channels/mcp/channels.mcp.module'
 import { ContentMcpController } from '../content/content.mcp.controller'
 import { ContentModule } from '../content/content.module'
+import { DraftGenerationMcpController } from './draft-generation.mcp.controller'
 
 @Module({
   imports: [
@@ -16,14 +15,13 @@ import { ContentModule } from '../content/content.module'
       apiPrefix: 'unified',
       decorators: [ApiTags('MCP/Unified')],
     }),
-    AccountModule,
-    PublishingModule,
+    ChannelsModule,
+    ChannelsMcpModule,
     ContentModule,
   ],
   providers: [
-    AccountMcpController,
-    PublishMcpController,
     ContentMcpController,
+    DraftGenerationMcpController,
   ],
 })
 export class UnifiedMcpModule {}

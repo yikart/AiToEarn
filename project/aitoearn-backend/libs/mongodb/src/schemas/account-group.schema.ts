@@ -70,3 +70,11 @@ export class AccountGroup extends WithTimestampSchema {
 }
 
 export const AccountGroupSchema = SchemaFactory.createForClass(AccountGroup)
+AccountGroupSchema.index(
+  { userId: 1, isDefault: 1 },
+  {
+    unique: true,
+    name: 'userId_1_isDefault_1_default',
+    partialFilterExpression: { isDefault: true },
+  },
+)

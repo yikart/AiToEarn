@@ -1,4 +1,4 @@
-import { createZodDto, zodI18nString } from '@yikart/common'
+import { createZodDto, FileUtil, zodI18nString } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogStatus } from '../enums'
 
@@ -11,7 +11,7 @@ const usageMetadataSchema = z.object({
 
 // 图片对象
 const imageObjectSchema = z.object({
-  url: z.string().optional().describe('图片URL'),
+  url: FileUtil.zodBuildUrl().nullable().optional().describe('图片URL'),
   b64_json: z.string().optional().describe('base64编码的图片'),
   revised_prompt: z.string().optional().describe('修订后的提示词'),
 })
@@ -40,9 +40,6 @@ export const imageGenerationModelSchema = z.object({
   sizes: z.array(z.string()).describe('支持的尺寸'),
   qualities: z.array(z.string()).describe('支持的质量选项'),
   styles: z.array(z.string()).describe('支持的风格选项'),
-  pricing: z.string(),
-  discount: z.string().optional(),
-  originPrice: z.string().optional(),
 })
 
 export class ImageGenerationModelParamsVo extends createZodDto(imageGenerationModelSchema) {}
@@ -56,9 +53,6 @@ export const imageEditModelSchema = z.object({
   tags: z.array(zodI18nString()).default([]),
   mainTag: z.string().optional(),
   sizes: z.array(z.string()).describe('支持的尺寸'),
-  pricing: z.string(),
-  discount: z.string().optional(),
-  originPrice: z.string().optional(),
   maxInputImages: z.number(),
 })
 
@@ -78,7 +72,6 @@ const taskStatusResponseSchema = z.object({
   status: z.enum(AiLogStatus).describe('任务状态'),
   startedAt: z.date().describe('开始时间'),
   duration: z.number().optional().describe('持续时间(毫秒)'),
-  points: z.number().describe('用量点数'),
   request: z.record(z.string(), z.unknown()).describe('请求参数'),
   response: z.record(z.string(), z.unknown()).optional().describe('响应结果'),
   images: z.array(imageObjectSchema).optional().describe('生成的图片列表'),
@@ -88,10 +81,3 @@ const taskStatusResponseSchema = z.object({
 })
 
 export class TaskStatusResponseVo extends createZodDto(taskStatusResponseSchema) {}
-
-// 二维码艺术图生成响应
-const qrCodeArtResponseSchema = z.object({
-  imageUrl: z.string().describe('生成的二维码艺术图 URL'),
-})
-
-export class QrCodeArtResponseVo extends createZodDto(qrCodeArtResponseSchema) {}

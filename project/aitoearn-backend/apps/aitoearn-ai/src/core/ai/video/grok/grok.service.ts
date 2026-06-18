@@ -1,19 +1,14 @@
 import type { GrokVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
 import { Injectable, Logger } from '@nestjs/common'
-import { AiLogSettlementSettledBy } from '@yikart/aitoearn-ai-shared'
-import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, StorageProvider, VideoMetadataService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
+import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { AxiosError } from 'axios'
 import { TaskStatus } from '../../../../common'
 import { config } from '../../../../config'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import { GrokAspectRatio, GrokGetVideoStatusResponse, GrokLibService, GrokResolution, GrokVideoTaskStatus } from '../../libs/grok'
-import { ModelsConfigService } from '../../models-config'
-import { AsyncSettlementService } from '../../settlement'
 
 export interface GrokVideoCreateRequest {
   userId: string
@@ -26,7 +21,6 @@ export interface GrokVideoCreateRequest {
   image?: string
   referenceImages?: string[]
   videoUrl?: string
-  source?: CreditsConsumptionSource
 }
 
 export interface GrokVideoCallbackDto {
@@ -44,51 +38,9 @@ export class GrokVideoService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
     private readonly storageProvider: StorageProvider,
-    private readonly modelsConfigService: ModelsConfigService,
-    private readonly creditsHelper: CreditsHelperService,
-    private readonly queueService: QueueService,
     private readonly videoMetadataService: VideoMetadataService,
     private readonly aiAvailability: AiAvailabilityService,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) { }
-
-  private async enqueueTaskRefund(aiLog: AiLog): Promise<void> {
-    await this.asyncSettlementService.markFailed(aiLog.id, {
-      channel: aiLog.channel,
-      action: aiLog.action,
-      settledBy: AiLogSettlementSettledBy.GrokCallback,
-    })
-
-    if (aiLog.userType !== UserType.User) {
-      return
-    }
-
-    if (!aiLog.taskId) {
-      this.logger.error(
-        { aiLogId: aiLog.id, userId: aiLog.userId },
-        'Cannot enqueue refund: missing taskId',
-      )
-      return
-    }
-
-    await this.queueService.addAiTaskRefundJob({
-      userId: aiLog.userId,
-      taskId: aiLog.id,
-      amount: aiLog.points,
-      description: aiLog.model,
-      expiredAt: null,
-      metadata: {
-        channel: aiLog.channel,
-        action: aiLog.action,
-        failedAt: new Date().toISOString(),
-      },
-    })
-
-    this.logger.log(
-      { userId: aiLog.userId, taskId: aiLog.taskId, amount: aiLog.points },
-      'Enqueued AI task refund',
-    )
-  }
 
   private async toAccessibleUrl(url: string | undefined): Promise<string | undefined> {
     if (!url) {
@@ -101,7 +53,7 @@ export class GrokVideoService {
     return this.storageProvider.toPresignedUrl(url)
   }
 
-  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string, points: number }> {
+  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
     const videoUrl = await this.toAccessibleUrl(request.video_url)
     const image = Array.isArray(request.image)
       ? undefined
@@ -124,61 +76,27 @@ export class GrokVideoService {
       image,
       referenceImages,
       videoUrl,
-      source: request.source,
     })
 
-    return { id: result.id, points: result.points }
+    return { id: result.id }
   }
 
-  calculatePrice(params: { model: string, duration?: number, mode?: string }): number {
-    const { model, duration, mode } = params
-
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    const defaults = modelConfig.defaults || {}
-    const finalDuration = duration || defaults.duration
-
-    const pricingConfig = modelConfig.pricing.find((pricing) => {
-      const durationMatch = !pricing.duration || !finalDuration || pricing.duration === finalDuration
-      const modeMatch = mode ? pricing.mode === mode : !pricing.mode
-      return durationMatch && modeMatch
-    })
-
-    if (!pricingConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    return pricingConfig.price
-  }
-
-  private resolveVideoEditDuration(model: string, requestedDuration?: number, metadataDuration?: number): number | undefined {
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
+  private resolveVideoEditDuration(requestedDuration?: number, metadataDuration?: number): number | undefined {
     const normalizedMetadataDuration = Number(metadataDuration)
     if (Number.isFinite(normalizedMetadataDuration) && normalizedMetadataDuration > 0) {
       return Math.ceil(normalizedMetadataDuration)
     }
 
-    return requestedDuration ?? modelConfig.defaults?.duration
+    return requestedDuration
   }
 
   async createVideo(request: GrokVideoCreateRequest) {
-    const { userId, userType, model, prompt, duration, aspectRatio, resolution, image, referenceImages, videoUrl, source = CreditsConsumptionSource.AiVideo } = request
+    const { userId, userType, model, prompt, duration, aspectRatio, resolution, image, referenceImages, videoUrl } = request
 
-    let pricing: number
+    let resolvedDuration = duration
     if (videoUrl) {
       const metadata = await this.videoMetadataService.probeVideoMetadata(videoUrl)
-      const resolvedDuration = this.resolveVideoEditDuration(model, duration, metadata.duration)
-      pricing = this.calculatePrice({ model, duration: resolvedDuration, mode: 'video2video' })
-    }
-    else {
-      pricing = this.calculatePrice({ model, duration })
+      resolvedDuration = this.resolveVideoEditDuration(duration, metadata.duration)
     }
 
     const startedAt = new Date()
@@ -194,7 +112,7 @@ export class GrokVideoService {
         : this.grokLibService.createVideo({
             model,
             prompt,
-            duration,
+            duration: resolvedDuration,
             aspect_ratio: aspectRatio as GrokAspectRatio,
             resolution: resolution as GrokResolution,
             image: image ? { url: image } : undefined,
@@ -202,16 +120,6 @@ export class GrokVideoService {
           }),
       r => r.request_id,
     )
-
-    if (userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId,
-        amount: pricing,
-        type: CreditsType.AiService,
-        source,
-        description: model,
-      })
-    }
 
     const aiLog = await this.aiLogRepo.create({
       userId,
@@ -221,16 +129,13 @@ export class GrokVideoService {
       channel: AiLogChannel.Grok,
       startedAt,
       type: AiLogType.Video,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, { source }),
-      request: { model, prompt, duration, aspectRatio, resolution, image, referenceImages, videoUrl },
+      request: { model, prompt, duration: resolvedDuration, aspectRatio, resolution, image, referenceImages, videoUrl },
       status: AiLogStatus.Generating,
     })
 
     return {
       id: aiLog.id,
       requestId: result.request_id,
-      points: pricing,
     }
   }
 
@@ -245,7 +150,7 @@ export class GrokVideoService {
     this.logger.log({ result, aiLogId: aiLog.id }, 'Grok callback')
 
     if (result.video?.url) {
-      const downloadUrl = config.ai.grok.proxyUrl
+      const downloadUrl = config.ai.grok?.proxyUrl
         ? `${config.ai.grok.proxyUrl}/${result.video.url}`
         : result.video.url
 
@@ -260,16 +165,21 @@ export class GrokVideoService {
         videoUrl: uploaded.asset.path,
       }
 
-      await this.aiLogRepo.updateById(aiLog.id, {
-        status: AiLogStatus.Success,
-        response: callbackData,
-        duration: elapsedMs,
-      })
+      const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(
+        aiLog.id,
+        AiLogStatus.Generating,
+        {
+          $set: {
+            status: AiLogStatus.Success,
+            response: callbackData,
+            duration: elapsedMs,
+          },
+        },
+      )
 
-      await this.asyncSettlementService.settleSuccess(aiLog.id, aiLog.points, {
-        channel: aiLog.channel,
-        settledBy: AiLogSettlementSettledBy.GrokCallback,
-      })
+      if (!updatedAiLog) {
+        return aiLog.response!
+      }
 
       await this.aiAvailability.recordAsyncComplete(
         aiLog.taskId!,
@@ -297,14 +207,18 @@ export class GrokVideoService {
         error: errorMessage,
       }
 
-      await this.aiLogRepo.updateById(aiLog.id, {
-        status: AiLogStatus.Failed,
-        response: callbackData,
-        duration: elapsedMs,
-        errorMessage,
+      const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(aiLog.id, AiLogStatus.Generating, {
+        $set: {
+          status: AiLogStatus.Failed,
+          response: callbackData,
+          duration: elapsedMs,
+          errorMessage,
+        },
       })
 
-      await this.enqueueTaskRefund(aiLog)
+      if (!updatedAiLog) {
+        return aiLog.response!
+      }
 
       const isContentModeration = errorMessage.toLowerCase().includes('content moderation')
 

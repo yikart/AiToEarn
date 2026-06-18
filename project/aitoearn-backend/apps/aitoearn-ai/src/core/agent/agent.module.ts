@@ -1,7 +1,4 @@
 import { Module } from '@nestjs/common'
-import { AitoearnServerClientModule } from '@yikart/aitoearn-server-client'
-import { HelpersModule } from '@yikart/helpers'
-import { config } from '../../config'
 import { AideoModule } from '../ai/aideo'
 import { ChatModule } from '../ai/chat'
 import { ImageModule } from '../ai/image'
@@ -24,13 +21,11 @@ import { SkillInitService } from './skill-init.service'
 
 @Module({
   imports: [
-    HelpersModule,
     ChatModule,
     ImageModule,
     VideoModule,
     AideoModule,
     ClaudeCodeRouterModule,
-    AitoearnServerClientModule.forRoot(config.serverClient),
   ],
   controllers: [AgentController],
   providers: [

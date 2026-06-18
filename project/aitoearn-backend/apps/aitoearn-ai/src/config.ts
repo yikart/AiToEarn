@@ -1,5 +1,4 @@
 import { aitoearnAuthConfigSchema } from '@yikart/aitoearn-auth'
-import { aitoearnServerClientConfigSchema } from '@yikart/aitoearn-server-client'
 import { assetsConfigSchema } from '@yikart/assets'
 import { baseConfig, createZodDto, i18nObjectSchema, selectConfig } from '@yikart/common'
 import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
@@ -10,67 +9,43 @@ import { dashscopeConfigSchema } from './core/ai/libs/dashscope'
 import { geminiConfigSchema } from './core/ai/libs/gemini'
 import { grokConfigSchema } from './core/ai/libs/grok'
 import { openaiConfigSchema } from './core/ai/libs/openai'
+import { relayConfigSchema } from './core/ai/libs/relay/relay.config'
 import { volcengineConfigSchema } from './core/ai/libs/volcengine'
 
-const chatPricingModalitySchema = z.object({
-  text: z.string(),
-  image: z.string().optional(),
-  video: z.string().optional(),
-  audio: z.string().optional(),
-}).strict()
-
-const chatPricingTierSchema = z.object({
-  maxInputTokens: z.number().int().positive().optional(),
-  input: chatPricingModalitySchema,
-  output: chatPricingModalitySchema,
-}).strict()
-
-const chatTieredPricingSchema = z.object({
-  tiers: z.array(chatPricingTierSchema).min(1),
-}).strict().superRefine((pricing, ctx) => {
-  const { tiers } = pricing
-  const lastIndex = tiers.length - 1
-
-  for (let i = 0; i < tiers.length; i++) {
-    const current = tiers[i]
-    const prev = i > 0 ? tiers[i - 1] : undefined
-
-    if (i !== lastIndex && current.maxInputTokens == null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['tiers', i, 'maxInputTokens'],
-        message: 'Non-final tiers must define maxInputTokens',
-      })
-    }
-
-    if (!prev) {
-      continue
-    }
-
-    if (prev.maxInputTokens == null) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['tiers', i - 1, 'maxInputTokens'],
-        message: 'Only the last tier can omit maxInputTokens',
-      })
-      continue
-    }
-
-    if (current.maxInputTokens != null && current.maxInputTokens <= prev.maxInputTokens) {
-      ctx.addIssue({
-        code: 'custom',
-        path: ['tiers', i, 'maxInputTokens'],
-        message: 'Tier maxInputTokens must be strictly increasing',
-      })
-    }
-  }
+const videoModelInputConstraintSchema = z.object({
+  maxCount: z.number().int().min(0).optional(),
+  formats: z.array(z.string()).optional(),
+  minDuration: z.number().positive().optional(),
+  maxDuration: z.number().positive().optional(),
+  maxTotalDuration: z.number().positive().optional(),
+  maxSizeMb: z.number().positive().optional(),
+  minAspectRatio: z.number().positive().optional(),
+  maxAspectRatio: z.number().positive().optional(),
+  minWidth: z.number().int().positive().optional(),
+  maxWidth: z.number().int().positive().optional(),
+  minPixels: z.number().int().positive().optional(),
+  maxPixels: z.number().int().positive().optional(),
+  minFps: z.number().positive().optional(),
+  maxFps: z.number().positive().optional(),
 })
 
-const chatFlatPricingSchema = z.object({
-  price: z.string(),
+const videoModelInputConstraintsSchema = z.object({
+  images: videoModelInputConstraintSchema.optional(),
+  videos: videoModelInputConstraintSchema.optional(),
+  audios: videoModelInputConstraintSchema.optional(),
+}).optional()
+
+const videoModelRuntimeFallbackSchema = z.object({
+  channel: z.enum(AiLogChannel),
+  model: z.string(),
 }).strict()
 
-export const chatPricingSchema = z.union([chatFlatPricingSchema, chatTieredPricingSchema])
+const videoModelRuntimeModelSchema = z.object({
+  model: z.string(),
+  mode: z.string().optional(),
+  resolution: z.string().optional(),
+  fallback: videoModelRuntimeFallbackSchema.optional(),
+}).strict()
 
 export const aiModelsConfigSchema = z.object({
   chat: z.array(z.object({
@@ -84,11 +59,6 @@ export const aiModelsConfigSchema = z.object({
     scenes: z.string().array().optional(),
     inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
     outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
-    pricing: chatPricingSchema,
-    fixedImagePricing: z.array(z.object({
-      resolution: z.string(),
-      price: z.number(),
-    })).optional(),
   })),
   image: z.object({
     generation: z.array(z.object({
@@ -99,10 +69,10 @@ export const aiModelsConfigSchema = z.object({
       tags: z.array(i18nObjectSchema).default([]),
       mainTag: z.string().optional(),
       runtimeModel: z.string().optional(),
+      retry: z.number().int().min(0).optional(),
       sizes: z.array(z.string()),
       qualities: z.array(z.string()),
       styles: z.array(z.string()),
-      pricing: z.string(),
     })),
     edit: z.array(z.object({
       name: z.string(),
@@ -112,8 +82,8 @@ export const aiModelsConfigSchema = z.object({
       tags: z.array(i18nObjectSchema).default([]),
       mainTag: z.string().optional(),
       runtimeModel: z.string().optional(),
+      retry: z.number().int().min(0).optional(),
       sizes: z.array(z.string()),
-      pricing: z.string(),
       maxInputImages: z.number(),
     })),
   }),
@@ -126,56 +96,22 @@ export const aiModelsConfigSchema = z.object({
       tags: z.array(i18nObjectSchema).default([]),
       mainTag: z.string().optional(),
       channel: z.enum(AiLogChannel),
-      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'video2video'])),
+      modes: z.array(z.enum(['text2video', 'image2video', 'flf2video', 'lf2video', 'multi-image2video', 'multi-ref', 'video2video'])),
       resolutions: z.array(z.string()),
       durations: z.array(z.number()),
       maxInputImages: z.number().int().min(0),
+      inputConstraints: videoModelInputConstraintsSchema,
       aspectRatios: z.array(z.string()),
+      runtimeModels: z.array(videoModelRuntimeModelSchema).optional(),
       defaults: z.object({
         resolution: z.string().optional(),
         aspectRatio: z.string().optional(),
         duration: z.number().optional(),
       }),
-      pricing: z.object({
-        resolution: z.string().optional(),
-        aspectRatio: z.string().optional(),
-        mode: z.string().optional(),
-        duration: z.number().optional(),
-        price: z.number(),
-        originPrice: z.number().optional(),
-      }).array(),
       queuePriority: z.number().int().min(1).max(2097152).optional(),
-      modeMappings: z.record(z.string(), z.string()).optional(),
-      settlement: z.object({
-        withVideo: z.string().optional(),
-        withoutVideo: z.string().optional(),
-      }).optional(),
+      retry: z.number().int().min(0).optional(),
     })),
   }),
-})
-
-export const aideoPricingConfigSchema = z.object({
-  vCreative: z.object({
-    basePrice: z.number().describe('视频风格转换基础价格（元/分钟，720P）'),
-  }),
-  vision: z.object({
-    basePrice: z.number().describe('视频理解基础价格（元/分钟）'),
-  }),
-  highlight: z.object({
-    basePrice: z.number().describe('高光智剪基础价格（元/分钟）'),
-  }),
-  aiTranslation: z.object({
-    facialTranslation: z.number().describe('面容翻译价格（元/分钟）'),
-  }),
-  erase: z.object({
-    basePrice: z.number().describe('AI 字幕擦除基础价格（元/分钟）'),
-  }),
-  videoEdit: z.object({
-    basePrice: z.number().describe('视频编辑基础价格（元/分钟，720P）'),
-  }),
-  dramaRecap: z.object({
-    basePrice: z.number().describe('短剧解说基础价格（元/分钟）'),
-  }).optional(),
 })
 
 export const aiConfigSchema = z.object({
@@ -187,8 +123,8 @@ export const aiConfigSchema = z.object({
   }),
   grok: grokConfigSchema,
   dashscope: dashscopeConfigSchema,
-  aideo: aideoPricingConfigSchema,
   gemini: geminiConfigSchema,
+  relay: relayConfigSchema.optional(),
   anthropic: z.object({
     baseUrl: z.string(),
     apiKey: z.string(),
@@ -212,27 +148,55 @@ export const aiConfigSchema = z.object({
       tags: z.array(i18nObjectSchema).default([]),
       supportedAspectRatios: z.array(z.string()).describe('支持的图片宽高比列表'),
       maxInputImages: z.number().int().min(1).describe('最多可输入的参考图片数量'),
-      pricing: z.array(z.object({
-        resolution: z.string().describe('分辨率，如 0.5K, 1K, 2K'),
-        pricePerImage: z.number().describe('每张图片 USD 单价'),
-        originPrice: z.number().optional().describe('原价'),
-      })),
     })),
   }),
 })
+
+const defaultAgentModels = [
+  'claude-opus-4-6',
+  'claude-haiku-4-5-20251001-thinking',
+  'claude-opus-4-5-20251101-thinking',
+  'claude-opus-4-5-20251101',
+  'claude-sonnet-4-5-20250929-thinking',
+  'claude-haiku-4-5-20251001',
+  'claude-opus-4-1-20250805',
+  'claude-opus-4-1-20250805-thinking',
+  'claude-sonnet-4-5-20250929',
+  'claude-opus-4-6',
+  'claude-opus-4-6-thinking',
+]
+
+const agentModelNameSchema = z.string().min(1).regex(/^[^,]+$/)
 
 // Agent 配置
 export const agentConfigSchema = z.object({
   baseUrl: z.string(),
   apiKey: z.string(),
+  models: z.array(agentModelNameSchema).min(1).default(defaultAgentModels).describe('Agent 可用模型列表'),
+  defaultModel: agentModelNameSchema.default('claude-opus-4-6').describe('Agent 默认模型'),
+  backgroundModel: agentModelNameSchema.default('claude-haiku-4-5-20251001').describe('Agent 后台子任务模型'),
+  thinkModel: agentModelNameSchema.default('claude-opus-4-6').describe('Agent 思考任务模型'),
   taskTimeoutMs: z.number().default(60 * 60 * 1000).describe('Agent 任务超时时间（毫秒），默认 60 分钟'),
-  gracefulShutdownTimeoutMs: z.number().optional(),
-  analysis: z.object({
-    apiKey: z.string().describe('Gemini API Key'),
-    baseUrl: z.string().optional().describe('Gemini API Base URL'),
-    model: z.string().default('gemini-3.1-pro-preview').describe('默认模型'),
-    apiVersion: z.string().default('v1beta'),
-  }).describe('Agent 分析配置'),
+}).superRefine((agent, ctx) => {
+  const configuredModels = new Set(agent.models)
+
+  for (const [field, model] of Object.entries({
+    defaultModel: agent.defaultModel,
+    backgroundModel: agent.backgroundModel,
+    thinkModel: agent.thinkModel,
+  })) {
+    if (!configuredModels.has(model)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: [field],
+        message: `${field} must be included in agent.models`,
+      })
+    }
+  }
+})
+
+const serverClientConfigSchema = z.object({
+  baseUrl: z.string(),
 })
 
 export const appConfigSchema = z.object({
@@ -241,7 +205,7 @@ export const appConfigSchema = z.object({
   redis: redisConfigSchema,
   mongodb: mongodbConfigSchema,
   redlock: redlockConfigSchema,
-  serverClient: aitoearnServerClientConfigSchema,
+  serverClient: serverClientConfigSchema,
   assets: assetsConfigSchema,
   ai: aiConfigSchema,
   agent: agentConfigSchema,

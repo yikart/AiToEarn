@@ -36,6 +36,7 @@ interface BasePlanInput {
   memoryItems: string[]
   referenceImageUrls?: string[]
   referenceVideoUrls?: string[]
+  referenceAudioUrls?: string[]
   platforms?: string[]
 }
 
@@ -77,7 +78,7 @@ export class DraftGenerationPlannerService {
       throw new AppException(ResponseCode.InvalidModel)
     }
     const prompt = this.buildVideoPrompt(input)
-    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, VideoDraftPlanResultSchema, input.referenceImageUrls, input.referenceVideoUrls)
+    const plan = await this.invokeStructuredPlanner(modelConfig, prompt, VideoDraftPlanResultSchema, input.referenceImageUrls)
     return { plan, model: modelConfig.name }
   }
 
@@ -111,14 +112,18 @@ export class DraftGenerationPlannerService {
 
 ## System Rules
 - Never depict children, minors, or anyone appearing under 18. If mentioned, replace them with adults.
-- Video Prompt and Caption Prompt are separate inputs.
-- Use Video Prompt ONLY for videoPrompt.
-- Use Caption Prompt ONLY for title, description, and topics.
+- Video Prompt and Caption Prompt are separate inputs with different roles.
+- Use Video Prompt as the content source for title, description, topics, and videoPrompt.
+- Use Caption Prompt as social-copy requirements for title, description, and topics, such as tone, CTA, character limits, hashtag count, and emoji rules.
 - Do NOT use Caption Prompt to create, rewrite, translate, expand, or constrain videoPrompt.
-- Do NOT use Video Prompt to create title, description, or topics.
-- Merge memory naturally into title, description, and topics only when it does not conflict with Caption Prompt; do not say "based on your memory".
+- Title, description, and topics must stay grounded in the concrete subject, place, product, brand, or scenario from the Video Prompt and reference media.
+- Avoid generic titles/descriptions when the Video Prompt contains a specific subject.
+- For title, description, and topics, extract only public-facing facts from the Video Prompt, such as event name, place, product, brand, scenario, benefit, and audience.
+- Do NOT copy media-generation instructions, style directions, negative constraints, or uncertainty guards into title, description, or topics. Examples: no QR codes, no logos, no contact info, no unknown information, no people from reference media, poster/video format, cartoon style, or "only for promotion".
+- Title and description should promote the subject itself, not describe the generated creative asset, unless the user explicitly asks the social copy to announce that asset or style.
+- Merge memory naturally into title, description, and topics only when it does not conflict with the current prompt or Caption Prompt; do not say "based on your memory".
 - Generate title, description, and topics in the SAME language as the Caption Prompt. Do NOT translate them.
-- For videoPrompt, use the Video Prompt as the source and keep the SAME language as the Video Prompt. Replace children/minors/under-18 people with adults, and strip caption/title/description/topic/CTA/hashtag/character-limit requirements. Do NOT translate, expand, or use Caption Prompt content in videoPrompt.
+- For videoPrompt, use the Video Prompt as the source and keep the SAME language as the Video Prompt. Preserve media-generation style, format, and negative constraints from the Video Prompt. Replace children/minors/under-18 people with adults, and strip caption/title/description/topic/CTA/hashtag/character-limit requirements. Do NOT translate, expand, or use Caption Prompt content in videoPrompt.
 
 ## Video Prompt
 ${input.userPrompt || ''}
@@ -137,11 +142,12 @@ ${this.formatList(input.memoryItems)}
 - Platforms: ${input.platforms?.join(', ') || 'default'}
 - Reference Images: ${input.referenceImageUrls?.join(', ') || 'none'}
 - Reference Videos: ${input.referenceVideoUrls?.join(', ') || 'none'}
+- Reference Audios: ${input.referenceAudioUrls?.join(', ') || 'none'}
 
 ## Output Requirements
-- title: short post title in the SAME language as the Caption Prompt.
-- description: social post caption with clear value and CTA, in the SAME language as the Caption Prompt.
-- topics: 3-5 hashtag topics without #, based on the Caption Prompt.
+- title: short post title grounded in the Video Prompt and refined by the Caption Prompt.
+- description: social post caption grounded in the Video Prompt, with clear value and CTA when requested by the Caption Prompt.
+- topics: 3-5 hashtag topics without #, grounded in the Video Prompt and filtered by the Caption Prompt.
 - videoPrompt: the Video Prompt in the SAME language as the Video Prompt, with children/minors/under-18 people replaced by adults and caption/title/description/topic/CTA/hashtag/character-limit requirements stripped when provided; otherwise a minimal prompt based only on visual reference media and generation context, never on Caption Prompt. Do NOT translate or add content the user did not write.`
     }
 
@@ -152,6 +158,9 @@ ${this.formatList(input.memoryItems)}
 - The current user prompt has higher priority than memory.
 - Merge memory naturally; do not say "based on your memory".
 - The user prompt may contain caption/title/description/topic/CTA/hashtag/character-limit requirements. These apply ONLY to title/description/topics — do NOT let them influence the videoPrompt content.
+- For title, description, and topics, extract only public-facing facts from the user prompt, such as event name, place, product, brand, scenario, benefit, and audience.
+- Do NOT copy media-generation instructions, style directions, negative constraints, or uncertainty guards into title, description, or topics. Examples: no QR codes, no logos, no contact info, no unknown information, no people from reference media, poster/video format, cartoon style, or "only for promotion".
+- Title and description should promote the subject itself, not describe the generated creative asset, unless the user explicitly asks the social copy to announce that asset or style.
 - CRITICAL: For videoPrompt, use the user's original prompt VERBATIM as the base. Do NOT translate, rewrite, or expand it. Only strip appended caption/title/description/topic/CTA/hashtag/character-limit requirements if present. Do NOT add camera directions, lighting, or other details the user did not write.
 - Generate title, description, and topics in the SAME language as the user prompt. Do NOT translate them.
 
@@ -169,6 +178,7 @@ ${this.formatList(input.memoryItems)}
 - Platforms: ${input.platforms?.join(', ') || 'default'}
 - Reference Images: ${input.referenceImageUrls?.join(', ') || 'none'}
 - Reference Videos: ${input.referenceVideoUrls?.join(', ') || 'none'}
+- Reference Audios: ${input.referenceAudioUrls?.join(', ') || 'none'}
 
 ## Output Requirements
 - title: short post title in the SAME language as the user prompt, respecting any character limits from the prompt.
@@ -184,14 +194,19 @@ ${this.formatList(input.memoryItems)}
 
 ## System Rules
 - Never depict children, minors, or anyone appearing under 18. If mentioned, replace them with adults.
-- Image Prompt and Caption Prompt are separate inputs.
-- Use Image Prompt ONLY for imagePrompts.
-- Use Caption Prompt ONLY for title, description, and topics.
+- Image Prompt and Caption Prompt are separate inputs with different roles.
+- Use Image Prompt as the content source for title, description, topics, and imagePrompts.
+- Use Caption Prompt as social-copy requirements for title, description, and topics, such as tone, CTA, character limits, hashtag count, and emoji rules.
 - Do NOT use Caption Prompt to create, rewrite, translate, expand, or constrain imagePrompts.
-- Do NOT use Image Prompt to create title, description, or topics.
-- Merge memory naturally into title, description, and topics only when it does not conflict with Caption Prompt; do not say "based on your memory".
+- Title, description, and topics must stay grounded in the concrete subject, place, product, brand, or scenario from the Image Prompt and reference images.
+- Avoid generic titles/descriptions when the Image Prompt contains a specific subject.
+- For title, description, and topics, extract only public-facing facts from the Image Prompt, such as event name, place, product, brand, scenario, benefit, and audience.
+- Do NOT copy media-generation instructions, style directions, negative constraints, or uncertainty guards into title, description, or topics. Examples: no QR codes, no logos, no contact info, no unknown information, no people from reference images, poster format, cartoon style, or "only for promotion".
+- Title and description should promote the subject itself, not describe the generated image, poster, or style, unless the user explicitly asks the social copy to announce that asset or style.
+- Merge memory naturally into title, description, and topics only when it does not conflict with the current prompt or Caption Prompt; do not say "based on your memory".
 - Generate title, description, and topics in the SAME language as the Caption Prompt. Do NOT translate them.
 - For imagePrompts, use the Image Prompt as the source and keep the SAME language as the Image Prompt. Replace children/minors/under-18 people with adults.
+- Preserve media-generation style, format, and negative constraints from the Image Prompt in imagePrompts, such as no QR codes, no logos, no contact info, no unknown information, and no people from reference images.
 - Image Prompt may include on-image text, cover titles, carousel page roles, and comment-interaction prompts. Preserve those as image content; do not strip them as caption requirements.
 - Only strip publication metadata constraints such as caption/title/description/topic/CTA/hashtag/character-limit requirements when they are not meant to appear in the image.
 - You may rewrite and split imagePrompts in the original language to create distinct image-generation instructions for each requested image, including concise layout, composition, typography hierarchy, and restrained professional style details implied by the user's requested format.
@@ -216,9 +231,9 @@ ${this.formatList(input.memoryItems)}
 - Reference Images: ${input.referenceImageUrls?.join(', ') || 'none'}
 
 ## Output Requirements
-- title: short post title in the SAME language as the Caption Prompt.
-- description: social post caption with clear value and CTA, in the SAME language as the Caption Prompt.
-- topics: 3-5 hashtag topics without #, based on the Caption Prompt.
+- title: short post title grounded in the Image Prompt and refined by the Caption Prompt.
+- description: social post caption grounded in the Image Prompt, with clear value and CTA when requested by the Caption Prompt.
+- topics: 3-5 hashtag topics without #, grounded in the Image Prompt and filtered by the Caption Prompt.
 - imagePrompts: exactly ${input.imageCount} prompts for image generation in the SAME language as the Image Prompt. Base each prompt on the Image Prompt only. Split carousel/page-style requests into different page goals when applicable. Keep explicit on-image text unchanged. Do NOT translate, use Caption Prompt content, or include non-image output format constraints or character limits in the imagePrompts.`
     }
 
@@ -229,8 +244,12 @@ ${this.formatList(input.memoryItems)}
 - The current user prompt has higher priority than memory.
 - Merge memory naturally; do not say "based on your memory".
 - The user prompt may contain appended publication metadata constraints (e.g., "重要：标题字数限制：80"). These apply ONLY to title/description/topics. Do NOT let them influence the imagePrompts content unless the user clearly wants that text visible inside the image.
+- For title, description, and topics, extract only public-facing facts from the user prompt, such as event name, place, product, brand, scenario, benefit, and audience.
+- Do NOT copy media-generation instructions, style directions, negative constraints, or uncertainty guards into title, description, or topics. Examples: no QR codes, no logos, no contact info, no unknown information, no people from reference images, poster format, cartoon style, or "only for promotion".
+- Title and description should promote the subject itself, not describe the generated image, poster, or style, unless the user explicitly asks the social copy to announce that asset or style.
 - Generate title, description, and topics in the SAME language as the user prompt. Do NOT translate them.
 - For imagePrompts, use the user's original prompt as the base and keep the SAME language as the user prompt.
+- Preserve media-generation style, format, and negative constraints from the user prompt in imagePrompts, such as no QR codes, no logos, no contact info, no unknown information, and no people from reference images.
 - The user prompt may include on-image text, cover titles, carousel page roles, and comment-interaction prompts. Preserve those as image content.
 - You may rewrite and split imagePrompts in the original language to create distinct image-generation instructions for each requested image, including concise layout, composition, typography hierarchy, and restrained professional style details implied by the user's requested format.
 - Do NOT translate imagePrompts, change the user's core intent, invent unsupported claims, or make the style flashy/exaggerated.
@@ -269,10 +288,9 @@ ${this.formatList(input.memoryItems)}
     prompt: string,
     schema: z.ZodType<T>,
     referenceImageUrls: string[] = [],
-    referenceVideoUrls: string[] = [],
   ): Promise<T> {
     const model = this.createPlannerModel(modelConfig)
-    const messages = this.buildMessages(prompt, referenceImageUrls, referenceVideoUrls)
+    const messages = this.buildMessages(prompt, referenceImageUrls)
     const { output } = await this.aiAvailability.execute(
       { provider: modelConfig.channel, operation: 'draftGeneration.planner', model: modelConfig.name },
       async () => await generateText({
@@ -287,13 +305,10 @@ ${this.formatList(input.memoryItems)}
     return output
   }
 
-  private buildMessages(prompt: string, referenceImageUrls: string[], referenceVideoUrls: string[]): ModelMessage[] {
+  private buildMessages(prompt: string, referenceImageUrls: string[]): ModelMessage[] {
     const content: UserContent = [{ type: 'text', text: prompt }]
     for (const referenceImageUrl of referenceImageUrls) {
       content.push({ type: 'image', image: new URL(FileUtil.buildUrl(referenceImageUrl)) })
-    }
-    for (const referenceVideoUrl of referenceVideoUrls) {
-      content.push({ type: 'file', data: new URL(FileUtil.buildUrl(referenceVideoUrl)), mediaType: 'video/mp4' })
     }
     return [{ role: 'user', content }]
   }
@@ -310,6 +325,7 @@ ${this.formatList(input.memoryItems)}
         }).chat(modelConfig.name)
       }
       case AiLogChannel.OpenAI:
+      case AiLogChannel.DeepSeek:
         return createOpenAI({
           apiKey: config.ai.openai.apiKey,
           baseURL: config.ai.openai.baseUrl,

@@ -1,17 +1,12 @@
 import type { OpenAIVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { AiLogSettlementSettledBy } from '@yikart/aitoearn-ai-shared'
-import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, StorageProvider } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
+import { AppException, FileUtil, ResponseCode, UserType } from '@yikart/common'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import { OpenaiService as OpenaiLibService } from '../../libs/openai'
-import { ModelsConfigService } from '../../models-config'
-import { AsyncSettlementService } from '../../settlement'
 import {
   OpenAIVideoCallbackDto,
   SoraCharacterCallbackDto,
@@ -29,81 +24,8 @@ export class OpenAIVideoService {
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
     private readonly storageProvider: StorageProvider,
-    private readonly modelsConfigService: ModelsConfigService,
-    private readonly creditsHelper: CreditsHelperService,
-    private readonly queueService: QueueService,
     private readonly aiAvailability: AiAvailabilityService,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) {}
-
-  /**
-   * 异步处理AI任务失败退款
-   */
-  private async enqueueTaskRefund(aiLog: AiLog): Promise<void> {
-    await this.asyncSettlementService.markFailed(aiLog.id, {
-      channel: aiLog.channel,
-      action: aiLog.action,
-      settledBy: AiLogSettlementSettledBy.OpenAICallback,
-    })
-
-    if (aiLog.userType !== UserType.User) {
-      return
-    }
-
-    if (!aiLog.taskId) {
-      this.logger.error(
-        { aiLogId: aiLog.id, userId: aiLog.userId },
-        'Cannot enqueue refund: missing taskId',
-      )
-      return
-    }
-
-    await this.queueService.addAiTaskRefundJob({
-      userId: aiLog.userId,
-      taskId: aiLog.id,
-      amount: aiLog.points,
-      description: aiLog.model,
-      expiredAt: null,
-      metadata: {
-        channel: aiLog.channel,
-        action: aiLog.action,
-        failedAt: new Date().toISOString(),
-      },
-    })
-
-    this.logger.log(
-      { userId: aiLog.userId, taskId: aiLog.taskId, amount: aiLog.points },
-      'Enqueued AI task refund',
-    )
-  }
-
-  async calculatePrice(params: {
-    model: string
-    userId?: string
-    userType?: UserType
-    duration?: number
-  }): Promise<number> {
-    const { model, duration } = params
-
-    const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
-    if (!modelConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    const defaults = modelConfig.defaults || {}
-    const finalDuration = duration || defaults.duration
-
-    const pricingConfig = modelConfig.pricing.find((pricing) => {
-      const durationMatch = !pricing.duration || !finalDuration || pricing.duration === finalDuration
-      return durationMatch
-    })
-
-    if (!pricingConfig) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    return pricingConfig.price
-  }
 
   private async toAccessibleUrl(url: string | undefined): Promise<string | undefined> {
     if (!url) {
@@ -116,7 +38,7 @@ export class OpenAIVideoService {
     return this.storageProvider.toPresignedUrl(url)
   }
 
-  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string, points: number }> {
+  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
     if (Array.isArray(request.image)) {
       throw new BadRequestException('OpenAI does not support multiple images')
     }
@@ -129,24 +51,16 @@ export class OpenAIVideoService {
       model: request.model as 'sora-2' | 'sora-2-pro',
       seconds: request.duration ? request.duration.toString() as '10' | '15' | '25' : undefined,
       size: request.size as '720x1280' | '1280x720' | '1024x1792' | '1792x1024' | undefined,
-      source: request.source,
     })
 
-    return { id: result.id, points: result.points }
+    return { id: result.id }
   }
 
   /**
    * OpenAI 视频创建
    */
   async createVideo(request: UserOpenAIVideoCreateRequestDto) {
-    const { userId, userType, model, prompt, input_reference, seconds, size, source = CreditsConsumptionSource.AiVideo } = request
-
-    const pricing = await this.calculatePrice({
-      userId,
-      userType,
-      model: model || 'sora-2',
-      duration: seconds ? Number(seconds) : undefined,
-    })
+    const { userId, userType, model, prompt, input_reference, seconds, size } = request
 
     const startedAt = new Date()
 
@@ -173,16 +87,6 @@ export class OpenAIVideoService {
       r => r.id,
     )
 
-    if (userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId,
-        amount: pricing,
-        type: CreditsType.AiService,
-        source,
-        description: model || 'sora-2',
-      })
-    }
-
     const aiLog = await this.aiLogRepo.create({
       userId,
       userType,
@@ -191,8 +95,6 @@ export class OpenAIVideoService {
       channel: AiLogChannel.OpenAI,
       startedAt,
       type: AiLogType.Video,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, { source }),
       request: {
         prompt,
         input_reference,
@@ -206,7 +108,6 @@ export class OpenAIVideoService {
     return {
       ...result,
       id: aiLog.id,
-      points: pricing,
     }
   }
 
@@ -214,7 +115,7 @@ export class OpenAIVideoService {
    * OpenAI 视频 Remix
    */
   async remixVideo(request: UserOpenAIVideoRemixRequestDto) {
-    const { userId, userType, videoId, prompt, source = CreditsConsumptionSource.AiVideo } = request
+    const { userId, userType, videoId, prompt } = request
 
     // 首先查找原视频任务
     const aiLog = await this.aiLogRepo.getByIdAndUserId(videoId, userId, userType)
@@ -224,28 +125,12 @@ export class OpenAIVideoService {
 
     const model = aiLog.model
 
-    const pricing = await this.calculatePrice({
-      userId,
-      userType,
-      model,
-    })
-
     const startedAt = new Date()
     const result = await this.aiAvailability.executeAsync(
       { provider: 'openai', operation: 'videoGeneration', model },
       () => this.openaiLibService.remixVideo(aiLog.taskId!, prompt),
       r => r.id,
     )
-
-    if (userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId,
-        amount: pricing,
-        type: CreditsType.AiService,
-        source,
-        description: model,
-      })
-    }
 
     const newAiLog = await this.aiLogRepo.create({
       userId,
@@ -255,8 +140,6 @@ export class OpenAIVideoService {
       channel: AiLogChannel.OpenAI,
       startedAt,
       type: AiLogType.Video,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, { source }),
       request: {
         prompt,
         remixed_from_video_id: aiLog.taskId,
@@ -338,22 +221,17 @@ export class OpenAIVideoService {
 
     const duration = data.completed_at ? (data.completed_at * 1000) - openAiLog.startedAt.getTime() : Date.now() - openAiLog.startedAt.getTime()
 
-    await this.aiLogRepo.updateById(openAiLog.id, {
-      status: aiLogStatus,
-      response: data,
-      duration,
-      errorMessage: status === 'failed' ? data.error?.message : undefined,
+    const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(openAiLog.id, AiLogStatus.Generating, {
+      $set: {
+        status: aiLogStatus,
+        response: data,
+        duration,
+        errorMessage: status === 'failed' ? data.error?.message : undefined,
+      },
     })
 
-    if (aiLogStatus === AiLogStatus.Success) {
-      await this.asyncSettlementService.settleSuccess(openAiLog.id, openAiLog.points, {
-        channel: openAiLog.channel,
-        settledBy: AiLogSettlementSettledBy.OpenAICallback,
-      })
-    }
-
-    if (aiLogStatus === AiLogStatus.Failed) {
-      await this.enqueueTaskRefund(openAiLog)
+    if (!updatedAiLog) {
+      return
     }
 
     if (aiLogStatus === AiLogStatus.Success || aiLogStatus === AiLogStatus.Failed) {

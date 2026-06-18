@@ -28,6 +28,7 @@ const TYPE_PATH_MAP: Record<AssetType, string> = {
   [AssetType.Avatar]: 'social/avatar',
   [AssetType.AgentSession]: 'claude-session',
   [AssetType.VideoThumbnail]: 'ai/video-thumbnail',
+  [AssetType.GooglePlace]: 'google-maps',
   [AssetType.Temp]: 'temp',
   [AssetType.ImageEdit]: 'agent/image-edit',
   [AssetType.Subtitle]: 'agent/subtitle',

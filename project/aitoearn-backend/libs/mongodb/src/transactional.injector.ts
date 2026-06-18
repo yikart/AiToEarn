@@ -24,8 +24,24 @@ export class TransactionalInjector implements OnModuleInit {
   ) {}
 
   async onModuleInit() {
+    await this.dropLegacyContentSafetyReviewIndex()
+
     for (const provider of this.getProviders()) {
       this.injectToProvider(provider)
+    }
+  }
+
+  private async dropLegacyContentSafetyReviewIndex(): Promise<void> {
+    try {
+      await this.connection.collection('contentSafetyReview').dropIndex('scene_1_targetType_1_targetId_1_contentType_1_sourceField_1_contentHash_1_provider_1')
+      this.logger.log('Dropped legacy index contentSafetyReview.scene_1_targetType_1_targetId_1_contentType_1_sourceField_1_contentHash_1_provider_1')
+    }
+    catch (error) {
+      const code = (error as { code?: number }).code
+      if (code === 26 || code === 27) {
+        return
+      }
+      throw error
     }
   }
 

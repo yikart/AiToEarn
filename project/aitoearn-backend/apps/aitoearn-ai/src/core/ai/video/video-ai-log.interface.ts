@@ -1,15 +1,15 @@
 import type {
   DashscopeVideoAiLogRequest,
-  GeminiVideoAiLogRequest,
   GrokVideoAiLogRequest,
   OpenAIRemixVideoAiLogRequest,
   OpenAIVideoAiLogRequest,
+  RelayVideoAiLogRequest,
   TypedAiLog,
   UserVideoGenerationAiLogRequest,
   VolcengineVideoAiLogRequest,
 } from '@yikart/mongodb'
+import type { RelayVideoCallbackDto } from '../libs/relay/relay.interface'
 import type { DashscopeVideoCallbackDto } from './dashscope'
-import type { GeminiVeoVideoCallbackDto } from './gemini/gemini.dto'
 import type { GrokVideoCallbackDto } from './grok/grok.service'
 import type { OpenAIVideoCallbackDto } from './openai/openai.dto'
 import type { VolcengineCallbackDto } from './volcengine/volcengine.dto'
@@ -46,11 +46,10 @@ export type DashscopeVideoAiLog = VideoAiLogBase & {
   request: DashscopeVideoAiLogRequest
   response?: DashscopeVideoCallbackDto & SavedVideoMediaInfo
 }
-
-export type GeminiVideoAiLog = VideoAiLogBase & {
-  channel: AiLogChannel.Gemini
-  request: GeminiVideoAiLogRequest
-  response?: GeminiVeoVideoCallbackDto & SavedVideoMediaInfo
+export type RelayVideoAiLog = VideoAiLogBase & {
+  channel: AiLogChannel.Relay
+  request: RelayVideoAiLogRequest
+  response?: RelayVideoCallbackDto & SavedVideoMediaInfo
 }
 
 export type UserRequestedVideoAiLog = VideoAiLogBase & {
@@ -62,7 +61,7 @@ export interface VideoAiLogByChannelMap {
   [AiLogChannel.OpenAI]: OpenAIVideoAiLog
   [AiLogChannel.Grok]: GrokVideoAiLog
   [AiLogChannel.Dashscope]: DashscopeVideoAiLog
-  [AiLogChannel.Gemini]: GeminiVideoAiLog
+  [AiLogChannel.Relay]: RelayVideoAiLog
 }
 
 export type VideoAiLogByChannel<C extends keyof VideoAiLogByChannelMap> = VideoAiLogByChannelMap[C]
@@ -72,4 +71,4 @@ export type VideoAiLog
     | OpenAIVideoAiLog
     | GrokVideoAiLog
     | DashscopeVideoAiLog
-    | GeminiVideoAiLog
+    | RelayVideoAiLog

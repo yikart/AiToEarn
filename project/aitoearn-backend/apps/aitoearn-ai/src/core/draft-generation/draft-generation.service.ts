@@ -1,10 +1,10 @@
-import type { DraftGenerationData } from '@yikart/aitoearn-queue'
-import { AIMessage, HumanMessage } from '@langchain/core/messages'
+import type { DraftGenerationData, DraftGenerationQueueInfo } from '@yikart/aitoearn-queue'
+import { HumanMessage } from '@langchain/core/messages'
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { AccountType, AppException, CreditsConsumptionSource, FileUtil, getErrorMessage, poll, ResponseCode, retry, UserType } from '@yikart/common'
+import { AccountType, AppException, FileUtil, getErrorMessage, poll, ResponseCode, retry, UserType } from '@yikart/common'
 import {
   AiLogChannel,
   AiLogRepository,
@@ -24,7 +24,6 @@ import { TaskStatus } from '../../common'
 import { config } from '../../config'
 import { AiAvailabilityService } from '../ai-availability'
 import { ImageService } from '../ai/image/image.service'
-import { calculatePricingPoints, ChatPricing } from '../ai/pricing/pricing-calculator'
 import { VideoService } from '../ai/video/video.service'
 import { DraftGenerationMemoryService } from './draft-generation-memory.service'
 import { DraftGenerationPlannerService, ImageTextDraftPlanResult, VideoDraftPlanResult } from './draft-generation-planner.service'
@@ -39,12 +38,10 @@ import {
   ListDraftGenerationTasksDto,
   QueryDraftGenerationTasksDto,
 } from './draft-generation.dto'
-import { DraftGenerationPricingVoInput } from './draft-generation.vo'
 
 export class DraftGenerationError extends Error {
   constructor(
     message: string,
-    public readonly consumedPoints: number,
     cause?: unknown,
   ) {
     super(message, { cause })
@@ -68,7 +65,11 @@ interface ImageGenerationErrorDetail {
   errorMessage: string
 }
 
-type ImageGenerationProgressHandler = (imageUrl: string, points: number, imageGenerationErrors: ImageGenerationErrorDetail[]) => Promise<void>
+type ImageGenerationProgressHandler = (imageUrl: string, imageGenerationErrors: ImageGenerationErrorDetail[]) => Promise<void>
+
+type DraftGenerationTaskWithQueue<T extends { id: string, status: AiLogStatus }> = T & {
+  queue?: DraftGenerationQueueInfo
+}
 
 enum ImageExecutionReferenceHandling {
   None = 'none',
@@ -77,10 +78,21 @@ enum ImageExecutionReferenceHandling {
   Ignored = 'ignored',
 }
 
-const OPENAI_IMAGE_DEFAULT_SIZE = '1024x1536'
-const OPENAI_IMAGE_SQUARE_SIZE = '1024x1024'
-const OPENAI_IMAGE_MAX_EDGE = 1536
-const OPENAI_IMAGE_MAX_PIXELS = 1536 * 1024
+const OPENAI_IMAGE_DEFAULT_ASPECT_RATIO = '2:3'
+const OPENAI_IMAGE_DEFAULT_RESOLUTION = '1K'
+
+function getOpenAIImageSizeProfile(imageSize: string): { maxEdge: number, maxPixels: number, squareSize?: string } {
+  switch (imageSize) {
+    case '1K':
+      return { maxEdge: 1536, maxPixels: 1536 * 1024, squareSize: '1024x1024' }
+    case '2K':
+      return { maxEdge: 2560, maxPixels: 2560 * 1440 }
+    case '4K':
+      return { maxEdge: 3840, maxPixels: 3840 * 2160 }
+    default:
+      throw new BadRequestException('imageSize must be one of 1K, 2K, or 4K')
+  }
+}
 const OPENAI_IMAGE_SIZE_MULTIPLE = 16
 const OPENAI_IMAGE_MIN_ASPECT_RATIO = 1 / 3
 const OPENAI_IMAGE_MAX_ASPECT_RATIO = 3
@@ -156,20 +168,22 @@ export class DraftGenerationService {
     if (!aiLog) {
       throw new AppException(ResponseCode.AiLogNotFound)
     }
-    return aiLog
+    return await this.attachQueueInfo(aiLog)
   }
 
   async listTasks(dto: QueryDraftGenerationTasksDto, userId: string, userType: UserType) {
-    return this.aiLogRepository.listByIdsAndUserId(dto.taskIds, userId, userType)
+    const tasks = await this.aiLogRepository.listByIdsAndUserId(dto.taskIds, userId, userType)
+    return await this.attachQueueInfoToTasks(tasks)
   }
 
   async listTasksWithPagination(dto: ListDraftGenerationTasksDto, userId: string, userType: UserType) {
-    return this.aiLogRepository.listWithPagination({
+    const [tasks, total] = await this.aiLogRepository.listWithPagination({
       ...dto,
       userId,
       userType,
       type: AiLogType.DraftGeneration,
     })
+    return [await this.attachQueueInfoToTasks(tasks), total] as const
   }
 
   async getStats(userId: string, userType: UserType) {
@@ -180,10 +194,6 @@ export class DraftGenerationService {
       AiLogStatus.Generating,
     )
     return { generatingCount }
-  }
-
-  private async assertUserCreditsSufficient(_userId: string, _userType: UserType, _requiredPoints: number): Promise<void> {
-    return undefined
   }
 
   private async addDraftGenerationJob(data: DraftGenerationData): Promise<void> {
@@ -199,6 +209,23 @@ export class DraftGenerationService {
     await this.queueService.addDraftGenerationJob(data, options)
   }
 
+  private async attachQueueInfo<T extends { id: string, status: AiLogStatus }>(task: T): Promise<DraftGenerationTaskWithQueue<T>> {
+    if (task.status !== AiLogStatus.Generating) {
+      return task
+    }
+
+    const queue = await this.queueService.getDraftGenerationQueueInfo(task.id)
+    if (!queue) {
+      return task
+    }
+
+    return { ...task, queue }
+  }
+
+  private async attachQueueInfoToTasks<T extends { id: string, status: AiLogStatus }>(tasks: T[]): Promise<Array<DraftGenerationTaskWithQueue<T>>> {
+    return await Promise.all(tasks.map(task => this.attachQueueInfo(task)))
+  }
+
   private getVideoDraftModelConfig(model: string) {
     const modelConfig = config.ai.models.video.generation.find(m => m.name === model)
     if (!modelConfig) {
@@ -208,66 +235,26 @@ export class DraftGenerationService {
     return modelConfig
   }
 
-  private async resolveEstimatedVideoDuration(
+  private resolveVideoReferenceMode(
     modelConfig: ReturnType<DraftGenerationService['getVideoDraftModelConfig']>,
-    dto: Pick<CreateDraftGenerationV2Dto, 'duration' | 'videoUrls'>,
-  ): Promise<number | undefined> {
-    if (dto.duration != null) {
-      return dto.duration
+    videoUrls?: string[],
+    audioUrls?: string[],
+  ): 'multi-ref' | 'video2video' | undefined {
+    const hasVideoReference = (videoUrls?.length ?? 0) > 0
+    const hasAudioReference = (audioUrls?.length ?? 0) > 0
+    if (!hasVideoReference && !hasAudioReference) {
+      return undefined
     }
 
-    const referenceVideoUrl = dto.videoUrls?.[0]
-    if (!referenceVideoUrl) {
-      return modelConfig.defaults?.duration
+    if (modelConfig.modes.includes('multi-ref')) {
+      return 'multi-ref'
     }
 
-    const maxDuration = Math.max(...modelConfig.durations)
-    if (!Number.isFinite(maxDuration)) {
-      throw new AppException(ResponseCode.InvalidModel)
+    if (hasVideoReference && !hasAudioReference && modelConfig.modes.includes('video2video')) {
+      return 'video2video'
     }
 
-    const metadata = await this.videoMetadataService.probeVideoMetadata(FileUtil.buildUrl(referenceVideoUrl))
-    const metadataDuration = Number(metadata.duration)
-    if (!Number.isFinite(metadataDuration) || metadataDuration <= 0) {
-      throw new BadRequestException(`video duration is required and must be within ${maxDuration} seconds`)
-    }
-
-    return Math.min(Math.ceil(metadataDuration), maxDuration)
-  }
-
-  private async estimateSingleVideoDraftPoints(
-    userId: string,
-    userType: UserType,
-    dto: Pick<CreateDraftGenerationV2Dto, 'model' | 'duration' | 'resolution' | 'aspectRatio' | 'videoUrls'>,
-  ): Promise<number> {
-    const modelConfig = this.getVideoDraftModelConfig(dto.model)
-    const referenceVideoUrl = dto.videoUrls?.[0]
-    const mode = referenceVideoUrl ? 'video2video' : undefined
-
-    if (mode && !modelConfig.modes.includes(mode)) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    const duration = await this.resolveEstimatedVideoDuration(modelConfig, dto)
-
-    return this.videoService.calculateVideoGenerationPrice({
-      model: dto.model,
-      userId,
-      userType,
-      duration,
-      resolution: dto.resolution,
-      aspectRatio: dto.aspectRatio,
-      mode,
-    })
-  }
-
-  private async estimateVideoDraftSubmissionPoints(
-    userId: string,
-    userType: UserType,
-    dto: CreateDraftGenerationV2Dto,
-  ): Promise<number> {
-    const singleTaskPoints = await this.estimateSingleVideoDraftPoints(userId, userType, dto)
-    return singleTaskPoints * (dto.quantity ?? 1)
+    throw new AppException(ResponseCode.InvalidModel)
   }
 
   private getImageTextDraftModelConfig(model: string) {
@@ -279,27 +266,9 @@ export class DraftGenerationService {
     return modelConfig
   }
 
-  private getImageTextDraftPricingEntry(model: string, imageSize?: string) {
-    const modelConfig = this.getImageTextDraftModelConfig(model)
-    const pricingEntry = modelConfig.pricing.find(p => p.resolution === (imageSize ?? '1K')) ?? modelConfig.pricing[0]
-    if (!pricingEntry) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-
-    return pricingEntry
-  }
-
-  private estimateImageTextDraftSubmissionPoints(dto: CreateImageTextDraftDto): number {
-    const pricingEntry = this.getImageTextDraftPricingEntry(dto.imageModel, dto.imageSize)
-    return pricingEntry.pricePerImage * (dto.imageCount ?? 3) * (dto.quantity ?? 1)
-  }
-
-  private resolveOpenAIImageSize(aspectRatio?: string): string {
-    if (!aspectRatio) {
-      return OPENAI_IMAGE_DEFAULT_SIZE
-    }
-
-    const parts = aspectRatio.split(':')
+  private resolveOpenAIImageSize(aspectRatio?: string, imageSize = OPENAI_IMAGE_DEFAULT_RESOLUTION): string {
+    const sizeProfile = getOpenAIImageSizeProfile(imageSize)
+    const parts = (aspectRatio ?? OPENAI_IMAGE_DEFAULT_ASPECT_RATIO).split(':')
     if (parts.length !== 2) {
       throw new BadRequestException('image aspectRatio must use WIDTH:HEIGHT')
     }
@@ -316,14 +285,22 @@ export class DraftGenerationService {
     }
 
     if (widthRatio === heightRatio) {
-      return OPENAI_IMAGE_SQUARE_SIZE
+      return sizeProfile.squareSize ?? this.resolveScaledOpenAIImageSize(widthRatio, heightRatio, sizeProfile)
     }
 
+    return this.resolveScaledOpenAIImageSize(widthRatio, heightRatio, sizeProfile)
+  }
+
+  private resolveScaledOpenAIImageSize(
+    widthRatio: number,
+    heightRatio: number,
+    sizeProfile: { maxEdge: number, maxPixels: number },
+  ): string {
     const divisor = getGreatestCommonDivisor(widthRatio, heightRatio)
     const reducedWidth = widthRatio / divisor
     const reducedHeight = heightRatio / divisor
-    const maxScaleByEdge = Math.floor(OPENAI_IMAGE_MAX_EDGE / Math.max(reducedWidth, reducedHeight))
-    const maxScaleByPixels = Math.floor(Math.sqrt(OPENAI_IMAGE_MAX_PIXELS / (reducedWidth * reducedHeight)))
+    const maxScaleByEdge = Math.floor(sizeProfile.maxEdge / Math.max(reducedWidth, reducedHeight))
+    const maxScaleByPixels = Math.floor(Math.sqrt(sizeProfile.maxPixels / (reducedWidth * reducedHeight)))
     const maxScale = Math.min(maxScaleByEdge, maxScaleByPixels)
     const scale = Math.floor(maxScale / OPENAI_IMAGE_SIZE_MULTIPLE) * OPENAI_IMAGE_SIZE_MULTIPLE
 
@@ -338,6 +315,7 @@ export class DraftGenerationService {
     imageModel: string,
     referenceImageUrls: string[],
     aspectRatio?: string,
+    imageSize?: string,
   ): ResolvedImageExecution {
     this.getImageTextDraftModelConfig(imageModel)
 
@@ -361,7 +339,7 @@ export class DraftGenerationService {
       }
     }
 
-    const resolvedSize = this.resolveOpenAIImageSize(aspectRatio)
+    const resolvedSize = this.resolveOpenAIImageSize(aspectRatio, imageSize)
 
     if (referenceImageUrls.length > 0 && editModel) {
       return {
@@ -388,7 +366,7 @@ export class DraftGenerationService {
 
   /**
    * V2: 创建草稿生成任务（投递队列时标记 version=v2）
-   * 支持选择视频模型、duration、aspectRatio
+   * 支持选择 modelType、duration、aspectRatio
    */
   async createDraftsV2(userId: string, userType: UserType, dto: CreateDraftGenerationV2Dto): Promise<string[]> {
     const modelConfig = config.ai.models.video.generation.find(m => m.name === dto.model)
@@ -404,8 +382,6 @@ export class DraftGenerationService {
     if (plannerModel && !config.ai.models.chat.some(model => model.name === plannerModel && model.scenes?.includes('draft-generation'))) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const estimatedPoints = await this.estimateVideoDraftSubmissionPoints(userId, userType, { ...dto, resolution })
-    await this.assertUserCreditsSufficient(userId, userType, estimatedPoints)
 
     const quantity = dto.quantity ?? 1
     const aiLogIds: string[] = []
@@ -419,7 +395,6 @@ export class DraftGenerationService {
         channel: modelConfig.channel as AiLogChannel,
         status: AiLogStatus.Generating,
         startedAt: new Date(),
-        points: 0,
         request: {
           groupId: resolvedGroupId,
           version: 'v2',
@@ -431,6 +406,7 @@ export class DraftGenerationService {
           captionPrompt: dto.captionPrompt,
           imageUrls: dto.imageUrls,
           videoUrls: dto.videoUrls,
+          audioUrls: dto.audioUrls,
           draftType,
           plannerModel,
           queuePriority,
@@ -452,6 +428,7 @@ export class DraftGenerationService {
         resolution,
         aspectRatio: dto.aspectRatio,
         videoUrls: dto.videoUrls,
+        audioUrls: dto.audioUrls,
         draftType,
         platforms: dto.platforms,
         plannerModel,
@@ -473,8 +450,6 @@ export class DraftGenerationService {
    * 2. 调用视频模型生成视频
    * 3. 截帧生成封面
    * 4. 保存素材 + 更新 AiLog
-   *
-   * 积分由 ChatService 和各 VideoService 内部自动扣除
    */
   async generateContentV2(
     aiLogId: string,
@@ -490,13 +465,13 @@ export class DraftGenerationService {
       resolution?: string
       aspectRatio?: string
       videoUrls?: string[]
+      audioUrls?: string[]
       draftType?: DraftType
       platforms?: string[]
       plannerModel?: string
       disableMemory?: boolean
     },
-  ): Promise<{ consumedPoints: number }> {
-    let consumedPoints = 0
+  ): Promise<void> {
     const startTime = Date.now()
     const draftType = options?.draftType ?? 'draft'
 
@@ -530,6 +505,7 @@ export class DraftGenerationService {
             memoryItems,
             referenceImageUrls: candidateImageUrls,
             referenceVideoUrls: options?.videoUrls,
+            referenceAudioUrls: options?.audioUrls,
             platforms: options?.platforms,
             model,
             duration,
@@ -553,7 +529,7 @@ export class DraftGenerationService {
         this.logger.log({ aiLogId }, 'V2: Reusing video+cover from previous attempt')
       }
       else {
-        const { videoUrl: generatedVideoUrl, points: videoPoints } = await this.generateVideo(
+        const { videoUrl: generatedVideoUrl } = await this.generateVideo(
           aiLogId,
           userId,
           userType,
@@ -563,9 +539,9 @@ export class DraftGenerationService {
           duration,
           resolution,
           aspectRatio,
-          options?.videoUrls?.[0],
+          options?.videoUrls,
+          options?.audioUrls,
         )
-        consumedPoints += videoPoints
 
         const fullVideoUrl = FileUtil.buildUrl(generatedVideoUrl)
         const thumbnailBuffer = await this.videoMetadataService.extractThumbnailFromUrl(fullVideoUrl, 2)
@@ -602,13 +578,12 @@ export class DraftGenerationService {
           $set: {
             status: AiLogStatus.Success,
             model,
-            points: consumedPoints,
             duration: Date.now() - startTime,
             response,
           },
         })
 
-        return { consumedPoints }
+        return
       }
 
       const draftPlan = plan!
@@ -654,19 +629,15 @@ export class DraftGenerationService {
         $set: {
           status: AiLogStatus.Success,
           model,
-          points: consumedPoints,
           duration: Date.now() - startTime,
           response,
         },
       })
-
-      return { consumedPoints }
     }
     catch (error) {
-      this.logger.error(error, `v2 generateContentV2 failed aiLogId=${aiLogId}, userId=${userId}, groupId=${groupId}, consumedPoints=${consumedPoints}`)
+      this.logger.error(error, `v2 generateContentV2 failed aiLogId=${aiLogId}, userId=${userId}, groupId=${groupId}`)
       throw new DraftGenerationError(
         getErrorMessage(error),
-        consumedPoints,
         error,
       )
     }
@@ -685,21 +656,26 @@ export class DraftGenerationService {
     duration?: number,
     resolution?: string,
     aspectRatio?: string,
-    videoUrl?: string,
-  ): Promise<{ videoUrl: string, points: number }> {
-    let task: { id: string, points: number }
+    videoUrls?: string[],
+    audioUrls?: string[],
+  ): Promise<{ videoUrl: string }> {
+    let task: { id: string }
     try {
+      const modelConfig = this.getVideoDraftModelConfig(model)
+      const mode = this.resolveVideoReferenceMode(modelConfig, videoUrls, audioUrls)
       task = await this.videoService.userVideoGeneration({
         userId,
         userType,
         model,
         prompt: videoPrompt,
         image: imageUrls,
-        video_url: videoUrl,
+        video_url: mode === 'video2video' ? videoUrls?.[0] : undefined,
+        videos: mode === 'multi-ref' ? videoUrls : undefined,
+        audios: mode === 'multi-ref' ? audioUrls : undefined,
+        mode,
         duration,
         resolution,
         ratio: aspectRatio,
-        source: CreditsConsumptionSource.AiDraftGeneration,
         metadata: { aspectRatio, resolution },
       })
     }
@@ -727,22 +703,16 @@ export class DraftGenerationService {
         }
         return { done: false }
       },
-      { taskName: `Video generation (${model})` },
+      {
+        maxPollingMs: 30 * 60 * 1000,
+        taskName: `Video generation (${model})`,
+      },
     )
 
-    return { videoUrl: url, points: task.points }
+    return { videoUrl: url }
   }
 
   // ==================== 图文草稿生成 ====================
-
-  getDraftGenerationPricing(): DraftGenerationPricingVoInput {
-    const imageModels = config.ai.draftGeneration.imageModels
-
-    const videoModels = config.ai.models.video.generation
-      .filter(v => v.channel === AiLogChannel.Grok)
-
-    return { imageModels, videoModels }
-  }
 
   /**
    * 创建图文草稿生成任务（同步阶段）
@@ -754,13 +724,11 @@ export class DraftGenerationService {
     if (plannerModel && !config.ai.models.chat.some(model => model.name === plannerModel && model.scenes?.includes('draft-generation'))) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    const estimatedPoints = this.estimateImageTextDraftSubmissionPoints(dto)
-    await this.assertUserCreditsSufficient(userId, userType, estimatedPoints)
 
     const imageModelConfig = this.getImageTextDraftModelConfig(dto.imageModel)
     const runtimeImageModel = imageModelConfig.runtimeModel ?? dto.imageModel
     const queuePriority = imageModelConfig.queuePriority
-    const imageExecution = this.resolveImageExecution(dto.imageModel, dto.imageUrls ?? [], dto.aspectRatio)
+    const imageExecution = this.resolveImageExecution(dto.imageModel, dto.imageUrls ?? [], dto.aspectRatio, dto.imageSize)
     const channel = imageExecution.channel
 
     const quantity = dto.quantity ?? 1
@@ -775,7 +743,6 @@ export class DraftGenerationService {
         channel,
         status: AiLogStatus.Generating,
         startedAt: new Date(),
-        points: 0,
         request: {
           groupId: resolvedGroupId,
           version: 'v2-image-text',
@@ -847,17 +814,16 @@ export class DraftGenerationService {
       plannerModel?: string
       disableMemory?: boolean
     },
-  ): Promise<{ consumedPoints: number }> {
+  ): Promise<void> {
     const existingAiLog = await this.aiLogRepository.getById(aiLogId)
     const existing = (existingAiLog?.response ?? {}) as ImageTextDraftResponse
-    let consumedPoints = existingAiLog?.points ?? 0
     const startTime = Date.now()
     const draftType = options.draftType ?? 'draft'
     const targetImageCount = options.imageCount
 
     try {
       const referenceImageUrls = options.imageUrls ?? []
-      const imageExecution = this.resolveImageExecution(options.imageModel, referenceImageUrls, options.aspectRatio)
+      const imageExecution = this.resolveImageExecution(options.imageModel, referenceImageUrls, options.aspectRatio, options.imageSize)
       this.logger.log(
         {
           aiLogId,
@@ -923,11 +889,9 @@ export class DraftGenerationService {
       let generatedImageUrls = (existing.imageUrls ?? []).slice(0, targetImageCount)
       const updateImageProgress = async (
         imageUrls: string[],
-        points: number,
         imageGenerationErrors: ImageGenerationErrorDetail[] = [],
       ) => {
         const response: Record<string, unknown> = {
-          'points': points,
           'response.imageUrls': [...imageUrls],
           'response.requestedImageCount': targetImageCount,
           'response.generatedImageCount': imageUrls.length,
@@ -949,7 +913,7 @@ export class DraftGenerationService {
         const missingPromptTasks = imagePromptTasks.slice(generatedImageUrls.length, targetImageCount)
         const previousGeneratedImageCount = generatedImageUrls.length
         const progressImageUrls = [...generatedImageUrls]
-        const { urls, points: imagePoints, imageGenerationErrors } = await this.generateImages(
+        const { urls, imageGenerationErrors } = await this.generateImages(
           userId,
           userType,
           options.imageModel,
@@ -958,11 +922,11 @@ export class DraftGenerationService {
           referenceImageUrls,
           options.aspectRatio,
           options.imageSize,
-          async (imageUrl, points, imageGenerationErrors) => {
+          async (imageUrl, imageGenerationErrors) => {
             if (progressImageUrls.length < targetImageCount) {
               progressImageUrls.push(imageUrl)
             }
-            await updateImageProgress(progressImageUrls, consumedPoints + points, [
+            await updateImageProgress(progressImageUrls, [
               ...(existing.imageGenerationErrors ?? []),
               ...imageGenerationErrors,
             ])
@@ -971,12 +935,11 @@ export class DraftGenerationService {
         generatedImageUrls = progressImageUrls.length > previousGeneratedImageCount
           ? progressImageUrls.slice(0, targetImageCount)
           : [...generatedImageUrls, ...urls].slice(0, targetImageCount)
-        consumedPoints += imagePoints
 
-        await updateImageProgress(generatedImageUrls, consumedPoints, imageGenerationErrors)
+        await updateImageProgress(generatedImageUrls, imageGenerationErrors)
 
         this.logger.log(
-          { aiLogId, generatedCount: generatedImageUrls.length, targetImageCount, imagePoints, errorCount: imageGenerationErrors.length },
+          { aiLogId, generatedCount: generatedImageUrls.length, targetImageCount, errorCount: imageGenerationErrors.length },
           'ImageText: Image generation completed',
         )
 
@@ -1008,13 +971,12 @@ export class DraftGenerationService {
           $set: {
             status: AiLogStatus.Success,
             model: options.imageModel,
-            points: consumedPoints,
             duration: Date.now() - startTime,
             response,
           },
         })
 
-        return { consumedPoints }
+        return
       }
 
       // draft 类型：复用已有 materialId 或创建新素材
@@ -1066,19 +1028,15 @@ export class DraftGenerationService {
         $set: {
           status: AiLogStatus.Success,
           model: options.imageModel,
-          points: consumedPoints,
           duration: Date.now() - startTime,
           response,
         },
       })
-
-      return { consumedPoints }
     }
     catch (error) {
-      this.logger.error(error, `v2 generateContentImageText failed aiLogId=${aiLogId}, userId=${userId}, groupId=${groupId}, consumedPoints=${consumedPoints}`)
+      this.logger.error(error, `v2 generateContentImageText failed aiLogId=${aiLogId}, userId=${userId}, groupId=${groupId}`)
       throw new DraftGenerationError(
         getErrorMessage(error),
-        consumedPoints,
         error,
       )
     }
@@ -1097,7 +1055,7 @@ export class DraftGenerationService {
     aspectRatio?: string,
     imageSize?: string,
     onImageGenerated?: ImageGenerationProgressHandler,
-  ): Promise<{ urls: string[], points: number, imageGenerationErrors: ImageGenerationErrorDetail[] }> {
+  ): Promise<{ urls: string[], imageGenerationErrors: ImageGenerationErrorDetail[] }> {
     if (imageExecution.mode === 'gemini') {
       return this.generateImagesWithGemini(userId, userType, imageModel, imagePrompts, referenceImageUrls, aspectRatio, imageSize, onImageGenerated)
     }
@@ -1107,7 +1065,6 @@ export class DraftGenerationService {
 
   /**
    * 使用 Gemini 模型（nb2/nb-pro）批量生成图片
-   * 注意：userGeminiGeneration 内部已自动扣费和记录 AiLog
    */
   private async generateImagesWithGemini(
     userId: string,
@@ -1118,10 +1075,9 @@ export class DraftGenerationService {
     aspectRatio?: string,
     imageSize?: string,
     onImageGenerated?: ImageGenerationProgressHandler,
-  ): Promise<{ urls: string[], points: number, imageGenerationErrors: ImageGenerationErrorDetail[] }> {
+  ): Promise<{ urls: string[], imageGenerationErrors: ImageGenerationErrorDetail[] }> {
     const urls: string[] = []
     const imageGenerationErrors: ImageGenerationErrorDetail[] = []
-    let totalPoints = 0
 
     for (const { prompt, promptIndex } of imagePrompts) {
       this.logger.log(
@@ -1137,7 +1093,6 @@ export class DraftGenerationService {
             model: model as 'gemini-3.1-flash-image-preview' | 'gemini-3-pro-image-preview',
             prompt,
             imageUrls: referenceImageUrls.length > 0 ? referenceImageUrls : undefined,
-            source: CreditsConsumptionSource.AiDraftGeneration,
             ...(imageSize ? { imageSize: imageSize as '1K' | '2K' | '4K' } : {}),
             ...(aspectRatio ? { aspectRatio: aspectRatio as '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '4:5' | '5:4' | '9:16' | '16:9' | '21:9' } : {}),
           }),
@@ -1158,12 +1113,11 @@ export class DraftGenerationService {
           break
         }
 
-        totalPoints += result.usage?.points ?? 0
         if (result.images.length > 0) {
           const generatedUrls = result.images.slice(0, remainingSlots).map(image => image.url)
           for (const imageUrl of generatedUrls) {
             urls.push(imageUrl)
-            await onImageGenerated?.(imageUrl, totalPoints, imageGenerationErrors)
+            await onImageGenerated?.(imageUrl, imageGenerationErrors)
           }
         }
 
@@ -1183,7 +1137,7 @@ export class DraftGenerationService {
       }
     }
 
-    return { urls, points: totalPoints, imageGenerationErrors }
+    return { urls, imageGenerationErrors }
   }
 
   private async generateImagesWithOpenAI(
@@ -1195,11 +1149,9 @@ export class DraftGenerationService {
     referenceImageUrls: string[],
     imageSize?: string,
     onImageGenerated?: ImageGenerationProgressHandler,
-  ): Promise<{ urls: string[], points: number, imageGenerationErrors: ImageGenerationErrorDetail[] }> {
+  ): Promise<{ urls: string[], imageGenerationErrors: ImageGenerationErrorDetail[] }> {
     const urls: string[] = []
     const imageGenerationErrors: ImageGenerationErrorDetail[] = []
-    const pricePerImage = this.getImageTextDraftPricingEntry(model, imageSize).pricePerImage
-    let totalPoints = 0
 
     for (const { prompt, promptIndex } of imagePrompts) {
       this.logger.log(
@@ -1229,7 +1181,6 @@ export class DraftGenerationService {
                 prompt,
                 n: 1,
                 size: imageExecution.resolvedSize,
-                source: CreditsConsumptionSource.AiDraftGeneration,
               })
             }
 
@@ -1240,7 +1191,6 @@ export class DraftGenerationService {
               prompt,
               n: 1,
               size: imageExecution.resolvedSize,
-              source: CreditsConsumptionSource.AiDraftGeneration,
             })
           },
           {
@@ -1267,10 +1217,9 @@ export class DraftGenerationService {
         if (generatedUrls.length > 0) {
           for (const imageUrl of generatedUrls.slice(0, remainingSlots)) {
             urls.push(imageUrl)
-            await onImageGenerated?.(imageUrl, totalPoints + pricePerImage, imageGenerationErrors)
+            await onImageGenerated?.(imageUrl, imageGenerationErrors)
           }
         }
-        totalPoints += pricePerImage
 
         if (urls.length >= imagePrompts.length) {
           break
@@ -1288,7 +1237,7 @@ export class DraftGenerationService {
       }
     }
 
-    return { urls, points: totalPoints, imageGenerationErrors }
+    return { urls, imageGenerationErrors }
   }
 
   /**
@@ -1306,7 +1255,7 @@ export class DraftGenerationService {
     dto: CreateDraftFromVideoUrlDto,
   ): Promise<{ materialId: string }> {
     const resolvedGroupId = await this.resolveDraftGroupId(userId, dto.groupId)
-    const modelName = 'gemini-3-flash-preview'
+    const modelName = 'gemini-3.5-flash'
     const startedAt = new Date()
     const fullVideoUrl = FileUtil.buildUrl(dto.videoUrl)
 
@@ -1337,7 +1286,7 @@ Return the result as JSON.`
     ]
 
     const structuredModel = model.withStructuredOutput(z.toJSONSchema(VideoDraftMetadataResultSchema), { includeRaw: true })
-    const { raw, parsed: structuredResult } = await this.aiAvailability.execute(
+    const { parsed: structuredResult } = await this.aiAvailability.execute(
       { provider: 'gemini', operation: 'draftGeneration.generateDraftFromVideoUrl', model: modelName },
       async () => structuredModel.invoke([
         new HumanMessage({ content: messageContent }),
@@ -1354,27 +1303,19 @@ Return the result as JSON.`
     }
 
     const plan = parsed.data
-    const usage = AIMessage.isInstance(raw) ? raw.usage_metadata : undefined
-    const chatModel = config.ai.models.chat.find(m => m.name === modelName)
-    if (chatModel && usage) {
-      const pricing = chatModel.pricing as ChatPricing
-      const consumedPoints = calculatePricingPoints(pricing, usage)
-      const duration = Date.now() - startedAt.getTime()
-
-      await this.aiLogRepository.create({
-        userId,
-        userType,
-        type: AiLogType.Agent,
-        model: modelName,
-        channel: AiLogChannel.Gemini,
-        startedAt,
-        duration,
-        points: consumedPoints,
-        request: { videoUrl: dto.videoUrl },
-        response: plan,
-        status: AiLogStatus.Success,
-      })
-    }
+    const duration = Date.now() - startedAt.getTime()
+    await this.aiLogRepository.create({
+      userId,
+      userType,
+      type: AiLogType.Agent,
+      model: modelName,
+      channel: AiLogChannel.Gemini,
+      startedAt,
+      duration,
+      request: { videoUrl: dto.videoUrl },
+      response: plan,
+      status: AiLogStatus.Success,
+    })
 
     this.logger.log({ plan }, 'VideoUrl: Plan generated')
 

@@ -1,4 +1,4 @@
-import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 import { AudioRole, ContentType, ImageRole, TaskStatus, ToolType, VideoRole } from '../../libs/volcengine'
 
@@ -41,7 +41,6 @@ const volcengineGenerationRequestSchema = z.object({
   duration: z.number().int().optional().describe('时长（秒）'),
   seed: z.number().int().optional().describe('随机种子'),
   watermark: z.boolean().optional().describe('是否带水印'),
-  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class VolcengineGenerationRequestDto extends createZodDto(volcengineGenerationRequestSchema) {}

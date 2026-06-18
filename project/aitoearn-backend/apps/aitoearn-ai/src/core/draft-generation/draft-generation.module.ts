@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { HelpersModule } from '@yikart/helpers'
 import { ImageModule } from '../ai/image'
 import { VideoModule } from '../ai/video'
 import { DraftGenerationMemoryScheduler } from './draft-generation-memory.scheduler'
@@ -11,7 +10,6 @@ import { DraftGenerationService } from './draft-generation.service'
 
 @Module({
   imports: [
-    HelpersModule,
     ImageModule,
     VideoModule,
   ],

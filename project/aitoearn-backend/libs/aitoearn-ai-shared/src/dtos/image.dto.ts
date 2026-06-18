@@ -1,4 +1,4 @@
-import { createZodDto, CreditsConsumptionSource, UserType } from '@yikart/common'
+import { createZodDto, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 // 图片生成请求
@@ -11,7 +11,6 @@ const imageGenerationSchema = z.object({
   size: z.string().optional().describe('图片尺寸'),
   style: z.string().optional().describe('图片风格'),
   user: z.string().optional().describe('用户标识符'),
-  source: z.enum([CreditsConsumptionSource.AiImage, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ImageGenerationDto extends createZodDto(imageGenerationSchema) {}
@@ -26,7 +25,6 @@ const imageEditSchema = z.object({
   size: z.string().optional().describe('图片尺寸'),
   response_format: z.enum(['url', 'b64_json']).optional().describe('返回格式'),
   user: z.string().optional().describe('用户标识符'),
-  source: z.enum([CreditsConsumptionSource.AiImage, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class ImageEditDto extends createZodDto(imageEditSchema) {}
@@ -72,7 +70,6 @@ const geminiImageGenerationSchema = z.object({
   imageSize: z.enum(['1K', '2K', '4K']).optional().describe('图片尺寸'),
   aspectRatio: z.enum(['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9']).optional().describe('图片宽高比'),
   model: z.enum(['gemini-3.1-flash-image-preview', 'gemini-3-pro-image-preview']).optional().describe('Gemini 图片模型'),
-  source: z.enum([CreditsConsumptionSource.AiImage, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class GeminiImageGenerationDto extends createZodDto(geminiImageGenerationSchema) {}
@@ -85,23 +82,3 @@ const userGeminiImageGenerationSchema = z.object({
 })
 
 export class UserGeminiImageGenerationDto extends createZodDto(userGeminiImageGenerationSchema) {}
-
-// 二维码艺术图生成请求
-const qrCodeArtSchema = z.object({
-  content: z.string().min(1).max(2000).describe('二维码扫码后的内容'),
-  referenceImageUrl: z.url().optional().describe('参考样式图 URL'),
-  prompt: z.string().min(1).max(4000).describe('文字描述（提示词）'),
-  model: z.string().default('gpt-image-1').describe('图片生成模型'),
-  size: z.string().optional().describe('图片尺寸'),
-})
-
-export class QrCodeArtDto extends createZodDto(qrCodeArtSchema) {}
-
-// 用户二维码艺术图生成请求
-const userQrCodeArtSchema = z.object({
-  userId: z.string(),
-  userType: z.enum(UserType),
-  ...qrCodeArtSchema.shape,
-})
-
-export class UserQrCodeArtDto extends createZodDto(userQrCodeArtSchema) {}

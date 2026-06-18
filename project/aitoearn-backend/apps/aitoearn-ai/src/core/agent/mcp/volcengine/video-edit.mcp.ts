@@ -1,8 +1,7 @@
 import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-ai/claude-agent-sdk'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { CreditsConsumptionSource, CreditsType, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
+import { UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { z } from 'zod'
 import { AiAvailabilityService } from '../../../ai-availability'
@@ -17,17 +16,6 @@ import {
 } from './common'
 import { VolcengineVideoUtils } from './volcengine.utils'
 
-// 火山引擎官方价格表（美分/分钟，已进位保留两位小数）
-const VIDEO_EDIT_PRICING_TABLE = [
-  { maxHeight: 360, centsPerMinute: 0.15 }, // 360P: 0.01 元 → 0.143 → 0.15
-  { maxHeight: 480, centsPerMinute: 0.22 }, // 480P: 0.015 元 → 0.214 → 0.22
-  { maxHeight: 540, centsPerMinute: 0.29 }, // 540P: 0.02 元 → 0.286 → 0.29
-  { maxHeight: 720, centsPerMinute: 0.43 }, // 720P: 0.03 元 → 0.429 → 0.43
-  { maxHeight: 1080, centsPerMinute: 0.86 }, // 1080P: 0.06 元 → 0.857 → 0.86
-  { maxHeight: 1440, centsPerMinute: 1.72 }, // 2K: 0.12 元 → 1.714 → 1.72
-  { maxHeight: 2160, centsPerMinute: 3.43 }, // 4K: 0.24 元 → 3.429 → 3.43
-]
-
 @Injectable()
 export class VideoEditMcp {
   private readonly logger = new Logger(VideoEditMcp.name)
@@ -35,38 +23,9 @@ export class VideoEditMcp {
   constructor(
     private readonly volcengineService: VolcengineService,
     private readonly assetsService: AssetsService,
-    private readonly creditsHelper: CreditsHelperService,
     private readonly aiAvailability: AiAvailabilityService,
     private readonly aiLogRepo: AiLogRepository,
   ) {}
-
-  /**
-   * 计算视频编辑价格（美分）
-   */
-  private calculateVideoEditPrice(durationSeconds: number, resolution: string): number {
-    const height = Math.min(...resolution.split('x').map(Number))
-    const pricing = VIDEO_EDIT_PRICING_TABLE.find(p => height <= p.maxHeight)
-      || VIDEO_EDIT_PRICING_TABLE[VIDEO_EDIT_PRICING_TABLE.length - 1]
-
-    const durationMinutes = durationSeconds / 60
-    return durationMinutes * pricing.centsPerMinute
-  }
-
-  /**
-   * 计算 Track 的总时长（秒）
-   */
-  private calculateTotalDuration(Track: z.infer<typeof submitDirectEditTaskSchema>['Track']): number {
-    let maxEndTime = 0
-    for (const layer of Track) {
-      for (const element of layer) {
-        const endTime = element.TargetTime[1]
-        if (endTime > maxEndTime) {
-          maxEndTime = endTime
-        }
-      }
-    }
-    return maxEndTime / 1000
-  }
 
   /**
    * 从 Track 中推导 Canvas 尺寸
@@ -179,23 +138,6 @@ export class VideoEditMcp {
           EditParam: editParam,
         })
 
-        const totalDuration = this.calculateTotalDuration(Track)
-        const resolution = `${canvas.Width}x${canvas.Height}`
-        const price = this.calculateVideoEditPrice(totalDuration, resolution)
-
-        await this.creditsHelper.deductCredits({
-          userId,
-          amount: price,
-          type: CreditsType.AiService,
-          source: CreditsConsumptionSource.AiVideoEdit,
-          description: `Video Edit - ${result.ReqId}`,
-          metadata: {
-            taskId: result.ReqId,
-            duration: totalDuration,
-            resolution,
-          },
-        })
-
         const aiLog = await this.aiLogRepo.create({
           userId,
           userType,
@@ -204,7 +146,6 @@ export class VideoEditMcp {
           channel: AiLogChannel.Volcengine,
           startedAt,
           type: AiLogType.VideoEdit,
-          points: price,
           request: { Canvas: canvas, Output, tracksCount: Track.length },
           status: AiLogStatus.Generating,
         })
@@ -242,6 +183,19 @@ Returns detailed error information on failure.`,
           return errorResult('Task record is invalid. Missing Volcengine task ID.')
         }
 
+        if (aiLog.status === AiLogStatus.Success) {
+          const outputUrl = aiLog.response?.outputUrl
+          return successResult(
+            outputUrl
+              ? `Task completed successfully! Output Video URL: ${outputUrl}. The video has been processed and is now available.`
+              : 'Task completed successfully.',
+          )
+        }
+
+        if (aiLog.status === AiLogStatus.Failed) {
+          return errorResult(aiLog.response?.error ?? 'Task failed.')
+        }
+
         const result = await this.volcengineService.getDirectEditResult({
           ReqIds: [volcTaskId],
         })
@@ -273,11 +227,17 @@ Returns detailed error information on failure.`,
 
           this.logger.debug({ taskId, outputUrl }, '[VideoEdit] 视频上传成功')
 
-          await this.aiLogRepo.updateById(aiLog.id, {
-            status: AiLogStatus.Success,
-            finishedAt: new Date(),
-            response: { outputUrl, outputVid },
+          const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(aiLog.id, AiLogStatus.Generating, {
+            $set: {
+              status: AiLogStatus.Success,
+              finishedAt: new Date(),
+              response: { outputUrl, outputVid },
+            },
           })
+
+          if (!updatedAiLog) {
+            return errorResult('Task is no longer running. Please check the task status again.')
+          }
 
           return successResult(
             `Task completed successfully! Output Video URL: ${outputUrl}. The video has been processed and is now available.`,
@@ -291,23 +251,16 @@ Returns detailed error information on failure.`,
             ? `Task failed: ${result.Message}`
             : 'Task failed. Please check the video source and parameters, then try again.'
 
-          await this.aiLogRepo.updateById(aiLog.id, {
-            status: AiLogStatus.Failed,
-            finishedAt: new Date(),
-            response: { error: errorMessage },
+          const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(aiLog.id, AiLogStatus.Generating, {
+            $set: {
+              status: AiLogStatus.Failed,
+              finishedAt: new Date(),
+              response: { error: errorMessage },
+            },
           })
 
-          if (aiLog.points && aiLog.points > 0) {
-            await this.creditsHelper.addCredits({
-              userId: aiLog.userId,
-              amount: aiLog.points,
-              type: CreditsType.AiService,
-              description: `Video Edit Refund - ${volcTaskId}`,
-              metadata: {
-                taskId: volcTaskId,
-                reason: 'task_failed',
-              },
-            })
+          if (!updatedAiLog) {
+            return errorResult('Task is no longer running. Please check the task status again.')
           }
 
           return errorResult(errorMessage)

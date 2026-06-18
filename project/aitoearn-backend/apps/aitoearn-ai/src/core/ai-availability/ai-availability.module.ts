@@ -4,7 +4,7 @@ import { AiAvailabilityService } from './ai-availability.service'
 @Global()
 @Module({})
 export class AiAvailabilityModule {
-  static forRoot(_config?: unknown): DynamicModule {
+  static forRoot(): DynamicModule {
     return {
       global: true,
       module: AiAvailabilityModule,

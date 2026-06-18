@@ -89,8 +89,6 @@ jobs:
       - name: Install pnpm
         if: steps.parse-manual.outputs.manual_apps == ''
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         if: steps.parse-manual.outputs.manual_apps == ''
@@ -234,8 +232,6 @@ jobs:
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
-        with:
-          version: 10
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -267,6 +263,9 @@ jobs:
           restore-keys: |
             nx-${{ matrix.app }}-${{ hashFiles('pnpm-lock.yaml') }}-
             nx-${{ matrix.app }}-
+
+      - name: Generate GraphQL types
+        run: pnpm --filter aitoearn-task graphql-codegen
 
       - name: Build application
         run: pnpm nx run ${{ matrix.app }}:build

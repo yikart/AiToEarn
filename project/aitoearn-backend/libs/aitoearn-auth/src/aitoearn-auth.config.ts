@@ -5,7 +5,6 @@ export const AITOEARN_AUTH_OPTIONS = Symbol('AITOEARN_AUTH_OPTIONS')
 
 export const aitoearnAuthConfigSchema = z.object({
   secret: z.string().default(''),
-  expiresIn: z.number().default(7 * 24 * 60 * 60),
   internalToken: z.string().min(1),
 })
 

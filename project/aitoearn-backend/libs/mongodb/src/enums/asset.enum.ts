@@ -29,6 +29,9 @@ export enum AssetType {
   // 视频缩略图
   VideoThumbnail = 'videoThumbnail',
 
+  // Google Maps
+  GooglePlace = 'googlePlace',
+
   // 临时
   Temp = 'temp',
 }

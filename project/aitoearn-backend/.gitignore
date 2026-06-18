@@ -44,6 +44,7 @@ Thumbs.db
 .github/instructions/nx.instructions.md
 
 local.config.js
+local.config.yaml
 .prettierignore
 .prettierrc
 .claude-session
@@ -66,3 +67,4 @@ vitest.config.*.timestamp*
 .tmp
 
 /gzq
+.dev-compare/

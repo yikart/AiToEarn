@@ -153,7 +153,7 @@ Use this tool when user wants to:
         const response = await this.chatService.userGeminiGenerateContent({
           userId,
           userType,
-          model: 'gemini-2.5-flash-preview-09-2025',
+          model: 'gemini-3.5-flash',
           contents: [{
             role: 'user',
             parts: [

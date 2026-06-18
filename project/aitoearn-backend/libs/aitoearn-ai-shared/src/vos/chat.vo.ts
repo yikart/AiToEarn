@@ -11,36 +11,27 @@ const modalitiesTokenDetails = z.object({
   document: z.number().optional(),
 })
 
-const chatPricingModalitySchema = z.object({
-  text: z.string(),
-  image: z.string().optional(),
-  video: z.string().optional(),
-  audio: z.string().optional(),
-})
+const chatInputTokenDetailsSchema = z.object({
+  ...modalitiesTokenDetails.shape,
+  cache_read: z.number().optional(),
+  cache_creation_5m: z.number().optional(),
+  cache_creation_1h: z.number().optional(),
+}).optional()
 
-const chatPricingTierSchema = z.object({
-  maxInputTokens: z.number().int().positive().optional(),
-  input: chatPricingModalitySchema,
-  output: chatPricingModalitySchema,
-})
+const chatOutputTokenDetailsSchema = z.object({
+  ...modalitiesTokenDetails.shape,
+  reasoning: z.number().optional(),
+}).optional()
 
 const chatCompletionVoSchema = z.object({
   content: z.union([z.string(), z.array(messageContentComplexSchema)]).describe('生成内容'),
   model: z.string().optional().describe('使用的模型'),
   usage: z.object({
-    points: z.number().optional(),
     input_tokens: z.number().optional().describe('输入token数'),
     output_tokens: z.number().optional().describe('输出token数'),
     total_tokens: z.number().optional().describe('总token数'),
-    input_token_details: z.object({
-      ...modalitiesTokenDetails.shape,
-      cache_read: z.number().optional(),
-      cache_creation: z.number().optional(),
-    }).optional(),
-    output_token_details: z.object({
-      ...modalitiesTokenDetails.shape,
-      reasoning: z.number().optional(),
-    }).optional(),
+    input_token_details: chatInputTokenDetailsSchema,
+    output_token_details: chatOutputTokenDetailsSchema,
   }).optional().describe('token 使用情况'),
 })
 
@@ -56,19 +47,11 @@ export const chatCompletionChunkVoSchema = z.union([
     type: z.literal('complete'),
     content: z.union([z.string(), z.array(messageContentComplexSchema)]).describe('完整内容'),
     usage: z.object({
-      points: z.number().optional(),
       input_tokens: z.number().optional().describe('输入token数'),
       output_tokens: z.number().optional().describe('输出token数'),
       total_tokens: z.number().optional().describe('总token数'),
-      input_token_details: z.object({
-        ...modalitiesTokenDetails.shape,
-        cache_read: z.number().optional(),
-        cache_creation: z.number().optional(),
-      }).optional(),
-      output_token_details: z.object({
-        ...modalitiesTokenDetails.shape,
-        reasoning: z.number().optional(),
-      }).optional(),
+      input_token_details: chatInputTokenDetailsSchema,
+      output_token_details: chatOutputTokenDetailsSchema,
     }).describe('token 使用情况'),
   }),
 ])
@@ -87,18 +70,6 @@ export const chatModelSchema = z.object({
   scenes: z.string().array().optional().describe('适用场景'),
   inputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
   outputModalities: z.array(z.enum(['text', 'image', 'video', 'audio'])),
-  pricing: z.union([
-    z.object({
-      price: z.string(),
-    }).strict(),
-    z.object({
-      tiers: z.array(chatPricingTierSchema).min(1),
-    }).strict(),
-  ]),
-  fixedImagePricing: z.array(z.object({
-    resolution: z.string(),
-    price: z.number(),
-  })).optional(),
 })
 
 export class ChatModelConfigVo extends createZodDto(chatModelSchema) {}

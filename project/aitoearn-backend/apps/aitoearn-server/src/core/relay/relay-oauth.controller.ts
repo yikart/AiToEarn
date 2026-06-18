@@ -1,19 +1,25 @@
 import { Body, Controller, Post, Query, Render } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
-import { ApiDoc, AppException, ResponseCode } from '@yikart/common'
-import { AccountStatus } from '@yikart/mongodb'
-import { RedisService } from '@yikart/redis'
-import { ChannelRedisKeys } from '../channel/channel.constants'
-import { ChannelAccountService } from '../channel/platforms/channel-account.service'
+import { AccountType, ApiDoc, AppException, ChannelAuthTaskStatus, ParseObjectIdPipe, ResponseCode } from '@yikart/common'
+import { ServerRedisService } from '../../common/redis'
+import { AccountService } from '../channels/accounts/account.service'
 import { RelayCallbackDto } from './relay-callback.dto'
+
+interface RelayCallbackAccount {
+  relayAccountRef: string
+  nickname: string
+  avatar?: string
+  platformUid: string
+  platform: AccountType
+}
 
 @ApiTags('Relay/OAuth')
 @Controller('plat')
 export class RelayOAuthController {
   constructor(
-    private readonly channelAccountService: ChannelAccountService,
-    private readonly redisService: RedisService,
+    private readonly accountService: AccountService,
+    private readonly redisService: ServerRedisService,
   ) {}
 
   @Public()
@@ -23,45 +29,84 @@ export class RelayOAuthController {
     body: RelayCallbackDto.schema,
   })
   @Post('/relay-callback')
-  @Render('auth/back')
+  @Render('channels/auth/callback')
   async handleRelayCallback(
     @Body() body: RelayCallbackDto,
-    @Query('userId') userId: string,
+    @Query('userId', ParseObjectIdPipe) userId: string,
   ) {
     if (!userId) {
       throw new AppException(ResponseCode.UserNotFound)
     }
 
-    const account = await this.channelAccountService.createAccount(
-      { type: body.accountType, uid: body.platformUid },
-      {
-        userId,
-        type: body.accountType,
-        uid: body.platformUid,
-        nickname: body.nickname,
-        avatar: body.avatar,
-        status: AccountStatus.NORMAL,
-        relayAccountRef: body.relayAccountRef,
-      },
-    )
+    const relayAccounts = this.getRelayCallbackAccounts(body)
+    const accounts: Array<{ id: string }> = []
+    for (const relayAccount of relayAccounts) {
+      const account = await this.accountService.createRelayAccount(userId, {
+        type: relayAccount.platform,
+        uid: relayAccount.platformUid,
+        nickname: relayAccount.nickname,
+        avatar: relayAccount.avatar,
+        relayAccountRef: relayAccount.relayAccountRef,
+      })
+      if (account) {
+        accounts.push(account)
+      }
+    }
+    const accountIds = accounts.map(account => account.id)
 
-    if (body.taskId) {
-      const authTaskPlatform = this.getAuthTaskPlatform(body.accountType)
-      await this.redisService.setJson(
-        ChannelRedisKeys.authTask(authTaskPlatform, body.taskId),
-        { status: 1, accountId: account?.id },
-        600,
-      )
+    if (body.taskId && accountIds.length > 0) {
+      const authTaskPlatform = this.getAuthTaskPlatform(relayAccounts[0].platform)
+      await this.redisService.saveLegacyRelayAuthTask(authTaskPlatform, body.taskId, {
+        status: ChannelAuthTaskStatus.Completed,
+        accountId: accountIds[0],
+        accountIds,
+      })
     }
 
-    return { status: 1, message: '授权成功', accountId: account?.id }
+    return {
+      status: 1,
+      message: '授权成功',
+      accountId: accountIds[0],
+      accountIds,
+      redirectUri: body.redirectUri,
+    }
   }
 
-  private getAuthTaskPlatform(accountType: string): string {
+  private getRelayCallbackAccounts(body: RelayCallbackDto): RelayCallbackAccount[] {
+    if (body.accounts) {
+      try {
+        const accounts = JSON.parse(body.accounts) as RelayCallbackAccount[]
+        if (Array.isArray(accounts) && accounts.length > 0) {
+          const validAccounts = accounts.filter(account => (
+            account.relayAccountRef
+            && account.platformUid
+            && account.platform
+            && account.nickname
+          ))
+          if (validAccounts.length > 0) {
+            return validAccounts
+          }
+        }
+      }
+      catch {
+        // Fall back to legacy single-account fields below.
+      }
+    }
+
+    return [{
+      relayAccountRef: body.relayAccountRef,
+      nickname: body.nickname,
+      avatar: body.avatar,
+      platformUid: body.platformUid,
+      platform: body.platform,
+    }]
+  }
+
+  private getAuthTaskPlatform(platform: string): string {
     const META_PLATFORMS = ['facebook', 'instagram', 'threads', 'linkedin']
-    if (META_PLATFORMS.includes(accountType)) {
+    if (META_PLATFORMS.includes(platform)) {
       return 'meta'
     }
-    return accountType
+    return platform
   }
 }

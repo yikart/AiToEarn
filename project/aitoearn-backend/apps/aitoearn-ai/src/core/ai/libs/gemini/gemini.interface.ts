@@ -1,10 +1,3 @@
-export enum VeoModel {
-  Veo31Generate = 'veo-3.1-generate-001',
-  Veo31FastGenerate = 'veo-3.1-fast-generate-001',
-  Veo31GeneratePreview = 'veo-3.1-generate-preview',
-  Veo31FastGeneratePreview = 'veo-3.1-fast-generate-preview',
-}
-
 /**
  * 图片生成尺寸选项
  */
@@ -62,62 +55,4 @@ export interface GeminiImageUsage {
 export interface GeminiImageGenerateResponse {
   images: GeminiGeneratedImage[]
   usage?: GeminiImageUsage
-}
-
-/**
- * 与官方 API 保持一致的媒体内容格式 (仅支持 base64)
- */
-export interface GeminiMediaContent {
-  bytesBase64Encoded: string
-  mimeType: string
-}
-
-/**
- * 与官方 API 保持一致的参考图片格式
- */
-export interface GeminiReferenceImage {
-  image: GeminiMediaContent
-  referenceType: 'asset' | 'style'
-}
-
-/**
- * 与官方 API 保持一致的请求格式
- */
-export interface GeminiVeoCreateVideoRequest {
-  instances: Array<{
-    prompt: string
-    image?: GeminiMediaContent
-    lastFrame?: GeminiMediaContent
-    video?: GeminiMediaContent
-    referenceImages?: GeminiReferenceImage[]
-  }>
-  parameters: {
-    aspectRatio?: '16:9' | '9:16'
-    durationSeconds?: number
-    generateAudio?: boolean
-    seed?: number
-    sampleCount?: number
-    storageUri?: string
-  }
-}
-
-/**
- * 与官方 API 保持一致的响应格式 (仅使用 base64)
- */
-export interface GeminiVeoOperationResponse {
-  name: string
-  done: boolean
-  response?: {
-    '@type': string
-    'raiMediaFilteredCount'?: number
-    'raiMediaFilteredReasons'?: string[]
-    'videos': Array<{
-      bytesBase64Encoded: string
-      mimeType: string
-    }>
-  }
-  error?: {
-    code: number
-    message: string
-  }
 }

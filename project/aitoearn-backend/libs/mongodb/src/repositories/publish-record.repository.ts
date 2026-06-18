@@ -8,7 +8,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/mongoose'
 import { AccountType, POST_DATA_UNAVAILABLE_WORK_STATUSES, WorkStatus } from '@yikart/common'
-import { Model, RootFilterQuery } from 'mongoose'
+import { Model, RootFilterQuery, UpdateQuery } from 'mongoose'
 import { PublishRecordSource, PublishStatus, PublishType } from '../enums'
 import { PublishDayInfo, PublishInfo, PublishRecord } from '../schemas'
 import { BaseRepository } from './base.repository'
@@ -17,6 +17,7 @@ export interface PublishRecordPostDataCrawlerMonitorItem {
   publishRecordId: string
   materialGroupId?: string
   dataId: string
+  taskId?: string
   accountType: AccountType
   accountId?: string
   uid?: string
@@ -65,12 +66,14 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       accountType?: AccountType
       status?: PublishStatus
       type?: PublishType
+      source?: PublishRecordSource
       time?: [Date, Date]
       uid?: string
     },
   ): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       userId: query.userId,
+      source: query.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
       ...(query.accountId !== undefined && { accountId: query.accountId }),
       ...(query.accountType !== undefined && {
         accountType: query.accountType,
@@ -97,12 +100,14 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     userId: string
     accountId?: string
     accountType?: AccountType
+    source?: PublishRecordSource
     time?: [Date, Date]
   }): Promise<PublishRecord[]> {
     // status not equal published
     const filters: RootFilterQuery<PublishRecord> = {
-      status: { $ne: PublishStatus.PUBLISHED },
+      status: { $ne: PublishStatus.Published },
       userId: query.userId,
+      source: query.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
     }
     if (query.accountId) {
       filters.accountId = query.accountId
@@ -152,9 +157,31 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     ]).exec()
   }
 
+  async getAdminPublishRecordList(
+    filter: RootFilterQuery<PublishRecord>,
+    page: number,
+    pageSize: number,
+  ) {
+    return this.publishRecordModel
+      .find(filter)
+      .sort({ publishTime: -1, createdAt: -1 })
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .lean({ virtuals: true })
+      .exec()
+  }
+
   // 获取发布记录信息
   async getPublishRecordInfo(id: string) {
     return this.publishRecordModel.findOne({ _id: id }).lean({ virtuals: true })
+  }
+
+  async getByAccountTypeAndPlatformWorkId(accountType: AccountType, platformWorkId: string) {
+    return this.publishRecordModel.findOne({ accountType, platformWorkId }).lean({ virtuals: true }).exec()
+  }
+
+  async getByAccountTypeAndDataId(accountType: AccountType, dataId: string) {
+    return this.publishRecordModel.findOne({ accountType, dataId }).lean({ virtuals: true }).exec()
   }
 
   // 删除发布记录
@@ -172,6 +199,21 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return res.modifiedCount > 0
   }
 
+  async updateByIdAndStatuses(
+    id: string,
+    statuses: readonly PublishStatus[],
+    update: UpdateQuery<PublishRecord>,
+  ): Promise<PublishRecord | null> {
+    return this.publishRecordModel
+      .findOneAndUpdate(
+        { _id: id, status: { $in: statuses } },
+        update,
+        { new: true },
+      )
+      .lean({ virtuals: true })
+      .exec()
+  }
+
   /**
    * 创建
    * @param data
@@ -187,9 +229,9 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
    * if data had publish record, update it
    * @param data
    */
-  async upDayPublishInfo(data: PublishRecord) {
+  async upDayPublishInfo(data: Pick<PublishRecord, 'userId'>) {
     const today = new Date()
-    this.publishDayInfoModel
+    return this.publishDayInfoModel
       .findOneAndUpdate(
         {
           userId: data.userId,
@@ -295,19 +337,59 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return publishRecord
   }
 
+  async getPublishRecordByTaskId(taskId: string, userId: string) {
+    const res = await this.publishRecordModel
+      .findOne({ taskId, userId })
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true })
+    return res
+  }
+
+  async listPublishedByTaskId(
+    taskId: string,
+    query?: {
+      accountType?: AccountType
+    },
+  ): Promise<PublishRecord[]> {
+    return this.publishRecordModel
+      .find({
+        taskId,
+        status: PublishStatus.Published,
+        ...(query?.accountType && { accountType: query.accountType }),
+      })
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true })
+      .exec()
+  }
+
+  async getPublishedByTaskIdAndDataId(taskId: string, dataId: string): Promise<PublishRecord | null> {
+    return this.publishRecordModel
+      .findOne({
+        taskId,
+        dataId,
+        status: PublishStatus.Published,
+      })
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true })
+      .exec()
+  }
+
   async listPublishedByPublishTimeRangeForCrawlerMonitor(
     startDate: Date,
     endDate: Date,
+    taskId?: string,
     accountType?: string,
   ): Promise<PublishRecordPostDataCrawlerMonitorItem[]> {
     return this.publishRecordModel.aggregate<PublishRecordPostDataCrawlerMonitorItem>([
       {
         $match: {
-          status: PublishStatus.PUBLISHED,
+          status: PublishStatus.Published,
           publishTime: { $gte: startDate, $lt: endDate },
+          source: { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
           dataId: { $exists: true, $nin: [null, ''] },
           workStatus: { $nin: POST_DATA_UNAVAILABLE_WORK_STATUSES },
           workLink: { $exists: true, $nin: [null, ''] },
+          ...(taskId && { taskId }),
           ...(accountType && { accountType }),
         },
       },
@@ -321,6 +403,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
           publishRecordId: { $first: { $toString: '$_id' } },
           materialGroupId: { $first: '$materialGroupId' },
           dataId: { $first: '$dataId' },
+          taskId: { $first: '$taskId' },
           accountType: { $first: '$accountType' },
           accountId: { $first: '$accountId' },
           uid: { $first: '$uid' },
@@ -340,6 +423,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
           publishRecordId: 1,
           materialGroupId: 1,
           dataId: 1,
+          taskId: 1,
           accountType: 1,
           accountId: 1,
           uid: 1,
@@ -357,12 +441,98 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     ]).exec()
   }
 
+  async listOfflineQrPublishedByCreatedAtRangeForCrawlerMonitor(
+    startDate: Date,
+    endDate: Date,
+    accountType?: string,
+  ): Promise<PublishRecordPostDataCrawlerMonitorItem[]> {
+    return this.publishRecordModel.aggregate<PublishRecordPostDataCrawlerMonitorItem>([
+      {
+        $match: {
+          status: PublishStatus.Published,
+          source: PublishRecordSource.OfflineQr,
+          createdAt: { $gte: startDate, $lt: endDate },
+          dataId: { $exists: true, $nin: [null, ''] },
+          workStatus: { $nin: POST_DATA_UNAVAILABLE_WORK_STATUSES },
+          isDeleted: { $ne: true },
+          ...(accountType && { accountType }),
+        },
+      },
+      { $sort: { createdAt: -1, publishTime: -1 } },
+      {
+        $group: {
+          _id: {
+            accountType: '$accountType',
+            uid: '$uid',
+            dataId: '$dataId',
+          },
+          publishRecordId: { $first: { $toString: '$_id' } },
+          materialGroupId: { $first: '$materialGroupId' },
+          dataId: { $first: '$dataId' },
+          taskId: { $first: '$taskId' },
+          accountType: { $first: '$accountType' },
+          accountId: { $first: '$accountId' },
+          uid: { $first: '$uid' },
+          workLink: { $first: '$workLink' },
+          originalWorkLink: { $first: '$originalWorkLink' },
+          publishTime: { $first: '$publishTime' },
+          status: { $first: '$status' },
+          workStatus: { $first: '$workStatus' },
+          errorMessage: { $first: '$errorMsg' },
+          createdAt: { $first: '$createdAt' },
+          updatedAt: { $first: '$updatedAt' },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          publishRecordId: 1,
+          materialGroupId: 1,
+          dataId: 1,
+          taskId: 1,
+          accountType: 1,
+          accountId: 1,
+          uid: 1,
+          workLink: 1,
+          originalWorkLink: 1,
+          publishTime: 1,
+          status: 1,
+          workStatus: 1,
+          errorMessage: 1,
+          createdAt: 1,
+          updatedAt: 1,
+        },
+      },
+      { $sort: { createdAt: -1 } },
+    ]).exec()
+  }
+
+  async listPublishedByTaskIdAndDataId(taskId: string, dataId: string): Promise<PublishRecord[]> {
+    return this.publishRecordModel
+      .find({
+        taskId,
+        dataId,
+        status: PublishStatus.Published,
+      })
+      .sort({ createdAt: -1 })
+      .lean({ virtuals: true })
+      .exec()
+  }
+
   async getPublishRecordByDataIdAndUid(uid: string, dataId: string) {
     const res = await this.publishRecordModel
       .findOne({ uid, dataId })
       .sort({ createdAt: -1 })
       .lean({ virtuals: true })
     return res
+  }
+
+  async updateWorkStatusById(id: string, workStatus: WorkStatus) {
+    return await this.updateById(id, {
+      $set: {
+        workStatus,
+      },
+    })
   }
 
   // 完成发布
@@ -373,9 +543,9 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       dataOption?: unknown
     },
   ) {
-    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.PUBLISHING }, {
+    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.Publishing }, {
       $set: {
-        status: PublishStatus.PUBLISHED,
+        status: PublishStatus.Published,
         ...data,
       },
     }).lean({ virtuals: true })
@@ -387,9 +557,9 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     filter: { dataId: string, uid: string },
     errorMsg: string,
   ) {
-    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.PUBLISHING }, {
+    const res = await this.publishRecordModel.findOneAndUpdate({ ...filter, status: PublishStatus.Publishing }, {
       $set: {
-        status: PublishStatus.FAILED,
+        status: PublishStatus.Failed,
         errorMsg,
         queued: false,
         inQueue: false,
@@ -459,10 +629,10 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   ): Promise<{ records: PublishRecord[], total: number }> {
     const filters: RootFilterQuery<PublishRecord> = {
       materialGroupId,
-      status: PublishStatus.PUBLISHED,
+      status: PublishStatus.Published,
       dataId: { $exists: true, $ne: '' },
       workLink: { $exists: true, $nin: ['', null] },
-      ...(query?.source !== undefined && { source: query.source }),
+      source: query?.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
       ...(query?.accountType !== undefined && { accountType: query.accountType }),
     }
 
@@ -490,10 +660,10 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   ): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       materialGroupId,
-      status: PublishStatus.PUBLISHED,
+      status: PublishStatus.Published,
       dataId: { $exists: true, $ne: '' },
       workLink: { $exists: true, $nin: ['', null] },
-      ...(query?.source !== undefined && { source: query.source }),
+      source: query?.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
       ...(query?.accountType !== undefined && { accountType: query.accountType }),
     }
 
@@ -536,7 +706,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return await this.publishRecordModel.updateOne(
       { _id: id },
       {
-        status: PublishStatus.PUBLISHED,
+        status: PublishStatus.Published,
         errorMsg: '',
         dataId,
         workLink: data?.workLink,
@@ -550,7 +720,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   async fail(id: string, errMsg: string) {
     return await this.publishRecordModel.updateOne(
       { _id: id },
-      { status: PublishStatus.FAILED, errorMsg: errMsg },
+      { status: PublishStatus.Failed, errorMsg: errMsg },
     ).exec()
   }
 
@@ -575,7 +745,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
 
   async getStalePublishingTasks(cutoffTime: Date, limit: number): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
-      status: PublishStatus.PUBLISHING,
+      status: PublishStatus.Publishing,
       updatedAt: { $lte: cutoffTime },
     }
     return await this.publishRecordModel
@@ -586,9 +756,10 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       .exec()
   }
 
-  async getPublishTasks(query: any): Promise<PublishRecord[]> {
+  async listByFilter(query: any): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       userId: query.userId,
+      source: query.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
       ...(query.flowId !== undefined && { flowId: query.flowId }),
       ...(query.accountId !== undefined && { accountId: query.accountId }),
       ...(query.accountType !== undefined && {
@@ -612,15 +783,46 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return list
   }
 
-  async getQueuedPublishTasks(query: {
+  async getLatestPublishedByUserIdAndWorkIdentity(query: {
+    userId: string
+    accountType: AccountType
+    accountId?: string
+    platformWorkId: string
+  }): Promise<PublishRecord | null> {
+    const filters: RootFilterQuery<PublishRecord> = {
+      userId: query.userId,
+      accountType: query.accountType,
+      status: PublishStatus.Published,
+      $or: [
+        { platformWorkId: query.platformWorkId },
+        { dataId: query.platformWorkId },
+        { uniqueId: query.platformWorkId },
+        { uniqueId: `${query.accountType}_${query.platformWorkId}` },
+        { workLink: query.platformWorkId },
+        { originalWorkLink: query.platformWorkId },
+      ],
+    }
+    if (query.accountId) {
+      filters.accountId = query.accountId
+    }
+
+    return this.publishRecordModel
+      .findOne(filters)
+      .sort({ updatedAt: -1, createdAt: -1 })
+      .lean({ virtuals: true })
+      .exec()
+  }
+
+  async listQueuedByFilter(query: {
     userId: string
     accountId?: string
     accountType?: AccountType
     time?: [Date?, Date?, ...unknown[]]
   }): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
-      status: PublishStatus.WaitingForPublish,
+      status: { $in: [PublishStatus.WaitingForPublish, PublishStatus.Queued] },
       userId: query.userId,
+      source: { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
     }
     if (query.accountId) {
       filters.accountId = query.accountId
@@ -636,15 +838,16 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     }).lean({ virtuals: true })
   }
 
-  async getPublishedPublishTasks(query: {
+  async listPublishedByFilter(query: {
     userId: string
     accountId?: string
     accountType?: AccountType
     time?: [Date?, Date?, ...unknown[]]
   }): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
-      status: PublishStatus.PUBLISHED,
+      status: PublishStatus.Published,
       userId: query.userId,
+      source: { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
     }
     if (query.accountId) {
       filters.accountId = query.accountId
@@ -660,7 +863,37 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     }).lean({ virtuals: true })
   }
 
-  async getPublishTaskListByFlowId(
+  async listPublishedTaskLinkRecords(query: {
+    userId: string
+    accountId?: string
+    accountType?: AccountType
+    flowId?: string
+    time?: [Date?, Date?, ...unknown[]]
+  }): Promise<PublishRecord[]> {
+    const filters: RootFilterQuery<PublishRecord> = {
+      status: PublishStatus.Published,
+      userId: query.userId,
+      source: PublishRecordSource.TaskLink,
+    }
+    if (query.accountId) {
+      filters.accountId = query.accountId
+    }
+    if (query.accountType) {
+      filters.accountType = query.accountType
+    }
+    if (query.flowId) {
+      filters.flowId = query.flowId
+    }
+    if (query.time && query.time.length === 2) {
+      filters.publishTime = { $gte: query.time[0], $lte: query.time[1] }
+    }
+
+    return this.publishRecordModel.find(filters).sort({
+      createdAt: -1,
+    }).lean({ virtuals: true })
+  }
+
+  async listByFlowId(
     flowId: string,
   ): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
@@ -672,10 +905,22 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return list
   }
 
+  async listByFlowIdAndUserId(flowId: string, userId: string): Promise<PublishRecord[]> {
+    return this.publishRecordModel.find({ flowId, userId }).sort({
+      publishTime: 1,
+    }).lean({ virtuals: true })
+  }
+
   async updatePublishTaskStatus(
     id: string,
     newData: {
       errorMsg?: string
+      errorData?: {
+        type: string
+        code: string
+        message: string
+        originalData?: Record<string, unknown>
+      }
       status: PublishStatus
       publishTime?: Date
       queued?: boolean
@@ -689,9 +934,14 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
   async updateAsPublishing(id: string, dataId: string, workLink?: string): Promise<boolean> {
     const res = await this.publishRecordModel.updateOne(
       { _id: id },
-      { $set: { status: PublishStatus.PUBLISHING, dataId, workLink, errorMsg: '', inQueue: false, queued: false } },
+      { $set: { status: PublishStatus.Publishing, dataId, workLink, errorMsg: '', inQueue: false, queued: false } },
     ).exec()
     return res.modifiedCount > 0
+  }
+
+  async deleteByIdAndUserId(id: string, userId: string): Promise<boolean> {
+    const res = await this.publishRecordModel.deleteOne({ _id: id, userId })
+    return res.deletedCount > 0
   }
 
   async delById(id: string): Promise<boolean> {
@@ -699,11 +949,11 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
     return res.deletedCount > 0
   }
 
-  async getPublishTaskInfoWithFlowId(flowId: string, userId: string) {
+  async getByFlowIdAndUserId(flowId: string, userId: string) {
     return await this.publishRecordModel.findOne({ flowId, userId }).lean({ virtuals: true }).exec()
   }
 
-  async getPublishTaskInfoWithUserId(id: string, userId: string) {
+  async getByIdAndUserId(id: string, userId: string) {
     return await this.publishRecordModel.findOne({ _id: id, userId }).lean({ virtuals: true }).exec()
   }
 }

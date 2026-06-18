@@ -13,7 +13,7 @@ export class DraftGenerationMcpController {
 
   @Tool({
     name: 'createVideoDraft',
-    description: 'Generate video content drafts using AI. Use getDraftGenerationPricing first to get available models. prompt is only for video generation; captionPrompt is for title, description, and topics. When draftType is video, only media is generated and prompt is the pure video prompt. Returns task IDs, use getDraftTaskStatus to check progress.',
+    description: 'Generate video content drafts using AI. For draftType=draft, prompt provides the video subject/content and captionPrompt provides social title, description, topic, tone, CTA, and length requirements. When draftType=video, only media is generated and prompt is the pure video prompt. Returns task IDs, use getDraftTaskStatus to check progress.',
     parameters: CreateDraftGenerationV2DtoSchema,
   })
   async createVideoDraft(params: z.infer<typeof CreateDraftGenerationV2DtoSchema>) {
@@ -28,7 +28,7 @@ export class DraftGenerationMcpController {
 
   @Tool({
     name: 'createImageTextDraft',
-    description: 'Generate image-text content drafts using AI. Use getDraftGenerationPricing first to get available image models. When draftType is image, only media is generated and prompt is the pure image prompt. Returns task IDs, use getDraftTaskStatus to check progress.',
+    description: 'Generate image-text content drafts using AI. For draftType=draft, prompt provides the image subject/content and captionPrompt provides social title, description, topic, tone, CTA, and length requirements. When draftType=image, only media is generated and prompt is the pure image prompt. Returns task IDs, use getDraftTaskStatus to check progress.',
     parameters: CreateImageTextDraftDtoSchema,
   })
   async createImageTextDraft(params: z.infer<typeof CreateImageTextDraftDtoSchema>) {
@@ -54,15 +54,5 @@ export class DraftGenerationMcpController {
       taskId: params.taskId,
     })
     return toYamlTextResult(task)
-  }
-
-  @Tool({
-    name: 'getDraftGenerationPricing',
-    description: 'Get AI draft generation model pricing, including available video and image generation models with their supported parameters and prices.',
-    parameters: z.object({}),
-  })
-  async getDraftGenerationPricing() {
-    const pricing = await this.aiClientService.ai.getDraftPricing()
-    return toYamlTextResult(pricing)
   }
 }

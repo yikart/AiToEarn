@@ -1,12 +1,9 @@
 import type { DashscopeVideoAiLog } from '../video-ai-log.interface'
 import type { UserVideoGenerationRequestDto } from '../video.dto'
 import { BadRequestException, Injectable, Logger } from '@nestjs/common'
-import { AiLogSettlementSettledBy } from '@yikart/aitoearn-ai-shared'
-import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService, StorageProvider, VideoMetadataService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, FileUtil, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLog, AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
+import { AppException, FileUtil, ResponseCode } from '@yikart/common'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import { TaskStatus } from '../../../../common'
 import { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
 import {
@@ -15,8 +12,7 @@ import {
   DashscopeQueryVideoTaskResponse,
   DashscopeTaskStatus,
 } from '../../libs/dashscope'
-import { ModelsConfigService } from '../../models-config'
-import { AsyncSettlementService } from '../../settlement'
+import { ModelsConfigService } from '../../models-config/models-config.service'
 
 export interface DashscopeVideoCallbackDto {
   id: string
@@ -37,14 +33,12 @@ interface DashscopeModelConfig {
   }
   durations: number[]
   maxInputImages: number
-  pricing: Array<{
-    resolution?: string
-    mode?: string
-    duration?: number
-    price: number
-  }>
   modes: string[]
-  modeMappings?: Record<string, string>
+  runtimeModels?: Array<{
+    model: string
+    mode?: string
+    resolution?: string
+  }>
 }
 
 @Injectable()
@@ -57,44 +51,9 @@ export class DashscopeVideoService {
     private readonly assetsService: AssetsService,
     private readonly storageProvider: StorageProvider,
     private readonly modelsConfigService: ModelsConfigService,
-    private readonly creditsHelper: CreditsHelperService,
-    private readonly queueService: QueueService,
     private readonly videoMetadataService: VideoMetadataService,
     private readonly aiAvailability: AiAvailabilityService,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) {}
-
-  private async enqueueTaskRefund(aiLog: AiLog): Promise<void> {
-    await this.asyncSettlementService.markFailed(aiLog.id, {
-      channel: aiLog.channel,
-      action: aiLog.action,
-      settledBy: AiLogSettlementSettledBy.DashscopeCallback,
-    })
-
-    if (aiLog.userType !== UserType.User) {
-      return
-    }
-
-    if (!aiLog.taskId) {
-      this.logger.error({ aiLogId: aiLog.id, userId: aiLog.userId }, 'Cannot enqueue refund: missing taskId')
-      return
-    }
-
-    await this.queueService.addAiTaskRefundJob({
-      userId: aiLog.userId,
-      taskId: aiLog.id,
-      amount: aiLog.points,
-      description: aiLog.model,
-      expiredAt: null,
-      metadata: {
-        channel: aiLog.channel,
-        action: aiLog.action,
-        failedAt: new Date().toISOString(),
-      },
-    })
-
-    this.logger.log({ userId: aiLog.userId, taskId: aiLog.taskId, amount: aiLog.points }, 'Enqueued AI task refund')
-  }
 
   private getModelConfig(model: string): DashscopeModelConfig {
     const modelConfig = this.modelsConfigService.config.video.generation.find(m => m.name === model)
@@ -104,22 +63,14 @@ export class DashscopeVideoService {
     return modelConfig as DashscopeModelConfig
   }
 
-  private getPrice(modelConfig: DashscopeModelConfig, resolution: string | undefined, duration: number | undefined, mode?: string): number {
-    const pricing = modelConfig.pricing.find(item => item.resolution === resolution
-      && item.duration === duration
-      && (mode ? item.mode === mode : !item.mode))
-    if (!pricing) {
+  private getProviderModel(modelConfig: DashscopeModelConfig, mode: string, resolution: string | undefined): string {
+    const runtimeModel = modelConfig.runtimeModels
+      ?.filter(item => (item.mode == null || item.mode === mode) && (item.resolution == null || item.resolution === resolution))
+      .sort((a, b) => Number(b.mode != null) + Number(b.resolution != null) - Number(a.mode != null) - Number(a.resolution != null))[0]
+    if (!runtimeModel) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-    return pricing.price
-  }
-
-  private getProviderModel(modelConfig: DashscopeModelConfig, mode: string): string {
-    const providerModel = modelConfig.modeMappings?.[mode]
-    if (!providerModel) {
-      throw new AppException(ResponseCode.InvalidModel)
-    }
-    return providerModel
+    return runtimeModel.model
   }
 
   private async toAccessibleUrl(url: string): Promise<string> {
@@ -205,8 +156,8 @@ export class DashscopeVideoService {
     const imageUrls = this.collectImageUrls(request)
     const videoUrl = request.video_url ?? request.videos?.[0]
     const mode = this.resolveMode(request, modelConfig, imageUrls)
-    const providerModel = this.getProviderModel(modelConfig, mode)
     const resolution = request.resolution
+    const providerModel = this.getProviderModel(modelConfig, mode, resolution)
     const ratio = request.ratio
     const duration = await this.resolveVideoDuration(request, modelConfig, mode === 'video2video' ? videoUrl : undefined)
     const prompt = request.prompt
@@ -302,18 +253,9 @@ export class DashscopeVideoService {
     throw new AppException(ResponseCode.InvalidModel)
   }
 
-  async calculatePrice(params: { model: string, resolution?: string, duration?: number, mode?: string }): Promise<number> {
-    const modelConfig = this.getModelConfig(params.model)
-    const mode = params.mode === 'video2video' ? params.mode : undefined
-    return this.getPrice(modelConfig, params.resolution, params.duration, mode)
-  }
-
-  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string, points: number }> {
+  async createFromRequest(request: UserVideoGenerationRequestDto): Promise<{ id: string }> {
     const modelConfig = this.getModelConfig(request.model)
-    const source = request.source ?? CreditsConsumptionSource.AiVideo
     const { providerModel, mode, payload, duration, resolution } = await this.buildPayload(request, modelConfig)
-    const pricingMode = mode === 'video2video' ? mode : undefined
-    const pricing = this.getPrice(modelConfig, resolution, duration, pricingMode)
 
     const startedAt = new Date()
     const result = await this.aiAvailability.executeAsync(
@@ -327,15 +269,7 @@ export class DashscopeVideoService {
       throw new BadRequestException(result.message || result.code || 'DashScope task id is missing')
     }
 
-    if (request.userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId: request.userId,
-        amount: pricing,
-        type: CreditsType.AiService,
-        source,
-        description: request.model,
-      })
-    }
+    this.logger.log({ request, payload, result }, 'Video generation submitted to provider model')
 
     const aiLog = await this.aiLogRepo.create({
       userId: request.userId,
@@ -345,8 +279,6 @@ export class DashscopeVideoService {
       channel: AiLogChannel.Dashscope,
       startedAt,
       type: AiLogType.Video,
-      points: pricing,
-      settlement: this.asyncSettlementService.createPendingSettlement(pricing, { source }),
       request: {
         model: request.model,
         providerModel,
@@ -369,7 +301,7 @@ export class DashscopeVideoService {
       status: AiLogStatus.Generating,
     })
 
-    return { id: aiLog.id, points: pricing }
+    return { id: aiLog.id }
   }
 
   private async failTask(aiLog: DashscopeVideoAiLog, taskId: string, errorMessage: string, elapsedMs: number, status = DashscopeTaskStatus.Failed): Promise<DashscopeVideoCallbackDto> {
@@ -380,14 +312,18 @@ export class DashscopeVideoService {
       error: errorMessage,
     }
 
-    await this.aiLogRepo.updateById(aiLog.id, {
-      status: AiLogStatus.Failed,
-      response: callbackData,
-      duration: elapsedMs,
-      errorMessage,
+    const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(aiLog.id, AiLogStatus.Generating, {
+      $set: {
+        status: AiLogStatus.Failed,
+        response: callbackData,
+        duration: elapsedMs,
+        errorMessage,
+      },
     })
 
-    await this.enqueueTaskRefund(aiLog)
+    if (!updatedAiLog) {
+      return aiLog.response!
+    }
 
     await this.aiAvailability.recordAsyncComplete(
       taskId,
@@ -423,27 +359,6 @@ export class DashscopeVideoService {
     const elapsedMs = Date.now() - dashscopeAiLog.startedAt.getTime()
 
     if (status === DashscopeTaskStatus.Succeeded && queryResult.output.video_url) {
-      const pricingMode = dashscopeAiLog.request.mode === 'video2video' ? dashscopeAiLog.request.mode : undefined
-      const usageDuration = pricingMode
-        ? queryResult.usage?.output_video_duration
-        : queryResult.usage?.duration
-      if (usageDuration == null) {
-        const errorMessage = pricingMode
-          ? 'DashScope video edit output duration is required'
-          : 'DashScope usage.duration is required'
-        return this.failTask(dashscopeAiLog, taskId, errorMessage, elapsedMs)
-      }
-
-      let actualPoints: number
-      try {
-        actualPoints = this.getPrice(this.getModelConfig(dashscopeAiLog.model), dashscopeAiLog.request.resolution, Math.ceil(usageDuration), pricingMode)
-      }
-      catch (e) {
-        this.logger.debug({ taskId, dashscopeAiLog, result: queryResult }, 'DashScope usage.duration does not match model pricing')
-        this.logger.error(e, `DashScope usage.duration does not match model pricing, taskId: ${taskId}`)
-        return this.failTask(dashscopeAiLog, taskId, 'DashScope usage.duration does not match model pricing', elapsedMs)
-      }
-
       const uploaded = await this.assetsService.uploadFromUrl(dashscopeAiLog.userId, {
         url: queryResult.output.video_url,
         type: AssetType.AiVideo,
@@ -458,16 +373,21 @@ export class DashscopeVideoService {
         usage: queryResult.usage,
       }
 
-      await this.aiLogRepo.updateById(dashscopeAiLog.id, {
-        status: AiLogStatus.Success,
-        response: callbackData,
-        duration: elapsedMs,
-      })
+      const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(
+        dashscopeAiLog.id,
+        AiLogStatus.Generating,
+        {
+          $set: {
+            status: AiLogStatus.Success,
+            response: callbackData,
+            duration: elapsedMs,
+          },
+        },
+      )
 
-      await this.asyncSettlementService.settleSuccess(dashscopeAiLog.id, actualPoints, {
-        channel: dashscopeAiLog.channel,
-        settledBy: AiLogSettlementSettledBy.DashscopeCallback,
-      })
+      if (!updatedAiLog) {
+        return dashscopeAiLog.response!
+      }
 
       await this.aiAvailability.recordAsyncComplete(
         taskId,

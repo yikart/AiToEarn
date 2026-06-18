@@ -3,11 +3,22 @@ import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nes
 import { SSE_METADATA } from '@nestjs/common/constants'
 import { Observable } from 'rxjs'
 
+export type PropagationHeaders = Record<string, string | string[] | undefined>
+
 interface Store {
-  headers: Record<string, string | string[] | undefined>
+  headers: PropagationHeaders
 }
 
 export const propagationContext = new AsyncLocalStorage<Store>()
+
+export function getRequestIdFromHeaders(headers: PropagationHeaders | undefined): string | undefined {
+  const requestId = headers?.['x-request-id']
+  return Array.isArray(requestId) ? requestId[0] : requestId
+}
+
+export function getCurrentRequestId(): string | undefined {
+  return getRequestIdFromHeaders(propagationContext.getStore()?.headers)
+}
 
 export const COMMON_PROPAGATION_HEADERS = [
   'x-request-id',

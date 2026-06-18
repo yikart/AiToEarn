@@ -1,48 +1,43 @@
 import type { TokenPayload } from '@yikart/aitoearn-auth'
 import { createHash } from 'node:crypto'
-import path from 'node:path'
 import { Module, UnauthorizedException } from '@nestjs/common'
-import { EventEmitterModule } from '@nestjs/event-emitter'
 import { ScheduleModule } from '@nestjs/schedule'
 import { AitoearnAiClientModule } from '@yikart/aitoearn-ai-client'
 import { AitoearnAuthModule } from '@yikart/aitoearn-auth'
 import { AitoearnQueueModule } from '@yikart/aitoearn-queue'
-import { AliSmsModule } from '@yikart/ali-sms'
 import { ChannelDbModule } from '@yikart/channel-db'
-import { MailModule } from '@yikart/mail'
+import { ConfigEditorModule } from '@yikart/config-editor'
 import { ApiKeyRepository, MongodbModule, UserRepository, UserStatus } from '@yikart/mongodb'
 import { RedlockModule } from '@yikart/redlock'
-import { config } from './config'
-import { AccountModule } from './core/account/account.module'
+import { ServerRedisModule } from './common/redis'
+import { AppConfig, config } from './config'
 import { ApiKeyModule } from './core/api-key/api-key.module'
 import { AssetsModule } from './core/assets/assets.module'
-import { ChannelModule } from './core/channel/channel.module'
+import { ChannelsModule } from './core/channels/channels.module'
+import { ChannelsMcpModule } from './core/channels/mcp/channels.mcp.module'
+import { ContentMcpModule } from './core/content/content-mcp.module'
 import { ContentModule } from './core/content/content.module'
-import { InternalModule } from './core/internal/internal.module'
-import { NotificationModule } from './core/notification/notification.module'
 import { PublishModule } from './core/publish-record/publish-record.module'
 import { RelayModule } from './core/relay/relay.module'
 import { ShortLinkModule } from './core/short-link/short-link.module'
-import { ToolsModule } from './core/tools/tools.module'
 import { UnifiedMcpModule } from './core/unified-mcp/unified-mcp.module'
 import { UserModule } from './core/user/user.module'
 
 @Module({
   imports: [
     ScheduleModule.forRoot(),
-    EventEmitterModule.forRoot(),
+    ConfigEditorModule.forRoot({
+      schema: AppConfig,
+      config,
+      routePrefix: 'config',
+    }),
     MongodbModule.forRoot(config.mongodb),
     ChannelDbModule.forRoot(config.channel.channelDb),
     AitoearnQueueModule.forRoot({
       redis: config.redis,
       prefix: '{bull}',
     }),
-    MailModule.forRoot({
-      ...config.mail,
-      template: {
-        dir: path.join(__dirname, 'views'),
-      },
-    }),
+    ServerRedisModule,
     AitoearnAuthModule.forRootAsync({
       inject: [UserRepository, ApiKeyRepository],
       useFactory: (userRepository: UserRepository, apiKeyRepository: ApiKeyRepository) => {
@@ -70,19 +65,17 @@ import { UserModule } from './core/user/user.module'
     }),
     RedlockModule.forRoot(config.redlock),
     AitoearnAiClientModule.forRoot(config.aiClient),
-    AliSmsModule.forRoot(config.aliSms),
     AssetsModule,
-    NotificationModule,
-    AccountModule,
     UserModule,
     ContentModule,
-    ChannelModule,
+    ChannelsModule,
     PublishModule,
-    InternalModule,
     ShortLinkModule,
-    ToolsModule,
     ApiKeyModule,
     RelayModule,
+    // MCP modules (after business modules to ensure @Global services are available)
+    ChannelsMcpModule,
+    ContentMcpModule,
     UnifiedMcpModule,
   ],
   controllers: [],
