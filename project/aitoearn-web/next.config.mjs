@@ -33,12 +33,14 @@ const nextConfig = {
   output: 'standalone', // Temporarily disabled to avoid symlink issues on Windows
   productionBrowserSourceMaps: process.env.NEXT_PUBLIC_EVN === 'dev',
   rewrites: async () => {
-    const rewrites = [
-      {
+    const rewrites = []
+
+    if (process.env.NEXT_PUBLIC_OSS_URL_PROXY && process.env.NEXT_PUBLIC_OSS_URL) {
+      rewrites.push({
         source: `${process.env.NEXT_PUBLIC_OSS_URL_PROXY}:path*`,
         destination: `${process.env.NEXT_PUBLIC_OSS_URL}/:path*`,
-      },
-    ]
+      })
+    }
 
     // 存在 NEXT_PUBLIC_PROXY_URL 则代理，本地直连 用
     // 如：NEXT_PUBLIC_PROXY_URL = http://localhost:8080
