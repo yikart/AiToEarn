@@ -1,4 +1,4 @@
-# [Aitoearn：OPC（一人公司）的AI内容营销智能体](https://aitoearn.ai)
+# [Aitoearn：#1 AI内容营销智能体](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
