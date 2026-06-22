@@ -302,19 +302,7 @@ export class AgentRuntimeService {
                   this.logger.debug({ input }, 'Received PostToolUse hook')
                   const response = input.tool_response
                   if (Array.isArray(response)) {
-                    const updatedResponse = await Promise.all(response.map<Promise<ContentBlockParam>>(async (block) => {
-                      if (block.type === 'text' && typeof block.text === 'string' && block.text.startsWith('[Resource link: Image')) {
-                        const url = await this.resolveRelayText(block.text.split('] ')[1])
-                        return {
-                          type: 'image',
-                          source: {
-                            type: 'url',
-                            url,
-                          },
-                        }
-                      }
-                      return block
-                    }))
+                    const updatedResponse = await this.resolveRelayJson(response)
                     return {
                       hookSpecificOutput: {
                         hookEventName: 'PostToolUse',
@@ -906,13 +894,6 @@ export class AgentRuntimeService {
       return value
     }
     return await this.relayMediaResolver.resolveJson(value)
-  }
-
-  private async resolveRelayText(text: string): Promise<string> {
-    if (!this.relayMediaResolver) {
-      return text
-    }
-    return await this.relayMediaResolver.resolveText(text)
   }
 
   private buildSystemPromptContent(): ContentBlockParam[] {
