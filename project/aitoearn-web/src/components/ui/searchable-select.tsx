@@ -24,9 +24,12 @@ import { cn } from '@/utils/className'
 export interface SearchableSelectOption {
   value: string
   label: string
+  description?: string
   icon?: string
   color?: string
 }
+
+type SearchableSelectLoadingMode = 'trigger' | 'list'
 
 export interface SearchableSelectProps {
   /** 选项列表 */
@@ -45,8 +48,16 @@ export interface SearchableSelectProps {
   disabled?: boolean
   /** 是否处于加载中 */
   loading?: boolean
+  /** loading 展示位置：默认在触发器内，远程搜索时可展示在列表内 */
+  loadingMode?: SearchableSelectLoadingMode
   /** 加载中文案 */
   loadingText?: string
+  /** 受控搜索关键词 */
+  searchValue?: string
+  /** 搜索关键词变化回调，传入后可用于远程搜索 */
+  onSearchChange?: (value: string) => void
+  /** 是否启用 Command 内置过滤 */
+  shouldFilter?: boolean
   /** 自定义类名 */
   className?: string
   /** 触发器高度，默认 h-8 */
@@ -66,7 +77,11 @@ function SearchableSelect({
   emptyText,
   disabled = false,
   loading = false,
+  loadingMode = 'trigger',
   loadingText,
+  searchValue,
+  onSearchChange,
+  shouldFilter = true,
   className,
   triggerClassName,
   clearable,
@@ -74,13 +89,24 @@ function SearchableSelect({
 }: SearchableSelectProps) {
   const { t } = useTransClient('common')
   const [open, setOpen] = React.useState(false)
+  const [internalSearchValue, setInternalSearchValue] = React.useState('')
 
   // 使用传入的文本或国际化默认值
   const placeholderText = placeholder || t('select.placeholder')
   const searchPlaceholderText = searchPlaceholder || t('select.searchPlaceholder')
   const emptyTextDisplay = emptyText || t('select.noResults')
   const loadingTextDisplay = loadingText || t('actions.loading')
-  const isDisabled = disabled || loading
+  const isListLoading = loading && loadingMode === 'list'
+  const isTriggerLoading = loading && loadingMode === 'trigger'
+  const isDisabled = disabled || isTriggerLoading
+  const commandSearchValue = searchValue ?? internalSearchValue
+
+  const handleSearchChange = React.useCallback((nextValue: string) => {
+    if (searchValue === undefined) {
+      setInternalSearchValue(nextValue)
+    }
+    onSearchChange?.(nextValue)
+  }, [onSearchChange, searchValue])
 
   // 获取当前选中项
   const selectedOption = React.useMemo(() => {
@@ -110,10 +136,10 @@ function SearchableSelect({
   }, [open, selectedLabel])
 
   React.useEffect(() => {
-    if (loading) {
+    if (isTriggerLoading) {
       setOpen(false)
     }
-  }, [loading])
+  }, [isTriggerLoading])
 
   return (
     <Popover open={open} onOpenChange={setOpen} modal>
@@ -136,10 +162,10 @@ function SearchableSelect({
               <img src={selectedOption.icon} alt="" className="w-5 h-5 rounded-sm object-contain shrink-0" />
             )}
             <span className="truncate" style={{ color: selectedOption?.color }}>
-              {loading ? loadingTextDisplay : selectedLabel || placeholderText}
+              {isTriggerLoading ? loadingTextDisplay : selectedLabel || placeholderText}
             </span>
           </div>
-          {loading ? (
+          {isTriggerLoading ? (
             <Loader2 className="ml-2 h-4 w-4 shrink-0 animate-spin opacity-70" />
           ) : clearable && !isDisabled && onClear ? (
             <span
@@ -167,6 +193,7 @@ function SearchableSelect({
         align="start"
         side="bottom"
         sideOffset={4}
+        allowInnerScroll
         onOpenAutoFocus={(e) => {
           // 移动端不自动聚焦输入框，避免键盘弹出
           if (window.innerWidth < 768) {
@@ -176,6 +203,7 @@ function SearchableSelect({
       >
         <Command
           value={selectedLabel ?? ''}
+          shouldFilter={shouldFilter}
           filter={(value, search) => {
             // 自定义过滤逻辑，支持中文搜索
             if (value.toLowerCase().includes(search.toLowerCase()))
@@ -183,9 +211,20 @@ function SearchableSelect({
             return 0
           }}
         >
-          <CommandInput placeholder={searchPlaceholderText} className="h-9" />
+          <CommandInput
+            value={commandSearchValue}
+            placeholder={searchPlaceholderText}
+            className="h-9"
+            onValueChange={handleSearchChange}
+          />
           <CommandList ref={listRef} className="max-h-[40vh] md:max-h-[300px]">
-            <CommandEmpty>{emptyTextDisplay}</CommandEmpty>
+            {isListLoading && (
+              <div className="flex items-center gap-2 px-3 py-3 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>{loadingTextDisplay}</span>
+              </div>
+            )}
+            {!isListLoading && <CommandEmpty>{emptyTextDisplay}</CommandEmpty>}
             <CommandGroup>
               {options.map(option => (
                 <CommandItem
@@ -206,7 +245,14 @@ function SearchableSelect({
                   {option.icon && (
                     <img src={option.icon} alt="" className="w-5 h-5 rounded-sm object-contain shrink-0" />
                   )}
-                  <span className="truncate" style={{ color: option.color }}>{option.label}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block truncate" style={{ color: option.color }}>{option.label}</span>
+                    {option.description && (
+                      <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                        {option.description}
+                      </span>
+                    )}
+                  </span>
                 </CommandItem>
               ))}
             </CommandGroup>

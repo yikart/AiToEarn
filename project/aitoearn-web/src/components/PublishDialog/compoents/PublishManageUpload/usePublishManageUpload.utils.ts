@@ -1,5 +1,3 @@
-import CryptoJS from 'crypto-js'
-
 /** 生成任务 ID（优先使用 crypto.randomUUID） */
 export function createTaskId() {
   if (typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function') {
@@ -16,9 +14,23 @@ export function isAbortError(error: unknown): boolean {
   return Boolean((error as { name?: string })?.name === 'AbortError')
 }
 
-/** 计算文件 MD5（用于去重与缓存键） */
-export async function computeFileMd5(file: Blob): Promise<string> {
-  const buffer = await file.arrayBuffer()
-  const wordArray = CryptoJS.lib.WordArray.create(new Uint8Array(buffer))
-  return CryptoJS.MD5(wordArray).toString()
+function getFileName(file: Blob, fileName?: string) {
+  if (fileName)
+    return fileName
+  return 'name' in file && typeof file.name === 'string' ? file.name : ''
+}
+
+function getFileLastModified(file: Blob) {
+  return 'lastModified' in file && typeof file.lastModified === 'number'
+    ? file.lastModified
+    : 0
+}
+
+/** 计算文件轻量指纹（用于去重与缓存键，避免大文件主线程 MD5） */
+export function computeFileFingerprint(file: Blob, fileName?: string) {
+  return JSON.stringify([
+    getFileName(file, fileName),
+    file.size,
+    getFileLastModified(file),
+  ])
 }

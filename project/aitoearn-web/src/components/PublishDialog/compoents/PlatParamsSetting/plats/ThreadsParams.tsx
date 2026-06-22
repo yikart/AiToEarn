@@ -8,20 +8,12 @@ import type {
   IPlatsParamsRef,
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
 import { debounce } from 'lodash'
-import { Loader2 } from 'lucide-react'
-import { forwardRef, memo, useCallback, useEffect, useRef, useState } from 'react'
+import { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { apiGetThreadsLocations } from '@/api/platforms/threads.api'
 import { useTransClient } from '@/app/i18n/client'
 import usePlatParamsCommon from '@/components/PublishDialog/compoents/PlatParamsSetting/hooks/usePlatParamsCoomon'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
-import { Input } from '@/components/ui/input'
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
+import { SearchableSelect } from '@/components/ui/searchable-select'
 import { cn } from '@/utils/className'
 
 const ThreadsParams = memo(
@@ -35,11 +27,29 @@ const ThreadsParams = memo(
         pubItem,
         isMobile,
       )
+      const { t: tCommon } = useTransClient('common')
 
       const [locations, setLocations] = useState<ThreadsLocationItem[]>([])
+      const [selectedLocationItem, setSelectedLocationItem] = useState<ThreadsLocationItem | null>(null)
       const [loading, setLoading] = useState(false)
       const [searchKeyword, setSearchKeyword] = useState('')
       const debouncedSearchRef = useRef<ReturnType<typeof debounce> | null>(null)
+      const selectedLocationId = pubItem.params.option.threads?.location_id ?? ''
+
+      const locationOptions = useMemo(() => {
+        const selectedLocationExists = selectedLocationItem
+          ? locations.some(location => location.id === selectedLocationItem.id)
+          : true
+        const optionLocations = selectedLocationItem && !selectedLocationExists
+          ? [selectedLocationItem, ...locations]
+          : locations
+
+        return optionLocations.map(location => ({
+          value: location.id,
+          label: location.label,
+          description: location.description,
+        }))
+      }, [locations, selectedLocationItem])
 
       // 初始化Threads参数
       useEffect(() => {
@@ -60,13 +70,14 @@ const ThreadsParams = memo(
       // 获取位置列表
       const fetchLocations = useCallback(
         async (keyword?: string) => {
-          if (!keyword) {
+          const nextKeyword = keyword?.trim()
+          if (!nextKeyword) {
             return
           }
 
           try {
             setLoading(true)
-            const response: any = await apiGetThreadsLocations(pubItem.account.id, keyword || '')
+            const response = await apiGetThreadsLocations(pubItem.account.id, nextKeyword)
             if (response && response.code === 0) {
               setLocations(response.data)
             }
@@ -95,14 +106,10 @@ const ThreadsParams = memo(
         }
       }, [fetchLocations])
 
-      // 初始加载位置列表
-      useEffect(() => {
-        fetchLocations()
-      }, [fetchLocations])
-
       // 处理位置选择
       const handleLocationChange = (locationId: string) => {
-        const selectedLocation = locations.find(loc => loc.id === locationId)
+        const nextSelectedLocation = locations.find(loc => loc.id === locationId)
+          ?? (selectedLocationId === locationId ? selectedLocationItem : null)
         const option = pubItem.params.option
 
         // 构建 threads 对象，如果没有选择位置则不包含 location_id
@@ -110,12 +117,15 @@ const ThreadsParams = memo(
           ...option.threads,
         }
 
-        if (selectedLocation?.id) {
-          threadsOption.location_id = selectedLocation.id
+        if (nextSelectedLocation?.id) {
+          threadsOption.location_id = nextSelectedLocation.id
+          setSelectedLocationItem(nextSelectedLocation)
+          setSearchKeyword(nextSelectedLocation.label)
         }
         else {
           // 如果没有选择位置，删除 location_id 属性
           delete threadsOption.location_id
+          setSelectedLocationItem(null)
         }
 
         setOnePubParams(
@@ -132,10 +142,17 @@ const ThreadsParams = memo(
       // 处理搜索
       const handleSearch = useCallback((value: string) => {
         setSearchKeyword(value)
+        if (!value.trim()) {
+          debouncedSearchRef.current?.cancel()
+          setLocations(selectedLocationItem ? [selectedLocationItem] : [])
+          setLoading(false)
+          return
+        }
+
         if (debouncedSearchRef.current) {
           debouncedSearchRef.current(value)
         }
-      }, [])
+      }, [selectedLocationItem])
 
       return (
         <>
@@ -149,40 +166,23 @@ const ThreadsParams = memo(
                   <div
                     className={cn('shrink-0', isMobile ? 'text-sm font-medium' : 'w-[90px] mr-2.5')}
                   >
-                    {t('form.location' as any)}
+                    {t('form.location')}
                   </div>
-                  <div className="flex-1 flex flex-col gap-2">
-                    <Input
-                      placeholder={t('form.searchLocation' as any) || 'Search location...'}
-                      value={searchKeyword}
-                      onChange={e => handleSearch(e.target.value)}
-                      className="h-8"
-                    />
-                    <Select
-                      value={pubItem.params.option.threads?.location_id ?? ''}
+                  <div className="flex-1">
+                    <SearchableSelect
+                      options={locationOptions}
+                      value={selectedLocationId}
                       onValueChange={handleLocationChange}
-                    >
-                      <SelectTrigger className="w-full h-8">
-                        <SelectValue placeholder={t('form.selectLocation' as any)} />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {loading ? (
-                          <div className="flex items-center justify-center py-2">
-                            <Loader2 className="h-4 w-4 animate-spin" />
-                          </div>
-                        ) : locations.length > 0 ? (
-                          locations.map(location => (
-                            <SelectItem key={location.id} value={location.id}>
-                              {location.label}
-                            </SelectItem>
-                          ))
-                        ) : (
-                          <div className="text-center py-2 text-sm text-muted-foreground">
-                            {t('form.noLocationsFound' as any) || 'No locations found'}
-                          </div>
-                        )}
-                      </SelectContent>
-                    </Select>
+                      placeholder={t('form.searchLocation')}
+                      searchPlaceholder={t('form.searchLocation')}
+                      emptyText={searchKeyword.trim() ? t('form.noResults') : t('form.searchLocation')}
+                      loading={loading}
+                      loadingMode="list"
+                      loadingText={tCommon('actions.loading')}
+                      searchValue={searchKeyword}
+                      onSearchChange={handleSearch}
+                      shouldFilter={false}
+                    />
                   </div>
                 </div>
               </>

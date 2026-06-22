@@ -31,7 +31,7 @@
 | `metadata.ts`  | `getMetadata`，页面 SEO Metadata 生成。                                            |
 | `title.ts`     | `getPageTitle`，页面标题生成。                                                     |
 | `className.ts` | `cn`，合并 `clsx` 与 `tailwind-merge`，供 UI className 组合使用。                  |
-| `format.ts`    | 数字、日期、秒数、推荐分、相对时间和简写数值格式化。                               |
+| `format.ts`    | 数字、日期、秒数、文件大小、推荐分、相对时间和简写数值格式化。                     |
 | `oss.ts`       | OSS/R2 URL、代理 URL、缩略图处理。                                                 |
 | `currency.ts`  | 应用币种、货币符号与金额格式化。                                                   |
 | `auth.ts`      | 登录跳转与鉴权相关通用跳转工具。                                                   |

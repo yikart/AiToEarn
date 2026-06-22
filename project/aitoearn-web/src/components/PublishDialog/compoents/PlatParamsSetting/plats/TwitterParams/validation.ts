@@ -7,23 +7,10 @@ export function getTwitterPublishValidationMessages(params: IPubParams, t: Trans
 
   if (params.images) {
     for (const img of params.images) {
-      if (img.size > 5 * 1024 * 1024) {
-        errors.push(t('validation.twitterImageSize'))
-        break
-      }
       if (img.width > 8192 || img.height > 8192) {
         errors.push(t('validation.twitterImageResolution'))
         break
       }
-    }
-  }
-
-  if (params.video) {
-    if (params.video.duration < 0.5 || params.video.duration > 140) {
-      errors.push(t('validation.twitterVideoDuration'))
-    }
-    if (params.video.size > 512 * 1024 * 1024) {
-      errors.push(t('validation.twitterVideoSize'))
     }
   }
 
