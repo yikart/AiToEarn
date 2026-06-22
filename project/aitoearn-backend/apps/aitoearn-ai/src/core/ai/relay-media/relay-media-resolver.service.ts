@@ -4,7 +4,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { AssetType } from '@yikart/mongodb'
 import axios, { AxiosInstance } from 'axios'
 import { RelayConfig } from '../libs/relay'
-import { RELAY_MEDIA_ASSETS_CONFIG, RELAY_MEDIA_CONFIG } from './relay-media.module'
+import { RELAY_MEDIA_ASSETS_CONFIG, RELAY_MEDIA_CONFIG } from './relay-media.tokens'
 
 interface UploadSignResult {
   id: string
