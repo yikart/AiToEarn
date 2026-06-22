@@ -81,16 +81,19 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
         const isGet = request.method.toUpperCase() === 'GET'
         if (isGet) {
           const url = new URL(`${relayConfig.serverUrl}${request.originalUrl}`)
+          url.searchParams.delete('groupId')
           url.searchParams.set('callbackUrl', callbackUrlStr)
           targetUrl = url.toString()
           targetBody = undefined
         }
         else {
-          targetUrl = `${relayConfig.serverUrl}${request.originalUrl}`
-          targetBody = {
+          const body = {
             ...request.body,
             callbackUrl: callbackUrlStr,
           }
+          delete body.groupId
+          targetUrl = `${relayConfig.serverUrl}${request.originalUrl}`
+          targetBody = body
         }
       }
 
