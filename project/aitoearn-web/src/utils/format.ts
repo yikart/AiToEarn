@@ -35,6 +35,43 @@ export function formatRecommendationScore(score?: number | null) {
 }
 
 /**
+ * 格式化文件大小，自动使用 B / KB / MB / GB / TB 单位
+ */
+export function formatFileSize(bytes: number): string {
+  if (!Number.isFinite(bytes) || bytes <= 0)
+    return '0 B'
+
+  const unitBase = 1024
+  const units = ['B', 'KB', 'MB', 'GB', 'TB']
+  const unitIndex = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(unitBase)),
+    units.length - 1,
+  )
+  const value = bytes / unitBase ** unitIndex
+  const formattedValue = Number.isInteger(value)
+    ? value.toString()
+    : value.toFixed(2).replace(/\.?0+$/, '')
+
+  return `${formattedValue} ${units[unitIndex]}`
+}
+
+export interface DurationParts {
+  hours: number
+  minutes: number
+  seconds: number
+}
+
+/** 将秒数拆分为小时、分钟、秒，小时不按天折算 */
+export function getDurationPartsFromSeconds(seconds: number): DurationParts {
+  const safeSeconds = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0
+  return {
+    hours: Math.floor(safeSeconds / 3600),
+    minutes: Math.floor((safeSeconds % 3600) / 60),
+    seconds: safeSeconds % 60,
+  }
+}
+
+/**
  * 格式化日期
  * @param date 日期
  * @param format 格式，默认 'YYYY-MM-DD HH:mm'

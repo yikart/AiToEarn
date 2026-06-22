@@ -7,6 +7,7 @@
 export interface ThreadsLocationItem {
   id: string
   label: string
+  description?: string
 }
 
 /**
@@ -14,5 +15,7 @@ export interface ThreadsLocationItem {
  */
 export interface ThreadsLocationsResponse {
   data: ThreadsLocationItem[]
-  code: number
+  code: string | number
+  message: string
+  url: string
 }

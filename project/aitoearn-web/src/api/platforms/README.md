@@ -28,20 +28,20 @@
 
 ## 接口清单
 
-| 方法                                  | 请求                                                                 | 说明                                                   |
-| ------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------ |
-| `apiDouyinMiniAppChannelAuthComplete` | `POST plat/douyin/miniapp-auth/complete`                             | 完成抖音小程序渠道授权。                               |
-| `apiDouyinMiniAppHomepageFansCount`   | `GET plat/douyin-miniapp/homepage-data/fans-count`                   | 获取抖音小程序首页粉丝数。                             |
-| `apiGetBilibiliPartitions`            | `GET v2/channels/accounts/{param}/publish-options/tid/values`        | 获取 B 站分区列表。                                    |
-| `apiGetInstagramNoUserAuthUrl`        | `POST plat/meta/auth/url/public`                                     | Instagram 公开授权接口（无需登录）。                   |
-| `apiGetThreadsLocations`              | `GET plat/meta/threads/locations`                                    | 获取 Threads 位置列表。                                |
-| `apiGetTikTokNoUserAuthUrl`           | `POST plat/tiktok/authUrl`                                           | 获取 TikTok 无账号授权链接。                           |
-| `apiGetYouTubeCategories`             | `GET v2/channels/accounts/{param}/publish-options/categoryId/values` | 获取账号平台动态发布选项取值。                         |
-| `apiValidateWorkOwnership`            | `POST channel/work/validate`                                         | 校验作品归属。                                         |
-| `createPinterestBoardApi`             | `POST v2/channels/accounts/{param}/publish-options/boardId/values`   | 创建 Pinterest Board。                                 |
-| `getPinterestBoardListApi`            | `GET v2/channels/accounts/{param}/publish-options/boardId/values`    | 获取 Pinterest Board 列表。                            |
-| `getPublishRecordDetail`              | 前端封装                                                             | 获取发布记录详情。                                     |
-| `getPublishRecordDetailById`          | 前端封装                                                             | 根据记录 ID 获取发布记录详情（用于抖音 H5 发布轮询）。 |
+| 方法                                  | 请求                                                                  | 说明                                                   |
+| ------------------------------------- | --------------------------------------------------------------------- | ------------------------------------------------------ |
+| `apiDouyinMiniAppChannelAuthComplete` | `POST plat/douyin/miniapp-auth/complete`                              | 完成抖音小程序渠道授权。                               |
+| `apiDouyinMiniAppHomepageFansCount`   | `GET plat/douyin-miniapp/homepage-data/fans-count`                    | 获取抖音小程序首页粉丝数。                             |
+| `apiGetBilibiliPartitions`            | `GET v2/channels/accounts/{param}/publish-options/tid/values`         | 获取 B 站分区列表。                                    |
+| `apiGetInstagramNoUserAuthUrl`        | `POST plat/meta/auth/url/public`                                      | Instagram 公开授权接口（无需登录）。                   |
+| `apiGetThreadsLocations`              | `GET v2/channels/accounts/{param}/publish-options/location_id/values` | 获取 Threads 位置列表。                                |
+| `apiGetTikTokNoUserAuthUrl`           | `POST plat/tiktok/authUrl`                                            | 获取 TikTok 无账号授权链接。                           |
+| `apiGetYouTubeCategories`             | `GET v2/channels/accounts/{param}/publish-options/categoryId/values`  | 获取账号平台动态发布选项取值。                         |
+| `apiValidateWorkOwnership`            | `POST channel/work/validate`                                          | 校验作品归属。                                         |
+| `createPinterestBoardApi`             | `POST v2/channels/accounts/{param}/publish-options/boardId/values`    | 创建 Pinterest Board。                                 |
+| `getPinterestBoardListApi`            | `GET v2/channels/accounts/{param}/publish-options/boardId/values`     | 获取 Pinterest Board 列表。                            |
+| `getPublishRecordDetail`              | 前端封装                                                              | 获取发布记录详情。                                     |
+| `getPublishRecordDetailById`          | 前端封装                                                              | 根据记录 ID 获取发布记录详情（用于抖音 H5 发布轮询）。 |
 
 ## 类型清单
 

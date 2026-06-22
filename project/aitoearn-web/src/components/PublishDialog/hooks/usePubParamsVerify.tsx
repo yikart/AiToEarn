@@ -17,6 +17,7 @@ import {
 } from '@/components/PublishDialog/PublishDialog.util'
 import { usePlatformInfoMap } from '@/hooks/usePlatformMetadata'
 import { getFilePathName, parseTopicString } from '@/utils/common'
+import { formatFileSize, getDurationPartsFromSeconds } from '@/utils/format'
 
 export interface ErrPubParamsItem {
   // 参数错误提示消息（兼容旧版，显示第一个错误）
@@ -29,91 +30,7 @@ export interface ErrPubParamsItem {
 
 export type ErrPubParamsMapType = Map<string | number, ErrPubParamsItem>
 
-const TIKTOK_ALLOWED_IMAGE_MIME_TYPES = new Set(['image/jpeg', 'image/jpg', 'image/webp'])
-const TIKTOK_ALLOWED_IMAGE_SUFFIXES = new Set(['jpeg', 'jpg', 'webp'])
 const BACKEND_TOPIC_PATTERN = /#([\w\p{Script=Han}]+)/gu
-
-const MB = 1024 * 1024
-const GB = 1024 * MB
-const MINUTE = 60
-const HOUR = 60 * MINUTE
-
-const MEDIA_LIMITS = {
-  xhs: {
-    imageMaxSize: 20 * MB,
-    videoMaxDuration: 4 * HOUR,
-    videoMaxSize: 20 * GB,
-  },
-  bilibili: {
-    topicMaxTotalLength: 199,
-    videoMaxDuration: 5 * HOUR,
-    videoMaxSize: 4 * GB,
-  },
-  douyin: {
-    imageMaxSize: 20 * MB,
-    videoMaxDuration: 15 * MINUTE,
-    videoMaxSize: 100 * MB,
-  },
-  kwai: {
-    imageMaxSize: 20 * MB,
-    videoMaxDuration: 30 * MINUTE,
-    videoMaxSize: 100 * MB,
-  },
-  facebook: {
-    postImageMaxSize: 10 * MB,
-    storyImageMaxSize: 4 * MB,
-    videoMaxSize: 1 * GB,
-    storyVideoMaxSize: 1000 * MB,
-    postVideoMaxDuration: 4 * HOUR,
-    reelVideoMinDuration: 3,
-    reelVideoMaxDuration: 90,
-    storyVideoMinDuration: 3,
-    storyVideoMaxDuration: 60,
-  },
-  instagram: {
-    imageMaxSize: 8 * MB,
-    reelVideoMinDuration: 3,
-    reelVideoMaxDuration: 15 * MINUTE,
-    reelVideoMaxSize: 1 * GB,
-    storyVideoMinDuration: 3,
-    storyVideoMaxDuration: 60,
-    storyVideoMaxSize: 1 * GB,
-  },
-  threads: {
-    imageMaxSize: 8 * MB,
-    videoMaxDuration: 5 * MINUTE,
-    videoMaxSize: 100 * MB,
-  },
-  pinterest: {
-    imageMaxSize: 20 * MB,
-    videoMinDuration: 4,
-    videoMaxDuration: 5 * MINUTE,
-    videoMaxSize: 2 * GB,
-  },
-  tiktok: {
-    imageMaxSize: 20 * MB,
-    videoMinDuration: 3,
-    videoMaxDuration: 10 * MINUTE,
-    videoMaxSize: 4 * GB,
-  },
-  youtube: {
-    videoMaxDuration: 12 * HOUR,
-    videoMaxSize: 256 * GB,
-  },
-  linkedin: {
-    imageMaxSize: 10 * MB,
-    videoMinDuration: 3,
-    videoMaxDuration: 10 * MINUTE,
-    videoMaxSize: 200 * MB,
-  },
-  wxSph: {
-    videoMaxDuration: 8 * HOUR,
-    videoMaxSize: 20 * GB,
-  },
-  wxGzh: {
-    imageMaxSize: 10 * MB,
-  },
-} as const
 
 const FLOW_VALIDATION_EXCLUDED_PLATFORMS = new Set<PlatType>([
   PlatType.Xhs,
@@ -149,10 +66,6 @@ function getTopicTotalLength(topics: string[]) {
   return topics.reduce((total, topic) => total + normalizeTopicText(topic).length, 0)
 }
 
-function getJoinedTopicLength(topics: string[]) {
-  return getUniqueTopics(topics).join(',').length
-}
-
 function hasDuplicateTopics(topics: string[]) {
   const seen = new Set<string>()
   for (const topic of topics) {
@@ -166,30 +79,32 @@ function hasDuplicateTopics(topics: string[]) {
   return false
 }
 
-function hasOversizedImage(images: IImgFile[] | undefined, maxSize: number) {
+function hasOversizedImage(images: IImgFile[] | undefined, maxSize: number | undefined) {
+  if (typeof maxSize !== 'number')
+    return false
+
   return images?.some(img => img.size > maxSize) ?? false
 }
 
-function isVideoSizeExceeded(video: IVideoFile | undefined, maxSize: number) {
+function isVideoSizeExceeded(video: IVideoFile | undefined, maxSize: number | undefined) {
+  if (typeof maxSize !== 'number')
+    return false
+
   return Boolean(video && video.size > maxSize)
 }
 
 function isVideoDurationOutOfRange(
   video: IVideoFile | undefined,
-  maxDuration: number,
-  minDuration = 0,
+  maxDuration: number | undefined,
+  minDuration: number | undefined,
 ) {
-  return Boolean(video && (video.duration > maxDuration || video.duration < minDuration))
-}
+  if (!video)
+    return false
 
-function isTikTokImageFormatSupported(img: IImgFile) {
-  const mimeType = img.file?.type?.toLowerCase()
-  if (mimeType) {
-    return TIKTOK_ALLOWED_IMAGE_MIME_TYPES.has(mimeType)
-  }
+  const isOverMax = typeof maxDuration === 'number' && video.duration > maxDuration
+  const isUnderMin = typeof minDuration === 'number' && video.duration < minDuration
 
-  const { suffix } = getFilePathName(img.filename || img.imgPath)
-  return TIKTOK_ALLOWED_IMAGE_SUFFIXES.has(suffix.toLowerCase())
+  return isOverMax || isUnderMin
 }
 
 function stripTopicsFromBody(body: string) {
@@ -213,6 +128,30 @@ function getStringArrayRule(mediaRules: PlatformMediaRules, key: string) {
 
   const items = value.filter((item): item is string => typeof item === 'string')
   return items.length > 0 ? items : undefined
+}
+
+function getNumberRule(mediaRules: PlatformMediaRules, key: keyof PlatformMediaRules) {
+  const value = mediaRules[key]
+  return typeof value === 'number' && Number.isFinite(value) ? value : undefined
+}
+
+type TranslateFn = (key: string, options?: Record<string, number | string>) => string
+
+function getDurationLimitLabel(seconds: number, t: TranslateFn) {
+  const durationParts = getDurationPartsFromSeconds(seconds)
+  const segments: string[] = []
+
+  if (durationParts.hours > 0) {
+    segments.push(t('validation.durationLimitHours', { value: durationParts.hours }))
+  }
+  if (durationParts.minutes > 0) {
+    segments.push(t('validation.durationLimitMinutes', { value: durationParts.minutes }))
+  }
+  if (durationParts.seconds > 0 || segments.length === 0) {
+    segments.push(t('validation.durationLimitSeconds', { value: durationParts.seconds }))
+  }
+
+  return segments.join(t('validation.durationLimitSeparator'))
 }
 
 function getMimeExtension(type: string | undefined) {
@@ -315,6 +254,7 @@ function getInstagramMentionCount(body: string) {
  * @param data
  */
 export default function usePubParamsVerify(data: PubItem[]) {
+  console.log(data)
   const { t } = useTransClient('publish', { useSuspense: false })
   const platformInfoMap = usePlatformInfoMap()
 
@@ -421,11 +361,42 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
       const imageFormats = getStringArrayRule(platInfo.mediaRules, 'imageFormats')
       const videoFormats = getStringArrayRule(platInfo.mediaRules, 'videoFormats')
-      if (shouldValidateFlowRules && v.account.type !== PlatType.Tiktok && hasUnsupportedImageFormat(v.params.images, imageFormats)) {
+      const imageMaxSize = getNumberRule(platInfo.mediaRules, 'maxImageSize')
+      const videoMaxSize = getNumberRule(platInfo.mediaRules, 'maxVideoSize')
+      const videoMinDuration = getNumberRule(platInfo.mediaRules, 'minVideoDuration')
+      const videoMaxDuration = getNumberRule(platInfo.mediaRules, 'maxVideoDuration')
+
+      if (shouldValidateFlowRules && hasUnsupportedImageFormat(v.params.images, imageFormats)) {
         addErrorMsg(t('validation.imageFormatUnsupported', { formats: imageFormats?.join(', ') ?? '' }))
       }
       if (shouldValidateFlowRules && hasUnsupportedVideoFormat(video, videoFormats)) {
         addErrorMsg(t('validation.videoFormatUnsupported', { formats: videoFormats?.join(', ') ?? '' }))
+      }
+      if (typeof imageMaxSize === 'number' && hasOversizedImage(v.params.images, imageMaxSize)) {
+        addErrorMsg(t('validation.imageSizeExceeded', {
+          platformName: platInfo.name,
+          maxSize: formatFileSize(imageMaxSize),
+        }))
+      }
+      if (typeof videoMaxSize === 'number' && isVideoSizeExceeded(video, videoMaxSize)) {
+        addErrorMsg(t('validation.videoSizeExceeded', {
+          platformName: platInfo.name,
+          maxSize: formatFileSize(videoMaxSize),
+        }))
+      }
+      if (isVideoDurationOutOfRange(video, videoMaxDuration, videoMinDuration)) {
+        addErrorMsg(
+          typeof videoMinDuration === 'number' && typeof videoMaxDuration === 'number'
+            ? t('validation.videoDurationRangeExceeded', {
+                platformName: platInfo.name,
+                minDuration: getDurationLimitLabel(videoMinDuration, t),
+                maxDuration: getDurationLimitLabel(videoMaxDuration, t),
+              })
+            : t('validation.videoDurationMaxExceeded', {
+                platformName: platInfo.name,
+                maxDuration: getDurationLimitLabel(videoMaxDuration ?? videoMinDuration ?? 0, t),
+              }),
+        )
       }
 
       // 描述校验
@@ -535,72 +506,17 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
       // b站的强制校验
       if (v.account.type === PlatType.BILIBILI) {
-        // 强制需要标题
         if (!v.params.title) {
           addErrorMsg(t('validation.titleRequired'))
         }
-        // 强制需要话题
         if (topicsAll.length === 0) {
           addErrorMsg(t('validation.topicRequired'))
-        }
-        if (getJoinedTopicLength(topicsAll) > MEDIA_LIMITS.bilibili.topicMaxTotalLength) {
-          addErrorMsg(
-            t('validation.topicTotalLengthExceeded', {
-              platformName: platInfo.name,
-              max: MEDIA_LIMITS.bilibili.topicMaxTotalLength,
-            }),
-          )
         }
         if (!v.params.option.bilibili?.tid) {
           addErrorMsg(t('validation.partitionRequired'))
         }
         if (v.params.option.bilibili?.copyright === 2 && !v.params.option.bilibili.source) {
           addErrorMsg(t('validation.sourceRequired'))
-        }
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.bilibili.videoMaxSize)) {
-          addErrorMsg(t('validation.bilibiliVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.bilibili.videoMaxDuration)) {
-          addErrorMsg(t('validation.bilibiliVideoDuration'))
-        }
-      }
-
-      // 小红书的强制校验
-      if (v.account.type === PlatType.Xhs) {
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.xhs.imageMaxSize)) {
-          addErrorMsg(t('validation.xhsImageSize'))
-        }
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.xhs.videoMaxSize)) {
-          addErrorMsg(t('validation.xhsVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.xhs.videoMaxDuration)) {
-          addErrorMsg(t('validation.xhsVideoDuration'))
-        }
-      }
-
-      // 抖音的强制校验
-      if (v.account.type === PlatType.Douyin) {
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.douyin.imageMaxSize)) {
-          addErrorMsg(t('validation.douyinImageSize'))
-        }
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.douyin.videoMaxSize)) {
-          addErrorMsg(t('validation.douyinVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.douyin.videoMaxDuration)) {
-          addErrorMsg(t('validation.douyinVideoDuration'))
-        }
-      }
-
-      // 快手的强制校验
-      if (v.account.type === PlatType.KWAI) {
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.kwai.imageMaxSize)) {
-          addErrorMsg(t('validation.kwaiImageSize'))
-        }
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.kwai.videoMaxSize)) {
-          addErrorMsg(t('validation.kwaiVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.kwai.videoMaxDuration)) {
-          addErrorMsg(t('validation.kwaiVideoDuration'))
         }
       }
 
@@ -617,35 +533,13 @@ export default function usePubParamsVerify(data: PubItem[]) {
 
         switch (v.params.option.facebook?.content_category) {
           case 'post':
-            // Facebook Post 图片上限 ≤ 4MB，视频上限 ≤ 4GB / 4 小时
-            if (hasOversizedImage(v.params.images, MEDIA_LIMITS.facebook.postImageMaxSize)) {
-              addErrorMsg(t('validation.facebookPostImageSize'))
-            }
-            if (isVideoSizeExceeded(video, MEDIA_LIMITS.facebook.videoMaxSize)) {
-              addErrorMsg(t('validation.facebookVideoSize'))
-            }
-            if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.facebook.postVideoMaxDuration)) {
-              addErrorMsg(t('validation.facebookPostVideoDuration'))
-            }
             break
           case 'reel':
             if (!video) {
               addErrorMsg(t('validation.uploadVideo'))
             }
-            // facebook reel 不支持图片，只支持视频 + 描述
             if ((v.params.images?.length || 0) !== 0) {
               addErrorMsg(t('validation.facebookReelNoImage'))
-            }
-            // Facebook Reel 视频上限 ≤ 4GB，时长 3–90 秒
-            if (isVideoSizeExceeded(video, MEDIA_LIMITS.facebook.videoMaxSize)) {
-              addErrorMsg(t('validation.facebookVideoSize'))
-            }
-            if (isVideoDurationOutOfRange(
-              video,
-              MEDIA_LIMITS.facebook.reelVideoMaxDuration,
-              MEDIA_LIMITS.facebook.reelVideoMinDuration,
-            )) {
-              addErrorMsg(t('validation.facebookReelDuration'))
             }
             break
           case 'story':
@@ -665,21 +559,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
             if (v.params.option.facebook?.link) {
               addErrorMsg(t('validation.facebookStoryNoLink'))
             }
-            // Facebook Story 视频上限 ≤ 1000MB，时长 3–60 秒
-            if (isVideoSizeExceeded(video, MEDIA_LIMITS.facebook.storyVideoMaxSize)) {
-              addErrorMsg(t('validation.facebookStoryVideoSize'))
-            }
-            if (isVideoDurationOutOfRange(
-              video,
-              MEDIA_LIMITS.facebook.storyVideoMaxDuration,
-              MEDIA_LIMITS.facebook.storyVideoMinDuration,
-            )) {
-              addErrorMsg(t('validation.facebookStoryDuration'))
-            }
-            // facebook story 图片上限 ≤ 4MB
-            if (hasOversizedImage(v.params.images, MEDIA_LIMITS.facebook.storyImageMaxSize)) {
-              addErrorMsg(t('validation.facebookStoryImageSize'))
-            }
             break
         }
       }
@@ -688,10 +567,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
       if (v.account.type === PlatType.Instagram) {
         if (getInstagramMentionCount(publishBody) > 20) {
           addErrorMsg(t('validation.instagramMentionMax'))
-        }
-        // instagram 图片size上限8MB
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.instagram.imageMaxSize)) {
-          addErrorMsg(t('validation.instagramImageSize'))
         }
 
         // 图片比例判断
@@ -724,17 +599,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
             if ((v.params.images?.length || 0) !== 0) {
               addErrorMsg(t('validation.instagramReelNoImage'))
             }
-            // Instagram Reel 视频大小 ≤ 300MB，时长 3 秒–15 分钟
-            if (isVideoSizeExceeded(video, MEDIA_LIMITS.instagram.reelVideoMaxSize)) {
-              addErrorMsg(t('validation.instagramReelVideoSize'))
-            }
-            if (isVideoDurationOutOfRange(
-              video,
-              MEDIA_LIMITS.instagram.reelVideoMaxDuration,
-              MEDIA_LIMITS.instagram.reelVideoMinDuration,
-            )) {
-              addErrorMsg(t('validation.instagramReelDuration'))
-            }
             // instagram reel 视频宽高比限制：4:5 ~ 9:16 (0.8 ~ 0.5625)
             if (video && !isAspectRatioInRange(video.width, video.height, 9 / 16, 4 / 5)) {
               addErrorMsg(t('validation.instagramReelAspectRatio'))
@@ -745,17 +609,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
             if (v.params.des) {
               addErrorMsg(t('validation.instagramStoryNoDes'))
             }
-            // Instagram Story 视频大小 ≤ 100MB，时长 3–60 秒
-            if (isVideoSizeExceeded(video, MEDIA_LIMITS.instagram.storyVideoMaxSize)) {
-              addErrorMsg(t('validation.instagramStoryVideoSize'))
-            }
-            if (isVideoDurationOutOfRange(
-              video,
-              MEDIA_LIMITS.instagram.storyVideoMaxDuration,
-              MEDIA_LIMITS.instagram.storyVideoMinDuration,
-            )) {
-              addErrorMsg(t('validation.instagramStoryDuration'))
-            }
             break
         }
       }
@@ -763,20 +616,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
       if (v.account.type === PlatType.Threads) {
         if (!hasImages && !video && !bodyForLength) {
           addErrorMsg(t('validation.descriptionRequired'))
-        }
-        // Threads 视频大小限制 最大 1GB
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.threads.videoMaxSize)) {
-          addErrorMsg(t('validation.threadsVideoSize'))
-        }
-        // Threads视频限制，最长 5 分钟，最短 > 0 秒
-        if (
-          isVideoDurationOutOfRange(video, MEDIA_LIMITS.threads.videoMaxDuration)
-          || (video && video.duration <= 0)
-        ) {
-          addErrorMsg(t('validation.threadsVideoDuration'))
-        }
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.threads.imageMaxSize)) {
-          addErrorMsg(t('validation.threadsImageSize'))
         }
       }
 
@@ -792,22 +631,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
         }
         if (video && !v.params.video?.cover.ossUrl && !v.params.option.pinterest?.coverImageUrl) {
           addErrorMsg(t('validation.coverRequired'))
-        }
-        // Pinterest 视频限制，4 秒–15 分钟
-        if (isVideoDurationOutOfRange(
-          video,
-          MEDIA_LIMITS.pinterest.videoMaxDuration,
-          MEDIA_LIMITS.pinterest.videoMinDuration,
-        )) {
-          addErrorMsg(t('validation.pinterestVideoDuration'))
-        }
-        // Pinterest 视频大小≤ 2GB
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.pinterest.videoMaxSize)) {
-          addErrorMsg(t('validation.pinterestVideoSize'))
-        }
-        // Pinterest图片size  ≤ 20MB
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.pinterest.imageMaxSize)) {
-          addErrorMsg(t('validation.pinterestImageSize'))
         }
       }
 
@@ -825,40 +648,12 @@ export default function usePubParamsVerify(data: PubItem[]) {
         if (!v.params.option.youtube?.categoryId) {
           addErrorMsg(t('validation.categoryRequired'))
         }
-        // YouTube 视频大小限制 ≤ 256GB
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.youtube.videoMaxSize)) {
-          addErrorMsg(t('validation.youtubeVideoSize'))
-        }
-        // YouTube 视频时长限制 ≤ 12小时
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.youtube.videoMaxDuration)) {
-          addErrorMsg(t('validation.youtubeVideoDuration'))
-        }
       }
 
       // TikTok 的强制校验
       if (v.account.type === PlatType.Tiktok) {
         if ((v.params.images?.length || 0) === 1) {
           addErrorMsg(t('validation.tiktokImageMin'))
-        }
-        // TikTok 图片格式仅支持 JPEG/JPG/WEBP
-        if (v.params.images?.some(img => !isTikTokImageFormatSupported(img))) {
-          addErrorMsg(t('validation.tiktokImageFormat'))
-        }
-        // TikTok 视频时长限制 3 秒至 10 分钟
-        if (isVideoDurationOutOfRange(
-          video,
-          MEDIA_LIMITS.tiktok.videoMaxDuration,
-          MEDIA_LIMITS.tiktok.videoMinDuration,
-        )) {
-          addErrorMsg(t('validation.tiktokVideoDuration'))
-        }
-        // TikTok视频大小限制4GB或更小
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.tiktok.videoMaxSize)) {
-          addErrorMsg(t('validation.tiktokVideoSize'))
-        }
-        // TikTok 图片size限制 最多 20MB
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.tiktok.imageMaxSize)) {
-          addErrorMsg(t('validation.tiktokImageSize'))
         }
         // TikTok 图片最小高度和宽度为 360 像素
         if (v.params.images) {
@@ -887,40 +682,6 @@ export default function usePubParamsVerify(data: PubItem[]) {
       // Twitter 的强制校验
       if (v.account.type === PlatType.Twitter) {
         getTwitterPublishValidationMessages(v.params, t).forEach(addErrorMsg)
-      }
-
-      // LinkedIn 的强制校验
-      if (v.account.type === PlatType.LinkedIn) {
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.linkedin.imageMaxSize)) {
-          addErrorMsg(t('validation.linkedinImageSize'))
-        }
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.linkedin.videoMaxSize)) {
-          addErrorMsg(t('validation.linkedinVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(
-          video,
-          MEDIA_LIMITS.linkedin.videoMaxDuration,
-          MEDIA_LIMITS.linkedin.videoMinDuration,
-        )) {
-          addErrorMsg(t('validation.linkedinVideoDuration'))
-        }
-      }
-
-      // 微信视频号的强制校验
-      if (v.account.type === PlatType.WxSph) {
-        if (isVideoSizeExceeded(video, MEDIA_LIMITS.wxSph.videoMaxSize)) {
-          addErrorMsg(t('validation.wxSphVideoSize'))
-        }
-        if (isVideoDurationOutOfRange(video, MEDIA_LIMITS.wxSph.videoMaxDuration)) {
-          addErrorMsg(t('validation.wxSphVideoDuration'))
-        }
-      }
-
-      // 微信公众号的强制校验
-      if (v.account.type === PlatType.WxGzh) {
-        if (hasOversizedImage(v.params.images, MEDIA_LIMITS.wxGzh.imageMaxSize)) {
-          addErrorMsg(t('validation.wxGzhImageSize'))
-        }
       }
 
       // 如果有错误，保存到 Map 中
