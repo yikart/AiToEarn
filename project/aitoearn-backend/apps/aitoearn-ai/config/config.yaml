@@ -431,8 +431,8 @@ ai:
     accessKeyId: ''
     secretAccessKey: ''
     spaceName: ''
-    playbackBaseUrl: http://vod.assets.aitoearn.ai
-    urlAuthPrimaryKey: d8eea018341d4e9687ead69bea628271
+    playbackBaseUrl: ''
+    urlAuthPrimaryKey: ''
   grok:
     baseUrl: https://api.x.ai
     apiKey: ''

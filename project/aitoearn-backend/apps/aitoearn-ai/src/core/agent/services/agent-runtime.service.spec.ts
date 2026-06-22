@@ -18,6 +18,7 @@ vi.mock('@yikart/assets', async () => {
   const { z } = await import('zod')
 
   return {
+    ASSETS_CONFIG: Symbol('ASSETS_CONFIG'),
     StorageProvider: class StorageProvider {},
     assetsConfigSchema: z.looseObject({}),
   }

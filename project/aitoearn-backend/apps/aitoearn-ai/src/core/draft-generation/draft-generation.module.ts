@@ -14,7 +14,7 @@ import { DraftGenerationService } from './draft-generation.service'
   imports: [
     ImageModule,
     VideoModule,
-    RelayMediaModule.forRoot(config.ai.relay, config.assets),
+    RelayMediaModule.forRoot(config.ai.relay),
   ],
   controllers: [DraftGenerationController],
   providers: [

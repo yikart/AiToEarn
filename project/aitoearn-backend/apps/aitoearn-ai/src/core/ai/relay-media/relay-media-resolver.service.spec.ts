@@ -1,6 +1,8 @@
-import type { AssetsConfig } from '@yikart/assets'
+import { Test } from '@nestjs/testing'
+import { ASSETS_CONFIG, type AssetsConfig } from '@yikart/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { RelayConfig } from '../libs/relay'
+import { RelayConfig } from '../libs/relay/relay.config'
+import { RelayMediaResolverService } from './relay-media-resolver.service'
 
 const axiosMock = vi.hoisted(() => ({
   create: vi.fn(),
@@ -17,13 +19,15 @@ vi.mock('axios', () => ({
   },
 }))
 
+vi.mock('@yikart/assets', () => ({
+  ASSETS_CONFIG: Symbol('ASSETS_CONFIG'),
+}))
+
 vi.mock('@yikart/mongodb', () => ({
   AssetType: {
     Temp: 'temp',
   },
 }))
-
-const { RelayMediaResolverService } = await import('./relay-media-resolver.service')
 
 describe('relayMediaResolverService', () => {
   const assetsConfig = {
@@ -38,8 +42,25 @@ describe('relayMediaResolverService', () => {
     axiosMock.create.mockReturnValue({ post: axiosMock.post })
   })
 
+  async function createService(config?: RelayConfig) {
+    const moduleRef = await Test.createTestingModule({
+      providers: [
+        {
+          provide: RelayConfig,
+          useValue: config,
+        },
+        {
+          provide: ASSETS_CONFIG,
+          useValue: assetsConfig,
+        },
+        RelayMediaResolverService,
+      ],
+    }).compile()
+    return moduleRef.get(RelayMediaResolverService)
+  }
+
   it('keeps text unchanged when relay is not configured', async () => {
-    const service = new RelayMediaResolverService(undefined, assetsConfig)
+    const service = await createService()
 
     await expect(service.resolveText('https://cdn.local/user/media/cat.png')).resolves.toBe('https://cdn.local/user/media/cat.png')
     expect(axiosMock.get).not.toHaveBeenCalled()
@@ -47,10 +68,7 @@ describe('relayMediaResolverService', () => {
   })
 
   it('uploads each matched local asset url once and replaces every occurrence', async () => {
-    const service = new RelayMediaResolverService(
-      { url: 'https://relay.example.com', apiKey: 'relay-key', timeout: 1000 } as RelayConfig,
-      assetsConfig,
-    )
+    const service = await createService({ url: 'https://relay.example.com', apiKey: 'relay-key', timeout: 1000 } as RelayConfig)
     axiosMock.get.mockResolvedValue({
       data: Buffer.from('image-bytes'),
       headers: {
@@ -99,10 +117,7 @@ describe('relayMediaResolverService', () => {
   })
 
   it('keeps unmatched external urls and bare paths unchanged', async () => {
-    const service = new RelayMediaResolverService(
-      { url: 'https://relay.example.com', apiKey: 'relay-key', timeout: 1000 } as RelayConfig,
-      assetsConfig,
-    )
+    const service = await createService({ url: 'https://relay.example.com', apiKey: 'relay-key', timeout: 1000 } as RelayConfig)
 
     const text = 'external=https://external.example.com/a.png bare=user/media/cat.png'
 

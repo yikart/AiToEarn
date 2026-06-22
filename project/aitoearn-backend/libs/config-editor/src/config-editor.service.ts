@@ -1,5 +1,5 @@
-import { readFile, rename, unlink, writeFile } from 'node:fs/promises'
-import { basename, dirname, resolve } from 'node:path'
+import { readFile, writeFile } from 'node:fs/promises'
+import { resolve } from 'node:path'
 import { Injectable } from '@nestjs/common'
 import { AppException, isZodDto, ResponseCode } from '@yikart/common'
 import { parse as parseYaml, stringify as stringifyYaml } from 'yaml'
@@ -93,13 +93,10 @@ export class ConfigEditorService {
   }
 
   private async writeConfigFile(configPath: string, content: string) {
-    const tempPath = `${dirname(configPath)}/.${basename(configPath)}.${process.pid}.${Date.now()}.tmp`
     try {
-      await writeFile(tempPath, content, 'utf-8')
-      await rename(tempPath, configPath)
+      await writeFile(configPath, content, 'utf-8')
     }
     catch (error) {
-      await unlink(tempPath).catch(() => undefined)
       throw new AppException(
         ResponseCode.ConfigEditorWriteFailed,
         error instanceof Error ? error.message : String(error),
