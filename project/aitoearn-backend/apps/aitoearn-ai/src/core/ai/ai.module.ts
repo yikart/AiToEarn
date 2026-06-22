@@ -13,7 +13,7 @@ import { VideoModule } from './video'
 
 @Module({
   imports: [
-    RelayMediaModule.forRoot(config.ai.relay, config.assets),
+    RelayMediaModule.forRoot(config.ai.relay),
     OpenaiModule.forRoot(config.ai.openai),
     GeminiModule.forRoot(config.ai.gemini),
     ChatModule,

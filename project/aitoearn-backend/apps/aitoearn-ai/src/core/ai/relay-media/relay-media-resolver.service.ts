@@ -1,10 +1,9 @@
 import { basename } from 'node:path'
-import type { AssetsConfig } from '@yikart/assets'
-import { Inject, Injectable, Logger } from '@nestjs/common'
+import { Inject, Injectable, Logger, Optional } from '@nestjs/common'
+import { ASSETS_CONFIG, type AssetsConfig } from '@yikart/assets'
 import { AssetType } from '@yikart/mongodb'
 import axios, { AxiosInstance } from 'axios'
-import { RelayConfig } from '../libs/relay'
-import { RELAY_MEDIA_ASSETS_CONFIG, RELAY_MEDIA_CONFIG } from './relay-media.tokens'
+import { RelayConfig } from '../libs/relay/relay.config'
 
 interface UploadSignResult {
   id: string
@@ -25,8 +24,8 @@ export class RelayMediaResolverService {
   private readonly localUrlPrefixes: string[]
 
   constructor(
-    @Inject(RELAY_MEDIA_CONFIG) private readonly config: RelayConfig | undefined,
-    @Inject(RELAY_MEDIA_ASSETS_CONFIG) private readonly assetsConfig: AssetsConfig | undefined,
+    @Optional() private readonly config?: RelayConfig,
+    @Optional() @Inject(ASSETS_CONFIG) private readonly assetsConfig?: AssetsConfig,
   ) {
     this.localUrlPrefixes = []
     if (assetsConfig?.endpoint) {
