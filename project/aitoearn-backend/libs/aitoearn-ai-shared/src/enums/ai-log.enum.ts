@@ -74,4 +74,5 @@ export enum AiLogChannel {
   Anthropic = 'anthropic',
   Gemini = 'gemini',
   Grok = 'grok',
+  Atlascloud = 'atlascloud',
 }

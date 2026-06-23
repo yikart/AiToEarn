@@ -36,6 +36,8 @@ const {
   GEMINI_BASE_URL,
   DASHSCOPE_API_KEY,
   DASHSCOPE_BASE_URL,
+  ATLASCLOUD_API_KEY,
+  ATLASCLOUD_BASE_URL,
 } = process.env
 
 const {
@@ -156,6 +158,10 @@ module.exports = {
     dashscope: {
       apiKey: DASHSCOPE_API_KEY || '',
       ...(DASHSCOPE_BASE_URL && { baseUrl: DASHSCOPE_BASE_URL }),
+    },
+    atlascloud: {
+      apiKey: ATLASCLOUD_API_KEY || '',
+      ...(ATLASCLOUD_BASE_URL && { baseUrl: ATLASCLOUD_BASE_URL }),
     },
     aideo: {
       vCreative: {

@@ -8,6 +8,40 @@
 
 简体中文 | [English](README_EN.md) | [日本語](README_JA.md)
 
+<p align="center">
+  <a href="https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=AiToEarn">
+    <img src="presentation/atlas-cloud-logo.png" alt="Atlas Cloud" width="200">
+  </a>
+</p>
+
+> 🎁 **[Atlas Cloud](https://www.atlascloud.ai/?utm_source=github&utm_medium=link&utm_campaign=AiToEarn)** 为 AiToEarn 的内容生成提供全模态推理支持：一套 **OpenAI 兼容** API 即可同时调用 LLM（DeepSeek、Qwen、GLM、Kimi、MiniMax…）与图像 / 视频生成（Seedance、Kling、Wan…），无需为每家厂商单独接入。AiToEarn 的聊天链路本身就是 OpenAI 兼容，把 `OPENAI_BASE_URL` 指向 `https://api.atlascloud.ai/v1` 即可直接驱动；也可使用内置的 `atlascloud` provider（见 [project/aitoearn-backend/apps/aitoearn-ai/src/core/ai/libs/atlascloud](project/aitoearn-backend/apps/aitoearn-ai/src/core/ai/libs/atlascloud)）。
+>
+> [coding plan](https://www.atlascloud.ai/console/coding-plan) · [全部模型](https://www.atlascloud.ai/models)
+>
+> ```env
+> ATLASCLOUD_API_KEY=<atlascloud-api-key>
+> ATLASCLOUD_BASE_URL=https://api.atlascloud.ai/v1
+> # 默认聊天模型；deepseek-v4-pro 为推理模型，请给足 max_tokens（≥ 512）
+> # ATLASCLOUD_MODEL=deepseek-ai/deepseek-v4-pro
+> ```
+>
+> <details>
+> <summary>Atlas Cloud 全部 59 个聊天模型</summary>
+>
+> - Anthropic (Claude)：`anthropic/claude-haiku-4.5-20251001`、`anthropic/claude-opus-4.8`、`anthropic/claude-sonnet-4.6`
+> - OpenAI (GPT)：`openai/gpt-5.4`、`openai/gpt-5.5`
+> - Google (Gemini)：`google/gemini-3.1-flash-lite`、`google/gemini-3.1-pro-preview`、`google/gemini-3.5-flash`
+> - 阿里 Qwen：`qwen/qwen2.5-7b-instruct`、`Qwen/Qwen3-235B-A22B-Instruct-2507`、`qwen/qwen3-235b-a22b-thinking-2507`、`qwen/qwen3-30b-a3b`、`Qwen/Qwen3-30B-A3B-Instruct-2507`、`qwen/qwen3-30b-a3b-thinking-2507`、`qwen/qwen3-32b`、`qwen/qwen3-8b`、`Qwen/Qwen3-Coder`、`qwen/qwen3-coder-next`、`qwen/qwen3-max-2026-01-23`、`Qwen/Qwen3-Next-80B-A3B-Instruct`、`Qwen/Qwen3-Next-80B-A3B-Thinking`、`Qwen/Qwen3-VL-235B-A22B-Instruct`、`qwen/qwen3-vl-235b-a22b-thinking`、`qwen/qwen3-vl-30b-a3b-instruct`、`qwen/qwen3-vl-30b-a3b-thinking`、`qwen/qwen3-vl-8b-instruct`、`qwen/qwen3.5-122b-a10b`、`qwen/qwen3.5-27b`、`qwen/qwen3.5-35b-a3b`、`qwen/qwen3.5-397b-a17b`、`qwen/qwen3.6-35b-a3b`、`qwen/qwen3.6-plus`
+> - DeepSeek：`deepseek-ai/deepseek-ocr`、`deepseek-ai/deepseek-r1-0528`、`deepseek-ai/DeepSeek-V3-0324`、`deepseek-ai/DeepSeek-V3.1`、`deepseek-ai/DeepSeek-V3.1-Terminus`、`deepseek-ai/deepseek-v3.2`、`deepseek-ai/DeepSeek-V3.2-Exp`、`deepseek-ai/deepseek-v4-flash`、`deepseek-ai/deepseek-v4-pro`
+> - Moonshot (Kimi)：`moonshotai/Kimi-K2-Instruct`、`moonshotai/Kimi-K2-Instruct-0905`、`moonshotai/Kimi-K2-Thinking`、`moonshotai/kimi-k2.5`、`moonshotai/kimi-k2.6`
+> - 智谱 GLM：`zai-org/GLM-4.6`、`zai-org/glm-4.7`、`zai-org/glm-5`、`zai-org/glm-5-turbo`、`zai-org/glm-5.1`、`zai-org/glm-5v-turbo`
+> - MiniMax：`MiniMaxAI/MiniMax-M2`、`minimaxai/minimax-m2.1`、`minimaxai/minimax-m2.5`、`minimaxai/minimax-m2.7`
+> - xAI：`xai/grok-4.3`
+> - 快手 KAT：`kwaipilot/kat-coder-pro-v2`
+> - 其他：`owl`
+>
+> </details>
+
 **Monetize · Publish · Engage · Create —— 一站式平台。**
 
 AiToEarn 通过 **AI Agent自动化**，帮助 OPC（一人公司）、创作者、品牌与企业在全球主流平台上构建、分发并变现内容。
