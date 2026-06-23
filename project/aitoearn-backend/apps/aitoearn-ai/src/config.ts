@@ -9,6 +9,7 @@ import z from 'zod'
 import { dashscopeConfigSchema } from './core/ai/libs/dashscope'
 import { geminiConfigSchema } from './core/ai/libs/gemini'
 import { grokConfigSchema } from './core/ai/libs/grok'
+import { minimaxConfigSchema } from './core/ai/libs/minimax'
 import { openaiConfigSchema } from './core/ai/libs/openai'
 import { volcengineConfigSchema } from './core/ai/libs/volcengine'
 
@@ -98,6 +99,7 @@ export const aiModelsConfigSchema = z.object({
       logo: z.string().optional(),
       tags: z.array(i18nObjectSchema).default([]),
       mainTag: z.string().optional(),
+      channel: z.enum(AiLogChannel).optional(),
       runtimeModel: z.string().optional(),
       sizes: z.array(z.string()),
       qualities: z.array(z.string()),
@@ -187,6 +189,7 @@ export const aiConfigSchema = z.object({
   }),
   grok: grokConfigSchema,
   dashscope: dashscopeConfigSchema,
+  minimax: minimaxConfigSchema,
   aideo: aideoPricingConfigSchema,
   gemini: geminiConfigSchema,
   anthropic: z.object({

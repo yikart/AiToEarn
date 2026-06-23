@@ -3,6 +3,7 @@ import { ModelsConfigModule } from '../models-config'
 import { DashscopeVideoModule } from './dashscope'
 import { GeminiVideoModule } from './gemini'
 import { GrokVideoModule } from './grok'
+import { MiniMaxVideoModule } from './minimax'
 import { OpenAIVideoModule } from './openai'
 import { VideoTaskStatusScheduler } from './video-task-status.scheduler'
 import { VideoController } from './video.controller'
@@ -17,9 +18,10 @@ import { VolcengineVideoModule } from './volcengine'
     GeminiVideoModule,
     GrokVideoModule,
     DashscopeVideoModule,
+    MiniMaxVideoModule,
   ],
   controllers: [VideoController],
   providers: [VideoService, VideoTaskStatusScheduler],
-  exports: [VideoService, VolcengineVideoModule, OpenAIVideoModule, GeminiVideoModule, GrokVideoModule, DashscopeVideoModule],
+  exports: [VideoService, VolcengineVideoModule, OpenAIVideoModule, GeminiVideoModule, GrokVideoModule, DashscopeVideoModule, MiniMaxVideoModule],
 })
 export class VideoModule {}

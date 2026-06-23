@@ -35,6 +35,7 @@ describe('mediaMcp', () => {
 
     mockImageService = {
       userGeminiGeneration: vi.fn(),
+      userGeneration: vi.fn(),
     } as unknown as vi.Mocked<ImageService>
 
     mockAiAvailability = {
@@ -65,7 +66,7 @@ describe('mediaMcp', () => {
       expect(tool.name).toBe(MediaToolName.GenerateImage)
     })
 
-    it('should call imageService.userGeminiGeneration with correct params', async () => {
+    it('should call imageService.userGeminiGeneration with correct params for reference images', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
         usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
         images: [{ url: 'https://example.com/image1.png', data: '', mimeType: 'image/png' }],
@@ -86,6 +87,7 @@ describe('mediaMcp', () => {
         imageUrls: ['https://example.com/ref.png'],
         imageSize: '2K',
         aspectRatio: '16:9',
+        model: 'gemini-3.1-flash-image-preview',
       })
     })
 
@@ -109,13 +111,12 @@ describe('mediaMcp', () => {
     })
 
     it('should return generated image URLs', async () => {
-      mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
-        images: [
-          { url: 'image1.png', data: '', mimeType: 'image/png' },
-          { url: 'image2.png', data: '', mimeType: 'image/png' },
+      mockImageService.userGeneration.mockResolvedValue({
+        list: [
+          { url: 'image1.png' },
+          { url: 'image2.png' },
         ],
-      })
+      } as never)
 
       const tool = mediaMcp.createGenerateImageTool(userId, userType)
       const result = await tool.handler({
@@ -134,11 +135,10 @@ describe('mediaMcp', () => {
       expect(resourceLinks.length).toBe(2)
     })
 
-    it('should use default empty array for imageUrls when not provided', async () => {
-      mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
-        images: [{ url: 'image.png', data: '', mimeType: 'image/png' }],
-      })
+    it('should default text-to-image requests to MiniMax when imageUrls are not provided', async () => {
+      mockImageService.userGeneration.mockResolvedValue({
+        list: [{ url: 'image.png' }],
+      } as never)
 
       const tool = mediaMcp.createGenerateImageTool(userId, userType)
       await tool.handler({
@@ -148,9 +148,33 @@ describe('mediaMcp', () => {
         aspectRatio: undefined,
       } as never, {})
 
-      expect(mockImageService.userGeminiGeneration).toHaveBeenCalledWith(
+      expect(mockImageService.userGeneration).toHaveBeenCalledWith(
         expect.objectContaining({
-          imageUrls: [],
+          model: 'minimax-image-01',
+          n: 1,
+          size: '1024x1024',
+          response_format: 'url',
+        }),
+      )
+    })
+
+    it('should pass selected MiniMax model with an aspect-ratio size mapping', async () => {
+      mockImageService.userGeneration.mockResolvedValue({
+        list: [{ url: 'image.png' }],
+      } as never)
+
+      const tool = mediaMcp.createGenerateImageTool(userId, userType)
+      await tool.handler({
+        prompt: 'A poster',
+        model: 'minimax-image-01',
+        aspectRatio: '3:4',
+        imageSize: '2K',
+      } as never, {})
+
+      expect(mockImageService.userGeneration).toHaveBeenCalledWith(
+        expect.objectContaining({
+          model: 'minimax-image-01',
+          size: '864x1152',
         }),
       )
     })

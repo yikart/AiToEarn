@@ -425,6 +425,61 @@ GEMINI_KEY_PAIRS: '[{"projectId":"your-project","apiKey":"your-key","keyFile":"/
 
 </details>
 
+#### MiniMax
+
+| Variable | Description | Default |
+|----------|-------------|---------|
+| `MINIMAX_API_KEY` | MiniMax API key | |
+| `MINIMAX_BASE_URL` | MiniMax API URL; optional, falls back to the official endpoint | `https://api.minimax.io` |
+
+If `OPENAI_BASE_URL` already points to a MiniMax-compatible endpoint (for example `https://api.minimaxi.com/v1`) and `MINIMAX_API_KEY` is not set, the service reuses `OPENAI_API_KEY` for MiniMax text and media calls.
+
+**Built-in models:**
+
+| Model ID | Type | Description |
+|----------|------|-------------|
+| `MiniMax-M3` | Chat | MiniMax M3 multimodal chat model |
+| `minimax-image-01` | Image / Draft generation | Text-to-image with common aspect ratios and custom sizes |
+| `minimax-hailuo-2.3` | Video generation | text/image/first-last-frame → video, supports 768P/1080P |
+| `minimax-hailuo-2.3-fast` | Video generation | image → video, fast mode |
+
+<details>
+<summary>Model configuration example</summary>
+
+```js
+// Image model → ai.models.image.generation
+{
+  name: 'minimax-image-01',
+  description: 'MiniMax Image 01',
+  channel: 'minimax',
+  runtimeModel: 'image-01',
+  sizes: ['1024x1024', '1280x720', '720x1280'],
+  qualities: ['standard'],
+  styles: [],
+  pricing: '0.35',
+},
+
+// Video model → ai.models.video.generation
+{
+  name: 'minimax-hailuo-2.3',
+  description: 'MiniMax Hailuo 2.3',
+  channel: 'minimax',
+  modes: ['text2video', 'image2video', 'flf2video'],
+  resolutions: ['768P', '1080P'],
+  durations: [6, 10],
+  maxInputImages: 2,
+  aspectRatios: ['1:1', '16:9', '9:16', '4:3', '3:4', '3:2', '2:3', '21:9'],
+  defaults: { duration: 6, aspectRatio: '9:16', resolution: '768P' },
+  pricing: [
+    { resolution: '768P', duration: 6, price: 28 },
+    { resolution: '768P', duration: 10, price: 56 },
+    { resolution: '1080P', duration: 6, price: 49 },
+  ],
+},
+```
+
+</details>
+
 #### xAI (Grok)
 
 | Variable | Description |

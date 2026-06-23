@@ -1,5 +1,5 @@
 import { createSdkMcpServer, McpSdkServerConfigWithInstance } from '@anthropic-ai/claude-agent-sdk'
-import { Injectable, Logger } from '@nestjs/common'
+import { BadRequestException, Injectable, Logger } from '@nestjs/common'
 import { FileUtil, UserType } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import dayjs from 'dayjs'
@@ -15,8 +15,42 @@ const generateMediaSchema = z.object({
   imageUrls: z.array(z.string()).optional(),
   imageSize: z.enum(['1K', '2K', '4K']).optional(),
   aspectRatio: z.enum(['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9']).optional(),
-  model: z.enum(['gemini-3.1-flash-image-preview', 'gemini-3-pro-image-preview']).optional(),
+  model: z.enum(['minimax-image-01', 'gemini-3.1-flash-image-preview', 'gemini-3-pro-image-preview']).optional(),
 })
+
+const MINIMAX_IMAGE_MODEL = 'minimax-image-01'
+const DEFAULT_GEMINI_IMAGE_MODEL = 'gemini-3.1-flash-image-preview'
+const GEMINI_IMAGE_MODELS = [DEFAULT_GEMINI_IMAGE_MODEL, 'gemini-3-pro-image-preview'] as const
+type GeminiImageModel = typeof GEMINI_IMAGE_MODELS[number]
+
+function isGeminiImageModel(model: string): model is GeminiImageModel {
+  return (GEMINI_IMAGE_MODELS as readonly string[]).includes(model)
+}
+
+function resolveMiniMaxToolSize(aspectRatio?: string, imageSize?: string): string {
+  const sizeByAspectRatio: Record<string, string> = {
+    '1:1': '1024x1024',
+    '16:9': '1280x720',
+    '9:16': '720x1280',
+    '4:3': '1152x864',
+    '3:4': '864x1152',
+    '3:2': '1248x832',
+    '2:3': '832x1248',
+    '4:5': '1024x1280',
+    '5:4': '1280x1024',
+    '21:9': '1344x576',
+  }
+
+  if (aspectRatio && sizeByAspectRatio[aspectRatio]) {
+    return sizeByAspectRatio[aspectRatio]
+  }
+
+  if (imageSize === '2K' || imageSize === '4K') {
+    return '1280x720'
+  }
+
+  return '1024x1024'
+}
 
 const generateVideoSchema = z.object({
   prompt: z.string(),
@@ -90,14 +124,14 @@ export class MediaMcp {
     return wrapTool(
       this.logger,
       MediaToolName.GenerateImage,
-      `Generate an image using Gemini model.
+      `Generate an image using MiniMax or Gemini image models.
 
 Parameters:
 - prompt: Text description of the image
 - imageUrls (optional): Reference image URLs for editing
 - imageSize (optional): "1K", "2K", or "4K"
 - aspectRatio (optional): "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"
-- model (optional): "gemini-3.1-flash-image-preview" (default) or "gemini-3-pro-image-preview"
+- model (optional): "minimax-image-01" (default for text-to-image), "gemini-3.1-flash-image-preview" (default when imageUrls are provided), or "gemini-3-pro-image-preview"
 
 Returns the generated image URL(s).`,
       generateMediaSchema.shape,
@@ -105,17 +139,41 @@ Returns the generated image URL(s).`,
         this.logger.debug(`[generateImage] Starting image generation for user ${userId}`)
         const startTime = Date.now()
 
-        const result = await this.imageService.userGeminiGeneration({
-          userId,
-          userType,
-          prompt,
-          imageUrls,
-          imageSize,
-          aspectRatio,
-          ...(model ? { model } : {}),
-        })
+        const selectedModel = model ?? (imageUrls.length > 0 ? DEFAULT_GEMINI_IMAGE_MODEL : MINIMAX_IMAGE_MODEL)
+        let generatedImages: Array<{ url: string }>
 
-        const generatedImages = result.images.map(img => ({ ...img, url: FileUtil.buildUrl(img.url!) }))
+        if (selectedModel === MINIMAX_IMAGE_MODEL) {
+          if (imageUrls.length > 0) {
+            throw new BadRequestException('MiniMax image generation does not support imageUrls; use a Gemini image model for reference images')
+          }
+
+          const result = await this.imageService.userGeneration({
+            userId,
+            userType,
+            prompt,
+            model: selectedModel,
+            n: 1,
+            size: resolveMiniMaxToolSize(aspectRatio, imageSize),
+            response_format: 'url',
+          })
+          const images = result.list ?? result.data ?? []
+          generatedImages = images.map(img => ({ ...img, url: FileUtil.buildUrl(img.url!) }))
+        }
+        else if (isGeminiImageModel(selectedModel)) {
+          const result = await this.imageService.userGeminiGeneration({
+            userId,
+            userType,
+            prompt,
+            imageUrls,
+            imageSize,
+            aspectRatio,
+            model: selectedModel,
+          })
+          generatedImages = result.images.map(img => ({ ...img, url: FileUtil.buildUrl(img.url!) }))
+        }
+        else {
+          throw new BadRequestException(`Unsupported image model: ${selectedModel}`)
+        }
 
         const duration = Date.now() - startTime
         this.logger.debug(`[generateImage] Image generation completed in ${duration}ms for user ${userId}, count: ${generatedImages.length}`)

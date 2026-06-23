@@ -60,7 +60,7 @@ import {
   ContentGenerationTaskResultUnionSchema,
 } from '../agent.vo'
 import { ImageEditMcp, ImageEditToolName } from '../mcp/image-edit.mcp'
-import { successResult, wrapTool } from '../mcp/mcp.utils'
+import { createHttpBridgeServer, successResult, wrapTool } from '../mcp/mcp.utils'
 import { MediaMcp, MediaToolName } from '../mcp/media.mcp'
 import { SubtitleMcp, SubtitleToolName } from '../mcp/subtitle.mcp'
 import { UtilMcp, UtilToolName } from '../mcp/util.mcp'
@@ -82,6 +82,41 @@ export interface ClaudeQueryOptions {
 }
 
 type TaskResult = z.infer<typeof ContentGenerationTaskResultUnionSchema>
+
+const ACCOUNT_MCP_TOOL_NAMES = [
+  'getAccountGroupList',
+  'getAccountListByGroupId',
+  'getAllAccounts',
+  'getAccountDetail',
+]
+
+const CONTENT_MCP_TOOL_NAMES = [
+  'getMediaGroupInfoByName',
+  'createMedia',
+  'getDraftGroupInfoByName',
+  'createDraft',
+  'listDrafts',
+  'getDraftDetail',
+  'deleteDraft',
+  'listMedia',
+  'listDraftGroups',
+  'listMediaGroups',
+]
+
+const PUBLISH_MCP_TOOL_NAMES = [
+  'getPublishingTaskStatus',
+  'publishRestrictions',
+  'publishPostToBilibili',
+  'publishPostToWxGzh',
+  'publishPostToYoutube',
+  'publishPostToPinterest',
+  'publishPostToThreads',
+  'publishPostToTiktok',
+  'publishPostToFacebook',
+  'publishPostToInstagram',
+  'publishPostToKwai',
+  'publishPostToTwitter',
+]
 
 export interface RuntimeRunningTaskInfo {
   taskId: string
@@ -184,6 +219,15 @@ export class AgentRuntimeService {
           break
         case McpServerName.Subtitle:
           toolNames = Object.values(SubtitleToolName)
+          break
+        case McpServerName.Account:
+          toolNames = ACCOUNT_MCP_TOOL_NAMES
+          break
+        case McpServerName.Content:
+          toolNames = CONTENT_MCP_TOOL_NAMES
+          break
+        case McpServerName.Publish:
+          toolNames = PUBLISH_MCP_TOOL_NAMES
           break
         default:
           continue
@@ -737,6 +781,22 @@ export class AgentRuntimeService {
 
     const headers = filterHeaders(req.headers)
     this.logger.debug({ headers }, 'mcp headers')
+    const unifiedMcpUrl = `${config.serverClient.baseUrl}/unified/mcp`
+    const accountMcp = await createHttpBridgeServer(
+      McpServerName.Account,
+      unifiedMcpUrl,
+      headers,
+    )
+    const contentMcp = await createHttpBridgeServer(
+      McpServerName.Content,
+      unifiedMcpUrl,
+      headers,
+    )
+    const publishMcp = await createHttpBridgeServer(
+      McpServerName.Publish,
+      unifiedMcpUrl,
+      headers,
+    )
     const mcpServers: Record<string, McpServerConfig> = {
       [McpServerName.MediaGeneration]: this.mediaMcp.createServer(userId, userType),
       [McpServerName.Util]: this.utilMcp.server,
@@ -747,21 +807,9 @@ export class AgentRuntimeService {
       [McpServerName.StyleTransfer]: this.styleTransferMcp.createServer(userId, userType),
       [McpServerName.ImageEdit]: this.imageEditMcp.createServer(userId, userType),
       // [McpServerName.Subtitle]: this.subtitleMcp.createServer(userId, userType),
-      [McpServerName.Account]: {
-        type: 'http',
-        url: `${config.serverClient.baseUrl}/account/mcp`,
-        headers,
-      },
-      [McpServerName.Content]: {
-        type: 'http',
-        url: `${config.serverClient.baseUrl}/content/mcp`,
-        headers,
-      },
-      [McpServerName.Publish]: {
-        type: 'http',
-        url: `${config.serverClient.baseUrl}/publish/mcp`,
-        headers,
-      },
+      [McpServerName.Account]: accountMcp,
+      [McpServerName.Content]: contentMcp,
+      [McpServerName.Publish]: publishMcp,
     }
 
     return {

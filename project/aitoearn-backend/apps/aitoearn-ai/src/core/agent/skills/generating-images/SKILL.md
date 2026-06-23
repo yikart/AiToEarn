@@ -1,11 +1,15 @@
 ---
 name: generating-images
-description: Generates images using AI models (Gemini). AI图像生成、文生图、生成图片。
+description: Generates images using AI models (MiniMax or Gemini). AI图像生成、文生图、生成图片。
 ---
 
 # Image Generation
 
-Generates images using Gemini AI model (default: gemini-3.1-flash-image-preview, compatible: gemini-3-pro-image-preview).
+Generates images using MiniMax or Gemini AI models.
+
+- Default for text-to-image: `minimax-image-01`
+- Default for reference-image/editing workflows: `gemini-3.1-flash-image-preview`
+- Compatible Gemini model: `gemini-3-pro-image-preview`
 
 ## Parameters
 
@@ -18,6 +22,9 @@ Generates images using Gemini AI model (default: gemini-3.1-flash-image-preview,
 - `imageUrls`: Reference image URLs for editing
 - `imageSize`: Output resolution - "1K", "2K", "4K"
 - `aspectRatio`: "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"
+- `model`: "minimax-image-01", "gemini-3.1-flash-image-preview", or "gemini-3-pro-image-preview"
+
+Use `minimax-image-01` for normal text-to-image requests. Use a Gemini image model when `imageUrls` are provided because reference images are handled through the Gemini image workflow.
 
 ## Workflow
 
@@ -91,6 +98,7 @@ Text in generated images MUST match user's language.
 ```
 generateImage:
   prompt: "A photorealistic close-up portrait of an elderly Japanese ceramicist with deep, sun-etched wrinkles and a warm, knowing smile. He is carefully inspecting a freshly glazed tea bowl."
+  model: "minimax-image-01"
   aspectRatio: "3:4"
   imageSize: "2K"
 ```
@@ -100,6 +108,7 @@ generateImage:
 ```
 generateImage:
   prompt: "A kawaii-style sticker of a happy red panda wearing a tiny bamboo hat. It's munching on a green bamboo leaf. The design features bold, clean outlines, simple cel-shading, and a vibrant color palette."
+  model: "minimax-image-01"
   aspectRatio: "1:1"
   imageSize: "1K"
 ```
@@ -109,6 +118,7 @@ generateImage:
 ```
 generateImage:
   prompt: "A high-resolution, studio-lit product photograph of a minimalist ceramic coffee mug in matte black, presented on a polished concrete surface."
+  model: "minimax-image-01"
   aspectRatio: "1:1"
   imageSize: "2K"
 ```
@@ -118,6 +128,7 @@ generateImage:
 ```
 generateImage:
   prompt: "A minimalist composition featuring a single, delicate red maple leaf positioned in the bottom-right of the frame. The background is a vast, empty off-white canvas."
+  model: "minimax-image-01"
   aspectRatio: "16:9"
   imageSize: "2K"
 ```
@@ -127,5 +138,6 @@ generateImage:
 ```
 generateImage:
   prompt: "Add a vibrant rainbow to the sky, keep all other elements unchanged"
+  model: "gemini-3.1-flash-image-preview"
   imageUrls: ["source.jpg"]
 ```

@@ -2,6 +2,7 @@ import type {
   DashscopeVideoAiLogRequest,
   GeminiVideoAiLogRequest,
   GrokVideoAiLogRequest,
+  MiniMaxVideoAiLogRequest,
   OpenAIRemixVideoAiLogRequest,
   OpenAIVideoAiLogRequest,
   TypedAiLog,
@@ -11,6 +12,7 @@ import type {
 import type { DashscopeVideoCallbackDto } from './dashscope'
 import type { GeminiVeoVideoCallbackDto } from './gemini/gemini.dto'
 import type { GrokVideoCallbackDto } from './grok/grok.service'
+import type { MiniMaxVideoCallbackDto } from './minimax'
 import type { OpenAIVideoCallbackDto } from './openai/openai.dto'
 import type { VolcengineCallbackDto } from './volcengine/volcengine.dto'
 import { AiLogChannel, AiLogType } from '@yikart/mongodb'
@@ -53,6 +55,12 @@ export type GeminiVideoAiLog = VideoAiLogBase & {
   response?: GeminiVeoVideoCallbackDto & SavedVideoMediaInfo
 }
 
+export type MiniMaxVideoAiLog = VideoAiLogBase & {
+  channel: AiLogChannel.MiniMax
+  request: MiniMaxVideoAiLogRequest
+  response?: MiniMaxVideoCallbackDto & SavedVideoMediaInfo
+}
+
 export type UserRequestedVideoAiLog = VideoAiLogBase & {
   request: UserVideoGenerationAiLogRequest
 }
@@ -63,6 +71,7 @@ export interface VideoAiLogByChannelMap {
   [AiLogChannel.Grok]: GrokVideoAiLog
   [AiLogChannel.Dashscope]: DashscopeVideoAiLog
   [AiLogChannel.Gemini]: GeminiVideoAiLog
+  [AiLogChannel.MiniMax]: MiniMaxVideoAiLog
 }
 
 export type VideoAiLogByChannel<C extends keyof VideoAiLogByChannelMap> = VideoAiLogByChannelMap[C]
@@ -73,3 +82,4 @@ export type VideoAiLog
     | GrokVideoAiLog
     | DashscopeVideoAiLog
     | GeminiVideoAiLog
+    | MiniMaxVideoAiLog

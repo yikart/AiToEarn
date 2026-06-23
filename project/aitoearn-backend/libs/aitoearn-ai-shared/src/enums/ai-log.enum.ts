@@ -51,6 +51,7 @@ export enum AiLogSettlementSettledBy {
   GeminiCallback = 'gemini-callback',
   VolcengineCallback = 'volcengine-callback',
   DashscopeCallback = 'dashscope-callback',
+  MiniMaxCallback = 'minimax-callback',
   AiTaskRefundQueue = 'ai-task-refund-queue',
   ImageAsyncConsumer = 'image-async-consumer',
 }
@@ -74,4 +75,5 @@ export enum AiLogChannel {
   Anthropic = 'anthropic',
   Gemini = 'gemini',
   Grok = 'grok',
+  MiniMax = 'minimax',
 }

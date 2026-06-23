@@ -11,6 +11,7 @@ import QRCode from 'qrcode'
 import sharp from 'sharp'
 
 import { GeminiService } from '../libs/gemini/gemini.service'
+import { MiniMaxService } from '../libs/minimax'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
 import { calculatePricingPoints, ChatPricing } from '../pricing/pricing-calculator'
@@ -29,6 +30,7 @@ import {
 } from './image.dto'
 
 type Uploadable = File | Response
+type ImageGenerationModelConfig = ModelsConfigService['config']['image']['generation'][number]
 
 @Injectable()
 export class ImageService {
@@ -38,6 +40,7 @@ export class ImageService {
     private readonly assetsService: AssetsService,
     private readonly openaiService: OpenaiService,
     private readonly geminiService: GeminiService,
+    private readonly minimaxService: MiniMaxService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly creditsHelper: CreditsHelperService,
     private readonly modelsConfigService: ModelsConfigService,
@@ -46,12 +49,20 @@ export class ImageService {
     private readonly asyncSettlementService: AsyncSettlementService,
   ) { }
 
-  private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
-    const modelConfig = kind === 'generation'
+  private getImageModelConfig(model: string, kind: 'generation' | 'edit') {
+    return kind === 'generation'
       ? this.modelsConfigService.config.image.generation.find(item => item.name === model)
       : this.modelsConfigService.config.image.edit.find(item => item.name === model)
+  }
 
+  private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
+    const modelConfig = this.getImageModelConfig(model, kind)
     return modelConfig?.runtimeModel ?? model
+  }
+
+  private resolveImageModelChannel(model: string, kind: 'generation' | 'edit'): AiLogChannel {
+    const modelConfig = this.getImageModelConfig(model, kind)
+    return (modelConfig as { channel?: AiLogChannel } | undefined)?.channel ?? AiLogChannel.NewApi
   }
 
   /**
@@ -109,12 +120,105 @@ export class ImageService {
   /**
    * 图片生成
    */
+  private resolveMiniMaxImageSize(size?: string): { aspect_ratio?: string, width?: number, height?: number } {
+    if (!size) {
+      return {}
+    }
+
+    const officialAspectRatioBySize: Record<string, string> = {
+      '1024x1024': '1:1',
+      '1280x720': '16:9',
+      '1152x864': '4:3',
+      '1248x832': '3:2',
+      '832x1248': '2:3',
+      '864x1152': '3:4',
+      '720x1280': '9:16',
+      '1344x576': '21:9',
+    }
+
+    const normalized = size.toLowerCase()
+    if (officialAspectRatioBySize[normalized]) {
+      return { aspect_ratio: officialAspectRatioBySize[normalized] }
+    }
+
+    if (/^\d+:\d+$/.test(size)) {
+      return { aspect_ratio: size }
+    }
+
+    const match = /^(\d+)x(\d+)$/i.exec(size)
+    if (!match) {
+      return {}
+    }
+
+    const width = Number(match[1])
+    const height = Number(match[2])
+    if (
+      width >= 512
+      && width <= 2048
+      && height >= 512
+      && height <= 2048
+      && width % 8 === 0
+      && height % 8 === 0
+    ) {
+      return { width, height }
+    }
+
+    return {}
+  }
+
+  private async minimaxGeneration(request: ImageGenerationDto, runtimeModel: string) {
+    if (!request.user) {
+      throw new BadRequestException('userId is required')
+    }
+
+    const result = await this.minimaxService.createImageGeneration({
+      model: runtimeModel,
+      prompt: request.prompt,
+      n: Math.min(request.n ?? 1, 9),
+      response_format: 'url',
+      prompt_optimizer: true,
+      ...this.resolveMiniMaxImageSize(request.size),
+    })
+
+    const imageUrls = result.data?.image_urls ?? result.data?.images ?? []
+    const imageBase64List = result.data?.image_base64 ?? []
+    const data: AiLogImageResult[] = []
+
+    for (const imageUrl of imageUrls) {
+      data.push({
+        url: await this.uploadImageToS3(imageUrl, request.user, `ai/images/${request.model}`),
+      })
+    }
+
+    for (const imageBase64 of imageBase64List) {
+      const buffer = Buffer.from(imageBase64, 'base64')
+      const uploadResult = await this.assetsService.uploadFromBuffer(request.user, buffer, {
+        type: AssetType.AiImage,
+        mimeType: 'image/png',
+      }, `ai/images/${request.model}`)
+      data.push({ url: uploadResult.asset.path })
+    }
+
+    return {
+      id: result.id,
+      created: Math.floor(Date.now() / 1000),
+      data,
+      list: data,
+      metadata: result.metadata,
+    }
+  }
+
   async generation(request: ImageGenerationDto) {
     const { user, ...params } = request
+    const modelConfig = this.getImageModelConfig(params.model, 'generation') as ImageGenerationModelConfig | undefined
     const runtimeModel = this.resolveRuntimeImageModel(params.model, 'generation')
 
     if (!user) {
       throw new BadRequestException('userId is required')
+    }
+
+    if (modelConfig?.channel === AiLogChannel.MiniMax) {
+      return this.minimaxGeneration(request, runtimeModel)
     }
 
     if (runtimeModel === 'gpt-image-1') {
@@ -431,11 +535,13 @@ export class ImageService {
     const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
 
     const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
+    const channel = this.resolveImageModelChannel(params.model, 'generation')
 
     return await this.handleUserAiAction({
       userId,
       userType,
       model: params.model,
+      channel,
       type: AiLogType.Image,
       pricing,
       request: params,
@@ -487,6 +593,7 @@ export class ImageService {
   async userGenerationAsync(request: UserImageGenerationDto) {
     const { userId, userType, source = CreditsConsumptionSource.AiImage, ...params } = request
     const pricing = await this.getImageModelPricing(params.model, 'generation', userId, userType)
+    const channel = this.resolveImageModelChannel(params.model, 'generation')
 
     if (pricing > 0 && userType === UserType.User) {
       await this.deductUserCredits(userId, pricing, params.model, undefined, source)
@@ -497,7 +604,7 @@ export class ImageService {
       userId,
       userType,
       model: params.model,
-      channel: AiLogChannel.NewApi,
+      channel,
       type: AiLogType.Image,
       points: pricing,
       settlement: this.asyncSettlementService.createPendingSettlement(pricing, {
@@ -515,7 +622,7 @@ export class ImageService {
       userId,
       userType,
       model: params.model,
-      channel: AiLogChannel.NewApi,
+      channel,
       type: AiLogType.Image,
       pricing,
       request: { ...params, user: userId },

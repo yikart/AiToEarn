@@ -1,6 +1,6 @@
 import { createZodDto, zodI18nString } from '@yikart/common'
 import { z } from 'zod'
-import { AiLogStatus } from '../enums'
+import { AiLogChannel, AiLogStatus } from '../enums'
 
 // 使用情况统计
 const usageMetadataSchema = z.object({
@@ -37,6 +37,7 @@ export const imageGenerationModelSchema = z.object({
   logo: z.string().optional(),
   tags: z.array(zodI18nString()).default([]),
   mainTag: z.string().optional(),
+  channel: z.enum(AiLogChannel).optional(),
   sizes: z.array(z.string()).describe('支持的尺寸'),
   qualities: z.array(z.string()).describe('支持的质量选项'),
   styles: z.array(z.string()).describe('支持的风格选项'),

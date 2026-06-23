@@ -1,6 +1,7 @@
 export * from './dashscope'
 export * from './gemini'
 export * from './grok'
+export * from './minimax'
 export * from './openai'
 export * from './video.controller'
 export * from './video.dto'

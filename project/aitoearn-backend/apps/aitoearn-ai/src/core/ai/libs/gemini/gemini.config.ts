@@ -23,7 +23,7 @@ export const geminiConfigSchema = z.object({
 
   // 图片生成 API 配置（单 Key）
   apiKey: z.string().describe('Gemini Image Generation API Key'),
-  baseUrl: z.string().describe('Gemini Image Generation Base URL'),
+  baseUrl: z.string().default('https://generativelanguage.googleapis.com').describe('Gemini Image Generation Base URL'),
 
   // Key 管理配置
   keyManager: geminiKeyManagerConfigSchema.optional(),

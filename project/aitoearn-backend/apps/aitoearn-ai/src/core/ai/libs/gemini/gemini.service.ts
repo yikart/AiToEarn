@@ -37,13 +37,15 @@ export class GeminiService {
     private readonly config: GeminiConfig,
     readonly keyManager: GeminiKeyManagerService,
   ) {
-    const baseUrl = config.proxyUrl
-      ? `${config.proxyUrl}/${config.baseUrl}`
-      : config.baseUrl
+    const configuredBaseUrl = config.baseUrl?.trim()
+    const proxyUrl = config.proxyUrl?.trim()
+    const baseUrl = configuredBaseUrl
+      ? (proxyUrl ? `${proxyUrl}/${configuredBaseUrl}` : configuredBaseUrl)
+      : undefined
 
     this.genAiClient = new GoogleGenAI({
       apiKey: config.apiKey,
-      httpOptions: { baseUrl },
+      ...(baseUrl ? { httpOptions: { baseUrl } } : {}),
     })
   }
 

@@ -9,11 +9,13 @@ import { RedlockKey } from '../../../common'
 import { DashscopeService as DashscopeLibService } from '../libs/dashscope'
 import { GeminiService } from '../libs/gemini'
 import { GrokLibService, GrokVideoTaskStatus } from '../libs/grok'
+import { MiniMaxService as MiniMaxLibService } from '../libs/minimax'
 import { OpenaiService } from '../libs/openai'
 import { VolcengineService } from '../libs/volcengine'
 import { DashscopeVideoService } from './dashscope'
 import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
+import { MiniMaxVideoService } from './minimax'
 import { OpenAIVideoService } from './openai'
 import { VideoService } from './video.service'
 import { VolcengineVideoService } from './volcengine'
@@ -34,6 +36,8 @@ export class VideoTaskStatusScheduler {
     private readonly grokVideoService: GrokVideoService,
     private readonly dashscopeLibService: DashscopeLibService,
     private readonly dashscopeVideoService: DashscopeVideoService,
+    private readonly minimaxLibService: MiniMaxLibService,
+    private readonly minimaxVideoService: MiniMaxVideoService,
     private readonly videoService: VideoService,
   ) { }
 
@@ -110,6 +114,10 @@ export class VideoTaskStatusScheduler {
     else if (channel === AiLogChannel.Dashscope) {
       const result = await this.dashscopeLibService.getVideoTask(taskId)
       await this.dashscopeVideoService.callback(result)
+    }
+    else if (channel === AiLogChannel.MiniMax) {
+      const result = await this.minimaxLibService.getVideoTask(taskId)
+      await this.minimaxVideoService.callback(result)
     }
     else {
       this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)
