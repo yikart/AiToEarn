@@ -1,0 +1,822 @@
+port: 3010
+enableConfigLogging: false
+enableBadRequestDetails: false
+logger:
+  console:
+    enable: true
+    level: debug
+    pretty: false
+    singleLine: false
+    translateTime: true
+appDomain: ""
+auth:
+  secret: change-this-jwt-secret
+  internalToken: change-this-secret-token
+redis:
+  host: redis
+  port: 6379
+  username: default
+  password: password
+mongodb:
+  uri: mongodb://admin:password@mongodb:27017/?authSource=admin&directConnection=true
+  dbName: aitoearn
+redlock:
+  redis:
+    host: redis
+    port: 6379
+    username: default
+    password: password
+  ttl: 300
+  retryDelay: 1000
+  retryCount: 3
+serverClient:
+  baseUrl: http://aitoearn-server:3002
+assets:
+  region: us-east-1
+  accessKeyId: rustfsadmin
+  secretAccessKey: rustfsadmin
+  bucketName: aitoearn
+  endpoint: http://rustfs.local:9000
+  cdnEndpoint: http://localhost:8080/oss
+  signExpires: 300
+  forcePathStyle: true
+  publicEndpoint: http://localhost:9000
+  provider: s3
+ai:
+  models:
+    chat:
+      - name: gemini-3.1-pro-preview
+        description: Gemini 3.1 Pro Preview
+        tags: []
+        channel: gemini
+        scenes:
+          - web
+          - comment
+          - draft-generation
+        inputModalities:
+          - text
+          - image
+          - audio
+          - video
+        outputModalities:
+          - text
+      - name: gemini-3.5-flash
+        description: Gemini 3.5 Flash
+        tags: []
+        channel: gemini
+        scenes:
+          - web
+          - comment
+          - draft-generation
+        inputModalities:
+          - text
+          - image
+          - audio
+          - video
+        outputModalities:
+          - text
+      - name: gemini-3.1-flash-image-preview
+        description: Nano Banana 2
+        tags:
+          - en-US: Sale
+            zh-CN: 限时
+        channel: gemini
+        scenes: []
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - image
+      - name: gemini-3-pro-image-preview
+        description: Nano Banana Pro
+        tags: []
+        channel: gemini
+        scenes: []
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - image
+      - name: claude-opus-4-6
+        description: Claude Opus 4.6
+        tags: []
+        channel: anthropic
+        scenes:
+          - web
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - text
+      - name: claude-sonnet-4-6
+        description: Claude Sonnet 4.6
+        tags: []
+        channel: anthropic
+        scenes:
+          - web
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - text
+      - name: gpt-5.4
+        description: GPT 5.4
+        tags:
+          - en-US: Sale
+            zh-CN: 限时
+        channel: openai
+        scenes:
+          - comment
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - text
+      - name: gpt-5.5
+        description: GPT 5.5
+        tags:
+          - en-US: Sale
+            zh-CN: 限时
+        channel: openai
+        scenes:
+          - web
+          - comment
+          - draft-generation
+        inputModalities:
+          - text
+          - image
+        outputModalities:
+          - text
+      - name: deepseek-v4-pro
+        description: DeepSeek V4 Pro
+        tags: []
+        channel: deepseek
+        scenes:
+          - web
+          - plugin
+          - comment
+          - draft-generation
+        inputModalities:
+          - text
+        outputModalities:
+          - text
+    image:
+      generation:
+        - name: gpt-image-2
+          description: GPT Image 2
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+          retry: 1
+          sizes:
+            - 1024x1024
+            - 1536x1024
+            - 1024x1536
+            - 1408x1056
+            - 1056x1408
+            - 1360x1088
+            - 1088x1360
+            - 1536x864
+            - 864x1536
+            - 1920x1920
+            - 2304x1536
+            - 1536x2304
+            - 2176x1632
+            - 1632x2176
+            - 2080x1664
+            - 1664x2080
+            - 2560x1440
+            - 1440x2560
+            - 2880x2880
+            - 3504x2336
+            - 2336x3504
+            - 3264x2448
+            - 2448x3264
+            - 3200x2560
+            - 2560x3200
+            - 3840x2160
+            - 2160x3840
+          qualities:
+            - auto
+            - high
+            - medium
+            - low
+          styles: []
+      edit:
+        - name: gpt-image-2
+          description: GPT Image 2
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+          retry: 1
+          sizes:
+            - 1024x1024
+            - 1536x1024
+            - 1024x1536
+            - 1408x1056
+            - 1056x1408
+            - 1360x1088
+            - 1088x1360
+            - 1536x864
+            - 864x1536
+            - 1920x1920
+            - 2304x1536
+            - 1536x2304
+            - 2176x1632
+            - 1632x2176
+            - 2080x1664
+            - 1664x2080
+            - 2560x1440
+            - 1440x2560
+            - 2880x2880
+            - 3504x2336
+            - 2336x3504
+            - 3264x2448
+            - 2448x3264
+            - 3200x2560
+            - 2560x3200
+            - 3840x2160
+            - 2160x3840
+          maxInputImages: 16
+    video:
+      generation:
+        - name: seedance-2-fast-beta
+          description: Seedance 2.0 Fast Beta
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+            - en-US: Supports human subject video generation
+              zh-CN: 支持真人素材生成
+            - en-US: Input videos do not count toward tokens
+              zh-CN: 输入视频免计算token
+          channel: relay
+          retry: 1
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+            - multi-ref
+          resolutions:
+            - 480p
+            - 720p
+          durations:
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          inputConstraints:
+            images:
+              maxCount: 9
+            videos:
+              maxCount: 3
+              formats:
+                - mp4
+                - mov
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 50
+              minAspectRatio: 0.4
+              maxAspectRatio: 2.5
+              minWidth: 300
+              maxWidth: 6000
+              minPixels: 409600
+              maxPixels: 2086876
+              minFps: 24
+              maxFps: 60
+            audios:
+              maxCount: 3
+              formats:
+                - wav
+                - mp3
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 15
+          aspectRatios:
+            - 21:9
+            - 16:9
+            - 4:3
+            - 1:1
+            - 3:4
+            - 9:16
+          defaults:
+            resolution: 720p
+            aspectRatio: 16:9
+            duration: 6
+        - name: seedance-2-beta
+          description: Seedance 2.0 Beta
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+            - en-US: Supports human subject video generation
+              zh-CN: 支持真人素材生成
+            - en-US: Input videos do not count toward tokens
+              zh-CN: 输入视频免计算token
+          channel: relay
+          retry: 1
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+            - multi-ref
+          resolutions:
+            - 720p
+          durations:
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          inputConstraints:
+            images:
+              maxCount: 9
+            videos:
+              maxCount: 3
+              formats:
+                - mp4
+                - mov
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 50
+              minAspectRatio: 0.4
+              maxAspectRatio: 2.5
+              minWidth: 300
+              maxWidth: 6000
+              minPixels: 409600
+              maxPixels: 2086876
+              minFps: 24
+              maxFps: 60
+            audios:
+              maxCount: 3
+              formats:
+                - wav
+                - mp3
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 15
+          aspectRatios:
+            - 21:9
+            - 16:9
+            - 4:3
+            - 1:1
+            - 3:4
+            - 9:16
+          defaults:
+            resolution: 720p
+            aspectRatio: 16:9
+            duration: 6
+        - name: seedance-2-beta-1080p
+          description: Seedance 2.0 Beta 1080p
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+            - en-US: Supports human subject video generation
+              zh-CN: 支持真人素材生成
+            - en-US: Input videos do not count toward tokens
+              zh-CN: 输入视频免计算token
+          channel: relay
+          retry: 1
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+            - multi-ref
+          resolutions:
+            - 1080p
+          durations:
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          inputConstraints:
+            images:
+              maxCount: 9
+            videos:
+              maxCount: 3
+              formats:
+                - mp4
+                - mov
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 50
+              minAspectRatio: 0.4
+              maxAspectRatio: 2.5
+              minWidth: 300
+              maxWidth: 6000
+              minPixels: 409600
+              maxPixels: 2086876
+              minFps: 24
+              maxFps: 60
+            audios:
+              maxCount: 3
+              formats:
+                - wav
+                - mp3
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 15
+          aspectRatios:
+            - 16:9
+            - 9:16
+            - 1:1
+          defaults:
+            resolution: 1080p
+            aspectRatio: 16:9
+            duration: 8
+        - name: happyhorse-1.1
+          description: HappyHorse 1.1
+          tags: []
+          channel: relay
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+            - video2video
+          resolutions:
+            - 720P
+            - 1080P
+          durations:
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          aspectRatios:
+            - 16:9
+            - 9:16
+            - 1:1
+            - 4:3
+            - 3:4
+          defaults:
+            resolution: 720P
+            aspectRatio: 9:16
+            duration: 5
+        - name: doubao-seedance-2-0-260128
+          description: Seedance 2.0
+          tags: []
+          channel: relay
+          modes:
+            - text2video
+            - image2video
+            - flf2video
+            - multi-image2video
+            - multi-ref
+          resolutions:
+            - 720p
+            - 1080p
+          durations:
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          inputConstraints:
+            images:
+              maxCount: 9
+            videos:
+              maxCount: 3
+              formats:
+                - mp4
+                - mov
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 50
+              minAspectRatio: 0.4
+              maxAspectRatio: 2.5
+              minWidth: 300
+              maxWidth: 6000
+              minPixels: 409600
+              maxPixels: 2086876
+              minFps: 24
+              maxFps: 60
+            audios:
+              maxCount: 3
+              formats:
+                - wav
+                - mp3
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 15
+          aspectRatios:
+            - 16:9
+            - 4:3
+            - 1:1
+            - 3:4
+            - 9:16
+            - 21:9
+            - adaptive
+          defaults:
+            resolution: 720p
+            aspectRatio: adaptive
+            duration: 5
+        - name: doubao-seedance-2-0-fast-260128
+          description: Seedance 2.0 Fast
+          tags: []
+          channel: relay
+          modes:
+            - text2video
+            - image2video
+            - flf2video
+            - multi-image2video
+            - multi-ref
+          resolutions:
+            - 720p
+          durations:
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 9
+          inputConstraints:
+            images:
+              maxCount: 9
+            videos:
+              maxCount: 3
+              formats:
+                - mp4
+                - mov
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 50
+              minAspectRatio: 0.4
+              maxAspectRatio: 2.5
+              minWidth: 300
+              maxWidth: 6000
+              minPixels: 409600
+              maxPixels: 2086876
+              minFps: 24
+              maxFps: 60
+            audios:
+              maxCount: 3
+              formats:
+                - wav
+                - mp3
+              minDuration: 2
+              maxDuration: 15
+              maxTotalDuration: 15
+              maxSizeMb: 15
+          aspectRatios:
+            - 16:9
+            - 4:3
+            - 1:1
+            - 3:4
+            - 9:16
+            - 21:9
+            - adaptive
+          defaults:
+            resolution: 720p
+            aspectRatio: adaptive
+            duration: 5
+        - name: grok-imagine-video
+          description: Grok Video
+          tags: []
+          channel: relay
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+            - video2video
+          resolutions:
+            - 720p
+          durations:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 7
+          aspectRatios:
+            - 1:1
+            - 16:9
+            - 9:16
+            - 4:3
+            - 3:4
+            - 3:2
+            - 2:3
+          defaults:
+            aspectRatio: 9:16
+            duration: 8
+        - name: grok-video-3-10s
+          description: Grok Video 10s
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+          channel: relay
+          modes:
+            - text2video
+            - image2video
+            - multi-image2video
+          resolutions:
+            - 720p
+          durations:
+            - 10
+          maxInputImages: 5
+          aspectRatios:
+            - 2:3
+            - 3:2
+            - 1:1
+          defaults:
+            aspectRatio: 2:3
+            duration: 10
+        - name: grok-imagine-video-1.5-preview
+          description: Grok Video 1.5 Preview
+          tags:
+            - en-US: Sale
+              zh-CN: 限时
+          channel: relay
+          modes:
+            - image2video
+          resolutions:
+            - 720p
+          durations:
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 1
+          aspectRatios:
+            - 2:3
+            - 3:2
+            - 1:1
+          defaults:
+            aspectRatio: 2:3
+            duration: 10
+        - name: grok-imagine-video-1.5
+          description: Grok Video 1.5
+          tags: []
+          channel: relay
+          modes:
+            - image2video
+          resolutions:
+            - 720p
+          durations:
+            - 1
+            - 2
+            - 3
+            - 4
+            - 5
+            - 6
+            - 7
+            - 8
+            - 9
+            - 10
+            - 11
+            - 12
+            - 13
+            - 14
+            - 15
+          maxInputImages: 1
+          aspectRatios:
+            - 1:1
+            - 16:9
+            - 9:16
+            - 4:3
+            - 3:4
+            - 3:2
+            - 2:3
+          defaults:
+            aspectRatio: 9:16
+            duration: 8
+  openai:
+    apiKey: ""
+    baseUrl: https://aitoearn.ai/api/ai
+    timeout: 300000
+  volcengine:
+    apiKey: ""
+    baseUrl: https://ark.cn-beijing.volces.com/
+    accessKeyId: ""
+    secretAccessKey: ""
+    spaceName: ""
+    playbackBaseUrl: ""
+    urlAuthPrimaryKey: ""
+  grok:
+    apiKey: ""
+    baseUrl: https://api.x.ai
+  dashscope:
+    apiKey: ""
+    baseUrl: https://dashscope.aliyuncs.com
+  gemini:
+    apiKey: ""
+    baseUrl: https://aitoearn.ai/api/ai
+  relay:
+    url: https://aitoearn.ai/
+    apiKey: ""
+    timeout: 300000
+  anthropic:
+    baseUrl: https://aitoearn.ai/api/ai
+    apiKey: ""
+  draftGeneration:
+    planner:
+      defaultModel: gpt-5.5
+    queue:
+      lowPriorityMinPriority: 1000
+      lowPriorityConcurrency: 2
+    imageModels:
+      - model: gpt-image-2
+        displayName: GPT Image 2
+        runtimeModel: gpt-image-2
+        queuePriority: 1
+        tags:
+          - en-US: Sale
+            zh-CN: 限时
+        supportedAspectRatios:
+          - 1:1
+          - 3:2
+          - 2:3
+          - 4:3
+          - 3:4
+          - 5:4
+          - 4:5
+          - 16:9
+          - 9:16
+        maxInputImages: 16
+        pricing:
+          - resolution: 1K
+          - resolution: 2K
+          - resolution: 4K
+agent:
+  baseUrl: https://api.openai.com/v1/messages
+  apiKey: sk-placeholder
+  models:
+    - claude-opus-4-6
+    - claude-haiku-4-5-20251001-thinking
+    - claude-opus-4-5-20251101-thinking
+    - claude-opus-4-5-20251101
+    - claude-sonnet-4-5-20250929-thinking
+    - claude-haiku-4-5-20251001
+    - claude-opus-4-1-20250805
+    - claude-opus-4-1-20250805-thinking
+    - claude-sonnet-4-5-20250929
+    - claude-opus-4-6
+    - claude-opus-4-6-thinking
+  defaultModel: claude-opus-4-6
+  backgroundModel: claude-haiku-4-5-20251001
+  thinkModel: claude-opus-4-6
+  taskTimeoutMs: 3600000

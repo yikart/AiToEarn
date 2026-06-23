@@ -6,7 +6,7 @@ import dayjs from 'dayjs'
 import { z } from 'zod'
 import { AiAvailabilityService } from '../../ai-availability'
 import { ImageService } from '../../ai/image'
-import { geminiVeoVideoCreateRequestSchema, GeminiVideoService, GrokVideoService, OpenAIVideoService } from '../../ai/video'
+import { GrokVideoService, OpenAIVideoService } from '../../ai/video'
 import { McpServerName } from '../agent.constants'
 import { errorResult, successResult, wrapTool } from './mcp.utils'
 
@@ -41,14 +41,6 @@ const getSoraCharacterSchema = z.object({
   characterId: z.string(),
 })
 
-const generateVideoWithVeoSchema = z.object({
-  params: geminiVeoVideoCreateRequestSchema,
-})
-
-const getVeoVideoStatusSchema = z.object({
-  taskId: z.string(),
-})
-
 const generateVideoWithGrokSchema = z.object({
   prompt: z.string().describe('Video description prompt'),
   model: z.string().default('grok-imagine-video').describe('Grok video model name'),
@@ -68,8 +60,6 @@ export enum MediaToolName {
   GetVideoStatus = 'getVideoStatus',
   CreateSoraCharacter = 'createSoraCharacter',
   GetSoraCharacter = 'getSoraCharacter',
-  GenerateVideoWithVeo = 'generateVideoWithVeo',
-  GetVeoVideoStatus = 'getVeoVideoStatus',
   GenerateVideoWithGrok = 'generateVideoWithGrok',
   GetGrokVideoStatus = 'getGrokVideoStatus',
 }
@@ -82,7 +72,6 @@ export class MediaMcp {
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly imageService: ImageService,
     private readonly aiAvailability: AiAvailabilityService,
-    private readonly geminiVideoService: GeminiVideoService,
     private readonly grokVideoService: GrokVideoService,
   ) { }
 
@@ -306,87 +295,6 @@ Example: "@character1 walks through a garden"`,
     )
   }
 
-  createGenerateVideoWithVeoTool(userId: string, userType: UserType) {
-    return wrapTool(
-      this.logger,
-      MediaToolName.GenerateVideoWithVeo,
-      `Generate a video using Google Veo 3.1 model with native audio support.
-Follow the generating-videos skill for prompt guidelines.
-
-**Models**:
-- veo-3.1-fast-generate-001 (default): Fast generation
-- veo-3.1-generate-001: Standard generation (higher quality)
-- veo-3.1-fast-generate-preview: Fast preview + video extension
-- veo-3.1-generate-preview: Preview + video extension + reference images
-
-**Generation Modes** (auto-detected):
-- Text-to-video: Only prompt
-- Image-to-video: prompt + image
-- First-last-frame: prompt + image + lastFrame
-- Video extension: prompt + video (preview models only, input & output 720p only, ~7s per extension, max 4 times)
-- Reference images: prompt + referenceImages (veo-3.1-generate-preview only, max 3)
-
-**Video Extension Note**: Prefer using GCS URI (\`gs://bucket/path\`) over HTTP URL for the \`video\` parameter - it's more efficient (no download/base64 conversion needed).
-
-**Parameters**:
-- negativePrompt: What to exclude from the video
-- duration: 4, 6, or 8 seconds (default: 8)
-- resolution: "720p", "1080p", or "4000" (default: 720p, 1080p/4K takes longer)
-- aspectRatio: "16:9" or "9:16" (default: 16:9)
-- seed: Random seed for reproducibility
-
-Returns task ID for status tracking.`,
-      generateVideoWithVeoSchema.shape,
-      async ({ params }) => {
-        const response = await this.geminiVideoService.createVideo({
-          userId,
-          userType,
-          ...params,
-        })
-        const { id, error } = response
-
-        if (error) {
-          return errorResult(`Failed to generate video with Veo ${params.model}, Error: ${error || 'Unknown error'}`)
-        }
-
-        return successResult(`Video is generating with Veo ${params.model}, task id: ${id}`)
-      },
-      this.aiAvailability,
-    )
-  }
-
-  createGetVeoVideoStatusTool(userId: string, userType: UserType) {
-    return wrapTool(
-      this.logger,
-      MediaToolName.GetVeoVideoStatus,
-      'Get Veo video generation task status. Provide taskId. Returns task status, progress percentage, and video URL when completed.',
-      getVeoVideoStatusSchema.shape,
-      async ({ taskId }) => {
-        const result = await this.geminiVideoService.getVideo(userId, userType, taskId)
-
-        const current = dayjs()
-        const elapsedSeconds = current.diff(result.createdAt, 'second')
-        const elapsedMinutes = current.diff(result.createdAt, 'minute')
-        const remainingSeconds = elapsedSeconds % 60
-        const timeInfo = `\nStart time: ${result.createdAt.toISOString()}\nCurrent time: ${current.toISOString()}\nElapsed time: ${elapsedMinutes} minutes ${remainingSeconds} seconds`
-
-        if (result.status === AiLogStatus.Success) {
-          const videoInfos = result.generatedVideos.map((video, index) => {
-            const s3Url = FileUtil.buildUrl(video.url)
-            const gcsUri = video.gcsUrl ? `\n  GCS URI: ${video.gcsUrl}` : ''
-            return `Video ${index + 1}:\n  HTTP URL: ${s3Url}${gcsUri}`
-          })
-          return successResult(`Video is completed, task id: ${taskId}\n${videoInfos.join('\n')}${timeInfo}`)
-        }
-        if (result.status === AiLogStatus.Failed) {
-          return errorResult(`Video is failed, task id: ${taskId} and error message is ${result.error ? JSON.stringify(result.error) : 'Unknown error'}${timeInfo}`)
-        }
-        return successResult(`Video is ${result.status}, task id: ${taskId}${timeInfo}`)
-      },
-      this.aiAvailability,
-    )
-  }
-
   createGenerateVideoWithGrokTool(userId: string, userType: UserType) {
     return wrapTool(
       this.logger,
@@ -460,8 +368,6 @@ Returns task ID for status tracking.`,
         // this.createGetVideoStatusTool(userId, userType),
         // this.createSoraCharacterTool(userId, userType),
         // this.createGetSoraCharacterTool(userId, userType),
-        // this.createGenerateVideoWithVeoTool(userId, userType),
-        // this.createGetVeoVideoStatusTool(userId, userType),
         this.createGenerateVideoWithGrokTool(userId, userType),
         this.createGetGrokVideoStatusTool(userId, userType),
       ],

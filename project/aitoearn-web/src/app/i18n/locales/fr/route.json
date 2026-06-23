@@ -1,7 +1,5 @@
 {
   "home": "Accueil",
-  "header.draftBox": "Gestion du contenu",
-  "header.agentAssets": "Ressources Agent",
   "tasksHistory": "Historique des tâches",
   "accounts": "Publier",
   "publish": "Publier",
@@ -20,9 +18,10 @@
   "sidebar.more": "Plus",
   "mobileBottom.content": "Contenu",
   "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.gold": "Or",
   "mobileBottom.publish": "Publier",
   "mobileBottom.interaction": "Interaction",
-  "aiSocial": "AI Publish",
-  "download": "Download",
-  "xhsData": "XHS Data"
+  "pricing": "Tarifs",
+  "xhsData": "Interaction IA",
+  "groundPromotion": "Ground Promotion"
 }

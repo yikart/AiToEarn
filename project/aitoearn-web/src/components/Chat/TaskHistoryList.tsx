@@ -4,16 +4,16 @@
  */
 'use client'
 
-import type { TaskListItem } from '@/api/agent'
+import type { TaskListItem } from '@/api/ai/ai.types'
 import Link from 'next/link'
 import React, { useCallback, useState } from 'react'
-import { agentApi } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { TaskCard, TaskCardSkeleton } from '@/components/Chat'
 import RatingModal from '@/components/Chat/Rating'
-import ShareModal from '@/components/Share/ShareModal'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import ShareModal from '@/components/Chat/Share/ShareModal'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 
 export interface ITaskHistoryListProps {
   tasks: TaskListItem[]

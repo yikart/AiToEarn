@@ -5,8 +5,7 @@
 'use client'
 
 import { useNavigationLogic } from '@/app/layout/shared/hooks/useNavigationLogic'
-import { cn } from '@/lib/utils'
-import { FilingRecord } from '../FilingRecord'
+import { cn } from '@/utils/className'
 
 interface MainContentProps {
   children: React.ReactNode
@@ -31,7 +30,6 @@ export function MainContent({ children, banner }: MainContentProps) {
         className="flex-1 min-h-0 overflow-y-auto overflow-x-hidden"
       >
         {children}
-        <FilingRecord />
       </div>
     </main>
   )

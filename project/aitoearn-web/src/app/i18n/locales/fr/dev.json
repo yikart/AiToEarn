@@ -1,0 +1,158 @@
+{
+  "remoteAutomation": {
+    "title": "Débogage d'automatisation distante",
+    "description": "Flux fixe : ouvrir la page, exécuter le JavaScript fourni par le web, capturer une capture d'écran et renvoyer le résultat.",
+    "status": {
+      "connected": "Plugin connecté",
+      "disconnected": "Plugin déconnecté"
+    },
+    "form": {
+      "title": "Paramètres d'exécution",
+      "urlLabel": "URL de la page cible",
+      "urlPlaceholder": "https://example.com",
+      "codeLabel": "Code d'exécution",
+      "codePlaceholder": "Saisissez le code JavaScript à exécuter",
+      "codeHint": "Le code s'exécute dans le monde principal de la page cible. Écrivez directement le corps de fonction, par exemple : `return document.title`",
+      "timeoutLabel": "Délai d'exécution (ms)",
+      "screenshotLabel": "Capturer après exécution",
+      "screenshotHint": "Capturer la page actuelle avant de fermer la fenêtre",
+      "run": "Exécuter"
+    },
+    "validation": {
+      "urlRequired": "Veuillez saisir l'URL de la page cible",
+      "codeRequired": "Veuillez saisir le code JavaScript à exécuter"
+    },
+    "result": {
+      "title": "Résultats d'exécution",
+      "empty": "Aucun enregistrement d'exécution pour le moment",
+      "emptyValue": "(vide)",
+      "pluginUnsupported": "Le plugin n'est pas installé ou sa version actuelle ne prend pas en charge la méthode remoteAutomationRun",
+      "executionError": "Erreur d'exécution",
+      "success": "Succès",
+      "failed": "Échec",
+      "executionTime": "Temps d'exécution {{value}} ms",
+      "url": "URL : ",
+      "message": "Message : ",
+      "payload": "Résultat d'exécution",
+      "screenshot": "Capture d'écran",
+      "screenshotAlt": "Capture d'écran d'exécution"
+    }
+  },
+  "proxyRequest": {
+    "title": "Débogage de requête proxy du plugin",
+    "description": "Envoyez n'importe quelle URL via l'arrière-plan de l'extension du navigateur, puis renvoyez au site le corps brut, le statut et les en-têtes de la réponse.",
+    "status": {
+      "connected": "Plugin connecté",
+      "disconnected": "Plugin déconnecté"
+    },
+    "form": {
+      "title": "Paramètres de requête",
+      "urlLabel": "URL cible",
+      "urlPlaceholder": "https://example.com/api",
+      "headersLabel": "En-têtes (JSON)",
+      "headersPlaceholder": "{\n  \"accept\": \"application/json\"\n}",
+      "headersHint": "Saisissez un objet JSON. Les valeurs des en-têtes seront converties en chaînes avant l'envoi.",
+      "bodyLabel": "Corps",
+      "bodyPlaceholder": "{\n  \"hello\": \"world\"\n}",
+      "bodyHint": "Un JSON valide sera envoyé comme JSON. Un JSON invalide sera envoyé comme chaîne brute.",
+      "methodLabel": "Méthode dérivée",
+      "methodGet": "GET",
+      "methodPost": "POST",
+      "methodHint": "Le plugin enverra cette requête en {{method}}.",
+      "credentialsHint": "L'extension envoie les requêtes avec les cookies du navigateur lorsque le site cible les autorise.",
+      "bodyIgnoredHint": "Le mode GET n'envoie pas de corps de requête. Passez en POST si vous devez envoyer un body.",
+      "submit": "Envoyer la requête"
+    },
+    "validation": {
+      "urlRequired": "Veuillez saisir l'URL cible",
+      "headersInvalid": "Les en-têtes doivent être un objet JSON valide"
+    },
+    "result": {
+      "title": "Résultats de requête",
+      "empty": "Aucun enregistrement de requête proxy pour le moment",
+      "emptyValue": "(vide)",
+      "pluginUnsupported": "Le plugin n'est pas installé ou sa version actuelle ne prend pas en charge la méthode proxyRequest",
+      "requestFailed": "La requête proxy a échoué",
+      "success": "Succès",
+      "failed": "Échec",
+      "status": "Statut {{status}} {{statusText}}",
+      "url": "URL demandée : ",
+      "finalUrl": "URL finale : ",
+      "message": "Message : ",
+      "requestHeaders": "En-têtes de requête",
+      "responseHeaders": "En-têtes de réponse",
+      "requestBody": "Corps de requête",
+      "responseBody": "Corps de réponse",
+      "clear": "Effacer"
+    }
+  },
+  "wxSphPublish": {
+    "title": "WeChat Channels Publish Debug",
+    "description": "Use the browser extension to publish a video through WeChat Channels web requests and debug login state, video/cover upload, scheduling, and location parameters.",
+    "status": {
+      "connected": "Plugin Connected",
+      "disconnected": "Plugin Disconnected"
+    },
+    "permission": {
+      "title": "Permission Check",
+      "check": "Check Plugin Permission",
+      "granted": "Plugin permissions are ready",
+      "denied": "Plugin permissions are not fully granted",
+      "failed": "Permission check failed"
+    },
+    "login": {
+      "title": "WeChat Channels Login",
+      "button": "Read Login State",
+      "empty": "Log in to channels.weixin.qq.com first, then read the login state.",
+      "failed": "WeChat Channels login failed",
+      "uid": "UID: {{uid}}"
+    },
+    "form": {
+      "title": "Publish Parameters",
+      "video": "Video File",
+      "cover": "Cover Image",
+      "videoMetadata": "Video: {{width}}×{{height}}, {{duration}}s, about {{size}} MB",
+      "workTitle": "Title",
+      "workTitlePlaceholder": "Optional, used as extra description text",
+      "topics": "Topics",
+      "topicsPlaceholder": "Separate by comma or newline, e.g. food, coffee",
+      "desc": "Description",
+      "descPlaceholder": "Enter the WeChat Channels description",
+      "scheduledTime": "Scheduled Time",
+      "publish": "Publish to WeChat Channels"
+    },
+    "location": {
+      "title": "Location",
+      "hint": "This version only debugs location parameters. If poiId is filled, it will be submitted with the post.",
+      "poiId": "POI ID",
+      "poiIdPlaceholder": "For example, uid returned by helper_search_location",
+      "poiName": "Location Name",
+      "poiNamePlaceholder": "Example: Coffee Shop",
+      "latitude": "Latitude",
+      "latitudePlaceholder": "39.904200",
+      "longitude": "Longitude",
+      "longitudePlaceholder": "116.407400",
+      "city": "City",
+      "cityPlaceholder": "Beijing",
+      "address": "Address",
+      "addressPlaceholder": "Detailed address"
+    },
+    "validation": {
+      "videoRequired": "Please select a video file",
+      "coverRequired": "Please select a cover image",
+      "videoMetadataRequired": "Video metadata is not ready. Please select the video again.",
+      "videoMetadataFailed": "Failed to read video metadata"
+    },
+    "result": {
+      "title": "Publish Result",
+      "pluginMissing": "The plugin is not installed or AIToEarnPlugin is not injected",
+      "publishFailed": "Publish failed",
+      "success": "Published successfully",
+      "failed": "Publish failed"
+    },
+    "progress": {
+      "title": "Publish Progress",
+      "empty": "No publish progress yet"
+    }
+  }
+}

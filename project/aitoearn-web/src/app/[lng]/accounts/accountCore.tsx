@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow'
 import AccountsTopNav from '@/app/[lng]/accounts/components/AccountsTopNav'
 import CalendarTiming from '@/app/[lng]/accounts/components/CalendarTiming'
 import { AccountStatus } from '@/app/config/accountConfig'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import rightArrow from '@/assets/images/jiantou.png'
 import { useChannelManagerStore } from '@/components/ChannelManager'
@@ -16,7 +16,7 @@ import PublishDialog from '@/components/PublishDialog'
 import { VideoGrabFrame } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { useAccountStore } from '@/store/account'
-import { generateUUID } from '@/utils'
+import { generateUUID } from '@/utils/common'
 import { useCalendarTiming } from './components/CalendarTiming/useCalendarTiming'
 import { useNewWork } from './hooks/useNewWork'
 import 'driver.js/dist/driver.css'
@@ -140,12 +140,10 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
           }
         }
         else {
-          // 没有指定平台，选择第一个在线且PC端支持的账户
+          // 没有指定平台，选择第一个在线账户
           targetAccount = allAccounts.find((account) => {
             const isOnline = account.status === AccountStatus.USABLE
-            const platConfig = AccountPlatInfoMap.get(account.type)
-            const isPcSupported = !platConfig?.pcNoThis
-            return isOnline && isPcSupported
+            return isOnline
           })
         }
 
@@ -547,7 +545,7 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
                 </div>
                 <div className="mb-5">
                   <div className="flex items-center gap-3 mb-3 text-sm text-foreground leading-normal">
-                    <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    <span className="bg-gradient-back text-gradient-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 shadow-sm shadow-primary/20">
                       1
                     </span>
                     <span className="flex-1">
@@ -559,7 +557,7 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
                     </span>
                   </div>
                   <div className="flex items-center gap-3 mb-3 text-sm text-foreground leading-normal">
-                    <span className="bg-primary text-primary-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0">
+                    <span className="bg-gradient-back text-gradient-foreground w-6 h-6 rounded-full flex items-center justify-center text-xs font-semibold flex-shrink-0 shadow-sm shadow-primary/20">
                       2
                     </span>
                     <span className="flex-1">
@@ -572,7 +570,7 @@ export default function AccountPageCore({ searchParams }: AccountPageCoreProps) 
                   </div>
                 </div>
                 <button
-                  className="w-full bg-primary text-primary-foreground border-none px-3 py-3 rounded-lg font-semibold cursor-pointer transition-all hover:bg-primary/90"
+                  className="w-full bg-gradient-back text-gradient-foreground border-none px-3 py-3 rounded-lg font-semibold cursor-pointer shadow-sm shadow-primary/20 transition-all hover:shadow-md hover:shadow-primary/25"
                   onClick={closeWechatBrowserTip}
                 >
                   {wechatBrowserTexts.cta}

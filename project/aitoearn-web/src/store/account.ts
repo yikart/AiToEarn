@@ -1,10 +1,12 @@
-import type { AccountGroupItem, SocialAccount } from '@/api/types/account.type'
+import type { AccountGroupItem, SocialAccount } from '@/api/accounts/account.types'
+import type { PluginAccountStatusMap } from '@/store/plugin/account.utils'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { getAccountGroupApi, getAccountListApi } from '@/api/account'
+import { getAccountGroupApi, getAccountListApi } from '@/api/accounts/account.api'
 import { directTrans } from '@/app/i18n/client'
 import { usePluginStore } from '@/store/plugin'
+import { mergePluginAccountStatus } from '@/store/plugin/account.utils'
 
 export interface AccountGroup extends AccountGroupItem {
   children: SocialAccount[]
@@ -13,16 +15,18 @@ export interface AccountGroup extends AccountGroupItem {
 export interface IAccountStore {
   accountList: SocialAccount[]
   accountMap: Map<string, SocialAccount>
-  // key=account,value=账户
-  accountAccountMap: Map<string, SocialAccount>
   accountGroupList: AccountGroup[]
   accountGroupMap: Map<string, AccountGroup>
   accountLoading: boolean
   accountListInitialized: boolean
+  accountPluginAuthLoading: boolean
+  accountPluginAuthInitialized: boolean
   // 当前选择的账户
   accountActive?: SocialAccount
   // 当前选择的空间ID
   activeSpaceId?: string
+  // 余额不足弹框状态
+  lowBalanceAlertOpen: boolean
 }
 
 const store: IAccountStore = {
@@ -32,15 +36,54 @@ const store: IAccountStore = {
   accountGroupList: [],
   accountGroupMap: new Map([]),
   accountMap: new Map([]),
-  accountAccountMap: new Map([]),
   accountLoading: false,
   accountListInitialized: false,
+  accountPluginAuthLoading: false,
+  accountPluginAuthInitialized: false,
   accountActive: undefined,
   activeSpaceId: undefined,
+  lowBalanceAlertOpen: false,
 }
+
+let pluginAuthStatusPromise: Promise<void> | null = null
 
 function getStore() {
   return lodash.cloneDeep(store)
+}
+
+function normalizeAccountListData(data: SocialAccount[] | { list: SocialAccount[] } | undefined) {
+  if (Array.isArray(data))
+    return data
+  return data?.list ?? []
+}
+
+function createAccountListState(accountList: SocialAccount[]) {
+  const accountMap = new Map<string, SocialAccount>()
+  accountList.forEach((account) => {
+    accountMap.set(account.id, account)
+  })
+
+  return {
+    accountList,
+    accountMap,
+  }
+}
+
+function mergeAccountStateWithPluginStatus(pluginAccountStatus: PluginAccountStatusMap) {
+  const accountList = useAccountStore.getState().accountList
+  if (accountList.length === 0)
+    return
+
+  const mergedAccountState = mergePluginAccountStatus(accountList, pluginAccountStatus)
+  const hasChange = mergedAccountState.accountList.some((account, index) => account !== accountList[index])
+
+  if (hasChange) {
+    useAccountStore.setState(mergedAccountState)
+  }
+}
+
+function mergeAccountStateWithCurrentPluginStatus() {
+  mergeAccountStateWithPluginStatus(usePluginStore.getState().platformAccounts)
 }
 
 // 视频发布所有组件的共享状态和方法
@@ -51,6 +94,12 @@ export const useAccountStore = create(
     },
     (set, get, storeApi) => {
       const methods = {
+        setLowBalanceAlertOpen(lowBalanceAlertOpen: boolean) {
+          set({
+            lowBalanceAlertOpen,
+          })
+        },
+
         clear() {
           set({
             ...getStore(),
@@ -83,40 +132,20 @@ export const useAccountStore = create(
           set({ accountLoading: true })
 
           try {
-            const accountMap = new Map<string, SocialAccount>([])
-            const accountAccountMap = new Map<string, SocialAccount>([])
-
             // 防卡死：给请求增加超时兜底（例如 15s），即使后端迟迟不返回也不会一直占用loading
             const timeoutMs = 10000
-            const timeoutPromise = new Promise<any>((resolve) => {
-              setTimeout(() => resolve({ code: -1, data: [] }), timeoutMs)
+            const timeoutPromise = new Promise<Awaited<ReturnType<typeof getAccountListApi>>>((resolve) => {
+              setTimeout(() => resolve({ code: -1, data: { total: 0, list: [] }, message: '', url: '' }), timeoutMs)
             })
             const result = await Promise.race([getAccountListApi(), timeoutPromise])
 
             if (result?.code !== 0)
               return
 
-            const accountList: SocialAccount[] = []
-            for (const item of result.data) {
-              accountMap.set(item.id, item)
-              accountAccountMap.set(item.account, item)
-              accountList.push(item)
-            }
+            const accountList = normalizeAccountListData(result.data)
+            set(createAccountListState(accountList))
 
-            set({
-              accountList,
-              accountMap,
-              accountAccountMap,
-            })
-
-            if (isBackground) {
-              // 初始化时：执行完整的插件初始化（包括授权检查）
-              await usePluginStore.getState().init()
-            }
-            else {
-              // 刷新时：只同步账号状态，不重新授权
-              await usePluginStore.getState().syncAccountStatus()
-            }
+            methods.refreshPluginAuthStatusInBackground(isBackground)
 
             // 后续分组数据获取不阻塞调用方
             methods.getAccountGroup()
@@ -133,6 +162,28 @@ export const useAccountStore = create(
           await methods.getAccountList(true)
         },
 
+        refreshPluginAuthStatusInBackground(isBackground = false) {
+          if (get().accountPluginAuthInitialized) {
+            mergeAccountStateWithCurrentPluginStatus()
+            return
+          }
+
+          if (pluginAuthStatusPromise)
+            return
+
+          set({ accountPluginAuthLoading: true })
+
+          pluginAuthStatusPromise = usePluginStore
+            .getState()
+            .getAccountStatusSnapshot(isBackground, { waitForPluginApi: true })
+            .then(mergeAccountStateWithPluginStatus)
+            .catch(() => {})
+            .finally(() => {
+              set({ accountPluginAuthLoading: false, accountPluginAuthInitialized: true })
+              pluginAuthStatusPromise = null
+            })
+        },
+
         // 获取用户组的数据并且将用户放到对应组下
         async getAccountGroup() {
           const res = await getAccountGroupApi()
@@ -142,17 +193,18 @@ export const useAccountStore = create(
             return
           if (groupList.length === 0)
             return
-          groupList.map((v: any) => {
-            v.name = v.isDefault ? directTrans('account', 'defaultSpace') : v.name
-          })
+          const normalizedGroupList = groupList.map(v => ({
+            ...v,
+            name: v.isDefault ? directTrans('account', 'defaultSpace') : v.name,
+          }))
 
           const accountGroupList: AccountGroup[] = []
           // key=组ID，val=账户ID
           const accountGroupMap = new Map<string, AccountGroup>()
 
-          const defaultGroup = groupList.find((v: any) => v.isDefault)!
+          const defaultGroup = normalizedGroupList.find(v => v.isDefault) ?? normalizedGroupList[0]
 
-          groupList.map((v: any) => {
+          normalizedGroupList.map((v) => {
             const accountGroupItem = {
               ...v,
               children: [],
@@ -164,14 +216,14 @@ export const useAccountStore = create(
             if (accountGroupMap.get(v.groupId!)) {
               accountGroupMap.get(v.groupId!)!.children?.push(v)
             }
-            else {
+            else if (defaultGroup) {
               accountGroupMap.get(defaultGroup.id)!.children?.push(v)
               v.groupId = defaultGroup.id
             }
           })
 
           accountGroupList.sort((a, b) => {
-            return a.rank - b.rank
+            return (a.rank ?? 0) - (b.rank ?? 0)
           })
 
           set({

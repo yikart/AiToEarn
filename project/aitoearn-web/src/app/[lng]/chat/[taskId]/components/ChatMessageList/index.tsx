@@ -12,7 +12,7 @@ import { ChatMessage } from '@/components/Chat/ChatMessage'
 import { RatingModal } from '@/components/Chat/Rating'
 import { Button } from '@/components/ui/button'
 import { StarRating } from '@/components/ui/star-rating'
-import { toast } from '@/lib/toast'
+import { toast } from '@/utils/ui/toast'
 
 export interface IChatMessageListProps {
   /** 消息列表 */

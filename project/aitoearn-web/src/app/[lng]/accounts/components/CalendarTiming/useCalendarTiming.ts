@@ -1,11 +1,29 @@
 import type FullCalendar from '@fullcalendar/react'
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { ChannelPublishRecordItem, ChannelPublishRecordListVo } from '@/api/channels/channel.types'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { getPublishList, getPublishRecordDetail } from '@/api/plat/publish'
+import { getChannelPublishRecordApi, getChannelPublishRecordsApi } from '@/api/channels/channel.api'
+import { PublishStatus } from '@/api/platforms/publish.constants'
 import { getDays } from '@/app/[lng]/accounts/components/CalendarTiming/calendarTiming.utils'
 import { useAccountStore } from '@/store/account'
+
+const PUBLISH_RECORD_POLLING_INTERVAL = 20_000
+
+const pollingPublishStatuses = new Set<PublishStatus>([
+  PublishStatus.QUEUED,
+  PublishStatus.PUB_LOADING,
+])
+
+interface CalendarTimingQueryOptions {
+  status?: number
+  dateRange?: [Date, Date]
+}
+
+function shouldPollPublishRecord(status: PublishStatus) {
+  return pollingPublishStatuses.has(status)
+}
 
 export interface ICalendarTimingStore {
   // 日历单元格宽度
@@ -18,6 +36,8 @@ export interface ICalendarTimingStore {
   calendarRef?: FullCalendar
   // 是否正在轮询
   polling: boolean
+  // 最近一次列表查询条件
+  lastQueryOptions?: CalendarTimingQueryOptions
 }
 
 const store: ICalendarTimingStore = {
@@ -26,10 +46,115 @@ const store: ICalendarTimingStore = {
   listLoading: false,
   calendarRef: undefined,
   polling: false,
+  lastQueryOptions: undefined,
 }
 
 function getStore() {
   return lodash.cloneDeep(store)
+}
+
+function getPublishRecordList(data?: ChannelPublishRecordListVo) {
+  if (!data) {
+    return []
+  }
+
+  if (Array.isArray(data)) {
+    return data
+  }
+
+  if (Array.isArray(data.records)) {
+    return data.records
+  }
+
+  if (Array.isArray(data.list)) {
+    return data.list
+  }
+
+  if (Array.isArray(data.items)) {
+    return data.items
+  }
+
+  if (Array.isArray(data.rows)) {
+    return data.rows
+  }
+
+  return []
+}
+
+function normalizePublishRecord(record: ChannelPublishRecordItem): PublishRecordItem {
+  return {
+    option: record.option || {},
+    userId: record.userId || '',
+    flowId: record.flowId || '',
+    userTaskId: record.userTaskId || '',
+    taskId: record.taskId || record.id,
+    taskMaterialId: record.taskMaterialId || '',
+    type: record.type,
+    title: record.title || '',
+    desc: record.desc || '',
+    accountId: record.accountId || '',
+    topics: record.topics || [],
+    accountType: record.accountType,
+    uid: record.uid || '',
+    videoUrl: record.videoUrl || '',
+    coverUrl: record.coverUrl || '',
+    imgUrlList: record.imgUrlList || [],
+    publishTime: new Date(record.publishTime),
+    status: Number(record.status) as PublishStatus,
+    inQueue: record.inQueue || false,
+    dataId: record.dataId || record.platformWorkId || '',
+    workLink: record.workLink || '',
+    linkStatus: record.linkStatus,
+    linkError: record.linkError,
+    linkMeta: record.linkMeta,
+    platformWorkId: record.platformWorkId,
+    createdAt: record.createdAt || '',
+    updatedAt: record.updatedAt || '',
+    id: record.id,
+    errorMsg: record.errorMsg || '',
+    engagement: record.engagement,
+  }
+}
+
+function updateRecordMapItem(
+  recordMap: Map<string, PublishRecordItem[]>,
+  nextRecord: PublishRecordItem,
+) {
+  const nextRecordMap = new Map(recordMap)
+  let previousRecord: PublishRecordItem | undefined
+
+  nextRecordMap.forEach((recordList, dayKey) => {
+    const currentRecord = recordList.find(item => item.id === nextRecord.id)
+    if (currentRecord) {
+      previousRecord = currentRecord
+    }
+
+    nextRecordMap.set(dayKey, recordList.filter(item => item.id !== nextRecord.id))
+  })
+
+  const publishTime = getDays(nextRecord.publishTime)
+  const timeStr = publishTime.format('YYYY-MM-DD')
+  const nextList = nextRecordMap.get(timeStr) ?? []
+  nextList.push(nextRecord)
+  nextList.sort((a, b) => new Date(a.publishTime).getTime() - new Date(b.publishTime).getTime())
+  nextRecordMap.set(timeStr, nextList)
+
+  return previousRecord ? nextRecordMap : recordMap
+}
+
+function removeRecordMapItem(recordMap: Map<string, PublishRecordItem[]>, recordId: string) {
+  const nextRecordMap = new Map(recordMap)
+  let hasRemoved = false
+
+  nextRecordMap.forEach((recordList, dayKey) => {
+    const nextList = recordList.filter(item => item.id !== recordId)
+    if (nextList.length !== recordList.length) {
+      hasRemoved = true
+      nextRecordMap.set(dayKey, nextList)
+    }
+  })
+
+  return hasRemoved ? nextRecordMap : recordMap
 }
 
 export const useCalendarTiming = create(
@@ -54,11 +179,32 @@ export const useCalendarTiming = create(
         setPolling(polling: boolean) {
           set({ polling })
         },
+        removePubRecord(recordId: string) {
+          const recordMap = removeRecordMapItem(get().recordMap, recordId)
+          methods.setRecordMap(recordMap)
+        },
+        async refreshPubRecordDetail(recordId: string) {
+          const res = await getChannelPublishRecordApi(recordId)
+          if (!res || !res.data) {
+            return undefined
+          }
+
+          const newPubRecord = normalizePublishRecord(res.data)
+          const recordMap = updateRecordMapItem(get().recordMap, newPubRecord)
+          methods.setRecordMap(recordMap)
+
+          if (shouldPollPublishRecord(newPubRecord.status)) {
+            methods.queryPubTask()
+          }
+
+          return newPubRecord
+        },
 
         // 获取发布记录数据
         // dateRange: 可选的日期范围参数，用于周视图场景
-        async getPubRecord(options?: { status?: number, dateRange?: [Date, Date] }) {
+        async getPubRecord(options?: CalendarTimingQueryOptions) {
           const { status, dateRange } = options || {}
+          set({ lastQueryOptions: options })
 
           try {
             methods.setListLoading(true)
@@ -88,16 +234,19 @@ export const useCalendarTiming = create(
               }
             }
 
-            const res = await getPublishList({
-              time: [startDay.utc().format(), endDay.utc().format()],
-              accountType: useAccountStore.getState().accountActive?.type,
+            const activeAccount = useAccountStore.getState().accountActive
+            const requestParams = {
+              time: [startDay.toISOString(), endDay.toISOString()] as [string, string],
+              accountType: activeAccount?.type,
               status,
-              publishingChannel: 'internal',
-            })
+            }
+
+            const res = await getChannelPublishRecordsApi(requestParams)
             methods.setListLoading(false)
+            const records = getPublishRecordList(res?.data)
 
             // 检查响应数据是否有效
-            if (!res || !res.data || !Array.isArray(res.data)) {
+            if (!res || !res.data) {
               console.warn('获取发布记录数据失败或数据格式不正确:', res)
               methods.setRecordMap(new Map())
               return
@@ -105,7 +254,8 @@ export const useCalendarTiming = create(
 
             const recordMap = new Map<string, PublishRecordItem[]>()
             // 将数据分拣到对应天中
-            res.data.map((v) => {
+            records.map((record) => {
+              const v = normalizePublishRecord(record)
               const days = getDays(v.publishTime)
               const timeStr = days.format('YYYY-MM-DD')
               let list = recordMap.get(timeStr)
@@ -139,7 +289,11 @@ export const useCalendarTiming = create(
           }
         },
 
-        // 查询列表是否有在发布中的数据，如果有则轮询查询详情，直到状态不为发布中
+        async refreshCurrentPubRecords() {
+          await methods.getPubRecord(get().lastQueryOptions)
+        },
+
+        // 查询列表是否有在队列中/发布中的数据，如果有则串行轮询查询详情，直到状态完成
         async queryPubTask() {
           if (get().polling) {
             return
@@ -149,13 +303,13 @@ export const useCalendarTiming = create(
           let pollRecord: PublishRecordItem | null = null
           const recordMap = get().recordMap
 
-          // 遍历 recordMap 查找状态为 2（发布中）的记录
+          // 遍历 recordMap 查找队列中或发布中的记录，同一时间只轮询一条
           for (const [_dayKey, recordList] of recordMap.entries()) {
             if (pollRecord !== null) {
               break
             }
             for (const item of recordList) {
-              if (item.status === 2) {
+              if (shouldPollPublishRecord(item.status)) {
                 pollRecord = item
                 break
               }
@@ -172,40 +326,26 @@ export const useCalendarTiming = create(
 
         // 轮询查询发布任务详情
         async _pollQueryPubTask(pubRecord: PublishRecordItem) {
-          // 延迟 5 秒
-          await new Promise(resolve => setTimeout(resolve, 20000))
+          await new Promise(resolve => setTimeout(resolve, PUBLISH_RECORD_POLLING_INTERVAL))
 
           try {
-            const res = await getPublishRecordDetail(pubRecord.flowId!)
+            const res = await getChannelPublishRecordApi(pubRecord.id)
             if (!res || !res.data) {
               methods.setPolling(false)
               return
             }
 
-            const newPubRecord = res.data
+            const newPubRecord = normalizePublishRecord(res.data)
+            const recordMap = updateRecordMapItem(get().recordMap, newPubRecord)
+            methods.setRecordMap(recordMap)
 
-            if (newPubRecord.status === 2) {
-              // 状态仍为发布中，继续轮询
+            if (shouldPollPublishRecord(newPubRecord.status)) {
+              // 状态仍为队列中或发布中，继续轮询当前记录
               methods._pollQueryPubTask(newPubRecord)
             }
             else {
-              // 状态已改变，更新 recordMap 中的数据
-              const recordMap = new Map(get().recordMap)
-              const publishTime = getDays(newPubRecord.publishTime)
-              const timeStr = publishTime.format('YYYY-MM-DD')
-
-              const list = recordMap.get(timeStr)
-              if (list) {
-                const index = list.findIndex(item => item.id === newPubRecord.id)
-                if (index !== -1) {
-                  list[index] = newPubRecord
-                  recordMap.set(timeStr, [...list])
-                  methods.setRecordMap(recordMap)
-                }
-              }
-
               methods.setPolling(false)
-              // 继续查询是否有其他发布中的任务
+              // 当前记录已结束，继续串行查询下一条队列中或发布中的任务
               methods.queryPubTask()
             }
           }

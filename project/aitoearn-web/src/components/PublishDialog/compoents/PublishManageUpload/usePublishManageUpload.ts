@@ -9,9 +9,9 @@ import type {
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { uploadToOss } from '@/api/oss'
+import { uploadToOss } from '@/api/materials/material.api'
 import {
-  computeFileMd5,
+  computeFileFingerprint,
   createTaskId,
   isAbortError,
 } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload.utils'
@@ -189,7 +189,7 @@ export const usePublishManageUpload = create(
       const promise = (async (): Promise<UploadResult> => {
         let currentMd5: string | undefined
         try {
-          const md5 = await computeFileMd5(file)
+          const md5 = computeFileFingerprint(file, name)
           currentMd5 = md5
 
           if (canceledTasks.has(taskId)) {

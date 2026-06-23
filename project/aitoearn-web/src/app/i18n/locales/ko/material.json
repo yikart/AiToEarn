@@ -5,13 +5,14 @@
     "keywords": "소재, 이미지 라이브러리, 비디오 라이브러리, 미디어 그룹, 클라우드 이미지, 클라우드 비디오, 리소스 저장소, 이미지 저장소, 비디오 저장소"
   },
   "agentAssets": {
-    "title": "Agent 생성 소재",
-    "description": "AI Agent가 자동으로 생성한 이미지와 동영상",
+    "title": "AI 생성 소재",
+    "description": "AI가 자동으로 생성한 이미지와 동영상",
     "shortDescription": "AI가 생성한 이미지와 동영상",
-    "keywords": "AI 소재, Agent 소재, AI 생성 이미지, AI 생성 동영상, 스마트 소재",
-    "noAssets": "Agent 소재가 없습니다",
-    "noAssetsDesc": "AI Agent와의 대화로 생성된 소재가 여기에 표시됩니다",
-    "goToChat": "대화 시작"
+    "keywords": "AI 소재, AI 생성 소재, AI 생성 이미지, AI 생성 동영상, 스마트 소재",
+    "noAssets": "AI 생성 소재가 없습니다",
+    "noAssetsDesc": "AI 생성 소재가 여기에 표시됩니다",
+    "goToChat": "대화 시작",
+    "previewAsset": "소재 미리보기"
   },
   "mediaManagement": {
     "title": "미디어 관리",
@@ -105,7 +106,6 @@
     "title": "AI 도구",
     "backToAlbum": "앨범으로 돌아가기",
     "textToImage": "텍스트에서 이미지로",
-    "imageToImage": "이미지에서 이미지로",
     "fireflyCard": "파이어플라이 카드",
     "videoGeneration": "동영상 생성",
     "prompt": "프롬프트",

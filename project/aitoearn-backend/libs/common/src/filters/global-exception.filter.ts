@@ -1,4 +1,4 @@
-import type { Response } from 'express'
+import type { Request, Response } from 'express'
 import type { Observable } from 'rxjs'
 
 import type { CommonResponse } from '../interfaces'
@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common'
 import { of } from 'rxjs'
 import { AppException } from '../exceptions'
+import { getCurrentRequestId, getRequestIdFromHeaders } from '../interceptors/propagation.interceptor'
 import { getExceptionPayload } from '../utils'
 
 export interface GlobalExceptionFilterOptions {
@@ -61,7 +62,11 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter<T> {
     host: ArgumentsHost,
     payload: CommonResponse<unknown>,
   ) {
-    return of(payload)
+    const requestId = getCurrentRequestId()
+    return of({
+      ...payload,
+      ...(requestId ? { requestId } : {}),
+    })
   }
 
   private handleHttpError(
@@ -69,8 +74,13 @@ export class GlobalExceptionFilter<T> implements ExceptionFilter<T> {
     payload: CommonResponse<unknown>,
   ) {
     const ctx = host.switchToHttp()
+    const request = ctx.getRequest<Request>()
     const response = ctx.getResponse<Response>()
+    const requestId = getRequestIdFromHeaders(request.headers)
 
-    response.status(200).json(payload)
+    response.status(200).json({
+      ...payload,
+      ...(requestId ? { requestId } : {}),
+    })
   }
 }

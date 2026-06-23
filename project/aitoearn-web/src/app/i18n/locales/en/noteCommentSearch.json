@@ -1,0 +1,287 @@
+{
+  "seo": {
+    "title": "AI Interaction",
+    "description": "Use the AiToEarn plugin for publishing, comments, and Agent automation. Comment search is under maintenance and temporarily unavailable.",
+    "keywords": "AI interaction, AiToEarn plugin, Rednote interaction, comment tasks, Agent automation"
+  },
+  "page": {
+    "breadcrumb": "AI Interaction",
+    "title": "AI Interaction",
+    "description": "Use the AiToEarn plugin for publishing, comments, and Agent automation. During comment search maintenance, AI Interaction is the primary entry.",
+    "searchMode": "Manual search mode",
+    "searchDirty": "Filters changed",
+    "selectedFilters": "{{count}} filters selected",
+    "resultCount": "{{count}} results",
+    "backToTop": "Back to top",
+    "aiAssist": "AI"
+  },
+  "filters": {
+    "keywordPlaceholder": "Enter a keyword such as a brand name, comment phrase, or product term",
+    "search": "Search",
+    "reset": "Reset",
+    "dateRange": "Date range",
+    "sort": "Sort by",
+    "noteType": "Note format",
+    "noteTypeAll": "All formats",
+    "authorType": "Author type",
+    "noteCategory": "Note categories",
+    "clearCategories": "Clear categories",
+    "childCategoryTitle": "Child categories",
+    "multiSelect": "Multi-select",
+    "moreFilters": "More filters",
+    "collapseFilters": "Hide filters",
+    "selectedConditions": "Selected filters",
+    "noneSelected": "No filters selected yet",
+    "pendingApply": "Search pending",
+    "searchCostTitle": "Search note:",
+    "searchCostNotice": "Each search click costs {{cost}} credits. Changing filters will not send requests automatically, and loading more pages after a search does not charge again.",
+    "searchDirtyNotice": "Filters changed, click Search to confirm",
+    "noteStatus": "Note status",
+    "noteAttribute": "Note attribute:",
+    "noteStatusHint": "When enabled, hidden or deleted notes will be filtered out.",
+    "noteStatusAll": "All notes",
+    "filteredDeletedHidden": "Hidden/deleted filtered",
+    "customDate": "Custom",
+    "quickDays": {
+      "7": "7 days",
+      "15": "15 days",
+      "30": "30 days"
+    },
+    "searchPanelTitle": "Search & filters",
+    "searchPanelHint": "Filter changes do not request automatically. Click search to refresh the list.",
+    "searchNote": "Search notes",
+    "all": "All",
+    "contentFormat": "Content format",
+    "searchCostInline": "Costs {{cost}} credits",
+    "sortOptions": {
+      "interaction": "Most interactions",
+      "likes": "Most likes",
+      "favorites": "Most favorites",
+      "comments": "Most comments",
+      "shares": "Most shares",
+      "latest": "Latest"
+    }
+  },
+  "mobile": {
+    "filterTitle": "Filters"
+  },
+  "tabs": {
+    "commentSearch": "Comment Search",
+    "aiInteraction": "AI Interaction"
+  },
+  "maintenance": {
+    "title": "Comment search is under maintenance and temporarily unavailable"
+  },
+  "results": {
+    "title": "Results",
+    "pending": "Enter a keyword and run a search. The list will refresh with the current filters.",
+    "sampleHint": "Sample data is shown here. Search a keyword to view real results; samples cannot be exported.",
+    "summary": "{{count}} notes found",
+    "empty": "No notes matched the current filters.",
+    "loadingMore": "Loading more notes",
+    "loadMore": "Load more",
+    "loadMoreFinished": "No more notes",
+    "openOriginal": "Open original",
+    "openDetail": "View details",
+    "relatedComments": "Related comments",
+    "relatedCommentsTop": "TOP 3",
+    "viewMoreComments": "View more",
+    "untitled": "Untitled note",
+    "authorUnknown": "Unknown author",
+    "columns": {
+      "note": "Note",
+      "author": "Author",
+      "category": "Category",
+      "publishTime": "Published",
+      "interaction": "Interactions",
+      "likes": "Likes",
+      "favorites": "Favorites",
+      "comments": "Comments",
+      "shares": "Shares",
+      "actions": "Actions"
+    },
+    "metrics": {
+      "interaction": "Interactions",
+      "likes": "Likes",
+      "favorites": "Favorites",
+      "comments": "Comments",
+      "shares": "Shares"
+    },
+    "dataUpdatedAt": "Updated at",
+    "originalShort": "Original",
+    "coverAlt": "Note cover"
+  },
+  "detail": {
+    "panelTitle": "Note details",
+    "empty": {
+      "title": "Select a note on the left to inspect it",
+      "description": "This panel shows the note metrics, growth trend, hot words, and comment analysis in the same compact workspace.",
+      "previewTrend": "Trend preview",
+      "previewComments": "Comment analysis preview",
+      "hintTitle": "Once opened you can review",
+      "hintTrend": "Growth trend: inspect daily changes across likes, favorites, comments, and shares.",
+      "hintHotWords": "Hot words: quickly understand which topics this note is connected to.",
+      "hintComments": "Comment analysis: filter by mention, hot words, sentiment, and the comment list."
+    },
+    "tabs": {
+      "overview": "Overview",
+      "comments": "Comments"
+    },
+    "cards": {
+      "noteInfo": {
+        "title": "Note information",
+        "timeline": "Timeline",
+        "published": "Published at",
+        "updated": "Last updated",
+        "tags": "Note tags",
+        "location": "Location",
+        "noteType": "Note type",
+        "accountType": "Account type",
+        "authorLevel": "Author level",
+        "fans": "Followers",
+        "noteCount": "Total notes",
+        "videoDuration": "Video duration",
+        "mcn": "MCN",
+        "empty": "No tags"
+      },
+      "hotWords": {
+        "title": "Note hot words",
+        "description": "Trending topic words extracted from the note to help identify the topic direction.",
+        "heat": "Heat {{count}}",
+        "empty": "No hot word data"
+      },
+      "trend": {
+        "title": "Growth trend",
+        "description": "Daily changes of likes, comments, favorites, and shares.",
+        "empty": "No trend data"
+      },
+      "commentMent": {
+        "title": "Comment mentions",
+        "description": "Selecting a mention tag refreshes both comment hot words and the comment list."
+      },
+      "commentHotWords": {
+        "title": "Comment hot words",
+        "description": "Click a hot word to search comments, or filter it out from the current view."
+      },
+      "commentList": {
+        "title": "Comment list",
+        "description": "{{count}} matching comments found."
+      }
+    },
+    "comments": {
+      "searchPlaceholder": "Search comment text and press Enter or click search",
+      "applyKeyword": "Search comments",
+      "excludedKeywords": "Excluded hot words",
+      "exclude": "Exclude",
+      "excluded": "Excluded",
+      "hotWordsEmpty": "No comment hot words.",
+      "authorUnknown": "Anonymous user",
+      "topComment": "Top comment",
+      "noContent": "No comment content",
+      "likes": "Likes",
+      "replies": "Replies",
+      "empty": "No comments matched the current filters.",
+      "loadMore": "Load more comments",
+      "loadMoreFinished": "No more comments",
+      "sentiment": {
+        "all": "All comments",
+        "positive": "Positive",
+        "neutral": "Neutral",
+        "negative": "Negative"
+      },
+      "typeCount": "Comment type count",
+      "clickHotWordHint": "Click a hot word to search comments",
+      "lockedKeyword": "Searched"
+    },
+    "videoFallback": "Video 2:00",
+    "author": {
+      "likes": "Qiangua index",
+      "fans": "Followers",
+      "notes": "Notes",
+      "creator": "Top creator",
+      "homepage": "Homepage"
+    },
+    "overview": {
+      "estimated": "Estimated exposure/read",
+      "updated": "Updated data",
+      "estimatedExposure": "Estimated impressions",
+      "estimatedRead": "Estimated reads",
+      "rankingHint": "Overview: exposure, interactions, growth trends, and hot words help judge note value.",
+      "trendSwitch": "Switch likes/favorites/comments/shares",
+      "extractDirection": "Extract topic direction"
+    }
+  },
+  "pluginGuide": {
+    "trigger": "Plugin Guide",
+    "title": "What can the AiToEarn plugin do?",
+    "description": "Used with AiToEarn Web, the plugin handles publishing, comments, and Agent automation directly in the browser.",
+    "features": {
+      "deepseek": {
+        "title": "DeepSeek foundation with better pricing",
+        "description": "DeepSeek powers the core model for stable results and lower costs. For frequent copy and comment generation, the savings become margin."
+      },
+      "publishing": {
+        "title": "Rednote and WeChat Channels publishing",
+        "description": "Start tasks in AiToEarn Web, then let the plugin publish content to Rednote and WeChat Channels."
+      },
+      "commentAction": {
+        "title": "Comment tasks and one-click actions",
+        "description": "AiToEarn Web comment tasks can be completed in one click, including likes, saves, follows, and other common actions."
+      },
+      "agentAssistant": {
+        "title": "Agent automation assistant",
+        "description": "The Agent can read code, understand webpage tasks, and write publishing copy or comment content based on your request."
+      }
+    },
+    "footerTip": "All capabilities are triggered through AiToEarn Web or tutorials, then executed by the plugin in the browser.",
+    "useNow": "Use now",
+    "confirm": "Confirm"
+  },
+  "export": {
+    "button": "Export Excel",
+    "dialogTitle": "Export Excel",
+    "dialogDescription": "Export data by the current search filters. Search results are previewed online, and Excel export supports a custom row count.",
+    "name": "Export title",
+    "count": "Export rows",
+    "countRange": "Available range: 1-{{max}}",
+    "creditsCost": "Export {{count}} rows, estimated cost {{credits}} credits.",
+    "cancel": "Cancel",
+    "confirm": "Export",
+    "recordsTitle": "Export records",
+    "recordsLoading": "Loading export records",
+    "recordMeta": "{{count}} rows · {{credits}} credits · {{time}}",
+    "download": "Download",
+    "downloadProgress": "Download progress",
+    "delete": "Delete",
+    "deleteConfirmTitle": "Delete export record",
+    "deleteConfirmContent": "Delete export record \"{{name}}\"?",
+    "status": {
+      "processing": "Processing",
+      "completed": "Completed",
+      "failed": "Failed"
+    },
+    "feedback": {
+      "created": "Export task created.",
+      "createFailed": "Failed to create export task.",
+      "listFailed": "Failed to load export records.",
+      "downloadFailed": "Failed to download export file.",
+      "deleteSuccess": "Export record deleted.",
+      "deleteFailed": "Failed to delete export record.",
+      "insufficientCredits": "This export is estimated to need {{cost}} credits. Your current balance is {{balance}} credits, so please recharge and try again."
+    }
+  },
+  "empty": {
+    "startSearch": "Run a keyword search to display the note list here."
+  },
+  "feedback": {
+    "optionsFailed": "Failed to load filter options.",
+    "searchFailed": "Search failed. Please try again later.",
+    "originalUnavailable": "The original link is not available right now.",
+    "originalFailed": "Failed to open the original note.",
+    "detailFailed": "Failed to load note details.",
+    "commentMentFailed": "Failed to load comment mentions.",
+    "commentPanelFailed": "Failed to load comment analysis.",
+    "insufficientCredits": "This search needs {{cost}} credits. Your current balance is {{balance}} credits, so please recharge and try again.",
+    "keywordRequired": "Enter a keyword before searching."
+  }
+}

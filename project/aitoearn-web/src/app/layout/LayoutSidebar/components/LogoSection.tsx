@@ -10,7 +10,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { BRAND_TITLE, BrandWordmark } from '@/app/layout/shared'
 import logo from '@/assets/images/logo.png'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export function LogoSection({ collapsed, onToggle }: LogoSectionProps) {
   return (

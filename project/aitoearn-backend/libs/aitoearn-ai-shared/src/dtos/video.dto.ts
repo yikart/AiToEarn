@@ -1,4 +1,4 @@
-import { createZodDto, CreditsConsumptionSource, PaginationDtoSchema, UserType } from '@yikart/common'
+import { createZodDto, PaginationDtoSchema, UserType } from '@yikart/common'
 import { z } from 'zod'
 
 const volcengineToolSchema = z.object({
@@ -25,7 +25,6 @@ const videoGenerationRequestSchema = z.object({
   watermark: z.boolean().optional().describe('是否带水印'),
   tools: z.array(volcengineToolSchema).optional().describe('供应商工具配置'),
   metadata: z.record(z.string(), z.unknown()).optional().describe('其他参数'),
-  source: z.enum([CreditsConsumptionSource.AiVideo, CreditsConsumptionSource.AiDraftGeneration, CreditsConsumptionSource.Plugin]).optional().describe('消费来源'),
 })
 
 export class VideoGenerationRequestDto extends createZodDto(videoGenerationRequestSchema) {}

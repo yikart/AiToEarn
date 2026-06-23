@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, getErrorMessage, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
+import { AppException, getErrorMessage, ResponseCode, UserType } from '@yikart/common'
 import {
   AiLog,
   AiLogChannel,
@@ -12,7 +11,6 @@ import {
   StyleTransferAiLogResponse,
 } from '@yikart/mongodb'
 import { isAxiosError } from 'axios'
-import { config } from '../../../config'
 import { VolcengineVideoUtils } from '../../agent/mcp/volcengine/volcengine.utils'
 import {
   AsyncVCreativeTaskParamObj,
@@ -22,17 +20,9 @@ import {
 } from '../libs/volcengine'
 import { UserGetVideoStyleTransferTaskRequest, UserSubmitVideoStyleTransferRequest } from './aideo.dto'
 
-// 视频风格转换（VCreative）分辨率系数映射
-// 按短边阈值从低到高排序，查找第一个大于等于短边值的阈值
-const vCreativeResolutionCoefficientMap = [
-  { threshold: 480, coefficient: 0.7 }, // 480P 及以下
-  { threshold: 720, coefficient: 1 }, // 720P 及以下
-  { threshold: 1080, coefficient: 1.8 }, // 1080P 及以下
-] as const
-
 /**
  * 视频风格转换服务
- * 负责 VCreative 视频风格转换任务的提交、查询和计费
+ * 负责 VCreative 视频风格转换任务的提交和查询
  */
 @Injectable()
 export class VideoStyleTransferService {
@@ -42,7 +32,6 @@ export class VideoStyleTransferService {
     private readonly volcengineService: VolcengineService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
-    private readonly creditsHelper: CreditsHelperService,
   ) { }
 
   /**
@@ -101,7 +90,6 @@ export class VideoStyleTransferService {
       channel: AiLogChannel.StyleTransfer,
       startedAt,
       type: AiLogType.StyleTransfer,
-      points: 0,
       request: { videoInput, style, resolution, vid },
       response: { taskId },
       status: AiLogStatus.Generating,
@@ -184,7 +172,7 @@ export class VideoStyleTransferService {
 
   /**
    * 处理 VCreative 任务（视频风格转换）
-   * 从火山引擎获取结果并计费
+   * 从火山引擎获取结果
    */
   async processVCreativeTask(task: AiLog) {
     const taskId = task.taskId
@@ -225,16 +213,6 @@ export class VideoStyleTransferService {
           catch (error) {
             this.logger.error({ error }, '[VCreative] 下载或上传 S3 失败')
           }
-        }
-
-        // 计算费用并扣费（只对已登录用户扣费）
-        if (task.userType === UserType.User) {
-          await this.calculateVideoStyleTransferPoints(
-            task.userId,
-            task.userType as UserType,
-            taskId,
-            result,
-          )
         }
 
         // 更新任务状态为成功
@@ -284,76 +262,6 @@ export class VideoStyleTransferService {
   }
 
   /**
-   * 计算视频风格转换费用并扣费
-   */
-  private async calculateVideoStyleTransferPoints(
-    userId: string,
-    userType: UserType,
-    taskId: string,
-    result: GetVCreativeTaskResultResponse,
-  ): Promise<void> {
-    let duration = 0
-    if (result.OutputJson) {
-      const outputJson = JSON.parse(result.OutputJson)
-      const outputVid = outputJson.vid
-
-      if (outputVid) {
-        const mediaInfos = await this.volcengineService.getMediaInfos({
-          Vids: outputVid,
-        })
-        duration = mediaInfos.MediaInfoList?.[0]?.SourceInfo?.Duration ?? 0
-      }
-    }
-
-    // 获取分辨率（从任务参数中）
-    const log = await this.aiLogRepo.getByTaskId(taskId)
-    const requestData = log?.request
-    const resolution = requestData?.['resolution'] as string || '720p'
-
-    // 计算价格
-    const basePrice = config.ai.aideo.vCreative.basePrice // 元/分钟
-    const coefficient = this.getVCreativeResolutionCoefficient(resolution)
-    const durationMinutes = duration / 60
-    const totalPrice = durationMinutes * basePrice * coefficient
-
-    this.logger.debug({
-      taskId,
-      duration,
-      resolution,
-      basePrice,
-      coefficient,
-      totalPrice,
-    }, '[VideoStyleTransfer] 计算费用')
-
-    // 扣费
-    if (totalPrice > 0) {
-      await this.creditsHelper.deductCredits({
-        userId,
-        amount: totalPrice,
-        type: CreditsType.VideoStyleTransfer,
-        source: CreditsConsumptionSource.AiAideo,
-        description: `video style transfer - task ID: ${taskId}`,
-        metadata: { taskId, duration, resolution },
-      })
-    }
-
-    // 更新日志
-    if (log) {
-      const response = log.response as StyleTransferAiLogResponse | undefined
-      await this.aiLogRepo.updateById(log.id, {
-        status: AiLogStatus.Success,
-        points: totalPrice,
-        response: {
-          ...(response || {}),
-          duration,
-          resolution,
-          price: totalPrice,
-        },
-      })
-    }
-  }
-
-  /**
    * 从 VID 获取视频并上传
    */
   private async saveVideoFromVid(
@@ -371,42 +279,5 @@ export class VideoStyleTransferService {
       this.logger,
       AssetType.AideoOutput,
     )
-  }
-
-  /**
-   * 解析分辨率字符串，提取短边值
-   */
-  private parseShortSide(resolution: string): number | null {
-    const resolutionLower = resolution.toLowerCase().trim()
-    const dimensionMatch = resolutionLower.match(/(\d+)[x×](\d+)/)
-
-    if (dimensionMatch) {
-      const width = Number.parseInt(dimensionMatch[1], 10)
-      const height = Number.parseInt(dimensionMatch[2], 10)
-      return Math.min(width, height)
-    }
-
-    return null
-  }
-
-  /**
-   * 获取分辨率换算系数（视频风格转换 - VCreative）
-   */
-  private getVCreativeResolutionCoefficient(resolution?: string): number {
-    const shortSide = resolution ? this.parseShortSide(resolution) : null
-
-    if (shortSide === null) {
-      return vCreativeResolutionCoefficientMap[1].coefficient // 默认 720P
-    }
-
-    // 从高到低查找第一个阈值大于等于短边值的项
-    for (let i = vCreativeResolutionCoefficientMap.length - 1; i >= 0; i--) {
-      if (shortSide <= vCreativeResolutionCoefficientMap[i].threshold) {
-        return vCreativeResolutionCoefficientMap[i].coefficient
-      }
-    }
-
-    // 如果短边值大于所有阈值，返回最后一个（最高）系数
-    return vCreativeResolutionCoefficientMap[vCreativeResolutionCoefficientMap.length - 1].coefficient
   }
 }

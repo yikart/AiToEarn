@@ -9,11 +9,12 @@ import type * as HoverCardPrimitive from '@radix-ui/react-hover-card'
 import { BookOpen, CloudDownload, TriangleAlert } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+import { useTransClient } from '@/app/i18n/client'
+import { isChineseLanguage } from '@/app/i18n/languageConfig'
 import { Button } from '@/components/ui/button'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from '@/components/ui/hover-card'
 import { PluginVersionLast } from '@/constant'
-import { isChineseLanguage } from '@/lib/i18n/languageConfig'
+import { useGetClientLng } from '@/hooks/useSystem'
 import { PLUGIN_DOWNLOAD_LINKS } from '@/store/plugin/constants'
 
 interface PluginUpdatePopoverProps {
@@ -36,8 +37,9 @@ export function PluginUpdatePopover({
   side = 'top',
   sideOffset = 8,
 }: PluginUpdatePopoverProps) {
-  const { t, i18n } = useTranslation('plugin')
-  const updateLink = isChineseLanguage(i18n.resolvedLanguage || i18n.language)
+  const { t } = useTransClient('plugin')
+  const lng = useGetClientLng()
+  const updateLink = isChineseLanguage(lng)
     ? PLUGIN_DOWNLOAD_LINKS.china
     : PLUGIN_DOWNLOAD_LINKS.github
 

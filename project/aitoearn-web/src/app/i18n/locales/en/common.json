@@ -5,7 +5,6 @@
   "docs": "Docs",
   "login": "Login",
   "support": "Support",
-  "notifications": "Notifications",
   "settings": "Settings",
   "vip": "Plus",
   "vip.tier": {
@@ -22,16 +21,13 @@
   "recharge": "Recharge",
   "adBalance": "Advertiser Balance",
   "creatorBalance": "Creator Balance",
+  "withdrawable": "Withdrawable",
   "plugin": "Extension",
-  "affiliates": "Affiliates",
   "advertiser": "AI Check-in",
-  "goToWebsite": "Go to Website",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "Install",
     "noPermission": "Not Authorized",
+    "siteAccessRequired": "Site Access Needed",
     "ready": "Ready",
     "checking": "Checking",
     "updateAvailable": "Update Available"
@@ -40,16 +36,15 @@
   "apiErrorContactTip": "If you have any questions, please ",
   "wechat": "WeChat",
   "scanToAdd": "Scan to Add",
+  "wechatLinkTip": "You can also open WeChat from this link",
   "documents": "Documents",
   "helpDocs": "Help Docs",
   "pluginGuide": "Plugin Installation and Usage Guide",
   "pluginUpdateGuide": "Plugin Update Guide",
   "privacyPolicy": "Privacy Policy",
   "termsOfService": "Terms of Service",
-  "noNotifications": "No notifications",
   "markAllAsRead": "Mark all as read",
   "markAsRead": "Mark as read",
-  "unreadCount": "Unread messages",
   "viewAll": "View all",
   "cancel": "Cancel",
   "confirm": "Confirm",
@@ -59,15 +54,7 @@
   "yes": "Yes",
   "no": "No",
   "calendar": {
-    "weekDaysShort": [
-      "Sun",
-      "Mon",
-      "Tue",
-      "Wed",
-      "Thu",
-      "Fri",
-      "Sat"
-    ],
+    "weekDaysShort": ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"],
     "monthSuffix": ""
   },
   "actions": {
@@ -95,16 +82,13 @@
     "jumpTo": "Jump to",
     "page": "page"
   },
-  "notificationTypes": {
-    "system": "System Notification",
-    "user": "User Notification",
-    "material": "Material Notification",
-    "other": "Other Notification"
-  },
   "header": {
     "messages": "Messages",
+    "income": "Income Records",
+    "wallet": "My Wallet",
     "materialLibrary": "Library",
     "draftBox": "Content Management",
+    "agentAssets": "AI Generated Assets",
     "draftBoxSeoTitle": "Content Management - AI Batch Creation & Draft Editor",
     "draftBoxSeoDescription": "Manage all your content drafts in one place. Use AI to batch generate social media posts, edit drafts before publishing, and organize content for multi-platform distribution with AiToEarn.",
     "draftBoxSeoKeywords": "content management, draft editor, AI content generation, batch content creation, social media drafts, content scheduling, AiToEarn",
@@ -206,10 +190,15 @@
       "importantNoteContent": "Data cannot be recovered after deletion. Please proceed with caution. Some data required by law may not be deletable."
     }
   },
+  "lowBalanceAlert": {
+    "title": "Low Balance Alert",
+    "content": "Your credits balance is running low. Please top up to continue using our services.",
+    "neverRemind": "Don't remind me again"
+  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 as low as $0.03/sec",
-    "videoPromo": "gpt-image-2 images from 0.007 yuan each",
-    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
+    "videoPromo": "Limited-time offer: seedance as low as 0.36 yuan/sec, gpt-image-2 as low as 0.07 yuan/image",
+    "videoPromoFallback": "Limited-time offer: seedance as low as 0.36 yuan/sec, gpt-image-2 as low as 0.07 yuan/image"
   },
   "chinaDomainPrompt": {
     "title": "Switch to China Region",
@@ -257,6 +246,13 @@
   },
   "switchToInternational": "Go to \"International\"",
   "switchToChina": "Go to \"China\"",
+  "platformRegionPrompt": {
+    "title": "Platform Region Restriction",
+    "chinaContent": "{{platform}} is only available on the China site. Redirect to the China site?",
+    "abroadContent": "{{platform}} is only available on the international site. Redirect to the international site?",
+    "ok": "Go",
+    "cancel": "Cancel"
+  },
   "noMore": "No more data",
   "comingSoon": "Under development, stay tuned",
   "datePicker": {
@@ -274,6 +270,11 @@
     "bubbleLine1": "Tap the top-right menu",
     "bubbleLine2": "and choose \"Open in Browser\"",
     "openInBrowser": "Open in Browser",
-    "description": "WeChat's webview may block publishing and redirects. Please continue in your browser."
-  }
+    "description": "WebViews in WeChat or Alipay may block publishing and redirects. Please continue in your browser."
+  },
+  "seedanceCredits": "Seedance Credits",
+  "seedanceCreditsRecharge": "Recharge Seedance Credits",
+  "configManagement": "Configuration",
+  "apiErrorConfigTip": "Please check whether your configuration is correct.",
+  "apiErrorConfigAction": "View configuration"
 }

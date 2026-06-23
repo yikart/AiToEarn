@@ -1,7 +1,9 @@
 import { AIMessageChunk, BaseMessage } from '@langchain/core/messages'
 import { ChatOpenAI, OpenAIChatInput } from '@langchain/openai'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import OpenAI from 'openai'
+import { AiAvailabilityService } from '../../../ai-availability'
+import { RelayMediaResolverService } from '../../relay-media'
 import { OpenaiConfig } from './openai.config'
 import { SoraCharacterResponse, SoraCreateCharacterRequest } from './openai.interface'
 
@@ -13,9 +15,18 @@ export class OpenaiService {
 
   constructor(
     private readonly config: OpenaiConfig,
+    private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {
     this.openAI = this._createOpenAIClient()
     this.chatOpenAI = this._createChatModel({})
+  }
+
+  private async withAvailability<T>(operation: string, fn: () => Promise<T>, model?: string): Promise<T> {
+    return this.aiAvailability.execute(
+      { provider: 'openai', operation, model },
+      fn,
+    )
   }
 
   private _createOpenAIClient(): OpenAI {
@@ -52,41 +63,62 @@ export class OpenaiService {
   }
 
   async createRawStream(options: OpenAI.Chat.ChatCompletionCreateParamsStreaming) {
-    return this.openAI.chat.completions.create(options)
+    return this.withAvailability('createRawStream', async () => {
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.chat.completions.create(resolvedOptions)
+    }, options.model)
+  }
+
+  async createRawCompletion(options: OpenAI.Chat.ChatCompletionCreateParamsNonStreaming): Promise<OpenAI.Chat.ChatCompletion> {
+    return this.withAvailability('createRawCompletion', async () => {
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.chat.completions.create(resolvedOptions)
+    }, options.model)
   }
 
   async createChatCompletion(options: Partial<OpenAIChatInput> & {
     model: string
     messages: BaseMessage[]
   }): Promise<AIMessageChunk> {
-    const stream = await this.createChatCompletionStream(options)
-    let result: AIMessageChunk | undefined
+    return this.withAvailability('createChatCompletion', async () => {
+      const stream = await this.createChatCompletionStream(options)
+      let result: AIMessageChunk | undefined
 
-    for await (const chunk of stream) {
-      if (result) {
-        result = result.concat(chunk)
+      for await (const chunk of stream) {
+        if (result) {
+          result = result.concat(chunk)
+        }
+        else {
+          result = chunk
+        }
       }
-      else {
-        result = chunk
-      }
-    }
 
-    return result!
+      return result!
+    }, options.model)
   }
 
   async createImageGeneration(options: Omit<OpenAI.Images.ImageGenerateParams, 'user' | 'stream'>): Promise<OpenAI.Images.ImagesResponse> {
-    return this.openAI.images.generate(options)
+    return this.withAvailability('createImageGeneration', async () => {
+      const resolvedOptions = await this.resolveRelayJson(options)
+      return this.openAI.images.generate(resolvedOptions)
+    }, options.model ?? undefined)
   }
 
   async createImageEdit(options: Omit<OpenAI.Images.ImageEditParams, 'user' | 'stream'>): Promise<OpenAI.Images.ImagesResponse> {
-    return this.openAI.images.edit(options)
+    return this.withAvailability('createImageEdit', async () => {
+      return this.openAI.images.edit(options)
+    }, options.model ?? undefined)
   }
 
   async createImageVariation(options: Omit<OpenAI.Images.ImageCreateVariationParams, 'user'>): Promise<OpenAI.Images.ImagesResponse> {
-    return this.openAI.images.createVariation(options)
+    return this.withAvailability('createImageVariation', async () => {
+      return this.openAI.images.createVariation(options)
+    })
   }
 
   private normalizeVideoTimestamp(video: OpenAI.Videos.Video): OpenAI.Videos.Video {
+    // 判断阈值：10000000000 对应 2001-09-09
+    // 大于此值则认为是毫秒值，需转换为秒值
     if (video.created_at > 10000000000) {
       return {
         ...video,
@@ -97,41 +129,64 @@ export class OpenaiService {
   }
 
   async createVideo(params: OpenAI.VideoCreateParams): Promise<OpenAI.Videos.Video> {
-    const video = await this.openAI.videos.create(params)
-    return this.normalizeVideoTimestamp(video)
+    return this.withAvailability('createVideo', async () => {
+      const video = await this.openAI.videos.create(params)
+      return this.normalizeVideoTimestamp(video)
+    }, params.model)
   }
 
   async retrieveVideo(videoId: string): Promise<OpenAI.Videos.Video> {
-    const video = await this.openAI.videos.retrieve(videoId)
-    return this.normalizeVideoTimestamp(video)
+    return this.withAvailability('retrieveVideo', async () => {
+      const video = await this.openAI.videos.retrieve(videoId)
+      return this.normalizeVideoTimestamp(video)
+    })
   }
 
   async listVideos(params?: OpenAI.VideoListParams): Promise<OpenAI.Videos.VideosPage> {
-    const result = await this.openAI.videos.list(params)
-    result.data = result.data.map(video => this.normalizeVideoTimestamp(video))
-    return result
+    return this.withAvailability('listVideos', async () => {
+      const result = await this.openAI.videos.list(params)
+      result.data = result.data.map(video => this.normalizeVideoTimestamp(video))
+      return result
+    })
   }
 
   async deleteVideo(videoId: string): Promise<OpenAI.Videos.VideoDeleteResponse> {
-    return this.openAI.videos.delete(videoId)
+    return this.withAvailability('deleteVideo', async () => {
+      return this.openAI.videos.delete(videoId)
+    })
   }
 
   async downloadVideoContent(videoId: string, variant?: 'video' | 'thumbnail' | 'spritesheet'): Promise<Response> {
-    return this.openAI.videos.downloadContent(videoId, { variant })
+    return this.withAvailability('downloadVideoContent', async () => {
+      return this.openAI.videos.downloadContent(videoId, { variant })
+    })
   }
 
   async remixVideo(videoId: string, prompt: string): Promise<OpenAI.Videos.Video> {
-    const video = await this.openAI.videos.remix(videoId, { prompt })
-    return this.normalizeVideoTimestamp(video)
+    return this.withAvailability('remixVideo', async () => {
+      const video = await this.openAI.videos.remix(videoId, { prompt })
+      return this.normalizeVideoTimestamp(video)
+    })
   }
 
   async createCharacter(params: SoraCreateCharacterRequest): Promise<SoraCharacterResponse> {
-    const response = await this.openAI.videos.create(params as unknown as OpenAI.VideoCreateParams)
-    return response as unknown as SoraCharacterResponse
+    return this.withAvailability('createCharacter', async () => {
+      const response = await this.openAI.videos.create(params as unknown as OpenAI.VideoCreateParams)
+      return response as unknown as SoraCharacterResponse
+    })
   }
 
   async getCharacter(characterId: string): Promise<SoraCharacterResponse> {
-    const response = await this.openAI.videos.retrieve(characterId)
-    return response as unknown as SoraCharacterResponse
+    return this.withAvailability('getCharacter', async () => {
+      const response = await this.openAI.videos.retrieve(characterId)
+      return response as unknown as SoraCharacterResponse
+    })
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
   }
 }

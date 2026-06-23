@@ -5,7 +5,7 @@
  */
 
 import type { RefObject } from 'react'
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { IPublishDialogRef } from '@/components/PublishDialog'
 import { useCallback, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'

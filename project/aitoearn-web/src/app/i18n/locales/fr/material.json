@@ -5,13 +5,14 @@
     "keywords": "matériaux, bibliothèque d'images, bibliothèque de vidéos, groupes médias, images cloud, vidéos cloud, stockage de ressources, stockage d'images, stockage de vidéos"
   },
   "agentAssets": {
-    "title": "Ressources générées par l'Agent",
-    "description": "Images et vidéos générées automatiquement par l'AI Agent",
+    "title": "Ressources générées par l'IA",
+    "description": "Images et vidéos générées automatiquement par l'IA",
     "shortDescription": "Images et vidéos générées par l'IA",
-    "keywords": "ressources IA, ressources Agent, images générées par IA, vidéos générées par IA, ressources intelligentes",
-    "noAssets": "Aucune ressource Agent",
-    "noAssetsDesc": "Les ressources générées par l'AI Agent apparaîtront ici",
-    "goToChat": "Commencer la conversation"
+    "keywords": "ressources IA, ressources générées par IA, images générées par IA, vidéos générées par IA, ressources intelligentes",
+    "noAssets": "Aucune ressource générée par l'IA",
+    "noAssetsDesc": "Les ressources générées par l'IA apparaîtront ici",
+    "goToChat": "Commencer la conversation",
+    "previewAsset": "Prévisualiser la ressource"
   },
   "mediaManagement": {
     "title": "Gestion des médias",
@@ -105,7 +106,6 @@
     "title": "Outils IA",
     "backToAlbum": "Retour à l'album",
     "textToImage": "Texte vers image",
-    "imageToImage": "Image vers image",
     "fireflyCard": "Carte Firefly",
     "videoGeneration": "Génération vidéo",
     "prompt": "Invite",

@@ -1,4 +1,4 @@
-@font-face {
+﻿@font-face {
   font-family: 'DIN';
   src: url('./DIN-Medium.otf') format('opentype');
   font-weight: normal;
@@ -12,4 +12,8 @@
   font-weight: 400;
   font-style: normal;
   font-display: swap;
+}
+
+.source-han-sans-cn {
+  font-family: 'HYHanHeiJ', sans-serif;
 }

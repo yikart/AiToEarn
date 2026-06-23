@@ -32,6 +32,5 @@
   "termsOfService": "Conditions d'utilisation",
   "and": "et",
   "privacyPolicy": "Politique de confidentialité",
-  "newUserPromotion": "Les nouveaux utilisateurs bénéficient de 14 jours d'abonnement gratuit !",
-  "manualLoginDisabledNotice": "La connexion manuelle n'est pas requise dans cet environnement. Si l'accès échoue toujours, vérifiez la configuration."
+  "newUserPromotion": "Les nouveaux utilisateurs bénéficient de 14 jours d'abonnement gratuit !"
 }

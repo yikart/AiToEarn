@@ -1,18 +1,23 @@
 /**
- * AgentAssetCardSkeleton - Agent 素材卡片骨架屏
+ * AgentAssetCardSkeleton - AI 生成素材卡片骨架屏
  */
 
 'use client'
 
 import { Skeleton } from '@/components/ui/skeleton'
 
-export function AgentAssetCardSkeleton() {
-  // 随机高度，模拟瀑布流效果
-  const randomHeight = Math.floor(Math.random() * 100) + 150
+const SKELETON_HEIGHTS = [180, 240, 210, 280, 160]
+
+interface AgentAssetCardSkeletonProps {
+  index: number
+}
+
+export function AgentAssetCardSkeleton({ index }: AgentAssetCardSkeletonProps) {
+  const height = SKELETON_HEIGHTS[index % SKELETON_HEIGHTS.length]
 
   return (
     <div className="rounded-lg overflow-hidden">
-      <Skeleton className="w-full" style={{ height: `${randomHeight}px` }} />
+      <Skeleton className="w-full" style={{ height: `${height}px` }} />
     </div>
   )
 }

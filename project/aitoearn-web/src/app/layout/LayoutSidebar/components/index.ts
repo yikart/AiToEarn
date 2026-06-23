@@ -3,7 +3,6 @@
  */
 
 export { BottomSection } from './BottomSection'
-export { IconBar } from './IconBar'
 export { LogoSection } from './LogoSection'
 export { NavSection } from './NavSection'
 export { UserDropdownMenu } from './UserDropdownMenu'

@@ -1,0 +1,227 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-06-08T00:00:00.000Z",
+  "title": "Design System: AiToEarn Web",
+  "extensions": {
+    "colorMeta": {
+      "brand-cyan": {
+        "role": "primary",
+        "displayName": "Brand Cyan-Violet",
+        "canonical": "oklch(0.71 0.17 294)",
+        "tonalRamp": [
+          "oklch(0.22 0.08 294)",
+          "oklch(0.33 0.11 294)",
+          "oklch(0.44 0.14 294)",
+          "oklch(0.55 0.16 294)",
+          "oklch(0.66 0.17 294)",
+          "oklch(0.71 0.17 294)",
+          "oklch(0.82 0.12 294)",
+          "oklch(0.93 0.05 294)"
+        ]
+      },
+      "brand-purple": {
+        "role": "primary",
+        "displayName": "Brand Magenta-Rose",
+        "canonical": "oklch(0.74 0.17 3)",
+        "tonalRamp": [
+          "oklch(0.24 0.09 3)",
+          "oklch(0.35 0.12 3)",
+          "oklch(0.46 0.15 3)",
+          "oklch(0.57 0.17 3)",
+          "oklch(0.68 0.17 3)",
+          "oklch(0.74 0.17 3)",
+          "oklch(0.84 0.12 3)",
+          "oklch(0.94 0.05 3)"
+        ]
+      },
+      "foreground": {
+        "role": "neutral",
+        "displayName": "Ink",
+        "canonical": "oklch(0.145 0 0)",
+        "tonalRamp": [
+          "oklch(0.145 0 0)",
+          "oklch(0.205 0 0)",
+          "oklch(0.269 0 0)",
+          "oklch(0.439 0 0)",
+          "oklch(0.556 0 0)",
+          "oklch(0.708 0 0)",
+          "oklch(0.85 0 0)",
+          "oklch(0.97 0 0)"
+        ]
+      },
+      "border": {
+        "role": "neutral",
+        "displayName": "Hairline",
+        "canonical": "oklch(0.922 0 0)",
+        "tonalRamp": [
+          "oklch(0.3 0 0)",
+          "oklch(0.45 0 0)",
+          "oklch(0.6 0 0)",
+          "oklch(0.75 0 0)",
+          "oklch(0.85 0 0)",
+          "oklch(0.922 0 0)",
+          "oklch(0.96 0 0)",
+          "oklch(0.99 0 0)"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "Card titles, section and modal headings. The in-app heading ceiling."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Base 14px text for all running copy and controls."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Form labels, badges, table headers, meta text."
+      },
+      "numeric": {
+        "displayName": "Numeric",
+        "purpose": "DIN-set counts, durations, dates, metrics."
+      }
+    },
+    "shadows": [
+      {
+        "name": "resting",
+        "value": "0 1px 2px 0 rgb(0 0 0 / 0.05)",
+        "purpose": "Cards, inputs, buttons at rest (Tailwind shadow-sm)."
+      },
+      {
+        "name": "hover-lift",
+        "value": "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+        "purpose": "Primary button and interactive cards on hover only."
+      },
+      {
+        "name": "brand-glow",
+        "value": "0 1px 2px 0 oklch(0.71 0.17 294 / 0.2)",
+        "purpose": "Exclusive to the primary gradient button; ties elevation to brand intent."
+      }
+    ],
+    "motion": [
+      {
+        "name": "transition-all",
+        "value": "150ms cubic-bezier(0.4, 0, 0.2, 1)",
+        "purpose": "Default state transition for interactive controls."
+      },
+      { "name": "accordion", "value": "200ms ease-out", "purpose": "Accordion open/close." }
+    ],
+    "breakpoints": [
+      { "name": "sm", "value": "640px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "1024px" },
+      { "name": "xl", "value": "1280px" },
+      { "name": "3xl", "value": "1400px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The Action role of the Signature Gradient; gradient fill for primary intent.",
+      "html": "<button class=\"ds-btn-primary\">发布内容</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px; font-size: 14px; font-weight: 500; color: oklch(0.985 0 0); background: linear-gradient(to right in oklch, oklch(0.74 0.17 3), oklch(0.71 0.17 294)); border: none; border-radius: 8px; box-shadow: 0 1px 2px 0 oklch(0.71 0.17 294 / 0.2); cursor: pointer; transition: box-shadow 150ms cubic-bezier(0.4,0,0.2,1), transform 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-primary:hover { box-shadow: 0 4px 6px -1px oklch(0.71 0.17 294 / 0.25); } .ds-btn-primary:active { transform: scale(0.98); } .ds-btn-primary:focus-visible { outline: 2px solid oklch(0.71 0.17 294); outline-offset: 2px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Neutral secondary action with hairline border.",
+      "html": "<button class=\"ds-btn-outline\">取消</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px; font-size: 14px; font-weight: 500; color: oklch(0.145 0 0); background: oklch(1 0 0); border: 1px solid oklch(0.922 0 0); border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); cursor: pointer; transition: background 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-outline:hover { background: oklch(0.97 0 0); } .ds-btn-outline:focus-visible { outline: 2px solid oklch(0.71 0.17 294); outline-offset: 2px; }"
+    },
+    {
+      "name": "Secondary Button",
+      "kind": "button",
+      "refersTo": "button-secondary",
+      "description": "Low-emphasis filled action.",
+      "html": "<button class=\"ds-btn-secondary\">保存草稿</button>",
+      "css": ".ds-btn-secondary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 36px; padding: 8px 16px; font-size: 14px; font-weight: 500; color: oklch(0.205 0 0); background: oklch(0.97 0 0); border: none; border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); cursor: pointer; transition: background 150ms cubic-bezier(0.4,0,0.2,1); } .ds-btn-secondary:hover { background: oklch(0.97 0 0 / 0.8); } .ds-btn-secondary:focus-visible { outline: 2px solid oklch(0.71 0.17 294); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "input-default",
+      "description": "Standard 36px field with 1px focus ring, no glow.",
+      "html": "<input class=\"ds-input\" type=\"text\" placeholder=\"输入标题\" />",
+      "css": ".ds-input { display: flex; width: 100%; height: 36px; padding: 4px 12px; font-size: 14px; color: oklch(0.145 0 0); background: transparent; border: 1px solid oklch(0.922 0 0); border-radius: 8px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); transition: border-color 150ms cubic-bezier(0.4,0,0.2,1); } .ds-input::placeholder { color: oklch(0.556 0 0); } .ds-input:focus-visible { outline: none; border-color: oklch(0.71 0.17 294); box-shadow: 0 0 0 1px oklch(0.71 0.17 294); } .ds-input:disabled { cursor: not-allowed; opacity: 0.5; }"
+    },
+    {
+      "name": "Card",
+      "kind": "card",
+      "refersTo": "card-default",
+      "description": "Flat surface with hairline border and soft resting shadow.",
+      "html": "<div class=\"ds-card\"><h3 class=\"ds-card-title\">发布记录</h3><p class=\"ds-card-desc\">查看跨平台发布状态</p></div>",
+      "css": ".ds-card { background: oklch(1 0 0); color: oklch(0.145 0 0); border: 1px solid oklch(0.922 0 0); border-radius: 10px; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); padding: 24px; } .ds-card-title { margin: 0 0 6px; font-size: 24px; font-weight: 600; letter-spacing: -0.01em; line-height: 1; } .ds-card-desc { margin: 0; font-size: 14px; color: oklch(0.556 0 0); }"
+    },
+    {
+      "name": "Topic Mention",
+      "kind": "custom",
+      "refersTo": "topic-mention",
+      "description": "Publish-editor inline @topic / #tag chip with thin brand-gradient underline.",
+      "html": "<span class=\"ds-topic\"><span class=\"ds-topic-trigger\">#</span><span class=\"ds-topic-value\">AI增长</span></span>",
+      "css": ".ds-topic { display: inline; margin-inline: 1px; padding: 0 1px 1px; vertical-align: baseline; color: color-mix(in oklch, oklch(0.71 0.17 294) 76%, oklch(0.145 0 0)); border-radius: 7px; background: linear-gradient(90deg, oklch(0.71 0.17 294), oklch(0.74 0.17 3)) 0 100% / 100% 0.08em no-repeat; transition: background 180ms ease, color 180ms ease; } .ds-topic-trigger { color: color-mix(in oklch, oklch(0.74 0.17 3) 62%, oklch(0.71 0.17 294)); font-weight: 700; } .ds-topic-value { font-weight: 600; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Calm Growth Studio",
+    "overview": "AiToEarn is a professional workspace where creators and operators drive AI agents through high-volume, multi-account publishing. The interface should feel like a calm growth studio: capable and efficient, never cold or sterile. Surfaces stay quiet and neutral so dense publishing flows read clearly; the purple→cyan brand gradient appears deliberately across a small set of explicit roles to mark action, state, progress, identity, and page structure. The tool disappears into the task. This system rejects decorative interfaces that distract from publishing, inconsistent form and modal patterns, and low-contrast controls. Depth is achieved through near-flat tonal layering, not heavy shadows. Light and dark themes are both first-class via semantic tokens.",
+    "keyCharacteristics": [
+      "Neutral grayscale surfaces; the brand gradient is the signature, deployed across action, state, progress, brand identity/frame, and seam roles while work surfaces stay neutral.",
+      "High information density, with calm spacing rhythm to keep it legible.",
+      "One sans family (Suisseintl) carries the whole UI; DIN for numerics, HYHanHeiJ for Chinese.",
+      "Near-flat elevation via shadow-sm and tonal color-mix layering.",
+      "Full light/dark parity through semantic tokens."
+    ],
+    "rules": [
+      {
+        "name": "The Signature Gradient Rule",
+        "body": "The purple→cyan brand gradient is the system signature, deployed across five defined roles and nowhere else: Action (primary button, key CTAs); State (active-nav indicator bar + label tint, unread/count badge, active tab underline, switch on-state); Progress (progress-bar fills, one emphasized metric/series); Brand identity/frame (brand mark, 1px gradient border on a focused field or one featured card, avatar ring, empty-state icon stroke); Brand-seam (a single thin page-header hairline). Ceiling: work surfaces stay neutral — cards, tables, forms, list rows, and panel backgrounds are never filled or backed with the gradient. Hard bans, always: no gradient text (background-clip:text), no gradient side-stripe wider than 1px, no full-bleed gradient on a work surface.",
+        "section": "colors"
+      },
+      {
+        "name": "The Semantic-Token Rule",
+        "body": "Never hardcode a color (no text-gray-900, no #000, no bg-[var(...)]). Always use the semantic variable so light/dark both resolve correctly.",
+        "section": "colors"
+      },
+      {
+        "name": "The One-Family Rule",
+        "body": "Suisseintl carries headings, buttons, labels, body, and data. DIN and HYHanHeiJ are scoped tools, not a second display voice. Display fonts in UI labels, buttons, or data are forbidden.",
+        "section": "typography"
+      },
+      {
+        "name": "The Fixed-Scale Rule",
+        "body": "Use the fixed rem scale, not fluid clamp() headings. Users view at consistent DPI; a heading that shrinks inside a sidebar looks worse.",
+        "section": "typography"
+      },
+      {
+        "name": "The Flat-By-Default Rule",
+        "body": "Surfaces are flat at rest. Shadows appear as a response to state (hover, focus, the primary action), never as ambient decoration. Prefer a hairline border or tonal color-mix layer before a shadow.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "Do deploy the brand gradient across its five roles — Action (primary button/CTA), State (active-nav indicator + tint, unread/count badge, active tab underline, switch on), Progress (progress fill, one emphasized metric/series), Brand identity/frame (brand mark, avatar ring, one featured card/focused-field border, empty-state icon stroke), Brand-seam (a single page-header hairline).",
+      "Do keep work surfaces neutral: cards, tables, forms, list rows, and panel backgrounds are never filled or backed with the gradient.",
+      "Do use semantic tokens (bg-background, text-muted-foreground, border-border) so every surface resolves in both light and dark.",
+      "Do keep elevation near-flat: shadow-sm at rest, shadows only as a state response.",
+      "Do carry the whole UI in Suisseintl; scope DIN to numerics and HYHanHeiJ to Chinese.",
+      "Do use the NumberInput component for all numeric entry.",
+      "Do verify body text and placeholders clear 4.5:1 contrast against tinted near-white surfaces."
+    ],
+    "donts": [
+      "Don't use the brand gradient as a work-surface background, ambient decoration, or a flourish beyond its five roles.",
+      "Don't render gradient text (background-clip:text), a gradient side-stripe wider than 1px on a card/list/alert, or any full-bleed gradient on a work surface — permanent bans regardless of role.",
+      "Don't hardcode colors (text-gray-900, #000, black, bg-[var(--primary-color)]); always semantic variables and Tailwind v4 bg-(--token) syntax.",
+      "Don't put display fonts in UI labels, buttons, or data.",
+      "Don't use fluid clamp() headings in product UI; use the fixed rem scale.",
+      "Don't reach for a modal as the first thought; exhaust inline and progressive alternatives first.",
+      "Don't ship inconsistent component vocabulary across platform flows.",
+      "Don't use native input type=number; use the NumberInput component.",
+      "Don't add gratuitous motion; transitions are 150-250ms and convey state, never choreography."
+    ]
+  }
+}

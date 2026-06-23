@@ -1,14 +1,14 @@
 import { dir } from 'i18next'
 import { headers } from 'next/headers'
 import Script from 'next/script'
+import { getPlatformMetadataInitialData } from '@/api/channels/channel.server'
 import { useTranslation } from '@/app/i18n'
+import { getHreflang } from '@/app/i18n/languageConfig'
 import { fallbackLng, languages } from '@/app/i18n/settings'
 import LayoutSidebar from '@/app/layout/LayoutSidebar'
 import { MainContent } from '@/app/layout/MainContent'
 import MobileNav from '@/app/layout/MobileNav'
 import { ChannelManager } from '@/components/ChannelManager'
-import { StructuredData } from '@/components/SEO/StructuredData'
-import { getHreflang } from '@/lib/i18n/languageConfig'
 import { Providers } from '../layout/Providers'
 import '../globals.css'
 
@@ -53,11 +53,7 @@ export default async function RootLayout({
   params: Promise<{ lng: string }>
 }>) {
   const { lng } = await params
-  const headersList = await headers()
-  const host = headersList.get('host') || 'localhost:3000'
-  const proto = headersList.get('x-forwarded-proto') || 'https'
-  const baseUrl = `${proto}://${host}`
-  const autoLoginToken = process.env.AUTO_LOGIN_TOKEN || ''
+  const platformMetadata = await getPlatformMetadataInitialData()
 
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
@@ -71,26 +67,6 @@ export default async function RootLayout({
           name="google-site-verification"
           content="sPyHcKp5GBej4O1pTNzZsGRGRxBLZq1_3ZV-UrgTX6U"
         />
-        {/* SEO: 全局结构化数据 */}
-        <StructuredData
-          organization={{
-            name: 'AiToEarn',
-            url: baseUrl,
-            logo: `${baseUrl}/logo.png`,
-            description: 'AI-powered content creation and social media management platform',
-            sameAs: ['https://twitter.com/aitoearn', 'https://www.linkedin.com/company/aitoearn'],
-          }}
-          website={{
-            name: 'AiToEarn',
-            url: baseUrl,
-            description: 'AI-powered content creation and social media management platform',
-            potentialAction: {
-              '@type': 'SearchAction',
-              'target': `${baseUrl}/search?q={search_term_string}`,
-              'query-input': 'required name=search_term_string',
-            },
-          }}
-        />
       </head>
       <body suppressHydrationWarning>
         {/* Rewardful 脚本 */}
@@ -102,7 +78,7 @@ export default async function RootLayout({
           }}
         />
         <Script src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" strategy="afterInteractive" />
-        <Providers lng={lng} autoLoginToken={autoLoginToken}>
+        <Providers lng={lng} platformMetadata={platformMetadata ?? []}>
           {/* 全局频道管理弹框 */}
           <ChannelManager />
           <p className="hidden">Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf</p>

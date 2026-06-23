@@ -1,7 +1,5 @@
 {
   "home": "ホーム",
-  "header.draftBox": "コンテンツ管理",
-  "header.agentAssets": "Agent素材",
   "tasksHistory": "タスク履歴",
   "accounts": "投稿",
   "publish": "投稿",
@@ -20,9 +18,10 @@
   "sidebar.more": "もっと見る",
   "mobileBottom.content": "コンテンツ",
   "mobileBottom.checkIn": "チェックイン",
+  "mobileBottom.gold": "ゴールド",
   "mobileBottom.publish": "投稿",
   "mobileBottom.interaction": "交流",
-  "aiSocial": "AI Publish",
-  "download": "Download",
-  "xhsData": "XHS Data"
+  "pricing": "料金",
+  "xhsData": "AI交流",
+  "groundPromotion": "Ground Promotion"
 }

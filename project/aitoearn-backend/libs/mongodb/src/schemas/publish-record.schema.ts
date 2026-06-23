@@ -32,6 +32,12 @@ export class PublishRecord extends WithTimestampSchema {
   @Prop({
     required: false,
     type: String,
+  })
+  taskId?: string // 任务ID
+
+  @Prop({
+    required: false,
+    type: String,
     index: true,
   })
   materialGroupId?: string // 草稿箱ID
@@ -66,8 +72,9 @@ export class PublishRecord extends WithTimestampSchema {
 
   // 话题
   @Prop({
-    required: true,
+    required: false,
     type: [String],
+    default: [],
   })
   topics: string[]
 
@@ -212,6 +219,18 @@ export class PublishRecord extends WithTimestampSchema {
 
   @Prop({
     required: false,
+    type: mongoose.Schema.Types.Mixed,
+  })
+  pendingMediaJobs?: Record<string, any>[]
+
+  @Prop({
+    required: false,
+    type: mongoose.Schema.Types.Mixed,
+  })
+  pendingUpdate?: Record<string, any>
+
+  @Prop({
+    required: false,
     type: String,
     enum: PublishRecordSource,
   })
@@ -221,3 +240,15 @@ export class PublishRecord extends WithTimestampSchema {
 export const PublishRecordSchema = SchemaFactory.createForClass(PublishRecord)
 
 PublishRecordSchema.index({ status: 1, publishTime: 1 })
+PublishRecordSchema.index(
+  { userId: 1, flowId: 1, accountId: 1, accountType: 1 },
+  {
+    unique: true,
+    name: 'userId_1_flowId_1_accountId_1_accountType_1',
+    partialFilterExpression: {
+      userId: { $type: 'string', $ne: '' },
+      flowId: { $type: 'string', $ne: '' },
+      accountId: { $type: 'string', $ne: '' },
+    },
+  },
+)

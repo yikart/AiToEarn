@@ -15,8 +15,8 @@ export const AssetVoSchema = z.object({
   mimeType: z.string(),
   filename: z.string().optional(),
   metadata: AssetMetadataSchema.optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
 })
 export class AssetVo extends createZodDto(AssetVoSchema, 'AssetVo') {}
 

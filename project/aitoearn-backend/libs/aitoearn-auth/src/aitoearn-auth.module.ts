@@ -4,7 +4,6 @@ import { APP_GUARD } from '@nestjs/core'
 import { JwtModule } from '@nestjs/jwt'
 import { AITOEARN_AUTH_OPTIONS, AitoearnAuthOptions } from './aitoearn-auth.config'
 import { AitoearnAuthGuard } from './aitoearn-auth.guard'
-import { AitoearnAuthService } from './aitoearn-auth.service'
 
 export interface AitoearnAuthModuleAsyncOptions<TTokenInfo = unknown> {
   imports?: ModuleMetadata['imports']
@@ -28,13 +27,11 @@ export class AitoearnAuthModule {
           useFactory: options.useFactory,
           inject: options.inject ?? [],
         },
-        AitoearnAuthService,
         {
           provide: APP_GUARD,
           useClass: AitoearnAuthGuard,
         },
       ],
-      exports: [AitoearnAuthService],
     }
   }
 }

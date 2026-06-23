@@ -8,7 +8,7 @@ export const MaterialGroupVoSchema = z.object({
   desc: z.string().optional().describe('描述'),
   isDefault: z.boolean().describe('是否默认'),
   platforms: z.array(z.enum(AccountType)).default([]).describe('平台限制'),
-  createdAt: z.date().describe('创建时间'),
-  updatedAt: z.date().describe('更新时间'),
+  createdAt: z.coerce.date().describe('创建时间'),
+  updatedAt: z.coerce.date().describe('更新时间'),
 })
 export class MaterialGroupVo extends createZodDto(MaterialGroupVoSchema, 'MaterialGroupVo') {}

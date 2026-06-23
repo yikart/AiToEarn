@@ -2,7 +2,6 @@ import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/commo
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, ParseObjectIdPipe, UserType } from '@yikart/common'
-import { MetricEventHelperService, MetricEventName } from '@yikart/helpers'
 import { DraftGenerationMemoryService } from './draft-generation-memory.service'
 import {
   CreateDraftFromVideoUrlDto,
@@ -37,7 +36,6 @@ export class DraftGenerationController {
   constructor(
     private readonly draftGenerationService: DraftGenerationService,
     private readonly draftGenerationMemoryService: DraftGenerationMemoryService,
-    private readonly metricEventHelperService: MetricEventHelperService,
   ) { }
 
   @ApiDoc({
@@ -91,8 +89,7 @@ export class DraftGenerationController {
   })
   @Get('/pricing')
   getPricing(): DraftGenerationPricingVo {
-    const pricing = this.draftGenerationService.getDraftGenerationPricing()
-    return DraftGenerationPricingVo.create(pricing)
+    return this.draftGenerationService.getDraftGenerationPricing()
   }
 
   @ApiDoc({
@@ -170,13 +167,12 @@ export class DraftGenerationController {
     @Body() body: CreateDraftGenerationV2Dto,
   ): Promise<CreateDraftGenerationVo> {
     const taskIds = await this.draftGenerationService.createDraftsV2(token.id, UserType.User, body)
-    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
     return CreateDraftGenerationVo.create({ taskIds })
   }
 
   @ApiDoc({
     summary: '生成图文内容草稿',
-    description: '使用 AI 生成图文内容草稿。支持选择草稿价格接口返回且当前服务已接入的图片模型；非 Gemini 模型收到参考图时，会优先尝试编辑能力，否则忽略参考图继续生成。返回 taskIds 可用于查询进度。',
+    description: '使用 AI 生成图文内容草稿。支持选择当前服务已接入的图片模型；非 Gemini 模型收到参考图时，会优先尝试编辑能力，否则忽略参考图继续生成。返回 taskIds 可用于查询进度。',
     body: CreateImageTextDraftDtoSchema,
     response: CreateDraftGenerationVo,
   })
@@ -186,7 +182,6 @@ export class DraftGenerationController {
     @Body() body: CreateImageTextDraftDto,
   ): Promise<CreateDraftGenerationVo> {
     const taskIds = await this.draftGenerationService.createImageTextDrafts(token.id, UserType.User, body)
-    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
     return CreateDraftGenerationVo.create({ taskIds })
   }
 
@@ -202,7 +197,6 @@ export class DraftGenerationController {
     @Body() body: CreateDraftFromVideoUrlDto,
   ): Promise<CreateDraftFromVideoUrlVo> {
     const result = await this.draftGenerationService.generateDraftFromVideoUrl(token.id, UserType.User, body)
-    await this.metricEventHelperService.record(token.id, MetricEventName.contentManagementAiGenerate)
     return CreateDraftFromVideoUrlVo.create(result)
   }
 }

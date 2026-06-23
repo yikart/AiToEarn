@@ -129,31 +129,4 @@ export class MaterialGroupRepository extends BaseRepository<MaterialGroup> {
       list,
     }
   }
-
-  async listByLibraryId(libraryId: string): Promise<MaterialGroup[]> {
-    return this.materialGroupModel.find({ libraryId }).lean({ virtuals: true })
-  }
-
-  async countByLibraryId(libraryId: string): Promise<number> {
-    return this.materialGroupModel.countDocuments({ libraryId })
-  }
-
-  async countByLibraryIdAndUserId(libraryId: string, userId: string): Promise<number> {
-    return this.materialGroupModel.countDocuments({ libraryId, userId })
-  }
-
-  async updateLibraryIdById(id: string, libraryId: string | null): Promise<boolean> {
-    const res = await this.materialGroupModel.updateOne(
-      { _id: id },
-      { $set: { libraryId } },
-    )
-    return res.modifiedCount > 0
-  }
-
-  async updateLibraryIdToNullByLibraryId(libraryId: string): Promise<void> {
-    await this.materialGroupModel.updateMany(
-      { libraryId },
-      { $set: { libraryId: null } },
-    ).exec()
-  }
 }

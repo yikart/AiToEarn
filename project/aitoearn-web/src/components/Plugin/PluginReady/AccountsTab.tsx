@@ -12,18 +12,19 @@ import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
-import AvatarPlat from '@/components/AvatarPlat'
+import { PlatType } from '@/app/config/platConfig'
 import { useChannelManagerStore } from '@/components/ChannelManager'
+import AvatarPlat from '@/components/common/AvatarPlat'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
 import { getXhsLoginStatus, isPluginPlatformAccountReady, usePluginStore } from '@/store/plugin'
 import { PLUGIN_SUPPORTED_PLATFORMS } from '@/store/plugin/types/baseTypes'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 
 interface AccountsTabProps {
   /** 需要高亮的平台 */
@@ -34,6 +35,10 @@ type PlatformLoginTarget = 'home' | 'creator'
 type XhsLoginStage = 'none' | 'homeOnly' | 'creatorOnly' | 'ready'
 
 const XHS_CREATOR_LOGIN_URL = '//creator.xiaohongshu.com/?source=official'
+const PLUGIN_PLATFORM_HOME_URLS: Record<PluginPlatformType, string> = {
+  [PlatType.Xhs]: '//www.xiaohongshu.com/',
+  [PlatType.WxSph]: 'https://channels.weixin.qq.com/',
+}
 const AUTH_POLLING_INTERVAL = 2000
 const AUTH_POLLING_MAX_ATTEMPTS = 60
 const AUTH_POLLING_PLATFORMS: readonly PluginPlatformType[] = [PlatType.Xhs, PlatType.WxSph]
@@ -46,7 +51,7 @@ function shouldStartAuthPolling(platform: PluginPlatformType) {
  * 获取平台显示名称
  */
 function getPlatformName(platform: PluginPlatformType): string {
-  const platInfo = AccountPlatInfoMap.get(platform)
+  const platInfo = getPlatformInfoSync(platform)
   return platInfo?.name || platform
 }
 
@@ -58,8 +63,7 @@ function getPlatformLoginUrl(platform: PluginPlatformType, target: PlatformLogin
     return XHS_CREATOR_LOGIN_URL
   }
 
-  const platInfo = AccountPlatInfoMap.get(platform)
-  return platInfo?.url
+  return PLUGIN_PLATFORM_HOME_URLS[platform]
 }
 
 function renderXhsLoginTip(
@@ -287,15 +291,6 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
     }
   }, [clearAuthPolling])
 
-  useEffect(() => {
-    const platform = authPollingPlatformRef.current
-
-    if (!platform || !isPluginPlatformAccountReady(platformAccounts[platform]))
-      return
-
-    void syncPlatformAccount(platform).finally(stopAuthPolling)
-  }, [platformAccounts, stopAuthPolling, syncPlatformAccount])
-
   /**
    * 处理同步账号到数据库
    */
@@ -335,6 +330,7 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
         {PLUGIN_SUPPORTED_PLATFORMS.map((platform) => {
           const account = platformAccounts[platform]
           const isConnected = isPluginPlatformAccountReady(account)
+          const loginUrl = getPlatformLoginUrl(platform)
           const xhsLoginStage = platform === PlatType.Xhs
             ? getXhsLoginStage(account)
             : 'none'
@@ -474,20 +470,22 @@ export function AccountsTab({ highlightPlatform }: AccountsTabProps) {
                           </TooltipProvider>
                         </div>
                       )
-                    : (
-                        <div className="flex flex-col items-end gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="cursor-pointer gap-1"
-                            onClick={() => handleGoLogin(platform)}
-                          >
-                            <ExternalLink className="h-4 w-4" />
-                            {t('header.loginNow')}
-                          </Button>
-                          {renderAuthPollingStatus(platform)}
-                        </div>
-                      )
+                    : loginUrl
+                      ? (
+                          <div className="flex flex-col items-end gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="cursor-pointer gap-1"
+                              onClick={() => handleGoLogin(platform)}
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              {t('header.loginNow')}
+                            </Button>
+                            {renderAuthPollingStatus(platform)}
+                          </div>
+                        )
+                      : null
                 )}
               </div>
             </div>

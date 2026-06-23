@@ -13,21 +13,15 @@ import {
   SpawnOptions,
 } from '@anthropic-ai/claude-agent-sdk'
 import { ContentBlockParam } from '@anthropic-ai/sdk/resources'
-import { Injectable, Logger } from '@nestjs/common'
-import { QueueService } from '@yikart/aitoearn-queue'
-import { AitoearnServerClientService } from '@yikart/aitoearn-server-client'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { StorageProvider } from '@yikart/assets'
 import {
   AppException,
-  CreditsType,
   getExceptionPayload,
-  NotificationMessageKey,
-  NotificationType,
   ResponseCode,
   UserType,
   WithLoggerContext,
 } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
 import {
   AiLogChannel,
   AiLogRepository,
@@ -45,8 +39,9 @@ import { z } from 'zod'
 import { RedlockKey } from '../../../common/enums'
 import { config } from '../../../config'
 import { AiAvailabilityService } from '../../ai-availability'
-import { McpServerName, POLLING_TASK_AGENT_PROMPT, SKILL_ANALYZER_AGENT_PROMPT, SYSTEM_PROMPT } from '../agent.constants'
-import { CreateContentGenerationTaskDto } from '../agent.dto'
+import { RelayMediaResolverService } from '../../ai/relay-media'
+import { ChannelsToolName, CLAUDE_CODE_ROUTER_PROVIDER_NAME, McpServerName, POLLING_TASK_AGENT_PROMPT, SKILL_ANALYZER_AGENT_PROMPT, SYSTEM_PROMPT } from '../agent.constants'
+import { ContentBlock, CreateContentGenerationTaskDto } from '../agent.dto'
 import { enhancePrompt, filterHeaders, normalizePrompt, sanitizeMessage, shouldFilterSyntheticMessage } from '../agent.utils'
 import {
   AgentMessageType,
@@ -75,7 +70,6 @@ export interface ClaudeQueryOptions {
   sessionId?: string
   model?: string
   taskId?: string
-  maxBudgetUsd?: number
   outputFormat?: OutputFormat
   persistSession?: boolean
   availabilityOperation?: string
@@ -106,16 +100,14 @@ export class AgentRuntimeService {
     private readonly videoEditMcp: VideoEditMcp,
     private readonly aiLogRepo: AiLogRepository,
     private readonly contentGenerateRepository: ContentGenerationTaskRepository,
-    private readonly creditsHelper: CreditsHelperService,
-    private readonly serverClient: AitoearnServerClientService,
+    private readonly aiAvailability: AiAvailabilityService,
     private readonly dramaRecapMcp: DramaRecapMcp,
     private readonly videoUtilsMcp: VideoUtilsMcp,
     private readonly styleTransferMcp: StyleTransferMcp,
     private readonly imageEditMcp: ImageEditMcp,
     private readonly subtitleMcp: SubtitleMcp,
     private readonly storageProvider: StorageProvider,
-    private readonly queueService: QueueService,
-    private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   private getTaskCwd(taskId: string): string {
@@ -185,6 +177,9 @@ export class AgentRuntimeService {
         case McpServerName.Subtitle:
           toolNames = Object.values(SubtitleToolName)
           break
+        case McpServerName.Channels:
+          toolNames = Object.values(ChannelsToolName)
+          break
         default:
           continue
       }
@@ -213,10 +208,13 @@ export class AgentRuntimeService {
       fs.mkdirSync(taskCwd, { recursive: true })
     }
 
+    const queryModel = options.model || config.agent.defaultModel
+    const ccrSubAgentModelPrompt = `<CCR-SUBAGENT-MODEL>${CLAUDE_CODE_ROUTER_PROVIDER_NAME},${config.agent.backgroundModel}</CCR-SUBAGENT-MODEL>`
+
     const queryOptions: Options = {
       permissionMode: 'default',
       includePartialMessages: options.includePartialMessages ?? false,
-      model: options.model,
+      model: queryModel,
       cwd: taskCwd,
       settingSources: ['project', 'user'],
       env: {
@@ -246,7 +244,7 @@ export class AgentRuntimeService {
       agents: {
         'polling-task': {
           description: 'AI task polling specialist for monitoring asynchronous video/media generation task status. Use when polling task status, checking completion, or handling timeouts.',
-          model: 'haiku',
+          model: 'inherit',
           mcpServers: [
             {
               ...(mcpServers?.[McpServerName.MediaGeneration] && { [McpServerName.MediaGeneration]: mcpServers[McpServerName.MediaGeneration] }),
@@ -270,7 +268,6 @@ export class AgentRuntimeService {
             'ToolSearch',
             'ListMcpResourcesTool',
             'ReadMcpResourceTool',
-            `mcp__${McpServerName.MediaGeneration}__getVeoVideoStatus`,
             `mcp__${McpServerName.MediaGeneration}__getVideoStatus`,
             `mcp__${McpServerName.MediaGeneration}__getSoraCharacter`,
             `mcp__${McpServerName.Aideo}__getAideoTaskStatus`,
@@ -280,15 +277,15 @@ export class AgentRuntimeService {
             `mcp__${McpServerName.Util}__wait`,
             `mcp__${McpServerName.Util}__getCurrentTime`,
           ],
-          prompt: POLLING_TASK_AGENT_PROMPT,
+          prompt: `${ccrSubAgentModelPrompt}\n${POLLING_TASK_AGENT_PROMPT}`,
           skills: [],
         },
         'skill-analyzer': {
           description: 'Analyzes user requests to determine which skills are needed for content generation tasks. Call this agent FIRST before any generation to identify required skills.',
-          model: 'haiku',
+          model: 'inherit',
           mcpServers: [],
           tools: [],
-          prompt: SKILL_ANALYZER_AGENT_PROMPT,
+          prompt: `${ccrSubAgentModelPrompt}\n${SKILL_ANALYZER_AGENT_PROMPT}`,
           skills: [],
         },
       },
@@ -305,7 +302,7 @@ export class AgentRuntimeService {
                   this.logger.debug({ input }, 'Received PostToolUse hook')
                   const response = input.tool_response
                   if (Array.isArray(response)) {
-                    const updatedResponse = response.map<ContentBlockParam>((block) => {
+                    const mappedResponse = response.map<ContentBlockParam>((block) => {
                       if (block.type === 'text' && typeof block.text === 'string' && block.text.startsWith('[Resource link: Image')) {
                         const url = block.text.split('] ')[1]
                         return {
@@ -318,6 +315,7 @@ export class AgentRuntimeService {
                       }
                       return block
                     })
+                    const updatedResponse = await this.resolveRelayJson(mappedResponse)
                     return {
                       hookSpecificOutput: {
                         hookEventName: 'PostToolUse',
@@ -332,7 +330,6 @@ export class AgentRuntimeService {
           },
         ],
       },
-      maxBudgetUsd: options.maxBudgetUsd,
       outputFormat: options.outputFormat,
       persistSession: options.persistSession,
       spawnClaudeCodeProcess,
@@ -365,9 +362,26 @@ export class AgentRuntimeService {
       options: queryOptions,
     })
 
+    const startedAt = Date.now()
+    const aiAvailability = this.aiAvailability
+    const availabilityContext = {
+      provider: 'agent',
+      operation: options.availabilityOperation ?? 'claudeQuery',
+      model: queryModel,
+      module: 'agent',
+    }
+
     return (async function* () {
-      for await (const chunk of req) {
-        yield chunk
+      try {
+        for await (const chunk of req) {
+          yield chunk
+        }
+
+        await aiAvailability.recordSuccess(availabilityContext, Date.now() - startedAt)
+      }
+      catch (error) {
+        await aiAvailability.recordFailure(availabilityContext, error, Date.now() - startedAt)
+        throw error
       }
     })()
   }
@@ -426,7 +440,7 @@ export class AgentRuntimeService {
     } = params
 
     return from(this.initializeTask(userId, userType, dto, abortController, req)).pipe(
-      mergeMap(({ taskId, sessionId: initialSessionId, abortController, mcpServers, maxBudgetUsd }) => {
+      mergeMap(({ taskId, sessionId: initialSessionId, abortController, mcpServers }) => {
         let sessionId = initialSessionId
         let completionResolver: () => void
         const completionPromise = new Promise<void>((resolve) => {
@@ -443,6 +457,8 @@ export class AgentRuntimeService {
         }
         this.runningTasks.set(taskId, taskInfo)
 
+        let completeTitleUpdate: (() => void) | undefined
+
         abortController.signal.addEventListener('abort', () => {
           this.logger.warn({
             taskId,
@@ -452,144 +468,142 @@ export class AgentRuntimeService {
           void this.contentGenerateRepository.updateStatus(taskId, ContentGenerationTaskStatus.Aborted)
         })
 
-        const normalizedContent = normalizePrompt(dto.prompt)
-        const enhancedContent = enhancePrompt(normalizedContent)
+        return from(this.prepareAgentPrompt(dto)).pipe(
+          mergeMap(({ normalizedContent, enhancedContent, systemPromptContent }) => {
+            const userMessage = {
+              type: 'user',
+              content: normalizedContent,
+            }
 
-        const userMessage = {
-          type: 'user',
-          content: normalizedContent,
-        }
+            void this.contentGenerateRepository.updateMessage(taskId, userMessage)
 
-        void this.contentGenerateRepository.updateMessage(taskId, userMessage)
+            let taskResult: TaskResult | undefined
 
-        const systemPromptContent = this.buildSystemPromptContent(null)
+            const outputTaskResultTool = wrapTool(
+              this.logger,
+              UtilToolName.OutputTaskResult,
+              'output task result JSON, the result will be included in the completion message.',
+              ContentGenerationTaskResultSchema.shape,
+              async (args) => {
+                taskResult = args.result
+                return successResult('Task result submitted successfully')
+              },
+              this.aiAvailability,
+            )
 
-        let taskResult: TaskResult | undefined
+            const [setTitleTool, titleUpdate$, completeTitleUpdateFn] = this.utilMcp.createSetTitleTool(taskId)
+            completeTitleUpdate = completeTitleUpdateFn
 
-        const outputTaskResultTool = wrapTool(
-          this.logger,
-          UtilToolName.OutputTaskResult,
-          'output task result JSON, the result will be included in the completion message.',
-          ContentGenerationTaskResultSchema.shape,
-          async (args) => {
-            taskResult = args.result
-            return successResult('Task result submitted successfully')
-          },
-          this.aiAvailability,
-        )
-
-        const [setTitleTool, titleUpdate$, completeTitleUpdate] = this.utilMcp.createSetTitleTool(taskId)
-
-        const sessionToolsMcp = createSdkMcpServer({
-          name: McpServerName.SessionTools,
-          version: '1.0.0',
-          tools: [outputTaskResultTool, setTitleTool],
-        })
-
-        const queryGenerator = this.claudeQuery(
-          systemPromptContent,
-          enhancedContent,
-          abortController,
-          {
-            includePartialMessages: dto.includePartialMessages ?? false,
-            sessionId,
-            model: dto.model,
-            taskId,
-            maxBudgetUsd,
-          },
-          {
-            [McpServerName.SessionTools]: sessionToolsMcp,
-            ...mcpServers,
-          },
-          (options: SpawnOptions): SpawnedProcess => {
-            const childProcess = spawn(options.command, options.args, {
-              cwd: options.cwd,
-              env: options.env,
-              signal: abortController.signal,
-              stdio: ['pipe', 'pipe', 'pipe'],
-              windowsHide: true,
-            })
-            childProcess.stderr.on('data', (data) => {
-              this.logger.debug({ taskId, sessionId }, `Received Claude DEBUG Log: ${data}`)
-            })
-            childProcess.on('exit', (code) => {
-              this.logger.debug({ taskId, sessionId, code }, `Claude Code process exited with code ${code}`)
+            const sessionToolsMcp = createSdkMcpServer({
+              name: McpServerName.SessionTools,
+              version: '1.0.0',
+              tools: [outputTaskResultTool, setTitleTool],
             })
 
-            taskInfo.claudeCodeProcess = childProcess
-
-            return childProcess
-          },
-        )
-
-        const messageStream$ = this.createMessageStream(queryGenerator).pipe(share())
-
-        const firstMessage$ = messageStream$.pipe(
-          first(),
-          concatMap(async (chunk) => {
-            const extractedSessionId = 'session_id' in chunk ? chunk.session_id : undefined
-
-            this.logger.debug({ taskId, chunk }, `Task ${taskId} first message received`)
-
-            if (extractedSessionId) {
-              await this.contentGenerateRepository.updateById(taskId, {
-                sessionId: extractedSessionId,
-              })
-              sessionId = extractedSessionId
-              taskInfo.sessionId = extractedSessionId
-
-              taskInfo.completionPromise
-                .then(() => {
-                  this.logger.log({ taskId: taskInfo.taskId, sessionId }, `Task ${taskInfo.taskId} completed during shutdown`)
+            const queryGenerator = this.claudeQuery(
+              systemPromptContent,
+              enhancedContent,
+              abortController,
+              {
+                includePartialMessages: dto.includePartialMessages ?? false,
+                sessionId,
+                model: dto.model,
+                taskId,
+              },
+              {
+                [McpServerName.SessionTools]: sessionToolsMcp,
+                ...mcpServers,
+              },
+              (options: SpawnOptions): SpawnedProcess => {
+                const childProcess = spawn(options.command, options.args, {
+                  cwd: options.cwd,
+                  env: options.env,
+                  signal: abortController.signal,
+                  stdio: ['pipe', 'pipe', 'pipe'],
+                  windowsHide: true,
                 })
-              this.logger.debug({ taskId, sessionId: extractedSessionId }, `Task ${taskId} sessionId saved: ${extractedSessionId}`)
-            }
+                childProcess.stderr.on('data', (data) => {
+                  this.logger.debug({ taskId, sessionId }, `Received Claude DEBUG Log: ${data}`)
+                })
+                childProcess.on('exit', (code) => {
+                  this.logger.debug({ taskId, sessionId, code }, `Claude Code process exited with code ${code}`)
+                })
 
-            return ContentGenerationTaskInitChunkVo.create({
-              type: AgentMessageType.Init,
-              taskId,
-              messages: undefined,
+                taskInfo.claudeCodeProcess = childProcess
+
+                return childProcess
+              },
+            )
+
+            const messageStream$ = this.createMessageStream(queryGenerator).pipe(share())
+
+            const firstMessage$ = messageStream$.pipe(
+              first(),
+              concatMap(async (chunk) => {
+                const extractedSessionId = 'session_id' in chunk ? chunk.session_id : undefined
+
+                this.logger.debug({ taskId, chunk }, `Task ${taskId} first message received`)
+
+                if (extractedSessionId) {
+                  await this.contentGenerateRepository.updateById(taskId, {
+                    sessionId: extractedSessionId,
+                  })
+                  sessionId = extractedSessionId
+                  taskInfo.sessionId = extractedSessionId
+
+                  taskInfo.completionPromise
+                    .then(() => {
+                      this.logger.log({ taskId: taskInfo.taskId, sessionId }, `Task ${taskInfo.taskId} completed during shutdown`)
+                    })
+                  this.logger.debug({ taskId, sessionId: extractedSessionId }, `Task ${taskId} sessionId saved: ${extractedSessionId}`)
+                }
+
+                return ContentGenerationTaskInitChunkVo.create({
+                  type: AgentMessageType.Init,
+                  taskId,
+                  messages: undefined,
+                })
+              }),
+            )
+
+            const restMessages$ = messageStream$.pipe(
+              tap((chunk) => {
+                if (chunk.type !== 'stream_event') {
+                  this.logger.debug({ taskId, sessionId, chunk: sanitizeMessage(chunk) }, `Received message for task ${taskId}`)
+                }
+              }),
+              skip(1),
+              filter(chunk => !shouldFilterSyntheticMessage(chunk)),
+              concatMap(async (chunk) => {
+                return this.transformMessage(chunk, taskId, userId, userType, taskResult, sessionId)
+              }),
+            )
+
+            const completionSignal$ = new Observable<null>((subscriber) => {
+              messageStream$.subscribe({
+                complete: () => subscriber.next(null),
+                error: () => subscriber.next(null),
+              })
             })
+
+            const keepAlive$ = interval(5000).pipe(
+              map(() => ContentGenerationTaskKeepAliveChunkVo.create({
+                type: AgentMessageType.KeepAlive,
+              })),
+              takeUntil(completionSignal$),
+            )
+
+            const titleUpdateStream$ = titleUpdate$.pipe(
+              takeUntil(completionSignal$),
+            )
+
+            return merge(
+              firstMessage$,
+              restMessages$,
+              keepAlive$,
+              titleUpdateStream$,
+            )
           }),
-        )
-
-        const restMessages$ = messageStream$.pipe(
-          tap((chunk) => {
-            if (chunk.type !== 'stream_event') {
-              this.logger.debug({ taskId, sessionId, chunk: sanitizeMessage(chunk) }, `Received message for task ${taskId}`)
-            }
-          }),
-          skip(1),
-          filter(chunk => !shouldFilterSyntheticMessage(chunk)),
-          concatMap(async (chunk) => {
-            return this.transformMessage(chunk, taskId, userId, userType, taskResult, sessionId)
-          }),
-        )
-
-        const completionSignal$ = new Observable<null>((subscriber) => {
-          messageStream$.subscribe({
-            complete: () => subscriber.next(null),
-            error: () => subscriber.next(null),
-          })
-        })
-
-        const keepAlive$ = interval(5000).pipe(
-          map(() => ContentGenerationTaskKeepAliveChunkVo.create({
-            type: AgentMessageType.KeepAlive,
-          })),
-          takeUntil(completionSignal$),
-        )
-
-        const titleUpdateStream$ = titleUpdate$.pipe(
-          takeUntil(completionSignal$),
-        )
-
-        return merge(
-          firstMessage$,
-          restMessages$,
-          keepAlive$,
-          titleUpdateStream$,
-        ).pipe(
           catchError((error) => {
             this.logger.error(Object.assign(error, { taskId, sessionId }), `Error in task ${taskId}, session ${sessionId}`)
             if (error instanceof AbortError) {
@@ -611,7 +625,9 @@ export class AgentRuntimeService {
             return of(errorChunk)
           }),
           finalize(async () => {
-            completeTitleUpdate()
+            if (completeTitleUpdate) {
+              completeTitleUpdate()
+            }
 
             if (!res.closed) {
               res.end()
@@ -628,8 +644,6 @@ export class AgentRuntimeService {
 
             completionResolver()
             this.runningTasks.delete(taskId)
-
-            // void this.queueService.addAgentTaskAnalysisJob({ taskId, userId })
 
             this.logger.log({
               taskId,
@@ -695,10 +709,7 @@ export class AgentRuntimeService {
     historicalMessages: Array<Record<string, unknown>>
     abortController: AbortController
     mcpServers: Record<string, McpServerConfig>
-    maxBudgetUsd?: number
   }> {
-    const maxBudgetUsd: number | undefined = undefined
-
     let task
     let originalTask
     let sessionId: string | undefined
@@ -757,9 +768,14 @@ export class AgentRuntimeService {
         url: `${config.serverClient.baseUrl}/content/mcp`,
         headers,
       },
-      [McpServerName.Publish]: {
+      [McpServerName.Statistics]: {
         type: 'http',
-        url: `${config.serverClient.baseUrl}/publish/mcp`,
+        url: `${config.serverClient.baseUrl}/statistics/mcp`,
+        headers,
+      },
+      [McpServerName.Channels]: {
+        type: 'http',
+        url: `${config.serverClient.baseUrl}/channels/mcp`,
         headers,
       },
     }
@@ -770,7 +786,6 @@ export class AgentRuntimeService {
       historicalMessages,
       abortController,
       mcpServers,
-      maxBudgetUsd,
     }
   }
 
@@ -790,18 +805,6 @@ export class AgentRuntimeService {
       const { session_id, modelUsage, ...restChunk } = chunk
       const currentSessionId = sessionId || session_id || undefined
       if ('total_cost_usd' in chunk) {
-        const points = (chunk.total_cost_usd || 0) * 100
-
-        if (userType === UserType.User) {
-          await this.creditsHelper.deductCredits({
-            userId,
-            amount: points,
-            type: CreditsType.AiService,
-            description: 'claude',
-            metadata: { taskId, modelUsage },
-          })
-        }
-
         await this.aiLogRepo.create({
           userId,
           userType,
@@ -810,7 +813,6 @@ export class AgentRuntimeService {
           channel: AiLogChannel.ClaudeAgent,
           startedAt: new Date(),
           type: AiLogType.Agent,
-          points,
           request: {},
           response: { modelUsage, taskResult },
           status: AiLogStatus.Success,
@@ -839,16 +841,6 @@ export class AgentRuntimeService {
           const finalStatus = hasRequiresAction ? ContentGenerationTaskStatus.RequiresAction : ContentGenerationTaskStatus.Completed
 
           void this.contentGenerateRepository.updateStatus(taskId, finalStatus)
-          void this.serverClient.notification.createForUser({
-            userId,
-            userType: UserType.User,
-            messageKey: hasRequiresAction
-              ? NotificationMessageKey.AgentResultRequiresAction
-              : NotificationMessageKey.AgentResult,
-            vars: { taskId, status: finalStatus },
-            type: NotificationType.AgentResult,
-            relatedId: taskId,
-          })
 
           return ContentGenerationTaskAgentChunkVo.create({
             type: this.getMessageType(chunk),
@@ -896,12 +888,29 @@ export class AgentRuntimeService {
     })
   }
 
-  private buildSystemPromptContent(_brand: unknown): ContentBlockParam[] {
-    const content: ContentBlockParam[] = []
+  private buildSystemPromptContent(): ContentBlockParam[] {
+    return [{ type: 'text', text: SYSTEM_PROMPT }]
+  }
 
-    content.push({ type: 'text', text: SYSTEM_PROMPT })
+  private async prepareAgentPrompt(dto: CreateContentGenerationTaskDto): Promise<{
+    normalizedContent: ContentBlock[]
+    enhancedContent: ContentBlockParam[]
+    systemPromptContent: ContentBlockParam[]
+  }> {
+    const normalizedContent = normalizePrompt(dto.prompt)
+    const relayContent = await this.resolveRelayJson(normalizedContent)
+    return {
+      normalizedContent,
+      enhancedContent: enhancePrompt(relayContent),
+      systemPromptContent: await this.buildSystemPromptContent(),
+    }
+  }
 
-    return content
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
   }
 
   private async uploadAgentSession(sessionId: string, taskId: string): Promise<void> {

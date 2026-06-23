@@ -1,5 +1,5 @@
 /**
- * AgentAssetsHeader - Agent 素材页顶部组件
+ * AgentAssetsHeader - AI 生成素材页顶部组件
  * 包含返回按钮、标题（只读模式，无上传按钮）
  */
 
@@ -22,7 +22,7 @@ export function AgentAssetsHeader({ total }: AgentAssetsHeaderProps) {
 
   // 返回内容管理
   const handleBack = useCallback(() => {
-    router.push('/')
+    router.push('/draft-box')
   }, [router])
 
   return (
@@ -33,8 +33,8 @@ export function AgentAssetsHeader({ total }: AgentAssetsHeaderProps) {
         </Button>
 
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
-            <Bot className="w-4 h-4 text-white" />
+          <div className="w-8 h-8 rounded-lg bg-gradient-back text-gradient-foreground flex items-center justify-center shadow-sm shadow-primary/20">
+            <Bot className="w-4 h-4" />
           </div>
           <h1 className="text-lg font-semibold text-foreground">{t('agentAssets.title')}</h1>
         </div>

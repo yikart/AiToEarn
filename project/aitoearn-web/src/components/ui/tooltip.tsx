@@ -11,7 +11,7 @@ import * as React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 const TooltipProvider = TooltipPrimitive.Provider
 
@@ -60,7 +60,9 @@ function TooltipMobile({
       }
     }
     document.addEventListener('pointerdown', handleClickOutside)
-    return () => document.removeEventListener('pointerdown', handleClickOutside)
+    return () => {
+      document.removeEventListener('pointerdown', handleClickOutside)
+    }
   }, [open, onOpenChange])
 
   return (

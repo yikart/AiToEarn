@@ -1,0 +1,23 @@
+{
+  "name": "@yikart/config-editor",
+  "type": "commonjs",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yikart/aitoearn-monorepo.git"
+  },
+  "main": "./src/index.js",
+  "types": "./src/index.d.ts",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "peerDependencies": {
+    "@nestjs/common": "11.1.24",
+    "@nestjs/core": "11.1.24",
+    "@nestjs/swagger": "11.2.6",
+    "@yikart/common": "workspace:*",
+    "tslib": "2.8.1",
+    "yaml": "2.8.3",
+    "zod": "4.3.6"
+  }
+}

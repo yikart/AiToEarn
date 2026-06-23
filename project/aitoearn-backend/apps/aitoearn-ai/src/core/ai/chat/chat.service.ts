@@ -3,11 +3,10 @@ import { RawMessageStreamEvent } from '@anthropic-ai/sdk/resources'
 import { GenerateContentResponse, GenerateContentResponseUsageMetadata } from '@google/genai'
 import { BaseMessage, ChatMessage } from '@langchain/core/messages'
 import { OpenAIClient } from '@langchain/openai'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, getErrorMessage, getErrorStack, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
-import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType, UserRepository } from '@yikart/mongodb'
+import { AppException, getErrorMessage, getErrorStack, ResponseCode, UserType } from '@yikart/common'
+import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType, AssetType } from '@yikart/mongodb'
 import OpenAI from 'openai'
 import { from, merge, Observable } from 'rxjs'
 import { catchError, concatMap, ignoreElements, last, share } from 'rxjs/operators'
@@ -16,7 +15,7 @@ import { AiAvailabilityService } from '../../ai-availability'
 import { GeminiService } from '../libs/gemini/gemini.service'
 import { OpenaiService } from '../libs/openai'
 import { ModelsConfigService } from '../models-config'
-import { calculatePricingPoints, ChatPricing, TokenUsageDetails } from '../pricing/pricing-calculator'
+import { RelayMediaResolverService } from '../relay-media'
 import {
   ChatCompletionDto,
   ChatModelsQueryDto,
@@ -25,6 +24,21 @@ import {
   UserClaudeChatProxyDto,
   UserGeminiGenerateContentDto,
 } from './chat.dto'
+
+type DeepSeekChatCompletionUsage = NonNullable<OpenAI.Chat.ChatCompletionChunk['usage']> & {
+  prompt_cache_hit_tokens?: number
+  prompt_cache_miss_tokens?: number
+}
+
+interface TokenUsageDetails {
+  text?: number
+  image?: number
+  audio?: number
+  video?: number
+  cache_read?: number
+  cache_creation_5m?: number
+  cache_creation_1h?: number
+}
 
 @Injectable()
 export class ChatService {
@@ -36,14 +50,13 @@ export class ChatService {
   })
 
   constructor(
-    private readonly userRepo: UserRepository,
     private readonly openaiService: OpenaiService,
-    private readonly creditsHelper: CreditsHelperService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly modelsConfigService: ModelsConfigService,
     private readonly assetsService: AssetsService,
     private readonly geminiService: GeminiService,
     private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {}
 
   /**
@@ -113,8 +126,6 @@ export class ChatService {
 
   async chatCompletion(request: ChatCompletionDto, userId: string) {
     const { messages, model, ...params } = request
-    delete (params as { billingGroupId?: string }).billingGroupId
-    delete (params as { source?: CreditsConsumptionSource }).source
 
     const langchainMessages: BaseMessage[] = messages.map((message) => {
       return new ChatMessage(message)
@@ -142,83 +153,19 @@ export class ChatService {
     }
   }
 
-  /**
-   * 扣减用户Credits
-   * @param userId 用户ID
-   * @param amount 扣减Credits数量
-   * @param description Credits变动描述
-   * @param metadata 额外信息
-   */
-  async deductUserPoints(
-    userId: string,
-    amount: number,
-    description: string,
-    metadata?: Record<string, unknown>,
-    billingGroupId?: string,
-    source = CreditsConsumptionSource.AiChat,
-  ): Promise<void> {
-    await this.creditsHelper.deductCredits({
-      userId,
-      amount,
-      type: CreditsType.AiService,
-      source,
-      description,
-      metadata: billingGroupId
-        ? { ...metadata, billingGroupId }
-        : metadata,
-    })
-  }
-
-  /**
-   * 检查用户余额是否足够
-   * @param userId 用户ID
-   * @param userType 用户类型
-   * @param pricing 价格配置
-   */
-  private async checkUserBalance(_userId: string, _userType: UserType, _pricing: ChatPricing): Promise<void> {
-    return undefined
-  }
-
-  /**
-   * 处理完成逻辑：扣减积分和记录日志
-   * @param params 参数
-   * @param userId 用户ID
-   * @param userType 用户类型
-   * @param modelConfig 模型配置，包含 name 和 pricing
-   * @param startedAt 开始时间
-   * @param usage token 使用情况
-   * @param result 响应结果
-   * @returns 计算出的积分
-   */
   private async handleCompletion(
     params: ChatCompletionDto,
     userId: string,
     userType: UserType,
-    modelConfig: { name: string, channel: AiLogChannel, pricing: ChatPricing },
+    modelConfig: { name: string, channel: AiLogChannel },
     startedAt: Date,
     usage: { input_tokens?: number, output_tokens?: number, total_tokens?: number, input_token_details?: TokenUsageDetails, output_token_details?: TokenUsageDetails },
     result: { model: string, usage: typeof usage },
-    billingGroupId?: string,
-    source = CreditsConsumptionSource.AiChat,
-  ): Promise<number> {
-    const points = calculatePricingPoints(modelConfig.pricing, usage)
-
+  ): Promise<void> {
     this.logger.debug({
-      points,
       usage,
       modelConfig,
     })
-
-    if (userType === UserType.User) {
-      await this.deductUserPoints(
-        userId,
-        points,
-        modelConfig.name,
-        usage,
-        billingGroupId,
-        source,
-      )
-    }
 
     const duration = Date.now() - startedAt.getTime()
 
@@ -230,22 +177,17 @@ export class ChatService {
       startedAt,
       duration,
       type: AiLogType.Chat,
-      points,
       request: params as unknown as Record<string, unknown>,
       response: result,
       status: AiLogStatus.Success,
     })
-
-    return points
   }
 
-  async userChatCompletion({ userId, userType, billingGroupId, source = CreditsConsumptionSource.AiChat, ...params }: UserChatCompletionDto) {
+  async userChatCompletion({ userId, userType, ...params }: UserChatCompletionDto) {
     const modelConfig = (await this.getChatModelConfig({ userId, userType })).find((m: { name: string }) => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-
-    await this.checkUserBalance(userId, userType, modelConfig.pricing)
 
     const startedAt = new Date()
 
@@ -253,7 +195,7 @@ export class ChatService {
 
     const { usage } = result
 
-    const points = await this.handleCompletion(
+    await this.handleCompletion(
       params,
       userId,
       userType,
@@ -261,17 +203,9 @@ export class ChatService {
       startedAt,
       usage,
       result,
-      billingGroupId,
-      source,
     )
 
-    return {
-      ...result,
-      usage: {
-        ...usage,
-        points,
-      },
-    }
+    return result
   }
 
   /**
@@ -322,15 +256,13 @@ export class ChatService {
   async proxyChatStream(
     params: ChatStreamProxyDto & { userId: string, userType: UserType },
   ): Promise<Observable<OpenAI.Chat.ChatCompletionChunk>> {
-    const { userId, userType, model, billingGroupId, source = CreditsConsumptionSource.AiChat, ...body } = params
+    const { userId, userType, model, ...body } = params
 
     const modelConfig = (await this.getChatModelConfig({ userId, userType }))
       .find(m => m.name === model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-
-    await this.checkUserBalance(userId, userType, modelConfig.pricing)
 
     const startedAt = new Date()
 
@@ -351,11 +283,14 @@ export class ChatService {
       last(),
       concatMap(async (lastChunk) => {
         if (lastChunk.usage) {
-          const usage = lastChunk.usage
+          const usage: DeepSeekChatCompletionUsage = lastChunk.usage
+          const cacheReadTokens = usage.prompt_cache_hit_tokens ?? usage.prompt_tokens_details?.cached_tokens ?? 0
+          const inputTokens = usage.prompt_cache_miss_tokens ?? Math.max((usage.prompt_tokens || 0) - cacheReadTokens, 0)
           const finalUsage = {
-            input_tokens: usage.prompt_tokens,
+            input_tokens: inputTokens,
             output_tokens: usage.completion_tokens,
             total_tokens: usage.total_tokens,
+            input_token_details: { cache_read: cacheReadTokens },
           }
           await this.handleCompletion(
             { model } as ChatCompletionDto,
@@ -365,8 +300,6 @@ export class ChatService {
             startedAt,
             finalUsage,
             { model, usage: finalUsage },
-            billingGroupId,
-            source,
           )
         }
 
@@ -392,21 +325,20 @@ export class ChatService {
   }
 
   /**
-   * Claude 流式对话（透传，含积分扣费）
+   * Claude 流式对话（透传）
    * 返回 Observable<RawMessageStreamEvent> 原始事件流
    */
   async proxyClaudeChatStream({ userId, userType, ...params }: UserClaudeChatProxyDto): Promise<Observable<RawMessageStreamEvent>> {
-    const { billingGroupId, source = CreditsConsumptionSource.AiChat, ...body } = params
+    const body = params
     const modelConfig = (await this.getChatModelConfig({ userId, userType })).find((m: { name: string }) => m.name === params.model)
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
 
-    await this.checkUserBalance(userId, userType, modelConfig.pricing)
-
     const startedAt = new Date()
 
-    const stream = this.anthropic.messages.stream(body as Anthropic.MessageStreamParams)
+    const resolvedBody = await this.resolveRelayJson(body)
+    const stream = this.anthropic.messages.stream(resolvedBody as Anthropic.MessageStreamParams)
 
     const stream$ = from(stream).pipe(
       share(),
@@ -419,6 +351,17 @@ export class ChatService {
       concatMap(async () => {
         const finalMessage = await stream.finalMessage()
         const usage = finalMessage.usage
+        const cacheCreation = usage.cache_creation
+        const inputTokenDetails: TokenUsageDetails = {
+          cache_read: usage.cache_read_input_tokens ?? 0,
+          cache_creation_5m: cacheCreation?.ephemeral_5m_input_tokens ?? usage.cache_creation_input_tokens ?? 0,
+          cache_creation_1h: cacheCreation?.ephemeral_1h_input_tokens ?? 0,
+        }
+        const finalUsage = {
+          input_tokens: usage.input_tokens,
+          output_tokens: usage.output_tokens,
+          input_token_details: inputTokenDetails,
+        }
 
         await this.handleCompletion(
           { model: params.model, messages: params.messages as ChatCompletionDto['messages'] },
@@ -426,10 +369,8 @@ export class ChatService {
           userType,
           modelConfig,
           startedAt,
-          usage,
-          { model: params.model, usage },
-          billingGroupId,
-          source,
+          finalUsage,
+          { model: params.model, usage: finalUsage },
         )
 
         await this.aiAvailability.recordSuccess(
@@ -455,7 +396,6 @@ export class ChatService {
 
   /**
    * Gemini generateContent（通用内容生成，支持视频/音频/图片分析）
-   * 带用户计费
    */
   async userGeminiGenerateContent(request: UserGeminiGenerateContentDto) {
     const { userId, userType, model, ...params } = request
@@ -466,9 +406,6 @@ export class ChatService {
     if (!modelConfig) {
       throw new AppException(ResponseCode.InvalidModel)
     }
-
-    // 检查余额
-    await this.checkUserBalance(userId, userType, modelConfig.pricing)
 
     const startedAt = new Date()
 
@@ -484,7 +421,6 @@ export class ChatService {
       })
 
       for await (const chunk of responses) {
-        this.logger.debug({ chunk }, 'Received chunk from Gemini')
         usage = chunk.usageMetadata
 
         if (!result) {
@@ -514,18 +450,7 @@ export class ChatService {
       throw error
     }
 
-    this.logger.debug({ result }, 'Received result from Gemini')
-
-    const inputTokenDetails = this.extractGeminiTokenDetails((usage as unknown as Record<string, unknown>)?.['promptTokensDetails'])
-    const outputTokenDetails = this.extractGeminiTokenDetails((usage as unknown as Record<string, unknown>)?.['candidatesTokensDetails'])
-
-    const finalUsage = {
-      input_tokens: usage?.promptTokenCount || 0,
-      output_tokens: usage?.candidatesTokenCount || 0,
-      total_tokens: usage?.totalTokenCount || 0,
-      input_token_details: inputTokenDetails,
-      output_token_details: outputTokenDetails,
-    }
+    const finalUsage = this.buildGeminiUsage(usage)
 
     await this.handleCompletion(
       { model, messages: [] },
@@ -540,20 +465,49 @@ export class ChatService {
     return result!
   }
 
-  private extractGeminiTokenDetails(details: unknown): TokenUsageDetails | undefined {
-    if (!Array.isArray(details)) {
+  /**
+   * 将 Gemini usageMetadata 转换为统一 usage 结构。
+   */
+  buildGeminiUsage(usage: GenerateContentResponseUsageMetadata | undefined): {
+    input_tokens: number
+    output_tokens: number
+    total_tokens: number
+    input_token_details: TokenUsageDetails
+    output_token_details: TokenUsageDetails | undefined
+  } {
+    const inputTokenDetails = this.extractGeminiTokenDetails(usage?.promptTokensDetails) ?? {}
+    const outputTokenDetails = this.extractGeminiTokenDetails(usage?.candidatesTokensDetails)
+    const cacheReadTokens = usage?.cachedContentTokenCount || 0
+    if (inputTokenDetails.text) {
+      inputTokenDetails.text = Math.max(inputTokenDetails.text - cacheReadTokens, 0)
+    }
+    inputTokenDetails.cache_read = cacheReadTokens
+
+    return {
+      input_tokens: cacheReadTokens > 0 ? Math.max((usage?.promptTokenCount || 0) - cacheReadTokens, 0) : usage?.promptTokenCount || 0,
+      output_tokens: usage?.candidatesTokenCount || 0,
+      total_tokens: usage?.totalTokenCount || 0,
+      input_token_details: inputTokenDetails,
+      output_token_details: outputTokenDetails,
+    }
+  }
+
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
+    }
+    return await this.relayMediaResolver.resolveJson(value)
+  }
+
+  extractGeminiTokenDetails(details: GenerateContentResponseUsageMetadata['promptTokensDetails']): TokenUsageDetails | undefined {
+    if (!details) {
       return undefined
     }
 
     const result: TokenUsageDetails = {}
-    for (const item of details) {
-      if (typeof item !== 'object' || item == null) {
-        continue
-      }
-
-      const detail = item as Record<string, unknown>
-      const rawModality = detail['modality']
-      const rawTokenCount = detail['tokenCount']
+    for (const detail of details) {
+      const rawModality = detail.modality
+      const rawTokenCount = detail.tokenCount
       if (typeof rawModality !== 'string' || typeof rawTokenCount !== 'number' || rawTokenCount <= 0) {
         continue
       }

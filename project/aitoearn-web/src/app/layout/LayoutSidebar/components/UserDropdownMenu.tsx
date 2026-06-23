@@ -7,23 +7,29 @@
 'use client'
 
 import type { SidebarCommonProps } from '../types'
-import type { SettingsTab } from '@/components/SettingsModal'
-import { Bell, BookOpen, ChevronRight, FileText, Globe, LogOut, Mail, ScrollText, Settings, Shield } from 'lucide-react'
+import type { SettingsTab } from '@/store/settingsModal'
+import {
+  BookOpen,
+  ChevronRight,
+  FileText,
+  LogOut,
+  ScrollText,
+  Settings,
+  Shield,
+} from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { DOCS_URL, GITHUB_REPO } from '@/app/layout/shared/constants'
 import { useGitHubStars } from '@/app/layout/shared/hooks/useGitHubStars'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { CONTACT } from '@/constant'
-import { cn } from '@/lib/utils'
 import { useUserStore } from '@/store/user'
 import { navigateToLogin } from '@/utils/auth'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 
 /** GitHub SVG 图标 */
@@ -36,10 +42,6 @@ function GitHubIcon({ className }: { className?: string }) {
 }
 
 export interface UserDropdownMenuProps extends SidebarCommonProps {
-  /** 未读通知数 */
-  unreadCount: number
-  /** 打开通知面板 */
-  onOpenNotification: () => void
   /** 打开设置弹框 */
   onOpenSettings: (defaultTab?: SettingsTab) => void
 }
@@ -78,12 +80,7 @@ function MenuItem({
   if (href) {
     if (external) {
       return (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={baseClassName}
-        >
+        <a href={href} target="_blank" rel="noopener noreferrer" className={baseClassName}>
           {content}
         </a>
       )
@@ -104,15 +101,9 @@ function MenuItem({
 
 /** 已登录用户的下拉菜单内容 */
 function LoggedInMenuContent({
-  collapsed,
-  unreadCount,
-  onOpenNotification,
   onOpenSettings,
   onClose,
 }: {
-  collapsed: boolean
-  unreadCount: number
-  onOpenNotification: () => void
   onOpenSettings: (defaultTab?: SettingsTab) => void
   onClose: () => void
 }) {
@@ -131,24 +122,25 @@ function LoggedInMenuContent({
     onClose()
   }
 
-  const handleOpenNotification = () => {
-    onOpenNotification()
-    onClose()
-  }
-
   return (
     <>
       <div className="flex flex-col gap-1 p-2">
         {/* 用户信息区域 */}
         <div className="flex items-center gap-3 px-3 py-2">
           <Avatar className="h-10 w-10 shrink-0 border border-border">
-            <AvatarImage src={getOssUrl(userInfo?.avatar) || ''} alt={userInfo?.name || t('common:unknownUser')} />
+            <AvatarImage
+              src={getOssUrl(userInfo?.avatar) || ''}
+              alt={userInfo?.name || t('common:unknownUser')}
+            />
             <AvatarFallback className="bg-muted-foreground font-semibold text-background">
               {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
             </AvatarFallback>
           </Avatar>
           <div className="flex min-w-0 flex-1 flex-col">
-            <span className="truncate text-sm font-medium text-foreground" data-testid="sidebar-user-name">
+            <span
+              className="truncate text-sm font-medium text-foreground"
+              data-testid="sidebar-user-name"
+            >
               {userInfo?.name || t('common:unknownUser')}
             </span>
           </div>
@@ -156,25 +148,17 @@ function LoggedInMenuContent({
 
         <div className="my-1 h-px bg-border" />
 
-        {/* 低频：外部链接 */}
-        <MenuItem
-          icon={Globe}
-          label={t('common:goToWebsite')}
-          href="/ai-social"
-        />
         <MenuItem
           icon={GitHubIcon}
           label="GitHub"
-          rightContent={
-            <span className="text-xs text-muted-foreground">{starCount}</span>
-          }
+          rightContent={<span className="text-xs text-muted-foreground">{starCount}</span>}
           href={`https://github.com/${GITHUB_REPO}`}
           external
         />
 
         <div className="my-1 h-px bg-border" />
 
-        {/* 中频：文档 + 联系我们 */}
+        {/* 中频：文档 */}
         <div className="group/docs relative">
           {/* 触发行 */}
           <div className="flex w-full cursor-pointer items-center gap-3 rounded-md px-3 py-2 text-sm text-foreground transition-colors hover:bg-accent">
@@ -186,46 +170,29 @@ function LoggedInMenuContent({
           <div className="invisible absolute left-full top-0 z-50 pl-1 opacity-0 transition-all group-hover/docs:visible group-hover/docs:opacity-100">
             <div className="w-48 rounded-md border bg-popover p-1 shadow-md">
               <MenuItem icon={FileText} label={t('common:helpDocs')} href={DOCS_URL} external />
-              <MenuItem icon={FileText} label={t('common:pluginGuide')} href="/websit/plugin-guide" />
-              <MenuItem icon={Shield} label={t('common:privacyPolicy')} href="/websit/privacy-policy" />
-              <MenuItem icon={ScrollText} label={t('common:termsOfService')} href="/websit/terms-of-service" />
+              <MenuItem
+                icon={FileText}
+                label={t('common:pluginGuide')}
+                href="/websit/plugin-guide"
+              />
+              <MenuItem
+                icon={Shield}
+                label={t('common:privacyPolicy')}
+                href="/websit/privacy-policy"
+              />
+              <MenuItem
+                icon={ScrollText}
+                label={t('common:termsOfService')}
+                href="/websit/terms-of-service"
+              />
             </div>
           </div>
         </div>
-        <MenuItem
-          icon={Mail}
-          label={t('common:contactUs')}
-          href={`mailto:${CONTACT}`}
-          external
-        />
-
         <div className="my-1 h-px bg-border" />
 
-        {/* 高频：通知 + 设置 */}
-        <div data-testid="sidebar-notification-entry">
-          <MenuItem
-            icon={Bell}
-            label={t('common:notifications')}
-            rightContent={
-              unreadCount > 0 && (
-                <Badge
-                  variant="destructive"
-                  className="h-5 min-w-5 px-1.5 text-[10px]"
-                  data-testid="sidebar-notification-badge"
-                >
-                  {unreadCount > 99 ? '99+' : unreadCount}
-                </Badge>
-              )
-            }
-            onClick={handleOpenNotification}
-          />
-        </div>
+        {/* 高频：设置 */}
         <div data-testid="sidebar-settings-entry">
-          <MenuItem
-            icon={Settings}
-            label={t('common:settings')}
-            onClick={handleOpenSettings}
-          />
+          <MenuItem icon={Settings} label={t('common:settings')} onClick={handleOpenSettings} />
         </div>
 
         <div className="my-1 h-px bg-border" />
@@ -240,17 +207,11 @@ function LoggedInMenuContent({
           />
         </div>
       </div>
-
     </>
   )
 }
 
-export function UserDropdownMenu({
-  collapsed,
-  unreadCount,
-  onOpenNotification,
-  onOpenSettings,
-}: UserDropdownMenuProps) {
+export function UserDropdownMenu({ collapsed, onOpenSettings }: UserDropdownMenuProps) {
   const token = useUserStore(state => state.token)
   const userInfo = useUserStore(state => state.userInfo)
   const hasHydrated = useUserStore(state => state._hasHydrated)
@@ -274,7 +235,12 @@ export function UserDropdownMenu({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <Button onClick={handleLogin} size="icon" className="h-9 w-9" data-testid="sidebar-login-btn">
+              <Button
+                onClick={handleLogin}
+                size="icon"
+                className="h-9 w-9"
+                data-testid="sidebar-login-btn"
+              >
                 <span className="text-sm font-semibold">In</span>
               </Button>
             </TooltipTrigger>
@@ -322,7 +288,10 @@ export function UserDropdownMenu({
                   )}
                 >
                   <Avatar className="h-8 w-8 shrink-0 border border-border">
-                    <AvatarImage src={getOssUrl(userInfo?.avatar) || ''} alt={userInfo?.name || t('unknownUser')} />
+                    <AvatarImage
+                      src={getOssUrl(userInfo?.avatar) || ''}
+                      alt={userInfo?.name || t('unknownUser')}
+                    />
                     <AvatarFallback className="bg-muted-foreground font-semibold text-background">
                       {userInfo?.name?.charAt(0)?.toUpperCase() || 'U'}
                     </AvatarFallback>
@@ -334,11 +303,6 @@ export function UserDropdownMenu({
                         {userInfo?.name || t('unknownUser')}
                       </span>
                     </div>
-                  )}
-
-                  {/* 未读通知指示器 */}
-                  {unreadCount > 0 && (
-                    <div className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-destructive" />
                   )}
                 </button>
               </TooltipTrigger>
@@ -360,13 +324,7 @@ export function UserDropdownMenu({
           onMouseEnter={() => setOpen(true)}
           onMouseLeave={() => setOpen(false)}
         >
-          <LoggedInMenuContent
-            collapsed={collapsed}
-            unreadCount={unreadCount}
-            onOpenNotification={onOpenNotification}
-            onOpenSettings={onOpenSettings}
-            onClose={() => setOpen(false)}
-          />
+          <LoggedInMenuContent onOpenSettings={onOpenSettings} onClose={() => setOpen(false)} />
         </PopoverContent>
       </Popover>
     </div>

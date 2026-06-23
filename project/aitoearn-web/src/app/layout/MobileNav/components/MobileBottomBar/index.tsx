@@ -1,6 +1,6 @@
 /**
  * MobileBottomBar - 移动端底部导航栏
- * 底部贴边五等分文字导航，激活项使用品牌渐变胶囊强调。
+ * 底部贴边六等分文字导航，激活项使用品牌渐变胶囊强调。
  */
 'use client'
 
@@ -9,30 +9,24 @@ import type { IRouterDataItem } from '@/app/layout/routerData'
 import Link from 'next/link'
 import { useTransClient } from '@/app/i18n/client'
 import { visibleRouterData } from '@/app/layout/routerData'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 const bottomNavItems = [
   { routerKey: 'header.draftBox', labelKey: 'header.draftBox', testId: 'content' },
-  { routerKey: 'aiSocial', labelKey: 'aiSocial', testId: 'ai-social' },
-  { routerKey: 'tasksHistory', labelKey: 'tasksHistory', testId: 'tasks-history' },
-  { routerKey: 'accounts', labelKey: 'accounts', testId: 'publish' },
+  { routerKey: 'aiSocial', labelKey: 'aiSocial', testId: 'publish' },
+  { routerKey: 'tasksHistory', labelKey: 'tasksHistory', testId: 'history' },
+  { routerKey: 'accounts', labelKey: 'accounts', testId: 'accounts' },
   { routerKey: 'header.agentAssets', labelKey: 'header.agentAssets', testId: 'agent-assets' },
 ] as const
 
-const publishNavFallback: IRouterDataItem = {
-  name: 'AI Publish',
-  translationKey: 'aiSocial',
-  path: '/accounts',
-}
-
 const navLabelBaseClassName
-  = 'flex h-9 min-w-0 max-w-full items-center justify-center truncate whitespace-nowrap rounded-full px-2 text-center text-[13px] font-semibold leading-none tracking-[0.01em] transition-all duration-200'
+  = 'flex h-9 min-w-0 max-w-full items-center justify-center truncate whitespace-nowrap rounded-full px-1.5 text-center text-[12px] font-semibold leading-none tracking-[0.01em] transition-all duration-200'
 
 function getNavLabelClassName(isActive: boolean) {
   return cn(
     navLabelBaseClassName,
     isActive
-      ? 'h-10 min-w-16 px-5 bg-gradient-back text-gradient-foreground shadow-lg shadow-brand-purple/20'
+      ? 'h-10 min-w-12 px-3 bg-gradient-back text-gradient-foreground shadow-lg shadow-brand-purple/20'
       : 'text-muted-foreground hover:text-foreground active:text-foreground',
   )
 }
@@ -108,7 +102,7 @@ function MobileBottomItem({
 export function MobileBottomBar({ currentRoute, hidden }: MobileBottomBarProps) {
   const navItems = bottomNavItems.map(config => ({
     ...config,
-    item: getNavItem(config.routerKey) ?? (config.routerKey === 'accounts' ? publishNavFallback : undefined),
+    item: getNavItem(config.routerKey),
   }))
 
   if (hidden) {
@@ -121,7 +115,7 @@ export function MobileBottomBar({ currentRoute, hidden }: MobileBottomBarProps) 
         className="fixed inset-x-0 bottom-0 z-50 border-t border-border/80 bg-background/95 pb-[env(safe-area-inset-bottom)] shadow-lg shadow-primary/10 backdrop-blur-xl md:hidden"
         data-testid="mobile-bottom-bar"
       >
-        <div className="grid h-14 grid-cols-5 items-center gap-1 px-4 py-2">
+        <div className="grid h-14 grid-cols-5 items-center gap-0.5 px-2 py-2">
           {navItems.map(({ item, labelKey, routerKey, testId }) => (
             <MobileBottomItem
               key={routerKey}

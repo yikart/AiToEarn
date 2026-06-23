@@ -4,7 +4,7 @@ import type { IWorkflowStep } from '@/store/agent'
 import { CheckCircle2, ChevronDown, ChevronRight, Loader2, Wrench } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import styles from './ChatMessage.module.scss'
 import { ToolDetailModal } from './ToolDetailModal'
 

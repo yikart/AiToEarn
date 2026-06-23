@@ -1,12 +1,14 @@
 export const AGENT_TASK_ABORT_CHANNEL = 'agent:task:abort'
+export const CLAUDE_CODE_ROUTER_PROVIDER_NAME = 'new'
 
 export enum McpServerName {
   MediaGeneration = 'mediaGeneration',
   Database = 'database',
   Util = 'util',
   Aideo = 'aideo',
+  Statistics = 'statistics',
   Account = 'account',
-  Publish = 'publish',
+  Channels = 'channels',
   Content = 'content',
   VideoEdit = 'videoEdit',
   VideoUtils = 'videoUtils',
@@ -15,6 +17,30 @@ export enum McpServerName {
   StyleTransfer = 'styleTransfer',
   ImageEdit = 'imageEdit',
   Subtitle = 'subtitle',
+}
+
+export enum ChannelsToolName {
+  CreateChannelPublishFlow = 'createChannelPublishFlow',
+  ListChannelPublishRecords = 'listChannelPublishRecords',
+  GetChannelPublishRecordByRecordId = 'getChannelPublishRecordByRecordId',
+  GetChannelPublishRecordByTaskId = 'getChannelPublishRecordByTaskId',
+  GetChannelPublishRecordByFlowId = 'getChannelPublishRecordByFlowId',
+  PublishChannelTaskNow = 'publishChannelTaskNow',
+  CancelChannelPublishTask = 'cancelChannelPublishTask',
+  UpdateChannelPublishAt = 'updateChannelPublishAt',
+  RequestChannelPublishUpdate = 'requestChannelPublishUpdate',
+  ListChannelPlatforms = 'listChannelPlatforms',
+  GetChannelPlatform = 'getChannelPlatform',
+  ListBilibiliChannelPlatformCategories = 'listBilibiliChannelPlatformCategories',
+  ListYoutubeChannelPlatformCategories = 'listYoutubeChannelPlatformCategories',
+  GetChannelWorkLinkInfo = 'getChannelWorkLinkInfo',
+  GetChannelWorkDetail = 'getChannelWorkDetail',
+  VerifyChannelWorkOwnership = 'verifyChannelWorkOwnership',
+  GetChannelAccountAnalytics = 'getChannelAccountAnalytics',
+  GetChannelWorkAnalytics = 'getChannelWorkAnalytics',
+  ListChannelEngagementComments = 'listChannelEngagementComments',
+  SubmitChannelEngagementComment = 'submitChannelEngagementComment',
+  CallChannelEngagementFunction = 'callChannelEngagementFunction',
 }
 
 export const SYSTEM_PROMPT = `You are a social media content generation assistant helping users create text, images, videos, and publish content.
@@ -77,7 +103,7 @@ Then call the \`Skill\` tool for each required skill. After loading, proceed to 
 
 **Available Skills:**
 - \`generating-images\` - Image generation with Gemini
-- \`generating-videos\` - Video generation with Grok (preferred) and Veo 3.1
+- \`generating-videos\` - Video generation with Grok
 - \`editing-videos\` - Video editing, concatenation
 - \`editing-images\` - Image editing, compositing
 - \`transferring-video-styles\` - Style transfer (cartoon, anime)
@@ -93,7 +119,7 @@ Then call the \`Skill\` tool for each required skill. After loading, proceed to 
 **Critical for character/scene consistency:**
 When generating multi-shot videos, MUST use \`generating-images\` skill first to generate keyframes with the \`imageUrls\` parameter for reference chaining.
 
-**Fallback skill loading**: When a generation task fails (e.g., Veo extension fails) and you fall back to an alternative approach (e.g., video concatenation via editing), you MUST load the corresponding skill before proceeding:
+**Fallback skill loading**: When a generation task fails and you fall back to an alternative approach (e.g., video concatenation via editing), you MUST load the corresponding skill before proceeding:
 - Falling back to video editing/concatenation → load \`editing-videos\` skill
 - Falling back to image editing → load \`editing-images\` skill
 - Any tool usage requiring skill knowledge → load the skill first
@@ -146,8 +172,8 @@ Add "Starting execution..." after the plan and proceed directly. Provide progres
 **⚠️ WRONG - Never do this:**
 \`\`\`
 User: 生成一个猫咪视频
-AI: 我来使用 Veo 生成视频...
-[直接调用 generateVideoWithVeo 工具]
+AI: 我来使用 Grok 生成视频...
+[直接调用 generateVideoWithGrok 工具]
 \`\`\`
 
 **✅ CORRECT - Always do this:**
@@ -231,7 +257,6 @@ Quick options: edit | extend | publish
 
 Use \`polling-task\` sub-agent for long-running tasks:
 - Grok Video (max 5 min)
-- Veo Video (max 10 min)
 - Aideo / Video Edit / Style Transfer / Drama Recap (max 20 min)
 
 Usage: Task tool with subagent_type="polling-task", prompt="Poll {taskId} type {taskType}"
@@ -246,31 +271,18 @@ Usage: Task tool with subagent_type="polling-task", prompt="Poll {taskId} type {
 
 ### Step 7: Publishing
 
-#### Platforms WITHOUT publish tools (MUST guide to manual publishing)
-The following platforms do NOT have automated publish tools:
-- **小红书 (Xiaohongshu/Xhs)**: No \`publishPostToXhs\` tool exists
-- **抖音 (Douyin)**: No \`publishPostToDouyin\` tool exists
-
-For these platforms: NEVER attempt to call a publish tool. Instead:
-1. Save content to draft (Step 6)
-2. Set action to "navigateToPublish" with the platform and accountId
-3. Inform user they need to publish manually through the platform
-
-#### Platforms WITH publish tools
-Only these platforms support automated publishing:
-Bilibili, YouTube, TikTok, Facebook, Instagram, Twitter, Threads, Pinterest, Kwai(快手), WxGzh(微信公众号)
-
 #### Publishing workflow
-1. Query \`publishRestrictions\` with platforms array to check platform requirements
+1. Query \`listChannelPlatforms\` or \`getChannelPlatform\` to check platform capabilities, publish limits, media rules, and optionSchema
 2. **Check account availability BEFORE attempting to publish**:
    - Call \`getAccountGroupList\` to get user's account groups
    - Call \`getAccountListByGroupId\` for each group to find accounts
    - Parse account list to find accounts matching target platform (format: \`[PLATFORM_TYPE] account_name (id: xxx)\`)
    - **If NO account exists for target platform**: Skip publish, set action to "createChannel" with the platform
    - **If account exists**: Proceed to step 3 with the accountId
-3. Publish using platform-specific tool with the found accountId (only for platforms WITH publish tools listed above)
-4. Handle publish results:
-   - **Publish task created successfully**: Extract flowId from tool response (format: "FlowId: xxx"). Use action: "none" with flowId, platform. If navigation to publish page is needed, use action: "navigateToPublish" with accountId, platform, publishTime, topics
+3. If platform metadata does not support backend publishing, save content to draft and use action "navigateToPublish" with platform/accountId
+4. Publish supported platforms with \`createChannelPublishFlow\`, passing generated content, publishAt, and items with platform/accountId/option matching the platform optionSchema
+5. Handle publish results:
+   - **Publish task created successfully**: Extract flowId from tool response. Use action: "none" with flowId, platform. If navigation to publish page is needed, use action: "navigateToPublish" with accountId, platform, publishTime, topics
    - "Account not found" (edge case) → action: "createChannel"
    - Auth expired → action: "updateChannel"
    - Platform unsupported/failed → action: "navigateToPublish" (include accountId, platform, publishTime, topics, errorMessage)
@@ -319,8 +331,9 @@ User: "Generate a video and publish to TikTok"
 User: "Publish this to YouTube"
 → Call \`getAccountGroupList\` → \`getAccountListByGroupId\`
 → Found: \`[YOUTUBE] my_channel (id: 789)\`
-→ **Decision**: Proceed with \`publishPostToYoutube\` using accountId "789"
-→ Tool returns: "Publish task created successfully. FlowId: abc-123"
+→ Call \`getChannelPlatform\` for "YOUTUBE" and fill option from optionSchema
+→ **Decision**: Proceed with \`createChannelPublishFlow\` using accountId "789"
+→ Tool returns flowId "abc-123"
 → Extract flowId "abc-123" from response
 → If navigation needed: \`{"action": "navigateToPublish", "platform": "YOUTUBE", "accountId": "789", "publishTime": "...", "topics": [...]}\`
 → If no navigation needed: \`{"action": "none", "platform": "YOUTUBE", "flowId": "abc-123", ...}\`
@@ -344,7 +357,6 @@ export const POLLING_TASK_AGENT_PROMPT = `You are an AI task polling specialist 
 | Task Type | Polling Tool | Max Timeout |
 |-----------|--------------|-------------|
 | Grok Video | getGrokVideoStatus | 5 min |
-| Veo Video | getVeoVideoStatus | 10 min |
 | Aideo | getAideoTaskStatus | 20 min |
 | Video Edit | getVideoEditTaskStatus | 20 min |
 | Style Transfer | getVideoStyleTransferStatus | 20 min |
@@ -357,7 +369,6 @@ export const POLLING_TASK_AGENT_PROMPT = `You are an AI task polling specialist 
 | Task Type | Initial Wait | Polling Interval |
 |-----------|--------------|------------------|
 | Grok Video | 30s | 30s |
-| Veo Video | 60s | 30s |
 | Aideo | 60s | 30s |
 | Video Edit | 30s | 20s |
 | Style Transfer | 120s | 60s |
@@ -369,7 +380,7 @@ export const POLLING_TASK_AGENT_PROMPT = `You are an AI task polling specialist 
 2. Record start time
 3. Wait initial interval using wait(seconds)
 4. Call appropriate status tool
-5. Check elapsed time against max timeout (Veo: 5min, others: 20min)
+5. Check elapsed time against max timeout (Grok: 5min, others: 20min)
 6. If timeout: report failure with timeout error
 7. If Processing/Pending: wait interval, repeat from step 4
 8. If Completed: return success with output URL
@@ -379,14 +390,13 @@ export const POLLING_TASK_AGENT_PROMPT = `You are an AI task polling specialist 
 
 ### Success
 - Grok: status === 'done'
-- Veo: status === 'completed' or 'Success'
 - Aideo/StyleTransfer/DramaRecap: status === 'Completed'
 - VideoEdit: Status === 'success'
 
 ### Failure
 - Error message present
 - Status contains 'failed', 'Failed', or 'expired'
-- Max timeout exceeded: Grok 5 min, Veo 10 min, others 20 min
+- Max timeout exceeded: Grok 5 min, others 20 min
 
 ## Output Format
 
@@ -409,7 +419,7 @@ Analyze user requests and determine which skills are needed.
 | Skill | Description | Keywords |
 |-------|-------------|----------|
 | generating-images | Image generation with Gemini | 图片, 图像, image, 照片, 画 |
-| generating-videos | Video generation with Grok (preferred) and Veo 3.1 | 视频, video, 短视频, 动画 |
+| generating-videos | Video generation with Grok | 视频, video, 短视频, 动画 |
 | editing-videos | Video editing, concatenation | 剪辑, 拼接, 合并, 裁剪 |
 | editing-images | Image editing, compositing | 编辑图片, 修图, 合成 |
 | transferring-video-styles | Style transfer (cartoon, anime) | 风格, style, 漫画风, 动画风 |

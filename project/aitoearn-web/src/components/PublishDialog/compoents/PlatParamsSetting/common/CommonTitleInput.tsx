@@ -3,42 +3,67 @@
  */
 import type { ForwardedRef } from 'react'
 import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
-import { forwardRef, memo, useMemo } from 'react'
-import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { forwardRef, memo } from 'react'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { usePlatformInfo } from '@/hooks/usePlatformMetadata'
+import { cn } from '@/utils/className'
 
 export interface ICommonTitleInputRef {}
 
-export interface ICommonTitleInputProps {
+interface AccountTitleInputProps {
   pubItem: PubItem
-  /** 是否为移动端 */
   isMobile?: boolean
+}
+
+interface ControlledTitleInputProps {
+  titleValue: string
+  titleMax: number
+  onTitleChange: (title: string) => void
+  isRequired?: boolean
+  isMobile?: boolean
+}
+
+export type ICommonTitleInputProps = AccountTitleInputProps | ControlledTitleInputProps
+
+function isAccountTitleInputProps(props: ICommonTitleInputProps): props is AccountTitleInputProps {
+  return 'pubItem' in props
 }
 
 const CommonTitleInput = memo(
   forwardRef(
-    ({ pubItem, isMobile }: ICommonTitleInputProps, ref: ForwardedRef<ICommonTitleInputRef>) => {
+    (props: ICommonTitleInputProps, ref: ForwardedRef<ICommonTitleInputRef>) => {
       const { t } = useTransClient('publish')
-      const platConfig = useMemo(() => {
-        return AccountPlatInfoMap.get(pubItem.account.type)!
-      }, [pubItem])
+      const isMobile = props.isMobile
+      const platConfig = usePlatformInfo(isAccountTitleInputProps(props) ? props.pubItem.account.type : undefined)
 
-      const { setOnePubParams, pubList } = usePublishDialog(
-        useShallow(state => ({
-          setOnePubParams: state.setOnePubParams,
-          pubList: state.pubList,
-        })),
-      )
+      const setOnePubParams = usePublishDialog(state => state.setOnePubParams)
 
-      // 判断是否需要显示必填标识
-      const isRequired = pubItem.account.type === PlatType.Pinterest
+      const titleInputConfig = isAccountTitleInputProps(props)
+        ? {
+            isRequired: props.pubItem.account.type === PlatType.Pinterest,
+            maxLength: platConfig?.commonPubParamsConfig.titleMax || 20,
+            value: props.pubItem.params.title || '',
+            onTitleChange: (title: string) => {
+              setOnePubParams(
+                {
+                  title,
+                },
+                props.pubItem.account.id,
+              )
+            },
+          }
+        : {
+            isRequired: props.isRequired === true,
+            maxLength: props.titleMax,
+            value: props.titleValue,
+            onTitleChange: props.onTitleChange,
+          }
 
-      const maxLength = platConfig.commonPubParamsConfig.titleMax || 20
-      const currentLength = pubItem.params.title?.length || 0
+      const { isRequired, maxLength, value, onTitleChange } = titleInputConfig
+      const currentLength = value.length
 
       return (
         <div className={cn('flex', isMobile ? 'flex-col gap-1.5' : 'items-center h-8')}>
@@ -48,18 +73,13 @@ const CommonTitleInput = memo(
           </div>
           <div className="flex-1 relative">
             <Input
-              value={pubItem.params.title}
+              value={value}
               maxLength={maxLength}
               placeholder={t('form.titlePlaceholder')}
               className="pr-16 h-8"
               data-testid="publish-title-input"
               onChange={(e) => {
-                setOnePubParams(
-                  {
-                    title: e.target.value,
-                  },
-                  pubItem.account.id,
-                )
+                onTitleChange(e.target.value)
               }}
             />
             <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-muted-foreground">

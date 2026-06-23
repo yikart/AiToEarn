@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
+import { AppException, ResponseCode } from '@yikart/common'
 import {
   AideoAiLogResponse,
   AiLog,
@@ -12,24 +11,20 @@ import {
   AssetType,
   StyleTransferAiLogResponse,
 } from '@yikart/mongodb'
-import { config } from '../../../config'
 import { VolcengineVideoUtils } from '../../agent/mcp/volcengine/volcengine.utils'
 import {
   AideoTaskStatus,
   AITranslationApiResponse,
   AITranslationProjectStatus,
-  AITranslationSkillParams,
   ApiResponse,
   DramaRecapTaskStatus,
   EraseApiResponse,
   GetAideoTaskResultResponse,
   HighlightApiResponse,
   SkillType,
-  TranslationType,
   VCreativeApiResponse,
   VCreativeStatus,
   VideoInput,
-  VisionApiResponse,
   VolcengineService,
 } from '../libs/volcengine'
 import { parseVolcengineError } from '../libs/volcengine/volcengine.utils'
@@ -45,24 +40,9 @@ import {
 import { DramaRecapService } from './drama-recap.service'
 import { VideoStyleTransferService } from './video-style-transfer.service'
 
-interface BillingInfo {
-  skillType: SkillType
-  duration: number
-  resolution?: string
-  translationType?: TranslationType
-}
-
-// 视频风格转换（VCreative）分辨率系数映射
-// 按短边阈值从低到高排序，查找第一个大于等于短边值的阈值
-const vCreativeResolutionCoefficientMap = [
-  { threshold: 480, coefficient: 0.7 }, // 480P 及以下
-  { threshold: 720, coefficient: 1 }, // 720P 及以下
-  { threshold: 1080, coefficient: 1.8 }, // 1080P 及以下
-] as const
-
 /**
  * Aideo 服务
- * 负责核心 Aideo 任务的提交、查询和计费
+ * 负责核心 Aideo 任务的提交和查询
  * 视频风格转换和短剧解说委托给专门的服务
  */
 @Injectable()
@@ -73,226 +53,9 @@ export class AideoService {
     private readonly volcengineService: VolcengineService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
-    private readonly creditsHelper: CreditsHelperService,
     private readonly videoStyleTransferService: VideoStyleTransferService,
     private readonly dramaRecapService: DramaRecapService,
   ) { }
-
-  /**
-   * 计算 Aideo 任务价格
-   */
-  async calculateAideoPrice(billingInfo: BillingInfo): Promise<number> {
-    const { skillType, duration, resolution } = billingInfo
-
-    const durationMinutes = duration / 60
-
-    let basePrice = 0
-
-    switch (skillType) {
-      case SkillType.VCreative: {
-        basePrice = config.ai.aideo.vCreative.basePrice
-        const coefficient = this.getVCreativeResolutionCoefficient(resolution)
-        return durationMinutes * basePrice * coefficient
-      }
-      case SkillType.Vision: {
-        basePrice = config.ai.aideo.vision.basePrice
-        return durationMinutes * basePrice
-      }
-      case SkillType.Highlight: {
-        basePrice = config.ai.aideo.highlight.basePrice
-        return durationMinutes * basePrice
-      }
-      case SkillType.AITranslation: {
-        // Only facial translation is supported
-        basePrice = config.ai.aideo.aiTranslation.facialTranslation
-        return durationMinutes * basePrice
-      }
-      case SkillType.Erase: {
-        basePrice = config.ai.aideo.erase.basePrice
-        return durationMinutes * basePrice
-      }
-      default:
-        this.logger.warn({ skillType }, '未知的技能类型')
-        return 0
-    }
-  }
-
-  /**
-   * 解析分辨率字符串，提取短边值
-   * @param resolution 分辨率字符串，支持格式：1920x1080, 1280x720 等
-   * @returns 短边值，如果无法解析则返回 null
-   */
-  private parseShortSide(resolution: string): number | null {
-    const resolutionLower = resolution.toLowerCase().trim()
-    const dimensionMatch = resolutionLower.match(/(\d+)[x×](\d+)/)
-
-    if (dimensionMatch) {
-      const width = Number.parseInt(dimensionMatch[1], 10)
-      const height = Number.parseInt(dimensionMatch[2], 10)
-      return Math.min(width, height)
-    }
-
-    return null
-  }
-
-  /**
-   * 根据短边值查找对应的系数
-   * @param shortSide 短边值
-   * @param coefficientMap 系数映射表（按阈值从低到高排序）
-   * @param defaultCoefficient 默认系数
-   * @returns 对应的系数值
-   */
-  private findCoefficientByShortSide(
-    shortSide: number | null,
-    coefficientMap: readonly { threshold: number, coefficient: number }[],
-    defaultCoefficient: number,
-  ): number {
-    if (shortSide === null) {
-      return defaultCoefficient
-    }
-
-    // 从高到低查找第一个阈值大于等于短边值的项
-    for (let i = coefficientMap.length - 1; i >= 0; i--) {
-      if (shortSide <= coefficientMap[i].threshold) {
-        return coefficientMap[i].coefficient
-      }
-    }
-
-    // 如果短边值大于所有阈值，返回最后一个（最高）系数
-    return coefficientMap[coefficientMap.length - 1].coefficient
-  }
-
-  /**
-   * 获取分辨率换算系数（视频风格转换 - VCreative）
-   * 按输出视频分辨率短边所属的范围进行判定（及以下）
-   */
-  private getVCreativeResolutionCoefficient(resolution?: string): number {
-    const shortSide = resolution ? this.parseShortSide(resolution) : null
-    return this.findCoefficientByShortSide(
-      shortSide,
-      vCreativeResolutionCoefficientMap,
-      vCreativeResolutionCoefficientMap[1].coefficient, // 默认 720P
-    )
-  }
-
-  /**
-   * 从任务结果中提取计费信息
-   */
-  private async extractBillingInfo(
-    taskResult: GetAideoTaskResultResponse,
-  ): Promise<BillingInfo | null> {
-    const { SkillType: skillType, ApiResponses } = taskResult
-
-    if (!skillType || !ApiResponses || ApiResponses.length === 0) {
-      return null
-    }
-
-    const apiResponse = ApiResponses[0] as ApiResponse
-
-    switch (skillType) {
-      case SkillType.VCreative: {
-        const vCreativeResponse = apiResponse as VCreativeApiResponse
-        const vCreative = vCreativeResponse.VCreative
-        if (!vCreative) {
-          return null
-        }
-
-        if (vCreative.Status === VCreativeStatus.Success) {
-          const paramJson = vCreative.ParamJson
-          const outputJson = vCreative.OutputJson
-          const resolution = paramJson.resolution
-
-          // 从 OutputJson.Result 中获取时长
-          let duration = 0
-          if (outputJson.Result?.Duration) {
-            duration = outputJson.Result.Duration
-          }
-          else if (outputJson.Result?.Vid) {
-            // 如果没有直接的时长，通过 VID 查询
-            const mediaInfos = await this.volcengineService.getMediaInfos({
-              Vids: outputJson.Result.Vid,
-            })
-            duration = mediaInfos.MediaInfoList?.[0].SourceInfo?.Duration ?? 0
-          }
-          else if (outputJson.vid) {
-            // 兼容旧版本格式
-            const mediaInfos = await this.volcengineService.getMediaInfos({
-              Vids: outputJson.vid,
-            })
-            duration = mediaInfos.MediaInfoList?.[0].SourceInfo?.Duration ?? 0
-          }
-
-          return {
-            skillType,
-            duration,
-            resolution,
-          }
-        }
-        else {
-          const paramJson = vCreative.ParamJson
-          return {
-            skillType,
-            duration: 0,
-            resolution: paramJson.resolution,
-          }
-        }
-      }
-      case SkillType.Vision: {
-        const visionResponse = apiResponse as VisionApiResponse
-        const duration = visionResponse.Vision?.Duration || 0
-        return {
-          skillType,
-          duration,
-        }
-      }
-      case SkillType.Highlight: {
-        const highlightResponse = apiResponse as HighlightApiResponse
-        const highlight = highlightResponse.Highlight
-        return {
-          skillType,
-          duration: highlight?.Duration || 0,
-        }
-      }
-      case SkillType.AITranslation: {
-        const translationResponse = apiResponse as AITranslationApiResponse
-        let translationType: TranslationType | undefined
-        if (taskResult.SkillParams) {
-          const skillParams = JSON.parse(taskResult.SkillParams) as AITranslationSkillParams
-          translationType = skillParams.TranslationConfig?.TranslationTypeList?.[0]
-        }
-        let duration = 0
-        const outputVideo = translationResponse.AITranslation?.ProjectInfo?.OutputVideo
-        if (outputVideo?.DurationSecond) {
-          duration = outputVideo.DurationSecond
-        }
-        else {
-          const voiceVideo = translationResponse.AITranslation?.ProjectInfo?.VoiceTranslationVideo
-          const facialVideo = translationResponse.AITranslation?.ProjectInfo?.FacialTranslationVideo
-          if (voiceVideo?.DurationSecond) {
-            duration = voiceVideo.DurationSecond
-          }
-          else if (facialVideo?.DurationSecond) {
-            duration = facialVideo.DurationSecond
-          }
-        }
-        return {
-          skillType,
-          duration,
-          translationType,
-        }
-      }
-      case SkillType.Erase: {
-        const eraseResponse = apiResponse as EraseApiResponse
-        const erase = eraseResponse.Erase
-        return {
-          skillType,
-          duration: erase?.Output?.Task?.Erase?.Duration || 0,
-        }
-      }
-      default:
-        return null
-    }
-  }
 
   /**
    * 提交 Aideo 任务
@@ -353,7 +116,6 @@ export class AideoService {
       channel: AiLogChannel.Volcengine,
       startedAt,
       type: AiLogType.Aideo,
-      points: 0,
       request: params,
       status: AiLogStatus.Generating,
     })
@@ -364,7 +126,7 @@ export class AideoService {
   }
 
   /**
-   * 处理 Aideo 任务（从火山接口获取结果并计费）
+   * 处理 Aideo 任务（从火山接口获取结果）
    * 支持多种任务类型：
    * - 'aideo': 通用 Aideo 任务（使用 GetAideoTaskResult API）
    * - 'video-style-transfer': 视频风格转换任务（委托给 VideoStyleTransferService）
@@ -490,35 +252,7 @@ export class AideoService {
         }
       }
 
-      if (task.points && task.points > 0) {
-        await this.updateTaskResult(task, taskResult, true)
-        return
-      }
-
-      const billingInfo = await this.extractBillingInfo(taskResult)
-      this.logger.debug({ billingInfo }, '提取计费信息完成')
-      if (!billingInfo || billingInfo.duration <= 0) {
-        this.logger.warn(
-          { taskId: task.id, taskResult },
-          '无法提取计费信息或时长为 0',
-        )
-        await this.updateTaskResult(task, taskResult, false)
-        return
-      }
-
-      const price = await this.calculateAideoPrice(billingInfo)
-      this.logger.debug({ taskId: task.id, price }, '计算任务价格完成')
-      if (price > 0 && task.userType === UserType.User) {
-        await this.creditsHelper.deductCredits({
-          userId: task.userId,
-          amount: price,
-          type: CreditsType.AiService,
-          source: CreditsConsumptionSource.AiAideo,
-          description: `Aideo ${billingInfo.skillType}`,
-        })
-      }
-
-      await this.updateTaskResult(task, taskResult, true, price)
+      await this.updateTaskResult(task, taskResult)
     }
     else if (Status === AideoTaskStatus.Failed) {
       const apiError = taskResult.ApiResponses?.[0]?.Error
@@ -559,8 +293,6 @@ export class AideoService {
   private async updateTaskResult(
     task: AiLog,
     taskResult: GetAideoTaskResultResponse,
-    isBilled: boolean,
-    price?: number,
   ) {
     if (taskResult.ApiResponses && taskResult.ApiResponses.length > 0) {
       const apiResponse = taskResult.ApiResponses[0] as ApiResponse
@@ -570,7 +302,6 @@ export class AideoService {
     await this.aiLogRepo.updateById(task.id, {
       status: AiLogStatus.Success,
       response: taskResult,
-      points: isBilled && price !== undefined ? price : task.points,
       duration: Date.now() - task.startedAt.getTime(),
     })
   }

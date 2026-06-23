@@ -1,8 +1,8 @@
 /** 当前环境对应的货币代码 */
-export const appCurrency = 'USD'
+export const appCurrency: 'USD' = 'USD'
 
 /** 当前环境对应的货币符号 */
-export const appCurrencySymbol = '$'
+export const appCurrencySymbol: '$' = '$'
 
 /** 货币代码到符号的映射（优先查找，覆盖常见货币） */
 const currencySymbolMap: Record<string, string> = {

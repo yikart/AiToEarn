@@ -7,12 +7,12 @@
 
 import { Loader2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { agentApi } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { Modal } from '@/components/ui/modal'
 import { StarRating } from '@/components/ui/star-rating'
 import { Textarea } from '@/components/ui/textarea'
-import { toast } from '@/lib/toast'
+import { toast } from '@/utils/ui/toast'
 
 interface RatingModalProps {
   taskId: string

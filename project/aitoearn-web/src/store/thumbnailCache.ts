@@ -3,8 +3,8 @@
  * 使用 IndexedDB 持久化存储视频封面 URL，避免重复请求
  */
 
-import { getVideoThumbnail } from '@/api/assets'
-import { createPersistStore } from '@/utils/createPersistStore'
+import { getVideoThumbnail } from '@/api/materials/material.api'
+import { createPersistStore } from '@/utils/storage/createPersistStore'
 
 export interface IThumbnailCacheState {
   cache: Record<string, string>

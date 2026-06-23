@@ -32,6 +32,5 @@
   "termsOfService": "Terms of Service",
   "and": "and",
   "privacyPolicy": "Privacy Policy",
-  "newUserPromotion": "New users get 14 days free membership!",
-  "manualLoginDisabledNotice": "Manual sign-in is not required in this environment. If access still fails, please check the configuration."
+  "newUserPromotion": "New users get 14 days free membership!"
 }

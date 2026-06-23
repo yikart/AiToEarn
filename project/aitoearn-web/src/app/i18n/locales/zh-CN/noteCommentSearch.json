@@ -1,0 +1,287 @@
+{
+  "seo": {
+    "title": "AI互动",
+    "description": "使用 AiToEarn 插件完成发布、评论与 Agent 自动化互动。评论搜索维护中，暂不可用。",
+    "keywords": "AI互动, AiToEarn插件, 小红书互动, 评论任务, Agent自动化"
+  },
+  "page": {
+    "breadcrumb": "AI互动",
+    "title": "AI互动",
+    "description": "使用 AiToEarn 插件完成发布、评论和 Agent 自动化。评论搜索维护期间，请优先使用 AI互动能力。",
+    "searchMode": "手动搜索模式",
+    "searchDirty": "筛选已变更",
+    "selectedFilters": "已选 {{count}} 个筛选",
+    "resultCount": "{{count}} 条结果",
+    "backToTop": "右下角回到顶部",
+    "aiAssist": "AI"
+  },
+  "filters": {
+    "keywordPlaceholder": "请输入关键词，例如品牌词、评论高频词、产品名",
+    "search": "搜索",
+    "reset": "重置",
+    "dateRange": "时间范围",
+    "sort": "排序方式",
+    "noteType": "笔记形式",
+    "noteTypeAll": "全部形式",
+    "authorType": "作者类型",
+    "noteCategory": "笔记分类",
+    "clearCategories": "清空分类",
+    "childCategoryTitle": "二级分类",
+    "multiSelect": "多选",
+    "moreFilters": "更多筛选",
+    "collapseFilters": "收起筛选",
+    "selectedConditions": "已选条件",
+    "noneSelected": "暂无已选筛选条件",
+    "pendingApply": "待执行搜索",
+    "searchCostTitle": "搜索提示：",
+    "searchCostNotice": "每次点击搜索将消耗 {{cost}} 积分；修改筛选条件不会自动请求，搜索完成后的分页加载不额外扣费。",
+    "searchDirtyNotice": "筛选已变更，请点击搜索确认",
+    "noteStatus": "笔记状态",
+    "noteAttribute": "笔记属性：",
+    "noteStatusHint": "开启后会过滤掉已隐藏或已删除的笔记。",
+    "noteStatusAll": "全部笔记",
+    "filteredDeletedHidden": "已过滤隐藏/删除",
+    "customDate": "自定义",
+    "quickDays": {
+      "7": "7天",
+      "15": "15天",
+      "30": "30天"
+    },
+    "searchPanelTitle": "搜索与筛选",
+    "searchPanelHint": "筛选变更后不会自动请求，点击搜索刷新列表",
+    "searchNote": "搜索笔记",
+    "all": "全部",
+    "contentFormat": "内容形式",
+    "searchCostInline": "搜索消耗 {{cost}} 积分",
+    "sortOptions": {
+      "interaction": "互动量最高",
+      "likes": "点赞最多",
+      "favorites": "收藏最多",
+      "comments": "评论最多",
+      "shares": "分享最多",
+      "latest": "最新发布"
+    }
+  },
+  "mobile": {
+    "filterTitle": "筛选条件"
+  },
+  "tabs": {
+    "commentSearch": "评论搜索",
+    "aiInteraction": "AI互动"
+  },
+  "maintenance": {
+    "title": "本功能内测调整中，后续上线时间另行通知。"
+  },
+  "results": {
+    "title": "搜索结果",
+    "pending": "输入关键词后点击搜索，列表会在当前筛选条件下刷新。",
+    "sampleHint": "这里展示示例数据，输入关键词搜索后可查看真实结果；示例不支持导出。",
+    "summary": "共找到 {{count}} 条笔记",
+    "empty": "当前条件下没有匹配到笔记。",
+    "loadingMore": "正在加载更多笔记",
+    "loadMore": "加载更多",
+    "loadMoreFinished": "没有更多笔记了",
+    "openOriginal": "查看原文",
+    "openDetail": "查看详情",
+    "relatedComments": "相关评论",
+    "relatedCommentsTop": "TOP 3",
+    "viewMoreComments": "查看更多",
+    "untitled": "未命名笔记",
+    "authorUnknown": "未知作者",
+    "columns": {
+      "note": "笔记内容",
+      "author": "发布者",
+      "category": "分类",
+      "publishTime": "发布时间",
+      "interaction": "互动量",
+      "likes": "点赞",
+      "favorites": "收藏",
+      "comments": "评论",
+      "shares": "分享",
+      "actions": "操作"
+    },
+    "metrics": {
+      "interaction": "互动量",
+      "likes": "点赞",
+      "favorites": "收藏",
+      "comments": "评论",
+      "shares": "分享"
+    },
+    "dataUpdatedAt": "数据更新时间",
+    "originalShort": "原文",
+    "coverAlt": "笔记封面"
+  },
+  "detail": {
+    "panelTitle": "笔记详情",
+    "empty": {
+      "title": "选择左侧笔记查看详细分析",
+      "description": "这里会展示该笔记的互动指标、增长趋势、热搜词和评论结构，整体布局与主列表保持同一工作台节奏。",
+      "previewTrend": "趋势预览",
+      "previewComments": "评论分析预览",
+      "hintTitle": "打开后可查看",
+      "hintTrend": "增长趋势：按时间查看点赞、收藏、评论和分享变化。",
+      "hintHotWords": "热搜词：快速判断当前笔记正在承接的话题方向。",
+      "hintComments": "评论分析：联动词性、热词、情感类型和评论列表。"
+    },
+    "tabs": {
+      "overview": "笔记概览",
+      "comments": "相关评论"
+    },
+    "cards": {
+      "noteInfo": {
+        "title": "笔记信息",
+        "timeline": "时间线",
+        "published": "发布时间",
+        "updated": "最近更新",
+        "tags": "笔记标签",
+        "location": "发布地区",
+        "noteType": "笔记类型",
+        "accountType": "账号类型",
+        "authorLevel": "作者等级",
+        "fans": "粉丝量",
+        "noteCount": "总笔记数",
+        "videoDuration": "视频时长",
+        "mcn": "MCN 机构",
+        "empty": "暂无标签"
+      },
+      "hotWords": {
+        "title": "笔记热搜词",
+        "description": "提取当前笔记关联的热搜词与主题词，辅助判断话题方向。",
+        "heat": "热度 {{count}}",
+        "empty": "暂无热搜词数据"
+      },
+      "trend": {
+        "title": "笔记数据增长趋势",
+        "description": "展示点赞、评论、收藏、分享等关键指标的时间变化。",
+        "empty": "暂无增长趋势数据"
+      },
+      "commentMent": {
+        "title": "评论词性",
+        "description": "选择一个评论词性后，会联动刷新评论热词和评论内容。"
+      },
+      "commentHotWords": {
+        "title": "评论热词",
+        "description": "点击热词可直接搜索评论内容，点击过滤会将其排除出当前评论视图。"
+      },
+      "commentList": {
+        "title": "评论内容",
+        "description": "当前共有 {{count}} 条匹配评论。"
+      }
+    },
+    "comments": {
+      "searchPlaceholder": "输入评论关键词后按回车或点击搜索",
+      "applyKeyword": "搜索评论",
+      "excludedKeywords": "已排除热词",
+      "exclude": "过滤",
+      "excluded": "已过滤",
+      "hotWordsEmpty": "暂无评论热词。",
+      "authorUnknown": "匿名用户",
+      "topComment": "置顶评论",
+      "noContent": "暂无评论内容",
+      "likes": "点赞",
+      "replies": "回复",
+      "empty": "当前筛选条件下暂无评论内容。",
+      "loadMore": "加载更多评论",
+      "loadMoreFinished": "没有更多评论了",
+      "sentiment": {
+        "all": "全部评论",
+        "positive": "正面评论",
+        "neutral": "中性评论",
+        "negative": "负面评论"
+      },
+      "typeCount": "评论类型数量",
+      "clickHotWordHint": "点击热词搜索评论内容",
+      "lockedKeyword": "已搜索"
+    },
+    "videoFallback": "视频 2:00",
+    "author": {
+      "likes": "千瓜指数",
+      "fans": "粉丝",
+      "notes": "笔记",
+      "creator": "头部达人",
+      "homepage": "主页"
+    },
+    "overview": {
+      "estimated": "预估曝光阅读",
+      "updated": "更新数据",
+      "estimatedExposure": "预估曝光次数",
+      "estimatedRead": "预估阅读数",
+      "rankingHint": "核心一览：曝光、互动、增长趋势、笔记热搜词，辅助判断笔记价值。",
+      "trendSwitch": "可切换点赞/收藏/评论/分享",
+      "extractDirection": "提取话题方向"
+    }
+  },
+  "pluginGuide": {
+    "trigger": "插件说明",
+    "title": "AiToEarn 插件能做什么？",
+    "description": "配合 AiToEarn Web 使用，插件负责在浏览器里完成发布、评论和 Agent 自动化。",
+    "features": {
+      "deepseek": {
+        "title": "DeepSeek 底座，价格更有优势",
+        "description": "采用 DeepSeek 作为核心模型，效果稳定、调用成本低；高频生成文案和评论时，省下来的就是利润空间。"
+      },
+      "publishing": {
+        "title": "小红书、视频号发布",
+        "description": "在 AiToEarn Web 发起任务，由插件完成小红书和视频号内容发布。"
+      },
+      "commentAction": {
+        "title": "评论任务与一键操作",
+        "description": "AiToEarn Web 的评论任务可一键完成，也支持点赞、收藏、关注等常见一键操作。"
+      },
+      "agentAssistant": {
+        "title": "Agent 自动化助手",
+        "description": "Agent 能读取代码、理解网页任务，并根据需求自己编写发布文案或评论内容。"
+      }
+    },
+    "footerTip": "所有能力通过 AiToEarn Web 或教程触发，插件在浏览器中执行。",
+    "useNow": "立即使用",
+    "confirm": "确认"
+  },
+  "export": {
+    "button": "导出 Excel",
+    "dialogTitle": "导出 Excel",
+    "dialogDescription": "按当前搜索条件导出数据。页面仅预览搜索结果，Excel 导出可自定义条数。",
+    "name": "导出标题",
+    "count": "导出条数",
+    "countRange": "可选范围：1-{{max}}",
+    "creditsCost": "导出 {{count}} 条，预计消耗 {{credits}} 积分。",
+    "cancel": "取消",
+    "confirm": "导出",
+    "recordsTitle": "导出记录",
+    "recordsLoading": "正在加载导出记录",
+    "recordMeta": "{{count}} 条 · {{credits}} 积分 · {{time}}",
+    "download": "下载",
+    "downloadProgress": "下载进度",
+    "delete": "删除",
+    "deleteConfirmTitle": "删除导出记录",
+    "deleteConfirmContent": "确认删除导出记录「{{name}}」吗？",
+    "status": {
+      "processing": "导出中",
+      "completed": "已完成",
+      "failed": "失败"
+    },
+    "feedback": {
+      "created": "导出任务已创建。",
+      "createFailed": "创建导出任务失败。",
+      "listFailed": "获取导出记录失败。",
+      "downloadFailed": "下载导出文件失败。",
+      "deleteSuccess": "导出记录已删除。",
+      "deleteFailed": "删除导出记录失败。",
+      "insufficientCredits": "本次导出预计需要 {{cost}} 积分，当前剩余 {{balance}} 积分，余额不足，请充值后重试。"
+    }
+  },
+  "empty": {
+    "startSearch": "输入关键词并执行搜索后，这里会展示笔记列表。"
+  },
+  "feedback": {
+    "optionsFailed": "获取筛选项失败，请稍后重试。",
+    "searchFailed": "搜索失败，请稍后重试。",
+    "originalUnavailable": "暂时无法获取原文链接。",
+    "originalFailed": "打开原文失败，请稍后重试。",
+    "detailFailed": "获取笔记详情失败，请稍后重试。",
+    "commentMentFailed": "获取评论词性失败，请稍后重试。",
+    "commentPanelFailed": "获取评论分析失败，请稍后重试。",
+    "insufficientCredits": "本次搜索需要 {{cost}} 积分，当前剩余 {{balance}} 积分，余额不足，请充值后重试。",
+    "keywordRequired": "请输入关键词后再搜索。"
+  }
+}

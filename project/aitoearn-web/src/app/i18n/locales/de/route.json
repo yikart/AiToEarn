@@ -1,7 +1,5 @@
 {
   "home": "Startseite",
-  "header.draftBox": "Content Management",
-  "header.agentAssets": "Agent-Assets",
   "tasksHistory": "Aufgabenverlauf",
   "accounts": "Veröffentlichen",
   "publish": "Veröffentlichen",
@@ -20,9 +18,10 @@
   "sidebar.more": "Mehr",
   "mobileBottom.content": "Inhalt",
   "mobileBottom.checkIn": "Check-in",
+  "mobileBottom.gold": "Gold",
   "mobileBottom.publish": "Publizieren",
   "mobileBottom.interaction": "Interaktion",
-  "aiSocial": "AI Publish",
-  "download": "Download",
-  "xhsData": "XHS Data"
+  "pricing": "Preise",
+  "xhsData": "KI-Interaktion",
+  "groundPromotion": "Ground Promotion"
 }

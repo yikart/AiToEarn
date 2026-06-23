@@ -2,7 +2,7 @@
  * 登录跳转工具函数
  */
 
-import { useLoginDialogStore } from '@/app/layout/LoginDialog/store'
+import { useLoginDialogStore } from '@/store/login-dialog'
 
 /**
  * 打开全局登录弹框

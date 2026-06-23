@@ -10,34 +10,17 @@ import type {
   ChannelManagerState,
   ChannelManagerView,
 } from './types'
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import type { ChannelAccountAuthStatus } from '@/api/channels/channel.types'
+import type { PlatType } from '@/app/config/platConfig'
 import type { PluginPlatformType } from '@/store/plugin'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { apiCheckBilibiliAuth, apiGetBilibiliLoginUrl } from '@/api/plat/bilibili'
-import { createDouyinAuth, getDouyinAuthStatus } from '@/api/plat/douyin'
-import { createKwaiAuth, getKwaiAuthStatus } from '@/api/plat/kwai'
-import {
-  apiCheckYoutubeAuth,
-  checkMetaAuthApi,
-  checkPinterestAuthApi,
-  checkTiktokAuthApi,
-  checkWxGzAuthApi,
-  getFacebookAuthUrlApi,
-  getInstagramAuthUrlApi,
-  getLinkedInAuthUrlApi,
-  getPinterestAuthUrlApi,
-  getThreadsAuthUrlApi,
-  getTiktokAuthUrlApi,
-  getWxGzhAuthUrlApi,
-  getYouTubeAuthUrlApi,
-} from '@/api/platAuth'
-import { apiCheckTwitterAuth, getTwitterAuthUrlApi } from '@/api/twitter'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
+import { getChannelAccountAuthStatusApi, startChannelAccountAuthApi } from '@/api/channels/channel.api'
 import i18next from '@/app/i18n/client'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { getPlatformInfoSync, isPlatformDisabledSync, isPlatformEnabledSync } from '@/store/platformMetadata'
 import {
   isPluginPlatformAccountReady,
   PLUGIN_SUPPORTED_PLATFORMS,
@@ -45,6 +28,8 @@ import {
   usePluginStore,
 } from '@/store/plugin'
 import { useUserStore } from '@/store/user'
+import { confirmPlatformRegionRedirect } from '@/utils/region/redirect'
+import { toast } from '@/utils/ui/toast'
 import { DEFAULT_AUTH_COUNTDOWN, POLLING_INTERVAL } from './types'
 
 /**
@@ -52,6 +37,14 @@ import { DEFAULT_AUTH_COUNTDOWN, POLLING_INTERVAL } from './types'
  */
 function t(key: string, options?: Record<string, string>): string {
   return i18next.t(key, { ns: 'account', ...options })
+}
+
+function getPlatformName(platform: PlatType) {
+  return getPlatformInfoSync(platform)?.name || platform
+}
+
+function notifyPlatformComingSoon(platform: PlatType) {
+  toast.warning(t('channelManager.platformComingSoon', { platform: getPlatformName(platform) }))
 }
 
 /**
@@ -64,8 +57,11 @@ function isPluginSupportedPlatform(platform: PlatType): platform is PluginPlatfo
 /** 初始授权状态 */
 const initialAuthState: AuthState = {
   platform: null,
-  taskId: null,
+  sessionId: null,
   authUrl: null,
+  authMode: 'oauth',
+  qrCodeDataUrl: null,
+  qrCodePath: null,
   countdown: DEFAULT_AUTH_COUNTDOWN,
   isPolling: false,
   error: null,
@@ -88,7 +84,7 @@ function getInitialState(): ChannelManagerState {
 }
 
 /** 轮询定时器ID */
-let pollingIntervalId: ReturnType<typeof setInterval> | null = null
+let pollingTimerId: ReturnType<typeof setTimeout> | null = null
 /** 倒计时定时器ID */
 let countdownIntervalId: ReturnType<typeof setInterval> | null = null
 
@@ -96,9 +92,9 @@ let countdownIntervalId: ReturnType<typeof setInterval> | null = null
  * 清理所有定时器
  */
 function clearAllTimers() {
-  if (pollingIntervalId) {
-    clearInterval(pollingIntervalId)
-    pollingIntervalId = null
+  if (pollingTimerId) {
+    clearTimeout(pollingTimerId)
+    pollingTimerId = null
   }
   if (countdownIntervalId) {
     clearInterval(countdownIntervalId)
@@ -111,103 +107,19 @@ function clearAllTimers() {
  */
 async function getAuthUrl(platform: PlatType, spaceId?: string): Promise<AuthUrlResponse | null> {
   try {
-    let res: any
+    const res = await startChannelAccountAuthApi(platform, { groupId: spaceId })
 
-    switch (platform) {
-      case PlatType.KWAI:
-        res = await createKwaiAuth('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.BILIBILI:
-        res = await apiGetBilibiliLoginUrl('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Douyin:
-        res = await createDouyinAuth('pc', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.YouTube:
-        res = await getYouTubeAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Tiktok:
-        res = await getTiktokAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Facebook:
-        res = await getFacebookAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Instagram:
-        res = await getInstagramAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Threads:
-        res = await getThreadsAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.LinkedIn:
-        res = await getLinkedInAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.Twitter:
-        // Twitter 使用与 Meta 系列相同的授权逻辑
-        res = await getTwitterAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.taskId }
-        }
-        break
-
-      case PlatType.WxGzh:
-        res = await getWxGzhAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.url, taskId: res.data.id || res.data.taskId }
-        }
-        break
-
-      case PlatType.Pinterest:
-        res = await getPinterestAuthUrlApi('', spaceId)
-        if (res?.data) {
-          return { url: res.data.uri, taskId: res.data.taskId }
-        }
-        break
-
-      default:
-        console.warn(`Platform ${platform} not supported for OAuth`)
-        return null
-    }
-
-    // 检查登录状态
     if (res?.code === 1) {
       useUserStore.getState().logout()
       return null
+    }
+
+    if (res?.code === 0 && res.data?.url && res.data.sessionId) {
+      return {
+        url: res.data.url,
+        sessionId: res.data.sessionId,
+        expiresAt: res.data.expiresAt,
+      }
     }
 
     return null
@@ -218,66 +130,45 @@ async function getAuthUrl(platform: PlatType, spaceId?: string): Promise<AuthUrl
   }
 }
 
-/**
- * 根据平台类型检查授权状态
- */
+function getAuthCountdown(expiresAt?: string) {
+  if (!expiresAt)
+    return DEFAULT_AUTH_COUNTDOWN
+
+  const expiresTime = new Date(expiresAt).getTime()
+  if (Number.isNaN(expiresTime))
+    return DEFAULT_AUTH_COUNTDOWN
+
+  return Math.max(0, Math.ceil((expiresTime - Date.now()) / 1000))
+}
+
+interface AuthStatusResult {
+  status: ChannelAccountAuthStatus['status']
+  data?: ChannelAccountAuthStatus
+  message?: string
+}
+
 async function checkAuthStatus(
   platform: PlatType,
-  taskId: string,
-): Promise<{ status: number, data?: any, message?: string } | null> {
+  sessionId: string,
+): Promise<AuthStatusResult | null> {
   try {
-    let res: any
+    const res = await getChannelAccountAuthStatusApi(platform, sessionId)
 
-    switch (platform) {
-      case PlatType.KWAI:
-        res = await getKwaiAuthStatus(taskId)
-        break
-
-      case PlatType.BILIBILI:
-        res = await apiCheckBilibiliAuth(taskId)
-        break
-
-      case PlatType.Douyin:
-        res = await getDouyinAuthStatus(taskId)
-        break
-
-      case PlatType.YouTube:
-        res = await apiCheckYoutubeAuth(taskId)
-        break
-
-      case PlatType.Tiktok:
-        res = await checkTiktokAuthApi(taskId)
-        break
-
-      case PlatType.Facebook:
-      case PlatType.Instagram:
-      case PlatType.Threads:
-      case PlatType.LinkedIn:
-        res = await checkMetaAuthApi(taskId)
-        break
-
-      case PlatType.WxGzh:
-        res = await checkWxGzAuthApi(taskId)
-        break
-
-      case PlatType.Pinterest:
-        res = await checkPinterestAuthApi(taskId)
-        break
-
-      case PlatType.Twitter:
-        res = await apiCheckTwitterAuth(taskId)
-        break
-
-      default:
-        return null
+    if (res?.code === 1) {
+      useUserStore.getState().logout()
+      return null
     }
 
-    if (res?.data) {
+    if (res?.code === 0 && res.data) {
       return {
         status: res.data.status,
         data: res.data,
-        message: res.data.message || res.data.error,
+        message: res.data.status === 'failed' ? res.message : undefined,
       }
+    }
+
+    if (res?.message) {
+      return { status: 'failed', message: res.message }
     }
 
     return null
@@ -286,6 +177,32 @@ async function checkAuthStatus(
     console.error(`Failed to check auth status for ${platform}:`, error)
     return null
   }
+}
+
+function getAuthAccountIds(data?: ChannelAccountAuthStatus) {
+  return [
+    data?.accountId,
+    ...(data?.accountIds ?? []),
+    ...(data?.accounts?.map(account => account.accountId) ?? []),
+  ].filter((accountId): accountId is string => Boolean(accountId))
+}
+
+function findAuthorizedAccount(
+  accountList: SocialAccount[],
+  platform: PlatType,
+  data?: ChannelAccountAuthStatus,
+) {
+  const accountIds = getAuthAccountIds(data)
+
+  if (accountIds.length > 0) {
+    const accountIdSet = new Set(accountIds)
+    const matchedAccount = accountList.find(account => accountIdSet.has(account.id))
+
+    if (matchedAccount)
+      return matchedAccount
+  }
+
+  return accountList.find(account => account.type === platform)
 }
 
 export const useChannelManagerStore = create(
@@ -318,6 +235,16 @@ export const useChannelManagerStore = create(
 
       /** 直接打开并进入指定平台的授权流程 */
       openAndAuth(platform: PlatType, spaceId?: string) {
+        if (isPlatformDisabledSync(platform)) {
+          notifyPlatformComingSoon(platform)
+          return
+        }
+
+        if (!isPlatformEnabledSync(platform)) {
+          confirmPlatformRegionRedirect(getPlatformName(platform))
+          return
+        }
+
         // 如果没有指定空间，使用默认空间
         const accountGroupList = useAccountStore.getState().accountGroupList
         const defaultSpace = accountGroupList.find(g => g.isDefault)
@@ -370,8 +297,32 @@ export const useChannelManagerStore = create(
 
       /** 开始授权流程 */
       async startAuth(platform: PlatType, spaceId?: string) {
+        if (isPlatformDisabledSync(platform)) {
+          notifyPlatformComingSoon(platform)
+          set({
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
+          })
+          return
+        }
+
+        if (!isPlatformEnabledSync(platform)) {
+          confirmPlatformRegionRedirect(getPlatformName(platform))
+          set({
+            currentView: 'connect-list',
+            authState: { ...initialAuthState },
+          })
+          return
+        }
+
         // 清理之前的定时器
         clearAllTimers()
+
+        const platformInfo = getPlatformInfoSync(platform)
+        const authMode: AuthState['authMode'] = platformInfo?.authType === 'qrcode'
+          ? 'miniappQr'
+          : 'oauth'
+        const targetSpaceId = spaceId || get().targetSpaceId || undefined
 
         // 设置授权状态
         set({
@@ -379,51 +330,56 @@ export const useChannelManagerStore = create(
           authState: {
             ...initialAuthState,
             platform,
+            authMode,
             isPolling: true,
           },
-          targetSpaceId: spaceId || get().targetSpaceId,
+          targetSpaceId: targetSpaceId || null,
         })
 
         // 检查是否为插件支持的平台
-        if (isPluginSupportedPlatform(platform)) {
-          await methods.handlePluginPlatformAuth(platform, spaceId)
+        if (authMode !== 'miniappQr' && isPluginSupportedPlatform(platform)) {
+          await methods.handlePluginPlatformAuth(platform, targetSpaceId)
           return
         }
 
         // OAuth授权流程
         // 先同步打开空白窗口，避免 Safari 拦截弹窗
-        const authWindow = window.open('about:blank')
+        const authWindow = authMode === 'oauth' ? window.open('about:blank') : null
         try {
           // 获取授权URL
-          const authData = await getAuthUrl(platform, spaceId)
+          const authData = await getAuthUrl(platform, targetSpaceId)
 
           if (!authData) {
             authWindow?.close()
             set({
               authState: {
                 ...get().authState,
-                error: 'Failed to get auth URL',
+                error: t('channelManager.authFailedTip'),
                 isPolling: false,
               },
             })
             return
           }
 
-          // 更新状态并打开授权窗口
+          // 更新状态并打开授权窗口/二维码
           set({
             authState: {
               ...get().authState,
-              taskId: authData.taskId,
+              sessionId: authData.sessionId,
               authUrl: authData.url,
+              countdown: getAuthCountdown(authData.expiresAt),
+              qrCodeDataUrl: authMode === 'miniappQr' ? authData.url : null,
             },
           })
 
           // 设置授权窗口地址
-          if (authWindow) {
-            authWindow.location.href = authData.url
-          }
-          else {
-            window.open(authData.url)
+          if (authMode === 'oauth') {
+            if (authWindow) {
+              authWindow.location.href = authData.url
+            }
+            else {
+              window.open(authData.url)
+            }
           }
 
           // 启动倒计时
@@ -453,27 +409,47 @@ export const useChannelManagerStore = create(
             }
           }, 1000)
 
-          // 启动轮询
-          pollingIntervalId = setInterval(async () => {
-            const currentState = get()
-            const { authState } = currentState
+          const pollAuthStatus = async () => {
+            const authState = get().authState
 
-            if (!authState.taskId || !authState.platform) {
+            if (
+              authState.sessionId !== authData.sessionId
+              || authState.platform !== platform
+              || !authState.isPolling
+            ) {
               return
             }
 
-            const result = await checkAuthStatus(authState.platform, authState.taskId)
+            const result = await checkAuthStatus(platform, authData.sessionId)
+            const latestAuthState = get().authState
 
-            if (result?.status === 1) {
+            if (
+              latestAuthState.sessionId !== authData.sessionId
+              || latestAuthState.platform !== platform
+              || !latestAuthState.isPolling
+            ) {
+              return
+            }
+
+            if (result?.status === 'completed') {
               // 授权成功
               clearAllTimers()
 
               // 刷新账户列表
               await useAccountStore.getState().getAccountList()
+              const completedAuthState = get().authState
+
+              if (
+                completedAuthState.sessionId !== authData.sessionId
+                || completedAuthState.platform !== platform
+                || !completedAuthState.isPolling
+              ) {
+                return
+              }
 
               // 获取新添加的账户
               const accountList = useAccountStore.getState().accountList
-              const newAccount = accountList.find(acc => acc.type === authState.platform)
+              const newAccount = findAuthorizedAccount(accountList, platform, result.data)
 
               if (newAccount) {
                 methods.handleAuthSuccess(newAccount)
@@ -482,22 +458,32 @@ export const useChannelManagerStore = create(
                 // 没找到新账户，但也算成功
                 set({
                   currentView: 'main',
-                  selectedPlatform: authState.platform || 'all',
+                  selectedPlatform: platform,
                   authState: { ...initialAuthState },
                   isNewUser: false,
                 })
               }
             }
-            else if (result?.message) {
+            else if (result?.status === 'failed' || result?.message) {
               clearAllTimers()
               set({
                 authState: {
-                  ...authState,
-                  error: result.message,
+                  ...latestAuthState,
+                  error: result.message || t('channelManager.authFailedTip'),
                   isPolling: false,
                 },
               })
             }
+            else {
+              pollingTimerId = setTimeout(() => {
+                void pollAuthStatus()
+              }, POLLING_INTERVAL)
+            }
+          }
+
+          // 启动轮询：每次请求完成后再安排下一轮，避免接口重叠请求
+          pollingTimerId = setTimeout(() => {
+            void pollAuthStatus()
           }, POLLING_INTERVAL)
         }
         catch (error) {
@@ -506,7 +492,7 @@ export const useChannelManagerStore = create(
           set({
             authState: {
               ...get().authState,
-              error: error instanceof Error ? error.message : 'Unknown error',
+              error: error instanceof Error ? error.message : t('channelManager.authFailedTip'),
               isPolling: false,
             },
           })
@@ -519,7 +505,7 @@ export const useChannelManagerStore = create(
        */
       async handlePluginPlatformAuth(platform: PluginPlatformType, spaceId?: string) {
         const pluginStore = usePluginStore.getState()
-        const platformName = AccountPlatInfoMap.get(platform)?.name || platform
+        const platformName = getPlatformInfoSync(platform)?.name || platform
 
         // 检查插件是否就绪
         if (pluginStore.status !== PluginStatus.READY) {
@@ -594,6 +580,10 @@ export const useChannelManagerStore = create(
       /** 重新打开授权页面 */
       reopenAuthWindow() {
         const { authState } = get()
+        if (authState.authMode === 'miniappQr' && authState.platform) {
+          methods.startAuth(authState.platform, get().targetSpaceId || undefined)
+          return
+        }
         if (authState.authUrl) {
           window.open(authState.authUrl)
         }

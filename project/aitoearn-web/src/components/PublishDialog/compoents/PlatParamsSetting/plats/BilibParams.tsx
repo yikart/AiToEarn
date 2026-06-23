@@ -6,7 +6,7 @@ import type {
   IPlatsParamsProps,
   IPlatsParamsRef,
 } from '@/components/PublishDialog/compoents/PlatParamsSetting/plats/plats.type'
-import { forwardRef, memo, useEffect, useMemo } from 'react'
+import { forwardRef, memo, useEffect } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import CommonTitleInput from '@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput'
@@ -16,25 +16,26 @@ import { usePublishDialogData } from '@/components/PublishDialog/usePublishDialo
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group'
-import { SearchableSelect } from '@/components/ui/searchable-select'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
+import BilibiliPartitionCascader from './BilibiliPartitionCascader'
 
 const BilibParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
+      const { t: tCommon } = useTransClient('common')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
-      const { getBilibiliPartitions, bilibiliPartitions } = usePublishDialogData(
+      const { getBilibiliPartitions, bilibiliPartitions, bilibiliPartitionsLoading } = usePublishDialogData(
         useShallow(state => ({
           getBilibiliPartitions: state.getBilibiliPartitions,
           bilibiliPartitions: state.bilibiliPartitions,
+          bilibiliPartitionsLoading: state.bilibiliPartitionsLoading,
         })),
       )
 
@@ -59,17 +60,6 @@ const BilibParams = memo(
         }
       }, [pubItem.account.id, setOnePubParams])
 
-      // 将分区数据转换为 SearchableSelect 选项格式
-      const partitionOptions = useMemo(() => {
-        if (!bilibiliPartitions || !Array.isArray(bilibiliPartitions)) {
-          return []
-        }
-        return bilibiliPartitions.map((partition: any) => ({
-          value: partition.id.toString(),
-          label: partition.name,
-        }))
-      }, [bilibiliPartitions])
-
       return (
         <>
           <PubParmasTextarea
@@ -87,12 +77,12 @@ const BilibParams = memo(
                   >
                     {t('form.partition')}
                   </div>
-                  <SearchableSelect
-                    options={partitionOptions}
-                    value={pubItem.params.option.bilibili?.tid?.toString() ?? ''}
+                  <BilibiliPartitionCascader
+                    partitions={bilibiliPartitions || []}
+                    value={pubItem.params.option.bilibili?.tid}
                     onValueChange={(value) => {
                       const option = pubItem.params.option
-                      option.bilibili!.tid = Number(value)
+                      option.bilibili!.tid = value
                       setOnePubParams(
                         {
                           option,
@@ -103,6 +93,8 @@ const BilibParams = memo(
                     placeholder={t('form.partitionPlaceholder')}
                     searchPlaceholder={t('form.searchPlaceholder')}
                     emptyText={t('form.noResults')}
+                    loading={bilibiliPartitionsLoading}
+                    loadingText={tCommon('actions.loading')}
                     className="flex-1"
                   />
                 </div>

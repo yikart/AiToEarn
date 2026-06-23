@@ -11,8 +11,8 @@ import { memo, useCallback, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 
 /** 内部内容组件属性 */
 interface ModalContentProps {

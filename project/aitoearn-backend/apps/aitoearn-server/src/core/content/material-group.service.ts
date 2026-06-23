@@ -40,7 +40,7 @@ export class MaterialGroupService {
   async getGroupList(
     page: TableDto,
     filter: {
-      userId: string
+      userId?: string
       title?: string
     },
   ) {

@@ -11,6 +11,7 @@ import {
 import { RENDER_METADATA, SSE_METADATA } from '@nestjs/common/constants'
 import { map } from 'rxjs'
 import { ResponseCode } from '../enums'
+import { getCurrentRequestId, getRequestIdFromHeaders } from './propagation.interceptor'
 
 const SKIP_RESPONSE_INTERCEPTOR_KEY = Symbol('SkipResponseInterceptor')
 
@@ -30,6 +31,7 @@ export class ResponseInterceptor implements NestInterceptor {
     if (type === 'http') {
       const req = context.switchToHttp().getRequest<Request>()
       const res = context.switchToHttp().getResponse<Response>()
+      const requestId = getRequestIdFromHeaders(req.headers)
 
       if (!isSSE) {
         res.header('x-request-id', req.headers['x-request-id'])
@@ -47,6 +49,7 @@ export class ResponseInterceptor implements NestInterceptor {
             data,
             code: ResponseCode.Success,
             message: '请求成功',
+            ...(requestId ? { requestId } : {}),
           }
         }),
       )
@@ -66,11 +69,13 @@ export class ResponseInterceptor implements NestInterceptor {
           if (reqTime >= 50) {
             this.logger.verbose(`${url}::${reqTime}ms`)
           }
+          const requestId = getCurrentRequestId()
 
           return {
             data,
             code: ResponseCode.Success,
             message: '请求成功',
+            ...(requestId ? { requestId } : {}),
           }
         }),
       )

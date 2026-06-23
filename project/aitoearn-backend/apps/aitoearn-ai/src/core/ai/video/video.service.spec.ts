@@ -25,13 +25,16 @@ describe('videoService', () => {
     extractThumbnailFromUrl: ReturnType<typeof vi.fn>
   }
   let mockGrokVideoService: {
-    calculatePrice: ReturnType<typeof vi.fn>
     createFromRequest: ReturnType<typeof vi.fn>
     extractInput: ReturnType<typeof vi.fn>
     getTaskResult: ReturnType<typeof vi.fn>
   }
   let mockVolcengineVideoService: {
-    calculatePrice: ReturnType<typeof vi.fn>
+    createFromRequest: ReturnType<typeof vi.fn>
+    extractInput: ReturnType<typeof vi.fn>
+    getTaskResult: ReturnType<typeof vi.fn>
+  }
+  let mockDashscopeVideoService: {
     createFromRequest: ReturnType<typeof vi.fn>
     extractInput: ReturnType<typeof vi.fn>
     getTaskResult: ReturnType<typeof vi.fn>
@@ -55,12 +58,6 @@ describe('videoService', () => {
           duration: 8,
           aspectRatio: '9:16',
         },
-        pricing: [
-          { duration: 5, price: 40 },
-          { duration: 8, price: 64 },
-          { mode: 'video2video', duration: 5, price: 40 },
-          { mode: 'video2video', duration: 8, price: 64 },
-        ],
       },
       {
         name: 'mode-fallback-model',
@@ -77,9 +74,6 @@ describe('videoService', () => {
           aspectRatio: '9:16',
           resolution: '720p',
         },
-        pricing: [
-          { resolution: '720p', duration: 5, price: 75 },
-        ],
       },
     ]
 
@@ -100,13 +94,16 @@ describe('videoService', () => {
       extractThumbnailFromUrl: vi.fn(),
     }
     mockGrokVideoService = {
-      calculatePrice: vi.fn().mockReturnValue(30),
       createFromRequest: vi.fn(),
       extractInput: vi.fn(),
       getTaskResult: vi.fn(),
     }
     mockVolcengineVideoService = {
-      calculatePrice: vi.fn().mockResolvedValue(75),
+      createFromRequest: vi.fn(),
+      extractInput: vi.fn(),
+      getTaskResult: vi.fn(),
+    }
+    mockDashscopeVideoService = {
       createFromRequest: vi.fn(),
       extractInput: vi.fn(),
       getTaskResult: vi.fn(),
@@ -123,31 +120,8 @@ describe('videoService', () => {
       mockVolcengineVideoService as never,
       {} as never,
       mockGrokVideoService as never,
-      {} as never,
-      {} as never,
-      {} as never,
+      mockDashscopeVideoService as never,
     )
-  })
-
-  it('存在 mode 专属价格时优先使用精确匹配', async () => {
-    const price = await service.calculateVideoGenerationPrice({
-      model: 'grok-imagine-video',
-      duration: 5,
-      mode: 'video2video',
-    })
-
-    expect(price).toBe(30)
-  })
-
-  it('不存在 mode 专属价格时回退到默认价格', async () => {
-    const price = await service.calculateVideoGenerationPrice({
-      model: 'mode-fallback-model',
-      duration: 5,
-      resolution: '720p',
-      mode: 'video2video',
-    })
-
-    expect(price).toBe(75)
   })
 
   it('groupId 非法时在提交阶段直接报错', async () => {
@@ -165,7 +139,7 @@ describe('videoService', () => {
   })
 
   it('grok 渠道将请求分发给渠道服务', async () => {
-    mockGrokVideoService.createFromRequest.mockResolvedValue({ id: 'task-1', points: 40 })
+    mockGrokVideoService.createFromRequest.mockResolvedValue({ id: 'task-1' })
 
     const request = {
       userId: 'user-1',
@@ -186,7 +160,6 @@ describe('videoService', () => {
     expect(result).toEqual({
       id: 'task-1',
       status: TaskStatus.Submitted,
-      points: 40,
     })
   })
 
@@ -316,6 +289,33 @@ describe('videoService', () => {
     })
   })
 
+  it('失败任务保留 running response 时仍返回失败状态', async () => {
+    mockGrokVideoService.extractInput.mockReturnValue({ prompt: 'test prompt' })
+
+    const aiLog = createAiLog({
+      status: AiLogStatus.Failed,
+      duration: 60 * 60 * 1000,
+      errorMessage: 'AI task timed out after 1 hour',
+      request: { prompt: 'test prompt', groupId: 'group-1' },
+      response: { status: 'pending' },
+    })
+
+    const result = await service.transformToCommonResponse(aiLog)
+
+    expect(mockGrokVideoService.getTaskResult).not.toHaveBeenCalled()
+    expect(result).toMatchObject({
+      status: TaskStatus.Failure,
+      videoUrl: undefined,
+      mediaId: undefined,
+      groupId: undefined,
+      coverUrl: undefined,
+      error: {
+        message: 'AI task timed out after 1 hour',
+      },
+      finishedAt: new Date('2025-01-01T01:00:00.000Z'),
+    })
+  })
+
   it('volcengine 成功任务即使有 last_frame_url 也会统一截帧生成封面', async () => {
     mockVolcengineVideoService.extractInput.mockReturnValue({ prompt: 'test prompt' })
     mockVolcengineVideoService.getTaskResult.mockReturnValue({
@@ -374,7 +374,6 @@ function createAiLog(overrides: Partial<AiLog>): AiLog {
     duration: 1000,
     request: {},
     response: {},
-    points: 40,
     ...overrides,
   } as AiLog
 }

@@ -139,8 +139,13 @@ export class VolcengineVideoUtils {
     logger: Logger,
     assetType: AssetType = AssetType.AideoOutput,
   ): Promise<string | undefined> {
-    const playbackBaseUrl = config.ai.volcengine.playbackBaseUrl
-    const urlAuthPrimaryKey = config.ai.volcengine.urlAuthPrimaryKey
+    const playbackBaseUrl = config.ai.volcengine?.playbackBaseUrl
+    const urlAuthPrimaryKey = config.ai.volcengine?.urlAuthPrimaryKey
+
+    if (!playbackBaseUrl || !urlAuthPrimaryKey) {
+      logger.warn({ fileName }, 'volcengine 未配置，跳过播放 URL 拼接')
+      return undefined
+    }
 
     const normalizedFileName = fileName.startsWith('/') ? fileName : `/${fileName}`
     const baseUrl = `${playbackBaseUrl}${normalizedFileName}`

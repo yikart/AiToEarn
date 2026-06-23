@@ -1,5 +1,5 @@
 /**
- * shared/components - 共享组件导出
+ * shared/components - shared component exports
  */
 
 export { BRAND_TITLE, BrandWordmark } from './BrandWordmark'

@@ -12,7 +12,8 @@ FROM node:24-alpine AS production
 
 ARG APP_NAME
 
-RUN apk add --no-cache curl ffmpeg
+RUN apk add --no-cache curl
+RUN npm install -g pm2 ffmpeg
 
 WORKDIR /app
 
@@ -25,4 +26,4 @@ COPY libs/ ./libs/
 ENV NODE_ENV=production
 ENV APP_NAME=$APP_NAME
 
-CMD ["sh", "-c", "node apps/${APP_NAME}/src/main.js -c config.js"]
+CMD ["sh", "-c", "exec pm2-runtime start apps/${APP_NAME}/src/main.js --name ${APP_NAME} -- -c config.yaml"]

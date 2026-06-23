@@ -14,13 +14,15 @@ import { MaterialSelectionModal } from '@/components/PublishDialog/compoents/Mat
 import { UploadTaskTypeEnum } from '@/components/PublishDialog/compoents/PublishManageUpload/publishManageUpload.enum'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
 import {
+  createPublishImageFromMedia,
+  createPublishVideoFromMedia,
   formatImg,
   formatVideo,
-  VideoGrabFrame,
+  PUBLISH_DIALOG_DND_TYPE,
 } from '@/components/PublishDialog/PublishDialog.util'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
-import { getOssProxyPath, getOssUrl } from '@/utils/oss'
+import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 
 export interface IPubParmasTextareaUploadRef {}
 
@@ -30,6 +32,18 @@ export interface IPubParmasTextareaUploadProps {
   onVideoUpdateFinish: (video: IVideoFile) => void
   onImgUpdateFinish: (img: IImgFile[]) => void
   enableGlobalDrag?: boolean // 是否启用全局拖拽上传
+}
+
+function isFileDrag(dataTransfer?: DataTransfer | null) {
+  if (!dataTransfer)
+    return false
+
+  const types = Array.from(dataTransfer.types)
+  if (!types.includes('Files') || types.includes(PUBLISH_DIALOG_DND_TYPE))
+    return false
+
+  const items = Array.from(dataTransfer.items || [])
+  return items.length === 0 || items.some(item => item.kind === 'file')
 }
 
 const PubParmasTextareaUpload = memo(
@@ -51,6 +65,8 @@ const PubParmasTextareaUpload = memo(
       const [isDragOver, setIsDragOver] = useState(false)
       const [isGlobalDragging, setIsGlobalDragging] = useState(false)
       const enqueueUpload = usePublishManageUpload(state => state.enqueueUpload)
+      const publishContentLoading = usePublishDialog(state => state.publishContentLoading)
+      const loading = importLoading || publishContentLoading
 
       // 判断是否为视频模式
       const isVideoMode = uploadAccept.includes('video') && !uploadAccept.includes('image')
@@ -195,14 +211,18 @@ const PubParmasTextareaUpload = memo(
         let dragCounter = 0
 
         const handleGlobalDragEnter = (e: DragEvent) => {
+          if (!isFileDrag(e.dataTransfer))
+            return
+
           e.preventDefault()
           dragCounter++
-          if (e.dataTransfer?.types.includes('Files')) {
-            setIsGlobalDragging(true)
-          }
+          setIsGlobalDragging(true)
         }
 
         const handleGlobalDragLeave = (e: DragEvent) => {
+          if (!isFileDrag(e.dataTransfer))
+            return
+
           e.preventDefault()
           dragCounter--
           if (dragCounter === 0) {
@@ -211,10 +231,16 @@ const PubParmasTextareaUpload = memo(
         }
 
         const handleGlobalDragOver = (e: DragEvent) => {
+          if (!isFileDrag(e.dataTransfer))
+            return
+
           e.preventDefault()
         }
 
         const handleGlobalDrop = async (e: DragEvent) => {
+          if (!isFileDrag(e.dataTransfer))
+            return
+
           e.preventDefault()
           dragCounter = 0
           setIsGlobalDragging(false)
@@ -299,6 +325,9 @@ const PubParmasTextareaUpload = memo(
 
       // 处理拖拽进入
       const handleDragEnter = useCallback((e: React.DragEvent) => {
+        if (!isFileDrag(e.dataTransfer))
+          return
+
         e.preventDefault()
         e.stopPropagation()
         setIsDragOver(true)
@@ -306,6 +335,9 @@ const PubParmasTextareaUpload = memo(
 
       // 处理拖拽离开
       const handleDragLeave = useCallback((e: React.DragEvent) => {
+        if (!isFileDrag(e.dataTransfer))
+          return
+
         e.preventDefault()
         e.stopPropagation()
         setIsDragOver(false)
@@ -313,6 +345,9 @@ const PubParmasTextareaUpload = memo(
 
       // 处理拖拽悬停
       const handleDragOver = useCallback((e: React.DragEvent) => {
+        if (!isFileDrag(e.dataTransfer))
+          return
+
         e.preventDefault()
         e.stopPropagation()
       }, [])
@@ -320,6 +355,9 @@ const PubParmasTextareaUpload = memo(
       // 处理文件释放
       const handleDrop = useCallback(
         async (e: React.DragEvent) => {
+          if (!isFileDrag(e.dataTransfer))
+            return
+
           e.preventDefault()
           e.stopPropagation()
           setIsDragOver(false)
@@ -349,51 +387,12 @@ const PubParmasTextareaUpload = memo(
 
       // 处理图片素材导入
       const processImageMedia = useCallback(async (media: MediaItem): Promise<IImgFile> => {
-        const ossUrl = getOssUrl(media.url)
-        const req = await fetch(getOssProxyPath(ossUrl))
-        const blob = await req.blob()
-        const imagefile = await formatImg({
-          blob,
-          path: `${media.title || 'image'}.${blob.type.split('/')[1]}`,
-        })
-        imagefile.ossUrl = media.url
-        return imagefile
+        return createPublishImageFromMedia(media)
       }, [])
 
       // 处理视频素材导入
       const processVideoMedia = useCallback(async (media: MediaItem): Promise<IVideoFile> => {
-        const ossUrl = getOssUrl(media.url)
-        const coverOss = getOssUrl(media.thumbUrl)
-
-        // 下载封面
-        const req = await fetch(getOssProxyPath(coverOss))
-        const blob = await req.blob()
-        const imagefile = await formatImg({
-          blob,
-          path: `${media.title || 'cover'}_cover.${blob.type.split('/')[1]}`,
-        })
-        imagefile.ossUrl = media.thumbUrl
-
-        // 获取视频信息
-        const videoInfo = await VideoGrabFrame(getOssProxyPath(ossUrl), 0)
-
-        // 从素材库导入的视频已上传到OSS，创建空占位文件
-        const filename = media.title || `video_${Date.now()}.mp4`
-
-        const video: IVideoFile = {
-          ossUrl,
-          videoUrl: ossUrl,
-          // 素材库导入时不需要file，创建空Blob占位
-          file: new Blob([], { type: 'video/mp4' }),
-          filename,
-          width: videoInfo.width,
-          height: videoInfo.height,
-          duration: videoInfo.duration,
-          size: media.metadata?.size || 0,
-          cover: imagefile,
-        }
-
-        return video
+        return createPublishVideoFromMedia(media)
       }, [])
 
       // 处理素材选择
@@ -431,7 +430,7 @@ const PubParmasTextareaUpload = memo(
       )
 
       return (
-        <div className="relative h-[110px]" onClick={e => e.stopPropagation()}>
+        <div className="relative h-[124px] w-full" onClick={e => e.stopPropagation()}>
           <MaterialSelectionModal
             open={materialSelectionOpen}
             onOpenChange={setMaterialSelectionOpen}
@@ -457,7 +456,7 @@ const PubParmasTextareaUpload = memo(
                 'w-full h-full border border-dashed border-border rounded-md flex flex-col items-center justify-center cursor-pointer gap-2.5 text-sm text-muted-foreground transition-colors',
                 'hover:border-primary',
                 isDragOver && 'border-primary bg-primary/5',
-                importLoading && 'pointer-events-none opacity-50',
+                loading && 'pointer-events-none opacity-50',
               )}
               onClick={triggerFileInput}
               onDragEnter={handleDragEnter}
@@ -466,7 +465,7 @@ const PubParmasTextareaUpload = memo(
               onDrop={handleDrop}
               data-testid="publish-upload-area"
             >
-              {importLoading ? (
+              {loading ? (
                 <>
                   <Loader2 className="h-5 w-5 animate-spin" />
                   {t('upload.importing')}
@@ -480,7 +479,7 @@ const PubParmasTextareaUpload = memo(
             </div>
 
             {/* Hover 菜单 */}
-            {!importLoading && (
+            {!loading && (
               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
                 <div className="bg-popover border border-border rounded-md shadow-md p-1 min-w-[120px]">
                   <div

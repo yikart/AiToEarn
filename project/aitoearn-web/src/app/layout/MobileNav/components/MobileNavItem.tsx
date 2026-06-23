@@ -6,10 +6,11 @@ import { FileText } from 'lucide-react'
 import Link from 'next/link'
 import { useTransClient } from '@/app/i18n/client'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 export function MobileNavItem({
   path,
+  href,
   translationKey,
   icon,
   isActive,
@@ -18,7 +19,7 @@ export function MobileNavItem({
 }: MobileNavItemProps) {
   const { t } = useTransClient('route')
   const lng = useGetClientLng()
-  const fullPath = path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`
+  const fullPath = href ?? (path.startsWith('/') ? `/${lng}${path}` : `/${lng}/${path}`)
 
   return (
     <Link

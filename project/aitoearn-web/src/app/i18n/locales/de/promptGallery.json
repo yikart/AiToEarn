@@ -24,9 +24,7 @@
   "tryOtherKeywords": "Versuchen Sie es mit anderen Suchbegriffen",
   "modal": {
     "promptLabel": "Prompt:",
-    "applyButton": "Jetzt anwenden",
-    "materialsHint": "These materials will be added to your input when applied",
-    "materialsLabel": "Reference Materials"
+    "applyButton": "Jetzt anwenden"
   },
   "badges": {
     "edit": "Bearbeiten",
@@ -80,6 +78,7 @@
         "title": "Videogenerierung",
         "desc": "Erstellen Sie Kurzvideoenvürfe aus Skripten oder Prompts, einschließlich Musik- und Einstellungsvorschläge"
       },
+
       "highlight": {
         "title": "Highlight-Bearbeitung",
         "desc": "Automatische Erkennung von Hochenergie-Momenten und Erstellung von Highlight-Clips mit Vorlagen"
@@ -96,6 +95,7 @@
         "title": "Asset-Download & Konvertierung",
         "desc": "Plattformvideos abrufen, Stapel-Download in mehreren Auflösungen und Formate konvertieren"
       },
+
       "videoTranslation": {
         "title": "Videoübersetzung",
         "desc": "Unterstützt Gesichtssynchronisation, Stimmenklonierung und eingebettete/weiche Untertitelexport"
@@ -112,6 +112,7 @@
         "title": "SEO & Keyword-Optimierung",
         "desc": "Bieten Sie Such- und Entdeckungsoptimierungsvorschläge für Text und Beschreibungen"
       },
+
       "schedule": {
         "title": "Geplante Veröffentlichung",
         "desc": "Unterstützt einmalige, wiederkehrende und zeitzonenbewusste Planung und automatische Veröffentlichung"
@@ -124,6 +125,7 @@
         "title": "Intelligente Zeitvorschläge",
         "desc": "Empfehlen Sie optimale Veröffentlichungszeiten basierend auf historischen Daten zur Reichweitenmaximierung"
       },
+
       "sse": {
         "title": "Streaming-Aufgaben (SSE)",
         "desc": "Streaming-Aufgabengenerierung in Echtzeit mit inkrementellen Ergebnissen und Abbruchunterstützung"
@@ -136,6 +138,7 @@
         "title": "Erweiterbare Workflows",
         "desc": "Unterstützt mehrstufige Pipelines und benutzerdefinierte Aktionshandler zur Verkettung komplexer Automatisierungen"
       },
+
       "videoUnderstanding": {
         "title": "Videoverständnis",
         "desc": "Automatische Erkennung von Emotionen, Personen und Ereignissen zur Generierung von Tags und Kapiteln"
@@ -144,6 +147,7 @@
         "title": "Berichte & Einblicke",
         "desc": "Automatische Generierung von Veröffentlichungsleistung und Wachstumsvorschlägen zur Überprüfung und Optimierung"
       },
+
       "commentAssistant": {
         "title": "Kommentar- & DM-Assistent",
         "desc": "Automatische Generierung von Antwortvorschlägen und Stapel-Antwortvorlagen zur Engagement-Steigerung"
@@ -153,7 +157,5 @@
         "desc": "Bieten Sie Zielgruppenprofile und Inhaltspräferenzanalysen zur Themen- und Zielgruppenführung"
       }
     }
-  },
-  "copiedSuccess": "Kopiert",
-  "copyFailed": "Kopieren fehlgeschlagen"
+  }
 }

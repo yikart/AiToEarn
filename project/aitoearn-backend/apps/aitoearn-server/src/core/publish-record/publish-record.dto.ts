@@ -1,5 +1,5 @@
 import { AccountType, createZodDto } from '@yikart/common'
-import { PublishRecordLinkStatus, PublishStatus, PublishType } from '@yikart/mongodb'
+import { PublishRecordLinkStatus, PublishRecordSource, PublishStatus, PublishType } from '@yikart/mongodb'
 import { z } from 'zod'
 
 /**
@@ -44,6 +44,7 @@ export const CreatePublishRecordSchema = z.object({
   status: z.enum(PublishStatus, { message: '状态' }),
   title: z.string().optional(),
   desc: z.string().optional(),
+  taskId: z.string({ message: '任务ID' }).optional(), // 任务ID
   materialGroupId: z.string({ message: '草稿箱ID' }).optional(), // 草稿箱ID
   materialId: z.string({ message: '草稿ID' }).optional(), // 草稿ID (替换原 taskMaterialId)
   videoUrl: z.string().optional(),
@@ -63,6 +64,7 @@ export const PublishRecordListFilterSchema = z.object({
   accountType: z.enum(AccountType, { message: '账户类型' }).optional(),
   type: z.enum(PublishType, { message: '类型' }).optional(),
   status: z.enum(PublishStatus, { message: '状态' }).optional(),
+  source: z.enum(PublishRecordSource).optional().describe('发布来源'),
   time: z.tuple([
     z.coerce.date(),
     z.coerce.date(),

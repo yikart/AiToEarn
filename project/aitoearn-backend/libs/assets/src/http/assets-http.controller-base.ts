@@ -12,6 +12,16 @@ import { UploadResultVo } from '../vo/upload-result.vo'
 import { CreateUploadSignDto, GetThumbnailQueryDto, OssCallbackDto } from './assets-http.dto'
 import { ASSETS_HTTP_OPTIONS, AssetsHttpModuleOptions } from './assets-http.options'
 
+const PUBLIC_UPLOAD_ID_PATTERN = /^[\w-]{8,64}$/
+
+function toPublicUploadUserId(publicUploadId: string) {
+  if (!PUBLIC_UPLOAD_ID_PATTERN.test(publicUploadId)) {
+    throw new BadRequestException('Invalid public upload id')
+  }
+
+  return `public-${publicUploadId}`
+}
+
 export abstract class AssetsHttpControllerBase {
   protected readonly userType: UserType
 
@@ -49,6 +59,34 @@ export abstract class AssetsHttpControllerBase {
     })
   }
 
+  @Public()
+  @ApiDoc({
+    summary: 'Create Public Upload Signed URL',
+    description: 'Create a signed URL for public direct upload. Asset owner is fixed to public.',
+    body: CreateUploadSignDto.schema,
+    response: UploadResultVo,
+  })
+  @Post('/public/:publicUploadId/uploadSign')
+  async createPublicUploadSign(
+    @Param('publicUploadId') publicUploadId: string,
+    @Body() body: CreateUploadSignDto,
+  ) {
+    const userId = toPublicUploadUserId(publicUploadId)
+    const mimeType = mime.lookup(body.filename) || 'application/octet-stream'
+    const result = await this.assetsService.createUploadSign(userId, {
+      type: body.type,
+      mimeType,
+      filename: body.filename,
+      size: body.size,
+    }, this.userType)
+    return UploadResultVo.create({
+      id: result.asset.id,
+      path: result.asset.path,
+      url: result.url,
+      uploadUrl: result.uploadUrl,
+    })
+  }
+
   @ApiDoc({
     summary: 'Confirm Asset Upload',
     description: 'Client confirms the asset upload after completing the upload to R2.',
@@ -60,6 +98,22 @@ export abstract class AssetsHttpControllerBase {
     @Param('id') assetId: string,
   ) {
     const asset = await this.assetsService.confirmUploadByUser(token.id, assetId, this.userType)
+    return AssetVo.create(Object.assign(asset, { url: asset.path }))
+  }
+
+  @Public()
+  @ApiDoc({
+    summary: 'Confirm Public Asset Upload',
+    description: 'Client confirms a public asset upload after completing the upload to R2.',
+    response: AssetVo,
+  })
+  @Post('/public/:publicUploadId/:id/confirm')
+  async confirmPublicUpload(
+    @Param('publicUploadId') publicUploadId: string,
+    @Param('id') assetId: string,
+  ) {
+    const userId = toPublicUploadUserId(publicUploadId)
+    const asset = await this.assetsService.confirmUploadByUser(userId, assetId, this.userType)
     return AssetVo.create(Object.assign(asset, { url: asset.path }))
   }
 

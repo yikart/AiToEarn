@@ -38,7 +38,7 @@ import { Autoplay, Pagination } from 'swiper/modules'
 import { Swiper, SwiperSlide } from 'swiper/react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 import 'swiper/css'
 import 'swiper/css/pagination'

@@ -58,4 +58,10 @@ export class Account extends BaseTemp {
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account)
-AccountSchema.index({ type: 1, uid: 1 }, { unique: true })
+AccountSchema.index(
+  { type: 1, uid: 1, account: 1 },
+  {
+    unique: true,
+    name: 'type_1_uid_1_account_1',
+  },
+)

@@ -1,25 +1,43 @@
-export interface PollOptions {
+export type PollErrorMapperData<E = string>
+  = | { type: 'failed', taskName: string, error: E }
+    | { type: 'completed_without_data', taskName: string }
+    | { type: 'timeout', taskName: string, maxPollingMs: number }
+
+export interface PollOptions<E = string> {
   /** 最大轮询时长（毫秒），默认 15 分钟 */
   maxPollingMs?: number
   /** 轮询间隔（毫秒），默认 10 秒 */
   intervalMs?: number
   /** 任务名称，用于超时错误信息 */
   taskName?: string
+  /** 映射 poll 自身产生的失败数据 */
+  errorMapper?: (data: PollErrorMapperData<E>) => Error
 }
 
-export interface PollResult<T> {
+export interface PollResult<T, E = string> {
   /** 是否完成（成功或失败） */
   done: boolean
   /** 完成时的返回数据 */
   data?: T
-  /** 失败时的错误信息 */
-  error?: string
+  /** 失败时的原始错误数据 */
+  error?: E
 }
 
 const DEFAULT_POLL_OPTIONS = {
   maxPollingMs: 15 * 60 * 1000,
   intervalMs: 10_000,
   taskName: 'Task',
+}
+
+function defaultPollErrorMapper<E>(data: PollErrorMapperData<E>): Error {
+  switch (data.type) {
+    case 'failed':
+      return new Error(`${data.taskName} failed: ${data.error}`)
+    case 'completed_without_data':
+      return new Error(`${data.taskName} completed without data`)
+    case 'timeout':
+      return new Error(`${data.taskName} timed out after ${Math.round(data.maxPollingMs / 60_000)} minutes`)
+  }
 }
 
 /**
@@ -40,27 +58,28 @@ const DEFAULT_POLL_OPTIONS = {
  *   { maxPollingMs: 10 * 60 * 1000, taskName: 'Video generation' },
  * )
  */
-export async function poll<T>(
-  pollFn: () => Promise<PollResult<T>>,
-  options?: PollOptions,
+export async function poll<T, E = string>(
+  pollFn: () => Promise<PollResult<T, E>>,
+  options?: PollOptions<E>,
 ): Promise<T> {
-  const { maxPollingMs, intervalMs, taskName } = { ...DEFAULT_POLL_OPTIONS, ...options }
+  const { maxPollingMs, intervalMs, taskName, errorMapper } = { ...DEFAULT_POLL_OPTIONS, ...options }
+  const mapError = errorMapper || defaultPollErrorMapper<E>
   const startTime = Date.now()
 
   while (Date.now() - startTime < maxPollingMs) {
     await new Promise(resolve => setTimeout(resolve, intervalMs))
     const { done, data, error } = await pollFn()
 
-    if (error) {
-      throw new Error(`${taskName} failed: ${error}`)
+    if (error !== undefined) {
+      throw mapError({ type: 'failed', taskName, error })
     }
     if (done && data !== undefined) {
       return data
     }
     if (done) {
-      throw new Error(`${taskName} completed without data`)
+      throw mapError({ type: 'completed_without_data', taskName })
     }
   }
 
-  throw new Error(`${taskName} timed out after ${Math.round(maxPollingMs / 60_000)} minutes`)
+  throw mapError({ type: 'timeout', taskName, maxPollingMs })
 }

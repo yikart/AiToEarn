@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getCalendarFestivalName, getCalendarFestivalTabValue } from '../calendarFestival.utils'
 
 export interface ICalendarFestivalDetailDialogProps {

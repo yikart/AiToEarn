@@ -23,7 +23,7 @@ export function buildClaudePrompt(
   // 添加媒体内容项
   validMedias.forEach((media) => {
     const item: IPromptContentItem = {
-      type: media.type as 'image' | 'video' | 'document',
+      type: media.type,
       source: {
         type: 'url',
         url: media.url,

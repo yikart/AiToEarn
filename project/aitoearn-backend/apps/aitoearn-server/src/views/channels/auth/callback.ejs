@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<%
+  const pageLocale = typeof locale !== 'undefined' ? locale : 'en-US'
+  const t = typeof messages !== 'undefined' ? messages : {
+    title: 'Authorization',
+    connectedTitle: 'Authorization completed',
+    redirectingDescription: 'Redirecting you back now.',
+    closeDescription: 'You can close this page now.',
+    connectedAccounts: 'Connected accounts',
+    accountId: 'Account ID',
+    platformUid: 'Platform ID',
+    account: 'Account'
+  }
+  const rawAccounts = typeof accounts !== 'undefined' ? accounts : []
+  const callbackAccounts = Array.isArray(rawAccounts) ? rawAccounts : []
+  const callbackPayloadAccounts = callbackAccounts.map(function(account) {
+    return {
+      relayAccountRef: account.accountId,
+      nickname: account.displayName,
+      avatar: account.avatarUrl,
+      platformUid: account.platformUid,
+      account: account.account,
+      platform: account.platform
+    }
+  })
+  const firstCallbackAccount = callbackPayloadAccounts[0] || {}
+  const pageCallbackUrl = typeof callbackUrl !== 'undefined' ? callbackUrl : ''
+  const pageRedirectUri = typeof redirectUri !== 'undefined' ? redirectUri : ''
+  const shouldRedirect = pageCallbackUrl || pageRedirectUri
+  const pagePlatformDisplayName = typeof platformDisplayName !== 'undefined' ? platformDisplayName : ''
+  const pagePlatformLogoUrl = typeof platformLogoUrl !== 'undefined' ? platformLogoUrl : ''
+  function toJsStringLiteral(value) {
+    return JSON.stringify(String(value)).replace(/[<>&]/g, function(char) {
+      return {
+        '<': '\\u003C',
+        '>': '\\u003E',
+        '&': '\\u0026'
+      }[char]
+    })
+  }
+%>
+<html lang="<%= pageLocale %>">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= t.connectedTitle %></title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    :root {
+      --background: #f7f8fb;
+      --foreground: #171717;
+      --muted: #6b7280;
+      --muted-bg: #f3f4f6;
+      --border: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --success: #16a34a;
+      --card: #fff;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Suisseintl, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--foreground);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(17, 24, 39, 0.08) 1px, transparent 0),
+        var(--background);
+      background-size: 18px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    main {
+      width: min(100%, 520px);
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .platform {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      min-width: 0;
+    }
+
+    .platform-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+      background: #fff;
+      flex: 0 0 auto;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 28px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      color: #166534;
+      background: #dcfce7;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+
+    p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .content {
+      padding: 20px 24px 24px;
+    }
+
+    .account-id {
+      margin: 0 0 14px;
+      padding: 12px;
+      border-radius: 10px;
+      background: var(--muted-bg);
+      color: #374151;
+      font-size: 13px;
+      word-break: break-all;
+    }
+
+    .section-title {
+      margin: 0 0 10px;
+      color: var(--foreground);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .account-list {
+      display: grid;
+      gap: 10px;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .account-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-height: 64px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      background: #fff;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--muted-bg);
+      border: 1px solid var(--border);
+      flex: 0 0 auto;
+      object-fit: cover;
+    }
+
+    .account-text {
+      min-width: 0;
+      display: block;
+    }
+
+    .name {
+      display: block;
+      font-size: 15px;
+      font-weight: 600;
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .uid {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .loading {
+      width: 18px;
+      height: 18px;
+      margin-left: auto;
+      border: 2px solid #dbeafe;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.9s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @media (max-width: 520px) {
+      body {
+        align-items: stretch;
+        padding: 12px;
+      }
+
+      header,
+      .content {
+        padding-left: 18px;
+        padding-right: 18px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="platform">
+        <% if (pagePlatformLogoUrl) { %>
+          <img class="platform-logo" src="<%= pagePlatformLogoUrl %>" alt="" />
+        <% } %>
+        <span class="status"><span class="dot"></span><%= pagePlatformDisplayName || t.title %></span>
+      </div>
+      <h1><%= t.connectedTitle %></h1>
+      <p><%= shouldRedirect ? t.redirectingDescription : t.closeDescription %></p>
+    </header>
+
+    <div class="content">
+      <% if (typeof accountId !== 'undefined' && accountId) { %>
+        <div class="account-id"><%= t.accountId %>: <%= accountId %></div>
+      <% } %>
+
+      <% if (callbackAccounts.length > 0) { %>
+        <p class="section-title"><%= t.connectedAccounts %></p>
+        <ul class="account-list">
+          <% callbackAccounts.forEach(function(account) { %>
+            <li class="account-row">
+              <% if (account.avatarUrl) { %>
+                <img class="avatar" src="<%= account.avatarUrl %>" alt="" />
+              <% } else { %>
+                <span class="avatar"></span>
+              <% } %>
+              <span class="account-text">
+                <span class="name"><%= account.displayName %></span>
+                <span class="uid"><%= t.platformUid %>: <%= account.platformUid %></span>
+                <% if (account.account) { %>
+                  <span class="uid"><%= t.account %>: <%= account.account %></span>
+                <% } %>
+              </span>
+              <% if (shouldRedirect) { %>
+                <span class="loading"></span>
+              <% } %>
+            </li>
+          <% }) %>
+        </ul>
+      <% } %>
+    </div>
+
+    <% if (pageCallbackUrl) { %>
+      <form id="callbackForm" method="POST" action="<%= pageCallbackUrl %>" style="display:none">
+        <input type="hidden" name="relayAccountRef" value="<%= firstCallbackAccount.relayAccountRef || '' %>" />
+        <input type="hidden" name="nickname" value="<%= firstCallbackAccount.nickname || '' %>" />
+        <input type="hidden" name="avatar" value="<%= firstCallbackAccount.avatar || '' %>" />
+        <input type="hidden" name="platformUid" value="<%= firstCallbackAccount.platformUid || '' %>" />
+        <input type="hidden" name="account" value="<%= firstCallbackAccount.account || '' %>" />
+        <input type="hidden" name="platform" value="<%= firstCallbackAccount.platform || '' %>" />
+        <% if (pageRedirectUri) { %>
+          <input type="hidden" name="redirectUri" value="<%= pageRedirectUri %>" />
+        <% } %>
+        <input type="hidden" name="accounts" value="<%= JSON.stringify(callbackPayloadAccounts) %>" />
+      </form>
+    <% } %>
+  </main>
+
+  <script>
+    const callbackUrl = <%- toJsStringLiteral(pageCallbackUrl) %>;
+    const redirectUri = <%- toJsStringLiteral(pageRedirectUri) %>;
+
+    if (callbackUrl) {
+      document.getElementById('callbackForm').submit();
+    } else if (redirectUri) {
+      setTimeout(function() {
+        window.location.replace(redirectUri);
+      }, 800);
+    } else {
+      setTimeout(function() {
+        window.close();
+      }, 3000);
+    }
+  </script>
+</body>
+
+</html>

@@ -2,7 +2,20 @@
  * 发布任务相关类型定义
  */
 
-import type { PluginPlatformType, ProgressEvent, PublishParams, PublishResult } from './baseTypes'
+import type { ProgressEvent, PublishParams, PublishResult } from './baseTypes'
+import type { PlatType } from '@/app/config/platConfig'
+
+export type PlatformPublishMode = 'auto' | 'task' | 'user_action'
+
+export type UnifiedPublishParams = Omit<PublishParams, 'platform'> & {
+  platform: PlatType
+}
+
+export interface PlatformPublishUserAction {
+  schemeUrl: string
+  shortLink: string
+  expiresAt?: string | Date
+}
 
 /**
  * 平台发布任务状态
@@ -16,6 +29,8 @@ export enum PlatformTaskStatus {
   COMPLETED = 'completed',
   /** 失败 */
   ERROR = 'error',
+  /** 已取消 */
+  CANCELED = 'canceled',
 }
 
 /**
@@ -29,13 +44,22 @@ export interface PlatformPublishTask {
   requestId?: string
 
   /** 平台类型 */
-  platform: PluginPlatformType
+  platform: PlatType
+
+  /** 发布方式：自动发布 / 发布任务 / 需你完成 */
+  publishMode?: PlatformPublishMode
+
+  /** 关联的发布记录 ID */
+  publishRecordId?: string
+
+  /** 用户后续操作信息（如抖音 App Scheme 与短链） */
+  userAction?: PlatformPublishUserAction
 
   /** 账号ID，用于关联账号信息 */
   accountId?: string
 
   /** 发布参数 */
-  params: PublishParams
+  params: UnifiedPublishParams
 
   /** 任务状态 */
   status: PlatformTaskStatus

@@ -11,7 +11,7 @@
 import { ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
 import * as React from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { Button, buttonVariants } from './button'
 import { Input } from './input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './select'

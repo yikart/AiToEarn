@@ -13,17 +13,9 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
   },
 
   // 10000 (common)
-  [ResponseCode.MailSendFail]: {
-    'en-US': 'Failed to send email',
-    'zh-CN': '邮件发送失败',
-  },
   [ResponseCode.ValidationFailed]: {
     'en-US': 'Validation failed',
     'zh-CN': '参数验证失败',
-  },
-  [ResponseCode.SmsSendFail]: {
-    'en-US': 'Failed to send SMS',
-    'zh-CN': '短信发送失败',
   },
   [ResponseCode.DevOnlyEndpoint]: {
     'en-US': 'This endpoint is only available in development environment',
@@ -43,6 +35,38 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Invalid GCS URI format',
     'zh-CN': '无效的 GCS URI 格式',
   },
+  [ResponseCode.ConfigEditorUnsupportedFormat]: {
+    'en-US': 'Unsupported config file format',
+    'zh-CN': '不支持的配置文件格式',
+  },
+  [ResponseCode.ConfigEditorParseFailed]: {
+    'en-US': 'Failed to parse config file',
+    'zh-CN': '配置文件解析失败',
+  },
+  [ResponseCode.ConfigEditorValidationFailed]: {
+    'en-US': 'Config validation failed',
+    'zh-CN': '配置校验失败',
+  },
+  [ResponseCode.ConfigEditorReadFailed]: {
+    'en-US': 'Failed to read config file',
+    'zh-CN': '配置文件读取失败',
+  },
+  [ResponseCode.ConfigEditorWriteFailed]: {
+    'en-US': 'Failed to write config file',
+    'zh-CN': '配置文件写入失败',
+  },
+  [ResponseCode.ConfigEditorConfigPathMissing]: {
+    'en-US': 'Config path is missing',
+    'zh-CN': '配置文件路径缺失',
+  },
+  [ResponseCode.ConfigEditorPm2Unavailable]: {
+    'en-US': 'PM2 is not available',
+    'zh-CN': 'PM2 不可用',
+  },
+  [ResponseCode.ConfigEditorRestartFailed]: {
+    'en-US': 'Failed to restart service with PM2',
+    'zh-CN': 'PM2 重启服务失败',
+  },
 
   // 12000 (user)
   [ResponseCode.UserNotFound]: {
@@ -56,39 +80,6 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
   [ResponseCode.UserStatusError]: {
     'en-US': 'User status error',
     'zh-CN': '用户状态错误',
-  },
-  [ResponseCode.UserPasswordError]: {
-    'en-US': 'Incorrect password',
-    'zh-CN': '密码错误',
-  },
-  [ResponseCode.UserLoginCodeError]: {
-    'en-US': 'Incorrect login code',
-    'zh-CN': '登录验证码错误',
-  },
-  [ResponseCode.UserAlreadyExists]: {
-    'en-US': 'User already exists',
-    'zh-CN': '用户已存在',
-  },
-
-  [ResponseCode.UserBanned]: {
-    'en-US': 'User has been banned',
-    'zh-CN': '用户已被封禁',
-  },
-  [ResponseCode.UserMembershipExpired]: {
-    'en-US': 'User membership expired',
-    'zh-CN': '用户会员已过期',
-  },
-  [ResponseCode.GetUserTokenFailed]: {
-    'en-US': 'Failed to get user token',
-    'zh-CN': '获取用户Token失败',
-  },
-  [ResponseCode.UserAlreadyHasLibrary]: {
-    'en-US': 'User already has a linked restaurant',
-    'zh-CN': '用户已关联餐厅',
-  },
-  [ResponseCode.UserNoLibrary]: {
-    'en-US': 'User has no linked restaurant',
-    'zh-CN': '用户未关联餐厅',
   },
 
   // 12300 (ai)
@@ -131,26 +122,6 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
   [ResponseCode.VideoUploadFailed]: {
     'en-US': 'Video upload task failed',
     'zh-CN': '视频上传任务失败',
-  },
-
-  // 12400 (notification)
-  [ResponseCode.NotificationNotFound]: {
-    'en-US': 'Notification not found',
-    'zh-CN': '通知未找到',
-  },
-
-  // 12500 (app-release)
-  [ResponseCode.AppReleaseNotFound]: {
-    'en-US': 'App release not found',
-    'zh-CN': '应用发布版本未找到',
-  },
-  [ResponseCode.AppReleaseAlreadyExists]: {
-    'en-US': 'App release already exists',
-    'zh-CN': '应用发布版本已存在',
-  },
-  [ResponseCode.StatusPageIncidentNotFound]: {
-    'en-US': 'Status page incident not found',
-    'zh-CN': '状态页事件未找到',
   },
 
   // 12600 (account)
@@ -242,6 +213,12 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'zh-CN': '组信息不存在',
   },
 
+  // 13200 (admin-operation)
+  [ResponseCode.AdminOperationPasswordError]: {
+    'en-US': 'Incorrect operation password',
+    'zh-CN': '操作密码错误',
+  },
+
   // 15000 (channel/publish)
   [ResponseCode.PublishRecordNotFound]: {
     'en-US': 'publish record with flowId {{flowId}} not found.',
@@ -256,12 +233,12 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'zh-CN': '发布任务已完成',
   },
   [ResponseCode.ChannelAccountNotAuthorized]: {
-    'en-US': 'Account not authorized',
-    'zh-CN': '账号未授权',
+    'en-US': 'Account is not authorized. Please re-authorize the account.',
+    'zh-CN': '账号未授权，请重新授权账号',
   },
   [ResponseCode.ChannelAuthorizationExpired]: {
-    'en-US': 'Authorization expired',
-    'zh-CN': '授权已过期',
+    'en-US': 'Authorization expired. Please re-authorize the account.',
+    'zh-CN': '授权已过期，请重新授权账号',
   },
   [ResponseCode.ChannelAccountInfoFailed]: {
     'en-US': 'Failed to get account information',
@@ -272,28 +249,28 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'zh-CN': '未发现任务',
   },
   [ResponseCode.ChannelCredentialNotFound]: {
-    'en-US': template.compile('{{channel}} credential not found for accountId: {{accountId}}'),
-    'zh-CN': template.compile('{{channel}} 凭证未找到，账号ID: {{accountId}}'),
+    'en-US': 'Account credential not found. Please re-authorize the account.',
+    'zh-CN': '账号授权凭证不存在，请重新授权账号',
   },
   [ResponseCode.ChannelRefreshTokenNotFound]: {
-    'en-US': template.compile('{{channel}} refresh token not found for accountId: {{accountId}}'),
-    'zh-CN': template.compile('{{channel}} 刷新令牌未找到，账号ID: {{accountId}}'),
+    'en-US': 'Refresh token not found. Please re-authorize the account.',
+    'zh-CN': '刷新令牌不存在，请重新授权账号',
   },
   [ResponseCode.ChannelRefreshTokenExpired]: {
-    'en-US': template.compile('{{channel}} refresh Token expired for accountId: {{accountId}}, expired at: {{credential.refresh_expires_in}}, please re-authorize'),
-    'zh-CN': '刷新令牌已过期',
+    'en-US': 'Refresh token expired. Please re-authorize the account.',
+    'zh-CN': '刷新令牌已过期，请重新授权账号',
   },
   [ResponseCode.ChannelRefreshTokenFailed]: {
-    'en-US': 'refresh Token failed for accountId: {{accountId}}',
-    'zh-CN': '刷新令牌失败',
+    'en-US': 'Failed to refresh authorization. Please re-authorize the account.',
+    'zh-CN': '刷新授权失败，请重新授权账号',
   },
   [ResponseCode.ChannelAccessTokenFailed]: {
-    'en-US': 'Failed to get access token',
-    'zh-CN': '获取访问令牌失败',
+    'en-US': 'Failed to get access token. Please re-authorize the account.',
+    'zh-CN': '获取访问令牌失败，请重新授权账号',
   },
   [ResponseCode.ChannelPlatformTokenNotFound]: {
-    'en-US': 'Platform authorization token not found',
-    'zh-CN': '不存在平台授权令牌',
+    'en-US': 'Platform authorization token not found. Please re-authorize the account.',
+    'zh-CN': '不存在平台授权令牌，请重新授权账号',
   },
   [ResponseCode.ChannelAuthTaskFailed]: {
     'en-US': 'Failed to create authorization task',
@@ -342,6 +319,14 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
   [ResponseCode.InteractRecordNotFound]: {
     'en-US': 'Publish record not found',
     'zh-CN': '未找到发布记录',
+  },
+  [ResponseCode.ChannelAccountCreateNotSupported]: {
+    'en-US': 'This platform does not support account creation via this endpoint',
+    'zh-CN': '该平台暂不支持通过此接口创建账号',
+  },
+  [ResponseCode.ChannelAccountAlreadyConnectedToAnotherUser]: {
+    'en-US': 'This channel account is already connected to another user',
+    'zh-CN': '该渠道账号已绑定到其他用户',
   },
   [ResponseCode.DataCubeAccountTypeNotSupported]: {
     'en-US': 'Account type not supported for data cube',
@@ -395,6 +380,222 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': template.compile('Publish resource is not accessible: {{url}} (status: {{status}})'),
     'zh-CN': template.compile('发布资源不可访问：{{url}}（状态：{{status}}）'),
   },
+  [ResponseCode.ChannelAuthSessionInvalid]: {
+    'en-US': 'Invalid or expired authorization session',
+    'zh-CN': '授权会话无效或已过期',
+  },
+  [ResponseCode.ChannelAuthPlatformMismatch]: {
+    'en-US': 'Authorization platform does not match',
+    'zh-CN': '授权平台不匹配',
+  },
+  [ResponseCode.ChannelAuthSessionCompleted]: {
+    'en-US': 'Authorization session has already been completed',
+    'zh-CN': '授权会话已完成',
+  },
+  [ResponseCode.ChannelAuthCsrfInvalid]: {
+    'en-US': 'Invalid authorization security token',
+    'zh-CN': '授权安全令牌无效',
+  },
+  [ResponseCode.ChannelAuthSelectableAccountsNotFound]: {
+    'en-US': 'No selectable accounts found',
+    'zh-CN': '未找到可选择的账号',
+  },
+  [ResponseCode.ChannelAuthSelectionRequired]: {
+    'en-US': 'Select at least one account to continue',
+    'zh-CN': '请至少选择一个账号继续',
+  },
+  [ResponseCode.ChannelAuthSelectedAccountUnavailable]: {
+    'en-US': 'Selected account is not available in this authorization session',
+    'zh-CN': '所选账号不属于当前授权会话',
+  },
+  [ResponseCode.ChannelAuthCodeMissing]: {
+    'en-US': 'Authorization code is missing',
+    'zh-CN': '缺少授权 code',
+  },
+  [ResponseCode.ChannelAuthRefreshTokenMissing]: {
+    'en-US': 'Refresh token is missing',
+    'zh-CN': '缺少刷新令牌',
+  },
+  [ResponseCode.ChannelAuthPlatformUidMissing]: {
+    'en-US': 'Platform user ID is missing',
+    'zh-CN': '缺少平台用户 ID',
+  },
+  [ResponseCode.ChannelAuthAccountAccessRevoked]: {
+    'en-US': 'Account access has been revoked',
+    'zh-CN': '账号访问权限已失效',
+  },
+  [ResponseCode.ChannelAuthCodeOrStateMissing]: {
+    'en-US': 'Authorization code or state is missing',
+    'zh-CN': '缺少授权 code 或 state',
+  },
+  [ResponseCode.ChannelOAuthIdentityAlreadyConnectedToAnotherUser]: {
+    'en-US': 'This OAuth identity is already connected to another user',
+    'zh-CN': '该 OAuth 身份已绑定到其他用户',
+  },
+  [ResponseCode.ChannelOAuthUserAlreadyConnectedToAnotherIdentity]: {
+    'en-US': 'Current user has already connected another OAuth identity for this platform',
+    'zh-CN': '当前用户已绑定该平台的其他 OAuth 身份',
+  },
+  [ResponseCode.PublishFlowNotFound]: {
+    'en-US': 'Publish flow not found',
+    'zh-CN': '发布流程未找到',
+  },
+  [ResponseCode.ChannelPublishValidationFailed]: {
+    'en-US': 'Publish content validation failed',
+    'zh-CN': '发布内容校验失败',
+  },
+  [ResponseCode.ChannelPublishDuplicateItem]: {
+    'en-US': template.compile('Duplicate publish item for {{platform}} account {{accountId}}'),
+    'zh-CN': template.compile('{{platform}} 账号 {{accountId}} 存在重复发布项'),
+  },
+  [ResponseCode.ChannelPublishMixedRelayAndLocalAccounts]: {
+    'en-US': 'Cannot mix relay and local accounts in one publish flow',
+    'zh-CN': '同一个发布流程不能混用中继账号和本地账号',
+  },
+  [ResponseCode.ChannelPublishQueueRemoveFailed]: {
+    'en-US': 'Failed to remove publish task from queue',
+    'zh-CN': '发布任务移出队列失败',
+  },
+  [ResponseCode.ChannelPublishPlatformCancelFailed]: {
+    'en-US': 'Failed to cancel publish task on platform',
+    'zh-CN': '平台侧取消发布任务失败',
+  },
+  [ResponseCode.ChannelPublishCancelNotSupported]: {
+    'en-US': 'This platform does not support canceling scheduled publish tasks',
+    'zh-CN': '该平台不支持取消已预约的发布任务',
+  },
+  [ResponseCode.ChannelPublishQueueFailed]: {
+    'en-US': 'Failed to queue publish task',
+    'zh-CN': '发布任务入队失败',
+  },
+  [ResponseCode.ChannelPublishTimeUpdateNotAllowed]: {
+    'en-US': 'Publish time cannot be updated for this task status',
+    'zh-CN': '当前任务状态不允许修改发布时间',
+  },
+  [ResponseCode.ChannelPublishNowNotAllowed]: {
+    'en-US': 'This task status cannot be published now',
+    'zh-CN': '当前任务状态不允许立即发布',
+  },
+  [ResponseCode.ChannelPublishUpdateNotAllowed]: {
+    'en-US': 'This task status cannot be updated',
+    'zh-CN': '当前任务状态不允许更新',
+  },
+  [ResponseCode.ChannelPublishPlatformWorkIdMissing]: {
+    'en-US': 'Platform work ID is missing',
+    'zh-CN': '缺少平台作品 ID',
+  },
+  [ResponseCode.ChannelPublishUpdateNotSupported]: {
+    'en-US': 'This platform does not support updating published posts',
+    'zh-CN': '该平台不支持更新已发布作品',
+  },
+  [ResponseCode.ChannelPublishPlatformNotSupported]: {
+    'en-US': 'This platform does not support publishing',
+    'zh-CN': '该平台不支持发布',
+  },
+  [ResponseCode.ChannelPublishPlatformStatusFailed]: {
+    'en-US': template.compile('Platform publish failed with status {{status}}'),
+    'zh-CN': template.compile('平台发布失败，状态码：{{status}}'),
+  },
+  [ResponseCode.ChannelPublishRetryNotAllowed]: {
+    'en-US': 'This publish task cannot be retried',
+    'zh-CN': '当前发布任务不允许重试',
+  },
+  [ResponseCode.ChannelWebhookNotSupported]: {
+    'en-US': 'This platform does not support webhooks',
+    'zh-CN': '该平台不支持 webhook',
+  },
+  [ResponseCode.ChannelWebhookChallengeNotSupported]: {
+    'en-US': 'This platform does not support webhook challenge',
+    'zh-CN': '该平台不支持 webhook 校验请求',
+  },
+  [ResponseCode.ChannelWebhookInvalidSignature]: {
+    'en-US': 'Invalid webhook signature',
+    'zh-CN': 'Webhook 签名无效',
+  },
+  [ResponseCode.ChannelWebhookInvalidVerifyToken]: {
+    'en-US': 'Invalid webhook verify token',
+    'zh-CN': 'Webhook verify token 无效',
+  },
+  [ResponseCode.ChannelWebhookChallengeCodeMissing]: {
+    'en-US': 'Webhook challenge code is missing',
+    'zh-CN': '缺少 webhook challenge code',
+  },
+  [ResponseCode.ChannelWebhookPublishFailed]: {
+    'en-US': template.compile('Publish failed by {{platform}} webhook'),
+    'zh-CN': template.compile('{{platform}} webhook 回调发布失败'),
+  },
+  [ResponseCode.ChannelPlatformApiFailed]: {
+    'en-US': template.compile('{{platform}} platform API request failed'),
+    'zh-CN': template.compile('{{platform}} 平台接口请求失败'),
+  },
+  [ResponseCode.ChannelPlatformServiceUnavailable]: {
+    'en-US': template.compile('{{platform}} platform service is temporarily unavailable, please try again later'),
+    'zh-CN': template.compile('{{platform}} 平台方服务异常，请稍后再试'),
+  },
+  [ResponseCode.ChannelPlatformRateLimited]: {
+    'en-US': template.compile('{{platform}} platform API rate limit reached'),
+    'zh-CN': template.compile('{{platform}} 平台接口触发频率限制'),
+  },
+  [ResponseCode.ChannelPlatformResponseInvalid]: {
+    'en-US': template.compile('{{platform}} platform API returned an invalid response'),
+    'zh-CN': template.compile('{{platform}} 平台接口返回数据无效'),
+  },
+  [ResponseCode.ChannelPlatformMediaUnsupported]: {
+    'en-US': template.compile('{{platform}} does not support this media'),
+    'zh-CN': template.compile('{{platform}} 不支持该媒体'),
+  },
+  [ResponseCode.ChannelPlatformMediaProcessingFailed]: {
+    'en-US': template.compile('{{platform}} media processing failed'),
+    'zh-CN': template.compile('{{platform}} 媒体处理失败'),
+  },
+  [ResponseCode.ChannelPlatformMediaProcessingTimeout]: {
+    'en-US': template.compile('{{platform}} media processing timed out'),
+    'zh-CN': template.compile('{{platform}} 媒体处理超时'),
+  },
+  [ResponseCode.ChannelPlatformAccountMissing]: {
+    'en-US': template.compile('{{platform}} account information is missing'),
+    'zh-CN': template.compile('缺少 {{platform}} 账号信息'),
+  },
+  [ResponseCode.ChannelPlatformPublishOptionMissing]: {
+    'en-US': template.compile('{{platform}} publish option is missing'),
+    'zh-CN': template.compile('缺少 {{platform}} 发布选项'),
+  },
+  [ResponseCode.ChannelPlatformPermissionMissing]: {
+    'en-US': template.compile('{{platform}} account permission is missing'),
+    'zh-CN': template.compile('{{platform}} 账号缺少所需权限'),
+  },
+  [ResponseCode.ChannelPlatformWorkNotFound]: {
+    'en-US': template.compile('{{platform}} work was not found'),
+    'zh-CN': template.compile('未找到 {{platform}} 作品'),
+  },
+  [ResponseCode.ChannelPlatformOperationNotSupported]: {
+    'en-US': template.compile('{{platform}} does not support this operation'),
+    'zh-CN': template.compile('{{platform}} 不支持该操作'),
+  },
+  [ResponseCode.ChannelPaginationModeNotSupported]: {
+    'en-US': template.compile('{{platform}} does not support this pagination mode'),
+    'zh-CN': template.compile('{{platform}} 不支持该分页模式'),
+  },
+  [ResponseCode.ChannelPaginationLimitExceeded]: {
+    'en-US': template.compile('{{platform}} pagination limit exceeds the maximum'),
+    'zh-CN': template.compile('{{platform}} 分页数量超过上限'),
+  },
+  [ResponseCode.ChannelPaginationPageSizeExceeded]: {
+    'en-US': template.compile('{{platform}} pagination page size exceeds the maximum'),
+    'zh-CN': template.compile('{{platform}} 分页页大小超过上限'),
+  },
+  [ResponseCode.ChannelPaginationDirectionNotSupported]: {
+    'en-US': template.compile('{{platform}} does not support this pagination direction'),
+    'zh-CN': template.compile('{{platform}} 不支持该分页方向'),
+  },
+  [ResponseCode.ChannelPublishPermalinkMissing]: {
+    'en-US': 'Published work permalink is missing',
+    'zh-CN': '缺少已发布作品链接',
+  },
+  [ResponseCode.ChannelAccountCreateRequiredFieldMissing]: {
+    'en-US': 'Required channel account creation field is missing',
+    'zh-CN': '缺少渠道账号创建必填字段',
+  },
 
   // 15100 (short-link)
   [ResponseCode.ShortLinkNotFound]: {
@@ -406,30 +607,14 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'zh-CN': '短链接已过期',
   },
 
-  // 16000 (work validation)
-  [ResponseCode.WorkDataIdNotFound]: {
-    'en-US': 'Work data ID not found',
-    'zh-CN': '作品数据ID未找到',
-  },
-  [ResponseCode.WorkLinkInfoNotFound]: {
-    'en-US': 'Work link info not found',
-    'zh-CN': '无法解析作品链接信息',
-  },
+  // 16000 (channel/work)
   [ResponseCode.WorkDetailNotFound]: {
     'en-US': 'Work detail not found',
     'zh-CN': '无法获取作品详情',
   },
   [ResponseCode.AccountAuthRequired]: {
-    'en-US': 'This platform requires account authorization',
-    'zh-CN': '该平台需要先授权账号',
-  },
-  [ResponseCode.WorkAlreadyDeleted]: {
-    'en-US': 'The work has been deleted and cannot be captured',
-    'zh-CN': '作品已删除，无法抓取数据',
-  },
-  [ResponseCode.MaterialGroupPlatformMismatch]: {
-    'en-US': 'Material group platform does not match selected platforms',
-    'zh-CN': '草稿箱平台限制与所选平台不匹配',
+    'en-US': 'This platform requires account authorization before submission',
+    'zh-CN': '该平台需要先授权账号才能提交',
   },
 
   // 18000 (agent)
@@ -473,25 +658,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'Failed to recover agent session, please try to create a new conversation',
     'zh-CN': '恢复代理任务会话失败, 请尝试新建会话',
   },
-  [ResponseCode.AgentAnalysisNotFound]: {
-    'en-US': 'Agent analysis record not found',
-    'zh-CN': '代理分析记录未找到',
-  },
-  [ResponseCode.AgentWeekSummaryNotFound]: {
-    'en-US': 'Agent week summary not found',
-    'zh-CN': '代理周总结未找到',
-  },
-
   // 18300 (place-draft)
   [ResponseCode.PlaceDraftNotFound]: {
     'en-US': 'Place draft not found',
     'zh-CN': '地点草稿未找到',
-  },
-
-  // 18400 (tools)
-  [ResponseCode.QrCodeArtImageNotFound]: {
-    'en-US': 'QR code art image not found',
-    'zh-CN': '二维码艺术图未找到',
   },
 
   // 19000 (api-key / relay)

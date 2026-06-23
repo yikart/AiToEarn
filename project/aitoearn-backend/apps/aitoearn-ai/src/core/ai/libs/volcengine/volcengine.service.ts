@@ -38,6 +38,7 @@ import type {
 import { Injectable, Logger } from '@nestjs/common'
 import { vodOpenapi } from '@volcengine/openapi'
 import { AppException, ResponseCode } from '@yikart/common'
+import { AiAvailabilityService } from '../../../ai-availability'
 import { AideoService } from './services/aideo.service'
 import { DirectEditService } from './services/direct-edit.service'
 import { DramaRecapService } from './services/drama-recap.service'
@@ -67,8 +68,16 @@ export class VolcengineService {
     private readonly vCreativeService: VCreativeService,
     private readonly directEditService: DirectEditService,
     private readonly dramaRecapService: DramaRecapService,
+    private readonly aiAvailability: AiAvailabilityService,
   ) {
     this.vodService = this.createVodService()
+  }
+
+  private async withAvailability<T>(operation: string, fn: () => Promise<T>, model?: string): Promise<T> {
+    return this.aiAvailability.execute(
+      { provider: 'volcengine', operation, model },
+      fn,
+    )
   }
 
   // ========== 配置方法 ==========
@@ -95,7 +104,7 @@ export class VolcengineService {
   async uploadMediaByUrl(
     request: VodUploadMediaByUrlRequest,
   ): Promise<VodUploadMediaByUrlResult> {
-    return this.uploadService.uploadMediaByUrl(request)
+    return this.withAvailability('uploadMediaByUrl', async () => this.uploadService.uploadMediaByUrl(request))
   }
 
   /**
@@ -104,7 +113,7 @@ export class VolcengineService {
   async uploadMaterial(
     request: VodUploadMaterialRequest,
   ): Promise<VodCommitUploadInfoResult> {
-    return this.uploadService.uploadMaterial(request)
+    return this.withAvailability('uploadMaterial', async () => this.uploadService.uploadMaterial(request))
   }
 
   /**
@@ -114,7 +123,7 @@ export class VolcengineService {
   async queryUploadTaskInfo(
     request: VodQueryUploadTaskInfoRequest,
   ): Promise<VodQueryUploadTaskInfoResult> {
-    return this.uploadService.getUploadTaskInfo(request)
+    return this.withAvailability('queryUploadTaskInfo', async () => this.uploadService.getUploadTaskInfo(request))
   }
 
   /**
@@ -123,7 +132,7 @@ export class VolcengineService {
   async getUploadTaskInfo(
     request: VodQueryUploadTaskInfoRequest,
   ): Promise<VodQueryUploadTaskInfoResult> {
-    return this.uploadService.getUploadTaskInfo(request)
+    return this.withAvailability('getUploadTaskInfo', async () => this.uploadService.getUploadTaskInfo(request))
   }
 
   /**
@@ -133,7 +142,7 @@ export class VolcengineService {
     url: string,
     options?: VideoUrlInput,
   ): Promise<string> {
-    return this.uploadService.downloadUrlAndUploadAsStream(url, options)
+    return this.withAvailability('downloadUrlAndUploadAsStream', async () => this.uploadService.downloadUrlAndUploadAsStream(url, options))
   }
 
   // ========== 媒资服务 (委托到 VolcengineMediaService) ==========
@@ -144,7 +153,7 @@ export class VolcengineService {
   async getMediaInfos(
     request: VodGetMediaInfosRequest,
   ): Promise<VodGetMediaInfosResult> {
-    return this.mediaService.getMediaInfos(request)
+    return this.withAvailability('getMediaInfos', async () => this.mediaService.getMediaInfos(request))
   }
 
   /**
@@ -153,14 +162,14 @@ export class VolcengineService {
   async getPlayInfo(
     request: VodGetPlayInfoRequest,
   ): Promise<VodGetPlayInfoResult> {
-    return this.mediaService.getPlayInfo(request)
+    return this.withAvailability('getPlayInfo', async () => this.mediaService.getPlayInfo(request))
   }
 
   /**
    * 构建带鉴权的播放URL
    */
   async buildAuthenticatedPlayUrl(uri: string): Promise<string> {
-    return this.mediaService.buildAuthenticatedPlayUrl(uri)
+    return this.withAvailability('buildAuthenticatedPlayUrl', async () => this.mediaService.buildAuthenticatedPlayUrl(uri))
   }
 
   // ========== 视频生成服务 (委托到 VolcengineVideoGenService) ==========
@@ -171,7 +180,7 @@ export class VolcengineService {
   async createVideoGenerationTask(
     request: CreateVideoGenerationTaskRequest,
   ) {
-    return this.videoGenService.createVideoGenerationTask(request)
+    return this.withAvailability('createVideoGenerationTask', async () => this.videoGenService.createVideoGenerationTask(request))
   }
 
   /**
@@ -180,7 +189,7 @@ export class VolcengineService {
   async getVideoGenerationTask(
     taskId: string,
   ): Promise<GetVideoGenerationTaskResponse> {
-    return this.videoGenService.getVideoGenerationTask(taskId)
+    return this.withAvailability('getVideoGenerationTask', async () => this.videoGenService.getVideoGenerationTask(taskId))
   }
 
   /**
@@ -189,7 +198,7 @@ export class VolcengineService {
   async deleteVideoGenerationTask(
     taskId: string,
   ) {
-    return this.videoGenService.deleteVideoGenerationTask(taskId)
+    return this.withAvailability('deleteVideoGenerationTask', async () => this.videoGenService.deleteVideoGenerationTask(taskId))
   }
 
   // ========== Aideo 服务 (委托到 VolcengineAideoService) ==========
@@ -211,7 +220,7 @@ export class VolcengineService {
         SkillParams?: SkillParams
       },
   ): Promise<SubmitAideoTaskAsyncResponse> {
-    return this.aideoService.submitAideoTaskAsync(request)
+    return this.withAvailability('submitAideoTaskAsync', async () => this.aideoService.submitAideoTaskAsync(request))
   }
 
   /**
@@ -220,7 +229,7 @@ export class VolcengineService {
   async getAideoTaskResult(
     request: GetAideoTaskResultRequest,
   ): Promise<GetAideoTaskResultResponse> {
-    return this.aideoService.getAideoTaskResult(request)
+    return this.withAvailability('getAideoTaskResult', async () => this.aideoService.getAideoTaskResult(request))
   }
 
   /**
@@ -240,7 +249,7 @@ export class VolcengineService {
         SkillParams?: SkillParams
       },
   ): Promise<SubmitAideoTaskAsyncResponse & { vids: string[] }> {
-    return this.aideoService.submitAideoTaskAsyncWithUpload(request)
+    return this.withAvailability('submitAideoTaskAsyncWithUpload', async () => this.aideoService.submitAideoTaskAsyncWithUpload(request))
   }
 
   // ========== VCreative 服务 (委托到 VolcengineVCreativeService) ==========
@@ -251,7 +260,7 @@ export class VolcengineService {
   async asyncVCreativeTask(
     request: AsyncVCreativeTaskRequest,
   ): Promise<AsyncVCreativeTaskResponse> {
-    return this.vCreativeService.asyncVCreativeTask(request)
+    return this.withAvailability('asyncVCreativeTask', async () => this.vCreativeService.asyncVCreativeTask(request))
   }
 
   /**
@@ -260,7 +269,7 @@ export class VolcengineService {
   async getVCreativeTaskResult(
     request: GetVCreativeTaskResultRequest,
   ): Promise<GetVCreativeTaskResultResponse> {
-    return this.vCreativeService.getVCreativeTaskResult(request)
+    return this.withAvailability('getVCreativeTaskResult', async () => this.vCreativeService.getVCreativeTaskResult(request))
   }
 
   // ========== DirectEdit 服务 (委托到 VolcengineDirectEditService) ==========
@@ -271,7 +280,7 @@ export class VolcengineService {
   async submitDirectEditTaskAsync(
     request: SubmitDirectEditTaskAsyncRequest,
   ): Promise<SubmitDirectEditTaskAsyncResponse> {
-    return this.directEditService.submitDirectEditTaskAsync(request)
+    return this.withAvailability('submitDirectEditTaskAsync', async () => this.directEditService.submitDirectEditTaskAsync(request))
   }
 
   /**
@@ -280,7 +289,7 @@ export class VolcengineService {
   async getDirectEditResult(
     request: GetDirectEditResultRequest,
   ): Promise<GetDirectEditResultItem> {
-    return this.directEditService.getDirectEditResult(request)
+    return this.withAvailability('getDirectEditResult', async () => this.directEditService.getDirectEditResult(request))
   }
 
   // ========== DramaRecap 服务 (委托到 VolcengineDramaRecapService) ==========
@@ -291,7 +300,7 @@ export class VolcengineService {
   async createDramaRecapTask(
     request: CreateDramaRecapTaskRequest,
   ): Promise<CreateDramaRecapTaskResponse> {
-    return this.dramaRecapService.createDramaRecapTask(request)
+    return this.withAvailability('createDramaRecapTask', async () => this.dramaRecapService.createDramaRecapTask(request))
   }
 
   /**
@@ -301,7 +310,7 @@ export class VolcengineService {
   async queryDramaRecapTask(
     request: QueryDramaRecapTaskRequest,
   ): Promise<QueryDramaRecapTaskResponse> {
-    return this.dramaRecapService.getDramaRecapTask(request)
+    return this.withAvailability('queryDramaRecapTask', async () => this.dramaRecapService.getDramaRecapTask(request))
   }
 
   /**
@@ -310,7 +319,7 @@ export class VolcengineService {
   async getDramaRecapTask(
     request: QueryDramaRecapTaskRequest,
   ): Promise<QueryDramaRecapTaskResponse> {
-    return this.dramaRecapService.getDramaRecapTask(request)
+    return this.withAvailability('getDramaRecapTask', async () => this.dramaRecapService.getDramaRecapTask(request))
   }
 
   // ========== 内部辅助方法 ==========

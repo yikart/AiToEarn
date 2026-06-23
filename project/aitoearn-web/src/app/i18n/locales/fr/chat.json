@@ -3,12 +3,7 @@
     "placeholder": "Créez une vidéo promotionnelle verticale de 8 secondes pour notre nouveau plateau de sushi. Utilisez de la musique jazz entraînante, des gros plans de saumon frais, générez des sous-titres et terminez avec notre logo.",
     "send": "Envoyer",
     "stop": "Arrêter",
-    "uploading": "Téléchargement...",
-    "clearSelection": "Clear Selection",
-    "linkPromotionPlan": "Link Promotion Plan (let agent operate your promotion plan)",
-    "noPromotionPlan": "No promotion plans",
-    "selectPromotionPlan": "Select Promotion Plan",
-    "upload": "Upload"
+    "uploading": "Téléchargement..."
   },
   "message": {
     "thinking": "Réflexion en cours...",
@@ -23,6 +18,13 @@
       "okText": "OK"
     }
   },
+  "agentNotice": {
+    "title": "Rappel amical",
+    "description": "Cet Agent est encore en phase de test. Ses fonctionnalités et la qualité des générations sont continuellement optimisées ; les résultats peuvent donc être instables ou ne pas correspondre entièrement aux attentes. Les crédits liés seront consommés normalement selon l'utilisation réelle, et aucun remboursement ni compensation ne peut actuellement être accordé pour les différences de résultats générés. Nous vous recommandons de commencer par un petit essai avant de décider de poursuivre. Merci de votre compréhension et de votre soutien.",
+    "doNotShowAgain": "Ne plus afficher",
+    "cancel": "Annuler",
+    "confirm": "Continuer"
+  },
   "task": {
     "newChat": "Nouvelle conversation",
     "delete": "Supprimer",
@@ -36,14 +38,7 @@
       "failed": "Échoué"
     },
     "rate": "Évaluer",
-    "share": "Partages",
-    "editTitle": "Edit Title",
-    "favorite": "Favorite",
-    "moreActions": "More",
-    "titleLabel": "Task Title",
-    "titlePlaceholder": "Enter task title",
-    "titleUpdated": "Title updated",
-    "unfavorite": "Unfavorite"
+    "share": "Partages"
   },
   "home": {
     "title": "Comment puis-je vous aider ?",
@@ -62,7 +57,7 @@
     "affiliateReward": "Gagnez 716,4 $",
     "imageMaterial": "Images",
     "videoMaterial": "Vidéos",
-    "agentAssets": "Ressources Agent",
+    "agentAssets": "Ressources générées par l'IA",
     "noData": "Aucune donnée"
   },
   "history": {
@@ -152,10 +147,11 @@
     "video": "Vidéo",
     "image": "Image",
     "document": "Document",
+    "audio": "Audio",
+    "edit": "Modifier le média",
+    "remove": "Supprimer le média",
     "uploadFailed": "Échec du téléchargement, veuillez réessayer",
-    "uploadCancelled": "Téléchargement annulé",
-    "edit": "Modifier",
-    "remove": "Retirer"
+    "uploadCancelled": "Téléchargement annulé"
   },
   "workflow": {
     "toolCallCompleted": "Appels d'outils terminés",
@@ -183,9 +179,7 @@
     "rechargeCredits": "Recharger les crédits",
     "action": "Action",
     "actionDesc": "Veuillez compléter l'action suivante",
-    "continue": "Continuer",
-    "error": "Échec",
-    "errorDesc": "La génération a échoué. Veuillez réessayer plus tard."
+    "continue": "Continuer"
   },
   "publishDetail": {
     "title": "Détails de la publication",
@@ -216,19 +210,6 @@
       "upload": "Envoi en cours...",
       "publish": "Publication en cours...",
       "complete": "Publié"
-    },
-    "goLogin": "Go Login",
-    "installPlugin": "Click to install plugin",
-    "platformNotLogged": "You are not logged into {{platform}} in this browser,",
-    "pluginNotInstalled": "Browser plugin not installed, unable to publish,",
-    "retry": "Retry"
-  },
-  "toolDetail": {
-    "input": "Input Parameters",
-    "noResult": "No result yet",
-    "output": "Execution Result"
-  },
-  "plugin": {
-    "platformNeedsPlugin": "Cette plateforme nécessite l’extension de navigateur. Veuillez d’abord l’autoriser."
+    }
   }
 }

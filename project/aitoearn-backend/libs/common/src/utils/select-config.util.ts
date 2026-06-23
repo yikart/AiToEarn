@@ -8,7 +8,14 @@ import { zodValidate } from './zod-validate.util'
 export function selectConfig<
   TOutput = unknown,
   TInput = TOutput,
->(config: ZodDto<TOutput, TInput>): TOutput {
+>(config: ZodDto<TOutput, TInput>): TOutput & { meta: { configPath: string } } {
+  const configPath = resolve(
+    process.cwd(),
+    program
+      .requiredOption('-c --config <config>', 'config path')
+      .parse(process.argv)
+      .opts()['config'],
+  )
   const module = TypedConfigModule.forRoot({
     schema: config,
     validate(value) {
@@ -17,14 +24,15 @@ export function selectConfig<
       }) as Record<string, unknown>
     },
     load: fileLoader({
-      absolutePath: resolve(
-        process.cwd(),
-        program
-          .requiredOption('-c --config <config>', 'config path')
-          .parse(process.argv)
-          .opts()['config'],
-      ),
+      absolutePath: configPath,
     }),
   })
-  return nestSelectConfig(module, config)
+  const selectedConfig = nestSelectConfig(module, config)
+  Object.defineProperty(selectedConfig, 'meta', {
+    value: { configPath },
+    enumerable: false,
+    configurable: false,
+    writable: false,
+  })
+  return selectedConfig as TOutput & { meta: { configPath: string } }
 }

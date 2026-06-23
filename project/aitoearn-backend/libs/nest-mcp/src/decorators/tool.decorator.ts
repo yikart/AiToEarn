@@ -28,7 +28,7 @@ export interface ToolOptions {
  * @param {object} options - The options for the decorator
  * @param {string} options.name - The name of the tool
  * @param {string} options.description - The description of the tool
- * @param {z.ZodTypeAny} [options.parameters] - The parameters of the tool
+ * @param {z.ZodObject} [options.parameters] - The parameters of the tool
  * @param {z.ZodTypeAny} [options.outputSchema] - The output schema of the tool
  * @returns {MethodDecorator} - The decorator
  */

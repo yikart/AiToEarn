@@ -4,14 +4,18 @@ import { AideoModule } from './aideo'
 import { AssetsModule } from './assets'
 import { ChatModule } from './chat'
 import { ImageModule } from './image'
+import { GeminiModule } from './libs/gemini'
 import { OpenaiModule } from './libs/openai'
 import { LogsModule } from './logs'
 import { ModelsConfigModule } from './models-config'
+import { RelayMediaModule } from './relay-media'
 import { VideoModule } from './video'
 
 @Module({
   imports: [
+    RelayMediaModule.forRoot(config.ai.relay),
     OpenaiModule.forRoot(config.ai.openai),
+    GeminiModule.forRoot(config.ai.gemini),
     ChatModule,
     LogsModule,
     ImageModule,
@@ -22,6 +26,6 @@ import { VideoModule } from './video'
   ],
   controllers: [],
   providers: [],
-  exports: [ChatModule, LogsModule, ImageModule, VideoModule, AideoModule, ModelsConfigModule, AssetsModule],
+  exports: [ChatModule, LogsModule, ImageModule, VideoModule, AideoModule, ModelsConfigModule, AssetsModule, RelayMediaModule],
 })
 export class AiModule { }

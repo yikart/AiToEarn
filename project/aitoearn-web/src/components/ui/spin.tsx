@@ -5,7 +5,7 @@
 
 'use client'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface SpinProps {
   /** 是否显示加载状态 */

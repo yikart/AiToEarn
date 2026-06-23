@@ -18,21 +18,7 @@ export enum MaterialStatus {
 /** 素材来源 */
 export enum MaterialSource {
   UPLOAD = 'upload',
-  GOOGLE_MAPS = 'google_maps',
   PlaceDraft = 'place_draft',
-}
-
-/** 品牌关联信息 */
-@Schema({ _id: false })
-export class MaterialBrandInfo {
-  @Prop({ required: true, index: true })
-  libraryId: string
-
-  @Prop({ required: true })
-  placeId: string
-
-  @Prop({ required: false })
-  photoReference?: string
 }
 
 @Schema({
@@ -109,10 +95,6 @@ export class Material extends WithTimestampSchema {
     index: true,
   })
   source: MaterialSource
-
-  /** 品牌关联信息 */
-  @Prop({ type: MaterialBrandInfo, required: false })
-  brandInfo?: MaterialBrandInfo
 
   @Prop({
     required: true,
@@ -217,5 +199,3 @@ export class Material extends WithTimestampSchema {
 }
 
 export const MaterialSchema = SchemaFactory.createForClass(Material)
-
-MaterialSchema.index({ 'userId': 1, 'brandInfo.placeId': 1 })

@@ -9,11 +9,12 @@ import type { PluginPlatformType, PublishTask } from '@/store/plugin/types/baseT
 import dayjs from 'dayjs'
 import { FileText } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+
+import { getPlatformInfoSync } from '@/store/platformMetadata'
 import { usePluginStore } from '@/store/plugin'
 import { PlatformTaskStatus } from '@/store/plugin/types/baseTypes'
+import { cn } from '@/utils/className'
 
 interface PublishListTabProps {
   /** 点击任务回调 */
@@ -24,7 +25,7 @@ interface PublishListTabProps {
  * 获取平台显示名称
  */
 function getPlatformName(platform: PluginPlatformType): string {
-  const platInfo = AccountPlatInfoMap.get(platform)
+  const platInfo = getPlatformInfoSync(platform)
   return platInfo?.name || platform
 }
 
@@ -39,6 +40,8 @@ function getStatusClassName(status: PlatformTaskStatus): string {
       return 'bg-blue-100 text-blue-700 hover:bg-blue-100'
     case PlatformTaskStatus.ERROR:
       return 'bg-red-100 text-red-700 hover:bg-red-100'
+    case PlatformTaskStatus.CANCELED:
+      return 'bg-muted text-muted-foreground hover:bg-muted'
     default:
       return 'bg-muted text-foreground hover:bg-muted'
   }

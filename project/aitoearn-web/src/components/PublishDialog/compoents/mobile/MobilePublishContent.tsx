@@ -1,24 +1,23 @@
 /**
  * MobilePublishContent - 移动端发布内容组件
- * 专为移动端优化的发布编辑界面，无 AI 助手和预览面板
+ * 专为移动端优化的发布编辑界面，无内容管理左栏
  */
-import type { SocialAccount } from '@/api/types/account.type'
-import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 
 import { ArrowRight, ChevronDown, FolderOpen, Layers, Plus, X } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap, PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import AvatarPlat from '@/components/AvatarPlat'
 import { useChannelManagerStore } from '@/components/ChannelManager/channelManagerStore'
+import AvatarPlat from '@/components/common/AvatarPlat'
 import { DouyinLaunchModal } from '@/components/PublishDialog/compoents/DouyinLaunchModal'
 import ErrorSummary from '@/components/PublishDialog/compoents/ErrorSummary'
 import PlatParamsSetting from '@/components/PublishDialog/compoents/PlatParamsSetting'
+import CommonTitleInput from '@/components/PublishDialog/compoents/PlatParamsSetting/common/CommonTitleInput'
 import PublishDatePicker from '@/components/PublishDialog/compoents/PublishDatePicker'
 import { usePublishManageUpload } from '@/components/PublishDialog/compoents/PublishManageUpload/usePublishManageUpload'
-import FacebookPagesModal from '@/components/PublishDialog/compoents/PublishModals/FacebookPagesModal'
 import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTextarea'
 import { useAccountClickHandler } from '@/components/PublishDialog/hooks/useAccountClickHandler'
 import { useAutoPublishOnReady } from '@/components/PublishDialog/hooks/useAutoPublishOnReady'
@@ -27,6 +26,7 @@ import { usePlatformAuth } from '@/components/PublishDialog/hooks/usePlatformAut
 import { usePublishActions } from '@/components/PublishDialog/hooks/usePublishActions'
 import usePubParamsVerify from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { useValidatedPublishTrigger } from '@/components/PublishDialog/hooks/useValidatedPublishTrigger'
+import { getCommonPublishTitleMax } from '@/components/PublishDialog/PublishDialog.util'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import {
@@ -38,10 +38,10 @@ import {
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import { usePlatformInfoMap } from '@/hooks/usePlatformMetadata'
 import { useAccountStore } from '@/store/account'
-import { parseTopicString } from '@/utils'
+import { cn } from '@/utils/className'
+import { parseTopicString } from '@/utils/common'
 
 export interface IMobilePublishContentProps {
   open: boolean
@@ -51,10 +51,15 @@ export interface IMobilePublishContentProps {
   defaultAccountIds?: string[]
   suppressAutoPublish?: boolean
   taskIdForPublish?: string
+  materialGroupIdForPublish?: string
   materialIdForPublish?: string
   onPublishConfirmed?: (taskId?: string, publishRecordId?: string) => void
   onPublishStart?: () => void
   autoPublishOnReady?: boolean
+  createLoading: boolean
+  setCreateLoading: (loading: boolean) => void
+  setCurrentPublishTaskId: (taskId: string | undefined) => void
+  setPublishDetailVisible: (visible: boolean) => void
 }
 
 // 移动端发布内容组件
@@ -66,12 +71,18 @@ const MobilePublishContent = memo(
     onPubSuccess,
     suppressAutoPublish,
     taskIdForPublish,
+    materialGroupIdForPublish,
     materialIdForPublish,
     onPublishConfirmed,
     onPublishStart,
     autoPublishOnReady,
+    createLoading,
+    setCreateLoading,
+    setCurrentPublishTaskId,
+    setPublishDetailVisible,
   }: IMobilePublishContentProps) => {
     const { t } = useTransClient('publish')
+    const platformInfoMap = usePlatformInfoMap()
 
     // ============ Store Hooks ============
 
@@ -120,6 +131,10 @@ const MobilePublishContent = memo(
         })),
       )
 
+    const commonTitleMax = useMemo(() => {
+      return getCommonPublishTitleMax(pubListChoosed)
+    }, [platformInfoMap, pubListChoosed])
+
     // 上传管理
     const { tasks, md5Cache } = usePublishManageUpload(
       useShallow(state => ({
@@ -133,13 +148,8 @@ const MobilePublishContent = memo(
 
     // ============ Local State ============
 
-    const [createLoading, setCreateLoading] = useState(false)
-    const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false)
-
     const [douyinPermalink, setDouyinPermalink] = useState('')
     const [douyinQRCodeVisible, setDouyinQRCodeVisible] = useState(false)
-    const [currentPublishTaskId, setCurrentPublishTaskId] = useState<string | undefined>()
-    const [publishDetailVisible, setPublishDetailVisible] = useState(false)
 
     // ============ Computed Values ============
 
@@ -175,17 +185,15 @@ const MobilePublishContent = memo(
     const { pubClick } = usePublishActions({
       pubListChoosed,
       pubTime,
-      isMobile: true,
       suppressAutoPublish,
       taskIdForPublish,
+      materialGroupIdForPublish,
       materialIdForPublish,
       onPublishConfirmed,
       onPublishStart,
       onClose,
       onPubSuccess,
       setCreateLoading,
-      setDouyinPermalink,
-      setDouyinQRCodeVisible,
       setCurrentPublishTaskId,
       setPublishDetailVisible,
       t,
@@ -202,21 +210,10 @@ const MobilePublishContent = memo(
 
     // ============ Callbacks ============
 
-    // 处理图生图（移动端暂不支持）
-    const handleImageToImage = useCallback(
-      (_imageFile: IImgFile) => {
-        toast.info(t('messages.mobileNotSupported'))
-      },
-      [t],
-    )
-
-    // 处理账户项点击（包装 handleAccountClick，添加离线和 PC 不支持检查）
+    // 处理账户项点击（包装 handleAccountClick，添加离线检查）
     const handleAccountItemClick = useCallback(
-      (pubItem: PubItem, isOffline: boolean, isPcNotSupported: boolean, platConfig: any) => {
+      (pubItem: PubItem, isOffline: boolean) => {
         if (isOffline) {
-          return
-        }
-        if (isPcNotSupported) {
           return
         }
         handleAccountClick(pubItem)
@@ -372,10 +369,11 @@ const MobilePublishContent = memo(
           {/* 账号选择区域 */}
           <div className="flex flex-wrap gap-2 mb-4">
             {pubList.map((pubItem) => {
-              const platConfig = AccountPlatInfoMap.get(pubItem.account.type)!
+              const platConfig = platformInfoMap.get(pubItem.account.type)
+              if (!platConfig)
+                return null
               const isChoosed = pubListChoosed.find(v => v.account.id === pubItem.account.id)
               const isOffline = pubItem.account.status === 0
-              const isPcNotSupported = platConfig && platConfig.pcNoThis === true
 
               return (
                 <TooltipProvider key={pubItem.account.id}>
@@ -390,21 +388,19 @@ const MobilePublishContent = memo(
                         }}
                         onClick={(e) => {
                           e.stopPropagation()
-                          handleAccountItemClick(pubItem, isOffline, isPcNotSupported, platConfig)
+                          handleAccountItemClick(pubItem, isOffline)
                         }}
                       >
                         <div className="relative">
                           <AvatarPlat
                             className={`cursor-pointer transition-all duration-300 p-[1px] ${
-                              isChoosed && !isOffline && !isPcNotSupported
+                              isChoosed && !isOffline
                                 ? '[&>img]:grayscale-0'
                                 : '[&>img]:grayscale hover:[&>img]:grayscale-0'
                             }`}
                             account={pubItem.account}
                             size="large"
-                            disabled={
-                              isOffline || !isChoosed || isPcNotSupported
-                            }
+                            disabled={isOffline || !isChoosed}
                           />
                           {isOffline && (
                             <div
@@ -417,17 +413,12 @@ const MobilePublishContent = memo(
                               {t('badges.offline')}
                             </div>
                           )}
-                          {isPcNotSupported && !isOffline && (
-                            <div className="absolute inset-0 bg-black/60 rounded-full flex items-center justify-center text-white text-[10px] font-semibold pointer-events-none text-center leading-tight">
-                              APP
-                            </div>
-                          )}
                         </div>
                       </div>
                     </TooltipTrigger>
-                    {(isPcNotSupported || isOffline) && (
+                    {isOffline && (
                       <TooltipContent>
-                        {isPcNotSupported ? t('tips.pcNotSupported') : t('tips.accountOffline')}
+                        {t('tips.accountOffline')}
                       </TooltipContent>
                     )}
                   </Tooltip>
@@ -459,14 +450,13 @@ const MobilePublishContent = memo(
                 {pubListChoosed.length === 1 && (
                   <PlatParamsSetting
                     pubItem={pubListChoosed[0]}
-                    onImageToImage={handleImageToImage}
                     isMobile
                   />
                 )}
                 {pubListChoosed.length >= 2 && (
                   <PubParmasTextarea
                     key={`${commonPubParams.images?.length || 0}-${commonPubParams.video ? 'video' : 'no-video'}`}
-                    platType={PlatType.Instagram}
+                    platType={pubListChoosed[0].account.type}
                     rows={10}
                     desValue={commonPubParams.des}
                     videoFileValue={commonPubParams.video}
@@ -480,7 +470,14 @@ const MobilePublishContent = memo(
                         topics,
                       })
                     }}
-                    onImageToImage={handleImageToImage}
+                    extend={commonTitleMax !== undefined && (
+                      <CommonTitleInput
+                        titleValue={commonPubParams.title || ''}
+                        titleMax={commonTitleMax}
+                        onTitleChange={title => setAccountAllParams({ title })}
+                        isMobile
+                      />
+                    )}
                     isMobile
                   />
                 )}
@@ -492,7 +489,6 @@ const MobilePublishContent = memo(
                     key={v.account.id}
                     pubItem={v}
                     style={{ marginBottom: '12px' }}
-                    onImageToImage={handleImageToImage}
                     isMobile
                   />
                 ))}
@@ -560,19 +556,14 @@ const MobilePublishContent = memo(
           </div>
         </div>
 
-        {/* Facebook页面选择弹窗 */}
-        <FacebookPagesModal
-          open={showFacebookPagesModal}
-          onClose={() => setShowFacebookPagesModal(false)}
-          onSuccess={() => setShowFacebookPagesModal(false)}
-        />
-
         {/* 移动端抖音唤起引导弹窗 */}
-        <DouyinLaunchModal
-          open={douyinQRCodeVisible}
-          permalink={douyinPermalink}
-          onClose={() => setDouyinQRCodeVisible(false)}
-        />
+        {douyinQRCodeVisible && (
+          <DouyinLaunchModal
+            open={douyinQRCodeVisible}
+            permalink={douyinPermalink}
+            onClose={() => setDouyinQRCodeVisible(false)}
+          />
+        )}
       </div>
     )
   },

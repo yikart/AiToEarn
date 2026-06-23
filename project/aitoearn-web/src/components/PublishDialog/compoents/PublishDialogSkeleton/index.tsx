@@ -42,12 +42,41 @@ export function PublishDialogSkeleton({ isMobile }: PublishDialogSkeletonProps) 
   }
 
   return (
-    <div className="absolute inset-0 z-50 rounded-lg bg-background p-5" aria-hidden="true">
-      <div className="flex h-full gap-4">
-        <div className="flex w-[720px] flex-col rounded-lg border border-border bg-card p-5">
-          <div className="mb-5 flex items-center justify-between">
+    <div className="absolute inset-0 z-50 overflow-hidden rounded-xl bg-background" aria-hidden="true">
+      <div className="flex h-full w-full overflow-hidden rounded-xl border border-border">
+        <div className="flex w-[52%] min-w-0 flex-col border-r border-border bg-card p-4">
+          <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
             <Skeleton className="h-6 w-28" />
-            <Skeleton className="h-8 w-36 rounded-md" />
+            <Skeleton className="h-8 w-24 rounded-md" />
+          </div>
+
+          <div className="mb-4 rounded-xl border border-border bg-background p-4">
+            <Skeleton className="mb-4 h-24 w-full rounded-lg" />
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 5 }).map((_, index) => (
+                <Skeleton key={index} className="h-7 w-20 rounded-full" />
+              ))}
+            </div>
+          </div>
+
+          <div className="min-h-0 flex-1 space-y-4 overflow-hidden rounded-xl border border-border bg-background p-4">
+            <div className="flex gap-2">
+              {Array.from({ length: 4 }).map((_, index) => (
+                <Skeleton key={index} className="h-8 w-16 rounded-md" />
+              ))}
+            </div>
+            <div className="grid grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <Skeleton key={index} className="aspect-square w-full rounded-lg" />
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <div className="flex min-w-0 flex-1 flex-col bg-background p-5">
+          <div className="mb-5 flex items-center justify-between">
+            <Skeleton className="h-6 w-24" />
+            <Skeleton className="h-8 w-8 rounded-full" />
           </div>
 
           <div className="mb-5 flex gap-3 overflow-hidden">
@@ -59,11 +88,11 @@ export function PublishDialogSkeleton({ isMobile }: PublishDialogSkeletonProps) 
             ))}
           </div>
 
-          <div className="flex-1 space-y-4 rounded-xl border border-border bg-background p-4">
+          <div className="min-h-0 flex-1 space-y-4 rounded-xl border border-border bg-card p-4">
             <Skeleton className="h-5 w-2/5" />
             <Skeleton className="h-40 w-full" />
-            <div className="grid grid-cols-4 gap-3">
-              {Array.from({ length: 4 }).map((_, index) => (
+            <div className="grid grid-cols-3 gap-3">
+              {Array.from({ length: 3 }).map((_, index) => (
                 <Skeleton key={index} className="aspect-square w-full rounded-lg" />
               ))}
             </div>
@@ -72,16 +101,6 @@ export function PublishDialogSkeleton({ isMobile }: PublishDialogSkeletonProps) 
           <div className="mt-5 flex justify-end gap-3">
             <Skeleton className="h-10 w-24 rounded-full" />
             <Skeleton className="h-10 w-28 rounded-full" />
-          </div>
-        </div>
-
-        <div className="flex w-[360px] flex-col rounded-lg border border-border bg-card p-5">
-          <Skeleton className="mb-5 h-6 w-24" />
-          <Skeleton className="mb-4 aspect-[9/16] w-full rounded-xl" />
-          <div className="space-y-3">
-            <Skeleton className="h-4 w-full" />
-            <Skeleton className="h-4 w-5/6" />
-            <Skeleton className="h-4 w-2/3" />
           </div>
         </div>
       </div>

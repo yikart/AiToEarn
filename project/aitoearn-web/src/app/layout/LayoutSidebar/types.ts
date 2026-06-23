@@ -2,7 +2,7 @@
  * LayoutSidebar - 侧边栏共享类型定义
  */
 
-import type { SettingsTab } from '@/components/SettingsModal'
+import type { SettingsTab } from '@/store/settingsModal'
 
 /** 侧边栏通用 Props */
 export interface SidebarCommonProps {
@@ -49,24 +49,8 @@ export interface NavSectionProps extends SidebarCommonProps {
   currentRoute: string
 }
 
-/** 图标栏 Props */
-export interface IconBarProps extends SidebarCommonProps {
-  /** 是否已登录 */
-  isLoggedIn: boolean
-  /** 未读通知数 */
-  unreadCount: number
-  /** 打开通知面板 */
-  onOpenNotification: () => void
-  /** 打开设置弹框 */
-  onOpenSettings: (defaultTab?: SettingsTab) => void
-}
-
 /** 用户下拉菜单 Props */
 export interface UserDropdownMenuProps extends SidebarCommonProps {
-  /** 未读通知数 */
-  unreadCount: number
-  /** 打开通知面板 */
-  onOpenNotification: () => void
   /** 打开设置弹框 */
   onOpenSettings: (defaultTab?: SettingsTab) => void
 }

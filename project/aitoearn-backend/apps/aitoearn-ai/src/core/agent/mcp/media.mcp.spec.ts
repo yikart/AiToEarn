@@ -4,7 +4,7 @@ import { UserType } from '@yikart/common'
 import { AiLogStatus } from '@yikart/mongodb'
 import { vi } from 'vitest'
 import { ImageService } from '../../ai/image'
-import { GeminiVideoService, GrokVideoService, OpenAIVideoService } from '../../ai/video'
+import { GrokVideoService, OpenAIVideoService } from '../../ai/video'
 import { MediaMcp, MediaToolName } from './media.mcp'
 
 describe('mediaMcp', () => {
@@ -13,7 +13,6 @@ describe('mediaMcp', () => {
   let mockOpenaiVideoService: vi.Mocked<OpenAIVideoService>
   let mockImageService: vi.Mocked<ImageService>
   let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
-  let mockGeminiVideoService: vi.Mocked<GeminiVideoService>
   let mockGrokVideoService: vi.Mocked<GrokVideoService>
 
   const userId = 'test-user-id'
@@ -41,18 +40,12 @@ describe('mediaMcp', () => {
       execute: vi.fn().mockImplementation((_ctx: unknown, fn: () => unknown) => (fn as () => Promise<unknown>)()),
     } as unknown as vi.Mocked<Pick<AiAvailabilityService, 'execute'>>
 
-    mockGeminiVideoService = {
-      createVideo: vi.fn(),
-      getVideo: vi.fn(),
-    } as unknown as vi.Mocked<GeminiVideoService>
-
     mockGrokVideoService = {} as vi.Mocked<GrokVideoService>
 
     mediaMcp = new MediaMcp(
       mockOpenaiVideoService,
       mockImageService,
       mockAiAvailability as unknown as AiAvailabilityService,
-      mockGeminiVideoService,
       mockGrokVideoService,
     )
     // Override the logger for testing
@@ -67,7 +60,7 @@ describe('mediaMcp', () => {
 
     it('should call imageService.userGeminiGeneration with correct params', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300 },
         images: [{ url: 'https://example.com/image1.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -91,7 +84,7 @@ describe('mediaMcp', () => {
 
     it('should pass selected gemini image model when provided', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300 },
         images: [{ url: 'https://example.com/image1.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -110,7 +103,7 @@ describe('mediaMcp', () => {
 
     it('should return generated image URLs', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300 },
         images: [
           { url: 'image1.png', data: '', mimeType: 'image/png' },
           { url: 'image2.png', data: '', mimeType: 'image/png' },
@@ -136,7 +129,7 @@ describe('mediaMcp', () => {
 
     it('should use default empty array for imageUrls when not provided', async () => {
       mockImageService.userGeminiGeneration.mockResolvedValue({
-        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300, points: 10 },
+        usage: { input_tokens: 100, output_tokens: 200, total_tokens: 300 },
         images: [{ url: 'image.png', data: '', mimeType: 'image/png' }],
       })
 
@@ -482,154 +475,6 @@ describe('mediaMcp', () => {
       expect(result.isError).toBeUndefined()
       const textContent = result.content[0] as { type: 'text', text: string }
       expect(textContent.text).toContain('processing')
-    })
-  })
-
-  describe('createGenerateVideoWithVeoTool', () => {
-    it('should have correct tool name', () => {
-      const tool = mediaMcp.createGenerateVideoWithVeoTool(userId, userType)
-      expect(tool.name).toBe(MediaToolName.GenerateVideoWithVeo)
-    })
-
-    it('should call geminiVideoService.createVideo with correct params', async () => {
-      mockGeminiVideoService.createVideo.mockResolvedValue({
-        id: 'veo-task-123',
-      })
-
-      const tool = mediaMcp.createGenerateVideoWithVeoTool(userId, userType)
-      await tool.handler({
-        params: {
-          prompt: 'A sunset over the ocean',
-          model: 'veo-3.1-fast-generate-001',
-          aspectRatio: '16:9',
-          duration: 8,
-          resolution: '720p',
-        },
-      } as never, {})
-
-      expect(mockGeminiVideoService.createVideo).toHaveBeenCalledWith({
-        userId,
-        userType,
-        prompt: 'A sunset over the ocean',
-        model: 'veo-3.1-fast-generate-001',
-        aspectRatio: '16:9',
-        duration: 8,
-        resolution: '720p',
-      })
-    })
-
-    it('should return success result with task id', async () => {
-      mockGeminiVideoService.createVideo.mockResolvedValue({
-        id: 'veo-task-123',
-      })
-
-      const tool = mediaMcp.createGenerateVideoWithVeoTool(userId, userType)
-      const result = await tool.handler({
-        params: {
-          prompt: 'A sunset over the ocean',
-          model: 'veo-3.1-fast-generate-001',
-          aspectRatio: '16:9',
-          duration: 8,
-          resolution: '720p',
-        },
-      } as never, {})
-
-      expect(result.isError).toBeUndefined()
-      const textContent = result.content[0] as { type: 'text', text: string }
-      expect(textContent.text).toContain('veo-task-123')
-    })
-
-    it('should return error when video generation fails', async () => {
-      mockGeminiVideoService.createVideo.mockResolvedValue({
-        id: 'veo-task-123',
-        error: { code: 400, message: 'Content policy violation' },
-      })
-
-      const tool = mediaMcp.createGenerateVideoWithVeoTool(userId, userType)
-      const result = await tool.handler({
-        params: {
-          prompt: 'A sunset over the ocean',
-          model: 'veo-3.1-fast-generate-001',
-          aspectRatio: '16:9',
-          duration: 8,
-          resolution: '720p',
-        },
-      } as never, {})
-
-      expect(result.isError).toBe(true)
-      const textContent = result.content[0] as { type: 'text', text: string }
-      expect(textContent.text).toContain('Failed')
-    })
-  })
-
-  describe('createGetVeoVideoStatusTool', () => {
-    it('should have correct tool name', () => {
-      const tool = mediaMcp.createGetVeoVideoStatusTool(userId, userType)
-      expect(tool.name).toBe(MediaToolName.GetVeoVideoStatus)
-    })
-
-    it('should return completed status with video URLs', async () => {
-      mockGeminiVideoService.getVideo.mockResolvedValue({
-        name: 'test-operation',
-        status: AiLogStatus.Success,
-        model: 'veo-3.1-fast-generate-001',
-        prompt: 'A sunset over the ocean',
-        createdAt: new Date(Date.now() - 60000),
-        completedAt: new Date(),
-        generatedVideos: [
-          { url: 'video1.mp4', gcsUrl: 'gs://bucket/video1.mp4' },
-          { url: 'video2.mp4', gcsUrl: null },
-        ],
-      })
-
-      const tool = mediaMcp.createGetVeoVideoStatusTool(userId, userType)
-      const result = await tool.handler({ taskId: 'veo-task-123' }, {})
-
-      expect(result.isError).toBeUndefined()
-      const textContent = result.content[0] as { type: 'text', text: string }
-      expect(textContent.text).toContain('completed')
-      expect(textContent.text).toContain('video1.mp4')
-      expect(textContent.text).toContain('gs://bucket/video1.mp4')
-    })
-
-    it('should return failed status with error message', async () => {
-      mockGeminiVideoService.getVideo.mockResolvedValue({
-        name: 'test-operation',
-        status: AiLogStatus.Failed,
-        model: 'veo-3.1-fast-generate-001',
-        prompt: 'A sunset over the ocean',
-        createdAt: new Date(Date.now() - 60000),
-        completedAt: null,
-        generatedVideos: [],
-        error: { code: 500, message: 'Generation failed' },
-      })
-
-      const tool = mediaMcp.createGetVeoVideoStatusTool(userId, userType)
-      const result = await tool.handler({ taskId: 'veo-task-123' }, {})
-
-      expect(result.isError).toBe(true)
-      const textContent = result.content[0] as { type: 'text', text: string }
-      expect(textContent.text).toContain('failed')
-      expect(textContent.text).toContain('Generation failed')
-    })
-
-    it('should return processing status', async () => {
-      mockGeminiVideoService.getVideo.mockResolvedValue({
-        name: 'test-operation',
-        status: AiLogStatus.Generating,
-        model: 'veo-3.1-fast-generate-001',
-        prompt: 'A sunset over the ocean',
-        createdAt: new Date(Date.now() - 30000),
-        completedAt: null,
-        generatedVideos: [],
-      })
-
-      const tool = mediaMcp.createGetVeoVideoStatusTool(userId, userType)
-      const result = await tool.handler({ taskId: 'veo-task-123' }, {})
-
-      expect(result.isError).toBeUndefined()
-      const textContent = result.content[0] as { type: 'text', text: string }
-      expect(textContent.text).toContain(AiLogStatus.Generating)
     })
   })
 

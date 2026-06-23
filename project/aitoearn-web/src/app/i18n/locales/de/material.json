@@ -5,13 +5,14 @@
     "keywords": "Materialien, Bildbibliothek, Videobibliothek, Mediengruppen, Cloud-Bilder, Cloud-Videos, Ressourcenspeicher, Bildspeicher, Videospeicher"
   },
   "agentAssets": {
-    "title": "Agent generierte Assets",
-    "description": "Von KI Agent automatisch generierte Bilder und Videos",
+    "title": "KI-generierte Assets",
+    "description": "Automatisch von KI generierte Bilder und Videos",
     "shortDescription": "KI-generierte Bilder und Videos",
-    "keywords": "KI-Assets, Agent-Assets, KI-generierte Bilder, KI-generierte Videos, smarte Assets",
-    "noAssets": "Keine Agent-Assets",
-    "noAssetsDesc": "Von KI Agent generierte Assets werden hier angezeigt",
-    "goToChat": "Chat starten"
+    "keywords": "KI-Assets, KI-generierte Assets, KI-generierte Bilder, KI-generierte Videos, smarte Assets",
+    "noAssets": "Keine KI-generierten Assets",
+    "noAssetsDesc": "KI-generierte Assets werden hier angezeigt",
+    "goToChat": "Chat starten",
+    "previewAsset": "Asset ansehen"
   },
   "mediaManagement": {
     "title": "Medienverwaltung",
@@ -105,7 +106,6 @@
     "title": "KI-Tools",
     "backToAlbum": "Zurück zum Album",
     "textToImage": "Text zu Bild",
-    "imageToImage": "Bild zu Bild",
     "fireflyCard": "Firefly-Karte",
     "videoGeneration": "Video-Generierung",
     "prompt": "Prompt",

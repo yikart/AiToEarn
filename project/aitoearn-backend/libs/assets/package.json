@@ -12,7 +12,7 @@
     "registry": "https://npm.pkg.github.com"
   },
   "peerDependencies": {
-    "@nestjs/common": "11.1.17",
+    "@nestjs/common": "11.1.24",
     "@nestjs/schedule": "6.1.1",
     "@nestjs/swagger": "11.2.6",
     "@yikart/aitoearn-auth": "workspace:*",

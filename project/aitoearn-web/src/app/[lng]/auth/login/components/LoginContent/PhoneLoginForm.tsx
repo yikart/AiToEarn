@@ -11,12 +11,12 @@ import { useMemo, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 
-import { phoneCodeLoginApi, sendPhoneCodeApi } from '@/api/auth'
+import { phoneCodeLoginApi, sendPhoneCodeApi } from '@/api/auth/auth.api'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/lib/toast'
 import { useUserStore } from '@/store/user'
+import { toast } from '@/utils/ui/toast'
 
 import { useCountdown } from './useCountdown'
 

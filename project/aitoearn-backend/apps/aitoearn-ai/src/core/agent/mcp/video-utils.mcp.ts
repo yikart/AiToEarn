@@ -11,7 +11,6 @@ import * as subtitle from 'subtitle'
 import { z } from 'zod'
 import { AiAvailabilityService } from '../../ai-availability'
 import { ChatService } from '../../ai/chat'
-import { GeminiService } from '../../ai/libs/gemini'
 import { VolcengineService } from '../../ai/libs/volcengine'
 import { McpServerName } from '../agent.constants'
 import { errorResult, srtTimestampToMs, successResult, wrapTool } from './mcp.utils'
@@ -79,7 +78,6 @@ export class VideoUtilsMcp {
     private readonly aiAvailability: AiAvailabilityService,
     private readonly videoMetadataService: VideoMetadataService,
     private readonly chatService: ChatService,
-    private readonly geminiService: GeminiService,
   ) {}
 
   /**
@@ -374,28 +372,20 @@ Use this tool when user wants to:
 
         const audioBuffer = await this.extractAudioWithFFmpeg(mediaUrl)
 
-        const keyPairId = this.geminiService.keyManager.getDefaultKeyPairId()
-        const gcsPath = `audio/subtitle-${Date.now()}.mp3`
-        const gcsUri = await this.geminiService.uploadToGcs(audioBuffer, {
-          keyPairId,
-          path: gcsPath,
-          mimeType: 'audio/mp3',
-        })
-
         const prompt = this.buildSubtitlePrompt(language)
 
-        this.logger.debug({ mediaUrl, language, gcsUri }, 'Calling Gemini for transcription')
+        this.logger.debug({ mediaUrl, language }, 'Calling Gemini for transcription')
         const response = await this.chatService.userGeminiGenerateContent({
           userId,
           userType,
-          model: 'gemini-2.5-flash',
+          model: 'gemini-3.5-flash',
           contents: [{
             role: 'user',
             parts: [
               {
-                fileData: {
-                  fileUri: gcsUri,
+                inlineData: {
                   mimeType: 'audio/mp3',
+                  data: audioBuffer.toString('base64'),
                 },
               },
               { text: prompt },

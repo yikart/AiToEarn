@@ -2,10 +2,20 @@
   "title": "Paramètres",
   "tabs": {
     "profile": "Profil",
+    "agent": "Agent",
+    "income": "Revenus",
+    "balance": "Solde",
+    "subscription": "Crédits",
+    "membership": "Factures",
+    "shopifyStores": "Shopify Stores",
     "general": "Général",
-    "agent": "Agent"
+    "ticket": "Tickets",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Crédits Seedance"
   },
   "profile": {
+    "totalIncome": "Solde",
+    "currentBalance": "Crédits actuels",
     "logout": "Déconnexion",
     "edit": "Modifier",
     "editName": "Modifier le pseudo",
@@ -30,7 +40,206 @@
     "zoomOut": "Zoom arrière",
     "imageLoading": "Chargement de l'image...",
     "processing": "Traitement...",
-    "githubStars": "Étoiles GitHub"
+    "githubStars": "Étoiles GitHub",
+    "viewMembershipBenefits": "Voir les avantages de l'adhésion",
+    "redeemCodeTitle": "Utiliser un code d'activation d'adhésion entreprise",
+    "redeemCodeDescription": "Une fois utilisé avec succès, l'adhésion entreprise sera activée et les avantages de crédits correspondants seront attribués.",
+    "redeemCodePlaceholder": "Entrez le code d'activation d'adhésion entreprise",
+    "redeemCodeButton": "Utiliser maintenant",
+    "redeemCodeRequired": "Veuillez entrer le code d'activation d'adhésion entreprise",
+    "redeemCodeSuccess": "Code d'activation d'adhésion entreprise utilisé avec succès",
+    "redeemCodeFailed": "Échec de l'utilisation du code d'activation d'adhésion entreprise",
+    "redeemCodeContactPrefix": "Vous n'avez pas de code d'activation ? ",
+    "redeemCodeContactSuffix": " pour obtenir un code d'activation d'adhésion entreprise."
+  },
+  "income": {
+    "balance": "Solde annonceur",
+    "withdrawableBalance": "Solde créateur",
+    "incomeRecords": "Historique des revenus",
+    "balanceRecords": "Historique du solde",
+    "withdrawRecords": "Historique des retraits",
+    "incomeId": "ID de revenu",
+    "withdrawId": "ID de retrait",
+    "amount": "Montant",
+    "type": "Type",
+    "statusLabel": "Statut",
+    "description": "Description",
+    "createTime": "Date de création",
+    "updateTime": "Date de mise à jour",
+    "all": "Tous",
+    "incomeDetail": "Détails du revenu",
+    "noBalanceRecords": "Aucun historique de solde",
+    "balanceAfter": "Solde après",
+    "balanceAfterType": {
+      "advertiser": "Solde annonceur après",
+      "creator": "Solde créateur après"
+    },
+    "currencyFilter": "Devise",
+    "typeFilter": "Type",
+    "balanceTypes": {
+      "task_creation": "Création de tâche",
+      "manual_deduct": "Déduction manuelle",
+      "refund": "Remboursement",
+      "recharge": "Rechargement",
+      "manual_add": "Ajout manuel",
+      "task_refund": "Remboursement de tâche",
+      "task_stopped": "Tâche arrêtée",
+      "withdraw": "Retrait",
+      "withdraw_refund": "Remboursement de retrait",
+      "cpm_cpe_deposit": "Dépôt CPM/CPE",
+      "cpm_cpe_deposit_refund": "Remboursement du dépôt CPM/CPE",
+      "task": "Revenu de tâche",
+      "commission": "Commission",
+      "manual": "Ajustement manuel",
+      "balance_transfer_out": "Transfert de solde sortant",
+      "balance_transfer_in": "Transfert de solde entrant",
+      "debt_payment": "Paiement de dette",
+      "sample_budget_deposit": "Dépôt de budget d'échantillon",
+      "sample_budget_refund": "Remboursement du budget d'échantillon",
+      "sample_subsidy_payout": "Versement de subvention d'échantillon",
+      "sample_subsidy_clawback": "Récupération de subvention d'échantillon",
+      "koc_deposit_deduct": "Déduction du dépôt KOC",
+      "koc_deposit_return": "Retour du dépôt KOC",
+      "commission_refund": "Remboursement de commission",
+      "challenge_refund": "Remboursement du défi",
+      "task_reward_clawback": "Récupération de récompense de tâche",
+      "task_work_deleted_refund": "Remboursement pour contenu supprimé"
+    },
+    "types": {
+      "task": "Revenu de tâche",
+      "task_back": "Remboursement de tâche",
+      "reward_back": "Remboursement de récompense",
+      "task_withdraw": "Retrait de tâche"
+    },
+    "status": {
+      "pending": "En attente",
+      "withdrawn": "Retiré"
+    },
+    "noWallet": "Aucun portefeuille ajouté",
+    "noWalletTip": "Veuillez d'abord ajouter un portefeuille dans l'onglet Portefeuille",
+    "manageWallets": "Gérer les portefeuilles",
+    "addWallet": "Ajouter un portefeuille",
+    "withdrawButton": "Retirer",
+    "withdrawNotice": "Les demandes de retrait seront traitées dans un délai de 15 jours ouvrables. Veuillez patienter. Pour toute question, veuillez ",
+    "rechargeButton": "Recharger",
+    "noIncomeRecords": "Aucun revenu",
+    "noWithdrawRecords": "Aucun retrait",
+    "withdraw": {
+      "cancel": "Annuler",
+      "cancelConfirmTitle": "Annuler le retrait",
+      "cancelConfirmDesc": "Êtes-vous sûr de vouloir annuler cette demande de retrait ?",
+      "type": {
+        "task": "Tâche",
+        "reward": "Récompense"
+      },
+      "walletAccount": "Portefeuille",
+      "adminNote": "Note",
+      "paidAt": "Payé le",
+      "screenshots": "Captures d'écran",
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvé",
+        "paid": "Payé",
+        "failed": "Échoué",
+        "rejected": "Rejeté"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "En cours",
+      "success": "Réussi",
+      "fail": "Échoué",
+      "task_withdraw": "Retrait de tâche",
+      "unknown": "Inconnu"
+    },
+    "messages": {
+      "cancelWithdrawSuccess": "Retrait annulé avec succès",
+      "cancelWithdrawFailed": "Échec de l'annulation du retrait",
+      "getIncomeRecordsFailed": "Échec de la récupération des revenus",
+      "getBalanceRecordsFailed": "Échec de la récupération de l'historique du solde",
+      "getIncomeDetailFailed": "Échec de la récupération des détails",
+      "getWithdrawRecordsFailed": "Échec de la récupération des retraits",
+      "noIncomeRecords": "Aucun revenu",
+      "noWithdrawRecords": "Aucun retrait",
+      "noIncomeDetail": "Aucun détail de revenu",
+      "loading": "Chargement...",
+      "totalRecords": "Total {{total}} enregistrements"
+    },
+    "balanceTooltip": "Le solde annonceur sert principalement à publier des tâches, payer les créateurs et couvrir les déductions liées aux tâches.",
+    "creatorBalanceTooltip": "Effectuer des tâches est le principal moyen d'obtenir un solde créateur. Le solde créateur peut être retiré.",
+    "transfer": {
+      "title": "Transférer le solde",
+      "amount": "Montant du transfert",
+      "amountPlaceholder": "Saisir le montant du transfert",
+      "availableBalance": "Transférable actuellement : {{amount}}",
+      "transferIn": "Transférer vers",
+      "submit": "Confirmer le transfert",
+      "to": "Transférer vers",
+      "success": "Transfert réussi",
+      "failed": "Échec du transfert",
+      "amountInvalid": "Veuillez saisir un montant supérieur à 0",
+      "amountExceedsBalance": "Le montant ne peut pas dépasser le solde disponible",
+      "balanceType": {
+        "advertiser": "Solde annonceur",
+        "creator": "Solde créateur"
+      },
+      "balanceToWithdrawable": "Solde annonceur vers solde créateur",
+      "withdrawableToBalance": "Solde créateur vers solde annonceur"
+    }
+  },
+  "subscription": {
+    "currentPlan": "Forfait actuel",
+    "upgrade": "Recharger",
+    "manage": "Gérer l'abonnement",
+    "balance": "Crédits",
+    "usageRecords": "Historique d'utilisation",
+    "detail": "Détail",
+    "date": "Date",
+    "amount": "Montant",
+    "amountChange": "Changement de montant",
+    "noRecords": "Aucun historique d'utilisation",
+    "loading": "Chargement...",
+    "loadMore": "Charger plus",
+    "browserPluginAgent": "Agent d'extension de navigateur",
+    "types": {
+      "register_bonus": "Bonus d'inscription",
+      "purchase": "Achat",
+      "vip_monthly": "VIP mensuel",
+      "ai_service": "Service IA",
+      "video_style_transfer": "Transfert de style vidéo",
+      "publish": "Publication",
+      "expired": "Expiré",
+      "manual": "Ajustement manuel",
+      "fan_check_in": "Check-in fan",
+      "fan_lottery": "Loterie fan",
+      "twitter_api": "API X/Twitter",
+      "note_comment_search": "Recherche de commentaires de notes",
+      "drama_recap": "Récapitulatif de drama",
+      "refund": "Remboursement"
+    },
+    "filters": {
+      "direction": "Sens",
+      "type": "Type",
+      "source": "Source",
+      "allDirections": "Tous les sens",
+      "allTypes": "Tous les types",
+      "allSources": "Toutes les sources",
+      "reset": "Réinitialiser"
+    },
+    "directions": {
+      "income": "Revenu",
+      "expense": "Dépense"
+    },
+    "sources": {
+      "ai_chat": "Chat IA",
+      "plugin": "Extension navigateur",
+      "ai_image": "Image IA",
+      "ai_video": "Vidéo IA",
+      "ai_agent": "Agent IA",
+      "ai_draft_generation": "Génération de brouillon IA",
+      "ai_material_adaptation": "Adaptation de contenu IA",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "Montage vidéo IA"
+    }
   },
   "general": {
     "language": "Langue du site",
@@ -39,11 +248,62 @@
     "themeDesc": "Choisissez votre mode de thème préféré",
     "themeLight": "Clair",
     "themeDark": "Sombre",
-    "themeSystem": "Système",
-    "notifications": "Notifications par e-mail",
-    "notificationsDesc": "Gérez vos préférences de notification par e-mail",
-    "editNotifications": "Modifier les paramètres de notification",
-    "changingLanguage": "Switching..."
+    "themeSystem": "Système"
+  },
+  "ticket": {
+    "title": "Tickets",
+    "description": "Consultez et suivez les tickets de tâche envoyés à l'équipe opérationnelle.",
+    "loading": "Chargement des tickets...",
+    "loadFailed": "Échec du chargement des tickets",
+    "refresh": "Actualiser",
+    "emptyTitle": "Aucun ticket",
+    "emptyDescription": "Les tickets sont actuellement envoyés depuis les pages de détail des tâches acceptées. Après l'envoi, vous pouvez suivre le statut dans la tâche associée.",
+    "goToMyTasks": "Aller à mes tâches",
+    "viewTask": "Voir la tâche",
+    "createdAt": "Envoyé le",
+    "updatedAt": "Mis à jour le",
+    "paginationTotal": "{{start}}-{{end}} sur {{total}}",
+    "status": {
+      "open": "Ouvert",
+      "in_progress": "En cours",
+      "resolved": "Résolu",
+      "closed": "Fermé"
+    },
+    "viewTimeline": "Historique de traitement",
+    "timeline": {
+      "title": "Historique de traitement",
+      "untitled": "Ticket sans titre",
+      "loading": "Chargement de l’historique...",
+      "loadFailed": "Échec du chargement de l’historique",
+      "empty": "Aucun historique pour le moment",
+      "back": "Retour aux tickets",
+      "description": "Consultez les mises à jour et notes de l’équipe opérationnelle pour ce ticket.",
+      "activityType": {
+        "create": "Ticket créé",
+        "assign": "Ticket attribué",
+        "status_change": "Statut modifié",
+        "comment": "Commentaire ajouté",
+        "link_takeover_action": "Action de reprise liée"
+      }
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify Stores",
+    "description": "View the Shopify stores connected to this account and their billing status.",
+    "refresh": "Refresh",
+    "active": "Connected",
+    "inactive": "Disabled",
+    "platformFeeRate": "Platform fee rate",
+    "boundAt": "Connected at",
+    "emptyTitle": "No Shopify store connected",
+    "emptyDesc": "Install the AiToEarn Shopify App and the store will sync here automatically.",
+    "installApp": "Install AiToEarn App",
+    "billingStatus": {
+      "none": "Billing not enabled",
+      "pending": "Pending",
+      "active": "Billing active",
+      "cancelled": "Billing cancelled"
+    }
   },
   "agent": {
     "title": "Agent",
@@ -57,5 +317,36 @@
     "saving": "Enregistrement...",
     "saveSuccess": "Enregistré avec succès",
     "saveFailed": "Échec de l'enregistrement"
+  },
+  "apiKeys": {
+    "title": "Gestion des API Key",
+    "description": "Créer et gérer les API Keys pour l'accès programmatique",
+    "create": "Créer",
+    "name": "Nom",
+    "namePlaceholder": "Entrez le nom de l'API Key",
+    "nameRequired": "Veuillez entrer un nom",
+    "createdAt": "Créé",
+    "lastUsedAt": "Dernière utilisation",
+    "neverUsed": "Jamais",
+    "deleteConfirmTitle": "Supprimer l'API Key",
+    "deleteConfirmDesc": "Êtes-vous sûr de vouloir supprimer cette API Key ? Cette action est irréversible.",
+    "createSuccess": "API Key créée avec succès",
+    "deleteSuccess": "API Key supprimée avec succès",
+    "copySuccess": "Copié dans le presse-papiers",
+    "copyTip": "Veuillez copier et sauvegarder votre API Key maintenant. Elle ne sera plus affichée.",
+    "dismiss": "Fermer",
+    "empty": "Aucune API Key",
+    "emptyDesc": "Créez une API Key pour commencer",
+    "cancel": "Annuler"
+  },
+  "seedanceCredits": {
+    "balance": "Crédits Seedance",
+    "availableBalance": "Crédits Seedance disponibles",
+    "availableBalanceTip": "Crédits disponibles = crédits Seedance + crédits standards restants après la consommation estimée des modèles standards, utilisables pour les modèles seedance-beta.",
+    "refundNotice": "Les crédits Seedance sont réservés aux modèles seedance-beta sur AiToEarn. Si AiToEarn vous empêche de les utiliser, la partie non utilisée est intégralement remboursable.",
+    "faceUploadTip": "Les vrais visages frontaux nets peuvent avoir un taux de réussite plus faible. Masquer ou flouter les zones clés comme les yeux avant l’import peut nettement améliorer le succès.",
+    "recharge": "Recharger",
+    "use": "Utiliser",
+    "info": "Voir les notes sur les crédits Seedance"
   }
 }

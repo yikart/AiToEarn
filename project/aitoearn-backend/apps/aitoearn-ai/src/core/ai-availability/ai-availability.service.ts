@@ -26,13 +26,19 @@ export class AiAvailabilityService {
     return executor()
   }
 
-  async recordSuccess(_context: AiAvailabilityContext, _latencyMs?: number): Promise<void> {}
+  async recordSuccess(_context: AiAvailabilityContext, _latencyMs?: number): Promise<void> {
+    return undefined
+  }
 
-  async recordFailure(_context: AiAvailabilityContext, _error: unknown, _latencyMs?: number): Promise<void> {}
+  async recordFailure(_context: AiAvailabilityContext, _error: unknown, _latencyMs?: number): Promise<void> {
+    return undefined
+  }
 
   async recordAsyncComplete(
     _asyncTaskId: string,
     _context: AiAvailabilityContext,
     _params: { success: boolean, latencyMs?: number, errorMessage?: string, isBusinessError?: boolean },
-  ): Promise<void> {}
+  ): Promise<void> {
+    return undefined
+  }
 }

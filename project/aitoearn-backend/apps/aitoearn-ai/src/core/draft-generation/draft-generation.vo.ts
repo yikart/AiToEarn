@@ -16,7 +16,6 @@ export {
   DraftGenerationTaskVoSchema,
   ImageModelPricingVoSchema,
   ImageModelVoSchema,
-  VideoModelPricingVoSchema,
   VideoModelVoSchema,
 } from '@yikart/aitoearn-ai-shared'
 

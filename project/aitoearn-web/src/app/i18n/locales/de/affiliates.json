@@ -1,0 +1,98 @@
+{
+  "title": "Treten Sie Friends of AiToEarn bei",
+  "seo": {
+    "title": "Partnerprogramm - 30% wiederkehrende Provision verdienen",
+    "description": "Treten Sie dem AiToEarn-Partnerprogramm bei und verdienen Sie 30% Provision auf die Zahlungen jeder Empfehlung für 12 Monate. Teilen Sie Ihren einzigartigen Link und verfolgen Sie Ihre Einnahmen.",
+    "keywords": "Partnerprogramm, Empfehlungsprovision, Online verdienen, passives Einkommen, 30% Provision, AiToEarn Partner"
+  },
+  "describe": "Empfehlen Sie zahlende Benutzer zur Registrierung bei aitoearn.ai und erhalten Sie 30% Provision auf ihre ersten 12 Zahlungen innerhalb von 12 Monaten, insgesamt $716,4!",
+  "keywords": "AiToEarn Affiliate, Affiliate-Marketing, Geld verdienen, teilen und verdienen, Empfehlungsverdienste",
+  "subtitle": "Erhalten Sie eine <strong>30% Provision</strong> auf die ersten 12 Zahlungen innerhalb der ersten 12 Monate für zahlende Kunden, die Sie an aitoearn.ai verweisen ($199×12×30% = $716.4)!",
+  "productIntro": {
+    "badge": "Github 10k+ Star Open-Source-Projekt",
+    "headline": "Automatisierte KI-Workflow-Engine",
+    "features": {
+      "oneClick": {
+        "title": "Ein-Klick-Aufgabenausführung",
+        "description": "Beschreiben Sie Ihren Bedarf, Agent orchestriert intelligent optimale KI-Tool-Kombinationen"
+      },
+      "multiModal": {
+        "title": "Multi-Modale Integration",
+        "description": "Kombiniert nahtlos Textgenerierung, Bilderstellung, Videoverarbeitung und Übersetzung"
+      },
+      "zeroCurve": {
+        "title": "Null-Lernkurve",
+        "description": "Vom Konzept zum Endprodukt - 10-fache Effizienzsteigerung ohne manuellen Tool-Wechsel"
+      }
+    },
+    "sections": {
+      "models": {
+        "title": "🎯 Premium-KI-Modelle",
+        "items": [
+          "<strong>Flaggschiff-LLMs:</strong> Claude Opus 4.5, GPT-5.1, Gemini 3.0 - neueste hochmoderne Modelle",
+          "<strong>Professionelle Video-Tools:</strong> Sora-2, Veo-3.1 für fortgeschrittene Videogenerierung und -bearbeitung",
+          "<strong>Hochwertige Bilderstellung:</strong> Nano Banana Pro, GPT-Image für professionelle Visuals"
+        ]
+      },
+      "distribution": {
+        "title": "📱 Omni-Channel-Verteilung",
+        "items": [
+          "<strong>Social-Media-Matrix:</strong> Instagram, TikTok, YouTube, Bilibili, Douyin + 20+ Plattformen",
+          "<strong>Intelligente Inhaltsanpassung:</strong> Optimiert automatisch Formate für beste Performance jeder Plattform",
+          "<strong>Massenverwaltung:</strong> Multi-Account-Handling mit Ein-Klick-Veröffentlichung"
+        ]
+      },
+      "processing": {
+        "title": "⚡ Professionelle Videoverarbeitung",
+        "items": [
+          "<strong>KI-gestützte Bearbeitung:</strong> Identifiziert automatisch Highlights für ansprechende Kurzinhalte",
+          "<strong>Mehrsprachige Sprachausgabe:</strong> Echtzeit-Übersetzung mit natürlicher, fließender Erzählung",
+          "<strong>Stil-Transformation:</strong> Sofortige Videostil-Änderungen für personalisierte visuelle Erlebnisse"
+        ]
+      },
+      "revolution": {
+        "title": "🌟 Content-Creation-Revolution",
+        "description": "Verwandeln Sie Content-Erstellung von manueller Arbeit in intelligente Steuerung. Ob Sie Creator, Marketer oder Unternehmen sind - erschließen Sie unbegrenztes kreatives Potenzial mit Aitoearn Agent."
+      }
+    }
+  },
+  "totalEarnings": "Gesamtverdienst",
+  "pending": "Ausstehend",
+  "pendingTooltip": "Ihr ausstehendes Einkommen wird am {{date}} auf Ihr Konto überwiesen. ",
+  "viewIncome": "Klicken Sie hier, um das Einkommen anzuzeigen",
+  "settled": "Abgerechnet",
+  "referralLink": {
+    "title": "Ihr Empfehlungslink",
+    "copy": "Kopieren",
+    "copied": "Kopiert!",
+    "copySuccess": "Empfehlungslink kopiert!",
+    "copyError": "Fehler beim Kopieren des Links",
+    "description": "Teilen Sie diesen Link mit Ihren Freunden und verdienen Sie 30% Provision auf ihre ersten 12 Zahlungen!"
+  },
+  "goToPublish": "Gehen Sie zu AiToEarn veröffentlichen",
+  "oneClickPromotion": {
+    "button": "Ein-Klick AiToEarn bewerben & {{amount}} verdienen",
+    "description": "KI erstellt automatisch Werbevideo mit Ihrem Empfehlungslink und veröffentlicht es auf allen Ihren Kanälen"
+  },
+  "stats": {
+    "totalReferrals": "Gesamte Empfehlungen",
+    "paidReferrals": "Bezahlte Empfehlungen",
+    "conversionRate": "Konversionsrate"
+  },
+  "commissions": {
+    "title": "Monatliche Provisionsdetails",
+    "settled": "Abgerechnet",
+    "pending": "Ausstehend",
+    "noData": "Noch keine Provisionen. Beginnen Sie, Ihren Empfehlungslink zu teilen!"
+  },
+  "howItWorks": {
+    "title": "So funktioniert es",
+    "step1": "Teilen Sie Ihren einzigartigen Empfehlungslink mit Freunden und Kontakten",
+    "step2": "Wenn sie sich anmelden und eine Zahlung tätigen, verdienen Sie 30% Provision",
+    "step3": "Verdienen Sie Provision auf ihre ersten 12 Zahlungen innerhalb von 12 Monaten",
+    "step4": "Provisionen werden monatlich abgerechnet und können auf Ihr Wallet ausgezahlt werden"
+  },
+  "loading": {
+    "failed": "Fehler beim Laden der Daten"
+  }
+}

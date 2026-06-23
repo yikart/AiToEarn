@@ -1,0 +1,187 @@
+{
+  "remoteAutomation": {
+    "title": "Remote Automation Debug",
+    "description": "Fixed flow: open page, run web-provided JavaScript, capture a screenshot, and return the result.",
+    "status": {
+      "connected": "Plugin Connected",
+      "disconnected": "Plugin Disconnected"
+    },
+    "form": {
+      "title": "Execution Parameters",
+      "urlLabel": "Target Page URL",
+      "urlPlaceholder": "https://example.com",
+      "codeLabel": "Execution Code",
+      "codePlaceholder": "Enter the JavaScript code to execute",
+      "codeHint": "The code runs in the main world of the target page. Write the function body directly, for example: `return document.title`",
+      "timeoutLabel": "Execution Timeout (ms)",
+      "screenshotLabel": "Capture Screenshot After Execution",
+      "screenshotHint": "Capture the current page before closing the window",
+      "run": "Run"
+    },
+    "validation": {
+      "urlRequired": "Please enter the target page URL",
+      "codeRequired": "Please enter the JavaScript code to execute"
+    },
+    "result": {
+      "title": "Execution Results",
+      "empty": "No execution records yet",
+      "emptyValue": "(empty)",
+      "pluginUnsupported": "The plugin is not installed or the current plugin version does not support the remoteAutomationRun method",
+      "executionError": "Execution error",
+      "success": "Success",
+      "failed": "Failed",
+      "executionTime": "Execution time {{value}} ms",
+      "url": "URL: ",
+      "message": "Message: ",
+      "payload": "Execution Result",
+      "screenshot": "Screenshot",
+      "screenshotAlt": "Execution screenshot"
+    }
+  },
+  "proxyRequest": {
+    "title": "Plugin Proxy Request Debug",
+    "description": "Send any URL through the browser extension background, then return the raw response body, status, and headers to the website.",
+    "status": {
+      "connected": "Plugin Connected",
+      "disconnected": "Plugin Disconnected"
+    },
+    "form": {
+      "title": "Request Parameters",
+      "urlLabel": "Target URL",
+      "urlPlaceholder": "https://example.com/api",
+      "headersLabel": "Headers (JSON)",
+      "headersPlaceholder": "{\n  \"accept\": \"application/json\"\n}",
+      "headersHint": "Enter a JSON object. Header values will be converted to strings before sending.",
+      "bodyLabel": "Body",
+      "bodyPlaceholder": "{\n  \"hello\": \"world\"\n}",
+      "bodyHint": "Valid JSON will be parsed as JSON. Invalid JSON will be sent as a raw string.",
+      "methodLabel": "Derived Method",
+      "methodGet": "GET",
+      "methodPost": "POST",
+      "methodHint": "The plugin will send this request as {{method}}.",
+      "credentialsHint": "The extension sends requests with browser cookies included when the target site allows them.",
+      "bodyIgnoredHint": "GET mode does not send a request body. Switch to POST if you need to send body content.",
+      "submit": "Send Request"
+    },
+    "validation": {
+      "urlRequired": "Please enter the target URL",
+      "headersInvalid": "Headers must be a valid JSON object"
+    },
+    "result": {
+      "title": "Request Results",
+      "empty": "No proxy request records yet",
+      "emptyValue": "(empty)",
+      "pluginUnsupported": "The plugin is not installed or the current plugin version does not support the proxyRequest method",
+      "requestFailed": "Proxy request failed",
+      "success": "Success",
+      "failed": "Failed",
+      "status": "Status {{status}} {{statusText}}",
+      "url": "Requested URL: ",
+      "finalUrl": "Final URL: ",
+      "message": "Message: ",
+      "requestHeaders": "Request Headers",
+      "responseHeaders": "Response Headers",
+      "requestBody": "Request Body",
+      "responseBody": "Response Body",
+      "clear": "Clear"
+    }
+  },
+  "wxSphPublish": {
+    "title": "WeChat Channels Publish Debug",
+    "description": "Use the browser extension to publish a video through WeChat Channels web requests and debug login state, video/cover upload, scheduling, location, activity, link, and original parameters.",
+    "status": {
+      "connected": "Plugin Connected",
+      "disconnected": "Plugin Disconnected"
+    },
+    "permission": {
+      "title": "Permission Check",
+      "check": "Check Plugin Permission",
+      "granted": "Plugin permissions are ready",
+      "denied": "Plugin permissions are not fully granted",
+      "failed": "Permission check failed"
+    },
+    "login": {
+      "title": "WeChat Channels Login",
+      "button": "Read Login State",
+      "empty": "Log in to channels.weixin.qq.com first, then read the login state.",
+      "failed": "WeChat Channels login failed",
+      "uid": "UID: {{uid}}"
+    },
+    "form": {
+      "title": "Publish Parameters",
+      "video": "Video File",
+      "cover": "Cover Image",
+      "videoMetadata": "Video: {{width}}×{{height}}, {{duration}}s, about {{size}} MB",
+      "workTitle": "Title",
+      "workTitlePlaceholder": "Optional, used as extra description text",
+      "topics": "Topics",
+      "topicsPlaceholder": "Separate by comma or newline, e.g. food, coffee",
+      "desc": "Description",
+      "descPlaceholder": "Enter the WeChat Channels description",
+      "scheduledTime": "Scheduled Time",
+      "publish": "Publish to WeChat Channels"
+    },
+    "location": {
+      "title": "Location",
+      "hint": "Search and select a location through the WeChat Channels location API. The selected location will be submitted with the post.",
+      "poiId": "POI ID",
+      "poiIdPlaceholder": "For example, uid returned by helper_search_location",
+      "poiName": "Location Name",
+      "poiNamePlaceholder": "Example: Coffee Shop",
+      "latitude": "Latitude",
+      "latitudePlaceholder": "39.904200",
+      "longitude": "Longitude",
+      "longitudePlaceholder": "116.407400",
+      "city": "City",
+      "cityPlaceholder": "Beijing",
+      "address": "Address",
+      "addressPlaceholder": "Detailed address",
+      "searchPlaceholder": "Search location",
+      "empty": "No matching locations found",
+      "searchFailed": "Location search failed",
+      "selected": "Selected: {{name}}",
+      "clear": "Clear",
+      "addressEmpty": "No address"
+    },
+    "validation": {
+      "videoRequired": "Please select a video file",
+      "coverRequired": "Please select a cover image",
+      "videoMetadataRequired": "Video metadata is not ready. Please select the video again.",
+      "videoMetadataFailed": "Failed to read video metadata"
+    },
+    "result": {
+      "title": "Publish Result",
+      "pluginMissing": "The plugin is not installed or AIToEarnPlugin is not injected",
+      "publishFailed": "Publish failed",
+      "success": "Published successfully",
+      "failed": "Publish failed"
+    },
+    "progress": {
+      "title": "Publish Progress",
+      "empty": "No publish progress yet"
+    },
+    "search": {
+      "loading": "Searching...",
+      "minKeyword": "Enter at least 2 characters to search",
+      "pluginUnsupported": "The current plugin version does not support WeChat Channels search. Please update the plugin first."
+    },
+    "activity": {
+      "title": "Activity",
+      "hint": "Search and select a WeChat Channels activity. It will be sent as the event parameter when publishing.",
+      "searchPlaceholder": "Search activity",
+      "empty": "No matching activities found",
+      "searchFailed": "Activity search failed",
+      "selected": "Selected: {{name}}",
+      "clear": "Clear"
+    },
+    "extLink": {
+      "title": "Link",
+      "placeholder": "https://example.com",
+      "hint": "Optional. Submitted as the WeChat Channels extended reading link."
+    },
+    "original": {
+      "title": "Declare Original",
+      "hint": "When checked, the publish request marks the post as original."
+    }
+  }
+}

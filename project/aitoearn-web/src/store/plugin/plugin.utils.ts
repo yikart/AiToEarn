@@ -18,6 +18,9 @@ export function calculateOverallStatus(platformTasks: PlatformPublishTask[]) {
   if (platformTasks.every(task => task.status === PlatformTaskStatus.COMPLETED)) {
     return PlatformTaskStatus.COMPLETED
   }
+  if (platformTasks.every(task => task.status === PlatformTaskStatus.CANCELED)) {
+    return PlatformTaskStatus.CANCELED
+  }
   if (platformTasks.some(task => task.status === PlatformTaskStatus.PUBLISHING)) {
     return PlatformTaskStatus.PUBLISHING
   }

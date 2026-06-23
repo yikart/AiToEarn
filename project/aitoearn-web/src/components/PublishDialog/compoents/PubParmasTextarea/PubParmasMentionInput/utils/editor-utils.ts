@@ -11,11 +11,13 @@ import {
 } from 'lexical'
 import { BeautifulMentionNode } from 'lexical-beautiful-mentions'
 import { useEffect } from 'react'
+import { hasInvalidDescTopicFormat } from '@/components/PublishDialog/PublishDialog.util'
 
 /**
  * 插件：根据外部 value 同步更新编辑器内容
- * @param value - 外部传入的文本值
- * @param lastOutputValueRef - 编辑器最近一次通过 onChange 输出的值，用于判断 value 是否为内部回传
+ * @param props - 插件参数
+ * @param props.value - 外部传入的文本值
+ * @param props.lastOutputValueRef - 编辑器最近一次通过 onChange 输出的值，用于判断 value 是否为内部回传
  */
 export function InitialValuePlugin({
   value,
@@ -50,10 +52,11 @@ export function InitialValuePlugin({
       }
 
       // 按原顺序拆分：话题片段形如 "#xxx"
+      const shouldRecognizeTopics = !hasInvalidDescTopicFormat(value)
       const parts = value.split(/(#\S+)/g).filter(Boolean)
 
       parts.forEach((part) => {
-        if (part.startsWith('#')) {
+        if (shouldRecognizeTopics && part.startsWith('#')) {
           const topic = part.slice(1)
           if (topic) {
             // @ts-ignore 构造函数依库版本
@@ -95,11 +98,12 @@ export function PasteTopicsPlugin() {
           // 删除当前选区内容
           selection.removeText()
 
+          const shouldRecognizeTopics = !hasInvalidDescTopicFormat(clipboardText)
           const lines = clipboardText.split(/\r?\n/)
           lines.forEach((line, idx) => {
             const parts = line.split(/(#\S+)/g).filter(Boolean)
             parts.forEach((part) => {
-              if (part.startsWith('#')) {
+              if (shouldRecognizeTopics && part.startsWith('#')) {
                 const topic = part.slice(1)
                 if (topic) {
                   // @ts-ignore

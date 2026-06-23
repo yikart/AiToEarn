@@ -3,6 +3,9 @@
  * 统一管理所有队列的名称
  */
 export enum QueueName {
+  /** 素材生成队列 */
+  MaterialGenerate = 'bull_material_generate',
+
   /** 发布任务队列 */
   PostPublish = 'post_publish',
 
@@ -24,11 +27,11 @@ export enum QueueName {
   /** 更新发布任务队列 */
   UpdatePublishedPost = 'update_published_post',
 
-  /** 通知队列 */
-  Notification = 'bull_notification',
+  /** 内容生成队列 */
+  ContentGenerationTask = 'content_generation_task',
 
-  /** AI任务失败退款处理队列 */
-  AiTaskRefund = 'ai_task_refund',
+  /** Agent任务分析队列 */
+  AgentTaskAnalysis = 'agent_task_analysis',
 
   /** DraftGeneration 生成队列 */
   DraftGeneration = 'place_draft_generation',
@@ -36,6 +39,4 @@ export enum QueueName {
   /** DraftGeneration 低优先级生成队列 */
   DraftGenerationLowPriority = 'place_draft_generation_low_priority',
 
-  /** 用户事件批量写入队列 */
-  UserEventBatch = 'user_event_batch',
 }

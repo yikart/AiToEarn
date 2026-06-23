@@ -6,13 +6,13 @@
 'use client'
 
 import type { UseEmblaCarouselType } from 'embla-carousel-react'
-import type { ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 import Autoplay from 'embla-carousel-autoplay'
 import useEmblaCarousel from 'embla-carousel-react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 type EmblaCarouselType = UseEmblaCarouselType[1]
 type EmblaOptionsType = Parameters<typeof useEmblaCarousel>[0]
@@ -115,13 +115,14 @@ interface CarouselContentProps {
   children: ReactNode
   className?: string
   viewportClassName?: string
+  viewportStyle?: CSSProperties
 }
 
-export function CarouselContent({ children, className, viewportClassName }: CarouselContentProps) {
+export function CarouselContent({ children, className, viewportClassName, viewportStyle }: CarouselContentProps) {
   const { emblaRef } = useCarousel()
 
   return (
-    <div ref={emblaRef} className={cn('overflow-hidden', viewportClassName)}>
+    <div ref={emblaRef} className={cn('overflow-hidden', viewportClassName)} style={viewportStyle}>
       <div className={cn('flex', className)}>
         {children}
       </div>

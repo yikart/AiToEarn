@@ -24,15 +24,17 @@ import {
 import Image from 'next/image'
 import { memo, useCallback, useEffect, useRef, useState } from 'react'
 import { AccountStatus } from '@/app/config/accountConfig'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
+
+import { OssImage } from '@/components/common/OssImage'
 import { PluginModal } from '@/components/Plugin'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
 import { useAccountStore } from '@/store/account'
 import { buildPluginPublishItem } from '@/store/agent/handlers/action.handlers'
+import { getPlatformInfoSync } from '@/store/platformMetadata'
 import { isPluginPlatformAccountReady, usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import { getActionKey, usePluginPublishCache } from './usePluginPublishCache'
 
@@ -60,7 +62,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
   const { t } = useTransClient('chat')
 
   // 获取平台信息
-  const platInfo = action.platform ? AccountPlatInfoMap.get(action.platform as PlatType) : null
+  const platInfo = action.platform ? getPlatformInfoSync(action.platform as PlatType) : null
   const platformName = platInfo?.name || action.platform || 'Platform'
 
   // 获取封面图（从 medias 中取第一个，视频优先用缩略图）
@@ -369,7 +371,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -437,7 +439,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -505,7 +507,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -585,7 +587,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -659,7 +661,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -725,7 +727,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
           <div className="flex items-center justify-between mb-1 sm:mb-1.5">
             <div className="flex items-center gap-1.5">
               {platInfo && (
-                <Image
+                <OssImage
                   src={platInfo.icon}
                   alt={platInfo.name}
                   width={16}
@@ -791,7 +793,7 @@ const PluginPublishCard = memo(({ action, className }: IPluginPublishCardProps) 
         <div className="flex items-center justify-between mb-1 sm:mb-1.5">
           <div className="flex items-center gap-1.5">
             {platInfo && (
-              <Image
+              <OssImage
                 src={platInfo.icon}
                 alt={platInfo.name}
                 width={16}

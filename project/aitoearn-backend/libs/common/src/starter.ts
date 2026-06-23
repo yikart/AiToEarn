@@ -6,7 +6,7 @@ import type { Request, Response } from 'express'
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { StreamEntry } from 'pino'
 import type { BaseConfig } from './config'
-import { HttpStatus, Logger, Module } from '@nestjs/common'
+import { HttpStatus, Logger, Module, VersioningType } from '@nestjs/common'
 import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE, NestFactory } from '@nestjs/core'
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { apiReference } from '@scalar/nestjs-api-reference'
@@ -17,7 +17,7 @@ import client from 'prom-client'
 import { z } from 'zod'
 import { GlobalExceptionFilter } from './filters'
 import { HttpMetricsInterceptor, PropagationInterceptor, RequestContextInterceptor, ResponseInterceptor } from './interceptors'
-import { CloudWatchLogger, ConsoleLogger, FeishuLogger } from './loggers'
+import { CloudWatchLogger, ConsoleLogger, FeishuLogger, serializeError } from './loggers'
 import { ZodValidationPipe } from './pipes'
 import { patchNestJsSwagger, zodToJsonSchemaOptions } from './utils'
 
@@ -36,6 +36,12 @@ function setupMetrics(app: NestApplication & NestExpressApplication) {
     const metrics = await client.register.metrics()
     res.end(metrics)
   })
+}
+
+function preserveRawBody(req: Request & { rawBody?: Buffer }, _res: Response, buf: Buffer) {
+  if (buf.length > 0) {
+    req.rawBody = Buffer.from(buf)
+  }
 }
 
 @Module({})
@@ -86,6 +92,10 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
       pinoHttp: [
         {
           level: 'trace',
+          serializers: {
+            err: serializeError,
+            error: serializeError,
+          },
           genReqId: (req: IncomingMessage, res: ServerResponse) => {
             const incomingRequestId = req.headers['x-request-id']
             const requestId = typeof incomingRequestId === 'string'
@@ -146,6 +156,8 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
   })
 
   app.useLogger(app.get(PinoLogger))
+
+  app.enableVersioning({ type: VersioningType.URI })
 
   if (config.globalPrefix)
     app.setGlobalPrefix(config.globalPrefix, { exclude: ['/'] })
@@ -210,8 +222,13 @@ export async function startApplication(Module: Type<unknown>, config: BaseConfig
     process.exit(0)
   })
 
-  app.useBodyParser('json', { limit: '50mb' })
-  app.useBodyParser('urlencoded', { limit: '50mb', extended: true })
+  app.useBodyParser('text', {
+    limit: '50mb',
+    type: ['text/*', 'application/xml', 'application/atom+xml'],
+    verify: preserveRawBody,
+  })
+  app.useBodyParser('json', { limit: '50mb', verify: preserveRawBody })
+  app.useBodyParser('urlencoded', { limit: '50mb', extended: true, verify: preserveRawBody })
   app.set('query parser', 'extended')
 
   app.disable('x-powered-by')

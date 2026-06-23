@@ -79,17 +79,6 @@ export const NewMaterialSchema = z.object({
 export interface NewMaterial extends z.infer<typeof NewMaterialSchema> {}
 
 // ---------------------------------------------------------------------------
-// MediaUrlInfo
-// ---------------------------------------------------------------------------
-
-export const MediaUrlInfoSchema = z.object({
-  url: z.string().describe('媒体 URL'),
-  num: z.number().describe('数量'),
-  type: z.enum(MediaType).describe('媒体类型'),
-})
-export interface MediaUrlInfo extends z.infer<typeof MediaUrlInfoSchema> {}
-
-// ---------------------------------------------------------------------------
 // UpMaterial
 // ---------------------------------------------------------------------------
 

@@ -3,9 +3,9 @@
  * 使用 IndexedDB 持久化存储发布记录详情，避免重复 API 调用
  */
 
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
-import { getPublishRecordDetail } from '@/api/plat/publish'
-import { createPersistStore } from '@/utils/createPersistStore'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
+import { getPublishRecordDetail } from '@/api/platforms/publish.api'
+import { createPersistStore } from '@/utils/storage/createPersistStore'
 
 // 缓存过期时间：5 分钟
 const CACHE_EXPIRY_MS = 5 * 60 * 1000

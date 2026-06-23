@@ -5,7 +5,7 @@
 
 import { AlertCircle } from 'lucide-react'
 import { useCallback } from 'react'
-import { confirm } from '@/lib/confirm'
+import { confirm } from '@/utils/ui/confirm'
 
 interface UseCloseDialogParams {
   onClose: () => void

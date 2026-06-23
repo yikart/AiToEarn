@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { AccountType } from '@yikart/common'
+import { Schema as MongooseSchema } from 'mongoose'
 import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
 import { WithTimestampSchema } from './timestamp.schema'
 
@@ -27,17 +28,16 @@ export class OAuth2Credential extends WithTimestampSchema {
   accessToken: string
 
   @Prop({
-    required: true,
+    required: false,
     type: String,
-    default: '',
   })
   refreshToken: string
 
   @Prop({
-    required: true,
+    required: false,
     type: Number,
   })
-  accessTokenExpiresAt: number
+  accessTokenExpiresAt?: number
 
   @Prop({
     required: false,
@@ -48,14 +48,29 @@ export class OAuth2Credential extends WithTimestampSchema {
   @Prop({
     required: false,
     type: String,
-    default: '',
   })
-  raw?: string
+  scope?: string
+
+  @Prop({
+    required: false,
+    type: MongooseSchema.Types.Mixed,
+  })
+  raw?: unknown
 
   get isExpired() {
     const now = Math.floor(Date.now() / 1000)
-    return this.refreshTokenExpiresAt ? this.refreshTokenExpiresAt <= now : this.accessTokenExpiresAt <= now
+    if (this.refreshTokenExpiresAt) {
+      return this.refreshTokenExpiresAt <= now
+    }
+    return this.accessTokenExpiresAt ? this.accessTokenExpiresAt <= now : false
   }
 }
 
 export const OAuth2CredentialSchema = SchemaFactory.createForClass(OAuth2Credential)
+OAuth2CredentialSchema.index(
+  { accountId: 1 },
+  {
+    unique: true,
+    name: 'accountId_1',
+  },
+)

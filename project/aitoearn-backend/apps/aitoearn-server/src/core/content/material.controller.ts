@@ -17,8 +17,9 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
-import { AccountType, ApiDoc, AppException, FileUtil, ParseObjectIdPipe, ResponseCode, TableDto, UserType } from '@yikart/common'
+import { AccountType, ApiDoc, AppException, ParseObjectIdPipe, ResponseCode, TableDto, UserType } from '@yikart/common'
 import { MaterialStatus, MaterialType, MediaType } from '@yikart/mongodb'
+import { MaterialListVo, MaterialVo } from './content.vo'
 import { MaterialGroupService } from './material-group.service'
 import {
   CreateMaterialDto,
@@ -38,12 +39,11 @@ export const MediaMaterialTypeMap = new Map<MediaType, MaterialType>([
 ])
 
 const VIDEO_ONLY_PLATFORMS = new Set<AccountType>([
-  AccountType.YOUTUBE,
-  AccountType.BILIBILI,
-  AccountType.KWAI,
-  AccountType.TIKTOK,
-  AccountType.Douyin,
-  AccountType.WxSph,
+  AccountType.YouTube,
+  AccountType.Bilibili,
+  AccountType.Kwai,
+  AccountType.TikTok,
+  AccountType.WeChatChannels,
 ])
 
 function getMaterialTypeByAccountType(accountType: AccountType): MaterialType | undefined {
@@ -72,7 +72,7 @@ export class MaterialController {
     @Body() body: CreateMaterialDto,
   ) {
     const getInfo = await this.materialGroupService.getGroupInfo(body.groupId)
-    if (!getInfo) {
+    if (!getInfo || getInfo.userId !== token.id) {
       throw new AppException(ResponseCode.MaterialGroupNotFound)
     }
 
@@ -82,7 +82,7 @@ export class MaterialController {
       userType: UserType.User,
       status: MaterialStatus.SUCCESS,
     })
-    return res
+    return MaterialVo.create(res)
   }
 
   @ApiDoc({
@@ -96,7 +96,7 @@ export class MaterialController {
     @Body() body: TransferMaterialDto,
   ) {
     const targetGroup = await this.materialGroupService.getGroupInfo(body.targetGroupId)
-    if (!targetGroup) {
+    if (!targetGroup || targetGroup.userId !== token.id) {
       throw new AppException(ResponseCode.MaterialGroupNotFound)
     }
 
@@ -194,7 +194,7 @@ export class MaterialController {
   @Get('info/:id')
   async getInfo(@Param('id', ParseObjectIdPipe) id: string) {
     const res = await this.materialService.getInfo(id)
-    return res
+    return res ? MaterialVo.create(res) : res
   }
 
   @ApiDoc({
@@ -207,7 +207,7 @@ export class MaterialController {
   async optimalInGroup(@Query() query: GetOptimalMaterialDto) {
     const type = getMaterialTypeByAccountType(query.accountType)
     const res = await this.materialService.optimalInGroup(query.groupId, type, query.accountType)
-    return res
+    return res ? MaterialVo.create(res) : res
   }
 
   @ApiDoc({
@@ -225,19 +225,9 @@ export class MaterialController {
       param,
       {
         ...query,
-        ...(!query.groupId && { userId: token.id, userType: UserType.User }),
+        userId: token.id,
       },
     )
-
-    for (const item of res.list) {
-      if (item.coverUrl)
-        item.coverUrl = FileUtil.buildUrl(item.coverUrl)
-      for (const media of item.mediaList) {
-        media.url = FileUtil.buildUrl(media.url)
-        if (media.thumbUrl)
-          media.thumbUrl = FileUtil.buildUrl(media.thumbUrl)
-      }
-    }
-    return res
+    return MaterialListVo.create(res)
   }
 }

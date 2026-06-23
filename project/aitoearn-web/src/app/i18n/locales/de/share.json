@@ -47,9 +47,5 @@
   "viewOnly": "Nur Ansicht",
   "linkExpiredDesc": "Dieser Freigabelink ist abgelaufen. Bitte kontaktieren Sie den Absender für einen neuen Link.",
   "linkNotFoundDesc": "Dieser Freigabelink existiert nicht oder wurde gelöscht.",
-  "backToHome": "Zurück zur Startseite",
-  "publishShareFailed": "Veröffentlichung konnte nicht vorbereitet werden",
-  "noImagesToShare": "Keine Bilder zum Teilen",
-  "uploadFailed": "Upload fehlgeschlagen",
-  "noPreview": "Keine Vorschau verfügbar"
+  "backToHome": "Zurück zur Startseite"
 }

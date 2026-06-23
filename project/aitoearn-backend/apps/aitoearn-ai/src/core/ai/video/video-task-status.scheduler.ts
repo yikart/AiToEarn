@@ -1,22 +1,23 @@
 import type { VideoAiLogByChannel } from './video-ai-log.interface'
-import { Injectable, Logger } from '@nestjs/common'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { Cron, CronExpression } from '@nestjs/schedule'
-import { WithLoggerContext } from '@yikart/common'
+import { getErrorMessage, WithLoggerContext } from '@yikart/common'
 import { AiLog, AiLogChannel, AiLogRepository, AiLogType } from '@yikart/mongodb'
 import { Redlock } from '@yikart/redlock'
 import { AxiosError } from 'axios'
 import { RedlockKey } from '../../../common'
+import { isNonRetryableAiRequestError } from '../ai-generation-retry.util'
 import { DashscopeService as DashscopeLibService } from '../libs/dashscope'
-import { GeminiService } from '../libs/gemini'
 import { GrokLibService, GrokVideoTaskStatus } from '../libs/grok'
 import { OpenaiService } from '../libs/openai'
+import { RelayLibService } from '../libs/relay'
 import { VolcengineService } from '../libs/volcengine'
 import { DashscopeVideoService } from './dashscope'
-import { GeminiVideoService } from './gemini'
 import { GrokVideoService } from './grok'
 import { OpenAIVideoService } from './openai'
+import { RelayVideoService } from './relay/relay-video.service'
 import { VideoService } from './video.service'
-import { VolcengineVideoService } from './volcengine'
+import { VolcengineVideoService } from './volcengine/volcengine.service'
 
 @Injectable()
 export class VideoTaskStatusScheduler {
@@ -24,17 +25,17 @@ export class VideoTaskStatusScheduler {
 
   constructor(
     private readonly aiLogRepo: AiLogRepository,
+    private readonly videoService: VideoService,
     private readonly volcengineVideoService: VolcengineVideoService,
     private readonly openaiVideoService: OpenAIVideoService,
     private readonly volcengineLibService: VolcengineService,
     private readonly openaiLibService: OpenaiService,
-    private readonly geminiLibService: GeminiService,
-    private readonly geminiVideoService: GeminiVideoService,
     private readonly grokLibService: GrokLibService,
     private readonly grokVideoService: GrokVideoService,
     private readonly dashscopeLibService: DashscopeLibService,
     private readonly dashscopeVideoService: DashscopeVideoService,
-    private readonly videoService: VideoService,
+    @Optional() private readonly relayLibService?: RelayLibService,
+    @Optional() private readonly relayVideoService?: RelayVideoService,
   ) { }
 
   /**
@@ -75,15 +76,6 @@ export class VideoTaskStatusScheduler {
       const result = await this.openaiLibService.retrieveVideo(taskId)
       await this.openaiVideoService.callback(result)
     }
-    else if (channel === AiLogChannel.Gemini) {
-      try {
-        const operation = await this.geminiLibService.getOperation(this.geminiVideoService.getOperation({ name: taskId }))
-        await this.geminiVideoService.callback(operation)
-      }
-      catch (e) {
-        await this.geminiVideoService.callback(this.geminiVideoService.getOperation({ name: taskId, error: { message: (e as Error).message } }))
-      }
-    }
     else if (channel === AiLogChannel.Grok) {
       const grokTask = task as VideoAiLogByChannel<AiLogChannel.Grok>
       try {
@@ -91,7 +83,14 @@ export class VideoTaskStatusScheduler {
         await this.grokVideoService.callback(result, grokTask)
       }
       catch (e) {
-        let errorMessage: string = (e as Error).message
+        if (!isNonRetryableAiRequestError(e)) {
+          this.logger.warn(
+            { error: e, taskId, aiLogId: task.id },
+            'Grok video status query failed, waiting for next poll',
+          )
+          return
+        }
+        let errorMessage = getErrorMessage(e)
         let code = '500'
         if (e instanceof AxiosError) {
           const status = e?.response?.status
@@ -111,11 +110,22 @@ export class VideoTaskStatusScheduler {
       const result = await this.dashscopeLibService.getVideoTask(taskId)
       await this.dashscopeVideoService.callback(result)
     }
+    else if (channel === AiLogChannel.Relay) {
+      if (!this.relayLibService || !this.relayVideoService) {
+        return this.skipUnregistered(task, channel)
+      }
+      const result = await this.relayLibService.getVideo(taskId)
+      await this.relayVideoService.callback(result)
+    }
     else {
       this.logger.warn(`任务 ${task.id} 未知的 channel: ${channel}，跳过检查`)
       return
     }
 
     await this.videoService.ensureSavedMediaByAiLogId(task.id)
+  }
+
+  private skipUnregistered(task: AiLog, channel: AiLogChannel): void {
+    this.logger.warn(`任务 ${task.id} 的 channel ${channel} 未注册（配置缺失），跳过检查`)
   }
 }

@@ -212,7 +212,7 @@ describe('mcp.utils', () => {
 
     it('should catch AppException and return errorResult without fatal log', async () => {
       const handler = vi.fn().mockRejectedValue(
-        new AppException(ResponseCode.AgentTaskFailed),
+        new AppException(ResponseCode.InvalidModel),
       )
       const schema = { param: z.string() }
 

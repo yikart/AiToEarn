@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService } from '@yikart/assets'
-import { AppException, CreditsConsumptionSource, CreditsType, ResponseCode, UserType } from '@yikart/common'
-import { CreditsHelperService } from '@yikart/helpers'
+import { AppException, ResponseCode, UserType } from '@yikart/common'
 import {
   AideoAiLogResponse,
   AiLog,
@@ -11,7 +10,6 @@ import {
   AiLogType,
   AssetType,
 } from '@yikart/mongodb'
-import { config } from '../../../config'
 import { VolcengineVideoUtils } from '../../agent/mcp/volcengine/volcengine.utils'
 import {
   CreateDramaRecapTaskRequest,
@@ -34,7 +32,6 @@ export class DramaRecapService {
     private readonly volcengineService: VolcengineService,
     private readonly aiLogRepo: AiLogRepository,
     private readonly assetsService: AssetsService,
-    private readonly creditsHelper: CreditsHelperService,
   ) { }
 
   /**
@@ -126,7 +123,6 @@ export class DramaRecapService {
       channel: AiLogChannel.Volcengine,
       startedAt,
       type: AiLogType.Aideo,
-      points: 0, // 任务完成后再计费
       request: {
         vids,
         dramaScriptTaskId,
@@ -252,12 +248,6 @@ export class DramaRecapService {
         response: updatedResponse,
       })
 
-      // 重新获取更新后的任务日志，然后计费
-      const updatedTaskLog = await this.aiLogRepo.getById(task.id)
-      if (updatedTaskLog) {
-        await this.billDramaRecapTask(updatedTaskLog)
-      }
-
       this.logger.log({ taskId: task.taskId, outputVid: result.Vid }, '[DramaRecap] 任务处理完成')
     }
     else if (result.Status === DramaRecapTaskStatus.Failed) {
@@ -271,69 +261,6 @@ export class DramaRecapService {
 
       this.logger.error({ taskId: task.taskId, errorMessage: result.ErrorMessage }, '[DramaRecap] 任务失败')
     }
-  }
-
-  /**
-   * 短剧解说任务计费
-   */
-  private async billDramaRecapTask(taskLog: AiLog): Promise<void> {
-    // 从响应中获取输出视频的 VID
-    const response = taskLog.response as AideoAiLogResponse | undefined
-    const outputVid = response?.outputVid
-
-    if (!outputVid) {
-      this.logger.warn({ taskId: taskLog.taskId }, '[DramaRecap] 无法获取输出视频 VID，跳过计费')
-      return
-    }
-
-    // 获取视频时长
-    const mediaInfos = await this.volcengineService.getMediaInfos({
-      Vids: outputVid,
-    })
-    const duration = mediaInfos.MediaInfoList?.[0]?.SourceInfo?.Duration ?? 0
-
-    // 计算价格
-    const basePrice = config.ai.aideo.dramaRecap?.basePrice || 0.5 // 元/分钟，默认 0.5
-    const durationMinutes = duration / 60
-    const totalPrice = durationMinutes * basePrice
-
-    this.logger.debug({
-      taskId: taskLog.taskId,
-      outputVid,
-      duration,
-      durationMinutes,
-      basePrice,
-      totalPrice,
-    }, '[DramaRecap] 计算费用')
-
-    // 只对已登录用户扣费
-    if (totalPrice > 0 && taskLog.userType === UserType.User) {
-      await this.creditsHelper.deductCredits({
-        userId: taskLog.userId,
-        amount: totalPrice,
-        type: CreditsType.DramaRecap,
-        source: CreditsConsumptionSource.AiAideo,
-        description: `Drama recap, task id: ${taskLog.taskId}`,
-        metadata: { taskId: taskLog.taskId, duration, outputVid },
-      })
-    }
-
-    // 更新任务日志中的积分消耗和视频信息
-    await this.aiLogRepo.updateById(taskLog.id, {
-      points: totalPrice,
-      response: {
-        ...response,
-        duration,
-        price: totalPrice,
-      },
-    })
-
-    this.logger.log({
-      taskId: taskLog.taskId,
-      duration,
-      price: totalPrice,
-      userType: taskLog.userType,
-    }, '[DramaRecap] 计费成功')
   }
 
   /**

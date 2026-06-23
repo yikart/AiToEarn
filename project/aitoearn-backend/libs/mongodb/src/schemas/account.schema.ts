@@ -107,6 +107,12 @@ export class Account extends WithTimestampSchema {
     required: true,
     default: 0,
   })
+  followingCount: number
+
+  @Prop({
+    required: true,
+    default: 0,
+  })
   readCount: number
 
   @Prop({
@@ -161,9 +167,6 @@ export class Account extends WithTimestampSchema {
   })
   status: AccountStatus
 
-  @Prop({ type: String, required: false })
-  channelId: string
-
   @Prop({
     required: true,
     type: Number,
@@ -176,4 +179,10 @@ export class Account extends WithTimestampSchema {
 }
 
 export const AccountSchema = SchemaFactory.createForClass(Account)
-AccountSchema.index({ type: 1, uid: 1 }, { unique: true })
+AccountSchema.index(
+  { type: 1, uid: 1, account: 1 },
+  {
+    unique: true,
+    name: 'type_1_uid_1_account_1',
+  },
+)

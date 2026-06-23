@@ -1,6 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
-import { VipStatus, VipTier } from '@yikart/common'
-import { UserStatus } from '../enums'
+import { UserStatus, UserType } from '../enums'
 import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
 import { WithTimestampSchema } from './timestamp.schema'
 
@@ -48,49 +47,6 @@ export class UserAiInfo {
     type: UserAiItemInfo,
   })
   agent?: UserAiItemInfo
-}
-
-@Schema({
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
-})
-export class UserBackData {
-  @Prop({
-    required: false,
-  })
-  phone?: string
-
-  @Prop({ required: false })
-  wxOpenid?: string
-
-  @Prop({ required: false })
-  wxUnionid?: string
-}
-
-// User VIP Info
-@Schema({
-  toJSON: { virtuals: true },
-  toObject: { virtuals: true },
-})
-export class UserVipInfo {
-  @Prop({
-    required: true,
-    enum: VipTier,
-  })
-  tier: VipTier
-
-  @Prop({ required: true })
-  expireAt: Date
-
-  @Prop({
-    required: true,
-    enum: VipStatus,
-    default: VipStatus.Active,
-  })
-  status: VipStatus
-
-  @Prop({ required: true })
-  startAt: Date
 }
 
 @Schema({ _id: false })
@@ -145,30 +101,12 @@ export class User extends WithTimestampSchema {
     required: false,
     index: true,
   })
-  mail: string
+  mail?: string
 
   @Prop({
     required: false,
   })
   avatar?: string
-
-  @Prop({
-    required: false,
-    index: true,
-  })
-  phone?: string
-
-  @Prop({
-    required: false,
-    select: false,
-  })
-  password?: string
-
-  @Prop({
-    required: false,
-    select: false,
-  })
-  salt?: string
 
   @Prop({
     required: true,
@@ -177,6 +115,14 @@ export class User extends WithTimestampSchema {
   })
   status: UserStatus
 
+  @Prop({
+    required: true,
+    enum: UserType,
+    default: UserType.CREATOR,
+    index: true,
+  })
+  userType: UserType
+
   // Is Deleted
   @Prop({
     required: true,
@@ -184,27 +130,6 @@ export class User extends WithTimestampSchema {
     index: true,
   })
   isDelete: boolean
-
-  @Prop({ required: false })
-  wxOpenid?: string
-
-  @Prop({ required: false })
-  wxUnionid?: string
-
-  @Prop({ required: false, index: true })
-  douyinUnionid?: string // 抖音UnionID
-
-  @Prop({ required: false, index: true })
-  douyinMiniAppOpenid?: string // 抖音小程序OpenID
-
-  @Prop({ type: Object, required: false, default: {} })
-  backData?: UserBackData
-
-  @Prop({ type: Object, required: false })
-  googleAccount?: Record<string, unknown> // Google Account Info
-
-  @Prop({ type: UserVipInfo, required: false })
-  vipInfo?: UserVipInfo
 
   @Prop({
     required: true,
@@ -232,12 +157,6 @@ export class User extends WithTimestampSchema {
 
   @Prop({ type: String, required: false, default: 'en-US' })
   locale?: string // 用户语言偏好 (en-US | zh-CN)
-
-  @Prop({ required: false, index: true })
-  placeId?: string
-
-  @Prop({ required: false, index: true })
-  libraryId?: string
 }
 
 export const UserSchema = SchemaFactory.createForClass(User)

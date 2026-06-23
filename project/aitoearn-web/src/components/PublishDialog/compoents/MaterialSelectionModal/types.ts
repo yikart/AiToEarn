@@ -3,7 +3,7 @@
  * 素材选择器弹窗的类型定义
  */
 
-import type { MediaGroup, MediaItem } from '@/api/types/media'
+import type { MediaGroup, MediaItem } from '@/api/materials/material.types'
 
 /**
  * 媒体类型

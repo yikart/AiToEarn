@@ -14,6 +14,7 @@ export interface DraftGenerationData {
   resolution?: string
   aspectRatio?: string
   videoUrls?: string[]
+  audioUrls?: string[]
   imageModel?: string
   imageCount?: number
   imageSize?: string

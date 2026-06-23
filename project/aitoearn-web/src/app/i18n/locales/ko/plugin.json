@@ -26,8 +26,7 @@
     "platforms": "플랫폼",
     "status": "상태",
     "time": "시간",
-    "viewDetail": "상세 보기",
-    "untitled": "제목 없음"
+    "viewDetail": "상세 보기"
   },
   "publishDetail": {
     "title": "게시 상세",
@@ -42,14 +41,41 @@
     "close": "닫기",
     "minimize": "최소화",
     "unknownAccount": "알 수 없는 계정",
-    "creatingRecord": "게시 기록 생성 중..."
+    "creatingRecord": "게시 기록 생성 중...",
+    "progressTitle": "게시 진행률",
+    "completeTitle": "게시 완료",
+    "sectionUserAction": "직접 완료 필요",
+    "sectionAuto": "자동 게시",
+    "sectionTask": "게시 작업",
+    "actionRequired": "직접 완료 필요",
+    "userActionTitle": "{{platform}}에서 완료 대기 중",
+    "userActionDesc": "콘텐츠가 준비되었습니다. 플랫폼으로 이동해 마지막 단계를 완료하세요.",
+    "preparingUserAction": "{{platform}} 게시 진입점을 준비 중...",
+    "openPlatform": "{{platform}} 열기",
+    "openPlatformFailed": "{{platform}}을(를) 열지 못했습니다. 짧은 링크를 복사해 수동으로 여세요.",
+    "copyShortLink": "짧은 링크 복사",
+    "shortLinkCopied": "짧은 링크가 복사되었습니다",
+    "shortLinkCopyFailed": "복사 실패",
+    "taskCreated": "작업 생성됨",
+    "autoPendingDesc": "자동 게시 시작을 기다리는 중입니다. 이 페이지를 열어 두세요.",
+    "sectionTitleWithCount": "{{title}} ({{count}})",
+    "userActionQrDesc": "콘텐츠가 준비되었습니다. 휴대폰으로 QR 코드를 스캔해 게시를 완료하세요.",
+    "userActionMobileDesc": "콘텐츠가 준비되었습니다. 아래 버튼을 눌러 {{platform}}을(를) 열고 게시를 완료하세요.",
+    "userActionPolling": "게시 성공 여부를 확인하는 중...",
+    "userActionPublished": "게시 성공",
+    "userActionFailed": "게시 실패. 다시 게시해 주세요.",
+    "cancelPublish": "게시 취소",
+    "cancelPublishConfirmTitle": "게시를 취소할까요?",
+    "cancelPublishConfirmContent": "취소하면 이 콘텐츠는 QR 코드 게시 대기를 중지합니다. 나중에 다시 게시할 수 있습니다.",
+    "cancelPublishSuccess": "게시가 취소되었습니다",
+    "cancelPublishFailed": "게시 취소에 실패했습니다. 다시 시도해 주세요."
   },
   "publishFloating": {
     "xhsPublishing": "RedNote is publishing",
-    "pluginPublishing": "Plugin publishing in progress",
-    "openDetail": "Click to view details",
-    "completed": "Plugin publishing completed",
-    "failed": "Plugin publishing failed. View details."
+    "pluginPublishing": "자동 게시 중",
+    "openDetail": "클릭하여 게시 진행률 보기",
+    "completed": "자동 게시 완료",
+    "failed": "자동 게시 실패. 진행률을 확인하세요."
   },
   "common": {
     "confirm": "확인",
@@ -71,7 +97,9 @@
     "PENDING": "대기 중",
     "PUBLISHING": "게시 중",
     "COMPLETED": "완료됨",
-    "ERROR": "오류"
+    "ERROR": "오류",
+    "canceled": "취소됨",
+    "CANCELED": "취소됨"
   },
   "header": {
     "pluginActive": "플러그인 활성",

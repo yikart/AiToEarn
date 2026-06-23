@@ -9,8 +9,9 @@ import { ArrowUp, Upload } from 'lucide-react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import { useAgentStore } from '@/store/agent'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 import { useTransClient } from '../../i18n/client'
 import AgentFeatures from './components/AgentFeatures'
 import EcosystemDiagram from './components/EcosystemDiagram'
@@ -20,6 +21,9 @@ import TaskPreview from './components/TaskPreview'
 
 export function AiSocialPageContent() {
   const { t } = useTransClient('home')
+
+  // Store 方法
+  const { setDebugFiles } = useAgentStore()
 
   // 拖拽上传状态
   const [isDragging, setIsDragging] = useState(false)
@@ -122,6 +126,33 @@ export function AiSocialPageContent() {
   const router = useRouter()
   const [agentTaskId, setAgentTaskId] = useState<string>('')
   const params = useParams()
+
+  // 解析 debug URL 参数，设置 debug 模式
+  useEffect(() => {
+    try {
+      const debugParam = searchParams.get('debug')
+      if (debugParam) {
+        // 解析 debug=[file1.txt,file2.txt] 或 debug=file1.txt,file2.txt 格式
+        const cleanedParam = debugParam.replace(/^\[|\]$/g, '')
+        const files = cleanedParam
+          .split(',')
+          .map(f => f.trim())
+          .filter(Boolean)
+
+        if (files.length > 0) {
+          setDebugFiles(files)
+
+          // 清理 URL 上的 debug 参数
+          const url = new URL(window.location.href)
+          url.searchParams.delete('debug')
+          router.replace(url.pathname + url.search)
+        }
+      }
+    }
+    catch (e) {
+      console.warn('[AiSocialPageContent] Failed to parse debug param:', e)
+    }
+  }, [searchParams, router, setDebugFiles])
 
   useEffect(() => {
     try {

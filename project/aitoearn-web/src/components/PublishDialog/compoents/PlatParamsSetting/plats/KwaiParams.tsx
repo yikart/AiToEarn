@@ -10,12 +10,11 @@ import PubParmasTextarea from '@/components/PublishDialog/compoents/PubParmasTex
 const KwaiParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { pubParmasTextareaCommonParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
 

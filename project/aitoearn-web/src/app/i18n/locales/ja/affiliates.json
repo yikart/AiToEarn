@@ -1,0 +1,98 @@
+{
+  "title": "Friends of AiToEarnに参加",
+  "seo": {
+    "title": "アフィリエイトプログラム - 30%の継続報酬を獲得",
+    "description": "AiToEarnアフィリエイトプログラムに参加して、紹介者の支払いごとに12ヶ月間30%のコミッションを獲得。専用リンクを共有し、リアルタイムで収益を追跡。",
+    "keywords": "アフィリエイト, 紹介コミッション, オンライン収入, 不労所得, 30%コミッション, 紹介プログラム, クリエイターアフィリエイト, AiToEarn"
+  },
+  "describe": "aitoearn.aiに有料ユーザーを紹介し、12ヶ月以内の最初の12回の支払いに対して30%のコミッションを獲得、合計$716.4!",
+  "keywords": "AiToEarnアフィリエイト, アフィリエイトマーケティング, お金を稼ぐ, シェアして稼ぐ, 紹介収益",
+  "subtitle": "aitoearn.aiに紹介した有料顧客の最初の12ヶ月以内の最初の12回の支払いに対して<strong>30%のコミッション</strong>を受け取ります（$199×12×30% = $716.4）!",
+  "productIntro": {
+    "badge": "Github 10k+ Starオープンソースプロジェクト",
+    "headline": "自動化されたAIワークフローエンジン",
+    "features": {
+      "oneClick": {
+        "title": "ワンクリックタスク実行",
+        "description": "ニーズを説明すると、エージェントが最適なAIツールの組み合わせをインテリジェントに編成"
+      },
+      "multiModal": {
+        "title": "マルチモーダル統合",
+        "description": "テキスト生成、画像作成、動画処理、翻訳をシームレスに組み合わせ"
+      },
+      "zeroCurve": {
+        "title": "ゼロ学習曲線",
+        "description": "コンセプトから最終製品まで - 手動でのツール切り替えなしで効率10倍向上"
+      }
+    },
+    "sections": {
+      "models": {
+        "title": "🎯 プレミアムAIモデル",
+        "items": [
+          "<strong>フラッグシップLLM:</strong> Claude Opus 4.5、GPT-5.1、Gemini 3.0 - 最新の最先端モデル",
+          "<strong>プロフェッショナル動画ツール:</strong> Sora-2、Veo-3.1による高度な動画生成と編集",
+          "<strong>高品質画像作成:</strong> Nano Banana Pro、GPT-Imageによるプロフェッショナルグレードのビジュアル"
+        ]
+      },
+      "distribution": {
+        "title": "📱 オムニチャネル配信",
+        "items": [
+          "<strong>ソーシャルメディアマトリックス:</strong> Instagram、TikTok、YouTube、Bilibili、Douyin + 20+プラットフォーム",
+          "<strong>スマートコンテンツ適応:</strong> 各プラットフォームの最高のパフォーマンスのためにフォーマットを自動最適化",
+          "<strong>一括管理:</strong> ワンクリック公開によるマルチアカウント処理"
+        ]
+      },
+      "processing": {
+        "title": "⚡ プロフェッショナル動画処理",
+        "items": [
+          "<strong>AI駆動編集:</strong> 魅力的なショートフォームコンテンツのためにハイライトを自動識別",
+          "<strong>多言語ボイスオーバー:</strong> 自然で流暢なナレーションによるリアルタイム翻訳",
+          "<strong>スタイル変換:</strong> パーソナライズされた視覚体験のための即座の動画スタイル変更"
+        ]
+      },
+      "revolution": {
+        "title": "🌟 コンテンツ作成革命",
+        "description": "コンテンツ作成を手作業からインテリジェントな方向性へ変革。クリエイター、マーケター、ビジネスのいずれであっても - Aitoearn Agentで無限の創造的可能性を解き放ちます。"
+      }
+    }
+  },
+  "totalEarnings": "総収益",
+  "pending": "保留中",
+  "pendingTooltip": "保留中の収入は{{date}}にアカウントに決済されます。",
+  "viewIncome": "クリックして収入を確認",
+  "settled": "決済済み",
+  "referralLink": {
+    "title": "あなたの紹介リンク",
+    "copy": "コピー",
+    "copied": "コピーしました!",
+    "copySuccess": "紹介リンクをコピーしました!",
+    "copyError": "リンクのコピーに失敗しました",
+    "description": "このリンクを友達と共有して、最初の12回の支払いに対して30%のコミッションを獲得しましょう!"
+  },
+  "goToPublish": "AiToEarn公開ページへ",
+  "oneClickPromotion": {
+    "button": "ワンクリックでAiToEarnを宣伝して{{amount}}を稼ぐ",
+    "description": "AIがあなたの紹介リンク付きのプロモーション動画を自動作成し、すべてのチャンネルに公開します"
+  },
+  "stats": {
+    "totalReferrals": "総紹介数",
+    "paidReferrals": "有料紹介数",
+    "conversionRate": "コンバージョン率"
+  },
+  "commissions": {
+    "title": "月次コミッション詳細",
+    "settled": "決済済み",
+    "pending": "保留中",
+    "noData": "まだコミッションがありません。紹介リンクの共有を始めましょう!"
+  },
+  "howItWorks": {
+    "title": "仕組み",
+    "step1": "友達や連絡先とあなた専用の紹介リンクを共有",
+    "step2": "彼らがサインアップして支払いを行うと、30%のコミッションを獲得",
+    "step3": "12ヶ月以内の最初の12回の支払いに対してコミッションを獲得",
+    "step4": "コミッションは毎月決済され、ウォレットに引き出すことができます"
+  },
+  "loading": {
+    "failed": "データの読み込みに失敗しました"
+  }
+}

@@ -14,7 +14,7 @@ import { memo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getCalendarFestivalName, getCalendarFestivalTabValue, getCalendarFestivalTitle } from '../calendarFestival.utils'
 
 export interface ICalendarFestivalSummaryProps {

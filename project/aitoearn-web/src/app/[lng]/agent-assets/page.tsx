@@ -1,12 +1,12 @@
 /**
- * Agent 素材详情页
- * 展示 Agent 生成的所有图片和视频素材（只读模式）
+ * AI 生成素材详情页
+ * 展示 AI 生成的所有图片和视频素材（只读模式）
  */
 
 import type { Metadata } from 'next'
 import { useTranslation } from '@/app/i18n'
 import { fallbackLng, languages } from '@/app/i18n/settings'
-import { getMetadata } from '@/utils/general'
+import { getMetadata } from '@/utils/metadata'
 import { AgentAssetsPageCore } from './agentAssetsPageCore'
 
 export async function generateMetadata({

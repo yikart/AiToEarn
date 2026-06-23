@@ -1,4 +1,4 @@
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import type { AccountGroup } from '@/store/account'
 import { ChevronDown, FolderOpen, Layers, UserPlus } from 'lucide-react'
 import { memo, useMemo } from 'react'
@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 import AccountItem from './AccountItem'
 import AccountSearchBar from './AccountSearchBar'
@@ -90,11 +90,11 @@ const AccountSelector = memo(
                       alt={accountActive.nickname}
                     />
                     <AvatarFallback>
-                      {accountActive.nickname?.[0] || accountActive.account?.[0]}
+                      {accountActive.nickname?.[0]}
                     </AvatarFallback>
                   </Avatar>
                   <span className="flex-1 truncate text-sm text-foreground text-left">
-                    {accountActive.nickname || accountActive.account}
+                    {accountActive.nickname}
                   </span>
                   <ChevronDown className="h-4 w-4 text-muted-foreground shrink-0" />
                 </>

@@ -12,8 +12,8 @@
     "registry": "https://npm.pkg.github.com"
   },
   "peerDependencies": {
-    "@nestjs/common": "11.1.17",
-    "@nestjs/core": "11.1.17",
+    "@nestjs/common": "11.1.24",
+    "@nestjs/core": "11.1.24",
     "@yikart/common": "workspace:*",
     "@yikart/redis": "workspace:*",
     "zod": "4.3.6"

@@ -11,15 +11,16 @@ import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { PluginModal, PluginUpdatePopover } from '@/components/Plugin'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
 import { usePluginStore } from '@/store/plugin'
 import { PluginStatus } from '@/store/plugin/types/baseTypes'
+import { cn } from '@/utils/className'
 
 export function PluginEntry({ collapsed }: SidebarCommonProps) {
   const { t } = useTransClient('common')
 
-  const { pluginNeedsUpdate, pluginStatus, pluginVersion, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
+  const { hostAccessGranted, pluginNeedsUpdate, pluginStatus, pluginVersion, pluginModalVisible, openPluginModal, closePluginModal } = usePluginStore(
     useShallow(state => ({
+      hostAccessGranted: state.hostAccessGranted,
       pluginNeedsUpdate: state.pluginNeedsUpdate,
       pluginStatus: state.status,
       pluginVersion: state.pluginVersion,
@@ -52,7 +53,9 @@ export function PluginEntry({ collapsed }: SidebarCommonProps) {
         return {
           iconColor: 'text-warning',
           dotColor: 'bg-warning',
-          statusText: t('pluginStatus.noPermission'),
+          statusText: hostAccessGranted === false
+            ? t('pluginStatus.siteAccessRequired')
+            : t('pluginStatus.noPermission'),
           statusColor: 'text-warning',
         }
       case PluginStatus.CHECKING:

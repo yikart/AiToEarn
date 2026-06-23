@@ -20,8 +20,8 @@ const aideoTaskStatusResponseSchema = z.object({
     code: z.string().optional(),
     message: z.string().optional(),
   }).optional().describe('错误信息'),
-  createdAt: z.date().describe('创建时间'),
-  updatedAt: z.date().describe('更新时间'),
+  createdAt: z.coerce.date().describe('创建时间'),
+  updatedAt: z.coerce.date().describe('更新时间'),
 })
 
 export class AideoTaskStatusResponseVo extends createZodDto(aideoTaskStatusResponseSchema) {}

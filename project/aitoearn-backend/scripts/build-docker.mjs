@@ -353,9 +353,9 @@ async function copyConfig(contextDir, projectName, verbose = false) {
   if (verbose)
     console.info(chalk.yellow('复制 assets 目录...'))
 
-  const config = `apps/${projectName}/config/config.js`
+  const config = `apps/${projectName}/config/config.yaml`
   if (await fs.pathExists(config)) {
-    const destPath = path.join(contextDir, 'config.js')
+    const destPath = path.join(contextDir, 'config.yaml')
     await fs.copy(config, destPath)
     if (verbose)
       console.info(chalk.gray(`  ${config} -> ${destPath}`))

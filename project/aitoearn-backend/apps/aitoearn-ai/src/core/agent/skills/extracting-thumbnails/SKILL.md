@@ -57,7 +57,7 @@ On success, return the thumbnail URL for use as coverUrl.
 2. Wait 15 seconds
 3. Poll getThumbnailTaskStatus until success
 4. Use returned thumbnail URL as coverUrl
-5. Proceed with publishPostToKwai
+5. Proceed with createChannelPublishFlow
 ```
 
 ### Example 2: Generate Cover Before Publishing

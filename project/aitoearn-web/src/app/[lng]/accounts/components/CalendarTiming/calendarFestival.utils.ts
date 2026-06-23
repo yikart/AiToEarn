@@ -1,7 +1,6 @@
 import chineseDaysData from 'chinese-days/dist/chinese-days.json'
 import dayjs from 'dayjs'
-import { isChina } from '@/constant'
-import { isChineseLanguage } from '@/lib/i18n/languageConfig'
+import { isChineseLanguage } from '@/app/i18n/languageConfig'
 import bmcxCalendarEvents2026Data from './data/china-calendar-events-2026.json'
 import lunarSolarEventsData from './data/china-lunar-solar-events.json'
 
@@ -329,7 +328,7 @@ function getAdditionalBmcxCalendarEvents(
 }
 
 function canShowChinaCalendarInfo(date: dayjs.ConfigType, lng?: string) {
-  if ((!isChina && (!lng || !isChineseLanguage(lng))) || !date) {
+  if ((!lng || !isChineseLanguage(lng)) || !date) {
     return false
   }
 

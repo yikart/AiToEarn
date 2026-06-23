@@ -5,7 +5,6 @@
   "docs": "Dokumentation",
   "login": "Anmelden",
   "support": "Support",
-  "notifications": "Benachrichtigungen",
   "settings": "Einstellungen",
   "vip": "Plus",
   "vip.tier": {
@@ -22,12 +21,8 @@
   "recharge": "Aufladen",
   "adBalance": "Werbetreibenden-Guthaben",
   "creatorBalance": "Creator-Guthaben",
+  "withdrawable": "Auszahlbar",
   "plugin": "Erweiterung",
-  "affiliates": "Partner",
-  "goToWebsite": "Zur Website",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "Installieren",
     "noPermission": "Nicht autorisiert",
@@ -39,16 +34,15 @@
   "apiErrorContactTip": "Wenn Sie Fragen haben, bitte ",
   "wechat": "WeChat",
   "scanToAdd": "QR-Code scannen zum Hinzufügen",
+  "wechatLinkTip": "Sie können WeChat auch über diesen Link öffnen",
   "documents": "Dokumente",
   "helpDocs": "Hilfedokumentation",
   "pluginGuide": "Anleitung zur Plugin-Installation und Nutzung",
   "pluginUpdateGuide": "Plugin-Update-Anleitung",
   "privacyPolicy": "Datenschutzrichtlinie",
   "termsOfService": "Nutzungsbedingungen",
-  "noNotifications": "Keine Benachrichtigungen",
   "markAllAsRead": "Alle als gelesen markieren",
   "markAsRead": "Als gelesen markieren",
-  "unreadCount": "Ungelesene Nachrichten",
   "viewAll": "Alle anzeigen",
   "cancel": "Abbrechen",
   "confirm": "Bestätigen",
@@ -58,15 +52,7 @@
   "yes": "Ja",
   "no": "Nein",
   "calendar": {
-    "weekDaysShort": [
-      "So",
-      "Mo",
-      "Di",
-      "Mi",
-      "Do",
-      "Fr",
-      "Sa"
-    ],
+    "weekDaysShort": ["So", "Mo", "Di", "Mi", "Do", "Fr", "Sa"],
     "monthSuffix": ""
   },
   "actions": {
@@ -94,20 +80,16 @@
     "jumpTo": "Gehe zu",
     "page": "Seite"
   },
-  "notificationTypes": {
-    "system": "Systembenachrichtigung",
-    "user": "Benutzerbenachrichtigung",
-    "material": "Materialbenachrichtigung",
-    "other": "Andere Benachrichtigung"
-  },
   "header": {
     "messages": "Nachrichten",
+    "income": "Einnahmenübersicht",
+    "wallet": "Meine Wallet",
     "materialLibrary": "Bibliothek",
     "draftBox": "Inhaltsverwaltung",
+    "agentAssets": "KI-generierte Assets",
     "draftBoxSeoTitle": "Content-Management - KI-Batch-Erstellung & Entwurfseditor",
     "draftBoxSeoDescription": "Alle Ihre Content-Entwürfe an einem Ort verwalten. Mit KI Social-Media-Posts generieren, Entwürfe vor der Veröffentlichung bearbeiten.",
-    "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn",
-    "brandPromotion": "AI Check-in"
+    "draftBoxSeoKeywords": "Content-Management, Entwurfseditor, KI-Content-Generierung, Batch-Erstellung, Social-Media-Entwürfe, AiToEarn"
   },
   "tasks": "Marktplatz",
   "signIn": {
@@ -205,10 +187,14 @@
       "importantNoteContent": "Daten können nach der Löschung nicht wiederhergestellt werden. Bitte gehen Sie vorsichtig vor. Einige gesetzlich vorgeschriebene Daten können möglicherweise nicht gelöscht werden."
     }
   },
+  "lowBalanceAlert": {
+    "title": "Warnung: Niedriges Guthaben",
+    "content": "Ihr Guthaben ist niedrig. Bitte laden Sie auf, um unsere Dienste weiter nutzen zu können.",
+    "neverRemind": "Nicht mehr erinnern"
+  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 ab nur $0,03/Sek.",
-    "videoPromo": "gpt-image-2 ab 0,007 Yuan pro Bild",
-    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
+    "videoPromo": "Zeitlich begrenztes Angebot: seedance ab 0,36 Yuan pro Sekunde, gpt-image-2 ab 0,07 Yuan pro Bild"
   },
   "chinaDomainPrompt": {
     "title": "Zur China-Region wechseln",
@@ -256,6 +242,13 @@
   },
   "switchToInternational": "Zu \"International\"",
   "switchToChina": "Zu \"China\"",
+  "platformRegionPrompt": {
+    "title": "Plattform-Regionsbeschränkung",
+    "chinaContent": "{{platform}} ist nur auf der China-Seite verfügbar. Zur China-Seite weiterleiten?",
+    "abroadContent": "{{platform}} ist nur auf der internationalen Seite verfügbar. Zur internationalen Seite weiterleiten?",
+    "ok": "Weiter",
+    "cancel": "Abbrechen"
+  },
   "noMore": "Keine weiteren Daten",
   "comingSoon": "In Entwicklung, bleiben Sie dran",
   "enterpriseSurvey": {
@@ -267,13 +260,11 @@
     "bubbleLine1": "Tippen Sie oben rechts",
     "bubbleLine2": "auf \"Im Browser öffnen\"",
     "openInBrowser": "Im Browser öffnen",
-    "description": "Das WeChat-WebView kann Veröffentlichungen und Weiterleitungen einschränken. Bitte im Browser fortfahren."
+    "description": "Das WebView von WeChat oder Alipay kann Veröffentlichungen und Weiterleitungen einschränken. Bitte im Browser fortfahren."
   },
-  "advertiser": "AI Check-in",
-  "datePicker": {
-    "clear": "Clear",
-    "confirm": "Confirm",
-    "selectDate": "Select date",
-    "selectDateRange": "Select date range"
-  }
+  "seedanceCredits": "Seedance-Credits",
+  "seedanceCreditsRecharge": "Seedance-Credits aufladen",
+  "configManagement": "Konfiguration",
+  "apiErrorConfigTip": "Bitte prüfen Sie, ob Ihre Konfiguration korrekt ist.",
+  "apiErrorConfigAction": "Konfiguration anzeigen"
 }

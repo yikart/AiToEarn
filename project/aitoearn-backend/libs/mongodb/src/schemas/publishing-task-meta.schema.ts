@@ -45,8 +45,8 @@ export class FacebookPublishTaskMeta {
 
 @Schema({})
 export class InstagramPublishTaskMeta {
-  @Prop({ required: true })
-  content_category: 'post' | 'reel' | 'story'
+  @Prop({ required: false })
+  media_type?: 'IMAGE' | 'REELS' | 'STORIES' | 'CAROUSEL'
 }
 
 @Schema({})

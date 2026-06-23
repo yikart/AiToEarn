@@ -5,25 +5,30 @@
 
 'use client'
 
-import { ArrowLeft, Info, Sparkles } from 'lucide-react'
+import { ArrowLeft, Sparkles } from 'lucide-react'
 import { toast } from 'sonner'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoArr, PlatType } from '@/app/config/platConfig'
+import { PlatType } from '@/app/config/platConfig'
 import { useTransClient } from '@/app/i18n/client'
-import { Alert, AlertDescription } from '@/components/ui/alert'
+import { PlatformIcon } from '@/components/common/PlatformIcon'
 import { Button } from '@/components/ui/button'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
+import { isChina } from '@/constant'
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { confirm } from '@/lib/confirm'
+import { useRegionSortedPlatforms } from '@/hooks/usePlatformMetadata'
 import { useAccountStore } from '@/store/account'
+import { isPlatformComingSoon, isPlatformRegionLimited } from '@/store/platformMetadata/utils'
 import { useUserStore } from '@/store/user'
 import { navigateToLogin } from '@/utils/auth'
+import { confirmPlatformRegionRedirect } from '@/utils/region/redirect'
+import { confirm } from '@/utils/ui/confirm'
 import { useChannelManagerStore } from '../channelManagerStore'
 
 export function ConnectChannelList() {
   const { t } = useTransClient('account')
   const isMobile = useIsMobile()
+  const platforms = useRegionSortedPlatforms()
 
   const { isNewUser, setCurrentView, startAuth, targetSpaceId, setTargetSpaceId, closeModal }
     = useChannelManagerStore(
@@ -56,6 +61,19 @@ export function ConnectChannelList() {
 
   // 处理平台点击
   const handlePlatformClick = async (platform: PlatType) => {
+    const platInfo = platforms.find(([key]) => key === platform)?.[1]
+    const platformName = platInfo?.name || platform
+
+    if (isPlatformComingSoon(platInfo)) {
+      toast.warning(t('channelManager.platformComingSoon', { platform: platformName }))
+      return
+    }
+
+    if (isPlatformRegionLimited(platInfo)) {
+      await confirmPlatformRegionRedirect(platformName)
+      return
+    }
+
     // 移动端点击小红书时显示提示
     if (isMobile && platform === PlatType.Xhs) {
       toast.warning(t('channelManager.xhsMobileNotSupported'))
@@ -113,17 +131,6 @@ export function ConnectChannelList() {
         </div>
       )}
 
-      <Alert
-        data-testid="cm-connect-multi-account-tip"
-        role="note"
-        className="mx-4 mt-4 w-auto border-border bg-muted/30 text-muted-foreground [&>svg]:text-muted-foreground"
-      >
-        <Info className="h-4 w-4" />
-        <AlertDescription className="text-xs leading-relaxed sm:text-sm">
-          {t('channelManager.connectNewChannelTip')}
-        </AlertDescription>
-      </Alert>
-
       {/* 平台网格 */}
       <ScrollArea className="flex-1 p-4">
         <div
@@ -138,7 +145,18 @@ export function ConnectChannelList() {
           "
         >
           <TooltipProvider>
-            {AccountPlatInfoArr.map(([key, value]) => {
+            {platforms.map(([key, value]) => {
+              const isDisabled = isPlatformComingSoon(value)
+              const isRegionLimited = isPlatformRegionLimited(value)
+              const isBrowserPlugin = value.authType === 'plugin'
+              const isQrAuth = value.authType === 'qrcode'
+              const regionLimitedLabel = isRegionLimited
+                ? t(isChina ? 'channelManager.internationalSiteOnly' : 'channelManager.chinaSiteOnly')
+                : undefined
+              const disabledTip = isDisabled
+                ? t('channelManager.platformComingSoon', { platform: value.name })
+                : regionLimitedLabel
+
               return (
                 <Tooltip key={key}>
                   <TooltipTrigger asChild>
@@ -156,13 +174,25 @@ export function ConnectChannelList() {
                         active:translate-y-0 active:scale-[0.98]
                         sm:h-[100px] sm:rounded-xl sm:p-3
                         md:h-[110px]
+                        ${isDisabled ? 'opacity-50 grayscale' : ''}
+                        ${isRegionLimited ? 'opacity-45 grayscale' : ''}
                       `}
                       onClick={() => handlePlatformClick(key as PlatType)}
                     >
-                      {/* 小红书浏览器插件标签 */}
-                      {key === PlatType.Xhs && (
+                      {regionLimitedLabel && (
+                        <span className="absolute -left-px -top-px z-20 rounded-br rounded-tl-lg bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                          {regionLimitedLabel}
+                        </span>
+                      )}
+                      {/* 浏览器插件标签 */}
+                      {isBrowserPlugin && (
                         <span className="absolute -right-px -top-px z-20 rounded-bl rounded-tr-lg bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
                           {t('channelManager.browserPlugin')}
+                        </span>
+                      )}
+                      {isQrAuth && (
+                        <span className="absolute -right-px -top-px z-20 rounded-bl rounded-tr-lg bg-muted px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                          {t('channelManager.qrCodeAuth')}
                         </span>
                       )}
 
@@ -170,8 +200,8 @@ export function ConnectChannelList() {
                       <div className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/40 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 
                       <div className="relative z-10 flex w-full flex-col items-center gap-1.5 sm:gap-2">
-                        <img
-                          src={value.icon}
+                        <PlatformIcon
+                          platform={key}
                           className="
                             h-9 w-9 object-contain
                             drop-shadow-md filter transition-all
@@ -180,7 +210,8 @@ export function ConnectChannelList() {
                             sm:h-10 sm:w-10
                             md:h-11 md:w-11
                           "
-                          alt={value.name}
+                          width={44}
+                          height={44}
                         />
                         <span
                           className="
@@ -196,9 +227,9 @@ export function ConnectChannelList() {
                       </div>
                     </Button>
                   </TooltipTrigger>
-                  {value.tips?.account && (
+                  {disabledTip && (
                     <TooltipContent className="max-w-[200px] text-xs">
-                      <p>{value.tips.account}</p>
+                      <p>{disabledTip}</p>
                     </TooltipContent>
                   )}
                 </Tooltip>

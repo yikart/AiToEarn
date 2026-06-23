@@ -1,9 +1,9 @@
 'use client'
 
 import type { IUploadedMedia } from '../MediaUpload'
-import { FileText, Play } from 'lucide-react'
+import { FileText, Music, Play } from 'lucide-react'
 import React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
 
 /** 视频文件扩展名列表 */
@@ -43,7 +43,7 @@ export function MediaGallery({
   return (
     <div className="flex flex-wrap gap-2">
       {medias.map((media, idx) => {
-        if (media.type === 'document') {
+        if (media.type === 'document' || media.type === 'audio') {
           return (
             <a
               key={idx}
@@ -52,9 +52,11 @@ export function MediaGallery({
               rel="noopener noreferrer"
               className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted hover:bg-muted/80 transition-colors"
             >
-              <FileText className="w-4 h-4 text-muted-foreground" />
+              {media.type === 'audio'
+                ? <Music className="w-4 h-4 text-muted-foreground" />
+                : <FileText className="w-4 h-4 text-muted-foreground" />}
               <span className="text-sm text-foreground truncate max-w-[200px]">
-                {media.name || 'Document'}
+                {media.name || (media.type === 'audio' ? 'Audio' : 'Document')}
               </span>
             </a>
           )

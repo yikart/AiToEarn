@@ -14,9 +14,6 @@ export interface PublishModalState {
   setDouyinQRCodeVisible: (visible: boolean) => void
   douyinPermalink: string
   setDouyinPermalink: (permalink: string) => void
-  // Facebook页面选择弹窗
-  showFacebookPagesModal: boolean
-  setShowFacebookPagesModal: (show: boolean) => void
   // 发布详情弹框
   publishDetailVisible: boolean
   setPublishDetailVisible: (visible: boolean) => void
@@ -33,8 +30,6 @@ export function usePublishModalState(): PublishModalState {
   // 抖音扫码发布弹窗状态
   const [douyinQRCodeVisible, setDouyinQRCodeVisible] = useState(false)
   const [douyinPermalink, setDouyinPermalink] = useState('')
-  // Facebook页面选择弹窗状态
-  const [showFacebookPagesModal, setShowFacebookPagesModal] = useState(false)
   // 发布详情弹框状态
   const [publishDetailVisible, setPublishDetailVisible] = useState(false)
   const [currentPublishTaskId, setCurrentPublishTaskId] = useState<string | undefined>(undefined)
@@ -46,8 +41,6 @@ export function usePublishModalState(): PublishModalState {
     setDouyinQRCodeVisible,
     douyinPermalink,
     setDouyinPermalink,
-    showFacebookPagesModal,
-    setShowFacebookPagesModal,
     publishDetailVisible,
     setPublishDetailVisible,
     currentPublishTaskId,

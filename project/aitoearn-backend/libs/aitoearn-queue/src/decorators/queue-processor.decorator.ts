@@ -66,7 +66,7 @@ function wrapProcess(proto: Record<string, unknown>, name: string): void {
         const details = `data=${inspect(job.data, { depth: 5, breakLength: Infinity })} attempt=${attempt} maxAttempts=${maxAttempts} durationMs=${durationMs} isLastAttempt=${attempt >= maxAttempts}`
 
         if (attempt >= maxAttempts) {
-          logger.fatal(error, `Job failed, no more retries ${details}`)
+          logger.error(error, `Job failed, no more retries ${details}`)
         }
         else {
           logger.error(error, `Job failed, will retry ${details}`)

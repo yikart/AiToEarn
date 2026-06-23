@@ -1,17 +1,17 @@
 export enum AccountType {
-  Douyin = 'douyin', // 抖音
-  Xhs = 'xhs', // 小红书
-  WxSph = 'wxSph', // 微信视频号
-  KWAI = 'KWAI', // 快手
-  YOUTUBE = 'youtube', // youtube
-  WxGzh = 'wxGzh', // 微信公众号
-  BILIBILI = 'bilibili', // B站
-  TWITTER = 'twitter', // twitter
-  TIKTOK = 'tiktok', // tiktok
-  FACEBOOK = 'facebook', // facebook
-  INSTAGRAM = 'instagram', // instagram
-  THREADS = 'threads', // threads
-  PINTEREST = 'pinterest', // pinterest
-  LINKEDIN = 'linkedin', // linkedin
-  GOOGLE_BUSINESS = 'google_business', // Google Business Profile
+  Douyin = 'douyin',
+  RedNote = 'xhs',
+  WeChatChannels = 'wxSph',
+  Kwai = 'KWAI',
+  YouTube = 'youtube',
+  WeChatOfficial = 'wxGzh',
+  Bilibili = 'bilibili',
+  Twitter = 'twitter',
+  TikTok = 'tiktok',
+  Facebook = 'facebook',
+  Instagram = 'instagram',
+  Threads = 'threads',
+  Pinterest = 'pinterest',
+  LinkedIn = 'linkedin',
+  GoogleBusiness = 'google_business',
 }

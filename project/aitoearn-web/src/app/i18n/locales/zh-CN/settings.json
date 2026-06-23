@@ -2,10 +2,21 @@
   "title": "设置",
   "tabs": {
     "profile": "个人资料",
+    "agent": "Agent",
+    "wallet": "钱包",
+    "income": "收入",
+    "balance": "余额",
+    "subscription": "积分",
+    "membership": "账单",
+    "shopifyStores": "Shopify 店铺",
     "general": "通用",
-    "agent": "Agent"
+    "ticket": "工单",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Seedance专用积分"
   },
   "profile": {
+    "totalIncome": "累计收入",
+    "currentBalance": "当前余额",
     "logout": "退出登录",
     "edit": "编辑",
     "editName": "编辑昵称",
@@ -30,7 +41,215 @@
     "zoomOut": "缩小",
     "imageLoading": "图片加载中...",
     "processing": "处理中...",
-    "githubStars": "GitHub 星标"
+    "githubStars": "GitHub 星标",
+    "viewMembershipBenefits": "查看会员权益",
+    "redeemCodeTitle": "兑换企业会员激活码",
+    "redeemCodeDescription": "兑换成功后将开通企业会员，并发放对应的积分权益。",
+    "redeemCodePlaceholder": "请输入企业会员激活码",
+    "redeemCodeButton": "立即兑换",
+    "redeemCodeRequired": "请输入企业会员激活码",
+    "redeemCodeSuccess": "企业会员激活码兑换成功",
+    "redeemCodeFailed": "企业会员激活码兑换失败",
+    "redeemCodeContactPrefix": "没有激活码？",
+    "redeemCodeContactSuffix": "，获取企业会员激活码。"
+  },
+  "income": {
+    "balance": "广告主余额",
+    "withdrawableBalance": "创作者余额",
+    "incomeRecords": "收入记录",
+    "balanceRecords": "余额记录",
+    "withdrawRecords": "提现记录",
+    "incomeId": "收入ID",
+    "withdrawId": "提现ID",
+    "amount": "金额",
+    "type": "类型",
+    "statusLabel": "状态",
+    "description": "描述",
+    "createTime": "创建时间",
+    "updateTime": "更新时间",
+    "all": "全部",
+    "incomeDetail": "收入详情",
+    "noWallet": "暂未添加钱包",
+    "noWalletTip": "请先在钱包页面添加收款账户",
+    "manageWallets": "管理钱包",
+    "addWallet": "添加钱包",
+    "withdrawButton": "提现",
+    "withdrawNotice": "提现申请将在15个工作日内处理，请您耐心等待，有任何问题请",
+    "rechargeButton": "充值",
+    "noIncomeRecords": "暂无收入记录",
+    "noBalanceRecords": "暂无余额记录",
+    "noWithdrawRecords": "暂无提现记录",
+    "balanceAfter": "操作后余额",
+    "balanceAfterType": {
+      "advertiser": "操作后广告主余额",
+      "creator": "操作后创作者余额"
+    },
+    "currencyFilter": "币种",
+    "typeFilter": "类型",
+    "balanceTypes": {
+      "task_creation": "创建任务",
+      "manual_deduct": "人工扣减",
+      "refund": "退款",
+      "recharge": "充值",
+      "manual_add": "人工增加",
+      "task_refund": "任务退款",
+      "task_stopped": "任务停止",
+      "withdraw": "提现",
+      "withdraw_refund": "提现退回",
+      "cpm_cpe_deposit": "CPM/CPE 押金",
+      "cpm_cpe_deposit_refund": "CPM/CPE 押金退回",
+      "task": "任务收入",
+      "commission": "佣金",
+      "manual": "人工调整",
+      "balance_transfer_out": "余额转出",
+      "balance_transfer_in": "余额转入",
+      "debt_payment": "欠款支付",
+      "sample_budget_deposit": "样品预算预扣",
+      "sample_budget_refund": "样品预算退还",
+      "sample_subsidy_payout": "样品补贴发放",
+      "sample_subsidy_clawback": "样品补贴追回",
+      "koc_deposit_deduct": "KOC 押金扣除",
+      "koc_deposit_return": "KOC 押金退还",
+      "commission_refund": "佣金退款",
+      "challenge_refund": "挑战达标退款",
+      "task_reward_clawback": "任务奖励追回",
+      "task_work_deleted_refund": "作品删除退款"
+    },
+    "types": {
+      "task": "任务收入",
+      "task_back": "任务退回",
+      "reward_back": "奖励退回",
+      "taskBack": "任务退回",
+      "rewardBack": "奖励退回",
+      "taskWithdraw": "任务提现",
+      "task_withdraw": "任务提现"
+    },
+    "status": {
+      "pending": "待提现",
+      "withdrawn": "已提现"
+    },
+    "withdraw": {
+      "cancel": "取消",
+      "cancelConfirmTitle": "取消提现",
+      "cancelConfirmDesc": "确定要取消这笔提现申请吗？",
+      "type": {
+        "task": "任务",
+        "reward": "奖励"
+      },
+      "walletAccount": "收款账户",
+      "adminNote": "备注",
+      "paidAt": "支付时间",
+      "screenshots": "截图",
+      "status": {
+        "pending": "待处理",
+        "approved": "已批准",
+        "paid": "已支付",
+        "failed": "失败",
+        "rejected": "已拒绝"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "处理中",
+      "success": "成功",
+      "fail": "失败",
+      "task_withdraw": "任务提现",
+      "unknown": "未知"
+    },
+    "messages": {
+      "getIncomeRecordsFailed": "获取收入记录失败",
+      "getBalanceRecordsFailed": "获取余额记录失败",
+      "getIncomeDetailFailed": "获取收入详情失败",
+      "getWithdrawRecordsFailed": "获取提现记录失败",
+      "cancelWithdrawSuccess": "取消提现成功",
+      "cancelWithdrawFailed": "取消提现失败",
+      "noIncomeRecords": "暂无收入记录",
+      "noWithdrawRecords": "暂无提现记录",
+      "noIncomeDetail": "暂无收入详情",
+      "loading": "加载中...",
+      "totalRecords": "共 {{total}} 条记录"
+    },
+    "balanceTooltip": "广告主余额主要用于发布任务、支付创作者报酬和任务相关扣款。",
+    "creatorBalanceTooltip": "做任务是您获取创作者余额的主要方式，创作者余额可提现",
+    "transfer": {
+      "title": "余额互转",
+      "amount": "转账金额",
+      "amountPlaceholder": "请输入转账金额",
+      "availableBalance": "当前可转：{{amount}}",
+      "transferIn": "转入",
+      "submit": "确认转账",
+      "to": "转入到",
+      "success": "转账成功",
+      "failed": "转账失败",
+      "amountInvalid": "请输入大于 0 的转账金额",
+      "amountExceedsBalance": "转账金额不能超过当前可转余额",
+      "balanceType": {
+        "advertiser": "广告主余额",
+        "creator": "创作者余额"
+      },
+      "balanceToWithdrawable": "广告主余额转创作者余额",
+      "withdrawableToBalance": "创作者余额转广告主余额"
+    }
+  },
+  "subscription": {
+    "currentPlan": "当前套餐",
+    "upgrade": "充值",
+    "manage": "管理订阅",
+    "balance": "积分",
+    "usageRecords": "使用记录",
+    "detail": "详情",
+    "date": "日期",
+    "amount": "金额",
+    "amountChange": "金额变更",
+    "noRecords": "暂无使用记录",
+    "loading": "加载中...",
+    "loadMore": "加载更多",
+    "browserPluginAgent": "浏览器插件agent",
+    "types": {
+      "register_bonus": "新用户奖励",
+      "purchase": "购买充值",
+      "vip_monthly": "VIP 月度奖励",
+      "ai_service": "AI 服务",
+      "twitter_api": "X/Twitter API",
+      "note_comment_search": "笔记评论搜索",
+      "video_style_transfer": "视频风格转换",
+      "drama_recap": "短剧解说",
+      "publish": "发布内容",
+      "expired": "已过期",
+      "manual": "人工调整",
+      "refund": "退款",
+      "fan_check_in": "粉丝签到",
+      "fan_lottery": "粉丝抽奖"
+    },
+    "descriptions": {
+      "User registered successfully, earned credits": "注册成功，获得积分奖励",
+      "Note comment search first page": "笔记评论搜索首页",
+      "Note comment search page": "笔记评论搜索翻页",
+      "Note comment search export": "笔记评论搜索导出"
+    },
+    "filters": {
+      "direction": "收支方向",
+      "type": "变动类型",
+      "source": "消费来源",
+      "allDirections": "全部收支",
+      "allTypes": "全部类型",
+      "allSources": "全部来源",
+      "reset": "重置"
+    },
+    "directions": {
+      "income": "收入",
+      "expense": "支出"
+    },
+    "sources": {
+      "ai_chat": "AI 聊天",
+      "plugin": "浏览器插件",
+      "ai_image": "AI 图片",
+      "ai_video": "AI 视频",
+      "ai_agent": "AI Agent",
+      "ai_draft_generation": "AI 草稿生成",
+      "ai_material_adaptation": "AI 素材改编",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "AI 视频编辑"
+    }
   },
   "general": {
     "language": "网站语言",
@@ -40,10 +259,63 @@
     "themeLight": "浅色",
     "themeDark": "深色",
     "themeSystem": "跟随系统",
-    "notifications": "邮件通知",
-    "notificationsDesc": "管理您的邮件通知偏好设置",
-    "editNotifications": "设置通知",
     "changingLanguage": "切换中..."
+  },
+  "ticket": {
+    "title": "工单",
+    "description": "查看和跟进您提交给运营的任务工单。",
+    "loading": "工单加载中...",
+    "loadFailed": "工单加载失败",
+    "refresh": "刷新",
+    "emptyTitle": "暂无工单记录",
+    "emptyDescription": "目前工单会从已接受任务详情页提交。提交后可在对应任务中关注处理状态。",
+    "goToMyTasks": "前往我的任务",
+    "viewTask": "查看任务",
+    "viewTimeline": "处理记录",
+    "createdAt": "提交时间",
+    "updatedAt": "更新时间",
+    "paginationTotal": "第 {{start}}-{{end}} 条，共 {{total}} 条",
+    "status": {
+      "open": "待处理",
+      "in_progress": "处理中",
+      "resolved": "已解决",
+      "closed": "已关闭"
+    },
+    "timeline": {
+      "title": "处理记录",
+      "untitled": "未命名工单",
+      "loading": "处理记录加载中...",
+      "loadFailed": "处理记录加载失败",
+      "empty": "暂无处理记录",
+      "activityType": {
+        "create": "工单已创建",
+        "assign": "工单已分配",
+        "status_change": "状态变更",
+        "comment": "添加评论",
+        "link_takeover_action": "关联接管操作"
+      },
+      "back": "返回工单",
+      "description": "查看运营对该工单的处理进度和备注。"
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify 店铺",
+    "description": "查看当前账号已绑定的 Shopify 店铺和计费状态。",
+    "refresh": "刷新",
+    "active": "已绑定",
+    "inactive": "已停用",
+    "platformFeeRate": "平台费率",
+    "boundAt": "绑定时间",
+    "emptyTitle": "暂未绑定 Shopify 店铺",
+    "emptyDesc": "安装 AiToEarn Shopify App 后，店铺会自动同步到这里。",
+    "installApp": "安装 AiToEarn 应用",
+    "openShopifyApp": "打开 Shopify 应用",
+    "billingStatus": {
+      "none": "未开通计费",
+      "pending": "待确认",
+      "active": "计费已开通",
+      "cancelled": "计费已取消"
+    }
   },
   "agent": {
     "title": "Agent",
@@ -57,5 +329,36 @@
     "saving": "保存中...",
     "saveSuccess": "保存成功",
     "saveFailed": "保存失败"
+  },
+  "apiKeys": {
+    "title": "API Key 管理",
+    "description": "创建和管理用于程序化访问的 API Key",
+    "create": "创建",
+    "name": "名称",
+    "namePlaceholder": "输入 API Key 名称",
+    "nameRequired": "请输入名称",
+    "createdAt": "创建时间",
+    "lastUsedAt": "最后使用",
+    "neverUsed": "从未使用",
+    "deleteConfirmTitle": "删除 API Key",
+    "deleteConfirmDesc": "确定要删除此 API Key 吗？此操作无法撤销。",
+    "createSuccess": "API Key 创建成功",
+    "deleteSuccess": "API Key 删除成功",
+    "copySuccess": "已复制到剪贴板",
+    "copyTip": "请立即复制并保存您的 API Key，它将不会再次显示。",
+    "dismiss": "关闭",
+    "empty": "暂无 API Key",
+    "emptyDesc": "创建一个 API Key 开始使用",
+    "cancel": "取消"
+  },
+  "seedanceCredits": {
+    "balance": "Seedance专用积分",
+    "availableBalance": "Seedance可用积分",
+    "availableBalanceTip": "可用积分 = Seedance专用积分 + 扣除普通模型预估消耗后的普通积分，可用于 seedance-beta 系列模型。",
+    "refundNotice": "Seedance专用积分仅用于 AiToEarn 平台上的 seedance-beta 系列模型；若因 AiToEarn 原因导致您无法使用相关模型，未使用部分可全额退款。",
+    "faceUploadTip": "直接上传清晰的真人正脸通过率偏低；建议先对人脸做遮挡 / 打码眼睛等关键部位处理后再上传，可明显提高成功率。",
+    "recharge": "充值",
+    "use": "前往使用",
+    "info": "查看 Seedance专用积分说明"
   }
 }

@@ -6,11 +6,10 @@ import type { CSSProperties, ForwardedRef } from 'react'
 import type { PlatType } from '@/app/config/platConfig'
 import type { IImgFile, IVideoFile } from '@/components/PublishDialog/publishDialog.type'
 import { Play, X } from 'lucide-react'
-import React, { forwardRef, memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { forwardRef, memo, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { ReactSortable } from 'react-sortablejs'
 import { CSSTransition, TransitionGroup } from 'react-transition-group'
 import { useShallow } from 'zustand/react/shallow'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
 import { PubType } from '@/app/config/publishConfig'
 import { useTransClient } from '@/app/i18n/client'
 import MediaPreview from '@/components/common/MediaPreview'
@@ -22,12 +21,11 @@ import PubParmasTextareaUpload from '@/components/PublishDialog/compoents/PubPar
 import PubParmasTextuploadImage from '@/components/PublishDialog/compoents/PubParmasTextarea/PubParmasTextuploadImage'
 import VideoCoverSeting from '@/components/PublishDialog/compoents/PubParmasTextarea/VideoCoverSeting'
 import { formatImg } from '@/components/PublishDialog/PublishDialog.util'
-import Aibrush from '@/components/PublishDialog/svgs/aibrush.svg'
-import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { toast } from '@/lib/toast'
-import { cn } from '@/lib/utils'
+import { usePlatformInfo } from '@/hooks/usePlatformMetadata'
+import { cn } from '@/utils/className'
+import { toast } from '@/utils/ui/toast'
 import './uploadItemTransition.css'
 
 export interface IPubParmasTextareaRef {}
@@ -55,18 +53,16 @@ export interface IPubParmasTextareaProps {
   imageFileListValue?: IImgFile[]
   videoFileValue?: IVideoFile
   desValue?: string
-  // 图生图回调
-  onImageToImage?: (imageFile: IImgFile) => void
   // 是否为移动端
   isMobile?: boolean
-  // 隐藏写作助手按钮
-  hideWritingAssistant?: boolean
-  // toolbar 额外内容（写作助手按钮后面）
+  // toolbar 额外内容
   toolbarExtra?: React.ReactNode
   // 覆盖图片最大数量（优先于平台配置）
   imagesMaxOverride?: number
   // 覆盖描述最大长度（优先于平台配置）
   desMaxOverride?: number
+  // 跳过平台兼容性前置限制，用于草稿先输入后校验的场景
+  disableUploadCompatibilityCheck?: boolean
 }
 
 const PubParmasTextarea = memo(
@@ -84,20 +80,14 @@ const PubParmasTextarea = memo(
         desValue = '',
         beforeExtend,
         platType,
-        onImageToImage,
         isMobile,
-        hideWritingAssistant,
         toolbarExtra,
         imagesMaxOverride,
         desMaxOverride,
+        disableUploadCompatibilityCheck,
       }: IPubParmasTextareaProps,
       ref: ForwardedRef<IPubParmasTextareaRef>,
     ) => {
-      const { setOpenLeft } = usePublishDialog(
-        useShallow(state => ({
-          setOpenLeft: state.setOpenLeft,
-        })),
-      )
       const [value, setValue] = useState(desValue)
       const [previewData, setPreviewData] = useState<IImgFile | IVideoFile | undefined>(undefined)
       // 图片
@@ -128,7 +118,7 @@ const PubParmasTextarea = memo(
       // 图片预览状态
       const [imagePreviewOpen, setImagePreviewOpen] = useState(false)
 
-      useEffect(() => {
+      useLayoutEffect(() => {
         if (isFirst.current.effect) {
           isFirst.current.effect = false
           return
@@ -162,32 +152,39 @@ const PubParmasTextarea = memo(
         setVideoFile(videoFileValue)
       }, [imageFileListValue, desValue, videoFileValue])
 
-      const platConfig = useMemo(() => {
-        return AccountPlatInfoMap.get(platType)! || {}
-      }, [platType])
+      const platConfig = usePlatformInfo(platType)
       const imageMax = useMemo(() => {
-        return imagesMaxOverride ?? platConfig.commonPubParamsConfig?.imagesMax ?? 10
+        return imagesMaxOverride ?? platConfig?.commonPubParamsConfig.imagesMax ?? 10
       }, [platConfig, imagesMaxOverride])
 
       // 动态accept类型
       const uploadAccept = useMemo(() => {
         const hasImage = imageFileList.length !== 0
         const hasVideo = !!videoFile
-        if (hasImage && !hasVideo && platConfig.pubTypes.has(PubType.ImageText))
-          return 'image/*'
-        if (!hasImage && hasVideo && platConfig.pubTypes.has(PubType.VIDEO))
-          return 'video/*'
 
-        if (platConfig.pubTypes.has(PubType.ImageText) && platConfig.pubTypes.has(PubType.VIDEO)) {
+        if (disableUploadCompatibilityCheck) {
+          if (hasImage && !hasVideo)
+            return 'image/*'
+          if (!hasImage && hasVideo)
+            return 'video/*'
           return 'video/*,image/*'
         }
-        if (platConfig.pubTypes.has(PubType.ImageText))
+
+        if (hasImage && !hasVideo && platConfig?.pubTypes.has(PubType.ImageText))
           return 'image/*'
-        if (platConfig.pubTypes.has(PubType.VIDEO))
+        if (!hasImage && hasVideo && platConfig?.pubTypes.has(PubType.VIDEO))
+          return 'video/*'
+
+        if (platConfig?.pubTypes.has(PubType.ImageText) && platConfig.pubTypes.has(PubType.VIDEO)) {
+          return 'video/*,image/*'
+        }
+        if (platConfig?.pubTypes.has(PubType.ImageText))
+          return 'image/*'
+        if (platConfig?.pubTypes.has(PubType.VIDEO))
           return 'video/*'
 
         return 'video/*,image/*'
-      }, [imageFileList, videoFile, platConfig])
+      }, [imageFileList, videoFile, platConfig, disableUploadCompatibilityCheck])
 
       // 是否可见Dragger
       const canShowDragger = useMemo(() => {
@@ -196,13 +193,13 @@ const PubParmasTextarea = memo(
         const hasImage = imageCount > 0
         const hasVideo = videoCount > 0
 
-        if (hasImage && imageCount >= imageMax)
+        if (!disableUploadCompatibilityCheck && hasImage && imageCount >= imageMax)
           return false
         if (hasVideo && videoCount >= videoMax)
           return false
         // 视频和图片都没有，或者只选一种且未到上限
         return true
-      }, [videoFile, imageMax, videoMax, videoFile])
+      }, [imageFileList, videoFile, imageMax, videoMax, disableUploadCompatibilityCheck])
 
       // 检查上传文件类型
       const checkFileListType = useCallback(
@@ -229,11 +226,11 @@ const PubParmasTextarea = memo(
             toast.warning(content, { id: 'upload-warning' })
           }
 
-          if (uploadHasImage && !platConfig.pubTypes.has(PubType.ImageText)) {
+          if (!disableUploadCompatibilityCheck && uploadHasImage && !platConfig?.pubTypes.has(PubType.ImageText)) {
             messageOpen(t('validation.uploadImage'))
             return false
           }
-          if (uploadHasVideo && !platConfig.pubTypes.has(PubType.VIDEO)) {
+          if (!disableUploadCompatibilityCheck && uploadHasVideo && !platConfig?.pubTypes.has(PubType.VIDEO)) {
             messageOpen(t('validation.uploadVideo'))
             return false
           }
@@ -275,18 +272,18 @@ const PubParmasTextarea = memo(
             // 图片条数限制
             const totalImageCount
               = imageFileList.length + fileList.filter(f => f.type.startsWith('image/')).length
-            if (totalImageCount > imageMax) {
+            if (!disableUploadCompatibilityCheck && totalImageCount > imageMax) {
               messageOpen(t('validation.imageMaxExceeded', { maxCount: imageMax }))
               return false
             }
           }
           return true
         },
-        [imageFileList, videoMax, imageMax, videoFile, platConfig],
+        [imageFileList, videoMax, imageMax, videoFile, platConfig, disableUploadCompatibilityCheck, t],
       )
 
       const desMax = useMemo(() => {
-        return desMaxOverride ?? platConfig.commonPubParamsConfig?.desMax ?? 2200
+        return desMaxOverride ?? platConfig?.commonPubParamsConfig.desMax ?? 2200
       }, [platConfig, desMaxOverride])
 
       return (
@@ -350,7 +347,7 @@ const PubParmasTextarea = memo(
             }}
           />
 
-          <div className="border border-border rounded-md flex-1 text-left" style={style} data-testid="publish-content-editor">
+          <div className="@container border border-border rounded-md flex-1 text-left" style={style} data-testid="publish-content-editor">
             {/* 输入区域 */}
             <div className="p-4 relative" data-testid="publish-input-area">
               {beforeExtend}
@@ -364,7 +361,12 @@ const PubParmasTextarea = memo(
 
               {/* 上传列表 */}
               <ReactSortable
-                className={cn('grid gap-2.5', isMobile ? 'grid-cols-3' : 'grid-cols-5')}
+                className={cn(
+                  'grid gap-2.5',
+                  isMobile
+                    ? 'grid-cols-4'
+                    : 'grid-cols-[repeat(auto-fill,112px)]',
+                )}
                 list={imageFileList}
                 animation={250}
                 data-testid="publish-media-list"
@@ -403,13 +405,6 @@ const PubParmasTextarea = memo(
                             return newState
                           })
                         }}
-                        onImageToImageClick={
-                          onImageToImage
-                            ? () => {
-                                onImageToImage(v)
-                              }
-                            : undefined
-                        }
                       />
                     </CSSTransition>
                   ))}
@@ -419,7 +414,7 @@ const PubParmasTextarea = memo(
                     return (
                       <CSSTransition key={`video-${i}`} timeout={300} classNames="upload-item">
                         <div
-                          className="h-[110px] border border-border rounded cursor-pointer relative overflow-hidden"
+                          className="h-[124px] w-full border border-border rounded cursor-pointer relative overflow-hidden"
                           onClick={() => {
                             setPreviewData(videoFile)
                           }}
@@ -554,27 +549,6 @@ const PubParmasTextarea = memo(
                     </span>
                     <span>{t('form.topicHint')}</span>
                   </div>
-                  {/* 写作助手 - 移动端或指定隐藏 */}
-                  {!isMobile && !hideWritingAssistant && (
-                    <div className="px-1.5 border-l border-border first:border-l-0">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className={cn(
-                          'cursor-pointer transition-all',
-                          'hover:bg-gradient-to-r hover:from-purple-500/10 hover:to-blue-500/10',
-                        )}
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setOpenLeft(true)
-                        }}
-                        data-testid="publish-ai-assistant-button"
-                      >
-                        <Aibrush className="mr-1" />
-                        {t('writingAssistant')}
-                      </Button>
-                    </div>
-                  )}
                   {toolbarExtra}
                 </div>
                 <div className="border border-muted-foreground rounded-md px-1.5 text-sm" data-testid="publish-char-counter">

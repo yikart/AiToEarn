@@ -5,11 +5,11 @@
  */
 'use client'
 
-import type { TaskDetail } from '@/api/agent'
+import type { TaskDetail } from '@/api/ai/ai.types'
 import { ArrowLeft, Eye, Link2Off } from 'lucide-react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { agentApi } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 import { useTransClient } from '@/app/i18n/client'
 import { ChatMessage } from '@/components/Chat/ChatMessage'
 import { Button } from '@/components/ui/button'

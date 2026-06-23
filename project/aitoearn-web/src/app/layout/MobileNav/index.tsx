@@ -4,28 +4,23 @@
  */
 'use client'
 
-import { Bell, Globe, LogOut, Settings } from 'lucide-react'
+import { LogOut, Settings } from 'lucide-react'
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
-import { SITE_SWITCH_TRANSLATION_KEY, SITE_SWITCH_URL, useNavigationLogic } from '@/app/layout/shared'
+import { useNavigationLogic } from '@/app/layout/shared'
 import { useChannelManagerStore } from '@/components/ChannelManager'
-import NotificationPanel from '@/components/notification/NotificationPanel'
-import { useSettingsModalStore } from '@/components/SettingsModal/store'
-import { Badge } from '@/components/ui/badge'
-import { useNotification } from '@/hooks/useNotification'
-import { cn } from '@/lib/utils'
+import { useSettingsModalStore } from '@/store/settingsModal'
 import { useUserStore } from '@/store/user'
+import { cn } from '@/utils/className'
 import { MobileBottomBar, MobileNavList, MobileTopBar } from './components'
 import { MobileUserSection } from './components/MobileUserSection'
 
 function MobileNav() {
   const [isOpen, setIsOpen] = useState(false)
-  const [notificationVisible, setNotificationVisible] = useState(false)
   const { currRouter, isAuthPage, isBottomNavHidden } = useNavigationLogic()
   const { openSettings } = useSettingsModalStore()
   const { t } = useTransClient('common')
-  const { unreadCount } = useNotification()
 
   const { token, logout } = useUserStore(
     useShallow(state => ({
@@ -53,12 +48,13 @@ function MobileNav() {
     logout()
   }
 
-  const actionItemClassName = 'flex w-full items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-muted-foreground transition-all hover:bg-brand-cyan/10 hover:text-brand-cyan cursor-pointer'
+  const actionItemClassName
+    = 'flex w-full items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-muted-foreground transition-all hover:bg-brand-cyan/10 hover:text-brand-cyan cursor-pointer'
 
   return (
     <>
       {/* 移动端顶部栏 */}
-      <MobileTopBar onOpen={() => setIsOpen(true)} unreadCount={unreadCount} />
+      <MobileTopBar onOpen={() => setIsOpen(true)} />
 
       {/* 移动端底部导航 */}
       <MobileBottomBar currentRoute={currRouter} hidden={isBottomNavHidden} />
@@ -95,18 +91,6 @@ function MobileNav() {
 
           {/* 常用功能区域 */}
           <div className="border-t border-border px-4 pb-4 pt-3 flex flex-col gap-1">
-            {/* 站点切换 */}
-            <a
-              href={SITE_SWITCH_URL}
-              className={actionItemClassName}
-              data-testid="mobile-site-switch"
-            >
-              <span className="flex items-center justify-center">
-                <Globe size={20} />
-              </span>
-              <span>{t(SITE_SWITCH_TRANSLATION_KEY)}</span>
-            </a>
-
             {/* 设置 */}
             <button
               onClick={() => {
@@ -116,36 +100,11 @@ function MobileNav() {
               className={actionItemClassName}
               data-testid="mobile-settings-btn"
             >
-              <span className="flex items-center justify-center">
+              <span className="relative flex items-center justify-center">
                 <Settings size={20} />
               </span>
               <span>{t('settings')}</span>
             </button>
-
-            {/* 消息通知 - 仅登录时显示 */}
-            {token && (
-              <button
-                onClick={() => {
-                  handleClose()
-                  setNotificationVisible(true)
-                }}
-                className={actionItemClassName}
-                data-testid="mobile-notification-btn"
-              >
-                <span className="flex items-center justify-center relative">
-                  <Bell size={20} />
-                  {unreadCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="absolute -right-2.5 -top-2 h-4 min-w-4 px-1 text-[9px] leading-4"
-                    >
-                      {unreadCount > 99 ? '99+' : unreadCount}
-                    </Badge>
-                  )}
-                </span>
-                <span>{t('notifications')}</span>
-              </button>
-            )}
 
             {/* 退出登录 - 仅登录时显示 */}
             {token && (
@@ -166,12 +125,6 @@ function MobileNav() {
           </div>
         </div>
       </div>
-
-      {/* 通知面板 */}
-      <NotificationPanel
-        visible={notificationVisible}
-        onClose={() => setNotificationVisible(false)}
-      />
     </>
   )
 }

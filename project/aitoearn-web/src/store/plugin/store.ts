@@ -9,30 +9,32 @@ import type {
   ProgressCallback,
   ProgressEvent,
   PublishParams,
+  PublishResult,
   PublishTask,
   PublishTaskListConfig,
   WxSphLinkAnchor,
 } from './types/baseTypes'
-import type { SocialAccount } from '@/api/types/account.type'
+import type { CreateChannelAccountParams, SocialAccount } from '@/api/accounts/account.types'
+import type { ChannelCreatePublishFlowParams } from '@/api/channels/channel.types'
 import type { IPubParams } from '@/components/PublishDialog/publishDialog.type'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import lodash from 'lodash'
 import { create } from 'zustand'
 import { combine } from 'zustand/middleware'
-import { createOrUpdateAccountApi } from '@/api/account'
-import { apiCreatePublishRecord } from '@/api/plat/publish'
-import { ClientType } from '@/app/[lng]/accounts/accounts.enums'
-import { AccountStatus } from '@/app/config/accountConfig'
+import { createChannelAccountApi } from '@/api/accounts/account.api'
+import { createChannelPublishFlowApi } from '@/api/channels/channel.api'
 import { PlatType } from '@/app/config/platConfig'
 import { directTrans } from '@/app/i18n/client'
+import { buildChannelPublishFlowParams, getPublishRecordIdFromFlow, isPublishTitleSupported } from '@/components/PublishDialog/PublishDialog.util'
 import { PluginVersionLast } from '@/constant'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { isPlatformEnabledSync } from '@/store/platformMetadata'
 import { useUserStore } from '@/store/user'
-import { generateUUID, parseTopicString } from '@/utils'
+import { parseTopicString } from '@/utils/common'
 import { getOssUrl } from '@/utils/oss'
-import { isPluginPlatformAccountReady } from './account.utils'
+import { toast } from '@/utils/ui/toast'
+import { isPluginPlatformAccountReady, mergePluginAccountStatus } from './account.utils'
 import { DEFAULT_POLLING_INTERVAL } from './constants'
 import {
   buildPluginPlatformConfig,
@@ -94,6 +96,8 @@ export interface ExecutePluginPublishParams {
   onComplete?: (publishRecordId?: string) => void
   /** 关联的用户任务ID（如果是从任务流程发布） */
   userTaskId?: string
+  /** 关联的素材组 ID（如果是从任务流程发布） */
+  materialGroupId?: string
   /** 关联的草稿素材 ID（如果是从任务流程发布且存在推荐草稿） */
   materialId?: string
   /** 是否跳过添加发布任务到 store（用于 PluginPublishCard 内联发布，避免触发弹框） */
@@ -103,12 +107,46 @@ export interface ExecutePluginPublishParams {
 /** 平台账号信息映射 */
 export type PlatformAccountsMap = Record<PluginPlatformType, PlatAccountInfo | null>
 
+interface RefreshPlatformAccountsOptions {
+  syncAccountStore?: boolean
+}
+
+interface AccountStatusSnapshotOptions {
+  waitForPluginApi?: boolean
+}
+
 /** 错误消息 */
 const ERROR_MESSAGES = {
   PLUGIN_NOT_INSTALLED: '请先安装 Aitoearn 浏览器插件',
   PLUGIN_NOT_READY: '插件未就绪，请先授权插件权限',
   PUBLISHING_IN_PROGRESS: '当前正在发布中，请稍后再试',
+  PLATFORM_REGION_RESTRICTED: '该平台在当前区域不可用',
 } as const
+
+const PLUGIN_API_INJECTION_WAIT_TIMEOUT_MS = 1500
+const PLUGIN_API_INJECTION_WAIT_INTERVAL_MS = 50
+
+function hasPluginApi() {
+  return typeof window !== 'undefined' && !!window.AIToEarnPlugin
+}
+
+function wait(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms))
+}
+
+async function waitForPluginApiInjection() {
+  if (hasPluginApi() || typeof window === 'undefined')
+    return
+
+  const startedAt = Date.now()
+  while (Date.now() - startedAt < PLUGIN_API_INJECTION_WAIT_TIMEOUT_MS) {
+    const remainingMs = PLUGIN_API_INJECTION_WAIT_TIMEOUT_MS - (Date.now() - startedAt)
+    await wait(Math.min(PLUGIN_API_INJECTION_WAIT_INTERVAL_MS, remainingMs))
+
+    if (hasPluginApi())
+      return
+  }
+}
 
 /**
  * 生成发布标识key（用于区分不同账号的发布）
@@ -143,6 +181,67 @@ function getWxSphLinkAnchor(result: { workId?: string, platformData?: unknown })
     mediaMd5sum,
     videoClipTaskId: platformData?.videoClipTaskId,
     scheduledTime: platformData?.scheduledTime,
+  }
+}
+
+async function createPluginPublishRecord(params: {
+  item: PluginPublishItem
+  result: PublishResult
+  publishTime?: string
+  userTaskId?: string
+  materialGroupId?: string
+  materialId?: string
+}) {
+  const flowParams = buildChannelPublishFlowParams([params.item], {
+    publishAt: params.publishTime || dayjs(Date.now()).utc().format(),
+    userTaskId: params.userTaskId,
+    materialGroupId: params.materialGroupId,
+    materialId: params.materialId,
+    source: 'web',
+  })
+
+  if (!flowParams)
+    return undefined
+
+  applyPluginPublishResultToFlow(
+    flowParams,
+    params.item.account.type as PluginPlatformType,
+    params.result,
+  )
+
+  const recordRes = await createChannelPublishFlowApi(flowParams)
+  if (recordRes?.code !== 0)
+    return undefined
+
+  return getPublishRecordIdFromFlow(recordRes.data, params.item.account.id)
+}
+
+function applyPluginPublishResultToFlow(
+  flowParams: ChannelCreatePublishFlowParams,
+  platform: PluginPlatformType,
+  result: PublishResult,
+) {
+  const flowItem = flowParams.items[0]
+  if (!flowItem)
+    return
+
+  if (platform === PlatType.Xhs && result.shareLink) {
+    flowItem.option = {
+      ...(flowItem.option || {}),
+      workLink: result.shareLink,
+    }
+    return
+  }
+
+  if (platform === PlatType.WxSph) {
+    const wxSphAnchor = getWxSphLinkAnchor(result)
+    flowItem.option = {
+      ...(flowItem.option || {}),
+      workId: wxSphAnchor?.mediaMd5sum || result.workId,
+      workLink: result.shareLink,
+      linkStatus: wxSphAnchor && !result.shareLink ? 'pending' : 'ready',
+      linkMeta: wxSphAnchor || undefined,
+    }
   }
 }
 
@@ -229,6 +328,8 @@ function comparePluginVersions(currentVersion: string, latestVersion: string) {
 /** 插件 Store 状态接口（只定义属性） */
 export interface IPluginStore {
   status: Status
+  /** 插件是否已授予站点访问权限 */
+  hostAccessGranted: boolean | null
   pollingTimer: NodeJS.Timeout | null
   /** 插件是否正在初始化（检测插件、权限、账号登录状态） */
   isInitializing: boolean
@@ -259,6 +360,7 @@ export interface IPluginStore {
 
 const store: IPluginStore = {
   status: Status.UNKNOWN,
+  hostAccessGranted: null,
   pollingTimer: null,
   isInitializing: true, // 初始状态为正在初始化
   isPublishing: false,
@@ -372,12 +474,12 @@ export const usePluginStore = create(
 
         if (!isAvailable) {
           methods.clearPluginVersion()
-          set({ status: Status.NOT_INSTALLED })
+          set({ status: Status.NOT_INSTALLED, hostAccessGranted: null })
           return false
         }
         const currentStatus = get().status
         if (currentStatus === Status.UNKNOWN || currentStatus === Status.NOT_INSTALLED) {
-          set({ status: Status.CHECKING })
+          set({ status: Status.CHECKING, hostAccessGranted: null })
         }
         return true
       },
@@ -387,26 +489,27 @@ export const usePluginStore = create(
         const isInstalled = typeof window !== 'undefined' && !!window.AIToEarnPlugin
         if (!isInstalled) {
           methods.clearPluginVersion()
-          set({ status: Status.NOT_INSTALLED })
+          set({ status: Status.NOT_INSTALLED, hostAccessGranted: null })
           return false
         }
         try {
           const result = await window.AIToEarnPlugin!.checkPermission()
-          if (result.granted) {
-            set({ status: Status.READY })
+          const hostAccessGranted = typeof result.hostAccess === 'boolean' ? result.hostAccess : null
+          if (result.granted && result.hostAccess !== false) {
+            set({ status: Status.READY, hostAccessGranted: true })
             void methods.fetchPluginVersion(true)
             return true
           }
           else {
             methods.clearPluginVersion()
-            set({ status: Status.INSTALLED_NO_PERMISSION })
+            set({ status: Status.INSTALLED_NO_PERMISSION, hostAccessGranted })
             return false
           }
         }
         catch (error) {
           console.error('权限检查失败:', error)
           methods.clearPluginVersion()
-          set({ status: Status.INSTALLED_NO_PERMISSION })
+          set({ status: Status.INSTALLED_NO_PERMISSION, hostAccessGranted: null })
           return false
         }
       },
@@ -482,30 +585,12 @@ export const usePluginStore = create(
 
       /** 将所有插件支持的平台账号设为离线 */
       setAllPluginAccountsOffline() {
-        const { accountList, accountMap, accountAccountMap } = useAccountStore.getState()
-        let hasChange = false
+        const { accountList } = useAccountStore.getState()
+        const mergedAccountState = mergePluginAccountStatus(accountList, createInitialPlatformAccounts())
+        const hasChange = mergedAccountState.accountList.some((account, index) => account !== accountList[index])
 
-        const updatedAccountList = accountList.map((acc) => {
-          if (!PLUGIN_SUPPORTED_PLATFORMS.includes(acc.type as any))
-            return acc
-
-          if (acc.status !== AccountStatus.DISABLE) {
-            hasChange = true
-            const updatedAccount = { ...acc, status: AccountStatus.DISABLE }
-            accountMap.set(acc.id, updatedAccount)
-            accountAccountMap.set(acc.account, updatedAccount)
-            return updatedAccount
-          }
-          return acc
-        })
-
-        if (hasChange) {
-          useAccountStore.setState({
-            accountList: updatedAccountList,
-            accountMap: new Map(accountMap),
-            accountAccountMap: new Map(accountAccountMap),
-          })
-        }
+        if (hasChange)
+          useAccountStore.setState(mergedAccountState)
       },
 
       /**
@@ -520,13 +605,52 @@ export const usePluginStore = create(
         }
       },
 
+      /** 获取插件平台账号状态快照，不直接回写 accountList */
+      async getAccountStatusSnapshot(isBackground = false, options?: AccountStatusSnapshotOptions) {
+        if (isBackground) {
+          set({ isInitializing: true })
+        }
+
+        const finish = (accounts: PlatformAccountsMap) => {
+          if (isBackground) {
+            set({ isInitializing: false })
+          }
+          return accounts
+        }
+
+        const offlineAccounts = createInitialPlatformAccounts()
+        if (options?.waitForPluginApi) {
+          await waitForPluginApiInjection()
+        }
+
+        const isInstalled = methods.checkPlugin()
+        if (!isInstalled) {
+          if (isBackground) {
+            methods.startPolling()
+          }
+          return finish(offlineAccounts)
+        }
+
+        const hasPermission = await methods.checkPermission()
+        if (!hasPermission) {
+          if (isBackground) {
+            methods.startPolling()
+          }
+          return finish(offlineAccounts)
+        }
+
+        const accounts = await methods.refreshAllPlatformAccounts({ syncAccountStore: false })
+        return finish(accounts)
+      },
+
       /** 刷新所有平台账号信息，并同步更新 accountList 中的在线/离线状态 */
-      async refreshAllPlatformAccounts() {
+      async refreshAllPlatformAccounts(options?: RefreshPlatformAccountsOptions) {
+        const syncAccountStore = options?.syncAccountStore ?? true
         const { status } = get()
         if (status !== Status.READY)
-          return
+          return createInitialPlatformAccounts()
 
-        const accounts: Partial<PlatformAccountsMap> = {}
+        const accounts: PlatformAccountsMap = createInitialPlatformAccounts()
 
         await Promise.all(
           PLUGIN_SUPPORTED_PLATFORMS.map(async (platform) => {
@@ -541,42 +665,26 @@ export const usePluginStore = create(
 
         set({ platformAccounts: accounts as PlatformAccountsMap })
 
-        // 根据 platformAccounts 更新 accountList 中的在线/离线状态
-        const { accountList, accountMap, accountAccountMap } = useAccountStore.getState()
-        let hasChange = false
+        if (syncAccountStore) {
+          const { accountList } = useAccountStore.getState()
+          const mergedAccountState = mergePluginAccountStatus(accountList, accounts)
+          const hasChange = mergedAccountState.accountList.some((account, index) => account !== accountList[index])
 
-        const updatedAccountList = accountList.map((acc) => {
-          if (!PLUGIN_SUPPORTED_PLATFORMS.includes(acc.type as any))
-            return acc
-
-          const platformAccount = accounts[acc.type as keyof typeof accounts]
-          const shouldBeOnline
-            = !!platformAccount
-              && isPluginPlatformAccountReady(platformAccount)
-              && platformAccount.uid === acc.uid
-          const newStatus = shouldBeOnline ? AccountStatus.USABLE : AccountStatus.DISABLE
-
-          if (acc.status !== newStatus) {
-            hasChange = true
-            const updatedAccount = { ...acc, status: newStatus }
-            accountMap.set(acc.id, updatedAccount)
-            accountAccountMap.set(acc.account, updatedAccount)
-            return updatedAccount
+          if (hasChange) {
+            useAccountStore.setState(mergedAccountState)
           }
-          return acc
-        })
-
-        if (hasChange) {
-          useAccountStore.setState({
-            accountList: updatedAccountList,
-            accountMap: new Map(accountMap),
-            accountAccountMap: new Map(accountAccountMap),
-          })
         }
+
+        return accounts
       },
 
       /** 同步插件账号到数据库 */
       async syncAccountToDatabase(platform: PluginPlatformType, groupId?: string) {
+        if (!isPlatformEnabledSync(platform)) {
+          console.warn('同步账号失败：该平台在当前区域不可用', platform)
+          return null
+        }
+
         const { platformAccounts } = get()
         const account = platformAccounts[platform]
 
@@ -586,23 +694,20 @@ export const usePluginStore = create(
         }
 
         try {
-          const accountData: Partial<SocialAccount> = {
+          const accountData: CreateChannelAccountParams = {
             type: platform,
             uid: account.uid,
-            account: account.account || account.uid,
-            avatar: account.avatar,
             nickname: account.nickname,
-            fansCount: account.fansCount || 0,
             loginCookie: account.loginCookie,
-            status: AccountStatus.USABLE,
-            // @ts-ignore
-            clientType: ClientType.WEB,
           }
+
+          if (account.avatar)
+            accountData.avatar = account.avatar
 
           if (groupId)
             accountData.groupId = groupId
 
-          const result = await createOrUpdateAccountApi(accountData)
+          const result = await createChannelAccountApi(accountData)
 
           if (result?.code === 0) {
             await useAccountStore.getState().getAccountList()
@@ -647,6 +752,9 @@ export const usePluginStore = create(
       async publish(params: PublishParams, onProgress?: ProgressCallback) {
         const { status, publishingPlatforms, platformProgress } = get()
         const platform = params.platform
+
+        if (!isPlatformEnabledSync(platform))
+          throw new Error(ERROR_MESSAGES.PLATFORM_REGION_RESTRICTED)
 
         // 解析话题
         const { topics, cleanedString } = parseTopicString(params.desc || '')
@@ -897,7 +1005,7 @@ export const usePluginStore = create(
        * @returns Promise<void>
        */
       async executePluginPublish(params: ExecutePluginPublishParams): Promise<void> {
-        const { items, platformTaskIdMap, publishTime, onProgress, onComplete, userTaskId, materialId } = params
+        const { items, platformTaskIdMap, publishTime, onProgress, onComplete, userTaskId, materialGroupId, materialId } = params
         let firstPublishRecordId: string | undefined
 
         // 创建发布任务
@@ -912,11 +1020,13 @@ export const usePluginStore = create(
             accountId,
             requestId,
             type: item.params.video ? 'video' : 'image',
-            title: item.params.title || '',
             desc: item.params.des || '',
             topics: item.params.topics || [],
             platformConfig: buildPluginPlatformConfig(platform, item.params),
           }
+
+          if (isPublishTitleSupported(item.account.type))
+            publishParams.title = item.params.title || ''
 
           // 添加视频或图片参数
           if (item.params.video) {
@@ -993,11 +1103,13 @@ export const usePluginStore = create(
               accountId, // 传入账号ID，用于区分同一平台的多个账号
               requestId, // 传入 requestId，插件回调时带回用于匹配
               type: item.params.video ? 'video' : 'image',
-              title: item.params.title || '',
               desc: item.params.des || '',
               topics: item.params.topics || [],
               platformConfig: buildPluginPlatformConfig(platform, item.params),
             }
+
+            if (isPublishTitleSupported(item.account.type))
+              publishParams.title = item.params.title || ''
 
             // 如果有定时发布时间，则传入
             if (publishTime) {
@@ -1089,45 +1201,22 @@ export const usePluginStore = create(
             // 发布成功后，创建发布记录
             set({ isCreatingRecord: true })
             try {
-              const wxSphAnchor = platform === PlatType.WxSph ? getWxSphLinkAnchor(result) : null
-              const recordRes = await apiCreatePublishRecord({
-                flowId: generateUUID(),
-                type: item.params.video ? 'video' : 'article',
-                title: item.params.title || '',
-                desc: item.params.des || '',
-                accountId: item.account.id,
-                accountType: item.account.type,
+              const publishRecordId = await createPluginPublishRecord({
+                item,
+                result,
+                publishTime,
                 userTaskId,
-                ...(materialId ? { materialId } : {}),
-                videoUrl: item.params.video?.ossUrl,
-                coverUrl:
-                  item.params.video?.cover?.ossUrl
-                  || (item.params.images && item.params.images.length > 0
-                    ? item.params.images[0].ossUrl
-                    : undefined),
-                imgUrlList:
-                  item.params.images
-                    ?.map(v => v.ossUrl)
-                    .filter((url): url is string => url !== undefined) || [],
-                topics: item.params.topics || [],
-                status: 1, // 已发布
-                dataId: wxSphAnchor?.mediaMd5sum || `${result.workId}`,
-                workLink: result.shareLink,
-                linkStatus: wxSphAnchor && !result.shareLink ? 'pending' : undefined,
-                linkMeta: wxSphAnchor || undefined,
-                uid: item.account.uid,
-                // @ts-ignore
-                publishTime: publishTime || dayjs(Date.now()).utc().format(),
-                option: {},
+                materialGroupId,
+                materialId,
               })
               // 发布记录创建成功，记录首个 publishRecordId
-              if (recordRes?.data?.id) {
+              if (publishRecordId) {
                 if (!firstPublishRecordId) {
-                  firstPublishRecordId = recordRes.data.id
+                  firstPublishRecordId = publishRecordId
                 }
                 if (platform === PlatType.WxSph) {
                   startWxSphLinkPolling({
-                    recordId: recordRes.data.id,
+                    recordId: publishRecordId,
                     accountId,
                     result,
                   })

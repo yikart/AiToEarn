@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto, zodI18nString } from '@yikart/common'
+import { createPaginationVo, createZodDto, FileUtil, zodI18nString } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogStatus } from '../enums'
 
@@ -16,15 +16,35 @@ export type CreateDraftFromVideoUrlVoInput = z.input<typeof CreateDraftFromVideo
 
 export class CreateDraftFromVideoUrlVo extends createZodDto(CreateDraftFromVideoUrlVoSchema, 'CreateDraftFromVideoUrlVo') {}
 
+export const DraftGenerationTaskQueueVoSchema = z.object({
+  position: z.number().nullable().describe('当前队列中的排队位置，1 表示下一个待执行任务；执行中或无法定位时为 null'),
+  waitingCount: z.number().describe('当前队列待执行任务总数'),
+})
+
+const fileUrlSchema = () => FileUtil.zodBuildUrl().optional()
+const fileUrlListSchema = () => z.array(FileUtil.zodBuildUrl().nonoptional()).optional()
+
+const DraftGenerationTaskPayloadVoSchema = z.object({
+  imageUrl: fileUrlSchema().describe('图片 URL'),
+  imageUrls: fileUrlListSchema().describe('图片 URL 列表'),
+  videoUrl: fileUrlSchema().describe('视频 URL'),
+  videoUrls: fileUrlListSchema().describe('视频 URL 列表'),
+  audioUrl: fileUrlSchema().describe('音频 URL'),
+  audioUrls: fileUrlListSchema().describe('音频 URL 列表'),
+  coverUrl: fileUrlSchema().describe('封面 URL'),
+  url: fileUrlSchema().describe('媒体 URL'),
+  thumbUrl: fileUrlSchema().describe('缩略图 URL'),
+}).loose()
+
 export const DraftGenerationTaskVoSchema = z.object({
   id: z.string().describe('任务 ID'),
   status: z.enum(AiLogStatus).describe('任务状态'),
-  points: z.number().describe('用量点数'),
   errorMessage: z.string().optional().describe('错误信息'),
-  request: z.record(z.string(), z.unknown()).optional().describe('生成输入参数'),
-  response: z.union([z.record(z.string(), z.unknown()), z.string()]).optional().describe('生成结果'),
-  createdAt: z.date().describe('创建时间'),
-  updatedAt: z.date().describe('更新时间'),
+  request: DraftGenerationTaskPayloadVoSchema.optional().describe('生成输入参数'),
+  response: z.union([DraftGenerationTaskPayloadVoSchema, z.string()]).optional().describe('生成结果'),
+  queue: DraftGenerationTaskQueueVoSchema.optional().describe('任务队列展示信息'),
+  createdAt: z.coerce.date().describe('创建时间'),
+  updatedAt: z.coerce.date().describe('更新时间'),
 })
 
 export class DraftGenerationTaskVo extends createZodDto(DraftGenerationTaskVoSchema, 'DraftGenerationTaskVo') {}
@@ -39,8 +59,6 @@ export class DraftGenerationStatsVo extends createZodDto(DraftGenerationStatsVoS
 
 export const ImageModelPricingVoSchema = z.object({
   resolution: z.string().describe('分辨率'),
-  pricePerImage: z.number().describe('每张图片 USD 单价'),
-  originPrice: z.number().optional().describe('原价'),
 })
 
 export const ImageModelVoSchema = z.object({
@@ -52,14 +70,28 @@ export const ImageModelVoSchema = z.object({
   pricing: z.array(ImageModelPricingVoSchema).describe('分辨率价格表'),
 })
 
-export const VideoModelPricingVoSchema = z.object({
-  resolution: z.string().optional().describe('分辨率'),
-  aspectRatio: z.string().optional().describe('宽高比'),
-  mode: z.string().optional().describe('生成模式'),
-  duration: z.number().optional().describe('时长（秒）'),
-  price: z.number().describe('价格'),
-  originPrice: z.number().optional().describe('原价'),
+const VideoModelInputConstraintVoSchema = z.object({
+  maxCount: z.number().optional().describe('最大输入数量'),
+  formats: z.array(z.string()).optional().describe('支持的文件格式'),
+  minDuration: z.number().optional().describe('最小时长（秒）'),
+  maxDuration: z.number().optional().describe('单个文件最大时长（秒）'),
+  maxTotalDuration: z.number().optional().describe('总最大时长（秒）'),
+  maxSizeMb: z.number().optional().describe('单个文件最大大小（MB）'),
+  minAspectRatio: z.number().optional().describe('最小宽高比'),
+  maxAspectRatio: z.number().optional().describe('最大宽高比'),
+  minWidth: z.number().optional().describe('最小宽度'),
+  maxWidth: z.number().optional().describe('最大宽度'),
+  minPixels: z.number().optional().describe('最小像素数'),
+  maxPixels: z.number().optional().describe('最大像素数'),
+  minFps: z.number().optional().describe('最小帧率'),
+  maxFps: z.number().optional().describe('最大帧率'),
 })
+
+const VideoModelInputConstraintsVoSchema = z.object({
+  images: VideoModelInputConstraintVoSchema.optional().describe('图片输入约束'),
+  videos: VideoModelInputConstraintVoSchema.optional().describe('视频输入约束'),
+  audios: VideoModelInputConstraintVoSchema.optional().describe('音频输入约束'),
+}).optional().describe('多模态输入约束')
 
 export const VideoModelVoSchema = z.object({
   name: z.string().describe('模型名称'),
@@ -69,6 +101,7 @@ export const VideoModelVoSchema = z.object({
   resolutions: z.array(z.string()).describe('支持的尺寸'),
   durations: z.array(z.number()).describe('支持的时长'),
   maxInputImages: z.number().describe('最大输入图片数'),
+  inputConstraints: VideoModelInputConstraintsVoSchema,
   aspectRatios: z.array(z.string()).describe('支持的宽高比列表'),
   tags: z.array(zodI18nString()).default([]).describe('标签'),
   defaults: z.object({
@@ -76,7 +109,6 @@ export const VideoModelVoSchema = z.object({
     aspectRatio: z.string().optional().describe('默认宽高比'),
     duration: z.number().optional().describe('默认时长'),
   }).describe('默认值'),
-  pricing: z.array(VideoModelPricingVoSchema).describe('价格表'),
 })
 
 export const DraftGenerationPricingVoSchema = z.object({

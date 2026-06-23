@@ -7,31 +7,45 @@
 
 import type { PlatformPublishTask, PublishTask } from '@/store/plugin/types/baseTypes'
 import { Loader2 } from 'lucide-react'
-import Image from 'next/image'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useShallow } from 'zustand/shallow'
-import { AccountPlatInfoMap } from '@/app/config/platConfig'
+import { OssImage } from '@/components/common/OssImage'
 import { Button } from '@/components/ui/button'
-import { notification } from '@/lib/notification'
-import { cn } from '@/lib/utils'
+
+import { getPlatformInfoSync } from '@/store/platformMetadata'
 import { usePluginStore } from '@/store/plugin'
 import { PlatformTaskStatus, PLUGIN_SUPPORTED_PLATFORMS } from '@/store/plugin/types/baseTypes'
+import { cn } from '@/utils/className'
+import { notification } from '@/utils/ui/notification'
 import { PublishDetailModal } from '../PublishDetailModal'
 import styles from './PluginPublishingFloatButton.module.scss'
 
 const notifiedPublishTaskIds = new Set<string>()
+const pluginSupportedPlatformSet = new Set<PlatformPublishTask['platform']>(PLUGIN_SUPPORTED_PLATFORMS)
 
 function isPluginPlatformTask(platformTask: PlatformPublishTask) {
-  return PLUGIN_SUPPORTED_PLATFORMS.includes(platformTask.platform)
+  return pluginSupportedPlatformSet.has(platformTask.platform)
 }
 
 function isPublishingPluginPlatformTask(platformTask: PlatformPublishTask) {
   return isPluginPlatformTask(platformTask) && platformTask.status === PlatformTaskStatus.PUBLISHING
 }
 
+function isActionRequiredPlatformTask(platformTask: PlatformPublishTask) {
+  return platformTask.publishMode === 'user_action' && platformTask.status === PlatformTaskStatus.PENDING
+}
+
+function isActivePlatformTask(platformTask: PlatformPublishTask) {
+  return platformTask.status === PlatformTaskStatus.PUBLISHING || isActionRequiredPlatformTask(platformTask)
+}
+
 function hasPublishingPluginTask(task: PublishTask) {
   return task.platformTasks.some(isPublishingPluginPlatformTask)
+}
+
+function hasActivePublishTask(task: PublishTask) {
+  return task.platformTasks.some(isActivePlatformTask)
 }
 
 function getPluginFinalStatus(task: PublishTask): 'success' | 'error' | null {
@@ -46,6 +60,9 @@ function getPluginFinalStatus(task: PublishTask): 'success' | 'error' | null {
   if (hasRunningTask)
     return null
 
+  if (pluginTasks.every(platformTask => platformTask.status === PlatformTaskStatus.CANCELED))
+    return null
+
   if (pluginTasks.some(platformTask => platformTask.status === PlatformTaskStatus.ERROR))
     return 'error'
 
@@ -53,7 +70,8 @@ function getPluginFinalStatus(task: PublishTask): 'success' | 'error' | null {
 }
 
 function getActivePlatformTask(task?: PublishTask) {
-  return task?.platformTasks.find(isPublishingPluginPlatformTask)
+  return task?.platformTasks.find(platformTask => platformTask.status === PlatformTaskStatus.PUBLISHING)
+    || task?.platformTasks.find(isActionRequiredPlatformTask)
 }
 
 export function PluginPublishingFloatButton() {
@@ -69,16 +87,17 @@ export function PluginPublishingFloatButton() {
     })),
   )
 
-  const activePublishingTask = useMemo(
-    () => publishTasks.find(hasPublishingPluginTask),
+  const activeProgressTask = useMemo(
+    () => publishTasks.find(hasActivePublishTask),
     [publishTasks],
   )
   const activePlatformTask = useMemo(
-    () => getActivePlatformTask(activePublishingTask),
-    [activePublishingTask],
+    () => getActivePlatformTask(activeProgressTask),
+    [activeProgressTask],
   )
+  const isActionRequiredActive = activePlatformTask ? isActionRequiredPlatformTask(activePlatformTask) : false
   const activePlatInfo = activePlatformTask
-    ? AccountPlatInfoMap.get(activePlatformTask.platform)
+    ? getPlatformInfoSync(activePlatformTask.platform)
     : undefined
 
   useEffect(() => {
@@ -124,13 +143,13 @@ export function PluginPublishingFloatButton() {
     }
   }, [activeTaskId, detailVisible, publishTasks])
 
-  const showButton = ready && !!activePublishingTask && publishDetailModalOpenCount === 0
+  const showButton = ready && !!activeProgressTask && publishDetailModalOpenCount === 0
 
   const handleOpenDetail = () => {
-    if (!activePublishingTask)
+    if (!activeProgressTask)
       return
 
-    setActiveTaskId(activePublishingTask.id)
+    setActiveTaskId(activeProgressTask.id)
     setDetailVisible(true)
   }
 
@@ -158,16 +177,20 @@ export function PluginPublishingFloatButton() {
           <span className={styles.floatButton_surface}>
             <span className={styles.floatButton_iconWrap}>
               {activePlatInfo?.icon ? (
-                <Image src={activePlatInfo.icon} alt={activePlatInfo.name} width={24} height={24} />
+                <OssImage src={activePlatInfo.icon} alt={activePlatInfo.name} width={24} height={24} />
               ) : (
                 <Loader2 className="h-5 w-5 animate-spin" />
               )}
-              <span className={styles.floatButton_spinnerBadge}>
-                <Loader2 className="h-3 w-3 animate-spin" />
-              </span>
+              {!isActionRequiredActive && (
+                <span className={styles.floatButton_spinnerBadge}>
+                  <Loader2 className="h-3 w-3 animate-spin" />
+                </span>
+              )}
             </span>
             <span className={styles.floatButton_textWrap}>
-              <span className={styles.floatButton_title}>{t('publishFloating.pluginPublishing')}</span>
+              <span className={styles.floatButton_title}>
+                {isActionRequiredActive ? t('publishDetail.actionRequired') : t('publishFloating.pluginPublishing')}
+              </span>
               <span className={styles.floatButton_subtitle}>{t('publishFloating.openDetail')}</span>
             </span>
           </span>

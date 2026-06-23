@@ -32,7 +32,7 @@ import { z } from 'zod'
 export const OrderDetailVoSchema = z.object({
   id: z.string(),
   amount: z.number(),
-  createdAt: z.date()
+  createdAt: z.coerce.date()
 })
 export class OrderDetailVo extends createZodDto(OrderDetailVoSchema, 'OrderDetailVo') {}
 export class OrderListVo extends createPaginationVo(OrderDetailVoSchema, 'OrderListVo') {}

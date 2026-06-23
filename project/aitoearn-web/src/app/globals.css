@@ -11,6 +11,11 @@ body {
   overflow: hidden;
 }
 
+/* Welcome 页面样式隔离 - 防止全局污染 */
+html:not(.welcome-page-active) {
+  font-size: 100% !important;
+}
+
 body {
   font-family: Suisseintl, sans-serif;
 }
@@ -89,7 +94,7 @@ button {
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
   --primary: var(--brand-cyan);
-  --primary-foreground: oklch(0.145 0 0);
+  --primary-foreground: var(--gradient-foreground);
   --secondary: oklch(0.97 0 0);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
@@ -132,7 +137,7 @@ button {
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
   --primary: var(--brand-purple);
-  --primary-foreground: oklch(0.145 0 0);
+  --primary-foreground: var(--gradient-foreground);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -277,6 +282,13 @@ body > div {
 
 .add-account-responsive-modal ::-webkit-scrollbar-thumb:hover {
   background: #9ca3af;
+}
+
+/* 定价页面响应式布局 - 1400px 以上显示4列 */
+@media (min-width: 1400px) {
+  .pricing-grid-4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
 }
 
 /* Shimmer 渐变动画 - 用于骨架屏 loading 效果 */

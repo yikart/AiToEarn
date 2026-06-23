@@ -10,7 +10,8 @@
 
 'use client'
 
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
+import type { PlatType } from '@/app/config/platConfig'
 import {
   Box,
   ChevronDown,
@@ -32,7 +33,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { ChannelItem } from './ChannelItem'
 
 interface AccountGroup {
@@ -52,6 +53,7 @@ interface SpaceItemProps {
   editingSpaceLoading: boolean
   deleteLoading?: string | null
   sortingLoading?: string | null
+  fansRefreshTarget?: 'all' | PlatType | null
   onToggleCollapse: () => void
   onStartEdit: () => void
   onEditNameChange: (name: string) => void
@@ -61,6 +63,7 @@ interface SpaceItemProps {
   onMoveDown?: () => void
   onDelete: () => void
   onChannelDelete: (channel: SocialAccount) => void
+  onChannelFansRefresh?: (platform: PlatType) => void
   onRefresh: () => void
   onAddChannel?: () => void
 }
@@ -76,6 +79,7 @@ export function SpaceItem({
   editingSpaceLoading,
   deleteLoading,
   sortingLoading,
+  fansRefreshTarget,
   onToggleCollapse,
   onStartEdit,
   onEditNameChange,
@@ -85,6 +89,7 @@ export function SpaceItem({
   onMoveDown,
   onDelete,
   onChannelDelete,
+  onChannelFansRefresh,
   onRefresh,
   onAddChannel,
 }: SpaceItemProps) {
@@ -276,6 +281,8 @@ export function SpaceItem({
                 channel={channel}
                 onDelete={onChannelDelete}
                 deleteLoading={deleteLoading}
+                fansRefreshTarget={fansRefreshTarget}
+                onRefreshFans={onChannelFansRefresh}
               />
             ))
           )}

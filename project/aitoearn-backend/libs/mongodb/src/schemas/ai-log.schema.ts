@@ -1,10 +1,6 @@
-import type {
-  AiLogSettlement as AiLogSettlementInterface,
-  AiLogSettlementMetadata,
-} from '@yikart/aitoearn-ai-shared'
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose'
 import { UserType } from '@yikart/common'
-import { AiLogChannel, AiLogSettlementStatus, AiLogStatus, AiLogType } from '../enums'
+import { AiLogChannel, AiLogStatus, AiLogType } from '../enums'
 import { DEFAULT_SCHEMA_OPTIONS } from '../mongodb.constants'
 import { WithTimestampSchema } from './timestamp.schema'
 
@@ -196,16 +192,26 @@ export type DashscopeVideoAiLogRequest = AiLogObject<{
   seed?: number
   groupId?: string
 }>
-
-export type GeminiVideoAiLogRequest = AiLogObject<{
+export type RelayVideoAiLogRequest = AiLogObject<{
   model: string
   prompt: string
-  image?: string
-  duration?: number
-  resolution?: string
-  aspectRatio?: string
-  keyPairId?: string
   groupId?: string
+  image?: string | string[]
+  image_tail?: string
+  video_url?: string
+  images?: string[]
+  videos?: string[]
+  audios?: string[]
+  mode?: string
+  size?: string
+  resolution?: string
+  ratio?: string
+  duration?: number
+  seed?: number
+  watermark?: boolean
+  tools?: Array<{ type: string }>
+  metadata?: Record<string, unknown>
+  source?: string
 }>
 
 export type VideoAiLogRequest
@@ -215,7 +221,7 @@ export type VideoAiLogRequest
     | OpenAIRemixVideoAiLogRequest
     | GrokVideoAiLogRequest
     | DashscopeVideoAiLogRequest
-    | GeminiVideoAiLogRequest
+    | RelayVideoAiLogRequest
 
 export type VideoAiLogResponse = AiLogObject<{
   id?: string
@@ -425,44 +431,6 @@ export type AiLogResponse = AiLogResponseByTypeMap[keyof AiLogResponseByTypeMap]
 export type AiLogRequestByType<T extends AiLogType> = AiLogRequestByTypeMap[T]
 export type AiLogResponseByType<T extends AiLogType> = AiLogResponseByTypeMap[T]
 
-@Schema({ _id: false })
-export class AiLogSettlement {
-  @Prop({
-    required: true,
-    enum: AiLogSettlementStatus,
-  })
-  status: AiLogSettlementStatus
-
-  @Prop({
-    required: true,
-  })
-  prepaidPoints: number
-
-  @Prop({
-    required: false,
-  })
-  actualPoints?: number
-
-  @Prop({
-    required: false,
-  })
-  deltaPoints?: number
-
-  @Prop({
-    required: false,
-    type: Date,
-  })
-  settledAt?: Date
-
-  @Prop({
-    required: false,
-    type: Object,
-  })
-  metadata?: AiLogSettlementMetadata
-}
-
-export const AiLogSettlementSchema = SchemaFactory.createForClass(AiLogSettlement)
-
 @Schema({ ...DEFAULT_SCHEMA_OPTIONS, collection: 'aiLogs' })
 export class AiLog extends WithTimestampSchema {
   id: string
@@ -478,12 +446,6 @@ export class AiLog extends WithTimestampSchema {
     enum: UserType,
   })
   userType: UserType
-
-  @Prop({
-    required: false,
-    index: true,
-  })
-  libraryId?: string
 
   @Prop({
     required: false,
@@ -547,17 +509,6 @@ export class AiLog extends WithTimestampSchema {
     type: Object,
   })
   errorMessage?: string
-
-  @Prop({
-    required: true,
-  })
-  points: number
-
-  @Prop({
-    required: false,
-    type: AiLogSettlementSchema,
-  })
-  settlement?: AiLogSettlementInterface
 }
 
 export type TypedAiLog<T extends AiLogType> = Omit<AiLog, 'type' | 'request' | 'response'> & {
@@ -570,3 +521,4 @@ export const AiLogSchema = SchemaFactory.createForClass(AiLog)
 AiLogSchema.index({ type: 1, status: 1, channel: 1, createdAt: -1 })
 AiLogSchema.index({ userId: 1, type: 1, userType: 1, createdAt: -1 })
 AiLogSchema.index({ status: 1, createdAt: -1 })
+AiLogSchema.index({ status: 1, startedAt: 1 })

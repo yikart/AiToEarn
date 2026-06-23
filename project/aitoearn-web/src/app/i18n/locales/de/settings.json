@@ -2,10 +2,20 @@
   "title": "Einstellungen",
   "tabs": {
     "profile": "Profil",
+    "agent": "Agent",
+    "income": "Einnahmen",
+    "balance": "Kontostand",
+    "subscription": "Guthaben",
+    "membership": "Rechnungen",
+    "shopifyStores": "Shopify Stores",
     "general": "Allgemein",
-    "agent": "Agent"
+    "ticket": "Tickets",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Seedance-Credits"
   },
   "profile": {
+    "totalIncome": "Guthaben",
+    "currentBalance": "Aktuelles Guthaben",
     "logout": "Abmelden",
     "edit": "Bearbeiten",
     "editName": "Spitznamen bearbeiten",
@@ -30,7 +40,206 @@
     "zoomOut": "Verkleinern",
     "imageLoading": "Bild wird geladen...",
     "processing": "Wird verarbeitet...",
-    "githubStars": "GitHub-Sterne"
+    "githubStars": "GitHub-Sterne",
+    "viewMembershipBenefits": "Mitgliedsvorteile ansehen",
+    "redeemCodeTitle": "Aktivierungscode für Unternehmensmitgliedschaft einlösen",
+    "redeemCodeDescription": "Nach erfolgreicher Einlösung wird die Unternehmensmitgliedschaft aktiviert und die entsprechenden Guthaben-Vorteile werden gewährt.",
+    "redeemCodePlaceholder": "Aktivierungscode für Unternehmensmitgliedschaft eingeben",
+    "redeemCodeButton": "Jetzt einlösen",
+    "redeemCodeRequired": "Bitte geben Sie den Aktivierungscode für die Unternehmensmitgliedschaft ein",
+    "redeemCodeSuccess": "Aktivierungscode für Unternehmensmitgliedschaft erfolgreich eingelöst",
+    "redeemCodeFailed": "Aktivierungscode für Unternehmensmitgliedschaft konnte nicht eingelöst werden",
+    "redeemCodeContactPrefix": "Kein Aktivierungscode? ",
+    "redeemCodeContactSuffix": ", um einen Aktivierungscode für die Unternehmensmitgliedschaft zu erhalten."
+  },
+  "income": {
+    "balance": "Advertiser-Guthaben",
+    "withdrawableBalance": "Creator-Guthaben",
+    "incomeRecords": "Einnahmenhistorie",
+    "balanceRecords": "Kontostandshistorie",
+    "withdrawRecords": "Auszahlungshistorie",
+    "incomeId": "Einnahmen-ID",
+    "withdrawId": "Auszahlungs-ID",
+    "amount": "Betrag",
+    "type": "Typ",
+    "statusLabel": "Status",
+    "description": "Beschreibung",
+    "createTime": "Erstellt am",
+    "updateTime": "Aktualisiert am",
+    "all": "Alle",
+    "incomeDetail": "Einnahmendetails",
+    "noBalanceRecords": "Keine Kontostandshistorie",
+    "balanceAfter": "Kontostand danach",
+    "balanceAfterType": {
+      "advertiser": "Advertiser-Guthaben danach",
+      "creator": "Creator-Guthaben danach"
+    },
+    "currencyFilter": "Währung",
+    "typeFilter": "Typ",
+    "balanceTypes": {
+      "task_creation": "Aufgabe erstellt",
+      "manual_deduct": "Manueller Abzug",
+      "refund": "Rückerstattung",
+      "recharge": "Aufladung",
+      "manual_add": "Manueller Zugang",
+      "task_refund": "Aufgabenrückerstattung",
+      "task_stopped": "Aufgabe gestoppt",
+      "withdraw": "Auszahlung",
+      "withdraw_refund": "Auszahlungsrückerstattung",
+      "cpm_cpe_deposit": "CPM/CPE Deposit",
+      "cpm_cpe_deposit_refund": "CPM/CPE Deposit-Rückerstattung",
+      "task": "Aufgabeneinkommen",
+      "commission": "Provision",
+      "manual": "Manuelle Anpassung",
+      "balance_transfer_out": "Guthabenübertrag ausgehend",
+      "balance_transfer_in": "Guthabenübertrag eingehend",
+      "debt_payment": "Schuldenzahlung",
+      "sample_budget_deposit": "Musterbudget-Einzahlung",
+      "sample_budget_refund": "Musterbudget-Rückerstattung",
+      "sample_subsidy_payout": "Musterzuschuss-Auszahlung",
+      "sample_subsidy_clawback": "Musterzuschuss-Rückforderung",
+      "koc_deposit_deduct": "KOC-Deposit-Abzug",
+      "koc_deposit_return": "KOC-Deposit-Rückgabe",
+      "commission_refund": "Provisionsrückerstattung",
+      "challenge_refund": "Challenge-Rückerstattung",
+      "task_reward_clawback": "Aufgabenbelohnung-Rückforderung",
+      "task_work_deleted_refund": "Rückerstattung für gelöschten Beitrag"
+    },
+    "types": {
+      "task": "Aufgabeneinnahmen",
+      "task_back": "Aufgabenrückerstattung",
+      "reward_back": "Belohnungsrückerstattung",
+      "task_withdraw": "Aufgabenauszahlung"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "withdrawn": "Ausgezahlt"
+    },
+    "noWallet": "Kein Wallet hinzugefügt",
+    "noWalletTip": "Bitte fügen Sie zuerst ein Wallet im Wallet-Tab hinzu",
+    "manageWallets": "Wallets verwalten",
+    "addWallet": "Wallet hinzufügen",
+    "withdrawButton": "Auszahlen",
+    "withdrawNotice": "Auszahlungsanträge werden innerhalb von 15 Werktagen bearbeitet. Bitte haben Sie Geduld. Bei Fragen ",
+    "rechargeButton": "Aufladen",
+    "noIncomeRecords": "Keine Einnahmen vorhanden",
+    "noWithdrawRecords": "Keine Auszahlungen vorhanden",
+    "withdraw": {
+      "cancel": "Abbrechen",
+      "cancelConfirmTitle": "Auszahlung stornieren",
+      "cancelConfirmDesc": "Möchten Sie diese Auszahlungsanfrage wirklich stornieren?",
+      "type": {
+        "task": "Aufgabe",
+        "reward": "Belohnung"
+      },
+      "walletAccount": "Wallet",
+      "adminNote": "Hinweis",
+      "paidAt": "Bezahlt am",
+      "screenshots": "Screenshots",
+      "status": {
+        "pending": "Ausstehend",
+        "approved": "Genehmigt",
+        "paid": "Bezahlt",
+        "failed": "Fehlgeschlagen",
+        "rejected": "Abgelehnt"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "In Bearbeitung",
+      "success": "Erfolgreich",
+      "fail": "Fehlgeschlagen",
+      "task_withdraw": "Aufgabenauszahlung",
+      "unknown": "Unbekannt"
+    },
+    "messages": {
+      "cancelWithdrawSuccess": "Auszahlung erfolgreich storniert",
+      "cancelWithdrawFailed": "Stornierung der Auszahlung fehlgeschlagen",
+      "getIncomeRecordsFailed": "Einnahmen konnten nicht abgerufen werden",
+      "getBalanceRecordsFailed": "Kontostandshistorie konnte nicht abgerufen werden",
+      "getIncomeDetailFailed": "Einnahmendetails konnten nicht abgerufen werden",
+      "getWithdrawRecordsFailed": "Auszahlungen konnten nicht abgerufen werden",
+      "noIncomeRecords": "Keine Einnahmen vorhanden",
+      "noWithdrawRecords": "Keine Auszahlungen vorhanden",
+      "noIncomeDetail": "Keine Einnahmendetails vorhanden",
+      "loading": "Laden...",
+      "totalRecords": "Insgesamt {{total}} Einträge"
+    },
+    "balanceTooltip": "Advertiser-Guthaben wird hauptsächlich zum Veröffentlichen von Aufgaben, Bezahlen von Creator-Vergütungen und für aufgabenbezogene Abbuchungen verwendet.",
+    "creatorBalanceTooltip": "Das Erledigen von Aufgaben ist der wichtigste Weg, Creator-Guthaben zu erhalten. Creator-Guthaben kann ausgezahlt werden.",
+    "transfer": {
+      "title": "Guthaben übertragen",
+      "amount": "Überweisungsbetrag",
+      "amountPlaceholder": "Überweisungsbetrag eingeben",
+      "availableBalance": "Aktuell übertragbar: {{amount}}",
+      "transferIn": "Einzahlen",
+      "submit": "Übertragung bestätigen",
+      "to": "Übertragen nach",
+      "success": "Übertragung erfolgreich",
+      "failed": "Übertragung fehlgeschlagen",
+      "amountInvalid": "Bitte geben Sie einen Betrag größer als 0 ein",
+      "amountExceedsBalance": "Der Betrag darf das verfügbare Guthaben nicht überschreiten",
+      "balanceType": {
+        "advertiser": "Advertiser-Guthaben",
+        "creator": "Creator-Guthaben"
+      },
+      "balanceToWithdrawable": "Advertiser-Guthaben zu Creator-Guthaben",
+      "withdrawableToBalance": "Creator-Guthaben zu Advertiser-Guthaben"
+    }
+  },
+  "subscription": {
+    "currentPlan": "Aktueller Plan",
+    "upgrade": "Aufladen",
+    "manage": "Abonnement verwalten",
+    "balance": "Guthaben",
+    "usageRecords": "Nutzungsaufzeichnungen",
+    "detail": "Details",
+    "date": "Datum",
+    "amount": "Betrag",
+    "amountChange": "Betragsänderung",
+    "noRecords": "Noch keine Nutzungsaufzeichnungen",
+    "loading": "Laden...",
+    "loadMore": "Mehr laden",
+    "browserPluginAgent": "Browser-Plugin-Agent",
+    "types": {
+      "register_bonus": "Registrierungsbonus",
+      "purchase": "Kauf",
+      "vip_monthly": "VIP Monatlich",
+      "ai_service": "KI-Dienst",
+      "video_style_transfer": "Video-Stiltransfer",
+      "publish": "Veröffentlichen",
+      "expired": "Abgelaufen",
+      "manual": "Manuelle Anpassung",
+      "fan_check_in": "Fan-Check-in",
+      "fan_lottery": "Fan-Lotterie",
+      "twitter_api": "X/Twitter API",
+      "note_comment_search": "Notiz-Kommentarsuche",
+      "drama_recap": "Drama-Zusammenfassung",
+      "refund": "Rückerstattung"
+    },
+    "filters": {
+      "direction": "Richtung",
+      "type": "Typ",
+      "source": "Quelle",
+      "allDirections": "Alle Richtungen",
+      "allTypes": "Alle Typen",
+      "allSources": "Alle Quellen",
+      "reset": "Zurücksetzen"
+    },
+    "directions": {
+      "income": "Einnahmen",
+      "expense": "Ausgaben"
+    },
+    "sources": {
+      "ai_chat": "AI Chat",
+      "plugin": "Browser-Plugin",
+      "ai_image": "AI Bild",
+      "ai_video": "AI Video",
+      "ai_agent": "AI Agent",
+      "ai_draft_generation": "AI Entwurfserstellung",
+      "ai_material_adaptation": "AI Materialanpassung",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "AI Videobearbeitung"
+    }
   },
   "general": {
     "language": "Website-Sprache",
@@ -39,11 +248,62 @@
     "themeDesc": "Wählen Sie Ihren bevorzugten Themenmodus",
     "themeLight": "Hell",
     "themeDark": "Dunkel",
-    "themeSystem": "System",
-    "notifications": "E-Mail-Benachrichtigungen",
-    "notificationsDesc": "Verwalten Sie Ihre E-Mail-Benachrichtigungseinstellungen",
-    "editNotifications": "Benachrichtigungseinstellungen bearbeiten",
-    "changingLanguage": "Switching..."
+    "themeSystem": "System"
+  },
+  "ticket": {
+    "title": "Tickets",
+    "description": "Sehen und verfolgen Sie Aufgaben-Tickets, die Sie an das Betriebsteam gesendet haben.",
+    "loading": "Tickets werden geladen...",
+    "loadFailed": "Tickets konnten nicht geladen werden",
+    "refresh": "Aktualisieren",
+    "emptyTitle": "Keine Ticket-Einträge",
+    "emptyDescription": "Tickets werden derzeit über die Detailseite angenommener Aufgaben eingereicht. Nach dem Senden können Sie den Bearbeitungsstatus in der zugehörigen Aufgabe verfolgen.",
+    "goToMyTasks": "Zu meinen Aufgaben",
+    "viewTask": "Aufgabe anzeigen",
+    "createdAt": "Gesendet am",
+    "updatedAt": "Aktualisiert am",
+    "paginationTotal": "{{start}}-{{end}} von {{total}}",
+    "status": {
+      "open": "Offen",
+      "in_progress": "In Bearbeitung",
+      "resolved": "Gelöst",
+      "closed": "Geschlossen"
+    },
+    "viewTimeline": "Bearbeitungsverlauf",
+    "timeline": {
+      "title": "Bearbeitungsverlauf",
+      "untitled": "Unbenanntes Ticket",
+      "loading": "Bearbeitungsverlauf wird geladen...",
+      "loadFailed": "Bearbeitungsverlauf konnte nicht geladen werden",
+      "empty": "Noch kein Bearbeitungsverlauf",
+      "back": "Zurück zu Tickets",
+      "description": "Prüfen Sie Updates und Notizen des Betriebsteams zu diesem Ticket.",
+      "activityType": {
+        "create": "Ticket erstellt",
+        "assign": "Ticket zugewiesen",
+        "status_change": "Status geändert",
+        "comment": "Kommentar hinzugefügt",
+        "link_takeover_action": "Übernahmeaktion verknüpft"
+      }
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify Stores",
+    "description": "View the Shopify stores connected to this account and their billing status.",
+    "refresh": "Refresh",
+    "active": "Connected",
+    "inactive": "Disabled",
+    "platformFeeRate": "Platform fee rate",
+    "boundAt": "Connected at",
+    "emptyTitle": "No Shopify store connected",
+    "emptyDesc": "Install the AiToEarn Shopify App and the store will sync here automatically.",
+    "installApp": "Install AiToEarn App",
+    "billingStatus": {
+      "none": "Billing not enabled",
+      "pending": "Pending",
+      "active": "Billing active",
+      "cancelled": "Billing cancelled"
+    }
   },
   "agent": {
     "title": "Agent",
@@ -57,5 +317,36 @@
     "saving": "Wird gespeichert...",
     "saveSuccess": "Erfolgreich gespeichert",
     "saveFailed": "Speichern fehlgeschlagen"
+  },
+  "apiKeys": {
+    "title": "API Key Verwaltung",
+    "description": "API Keys für den programmatischen Zugriff erstellen und verwalten",
+    "create": "Erstellen",
+    "name": "Name",
+    "namePlaceholder": "API Key Name eingeben",
+    "nameRequired": "Bitte geben Sie einen Namen ein",
+    "createdAt": "Erstellt",
+    "lastUsedAt": "Zuletzt verwendet",
+    "neverUsed": "Nie",
+    "deleteConfirmTitle": "API Key löschen",
+    "deleteConfirmDesc": "Sind Sie sicher, dass Sie diesen API Key löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "createSuccess": "API Key erfolgreich erstellt",
+    "deleteSuccess": "API Key erfolgreich gelöscht",
+    "copySuccess": "In die Zwischenablage kopiert",
+    "copyTip": "Bitte kopieren und speichern Sie Ihren API Key jetzt. Er wird nicht erneut angezeigt.",
+    "dismiss": "Schließen",
+    "empty": "Noch keine API Keys",
+    "emptyDesc": "Erstellen Sie einen API Key, um loszulegen",
+    "cancel": "Abbrechen"
+  },
+  "seedanceCredits": {
+    "balance": "Seedance-Credits",
+    "availableBalance": "Verfügbare Seedance-Credits",
+    "availableBalanceTip": "Verfügbare Credits = Seedance-Credits + reguläre Credits nach geschätztem Verbrauch regulärer Modelle, nutzbar für seedance-beta-Modelle.",
+    "refundNotice": "Seedance-Credits gelten nur für seedance-beta-Modelle auf AiToEarn. Wenn AiToEarn die Nutzung verhindert, ist der ungenutzte Teil vollständig erstattbar.",
+    "faceUploadTip": "Klare echte Frontalgesichter können eine geringere Erfolgsquote haben. Abdecken oder Verpixeln wichtiger Bereiche wie der Augen vor dem Upload kann die Erfolgsquote deutlich erhöhen.",
+    "recharge": "Aufladen",
+    "use": "Zur Nutzung",
+    "info": "Hinweise zu Seedance-Credits anzeigen"
   }
 }

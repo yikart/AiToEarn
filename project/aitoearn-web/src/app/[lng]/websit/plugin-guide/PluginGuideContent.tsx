@@ -21,7 +21,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { MediaPreview } from '@/components/common/MediaPreview'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { Card } from '@/components/ui/card'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface PublicImageAsset {
   src: string

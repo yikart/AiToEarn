@@ -6,7 +6,7 @@ describe('mcpToolsHandler', () => {
   it('tool 参数 schema 中的 date 字段可以转换为 JSON Schema', () => {
     const schema = z.object({
       commentTime: z.coerce.date().optional(),
-      publishTime: z.date().optional(),
+      publishTime: z.coerce.date().optional(),
       time: z.tuple([z.coerce.date(), z.coerce.date()]).optional(),
     })
 

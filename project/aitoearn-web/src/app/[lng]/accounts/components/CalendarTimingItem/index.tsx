@@ -6,7 +6,7 @@
 
 import type { DayCellContentArg } from '@fullcalendar/core'
 import type { ForwardedRef } from 'react'
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 import dayjs from 'dayjs'
 import { ChevronDown, ChevronUp, Plus } from 'lucide-react'
 import { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
@@ -18,8 +18,8 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useIsMobile } from '@/hooks/useIsMobile'
 import { useGetClientLng } from '@/hooks/useSystem'
-import { cn } from '@/lib/utils'
 import { useSystemStore } from '@/store/system'
+import { cn } from '@/utils/className'
 import {
   filterCalendarFestivalEvents,
   getChinaCalendarEvents,
@@ -36,14 +36,14 @@ export interface ICalendarTimingItemProps {
   arg: DayCellContentArg
   onClickPub: (date: string) => void
   loading: boolean
-  // 发布记录数据
-  records?: PublishRecordItem[]
 }
+
+const EMPTY_RECORDS: PublishRecordItem[] = []
 
 const CalendarTimingItem = memo(
   forwardRef(
     (
-      { arg, onClickPub, loading, records }: ICalendarTimingItemProps,
+      { arg, onClickPub, loading }: ICalendarTimingItemProps,
       ref: ForwardedRef<ICalendarTimingItemRef>,
     ) => {
       const { t } = useTransClient('account')
@@ -64,22 +64,22 @@ const CalendarTimingItem = memo(
           // 移动端禁用拖拽
           accept: isMobile ? 'none' : 'box',
           drop: () => ({
-            time: arg,
+            time: {
+              date: arg.date,
+              keepOriginalTime: true,
+            },
           }),
           collect: monitor => ({
             isOver: monitor.isOver(),
             canDrop: monitor.canDrop(),
           }),
         }),
-        [isMobile],
+        [arg.date, isMobile],
       )
       const [isMore, setIsMore] = useState(false)
       const cellRef = useRef<HTMLDivElement | null>(null)
-      const { recordMap } = useCalendarTiming(
-        useShallow(state => ({
-          recordMap: state.recordMap,
-        })),
-      )
+      const dateStr = useMemo(() => dayjs(arg.date).format('YYYY-MM-DD'), [arg.date])
+      const records = useCalendarTiming(state => state.recordMap.get(dateStr) ?? EMPTY_RECORDS)
       const { showSolarFestivals, showSolarTerms } = useSystemStore(
         useShallow(state => ({
           showSolarFestivals: state.calendarShowSolarFestivals,
@@ -95,15 +95,13 @@ const CalendarTimingItem = memo(
       const maxRecords = isMobile ? 2 : 3
 
       const recordsLast = useMemo(() => {
-        if (!records)
-          return []
         if (isMore) {
           return records
         }
         else {
           return records?.slice(0, maxRecords - reservationsTimesLast.length)
         }
-      }, [isMore, records, reservationsTimesLast, recordMap, maxRecords])
+      }, [isMore, records, reservationsTimesLast, maxRecords])
 
       const festivals = useMemo(() => {
         return filterCalendarFestivalEvents(getChinaCalendarEvents(arg.date, lng), {
@@ -262,19 +260,18 @@ const CalendarTimingItem = memo(
                 })}
 
               {/* 发布记录 */}
-              {records
-                && recordsLast.map((v) => {
-                  return (
-                    <div data-testid="calendar-cell-record" key={v.id + v.title + v.uid + v.updatedAt}>
-                      {/* 移动端不显示拖拽层 */}
-                      {!isMobile && <CustomDragLayer publishRecord={v} snapToGrid={false} />}
-                      <CalendarRecord publishRecord={v} />
-                    </div>
-                  )
-                })}
+              {recordsLast.map((v) => {
+                return (
+                  <div data-testid="calendar-cell-record" key={v.id + v.title + v.uid + v.updatedAt}>
+                    {/* 移动端不显示拖拽层 */}
+                    {!isMobile && <CustomDragLayer publishRecord={v} snapToGrid={false} />}
+                    <CalendarRecord publishRecord={v} />
+                  </div>
+                )
+              })}
 
               {/* 显示更多/收起按钮 */}
-              {records && records.length > maxRecords - reservationsTimesLast.length && (
+              {records.length > maxRecords - reservationsTimesLast.length && (
                 <Button
                   data-testid="calendar-cell-show-more"
                   variant="ghost"

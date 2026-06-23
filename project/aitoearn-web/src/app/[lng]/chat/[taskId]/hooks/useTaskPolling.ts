@@ -1,12 +1,14 @@
-import type { TaskDetail, TaskMessage } from '@/api/agent'
+import type { TaskDetail, TaskMessage } from '@/api/ai/ai.types'
 import type { IDisplayMessage } from '@/store/agent'
 /**
  * 任务轮询 Hook
  * 在页面刷新后任务未完成时，通过轮询获取最新状态
  */
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { agentApi, TaskStatus } from '@/api/agent'
+import { agentApi } from '@/api/ai/ai.api'
 
+import { AgentTaskStatus } from '@/api/ai/ai.constants'
+import { useUserStore } from '@/store/user'
 import { convertMessages, isTaskCompleted } from '../utils'
 
 export interface ITaskPollingOptions {
@@ -51,6 +53,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
 
   const [isPolling, setIsPolling] = useState(false)
   const pollingTimerRef = useRef<NodeJS.Timeout | null>(null)
+
+  // 获取 Credits 余额
+  const fetchCreditsBalance = useUserStore(state => state.fetchCreditsBalance)
 
   /** 开始轮询 */
   const startPolling = useCallback(() => {
@@ -115,7 +120,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           const result = await agentApi.getTaskMessages(taskId)
           if (result?.code === 0 && result.data) {
             // 检查任务状态
-            if (result.data.status === TaskStatus.Aborted) {
+            if (result.data.status === AgentTaskStatus.Aborted) {
               // [TaskPolling] Task aborted, stopping polling')
               setIsPolling(false)
               onTaskStatusChange?.('aborted')
@@ -169,6 +174,8 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
             if (isTaskCompleted(mergedMessages)) {
               // [TaskPolling] Task completed, stopping polling')
               setIsPolling(false)
+              // 任务完成时刷新 Credits 余额
+              fetchCreditsBalance()
             }
           }
 
@@ -180,9 +187,9 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
         if (result?.code === 0 && result.data) {
           // 检查任务状态
           if (
-            result.data.status === TaskStatus.Aborted
-            || result.data.status === TaskStatus.Completed
-            || result.data.status === TaskStatus.Error
+            result.data.status === AgentTaskStatus.Aborted
+            || result.data.status === AgentTaskStatus.Completed
+            || result.data.status === AgentTaskStatus.Error
           ) {
             // [TaskPolling] Task aborted, stopping polling')
             setIsPolling(false)
@@ -210,6 +217,8 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
           if (isTaskCompleted(mergedMessages)) {
             // [TaskPolling] Task completed, stopping polling')
             setIsPolling(false)
+            // 任务完成时刷新 Credits 余额
+            fetchCreditsBalance()
           }
         }
       }
@@ -239,6 +248,7 @@ export function useTaskPolling(options: ITaskPollingOptions): ITaskPollingReturn
     isActiveTask,
     pollingInterval,
     onMessagesUpdate,
+    fetchCreditsBalance,
     getCurrentRawMessages,
   ])
 

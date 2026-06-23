@@ -9,7 +9,7 @@ import {
   Logger,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { RedisService } from '@yikart/redis'
+import { ServerRedisService } from '../redis'
 
 export const RATE_LIMIT_KEY = 'rate_limit'
 
@@ -48,7 +48,7 @@ export class RateLimitGuard implements CanActivate {
   private readonly logger = new Logger(RateLimitGuard.name)
   private readonly reflector = new Reflector()
 
-  constructor(private readonly redisService: RedisService) {}
+  constructor(private readonly redisService: ServerRedisService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const rateLimitOptions = this.reflector.getAllAndOverride<RateLimitOptions | undefined>(
@@ -68,24 +68,8 @@ export class RateLimitGuard implements CanActivate {
       ? keyGenerator(request)
       : this.getDefaultKey(request)
 
-    const redisKey = `rate_limit:${key}`
-
     try {
-      // 使用 Lua 脚本原子性地递增计数器并设置过期时间
-      const luaScript = `
-        local count = redis.call("INCR", KEYS[1])
-        if tonumber(count) == 1 then
-          redis.call("EXPIRE", KEYS[1], ARGV[1])
-        end
-        return count
-      `
-
-      const count = (await this.redisService.eval(
-        luaScript,
-        1,
-        redisKey,
-        ttl.toString(),
-      )) as number
+      const count = await this.redisService.incrementRateLimit(key, ttl)
 
       // 设置响应头
       const response = context.switchToHttp().getResponse()

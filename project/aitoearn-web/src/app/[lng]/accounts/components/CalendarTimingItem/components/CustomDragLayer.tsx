@@ -1,9 +1,10 @@
 import type { CSSProperties, FC } from 'react'
 import type { XYCoord } from 'react-dnd'
-import type { PublishRecordItem } from '@/api/plat/types/publish.types'
+import type { PublishRecordItem } from '@/api/platforms/publish.types'
 import { useDragLayer } from 'react-dnd'
 import { createPortal } from 'react-dom'
 import { BoxDragPreview } from './BoxDragPreview'
+import { useDragAutoScroll } from './useDragAutoScroll'
 
 function snapToGrid(x: number, y: number): [number, number] {
   const snappedX = Math.round(x / 32) * 32
@@ -54,19 +55,38 @@ export interface CustomDragLayerProps {
   publishRecord: PublishRecordItem
 }
 
+interface CalendarDragLayerItem {
+  publishRecord: PublishRecordItem
+  dragPreviewWidth?: number
+}
+
+function isCalendarDragItem(value: unknown): value is CalendarDragLayerItem {
+  if (typeof value !== 'object' || value === null || !('publishRecord' in value))
+    return false
+
+  const publishRecord = value.publishRecord
+  return typeof publishRecord === 'object' && publishRecord !== null && 'id' in publishRecord
+}
+
 export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
-  const { itemType, isDragging, item, initialOffset, currentOffset, initialMouseOffset }
+  const { itemType, isDragging, item, initialOffset, currentOffset, clientOffset }
     = useDragLayer(monitor => ({
       item: monitor.getItem(),
       itemType: monitor.getItemType(),
       initialOffset: monitor.getInitialSourceClientOffset(), // 元素左上角位置
-      currentOffset: monitor.getSourceClientOffset(), // 鼠标当前位置
-      initialMouseOffset: monitor.getInitialClientOffset(), // 鼠标开始拖拽时的位置
+      currentOffset: monitor.getSourceClientOffset(),
+      clientOffset: monitor.getClientOffset(),
       isDragging: monitor.isDragging(),
     }))
+  const isActiveDragLayer = isDragging
+    && itemType === 'box'
+    && isCalendarDragItem(item)
+    && item.publishRecord.id === props.publishRecord.id
+
+  useDragAutoScroll(isActiveDragLayer, clientOffset)
 
   // 使用 Portal 将拖拽层渲染到 document.body，避免被父容器限制
-  if (!isDragging) {
+  if (!isActiveDragLayer || !isCalendarDragItem(item)) {
     return null
   }
 
@@ -79,7 +99,7 @@ export const CustomDragLayer: FC<CustomDragLayerProps> = (props) => {
           zIndex: 10001111,
         }}
       >
-        <BoxDragPreview publishRecord={props.publishRecord} />
+        <BoxDragPreview publishRecord={item.publishRecord} width={item.dragPreviewWidth} />
       </div>
     </div>,
     document.body,

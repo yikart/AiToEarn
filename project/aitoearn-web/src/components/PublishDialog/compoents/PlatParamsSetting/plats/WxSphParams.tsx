@@ -24,7 +24,7 @@ import {
 } from '@/components/ui/command'
 import { Label } from '@/components/ui/label'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import CommonTitleInput from '../common/CommonTitleInput'
 
 interface WxSphLocationSearchItem {
@@ -93,13 +93,12 @@ function getSearchErrorCode(error: unknown) {
 const WxSphParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       _ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
       const wxSphOption = pubItem.params.option.wxSph ?? {}

@@ -116,6 +116,10 @@ jobs:
             done
           fi
 
+      - name: Generate GraphQL types
+        if: steps.detect-changes.outputs.has_changes == 'true'
+        run: pnpm --filter aitoearn-task graphql-codegen
+
       - name: 运行 ESLint 检查
         if: steps.detect-changes.outputs.has_changes == 'true'
         run: |

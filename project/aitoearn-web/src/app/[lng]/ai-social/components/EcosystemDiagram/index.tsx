@@ -7,7 +7,7 @@
 
 import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 /** 功能节点类型 */
 type FunctionKey = 'publish' | 'create' | 'manage' | 'analyze' | 'dashboard'
@@ -412,7 +412,7 @@ function FunctionNode({ label, angle, radius, isActive, onClick }: FunctionNodeP
         className={cn(
           'px-5 py-2.5 rounded-full shadow-md border transition-all duration-300',
           isActive
-            ? 'bg-primary border-primary text-primary-foreground scale-110 shadow-lg shadow-primary/30'
+            ? 'bg-gradient-back border-transparent text-gradient-foreground scale-110 shadow-lg shadow-primary/30'
             : 'bg-white dark:bg-background border-border text-foreground hover:scale-105 hover:border-primary/50 hover:shadow-lg',
         )}
       >
@@ -440,7 +440,7 @@ function MobileFunctionNode({
       className={cn(
         'px-4 py-2.5 rounded-full shadow-sm border text-center transition-all duration-300 cursor-pointer',
         isActive
-          ? 'bg-primary border-primary text-primary-foreground shadow-primary/20'
+          ? 'bg-gradient-back border-transparent text-gradient-foreground shadow-primary/20'
           : 'bg-white dark:bg-background border-border text-foreground hover:border-primary/50',
         className,
       )}

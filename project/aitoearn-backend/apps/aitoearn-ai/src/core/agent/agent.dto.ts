@@ -1,5 +1,6 @@
 import { createZodDto, PaginationDtoSchema } from '@yikart/common'
 import { z } from 'zod'
+import { config } from '../../config'
 
 // 文本内容块
 const TextContentBlockSchema = z.object({
@@ -81,21 +82,7 @@ const PromptSchema = z.union([
   z.array(ContentBlockSchema).min(1).max(20),
 ])
 
-// 允许的模型列表
-export const AllowedModelSchema = z.enum([
-  'claude-opus-4-6',
-  'claude-haiku-4-5-20251001-thinking',
-  'claude-opus-4-5-20251101-thinking',
-  'claude-opus-4-5-20251101',
-  'claude-sonnet-4-5-20250929-thinking',
-  'claude-haiku-4-5-20251001',
-  'claude-opus-4-1-20250805',
-  'claude-opus-4-1-20250805-thinking',
-  'claude-sonnet-4-5-20250929',
-  'claude-opus-4-6',
-  'claude-opus-4-6-thinking',
-])
-  .default('claude-opus-4-6')
+export const AllowedModelSchema = z.enum(config.agent.models as [string, ...string[]]).default(config.agent.defaultModel)
 
 // 创建内容生成任务 DTO
 export const CreateContentGenerationTaskSchema = z.object({

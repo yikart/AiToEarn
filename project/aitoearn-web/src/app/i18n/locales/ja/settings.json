@@ -2,10 +2,20 @@
   "title": "設定",
   "tabs": {
     "profile": "プロフィール",
+    "agent": "エージェント",
+    "income": "収入",
+    "balance": "残高",
+    "subscription": "クレジット",
+    "membership": "請求書",
+    "shopifyStores": "Shopify Stores",
     "general": "一般",
-    "agent": "エージェント"
+    "ticket": "チケット",
+    "apiKeys": "API Key",
+    "seedanceCredits": "Seedance専用クレジット"
   },
   "profile": {
+    "totalIncome": "残高",
+    "currentBalance": "現在のクレジット",
     "logout": "ログアウト",
     "edit": "編集",
     "editName": "ニックネームを編集",
@@ -30,7 +40,206 @@
     "zoomOut": "縮小",
     "imageLoading": "画像を読み込み中...",
     "processing": "処理中...",
-    "githubStars": "GitHub スター"
+    "githubStars": "GitHub スター",
+    "viewMembershipBenefits": "メンバー特典を見る",
+    "redeemCodeTitle": "企業メンバーシップ有効化コードを交換",
+    "redeemCodeDescription": "交換に成功すると、企業メンバーシップが有効化され、対応するクレジット特典が付与されます。",
+    "redeemCodePlaceholder": "企業メンバーシップ有効化コードを入力してください",
+    "redeemCodeButton": "今すぐ交換",
+    "redeemCodeRequired": "企業メンバーシップ有効化コードを入力してください",
+    "redeemCodeSuccess": "企業メンバーシップ有効化コードの交換に成功しました",
+    "redeemCodeFailed": "企業メンバーシップ有効化コードの交換に失敗しました",
+    "redeemCodeContactPrefix": "有効化コードをお持ちでないですか？ ",
+    "redeemCodeContactSuffix": " から企業メンバーシップ有効化コードを取得してください。"
+  },
+  "income": {
+    "balance": "広告主残高",
+    "withdrawableBalance": "クリエイター残高",
+    "incomeRecords": "収入履歴",
+    "balanceRecords": "残高履歴",
+    "withdrawRecords": "出金履歴",
+    "incomeId": "収入ID",
+    "withdrawId": "出金ID",
+    "amount": "金額",
+    "type": "タイプ",
+    "statusLabel": "ステータス",
+    "description": "説明",
+    "createTime": "作成日時",
+    "updateTime": "更新日時",
+    "all": "すべて",
+    "incomeDetail": "収入詳細",
+    "noBalanceRecords": "残高履歴がありません",
+    "balanceAfter": "操作後残高",
+    "balanceAfterType": {
+      "advertiser": "操作後の広告主残高",
+      "creator": "操作後のクリエイター残高"
+    },
+    "currencyFilter": "通貨",
+    "typeFilter": "タイプ",
+    "balanceTypes": {
+      "task_creation": "タスク作成",
+      "manual_deduct": "手動差引",
+      "refund": "返金",
+      "recharge": "チャージ",
+      "manual_add": "手動追加",
+      "task_refund": "タスク返金",
+      "task_stopped": "タスク停止",
+      "withdraw": "出金",
+      "withdraw_refund": "出金返金",
+      "cpm_cpe_deposit": "CPM/CPE デポジット",
+      "cpm_cpe_deposit_refund": "CPM/CPE デポジット返金",
+      "task": "タスク収入",
+      "commission": "コミッション",
+      "manual": "手動調整",
+      "balance_transfer_out": "残高振替（出）",
+      "balance_transfer_in": "残高振替（入）",
+      "debt_payment": "未払い金支払い",
+      "sample_budget_deposit": "サンプル予算デポジット",
+      "sample_budget_refund": "サンプル予算返金",
+      "sample_subsidy_payout": "サンプル補助支払い",
+      "sample_subsidy_clawback": "サンプル補助回収",
+      "koc_deposit_deduct": "KOC デポジット差引",
+      "koc_deposit_return": "KOC デポジット返還",
+      "commission_refund": "コミッション返金",
+      "challenge_refund": "チャレンジ達成返金",
+      "task_reward_clawback": "タスク報酬回収",
+      "task_work_deleted_refund": "削除作品の返金"
+    },
+    "types": {
+      "task": "タスク収入",
+      "task_back": "タスク返金",
+      "reward_back": "報酬返金",
+      "task_withdraw": "タスク出金"
+    },
+    "status": {
+      "pending": "出金待ち",
+      "withdrawn": "出金済み"
+    },
+    "noWallet": "ウォレットが追加されていません",
+    "noWalletTip": "まずウォレットタブでウォレットを追加してください",
+    "manageWallets": "ウォレット管理",
+    "addWallet": "ウォレット追加",
+    "withdrawButton": "出金",
+    "withdrawNotice": "出金申請は15営業日以内に処理されます。しばらくお待ちください。ご不明な点がございましたら、",
+    "rechargeButton": "チャージ",
+    "noIncomeRecords": "収入履歴がありません",
+    "noWithdrawRecords": "出金履歴がありません",
+    "withdraw": {
+      "cancel": "キャンセル",
+      "cancelConfirmTitle": "出金キャンセル",
+      "cancelConfirmDesc": "この出金申請をキャンセルしてもよろしいですか？",
+      "type": {
+        "task": "タスク",
+        "reward": "報酬"
+      },
+      "walletAccount": "ウォレット",
+      "adminNote": "備考",
+      "paidAt": "支払日時",
+      "screenshots": "スクリーンショット",
+      "status": {
+        "pending": "保留中",
+        "approved": "承認済み",
+        "paid": "支払済み",
+        "failed": "失敗",
+        "rejected": "拒否"
+      }
+    },
+    "withdrawStatus": {
+      "wait": "処理中",
+      "success": "成功",
+      "fail": "失敗",
+      "task_withdraw": "タスク出金",
+      "unknown": "不明"
+    },
+    "messages": {
+      "cancelWithdrawSuccess": "出金がキャンセルされました",
+      "cancelWithdrawFailed": "出金のキャンセルに失敗しました",
+      "getIncomeRecordsFailed": "収入履歴の取得に失敗しました",
+      "getBalanceRecordsFailed": "残高履歴の取得に失敗しました",
+      "getIncomeDetailFailed": "収入詳細の取得に失敗しました",
+      "getWithdrawRecordsFailed": "出金履歴の取得に失敗しました",
+      "noIncomeRecords": "収入履歴がありません",
+      "noWithdrawRecords": "出金履歴がありません",
+      "noIncomeDetail": "収入詳細がありません",
+      "loading": "読み込み中...",
+      "totalRecords": "合計 {{total}} 件"
+    },
+    "balanceTooltip": "広告主残高は主にタスクの公開、クリエイター報酬の支払い、タスク関連の差し引きに使用されます。",
+    "creatorBalanceTooltip": "タスクを行うことがクリエイター残高を獲得する主な方法です。クリエイター残高は出金できます。",
+    "transfer": {
+      "title": "残高振替",
+      "amount": "振替金額",
+      "amountPlaceholder": "振替金額を入力",
+      "availableBalance": "現在振替可能：{{amount}}",
+      "transferIn": "振替",
+      "submit": "振替を確認",
+      "to": "振替先",
+      "success": "振替しました",
+      "failed": "振替に失敗しました",
+      "amountInvalid": "0 より大きい振替金額を入力してください",
+      "amountExceedsBalance": "振替金額は利用可能残高を超えられません",
+      "balanceType": {
+        "advertiser": "広告主残高",
+        "creator": "クリエイター残高"
+      },
+      "balanceToWithdrawable": "広告主残高からクリエイター残高へ",
+      "withdrawableToBalance": "クリエイター残高から広告主残高へ"
+    }
+  },
+  "subscription": {
+    "currentPlan": "現在のプラン",
+    "upgrade": "チャージ",
+    "manage": "サブスクリプションを管理",
+    "balance": "クレジット",
+    "usageRecords": "利用履歴",
+    "detail": "詳細",
+    "date": "日付",
+    "amount": "金額",
+    "amountChange": "変動金額",
+    "noRecords": "利用履歴がありません",
+    "loading": "読み込み中...",
+    "loadMore": "もっと見る",
+    "browserPluginAgent": "ブラウザプラグインエージェント",
+    "types": {
+      "register_bonus": "登録ボーナス",
+      "purchase": "購入",
+      "vip_monthly": "VIP月額",
+      "ai_service": "AIサービス",
+      "video_style_transfer": "動画スタイル変換",
+      "publish": "公開",
+      "expired": "期限切れ",
+      "manual": "手動調整",
+      "fan_check_in": "ファンチェックイン",
+      "fan_lottery": "ファン抽選",
+      "twitter_api": "X/Twitter API",
+      "note_comment_search": "ノートコメント検索",
+      "drama_recap": "ドラマ要約",
+      "refund": "返金"
+    },
+    "filters": {
+      "direction": "収支方向",
+      "type": "変動タイプ",
+      "source": "利用元",
+      "allDirections": "すべての収支",
+      "allTypes": "すべてのタイプ",
+      "allSources": "すべての利用元",
+      "reset": "リセット"
+    },
+    "directions": {
+      "income": "収入",
+      "expense": "支出"
+    },
+    "sources": {
+      "ai_chat": "AI チャット",
+      "plugin": "ブラウザプラグイン",
+      "ai_image": "AI 画像",
+      "ai_video": "AI 動画",
+      "ai_agent": "AI Agent",
+      "ai_draft_generation": "AI 下書き生成",
+      "ai_material_adaptation": "AI 素材アレンジ",
+      "ai_aideo": "AI Aideo",
+      "ai_video_edit": "AI 動画編集"
+    }
   },
   "general": {
     "language": "サイトの言語",
@@ -39,11 +248,62 @@
     "themeDesc": "お好みのテーマモードを選択してください",
     "themeLight": "ライト",
     "themeDark": "ダーク",
-    "themeSystem": "システム",
-    "notifications": "メール通知",
-    "notificationsDesc": "メール通知の設定を管理します",
-    "editNotifications": "通知設定を編集",
-    "changingLanguage": "Switching..."
+    "themeSystem": "システム"
+  },
+  "ticket": {
+    "title": "チケット",
+    "description": "運営チームへ送信したタスクチケットを確認・追跡します。",
+    "loading": "チケットを読み込み中...",
+    "loadFailed": "チケットの読み込みに失敗しました",
+    "refresh": "更新",
+    "emptyTitle": "チケット履歴はありません",
+    "emptyDescription": "現在、チケットは承認済みタスクの詳細ページから送信できます。送信後は、関連タスクで処理状況を確認できます。",
+    "goToMyTasks": "マイタスクへ",
+    "viewTask": "タスクを見る",
+    "createdAt": "送信日時",
+    "updatedAt": "更新日時",
+    "paginationTotal": "{{total}} 件中 {{start}}-{{end}} 件",
+    "status": {
+      "open": "未対応",
+      "in_progress": "対応中",
+      "resolved": "解決済み",
+      "closed": "終了"
+    },
+    "viewTimeline": "対応履歴",
+    "timeline": {
+      "title": "対応履歴",
+      "untitled": "無題のチケット",
+      "loading": "対応履歴を読み込み中...",
+      "loadFailed": "対応履歴の読み込みに失敗しました",
+      "empty": "対応履歴はまだありません",
+      "back": "チケットに戻る",
+      "description": "このチケットに対する運営の対応状況とメモを確認します。",
+      "activityType": {
+        "create": "チケット作成済み",
+        "assign": "チケット割り当て済み",
+        "status_change": "ステータス変更",
+        "comment": "コメント追加",
+        "link_takeover_action": "引き継ぎ操作を関連付け"
+      }
+    }
+  },
+  "shopifyStores": {
+    "title": "Shopify Stores",
+    "description": "View the Shopify stores connected to this account and their billing status.",
+    "refresh": "Refresh",
+    "active": "Connected",
+    "inactive": "Disabled",
+    "platformFeeRate": "Platform fee rate",
+    "boundAt": "Connected at",
+    "emptyTitle": "No Shopify store connected",
+    "emptyDesc": "Install the AiToEarn Shopify App and the store will sync here automatically.",
+    "installApp": "Install AiToEarn App",
+    "billingStatus": {
+      "none": "Billing not enabled",
+      "pending": "Pending",
+      "active": "Billing active",
+      "cancelled": "Billing cancelled"
+    }
   },
   "agent": {
     "title": "エージェント",
@@ -57,5 +317,36 @@
     "saving": "保存中...",
     "saveSuccess": "保存しました",
     "saveFailed": "保存に失敗しました"
+  },
+  "apiKeys": {
+    "title": "API Key 管理",
+    "description": "プログラムによるアクセス用の API Key を作成・管理",
+    "create": "作成",
+    "name": "名前",
+    "namePlaceholder": "API Key の名前を入力",
+    "nameRequired": "名前を入力してください",
+    "createdAt": "作成日",
+    "lastUsedAt": "最終使用",
+    "neverUsed": "未使用",
+    "deleteConfirmTitle": "API Key を削除",
+    "deleteConfirmDesc": "この API Key を削除してもよろしいですか？この操作は元に戻せません。",
+    "createSuccess": "API Key を作成しました",
+    "deleteSuccess": "API Key を削除しました",
+    "copySuccess": "クリップボードにコピーしました",
+    "copyTip": "API Key を今すぐコピーして保存してください。再度表示されることはありません。",
+    "dismiss": "閉じる",
+    "empty": "API Key がありません",
+    "emptyDesc": "API Key を作成して始めましょう",
+    "cancel": "キャンセル"
+  },
+  "seedanceCredits": {
+    "balance": "Seedance専用クレジット",
+    "availableBalance": "利用可能なSeedanceクレジット",
+    "availableBalanceTip": "利用可能クレジット = Seedance専用クレジット + 通常モデルの推定消費を差し引いた通常クレジットで、seedance-betaモデルに利用できます。",
+    "refundNotice": "Seedance専用クレジットはAiToEarn上のseedance-betaモデル専用です。AiToEarn側の原因で対象モデルを利用できない場合、未使用分は全額返金できます。",
+    "faceUploadTip": "鮮明な実在人物の正面顔は通過率が低くなる場合があります。アップロード前に目など重要部位を隠す／ぼかすと成功率を大きく改善できます。",
+    "recharge": "チャージ",
+    "use": "使いに行く",
+    "info": "Seedance専用クレジットの説明を表示"
   }
 }

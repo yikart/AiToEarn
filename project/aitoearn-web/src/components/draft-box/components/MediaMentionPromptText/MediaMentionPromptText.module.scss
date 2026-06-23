@@ -1,0 +1,61 @@
+.root {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.chip {
+  display: inline-flex;
+  max-width: min(220px, calc(100% - 4px));
+  box-sizing: border-box;
+  align-items: center;
+  gap: 4px;
+  margin: 0 2px;
+  vertical-align: middle;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  background: var(--muted);
+  padding: 0.08em 0.36em 0.08em 0.12em;
+  color: var(--foreground);
+  line-height: 1.25;
+}
+
+.chipCompact {
+  max-width: min(190px, calc(100% - 4px));
+}
+
+.thumb {
+  position: relative;
+  display: inline-flex;
+  height: 1.45em;
+  width: 1.45em;
+  flex: 0 0 1.45em;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 5px;
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+
+.audioThumb {
+  background: url('/assets/draft-box/video-back.svg') center / cover no-repeat;
+  color: var(--gradient-foreground);
+}
+
+.thumbIcon {
+  height: 1em;
+  width: 1em;
+}
+
+.name {
+  min-width: 0;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+.rootCompact .name {
+  max-width: 150px;
+}

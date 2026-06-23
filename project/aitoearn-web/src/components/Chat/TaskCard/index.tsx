@@ -20,7 +20,8 @@ import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn, formatRelativeTime } from '@/lib/utils'
+import { cn } from '@/utils/className'
+import { formatRelativeTime } from '@/utils/format'
 
 export interface ITaskCardProps {
   /** 任务ID */

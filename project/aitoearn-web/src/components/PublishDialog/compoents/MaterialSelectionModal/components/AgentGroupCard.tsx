@@ -1,6 +1,6 @@
 /**
- * AgentGroupCard - Agent 素材分组卡片
- * 用于素材选择器中展示的虚拟 Agent 分组
+ * AgentGroupCard - AI 生成素材分组卡片
+ * 用于素材选择器中展示的虚拟 AI 生成素材分组
  * 特点：渐变背景 + Bot 图标
  */
 
@@ -10,7 +10,7 @@ import { motion } from 'framer-motion'
 import { Bot, Sparkles } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface AgentGroupCardProps {
   /** 点击回调 */

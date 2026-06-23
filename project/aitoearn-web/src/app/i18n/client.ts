@@ -6,13 +6,23 @@ import { getCookie, setCookie } from 'cookies-next'
 import i18next from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import resourcesToBackend from 'i18next-resources-to-backend'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { initReactI18next, useTranslation } from 'react-i18next'
 
 import { useGetClientLng } from '@/hooks/useSystem'
 import { cookieName, getOptions, languages } from './settings'
 
 const runsOnServerSide = typeof window === 'undefined'
+
+function getClientPathLanguage() {
+  if (runsOnServerSide)
+    return undefined
+
+  const pathLng = window.location.pathname.split('/')[1]
+  return pathLng && languages.includes(pathLng) ? pathLng : undefined
+}
+
+const initialClientLng = getClientPathLanguage()
 
 // 全局标志：是否禁用语言自动切换（用于图片生成等场景）
 let disableLanguageSwitch = false
@@ -36,8 +46,8 @@ i18next
   )
   // .use(LocizeBackend) // locize backend could be used on client side, but prefer to keep it in sync with server side
   .init({
-    ...getOptions(undefined), // 不传递 lng 参数，让 i18next 自动检测
-    lng: undefined, // let detect the language on client side
+    ...getOptions(initialClientLng),
+    lng: initialClientLng,
     detection: {
       order: ['path', 'htmlTag', 'cookie', 'navigator'],
     },
@@ -52,6 +62,13 @@ export function useTransClient<Ns extends string | undefined = undefined>(
   const lng = useGetClientLng()
   if (typeof lng !== 'string')
     throw new Error('useT is only available inside /app/[lng]')
+
+  const nsKey = Array.isArray(ns) ? ns.join('|') : ns ?? ''
+  const stableNs = useMemo(() => ns, [nsKey])
+  const translationOptions: UseTranslationOptions<FlatNamespace> = useMemo(() => ({
+    ...options,
+    lng,
+  }), [lng, options])
 
   if (runsOnServerSide && i18next.resolvedLanguage !== lng) {
     i18next.changeLanguage(lng)
@@ -79,12 +96,12 @@ export function useTransClient<Ns extends string | undefined = undefined>(
       if (i18next.resolvedLanguage !== lng) {
         i18next.changeLanguage(lng).then(() => {
           // 语言切换完成后，强制重新渲染
-          setActiveLng(lng)
+          setActiveLng(currentLng => currentLng === lng ? currentLng : lng)
         })
       }
       else {
         // 即使语言相同，也确保状态同步
-        setActiveLng(lng)
+        setActiveLng(currentLng => currentLng === lng ? currentLng : lng)
       }
     }, [lng])
 
@@ -96,7 +113,7 @@ export function useTransClient<Ns extends string | undefined = undefined>(
     }, [lng, i18nextCookie])
   }
   // 强制类型断言以匹配 react-i18next 的签名
-  return useTranslation(ns as Ns | Ns[] | undefined, options) as UseTranslationResponse<
+  return useTranslation(stableNs as Ns | Ns[] | undefined, translationOptions) as UseTranslationResponse<
     string,
     FlatNamespace
   >

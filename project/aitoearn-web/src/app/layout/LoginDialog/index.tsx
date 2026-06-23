@@ -1,4 +1,4 @@
-/**
+﻿/**
  * LoginDialog - 全局登录弹框组件
  * 在当前页面弹出登录表单，避免跳转到独立登录页
  */
@@ -17,18 +17,15 @@ import logo from '@/assets/images/logo.png'
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog'
 
 import { useIsMobile } from '@/hooks/useIsMobile'
-import { cn } from '@/lib/utils'
-import { useLoginDialogStore } from './store'
+import { cn } from '@/utils/className'
+import { useLoginDialogStore } from '@/store/login-dialog'
 
-export default function LoginDialog({ manualLoginDisabled = false }: { manualLoginDisabled?: boolean }) {
-  const { visible, storeManualLoginDisabled } = useLoginDialogStore(
-    useShallow(state => ({
-      visible: state.visible,
-      storeManualLoginDisabled: state.manualLoginDisabled,
-    })),
+export default function LoginDialog() {
+  const { visible } = useLoginDialogStore(
+    useShallow(state => ({ visible: state.visible })),
   )
 
-  if (!visible || manualLoginDisabled || storeManualLoginDisabled)
+  if (!visible)
     return null
 
   return <LoginDialogContent />
@@ -77,7 +74,7 @@ const LoginDialogContent = memo(() => {
       >
         <DialogTitle className="sr-only">{t('welcomeBack')}</DialogTitle>
 
-        {/* Logo + 副标题 */}
+        {/* Logo + 标题 */}
         <div className="flex flex-col items-center pb-2 pt-2">
           <Image
             src={logo}
@@ -86,7 +83,8 @@ const LoginDialogContent = memo(() => {
             height={56}
             className="mb-4 drop-shadow-md"
           />
-          <p className="text-sm text-muted-foreground">{t('loginSubtitle')}</p>
+          <h2 className="text-xl font-semibold text-foreground">{t('welcomeBack')}</h2>
+          <p className="mt-1.5 text-sm text-muted-foreground">{t('loginSubtitle')}</p>
         </div>
 
         {/* 登录表单 */}

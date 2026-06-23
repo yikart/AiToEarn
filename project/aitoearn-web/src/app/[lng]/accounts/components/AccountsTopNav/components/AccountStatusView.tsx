@@ -1,4 +1,4 @@
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import { CheckCircleOutlined, WarningOutlined } from '@ant-design/icons'
 import { AccountStatus } from '@/app/config/accountConfig'
 import { useTransClient } from '@/app/i18n/client'

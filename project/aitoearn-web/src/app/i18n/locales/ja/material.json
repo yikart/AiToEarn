@@ -5,13 +5,14 @@
     "keywords": "素材, 画像ライブラリ, 動画ライブラリ, メディアグループ, クラウド画像, クラウド動画, リソースストレージ, 画像ストレージ, 動画ストレージ"
   },
   "agentAssets": {
-    "title": "Agent生成素材",
-    "description": "AI Agentが自動生成した画像と動画",
+    "title": "AI生成素材",
+    "description": "AIが自動生成した画像と動画",
     "shortDescription": "AI生成の画像と動画",
-    "keywords": "AI素材, Agent素材, AI生成画像, AI生成動画, スマート素材",
-    "noAssets": "Agent素材がありません",
-    "noAssetsDesc": "AI Agentとの会話で生成された素材がここに表示されます",
-    "goToChat": "会話を開始"
+    "keywords": "AI素材, AI生成素材, AI生成画像, AI生成動画, スマート素材",
+    "noAssets": "AI生成素材がありません",
+    "noAssetsDesc": "AI生成素材がここに表示されます",
+    "goToChat": "会話を開始",
+    "previewAsset": "素材をプレビュー"
   },
   "mediaManagement": {
     "title": "メディア管理",
@@ -105,7 +106,6 @@
     "title": "AIツール",
     "backToAlbum": "アルバムに戻る",
     "textToImage": "テキストから画像",
-    "imageToImage": "画像から画像",
     "fireflyCard": "Fireflyカード",
     "videoGeneration": "動画生成",
     "prompt": "プロンプト",

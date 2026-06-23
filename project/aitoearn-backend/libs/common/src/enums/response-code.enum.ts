@@ -6,15 +6,23 @@ export enum ResponseCode {
   // ========================================
 
   // 10000-10099: common（公共库）
-  MailSendFail = 10001,
   ValidationFailed = 10002,
-  SmsSendFail = 10004,
   DevOnlyEndpoint = 10005,
 
   // 10100-10199: s3/aws-s3/gcs
   S3DownloadFileFailed = 10100,
   S3UploadFailed = 10101,
   InvalidGcsUri = 10102,
+
+  // 10150-10199: config-editor（配置编辑）
+  ConfigEditorUnsupportedFormat = 10150,
+  ConfigEditorParseFailed = 10151,
+  ConfigEditorValidationFailed = 10152,
+  ConfigEditorReadFailed = 10153,
+  ConfigEditorWriteFailed = 10154,
+  ConfigEditorConfigPathMissing = 10155,
+  ConfigEditorPm2Unavailable = 10156,
+  ConfigEditorRestartFailed = 10157,
 
   // ========================================
   // 12000-12999: aitoearn-server（主服务）
@@ -24,14 +32,6 @@ export enum ResponseCode {
   UserNotFound = 12000,
   UserStorageExceeded = 12002,
   UserStatusError = 12003,
-  UserPasswordError = 12004,
-  UserLoginCodeError = 12005,
-  UserAlreadyExists = 12007,
-  UserBanned = 12008,
-  UserMembershipExpired = 12009,
-  GetUserTokenFailed = 12010,
-  UserAlreadyHasLibrary = 12011,
-  UserNoLibrary = 12012,
 
   // 12300-12399: ai（AI 模块）
   InvalidModel = 12300,
@@ -44,14 +44,6 @@ export enum ResponseCode {
   VideoUploadVidNotFound = 12307,
   VideoUploadFailed = 12308,
   DraftGenerationMemoryNotFound = 12309,
-
-  // 12400-12499: notification（通知）
-  NotificationNotFound = 12400,
-
-  // 12500-12599: app-release（应用发布）
-  AppReleaseNotFound = 12500,
-  AppReleaseAlreadyExists = 12501,
-  StatusPageIncidentNotFound = 12510,
 
   // 12600-12699: account（社交账号）
   AccountNotFound = 12600,
@@ -82,6 +74,13 @@ export enum ResponseCode {
   MaterialGroupTypeError = 12901,
   MediaGroupTypeNotSupported = 12902,
   GroupInfoNotFound = 12903,
+
+  // ========================================
+  // 13000-13999: aitoearn-admin-server（管理后台）
+  // ========================================
+
+  // 13200-13299: admin-operation（管理后台操作）
+  AdminOperationPasswordError = 13200,
 
   // ========================================
   // 15000-15999: aitoearn-channel（渠道服务）
@@ -128,18 +127,70 @@ export enum ResponseCode {
   // 作品不属于该账号
   WorkNotBelongToAccount = 15037,
   PublishResourceUnavailable = 15038,
+  ChannelAuthSessionInvalid = 15039,
+  ChannelAuthPlatformMismatch = 15040,
+  ChannelAuthSessionCompleted = 15041,
+  ChannelAuthCsrfInvalid = 15042,
+  ChannelAuthSelectableAccountsNotFound = 15043,
+  ChannelAuthCodeMissing = 15045,
+  ChannelAuthRefreshTokenMissing = 15046,
+  ChannelAuthPlatformUidMissing = 15047,
+  ChannelAuthAccountAccessRevoked = 15048,
+  ChannelAuthCodeOrStateMissing = 15049,
+  PublishFlowNotFound = 15050,
+  ChannelPublishValidationFailed = 15051,
+  ChannelPublishDuplicateItem = 15052,
+  ChannelPublishQueueRemoveFailed = 15053,
+  ChannelPublishPlatformCancelFailed = 15054,
+  ChannelPublishCancelNotSupported = 15055,
+  ChannelPublishQueueFailed = 15056,
+  ChannelPublishTimeUpdateNotAllowed = 15057,
+  ChannelPublishNowNotAllowed = 15058,
+  ChannelPublishUpdateNotAllowed = 15059,
+  ChannelPublishPlatformWorkIdMissing = 15060,
+  ChannelPublishUpdateNotSupported = 15061,
+  ChannelPublishPlatformNotSupported = 15062,
+  ChannelPublishPlatformStatusFailed = 15063,
+  ChannelWebhookNotSupported = 15064,
+  ChannelWebhookChallengeNotSupported = 15065,
+  ChannelWebhookInvalidSignature = 15066,
+  ChannelWebhookInvalidVerifyToken = 15067,
+  ChannelWebhookChallengeCodeMissing = 15068,
+  ChannelWebhookPublishFailed = 15069,
+  ChannelPlatformApiFailed = 15070,
+  ChannelPlatformRateLimited = 15071,
+  ChannelPlatformResponseInvalid = 15072,
+  ChannelPlatformMediaUnsupported = 15073,
+  ChannelPlatformMediaProcessingFailed = 15074,
+  ChannelPlatformMediaProcessingTimeout = 15075,
+  ChannelPlatformAccountMissing = 15076,
+  ChannelPlatformPublishOptionMissing = 15077,
+  ChannelPlatformPermissionMissing = 15078,
+  ChannelPlatformWorkNotFound = 15079,
+  ChannelPlatformOperationNotSupported = 15080,
+  ChannelAccountCreateNotSupported = 15081,
+  ChannelAccountAlreadyConnectedToAnotherUser = 15082,
+  ChannelAuthSelectionRequired = 15083,
+  ChannelAuthSelectedAccountUnavailable = 15084,
+  ChannelOAuthIdentityAlreadyConnectedToAnotherUser = 15085,
+  ChannelOAuthUserAlreadyConnectedToAnotherIdentity = 15086,
+  ChannelPublishMixedRelayAndLocalAccounts = 15087,
+  ChannelPaginationModeNotSupported = 15088,
+  ChannelPaginationLimitExceeded = 15089,
+  ChannelPaginationPageSizeExceeded = 15090,
+  ChannelPaginationDirectionNotSupported = 15091,
+  ChannelAccountCreateRequiredFieldMissing = 15092,
+  ChannelPublishPermalinkMissing = 15093,
+  ChannelPlatformServiceUnavailable = 15094,
+  ChannelPublishRetryNotAllowed = 15095,
 
   // 15100-15199: short-link（短链接）
   ShortLinkNotFound = 15100,
   ShortLinkExpired = 15101,
 
-  // 16000-16099: work validation（作品校验）
-  WorkAlreadyDeleted = 16021,
-  WorkDataIdNotFound = 16023,
-  WorkLinkInfoNotFound = 16025,
-  WorkDetailNotFound = 16026,
-  AccountAuthRequired = 16037,
-  MaterialGroupPlatformMismatch = 16052,
+  // 16000-16099: channel/work（作品辅助）
+  WorkDetailNotFound = 16026, // 作品详情未找到
+  AccountAuthRequired = 16037, // 该平台需要先授权账号
 
   // 18100-18199: agent（代理服务）
   AgentTaskNotFound = 18100,
@@ -152,14 +203,9 @@ export enum ResponseCode {
   AgentTaskTimeout = 18107,
   AgentTaskNotRunning = 18108,
   AgentSessionRecoveryFailed = 18109,
-  AgentAnalysisNotFound = 18110,
-  AgentWeekSummaryNotFound = 18111,
 
   // 18300-18399: place-draft（地点草稿）
   PlaceDraftNotFound = 18300,
-
-  // 18400-18499: tools（工具模块）
-  QrCodeArtImageNotFound = 18400,
 
   // ========================================
   // 19000-19099: api-key / relay

@@ -439,20 +439,13 @@
     ],
     "manage": "Content Management",
     "manageDesc": "Auto likes, bookmarks, comments",
-    "manageDetails": [
-      "Automatically like, bookmark, and comment on specific content"
-    ],
+    "manageDetails": ["Automatically like, bookmark, and comment on specific content"],
     "analyze": "Content Analysis",
     "analyzeDesc": "Global trends & creative inspiration",
-    "analyzeDetails": [
-      "Global Trending Topics",
-      "Creative Inspiration"
-    ],
+    "analyzeDetails": ["Global Trending Topics", "Creative Inspiration"],
     "dashboard": "Data Dashboard",
     "dashboardDesc": "Unified data analytics across platforms",
-    "dashboardDetails": [
-      "Unified data analytics across all platforms"
-    ],
+    "dashboardDetails": ["Unified data analytics across all platforms"],
     "trade": "Content Trading",
     "sell": "Sell",
     "buy": "Buy",

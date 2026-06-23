@@ -11,7 +11,8 @@ import { memo, useCallback, useMemo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
-import { cn } from '@/lib/utils'
+import { useGetClientLng } from '@/hooks/useSystem'
+import { cn } from '@/utils/className'
 
 interface CalendarDay {
   date: dayjs.Dayjs
@@ -34,7 +35,8 @@ const DatePicker = memo(({
   minDate,
   className,
 }: DatePickerProps) => {
-  const { t, i18n } = useTransClient('common')
+  const { t } = useTransClient('common')
+  const lng = useGetClientLng()
   const [open, setOpen] = useState(false)
   const [currentMonth, setCurrentMonth] = useState(() =>
     value ? dayjs(value) : dayjs(),
@@ -45,10 +47,10 @@ const DatePicker = memo(({
   const weekDays = useMemo(() => {
     const days: string[] = []
     for (let i = 0; i < 7; i++) {
-      days.push(dayjs().day(i).locale(i18n.language).format('dd'))
+      days.push(dayjs().day(i).locale(lng).format('dd'))
     }
     return days
-  }, [i18n.language])
+  }, [lng])
 
   const calendarDays = useMemo((): CalendarDay[] => {
     const days: CalendarDay[] = []
@@ -134,7 +136,7 @@ const DatePicker = memo(({
               <ChevronLeft className="size-4" />
             </Button>
             <span className="text-sm font-medium">
-              {currentMonth.locale(i18n.language).format('YYYY MMMM')}
+              {currentMonth.locale(lng).format('YYYY MMMM')}
             </span>
             <Button
               variant="ghost"
@@ -173,7 +175,7 @@ const DatePicker = memo(({
                       'size-9 rounded-full flex items-center justify-center text-sm transition-colors cursor-pointer',
                       !item.isCurrentMonth && 'opacity-40',
                       item.isCurrentMonth && !isSelected && !isDisabled && 'hover:bg-accent',
-                      isSelected && 'bg-primary text-primary-foreground hover:bg-primary/90',
+                      isSelected && 'bg-gradient-back text-gradient-foreground shadow-sm shadow-primary/20 hover:shadow-md hover:shadow-primary/25',
                       isToday && !isSelected && 'border border-primary',
                       isDisabled && 'opacity-25 cursor-not-allowed',
                     )}

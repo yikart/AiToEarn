@@ -10,11 +10,11 @@
 
 import { Loader2, Plus } from 'lucide-react'
 import { useCallback, useState } from 'react'
-import { createAccountGroupApi } from '@/api/account'
+import { createAccountGroupApi } from '@/api/accounts/account.api'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { toast } from '@/lib/toast'
+import { toast } from '@/utils/ui/toast'
 
 interface CreateSpaceSectionProps {
   onSpaceCreated: () => void

@@ -5,17 +5,16 @@ import type {
   IChangeParams,
   IPubParmasTextareaProps,
 } from '@/components/PublishDialog/compoents/PubParmasTextarea'
-import type { IImgFile, PubItem } from '@/components/PublishDialog/publishDialog.type'
+import type { PubItem } from '@/components/PublishDialog/publishDialog.type'
 import { Info } from 'lucide-react'
 import { useCallback, useMemo } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { PubParamsVerifyInfo } from '@/components/PublishDialog/hooks/usePubParamsVerify'
 import { usePublishDialog } from '@/components/PublishDialog/usePublishDialog'
-import { parseTopicString } from '@/utils'
+import { parseTopicString } from '@/utils/common'
 
 export default function usePlatParamsCommon(
   pubItem: PubItem,
-  onImageToImage?: (imageFile: IImgFile) => void,
   isMobile?: boolean,
 ) {
   const { setOnePubParams, errParamsMap, pubListChoosed, warningParamsMap } = usePublishDialog(
@@ -61,7 +60,6 @@ export default function usePlatParamsCommon(
       desValue: pubItem.params.des,
       imageFileListValue: pubItem.params.images,
       videoFileValue: pubItem.params.video,
-      onImageToImage,
       isMobile,
       beforeExtend: (
         <>
@@ -78,7 +76,7 @@ export default function usePlatParamsCommon(
       ),
     }
     return props
-  }, [currErrItem, onChange, pubItem, currWarningItem, onImageToImage, isMobile])
+  }, [currErrItem, onChange, pubItem, currWarningItem, isMobile])
 
   return { pubParmasTextareaCommonParams, setOnePubParams }
 }

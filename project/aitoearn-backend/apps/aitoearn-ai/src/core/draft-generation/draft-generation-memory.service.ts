@@ -147,7 +147,7 @@ Rules:
 - Each item must be one short stable preference.
 - Use the language that best matches the history samples or the user's usual language.
 - Keep only preferences repeated across history.
-- Do not include one-off campaign details, exact product names, or temporary topics.
+- Do not include one-off promotion details, exact product names, or temporary topics.
 
 History samples:
 ${JSON.stringify(samples, null, 2)}`

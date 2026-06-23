@@ -1,5 +1,5 @@
 /**
- * shared/hooks - 共享 hooks 导出
+ * shared/hooks - shared hook exports
  */
 
 export { useGitHubStars } from './useGitHubStars'

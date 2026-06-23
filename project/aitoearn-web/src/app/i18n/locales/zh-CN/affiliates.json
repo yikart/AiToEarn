@@ -1,0 +1,98 @@
+{
+  "title": "加入 AiToEarn 推广计划",
+  "seo": {
+    "title": "推广计划 - 赚取30%循环佣金",
+    "description": "加入AiToEarn推广计划，每推荐一位付费用户即可获得12个月内30%返佣。分享专属推广链接，实时追踪收益，用AI内容工具建立被动收入。",
+    "keywords": "推广计划, 推荐返佣, 网赚, 被动收入, 30%佣金, 推荐计划, 内容创作者推广, AiToEarn推广"
+  },
+  "describe": "推荐付费用户注册 aitoearn.ai，即可获得其前 12 个月内前 12 次付款的 30% 返佣，总计 $716.4！",
+  "keywords": "AiToEarn 推广, 联盟营销, 赚钱, 分享赚钱, 推广赚钱",
+  "subtitle": "推荐付费用户注册 aitoearn.ai，即可获得其前 12 个月内前 12 次付款的 <strong>30% 返佣</strong>（$199×12×30% = $716.4）！",
+  "productIntro": {
+    "badge": "Github 10k+ Star 开源项目",
+    "headline": "自动化 AI 工作流引擎",
+    "features": {
+      "oneClick": {
+        "title": "一键任务执行",
+        "description": "描述你的需求，Agent 智能编排最优 AI 工具组合"
+      },
+      "multiModal": {
+        "title": "多模态集成",
+        "description": "无缝结合文本生成、图像创作、视频处理和翻译"
+      },
+      "zeroCurve": {
+        "title": "零学习曲线",
+        "description": "从概念到成品 - 无需手动切换工具，效率提升 10 倍"
+      }
+    },
+    "sections": {
+      "models": {
+        "title": "🎯 顶级 AI 模型",
+        "items": [
+          "<strong>旗舰级 LLM：</strong>Claude Opus 4.5、GPT-5.1、Gemini 3.0 - 最新前沿模型",
+          "<strong>专业视频工具：</strong>Sora-2、Veo-3.1 提供先进的视频生成和编辑",
+          "<strong>高质量图像创作：</strong>Nano Banana Pro、GPT-Image 打造专业级视觉效果"
+        ]
+      },
+      "distribution": {
+        "title": "📱 全渠道分发",
+        "items": [
+          "<strong>社交媒体矩阵：</strong>Instagram、TikTok、YouTube、B站、抖音等 20+ 平台",
+          "<strong>智能内容适配：</strong>自动优化格式以适应各平台最佳表现",
+          "<strong>批量管理：</strong>多账号处理，一键发布"
+        ]
+      },
+      "processing": {
+        "title": "⚡ 专业视频处理",
+        "items": [
+          "<strong>AI 驱动剪辑：</strong>自动识别精彩片段，制作引人入胜的短视频内容",
+          "<strong>多语言配音：</strong>实时翻译，自然流畅的旁白",
+          "<strong>风格转换：</strong>即时改变视频风格，打造个性化视觉体验"
+        ]
+      },
+      "revolution": {
+        "title": "🌟 内容创作革命",
+        "description": "将内容创作从手工劳动转变为智能指导。无论你是创作者、营销人员还是企业 - 用 Aitoearn Agent 释放无限创意潜能。"
+      }
+    }
+  },
+  "totalEarnings": "累计收益",
+  "pending": "待结算",
+  "pendingTooltip": "您的待结算收入会在 {{date}} 结算到您的收入，",
+  "viewIncome": "点击查看收入",
+  "settled": "已结算",
+  "referralLink": {
+    "title": "你的推广链接",
+    "copy": "复制",
+    "copied": "已复制！",
+    "copySuccess": "推广链接已复制！",
+    "copyError": "复制失败",
+    "description": "分享此链接给你的朋友，即可获得他们前 12 次付款的 30% 返佣！"
+  },
+  "goToPublish": "前往发布推广 AiToEarn",
+  "oneClickPromotion": {
+    "button": "一键完成推广 AiToEarn 赚 {{amount}}",
+    "description": "AI 自动制作带有你邀请链接的推广视频，并发布到你的所有频道"
+  },
+  "stats": {
+    "totalReferrals": "总推荐人数",
+    "paidReferrals": "付费用户数",
+    "conversionRate": "转化率"
+  },
+  "commissions": {
+    "title": "月度返佣明细",
+    "settled": "已结算",
+    "pending": "待结算",
+    "noData": "暂无返佣记录。开始分享你的推广链接吧！"
+  },
+  "howItWorks": {
+    "title": "工作原理",
+    "step1": "分享你的专属推广链接给朋友和联系人",
+    "step2": "当他们注册并完成付款时，你将获得 30% 返佣",
+    "step3": "在 12 个月内，可获得他们前 12 次付款的返佣",
+    "step4": "返佣每月结算，可提现到你的钱包"
+  },
+  "loading": {
+    "failed": "加载数据失败"
+  }
+}

@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
-import { HelpersModule } from '@yikart/helpers'
+import { config } from '../../config'
 import { ImageModule } from '../ai/image'
+import { RelayMediaModule } from '../ai/relay-media'
 import { VideoModule } from '../ai/video'
 import { DraftGenerationMemoryScheduler } from './draft-generation-memory.scheduler'
 import { DraftGenerationMemoryService } from './draft-generation-memory.service'
@@ -11,9 +12,9 @@ import { DraftGenerationService } from './draft-generation.service'
 
 @Module({
   imports: [
-    HelpersModule,
     ImageModule,
     VideoModule,
+    RelayMediaModule.forRoot(config.ai.relay),
   ],
   controllers: [DraftGenerationController],
   providers: [

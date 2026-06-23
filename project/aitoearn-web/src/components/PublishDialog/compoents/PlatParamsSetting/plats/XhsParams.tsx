@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import CommonTitleInput from '../common/CommonTitleInput'
 
 const XHS_USER_DECLARATION_OPTIONS: IXhsUserDeclarationOrigin[] = [1, 2, 3]
@@ -34,13 +34,12 @@ function ensureXhsOption(option: IPlatOption): IPlatOption & { xhs: NonNullable<
 const XhsParams = memo(
   forwardRef(
     (
-      { pubItem, onImageToImage, isMobile }: IPlatsParamsProps,
+      { pubItem, isMobile }: IPlatsParamsProps,
       ref: ForwardedRef<IPlatsParamsRef>,
     ) => {
       const { t } = useTransClient('publish')
       const { pubParmasTextareaCommonParams, setOnePubParams } = usePlatParamsCommon(
         pubItem,
-        onImageToImage,
         isMobile,
       )
 

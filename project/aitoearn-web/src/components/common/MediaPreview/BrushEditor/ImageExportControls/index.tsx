@@ -11,7 +11,7 @@ import { memo, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Slider } from '@/components/ui/slider'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import {
   getImageExportLabel,
   IMAGE_EXPORT_FORMATS,

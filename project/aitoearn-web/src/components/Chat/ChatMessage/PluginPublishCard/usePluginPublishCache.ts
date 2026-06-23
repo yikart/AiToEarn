@@ -4,7 +4,7 @@
  */
 
 import type { IActionCard } from '@/store/agent/agent.types'
-import { createPersistStore } from '@/utils/createPersistStore'
+import { createPersistStore } from '@/utils/storage/createPersistStore'
 
 export interface PluginPublishRecord {
   state: 'SUCCESS' | 'ERROR'

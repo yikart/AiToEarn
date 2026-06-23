@@ -9,15 +9,15 @@
 
 'use client'
 
-import type { SocialAccount } from '@/api/types/account.type'
+import type { SocialAccount } from '@/api/accounts/account.types'
 import { useCallback, useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
-import { deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/account'
-import { apiUpdateAccountGroupSortRank } from '@/api/accountSort'
+import { apiUpdateAccountGroupSortRank, deleteAccountApi, deleteAccountGroupApi, updateAccountGroupApi } from '@/api/accounts/account.api'
+
 import { useTransClient } from '@/app/i18n/client'
 import { ScrollArea } from '@/components/ui/scroll-area'
-import { toast } from '@/lib/toast'
 import { useAccountStore } from '@/store/account'
+import { toast } from '@/utils/ui/toast'
 import { CreateSpaceSection } from './CreateSpaceSection'
 import { DeleteConfirmDialog } from './DeleteConfirmDialog'
 import { SpaceItem } from './SpaceItem'

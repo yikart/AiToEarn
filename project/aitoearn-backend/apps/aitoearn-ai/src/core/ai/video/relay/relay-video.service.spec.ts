@@ -1,0 +1,374 @@
+import type { AiLog, AiLogRepository } from '@yikart/mongodb'
+import type { AiAvailabilityService } from '../../../ai-availability/ai-availability.service'
+import type { RelayLibService } from '../../libs/relay'
+import type { ModelsConfigService } from '../../models-config'
+import type { RelayMediaResolverService } from '../../relay-media'
+import { UserType } from '@yikart/common'
+import { AiLogChannel, AiLogStatus, AiLogType } from '@yikart/mongodb'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { RelayVideoService } from './relay-video.service'
+
+vi.mock('../../models-config', () => ({ ModelsConfigService: class ModelsConfigService {} }))
+
+vi.mock('../../../ai-availability/ai-availability.service', () => ({
+  AiAvailabilityService: class AiAvailabilityService {},
+}))
+
+vi.mock('../../relay-media', () => ({
+  RelayMediaResolverService: class RelayMediaResolverService {},
+}))
+
+vi.mock('@yikart/mongodb', () => ({
+  AiLog: class AiLog {},
+  AiLogChannel: {
+    Relay: 'relay',
+  },
+  AiLogRepository: class AiLogRepository {},
+  AiLogStatus: {
+    Generating: 'generating',
+    Success: 'success',
+    Failed: 'failed',
+  },
+  AiLogType: {
+    Video: 'video',
+  },
+}))
+
+describe('relayVideoService', () => {
+  let service: RelayVideoService
+  let mockRelayLibService: vi.Mocked<Pick<RelayLibService, 'createVideo'>>
+  let mockAiLogRepo: vi.Mocked<Pick<AiLogRepository, 'create' | 'getByTaskId' | 'updateByIdAndStatus'>>
+  let mockAiAvailability: vi.Mocked<Pick<AiAvailabilityService, 'executeAsync' | 'recordAsyncComplete'>>
+  let mockRelayMediaResolver: vi.Mocked<Pick<RelayMediaResolverService, 'resolveJson'>>
+
+  const relayModel = {
+    name: 'relay-video-model',
+    channel: AiLogChannel.Relay,
+    defaults: {
+      resolution: '720p',
+      aspectRatio: '9:16',
+      duration: 5,
+    },
+    durations: [5],
+    aspectRatios: ['9:16', '16:9'],
+    maxInputImages: 9,
+    modes: ['text2video', 'multi-ref'],
+  }
+
+  beforeEach(() => {
+    mockRelayLibService = {
+      createVideo: vi.fn().mockResolvedValue({ id: 'relay-task-1', status: 'queued' }),
+    }
+    mockAiLogRepo = {
+      create: vi.fn().mockResolvedValue({ id: 'ai-log-1' }),
+      getByTaskId: vi.fn(),
+      updateByIdAndStatus: vi.fn(),
+    }
+    mockAiAvailability = {
+      executeAsync: vi.fn((_context, execute) => execute()),
+      recordAsyncComplete: vi.fn().mockResolvedValue(undefined),
+    } as never
+    mockRelayMediaResolver = {
+      resolveJson: vi.fn(async value => value),
+    }
+
+    service = new RelayVideoService(
+      mockRelayLibService as RelayLibService,
+      mockAiLogRepo as AiLogRepository,
+      { config: { video: { generation: [relayModel] } } } as unknown as ModelsConfigService,
+      mockAiAvailability as AiAvailabilityService,
+      mockRelayMediaResolver as RelayMediaResolverService,
+    )
+  })
+
+  it('forwards only original video fields and creates local ai log', async () => {
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A vertical product video',
+    })
+
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      model: 'relay-video-model',
+      prompt: 'A vertical product video',
+    }))
+
+    const payload = mockRelayLibService.createVideo.mock.calls[0][0]
+    expect('userId' in payload).toBe(false)
+    expect('userType' in payload).toBe(false)
+    expect('groupId' in payload).toBe(false)
+    expect(payload.ratio).toBeUndefined()
+    expect(payload.resolution).toBeUndefined()
+    expect(payload.duration).toBeUndefined()
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog).toMatchObject({
+      userId: 'user-1',
+      userType: UserType.User,
+      taskId: 'relay-task-1',
+      model: 'relay-video-model',
+      channel: AiLogChannel.Relay,
+      type: AiLogType.Video,
+      request: {
+        model: 'relay-video-model',
+        prompt: 'A vertical product video',
+        remoteTaskId: 'relay-task-1',
+      },
+      response: {
+        id: 'relay-task-1',
+        status: 'queued',
+      },
+      status: AiLogStatus.Generating,
+    })
+  })
+
+  it('resolves media fields before forwarding relay payload while keeping local log input unchanged', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: 'https://relay.example.com/assets/start.png',
+      image_tail: 'https://relay.example.com/assets/end.png',
+      video_url: 'https://relay.example.com/assets/source.mp4',
+      images: ['https://relay.example.com/assets/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://relay.example.com/assets/ref.mp4'],
+      audios: ['https://relay.example.com/assets/ref.mp3'],
+    }) as never)
+
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video with references',
+      image: 'images/start.png',
+      image_tail: 'https://cdn.example.com/images/end.png?version=1',
+      video_url: 'videos/source.mp4',
+      images: ['images/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://storage.example.com/videos/ref.mp4'],
+      audios: ['audios/ref.mp3'],
+    })
+
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'https://relay.example.com/assets/start.png',
+      image_tail: 'https://relay.example.com/assets/end.png',
+      video_url: 'https://relay.example.com/assets/source.mp4',
+      images: ['https://relay.example.com/assets/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://relay.example.com/assets/ref.mp4'],
+      audios: ['https://relay.example.com/assets/ref.mp3'],
+    }))
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog.request).toMatchObject({
+      image: 'images/start.png',
+      image_tail: 'https://cdn.example.com/images/end.png?version=1',
+      video_url: 'videos/source.mp4',
+      images: ['images/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://storage.example.com/videos/ref.mp4'],
+      audios: ['audios/ref.mp3'],
+    })
+  })
+
+  it('keeps local groupId in ai log but does not forward it to upstream relay', async () => {
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video saved locally',
+      groupId: 'local-group-1',
+    })
+
+    const payload = mockRelayLibService.createVideo.mock.calls[0][0]
+    expect('groupId' in payload).toBe(false)
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog.request).toMatchObject({
+      groupId: 'local-group-1',
+    })
+  })
+
+  it('uploads local media references before forwarding relay payload while keeping local log input unchanged', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: 'https://relay.example.com/assets/start.png',
+      images: ['https://relay.example.com/assets/ref.png'],
+    }) as never)
+
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video with references',
+      image: 'images/start.png',
+      images: ['images/ref.png'],
+    })
+
+    expect(mockRelayMediaResolver.resolveJson).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'images/start.png',
+      images: ['images/ref.png'],
+    }))
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'https://relay.example.com/assets/start.png',
+      images: ['https://relay.example.com/assets/ref.png'],
+    }))
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog.request).toMatchObject({
+      image: 'images/start.png',
+      images: ['images/ref.png'],
+    })
+  })
+
+  it('rejects unsupported model mode before calling upstream relay', async () => {
+    await expect(service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video',
+      mode: 'image2video',
+    })).rejects.toThrow()
+
+    expect(mockRelayLibService.createVideo).not.toHaveBeenCalled()
+  })
+
+  it('returns relay media inputs in task input', () => {
+    expect(service.extractInput({
+      model: 'relay-video-model',
+      prompt: 'A video with references',
+      groupId: 'local-group-1',
+      image: ['images/start.png', 'images/second.png'],
+      images: ['images/ref.png'],
+      video_url: 'videos/source.mp4',
+      videos: ['videos/ref.mp4'],
+      audios: ['audios/ref.mp3'],
+      duration: 5,
+      resolution: '720p',
+      ratio: '9:16',
+      watermark: true,
+    })).toEqual({
+      prompt: 'A video with references',
+      groupId: 'local-group-1',
+      image: ['images/start.png', 'images/second.png'],
+      images: ['images/ref.png'],
+      videoUrl: 'videos/source.mp4',
+      videos: ['videos/ref.mp4'],
+      audios: ['audios/ref.mp3'],
+      duration: 5,
+      resolution: '720p',
+      aspectRatio: '9:16',
+      watermark: true,
+    })
+  })
+
+  it('resolves array image references before forwarding relay payload', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: ['https://relay.example.com/assets/start.png', 'https://external.example.com/start.png'],
+    }) as never)
+
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video with image array',
+      image: ['images/start.png', 'https://external.example.com/start.png'],
+    })
+
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: ['https://relay.example.com/assets/start.png', 'https://external.example.com/start.png'],
+    }))
+  })
+
+  it('keeps relay callback video urls unchanged on success', async () => {
+    const aiLog = {
+      id: 'ai-log-1',
+      userId: 'user-1',
+      userType: UserType.User,
+      taskId: 'relay-task-1',
+      model: 'relay-video-model',
+      channel: AiLogChannel.Relay,
+      type: AiLogType.Video,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(Date.now() - 1000),
+      request: {
+        model: 'relay-video-model',
+        prompt: 'A video',
+      },
+    } as unknown as AiLog
+    mockAiLogRepo.getByTaskId.mockResolvedValue(aiLog)
+    mockAiLogRepo.updateByIdAndStatus.mockResolvedValue(aiLog)
+
+    await expect(service.callback({
+      id: 'relay-task-1',
+      status: 'success',
+      videoUrl: 'https://relay.example.com/videos/out.mp4',
+      coverUrl: 'https://relay.example.com/covers/out.png',
+    })).resolves.toEqual({
+      id: 'relay-task-1',
+      status: 'success',
+      videoUrl: 'https://relay.example.com/videos/out.mp4',
+      coverUrl: 'https://relay.example.com/covers/out.png',
+    })
+
+    expect(mockAiLogRepo.updateByIdAndStatus).toHaveBeenCalledWith(
+      'ai-log-1',
+      AiLogStatus.Generating,
+      expect.objectContaining({
+        $set: expect.objectContaining({
+          status: AiLogStatus.Success,
+          response: {
+            id: 'relay-task-1',
+            status: 'success',
+            videoUrl: 'https://relay.example.com/videos/out.mp4',
+            coverUrl: 'https://relay.example.com/covers/out.png',
+          },
+        }),
+      }),
+    )
+    expect(mockAiAvailability.recordAsyncComplete).toHaveBeenCalledWith(
+      'relay-task-1',
+      { provider: 'relay', operation: 'videoGeneration', model: 'relay-video-model' },
+      expect.objectContaining({ success: true }),
+    )
+  })
+
+  it('marks terminal relay failures', async () => {
+    const aiLog = {
+      id: 'ai-log-1',
+      userId: 'user-1',
+      userType: UserType.User,
+      taskId: 'relay-task-1',
+      model: 'relay-video-model',
+      channel: AiLogChannel.Relay,
+      type: AiLogType.Video,
+      status: AiLogStatus.Generating,
+      startedAt: new Date(Date.now() - 1000),
+      request: {
+        model: 'relay-video-model',
+        prompt: 'A video',
+      },
+    } as unknown as AiLog
+    mockAiLogRepo.getByTaskId.mockResolvedValue(aiLog)
+    mockAiLogRepo.updateByIdAndStatus.mockResolvedValue(aiLog)
+
+    await service.callback({
+      id: 'relay-task-1',
+      status: 'failed',
+      error: { message: 'upstream failed' },
+    })
+
+    expect(mockAiLogRepo.updateByIdAndStatus).toHaveBeenCalledWith(
+      'ai-log-1',
+      AiLogStatus.Generating,
+      expect.objectContaining({
+        $set: expect.objectContaining({
+          status: AiLogStatus.Failed,
+          errorMessage: 'upstream failed',
+        }),
+      }),
+    )
+    expect(mockAiAvailability.recordAsyncComplete).toHaveBeenCalledWith(
+      'relay-task-1',
+      { provider: 'relay', operation: 'videoGeneration', model: 'relay-video-model' },
+      expect.objectContaining({ success: false, errorMessage: 'upstream failed' }),
+    )
+  })
+})

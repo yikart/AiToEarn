@@ -8,10 +8,10 @@ PublishDialog 是发布作品的核心弹框组件，支持多平台、多账号
 
 **本组件采用 PC 端和移动端分离的架构，修改或新增功能时必须同时考虑两端！**
 
-| 端     | 入口文件                                    | 说明                               |
-| ------ | ------------------------------------------- | ---------------------------------- |
-| PC 端  | `index.tsx` + `DesktopPublishContent`       | 完整功能，包含 AI 助手、预览面板等 |
-| 移动端 | `compoents/mobile/MobilePublishContent.tsx` | 精简版，无 AI 助手和预览           |
+| 端     | 入口文件                                    | 说明                                |
+| ------ | ------------------------------------------- | ----------------------------------- |
+| PC 端  | `index.tsx` + `DesktopPublishContent`       | 全屏工作台，左内容管理 + 右发布编辑 |
+| 移动端 | `compoents/mobile/MobilePublishContent.tsx` | 精简版发布编辑，无内容管理左栏      |
 
 ### 判断逻辑（index.tsx）
 
@@ -33,17 +33,15 @@ PublishDialog/
 ├── index.tsx                          # 主入口（状态管理 + 双端判断）
 ├── README.md                          # 本文档
 ├── publishDialog.type.ts              # 类型定义
-├── PublishDialog.util.ts              # 工具函数
+├── PublishDialog.util.ts              # 工具函数（含拖拽素材转发布参数）
 ├── usePublishDialog.ts                # 核心状态管理 store
 ├── usePublishDialogData.ts            # 数据处理 hooks
-├── usePublishDialogStorageStore.tsx   # 持久化存储 store
-├── publishDialogTransition.css        # 动画样式
+├── usePublishDialogStorageStore.tsx   # 持久化存储 store（发布数据 + PC 双栏宽度）
 │
 ├── hooks/                             # 业务逻辑 hooks
 │   ├── usePublishState.ts             # 弹窗状态管理（loading、modal显示状态）
 │   ├── usePlatformAuth.ts             # 平台授权跳转逻辑
 │   ├── usePublishActions.ts           # 发布操作核心逻辑
-│   ├── useAISync.ts                   # AI内容同步到编辑器
 │   ├── useUploadSync.ts               # 上传结果同步到发布参数
 │   └── usePubParamsVerify.tsx         # 参数校验 hook（双端共用）
 │
@@ -52,7 +50,9 @@ PublishDialog/
 │   │   └── MobilePublishContent.tsx   # 【移动端】完整内容组件
 │   │
 │   ├── DesktopPublishContent/         # 【PC端】主内容组件
-│   │   └── index.tsx
+│   │   ├── index.tsx
+│   │   ├── PublishDialogDraftPanel.tsx # 【PC端】内容管理左栏
+│   │   └── useDesktopPublishLayout.ts  # 【PC端】双栏拖拽与宽度计算
 │   ├── AccountSelector/               # 账户选择器组件
 │   │   └── index.tsx
 │   ├── PublishFooter/                 # 底部操作栏（发布按钮等）
@@ -68,10 +68,6 @@ PublishDialog/
 │   ├── PublishDatePicker/             # 发布时间选择器（双端共用）
 │   ├── PubParmasTextarea/             # 发布内容编辑器（双端共用）
 │   │
-│   ├── PublishDialogAi.tsx            # AI 助手面板（仅 PC 端）
-│   ├── PublishDialogPreview.tsx       # 预览面板（仅 PC 端）
-│   ├── TextSelectionToolbar.tsx       # 划词工具栏（仅 PC 端）
-│   │
 │   ├── Choose/                        # 选择器组件
 │   ├── DouyinQRCodeModal.tsx          # 抖音二维码弹窗
 │   ├── DraftSelectionModal/           # 草稿选择弹窗
@@ -83,14 +79,13 @@ PublishDialog/
 
 ## Hooks 职责说明
 
-| Hook                 | 职责                                              |
-| -------------------- | ------------------------------------------------- |
-| `usePublishState`    | 管理弹窗内各种临时状态（loading、modal显隐）      |
-| `usePlatformAuth`    | 处理离线账户点击时的平台授权跳转                  |
-| `usePublishActions`  | 发布操作核心逻辑，包含 API 发布和插件发布         |
-| `useAISync`          | AI 生成内容同步到编辑器（划词、图生图、内容填充） |
-| `useUploadSync`      | 监听上传完成，同步 ossUrl 到发布参数              |
-| `usePubParamsVerify` | 校验发布参数，返回错误和警告信息                  |
+| Hook                 | 职责                                         |
+| -------------------- | -------------------------------------------- |
+| `usePublishState`    | 管理弹窗内各种临时状态（loading、modal显隐） |
+| `usePlatformAuth`    | 处理离线账户点击时的平台授权跳转             |
+| `usePublishActions`  | 发布操作核心逻辑，包含 API 发布和插件发布    |
+| `useUploadSync`      | 监听上传完成，同步 ossUrl 到发布参数         |
+| `usePubParamsVerify` | 校验发布参数，返回错误和警告信息             |
 
 ## Twitter 发布参数
 
@@ -105,17 +100,29 @@ Twitter 参数组件位于 `compoents/PlatParamsSetting/plats/TwitterParams/`，
 
 ## 双端功能对照表
 
-| 功能         | PC 端 | 移动端         | 共用组件               |
-| ------------ | ----- | -------------- | ---------------------- |
-| 账号选择     | ✅    | ✅             | `AccountSelector`      |
-| 错误汇总展示 | ✅    | ✅             | `ErrorSummary`         |
-| 平台参数设置 | ✅    | ✅             | `PlatParamsSetting`    |
-| 内容编辑器   | ✅    | ✅             | `PubParmasTextarea`    |
-| 发布时间选择 | ✅    | ✅             | `PublishDatePicker`    |
-| AI 助手      | ✅    | ❌             | `PublishDialogAi`      |
-| 预览面板     | ✅    | ❌             | `PublishDialogPreview` |
-| 划词工具     | ✅    | ❌             | `TextSelectionToolbar` |
-| 图生图       | ✅    | ❌ (toast提示) | -                      |
+| 功能         | PC 端 | 移动端 | 共用组件             |
+| ------------ | ----- | ------ | -------------------- |
+| 账号选择     | ✅    | ✅     | `AccountSelector`    |
+| 错误汇总展示 | ✅    | ✅     | `ErrorSummary`       |
+| 平台参数设置 | ✅    | ✅     | `PlatParamsSetting`  |
+| 内容编辑器   | ✅    | ✅     | `PubParmasTextarea`  |
+| 发布时间选择 | ✅    | ✅     | `PublishDatePicker`  |
+| 内容管理左栏 | ✅    | ❌     | `DraftContentModule` |
+
+## PC 端工作台布局
+
+PC 端使用全屏弹框，外层尺寸为 `100vw` × `100vh`，不保留外边距。
+
+```text
+┌──────────────────────────────────────────────────────────────────┐
+│ 内容管理左栏（草稿箱模块） │ 拖拽条 │ 发布编辑右栏 │
+│ 可拖动宽度，持久化存储     │       │ 多平台发布编辑 │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+- 左栏复用 `src/app/[lng]/draft-box/components/DraftContentModule`，并以 `embedded` 模式禁用内部 `PublishDialog`，避免弹框嵌套。
+- 双栏宽度由 `DesktopPublishContent/useDesktopPublishLayout.ts` 计算，使用 `ResizeObserver` 根据容器宽度动态归一化。
+- 用户拖拽后的 `draftPanelWidth` 和 `publishPanelWidth` 持久化到 `usePublishDialogStorageStore.tsx` 的 `desktopLayout`。
 
 ## 外部触发发布流程
 
@@ -323,14 +330,14 @@ usePubParamsVerify(pubListChoosed)
 | `usePublishDialogStorageStore.tsx` | 发布数据的持久化存储（IndexedDB）                   |
 | `publishDialog.type.ts`            | 类型定义，包括 PubItem、发布参数等                  |
 | `hooks/usePublishActions.ts`       | 发布操作核心逻辑（API发布 + 插件发布）              |
-| `hooks/useAISync.ts`               | AI 内容同步（划词、图生图、内容填充）               |
-| `compoents/DesktopPublishContent/` | PC 端主内容渲染组件                                 |
+| `compoents/DesktopPublishContent/` | PC 端双栏工作台渲染组件                             |
 | `compoents/AccountSelector/`       | 账户选择器 UI 组件                                  |
 | `compoents/PublishFooter/`         | 底部操作栏 UI 组件                                  |
 | `compoents/PublishModals/`         | 各种弹窗组件集合                                    |
 
 ## 更新记录
 
+- 2026-05-22：PC 端支持从内容管理左栏拖拽草稿/视频/图片到发布编辑区，并复用转换工具填充发布参数
 - 2026-01-06：重构组件架构，拆分业务逻辑到独立 hooks，主文件从 1500 行精简至 543 行
 - 2026-01-06：新增 `hooks/` 目录，包含 6 个业务逻辑 hooks
 - 2026-01-06：新增 `DesktopPublishContent`、`AccountSelector`、`PublishFooter`、`PublishModals` 组件

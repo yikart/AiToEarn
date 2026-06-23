@@ -5,9 +5,11 @@
  * @LastEditors: nevin
  * @Description: PublishRecord
  */
-import { Injectable, Logger } from '@nestjs/common'
+import type { EventEnvelope } from '@yikart/redis'
+import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { AccountType, TableDto, WorkStatus } from '@yikart/common'
 import { PublishRecord, PublishRecordLinkStatus, PublishRecordRepository, PublishRecordSource, PublishStatus, PublishType } from '@yikart/mongodb'
+import { EventStream, EventTopic, OnEventStream } from '@yikart/redis'
 import { UpdateQuery } from 'mongoose'
 import { MaterialService } from '../content/material.service'
 import {
@@ -17,12 +19,36 @@ import {
 } from './publish-record.dto'
 
 @Injectable()
-export class PublishRecordService {
+export class PublishRecordService implements OnModuleInit {
   private readonly logger = new Logger(PublishRecordService.name)
   constructor(
     private readonly publishRecordRepository: PublishRecordRepository,
     private readonly materialService: MaterialService,
   ) { }
+
+  async onModuleInit() {
+    // const data = {
+    //   "id": "69aa26a88d4edb16c4642293",
+    //   "userId": "69908f81a8660002fc02522b",
+    //   "taskId": "69aa26778d4edb16c464227a",
+    //   "type": PublishType.VIDEO,
+    //   "title": "",
+    //   "desc": "",
+    //   "topics": [],
+    //   "accountType": AccountType.TikTok,
+    //   "imgUrlList": [],
+    //   "publishTime": new Date("2026-03-06T00:58:16.583Z"),
+    //   "status": 1,
+    //   "inQueue": false,
+    //   "queued": false,
+    //   "dataId": "7610426383415774472",
+    //   "uniqueId": "tiktok_7610426383415774472",
+    //   "workLink": "https://www.tiktok.com/@arianalee0928/video/7610426383415774472",
+    //   "createdAt": new Date("2026-03-06T00:58:16.587Z"),
+    //   "updatedAt": new Date("2026-03-06T00:58:16.587Z")
+    // }
+    // await this.onPublishCompleted(data)
+  }
 
   /**
    * 更新素材使用次数
@@ -39,13 +65,23 @@ export class PublishRecordService {
     }
   }
 
+  private resolveSource(data: Partial<PublishRecord>) {
+    if (data.source) {
+      return data.source
+    }
+    return undefined
+  }
+
   /**
    * 创建发布记录，若状态为已发布则触发发布完成副作用
    * @param data 发布记录数据
    * @returns 创建后的发布记录
    */
   async createPublishRecord(data: Partial<PublishRecord>) {
-    const res = await this.publishRecordRepository.create(data)
+    const res = await this.publishRecordRepository.create({
+      ...data,
+      source: this.resolveSource(data),
+    })
     return res
   }
 
@@ -53,21 +89,43 @@ export class PublishRecordService {
    * 发布完成后的副作用：任务处理、每日统计、Redis 事件
    * @param data 已完成的发布记录
    */
-  private onPublishCompleted(data: PublishRecord) {
-    // 处理任务
-    this.doTaskProcess(data)
-    // 增加素材使用次数
-    this.increaseMaterialUseCount(data.materialId)
-    // 更新每日发布信息
-    this.upDayPublishInfo(data)
+  @OnEventStream(EventTopic.ChannelsPublishTaskPublished, {
+    streams: [EventStream.Channels],
+  })
+  private async handlePublishCompletedEvent(envelope: EventEnvelope<EventTopic.ChannelsPublishTaskPublished>) {
+    const data = envelope.payload
+    await this.onPublishCompleted({
+      id: data.publishRecordId ?? data.taskId,
+      userId: data.userId,
+      accountId: data.accountId,
+      accountType: data.accountType,
+      uid: data.uid,
+      materialId: data.materialId,
+      dataId: data.dataId ?? data.platformWorkId,
+    })
+  }
+
+  private async onPublishCompleted(data: Partial<PublishRecord>) {
+    const tasks = [
+      this.increaseMaterialUseCount(data.materialId),
+    ]
+    if (data.userId)
+      tasks.push(this.upDayPublishInfo({ userId: data.userId }))
+
+    await Promise.all(tasks)
   }
 
   /**
    * 更新每日发布统计信息
    * @param data 发布记录数据
    */
-  private async upDayPublishInfo(data: PublishRecord) {
-    await this.publishRecordRepository.upDayPublishInfo(data)
+  private async upDayPublishInfo(data: Pick<PublishRecord, 'userId'>) {
+    try {
+      await this.publishRecordRepository.upDayPublishInfo(data)
+    }
+    catch (error) {
+      this.logger.error(error, `Failed to update publish day info for user ${data.userId}`)
+    }
   }
 
   /**
@@ -124,14 +182,6 @@ export class PublishRecordService {
   }
 
   /**
-   * 处理发布完成后的任务逻辑：触发任务追踪事件、自动删除或增加素材使用次数
-   * @param data 发布记录数据
-   */
-  private async doTaskProcess(_data: Partial<PublishRecord>) {
-    // Task module removed — no-op
-  }
-
-  /**
    * 获取每日发布信息列表（分页）
    * @param inFilter 过滤条件
    * @param pageInfo 分页参数
@@ -182,6 +232,34 @@ export class PublishRecordService {
   }
 
   /**
+   * 根据任务ID和用户ID获取发布记录
+   * @param taskId 任务ID
+   * @param userId 用户ID
+   * @returns 发布记录
+   */
+  async getPublishRecordByTaskId(taskId: string, userId: string) {
+    const res = await this.publishRecordRepository.getPublishRecordByTaskId(taskId, userId)
+    return res
+  }
+
+  async listPublishedByTaskId(
+    taskId: string,
+    query?: {
+      accountType?: AccountType
+    },
+  ) {
+    return this.publishRecordRepository.listPublishedByTaskId(taskId, query)
+  }
+
+  async getPublishedByTaskIdAndDataId(taskId: string, dataId: string) {
+    return this.publishRecordRepository.getPublishedByTaskIdAndDataId(taskId, dataId)
+  }
+
+  async listPublishedByTaskIdAndDataId(taskId: string, dataId: string) {
+    return this.publishRecordRepository.listPublishedByTaskIdAndDataId(taskId, dataId)
+  }
+
+  /**
    * 根据用户UID和作品ID获取发布记录
    * @param uid 用户UID
    * @param dataId 作品ID
@@ -208,7 +286,6 @@ export class PublishRecordService {
     const res = await this.publishRecordRepository.donePublishRecord(filter, data)
     if (!res)
       return false
-    this.doTaskProcess(res)
     return !!res
   }
 
@@ -268,7 +345,17 @@ export class PublishRecordService {
    * 根据发布记录ID更新作品链接及其派生字段
    * @param id 发布记录ID
    * @param data 作品链接更新数据
+   * @param data.workLink 作品链接
+   * @param data.dataId 作品ID
+   * @param data.uniqueId 作品唯一标识
+   * @param data.platformWorkId 平台作品ID
+   * @param data.linkStatus 作品链接状态
+   * @param data.linkError 作品链接获取错误
+   * @param data.linkMeta 作品链接扩展信息
+   * @param data.type 作品类型
    * @returns 更新后的发布记录
+   * @param data.originalWorkLink Original submitted work link
+   * @param data.workStatus Work status
    */
   async updateWorkLinkById(
     id: string,
@@ -340,6 +427,7 @@ export class PublishRecordService {
   }
 
   /**
+  /**
    * 根据作品ID和账户类型获取单条发布记录
    * @param dataId 作品ID
    * @param accountType 账户类型
@@ -367,7 +455,7 @@ export class PublishRecordService {
    * @returns 更新结果
    */
   async completeById(data: PublishRecord, dataId: string, newData?: { workLink: string, dataOption?: Record<string, any> }) {
-    this.onPublishCompleted(data)
+    await this.onPublishCompleted(data)
     return this.publishRecordRepository.complete(data.id, dataId, newData)
   }
 
@@ -446,7 +534,7 @@ export class PublishRecordService {
     time?: [Date?, Date?, ...unknown[]]
     uid?: string
   }) {
-    return this.publishRecordRepository.getPublishTasks(query)
+    return this.publishRecordRepository.listByFilter(query)
   }
 
   /**
@@ -460,7 +548,7 @@ export class PublishRecordService {
     accountType?: AccountType
     time?: [Date?, Date?, ...unknown[]]
   }) {
-    return this.publishRecordRepository.getQueuedPublishTasks(query)
+    return this.publishRecordRepository.listQueuedByFilter(query)
   }
 
   /**
@@ -474,7 +562,17 @@ export class PublishRecordService {
     accountType?: AccountType
     time?: [Date?, Date?, ...unknown[]]
   }) {
-    return this.publishRecordRepository.getPublishedPublishTasks(query)
+    return this.publishRecordRepository.listPublishedByFilter(query)
+  }
+
+  async listPublishedTaskLinkRecords(query: {
+    userId: string
+    accountId?: string
+    accountType?: AccountType
+    flowId?: string
+    time?: [Date?, Date?, ...unknown[]]
+  }) {
+    return this.publishRecordRepository.listPublishedTaskLinkRecords(query)
   }
 
   /**
@@ -483,7 +581,7 @@ export class PublishRecordService {
    * @returns 发布任务列表
    */
   async listByFlowId(flowId: string) {
-    return this.publishRecordRepository.getPublishTaskListByFlowId(flowId)
+    return this.publishRecordRepository.listByFlowId(flowId)
   }
 
   /**
@@ -496,6 +594,12 @@ export class PublishRecordService {
     id: string,
     newData: {
       errorMsg?: string
+      errorData?: {
+        type: string
+        code: string
+        message: string
+        originalData?: Record<string, unknown>
+      }
       status: PublishStatus
       publishTime?: Date
       queued?: boolean
@@ -523,7 +627,7 @@ export class PublishRecordService {
    * @returns 发布任务详情
    */
   async getTaskInfoWithFlowId(flowId: string, userId: string) {
-    return this.publishRecordRepository.getPublishTaskInfoWithFlowId(flowId, userId)
+    return this.publishRecordRepository.getByFlowIdAndUserId(flowId, userId)
   }
 
   /**
@@ -533,7 +637,7 @@ export class PublishRecordService {
    * @returns 发布任务详情
    */
   async getTaskInfoWithUserId(id: string, userId: string) {
-    return this.publishRecordRepository.getPublishTaskInfoWithUserId(id, userId)
+    return this.publishRecordRepository.getByIdAndUserId(id, userId)
   }
 
   /**

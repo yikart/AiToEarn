@@ -47,9 +47,5 @@
   "viewOnly": "보기 전용",
   "linkExpiredDesc": "이 공유 링크가 만료되었습니다. 새 링크를 요청하려면 공유자에게 문의하세요.",
   "linkNotFoundDesc": "이 공유 링크가 존재하지 않거나 삭제되었습니다.",
-  "backToHome": "홈으로 돌아가기",
-  "publishShareFailed": "게시 준비에 실패했습니다",
-  "noImagesToShare": "공유할 이미지가 없습니다",
-  "uploadFailed": "업로드 실패",
-  "noPreview": "미리보기가 없습니다"
+  "backToHome": "홈으로 돌아가기"
 }

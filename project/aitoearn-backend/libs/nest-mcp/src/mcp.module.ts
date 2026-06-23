@@ -20,8 +20,12 @@ import { normalizeEndpoint } from './utils/normalize-endpoint'
 const DEFAULT_TOOL_MONITOR_PROVIDER: Provider = {
   provide: MCP_TOOL_MONITOR,
   useValue: {
-    async onToolSuccess(_toolName: string) {},
-    async onToolError(_toolName: string, _error: unknown) {},
+    async onToolSuccess() {
+      return undefined
+    },
+    async onToolError() {
+      return undefined
+    },
   } satisfies McpToolMonitor,
 }
 

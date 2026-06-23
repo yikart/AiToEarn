@@ -4,7 +4,7 @@
  * - 图片模式：多选
  * - 视频模式：单选
  * - 瀑布流布局 + 无限滚动
- * - 支持 Agent 素材分组
+ * - 支持 AI 生成素材分组
  */
 
 'use client'
@@ -14,14 +14,14 @@ import { ArrowLeft, Check, Loader2 } from 'lucide-react'
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 import Masonry from 'react-masonry-css'
-import { getAgentAssets } from '@/api/ai'
-import { apiGetMaterialGroupList } from '@/api/material'
-import { getMediaList } from '@/api/media'
+import { getAgentAssets } from '@/api/ai/ai.api'
+import { apiGetMaterialGroupList, getMediaList } from '@/api/materials/material.api'
+
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { cn } from '@/lib/utils'
-import { convertAssetToMediaItem, filterAssetsByMediaType } from '@/utils/agent-asset'
+import { convertAssetToMediaItem, filterAssetsByMediaType } from '@/utils/agent/asset'
+import { cn } from '@/utils/className'
 import {
   AgentGroupCard,
   EmptyState,
@@ -102,7 +102,7 @@ const MaterialSelectionModalContent = memo(
     const [groupsLoading, setGroupsLoading] = useState(false)
     const [selectedGroup, setSelectedGroup] = useState<MediaGroup | null>(null)
 
-    // 是否选中了 Agent 分组（虚拟分组）
+    // 是否选中了 AI 生成素材分组（虚拟分组）
     const [isAgentGroup, setIsAgentGroup] = useState(false)
 
     // 媒体相关状态
@@ -171,7 +171,7 @@ const MaterialSelectionModalContent = memo(
       }
     }, [])
 
-    // 获取 Agent 素材列表（首次加载）
+    // 获取 AI 生成素材列表（首次加载）
     const fetchAgentAssets = useCallback(async () => {
       setMediaLoading(true)
       setMediaPage(1)
@@ -215,7 +215,7 @@ const MaterialSelectionModalContent = memo(
       if (isLoadingMore || !hasMoreMedia)
         return
 
-      // Agent 分组加载更多
+      // AI 生成素材分组加载更多
       if (isAgentGroup) {
         const nextPage = mediaPage + 1
         setIsLoadingMore(true)
@@ -285,7 +285,7 @@ const MaterialSelectionModalContent = memo(
       fetchGroupsRef.current()
     }, [])
 
-    // 点击 Agent 分组
+    // 点击 AI 生成素材分组
     const handleAgentGroupClick = useCallback(() => {
       setIsAgentGroup(true)
       setSelectedGroup(null)
@@ -358,7 +358,7 @@ const MaterialSelectionModalContent = memo(
     // 获取标题
     const getTitle = () => {
       if (currentView === 'media') {
-        // Agent 分组标题
+        // AI 生成素材分组标题
         if (isAgentGroup) {
           return t('agentAssets.title')
         }
@@ -438,7 +438,7 @@ const MaterialSelectionModalContent = memo(
                     className="flex -ml-4 w-auto"
                     columnClassName="pl-4 bg-clip-padding"
                   >
-                    {/* Agent 素材分组卡片 - 始终显示在首位 */}
+                    {/* AI 生成素材分组卡片 - 始终显示在首位 */}
                     <div className="mb-4">
                       <AgentGroupCard onClick={handleAgentGroupClick} />
                     </div>

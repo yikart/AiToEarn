@@ -5,7 +5,6 @@
   "docs": "문서",
   "login": "로그인",
   "support": "지원",
-  "notifications": "알림",
   "settings": "설정",
   "vip": "Plus",
   "vip.tier": {
@@ -22,12 +21,8 @@
   "recharge": "충전",
   "adBalance": "광고주 잔액",
   "creatorBalance": "크리에이터 잔액",
+  "withdrawable": "출금 가능",
   "plugin": "확장 프로그램",
-  "affiliates": "제휴",
-  "goToWebsite": "공식 웹사이트로 이동",
-  "filing": {
-    "policeRecord": "京公网安备11010502060417号"
-  },
   "pluginStatus": {
     "notInstalled": "설치",
     "noPermission": "권한 없음",
@@ -39,16 +34,15 @@
   "apiErrorContactTip": "궁금한 점이 있으시면 ",
   "wechat": "WeChat",
   "scanToAdd": "QR코드를 스캔하여 추가",
+  "wechatLinkTip": "이 링크로도 WeChat을 열 수 있습니다",
   "documents": "문서",
   "helpDocs": "도움말 문서",
   "pluginGuide": "플러그인 설치 및 사용 가이드",
   "pluginUpdateGuide": "플러그인 업데이트 가이드",
   "privacyPolicy": "개인정보 처리방침",
   "termsOfService": "서비스 이용약관",
-  "noNotifications": "알림 없음",
   "markAllAsRead": "모두 읽음으로 표시",
   "markAsRead": "읽음으로 표시",
-  "unreadCount": "읽지 않은 메시지",
   "viewAll": "전체 보기",
   "cancel": "취소",
   "confirm": "확인",
@@ -58,15 +52,7 @@
   "yes": "예",
   "no": "아니오",
   "calendar": {
-    "weekDaysShort": [
-      "일",
-      "월",
-      "화",
-      "수",
-      "목",
-      "금",
-      "토"
-    ],
+    "weekDaysShort": ["일", "월", "화", "수", "목", "금", "토"],
     "monthSuffix": "월"
   },
   "actions": {
@@ -94,20 +80,16 @@
     "jumpTo": "이동",
     "page": "페이지"
   },
-  "notificationTypes": {
-    "system": "시스템 알림",
-    "user": "사용자 알림",
-    "material": "자료 알림",
-    "other": "기타 알림"
-  },
   "header": {
     "messages": "메시지",
+    "income": "수익 기록",
+    "wallet": "내 지갑",
     "materialLibrary": "라이브러리",
     "draftBox": "콘텐츠 관리",
+    "agentAssets": "AI 생성 소재",
     "draftBoxSeoTitle": "콘텐츠 관리 - AI 일괄 생성 및 초안 편집기",
     "draftBoxSeoDescription": "모든 콘텐츠 초안을 한 곳에서 관리하세요. AI로 소셜 미디어 게시물을 일괄 생성하고, 게시 전 초안을 편집하고, AiToEarn으로 멀티 플랫폼 배포를 정리하세요.",
-    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn",
-    "brandPromotion": "AI Check-in"
+    "draftBoxSeoKeywords": "콘텐츠 관리, 초안 편집기, AI 콘텐츠 생성, 일괄 생성, 소셜 미디어 초안, AiToEarn"
   },
   "tasks": "마켓플레이스",
   "signIn": {
@@ -205,10 +187,14 @@
       "importantNoteContent": "삭제 후 데이터는 복구할 수 없습니다. 신중하게 진행해 주세요. 법률에 의해 요구되는 일부 데이터는 삭제되지 않을 수 있습니다."
     }
   },
+  "lowBalanceAlert": {
+    "title": "잔액 부족 알림",
+    "content": "크레딧 잔액이 부족합니다. 계속 이용하시려면 충전해 주세요.",
+    "neverRemind": "다시 알리지 않기"
+  },
   "announcementBanner": {
     "seedancePromo": "seedance-2.0 최저 $0.03/초",
-    "videoPromo": "gpt-image-2 이미지 1장당 최저 0.007위안",
-    "videoPromoFallback": "gpt-image-2 images from 0.007 yuan each"
+    "videoPromo": "기간 한정 할인: seedance 초당 최저 0.36위안, gpt-image-2 이미지 1장당 최저 0.07위안"
   },
   "chinaDomainPrompt": {
     "title": "중국 리전으로 전환",
@@ -256,6 +242,13 @@
   },
   "switchToInternational": "\"국제판\"으로",
   "switchToChina": "\"중국판\"으로",
+  "platformRegionPrompt": {
+    "title": "플랫폼 지역 제한",
+    "chinaContent": "{{platform}}은(는) 중국 사이트에서만 이용 가능합니다. 중국 사이트로 이동하시겠습니까?",
+    "abroadContent": "{{platform}}은(는) 국제 사이트에서만 이용 가능합니다. 국제 사이트로 이동하시겠습니까?",
+    "ok": "이동",
+    "cancel": "취소"
+  },
   "noMore": "더 이상 데이터가 없습니다",
   "comingSoon": "개발 중입니다, 기대해 주세요",
   "enterpriseSurvey": {
@@ -267,13 +260,11 @@
     "bubbleLine1": "오른쪽 상단 메뉴에서",
     "bubbleLine2": "\"브라우저에서 열기\" 선택",
     "openInBrowser": "브라우저에서 열기",
-    "description": "WeChat 웹뷰에서는 게시와 리디렉션이 제한될 수 있습니다. 브라우저에서 계속 진행해 주세요."
+    "description": "WeChat 또는 Alipay 웹뷰에서는 게시와 리디렉션이 제한될 수 있습니다. 브라우저에서 계속 진행해 주세요."
   },
-  "advertiser": "AI Check-in",
-  "datePicker": {
-    "clear": "Clear",
-    "confirm": "Confirm",
-    "selectDate": "Select date",
-    "selectDateRange": "Select date range"
-  }
+  "seedanceCredits": "Seedance 전용 크레딧",
+  "seedanceCreditsRecharge": "Seedance 전용 크레딧 충전",
+  "configManagement": "구성 관리",
+  "apiErrorConfigTip": "구성이 올바른지 확인해 주세요.",
+  "apiErrorConfigAction": "구성 보기"
 }

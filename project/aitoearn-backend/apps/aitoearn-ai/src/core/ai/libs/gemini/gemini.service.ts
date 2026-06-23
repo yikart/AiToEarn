@@ -1,17 +1,14 @@
-import { Storage } from '@google-cloud/storage'
 import {
   GenerateContentParameters,
   GenerateContentResponse,
-  GenerateVideosOperation,
-  GenerateVideosParameters,
   GoogleGenAI,
   MediaModality,
   Modality,
   ModalityTokenCount,
 } from '@google/genai'
-import { Injectable, Logger } from '@nestjs/common'
-import { GeminiKeyPairSelection } from './gemini-key-manager.interface'
-import { GeminiKeyManagerService } from './gemini-key-manager.service'
+import { Injectable, Logger, Optional } from '@nestjs/common'
+import { AiAvailabilityService } from '../../../ai-availability'
+import { RelayMediaResolverService } from '../../relay-media'
 import { GeminiConfig } from './gemini.config'
 import {
   GeminiGeneratedImage,
@@ -22,12 +19,6 @@ import {
   GeminiModalityTokenDetails,
 } from './gemini.interface'
 
-export interface CreateVideoResult {
-  operation: GenerateVideosOperation
-  keyPairId: string
-  bucket: string
-}
-
 @Injectable()
 export class GeminiService {
   private readonly logger = new Logger(GeminiService.name)
@@ -35,7 +26,8 @@ export class GeminiService {
 
   constructor(
     private readonly config: GeminiConfig,
-    readonly keyManager: GeminiKeyManagerService,
+    private readonly aiAvailability: AiAvailabilityService,
+    @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
   ) {
     const baseUrl = config.proxyUrl
       ? `${config.proxyUrl}/${config.baseUrl}`
@@ -47,87 +39,97 @@ export class GeminiService {
     })
   }
 
+  private async withAvailability<T>(operation: string, fn: () => Promise<T>, model?: string): Promise<T> {
+    return this.aiAvailability.execute(
+      { provider: 'gemini', operation, model },
+      fn,
+    )
+  }
+
   async generateImage(request: GeminiImageGenerateRequest): Promise<GeminiImageGenerateResponse> {
     const model = request.model || 'gemini-3.1-flash-image-preview'
-    const { prompt, imageUrls = [], imageSize, aspectRatio } = request
+    return this.withAvailability('generateImage', async () => {
+      const { prompt, imageUrls = [], imageSize, aspectRatio } = request
+      const resolvedImageUrls = await Promise.all(imageUrls.map(url => this.resolveRelayText(url)))
 
-    this.logger.debug({ prompt, imageUrlsCount: imageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
+      this.logger.debug({ prompt, imageUrlsCount: resolvedImageUrls.length, imageSize, aspectRatio }, 'Starting image generation')
 
-    const parts: Array<{ text: string } | { inlineData: { mimeType: string, data: string } }> = []
+      const parts: Array<{ text: string } | { inlineData: { mimeType: string, data: string } }> = []
 
-    for (const url of imageUrls) {
-      const imageData = await this.fetchImageAsBase64(url)
-      parts.push({
-        inlineData: {
-          mimeType: imageData.mimeType,
-          data: imageData.base64,
+      for (const url of resolvedImageUrls) {
+        const imageData = await this.fetchImageAsBase64(url)
+        parts.push({
+          inlineData: {
+            mimeType: imageData.mimeType,
+            data: imageData.base64,
+          },
+        })
+      }
+
+      parts.push({ text: prompt })
+
+      const response = await this.genAiClient.models.generateContent({
+        model,
+        contents: [{ role: 'user', parts }],
+        config: {
+          responseModalities: [Modality.IMAGE],
+          imageConfig: {
+            ...(imageSize && { imageSize }),
+            ...(aspectRatio && { aspectRatio }),
+          },
         },
       })
-    }
 
-    parts.push({ text: prompt })
+      const images: GeminiGeneratedImage[] = []
 
-    const response = await this.genAiClient.models.generateContent({
-      model,
-      contents: [{ role: 'user', parts }],
-      config: {
-        responseModalities: [Modality.IMAGE],
-        imageConfig: {
-          ...(imageSize && { imageSize }),
-          ...(aspectRatio && { aspectRatio }),
-        },
-      },
-    })
-
-    const images: GeminiGeneratedImage[] = []
-
-    if (response.candidates?.[0]?.content?.parts) {
-      for (const part of response.candidates[0].content.parts) {
-        if ('inlineData' in part && part.inlineData) {
-          images.push({
-            imageData: Buffer.from(part.inlineData.data!, 'base64'),
-            mimeType: part.inlineData.mimeType || 'image/png',
-          })
+      if (response.candidates?.[0]?.content?.parts) {
+        for (const part of response.candidates[0].content.parts) {
+          if ('inlineData' in part && part.inlineData) {
+            images.push({
+              imageData: Buffer.from(part.inlineData.data!, 'base64'),
+              mimeType: part.inlineData.mimeType || 'image/png',
+            })
+          }
         }
       }
-    }
 
-    if (images.length === 0) {
-      this.logger.error('No image generated from Gemini API')
-      throw new Error('No image generated')
-    }
-
-    const usage: GeminiImageUsage | undefined = response.usageMetadata
-      ? {
-          promptTokenCount: response.usageMetadata.promptTokenCount || 0,
-          candidatesTokenCount: response.usageMetadata.candidatesTokenCount || 0,
-          totalTokenCount: response.usageMetadata.totalTokenCount || 0,
-          inputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['promptTokensDetails'] || []),
-          outputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['candidatesTokensDetails'] || []),
-        }
-      : undefined
-
-    this.logger.debug({
-      imageCount: images.length,
-      totalSize: images.reduce((sum, img) => sum + img.imageData.length, 0),
-      usage,
-    }, 'Image generation completed')
-
-    if (usage && images.length > 0 && (!usage.outputTokenDetails || !usage.outputTokenDetails.image)) {
-      const imageTokens = this.calculateImageTokens(model, imageSize)
-      if (imageTokens > 0) {
-        const totalImageTokens = imageTokens * images.length
-        usage.outputTokenDetails = {
-          ...usage.outputTokenDetails,
-          image: (usage.outputTokenDetails?.image || 0) + totalImageTokens,
-        }
-        usage.candidatesTokenCount += totalImageTokens
-        usage.totalTokenCount += totalImageTokens
-        this.logger.debug({ model, imageSize, imageCount: images.length, totalImageTokens }, 'Manually calculated image tokens')
+      if (images.length === 0) {
+        this.logger.error('No image generated from Gemini API')
+        throw new Error('No image generated')
       }
-    }
 
-    return { images, usage }
+      const usage: GeminiImageUsage | undefined = response.usageMetadata
+        ? {
+            promptTokenCount: response.usageMetadata.promptTokenCount || 0,
+            candidatesTokenCount: response.usageMetadata.candidatesTokenCount || 0,
+            totalTokenCount: response.usageMetadata.totalTokenCount || 0,
+            inputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['promptTokensDetails'] || []),
+            outputTokenDetails: this.extractGeminiModalityTokenDetails(response.usageMetadata['candidatesTokensDetails'] || []),
+          }
+        : undefined
+
+      this.logger.debug({
+        imageCount: images.length,
+        totalSize: images.reduce((sum, img) => sum + img.imageData.length, 0),
+        usage,
+      }, 'Image generation completed')
+
+      if (usage && images.length > 0 && (!usage.outputTokenDetails || !usage.outputTokenDetails.image)) {
+        const imageTokens = this.calculateImageTokens(model, imageSize)
+        if (imageTokens > 0) {
+          const totalImageTokens = imageTokens * images.length
+          usage.outputTokenDetails = {
+            ...usage.outputTokenDetails,
+            image: (usage.outputTokenDetails?.image || 0) + totalImageTokens,
+          }
+          usage.candidatesTokenCount += totalImageTokens
+          usage.totalTokenCount += totalImageTokens
+          this.logger.debug({ model, imageSize, imageCount: images.length, totalImageTokens }, 'Manually calculated image tokens')
+        }
+      }
+
+      return { images, usage }
+    }, model)
   }
 
   private calculateImageTokens(model: string, size?: GeminiImageSize): number {
@@ -212,112 +214,29 @@ export class GeminiService {
     }
   }
 
-  async createVideo(params: GenerateVideosParameters): Promise<CreateVideoResult> {
-    return this.executeWithKeyRotation(async (client, selection) => {
-      const operation = await client.models.generateVideos(params)
-      return {
-        operation,
-        keyPairId: selection.keyPairId,
-        bucket: selection.bucket,
-      }
-    })
-  }
-
-  async getOperation(operation: GenerateVideosOperation): Promise<GenerateVideosOperation> {
-    return this.executeWithKeyRotation(async (client) => {
-      return await client.operations.getVideosOperation({ operation })
-    })
-  }
-
-  private async executeWithKeyRotation<T>(
-    operation: (client: GoogleGenAI, selection: GeminiKeyPairSelection) => Promise<T>,
-    options?: { maxRetries?: number },
-  ): Promise<T> {
-    const maxRetries = options?.maxRetries ?? 3
-
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const selection = await this.keyManager.selectKeyPair()
-
-      try {
-        const result = await operation(selection.genAiClient, selection)
-        await this.keyManager.markKeySuccess(selection.keyPairId)
-        return result
-      }
-      catch (error) {
-        const analysis = await this.keyManager.markKeyFailed(selection.keyPairId, error)
-        this.logger.warn({ keyPairId: selection.keyPairId, attempt, analysis }, 'Vertex AI request failed')
-
-        if (!analysis.shouldSwitchKey || !analysis.retryable || !analysis.hasAlternativeKey) {
-          throw error
-        }
-      }
-    }
-    throw new Error('All Vertex AI key pairs exhausted')
-  }
-
   async generateContent(params: GenerateContentParameters): Promise<GenerateContentResponse> {
-    return this.executeWithKeyRotation(async (client) => {
-      return await client.models.generateContent(params)
-    })
+    return this.withAvailability('generateContent', async () => {
+      const resolvedParams = await this.resolveRelayJson(params)
+      return await this.genAiClient.models.generateContent(resolvedParams)
+    }, params.model)
   }
 
   async generateContentStream(params: GenerateContentParameters): Promise<AsyncGenerator<GenerateContentResponse>> {
-    return this.executeWithKeyRotation(async (client) => {
-      return await client.models.generateContentStream(params)
-    })
+    const resolvedParams = await this.resolveRelayJson(params)
+    return await this.genAiClient.models.generateContentStream(resolvedParams)
   }
 
-  async uploadToGcs(buffer: Buffer, options: {
-    keyPairId: string
-    path: string
-    mimeType: string
-  }): Promise<string> {
-    const storageClient = this.keyManager.getStorageClientByKeyPairId(options.keyPairId)
-    const bucketName = this.keyManager.getBucketByKeyPairId(options.keyPairId)
-
-    if (!storageClient || !bucketName) {
-      throw new Error(`No storage client/bucket for keyPairId: ${options.keyPairId}`)
+  private async resolveRelayJson<T>(value: T): Promise<T> {
+    if (!this.relayMediaResolver) {
+      return value
     }
-
-    const bucket = storageClient.bucket(bucketName)
-    const file = bucket.file(options.path)
-
-    await file.save(buffer, {
-      contentType: options.mimeType,
-    })
-
-    return `gs://${bucketName}/${options.path}`
+    return await this.relayMediaResolver.resolveJson(value)
   }
 
-  async downloadFromGcs(gcsUri: string, keyPairId: string): Promise<Buffer> {
-    let storageClient: Storage | null = this.keyManager.getStorageClientByKeyPairId(keyPairId)
-
-    if (!storageClient) {
-      const defaultId = this.keyManager.getDefaultKeyPairId()
-      this.logger.warn(
-        { keyPairId, defaultId },
-        'KeyPairId not found, using default key pair',
-      )
-      storageClient = this.keyManager.getStorageClientByKeyPairId(defaultId)
-      if (!storageClient) {
-        throw new Error(`No storage client for keyPairId: ${keyPairId}`)
-      }
+  private async resolveRelayText(text: string): Promise<string> {
+    if (!this.relayMediaResolver) {
+      return text
     }
-
-    return this.downloadWithClient(gcsUri, storageClient)
-  }
-
-  private async downloadWithClient(gcsUri: string, storageClient: Storage): Promise<Buffer> {
-    const match = gcsUri.match(/^gs:\/\/([^/]+)\/(.+)$/)
-    if (!match) {
-      throw new Error('Invalid GCS URI')
-    }
-
-    const [, bucketName, filePath] = match
-    const bucket = storageClient.bucket(bucketName)
-    const file = bucket.file(filePath)
-
-    const [buffer] = await file.download()
-    return Buffer.from(buffer)
+    return await this.relayMediaResolver.resolveText(text)
   }
 }

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * ExternalLinks - 外部链接组件（Docs 和 GitHub）
  * 支持桌面端（collapsed/expanded）和移动端样式
  */

@@ -8,13 +8,14 @@ import type { SidebarCommonProps } from '../../types'
 import { Settings } from 'lucide-react'
 import { useTransClient } from '@/app/i18n/client'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface SettingsEntryProps extends SidebarCommonProps {
   onClick: () => void
+  hasUnreadOpsTicket?: boolean
 }
 
-export function SettingsEntry({ collapsed, onClick }: SettingsEntryProps) {
+export function SettingsEntry({ collapsed, onClick, hasUnreadOpsTicket }: SettingsEntryProps) {
   const { t } = useTransClient('common')
 
   return (
@@ -28,7 +29,12 @@ export function SettingsEntry({ collapsed, onClick }: SettingsEntryProps) {
               collapsed ? 'h-9 w-9 justify-center' : 'gap-2 px-3 py-2',
             )}
           >
-            <Settings size={18} />
+            <span className="relative flex items-center justify-center">
+              <Settings size={18} />
+              {hasUnreadOpsTicket && (
+                <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-destructive" data-testid="sidebar-settings-ticket-unread-dot" />
+              )}
+            </span>
             {!collapsed && <span className="text-sm">{t('settings')}</span>}
           </button>
         </TooltipTrigger>

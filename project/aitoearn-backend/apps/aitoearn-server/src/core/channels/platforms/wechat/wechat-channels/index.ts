@@ -1,0 +1,5 @@
+export * from './wechat-channels-work.provider'
+export * from './wechat-channels.constants'
+export * from './wechat-channels.exception'
+export * from './wechat-channels.module'
+export * from './wechat-channels.schema'

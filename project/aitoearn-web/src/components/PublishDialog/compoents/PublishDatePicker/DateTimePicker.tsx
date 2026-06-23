@@ -9,7 +9,7 @@ import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import { useTransClient } from '@/app/i18n/client'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface DateTimePickerProps {
   value: Dayjs | null
@@ -38,6 +38,21 @@ export function DateTimePicker({
 
   const hourScrollRef = useRef<HTMLDivElement>(null)
   const minuteScrollRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!value) {
+      setCurrentMonth(dayjs())
+      setSelectedDate(null)
+      setSelectedHour(0)
+      setSelectedMinute(0)
+      return
+    }
+
+    setCurrentMonth(value)
+    setSelectedDate(value)
+    setSelectedHour(value.hour())
+    setSelectedMinute(value.minute())
+  }, [value])
 
   const daysInMonth = currentMonth.daysInMonth()
   const firstDayOfMonth = currentMonth.startOf('month').day()
@@ -192,7 +207,7 @@ export function DateTimePicker({
                   !item.isCurrentMonth && 'text-muted-foreground opacity-50',
                   isToday && 'border border-primary',
                   isSelected
-                  && 'bg-primary text-primary-foreground hover:bg-primary hover:text-primary-foreground',
+                  && 'bg-gradient-back text-gradient-foreground shadow-sm hover:bg-gradient-back hover:text-gradient-foreground',
                   isDisabled && 'opacity-30 cursor-not-allowed hover:bg-transparent',
                 )}
               >
@@ -244,7 +259,7 @@ export function DateTimePicker({
                   className={cn(
                     'w-full text-center text-sm transition-colors tabular-nums cursor-pointer select-none',
                     'hover:bg-accent hover:text-accent-foreground',
-                    isSelected && 'bg-primary/10 text-primary font-semibold',
+                    isSelected && 'bg-primary/10 text-primary font-semibold ring-1 ring-primary/20',
                     isDisabled && 'opacity-30 cursor-not-allowed hover:bg-transparent',
                     isMobile ? 'py-3' : 'py-2',
                   )}
@@ -271,7 +286,7 @@ export function DateTimePicker({
                   className={cn(
                     'w-full text-center text-sm transition-colors tabular-nums cursor-pointer select-none',
                     'hover:bg-accent hover:text-accent-foreground',
-                    isSelected && 'bg-primary/10 text-primary font-semibold',
+                    isSelected && 'bg-primary/10 text-primary font-semibold ring-1 ring-primary/20',
                     isDisabled && 'opacity-30 cursor-not-allowed hover:bg-transparent',
                     isMobile ? 'py-3' : 'py-2',
                   )}

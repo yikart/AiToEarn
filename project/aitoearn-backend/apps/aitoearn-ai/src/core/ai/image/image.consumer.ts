@@ -1,15 +1,14 @@
 import { OnWorkerEvent, WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
-import { AiLogSettlementSettledBy, AiLogSettlementTaskType } from '@yikart/aitoearn-ai-shared'
 import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { getErrorMessage, getErrorStack, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogRepository, AiLogStatus, AiLogType } from '@yikart/mongodb'
 import { Job } from 'bullmq'
-import { from, lastValueFrom, timer } from 'rxjs'
-import { retry, tap } from 'rxjs/operators'
-import { AsyncSettlementService } from '../settlement'
-import { ImageEditDto, ImageGenerationDto, QrCodeArtDto } from './image.dto'
+import { runWithAiGenerationRetry } from '../ai-generation-retry.util'
+import { ImageEditDto, ImageGenerationDto } from './image.dto'
 import { ImageService } from './image.service'
+
+type AsyncImageTaskType = 'generation' | 'edit'
 
 interface AsyncTaskData {
   logId: string
@@ -18,9 +17,9 @@ interface AsyncTaskData {
   model: string
   channel?: AiLogChannel
   type: AiLogType
-  pricing: number
+  retry?: number
   request: unknown
-  taskType: AiLogSettlementTaskType
+  taskType: AsyncImageTaskType
 }
 
 @QueueProcessor(QueueName.AiImageAsync, {
@@ -30,147 +29,74 @@ interface AsyncTaskData {
 })
 export class ImageConsumer extends WorkerHost {
   private readonly logger = new Logger(ImageConsumer.name)
-  private readonly MAX_RETRIES = 3
-  private readonly INITIAL_DELAY = 5000 // 5秒
-  private readonly BACKOFF_MULTIPLIER = 2
 
   constructor(
     private readonly imageService: ImageService,
     private readonly aiLogRepo: AiLogRepository,
-    private readonly asyncSettlementService: AsyncSettlementService,
   ) {
     super()
   }
 
   /**
-   * 判断错误是否可重试
-   * 网络错误、超时、429、5xx 可重试
-   * 参数错误、权限错误、4xx（除429）不可重试
-   */
-  private isRetryableError(error: unknown): boolean {
-    if (!(error instanceof Error)) {
-      return true
-    }
-
-    const errorMessage = error.message.toLowerCase()
-    const errorName = error.name.toLowerCase()
-
-    // 网络相关错误（可重试）
-    const networkErrors = [
-      'fetch',
-      'network',
-      'timeout',
-      'econnreset',
-      'econnrefused',
-      'etimedout',
-      'socket',
-      'connect',
-    ]
-    if (networkErrors.some(pattern => errorName.includes(pattern) || errorMessage.includes(pattern))) {
-      return true
-    }
-
-    // HTTP 状态码判断
-    if (errorMessage.includes('429') || errorMessage.includes('rate limit')) {
-      return true // 429 Too Many Requests
-    }
-    if (/5\d{2}/.test(errorMessage)) {
-      return true // 5xx 服务器错误
-    }
-
-    // 明确的不可重试错误
-    const nonRetryablePatterns = [
-      'invalid',
-      'required',
-      'must be',
-      'should be',
-      'bad request',
-      'unauthorized',
-      'forbidden',
-      'not found',
-      'insufficient',
-      'missing',
-      '400',
-      '401',
-      '403',
-      '404',
-    ]
-    if (nonRetryablePatterns.some(pattern => errorMessage.includes(pattern))) {
-      return false
-    }
-
-    // 默认可重试（保守策略）
-    return true
-  }
-
-  /**
    * 执行单次任务
    */
-  private async executeTask(taskType: AiLogSettlementTaskType, userId: string, request: unknown): Promise<unknown> {
+  private async executeTask(taskType: AsyncImageTaskType, request: unknown): Promise<unknown> {
     switch (taskType) {
-      case AiLogSettlementTaskType.Generation:
+      case 'generation':
         return await this.imageService.generation(request as ImageGenerationDto)
-      case AiLogSettlementTaskType.Edit:
+      case 'edit':
         return await this.imageService.edit(request as ImageEditDto)
-      case AiLogSettlementTaskType.QrCodeArt:
-        return await this.imageService.qrCodeArt(userId, request as QrCodeArtDto)
       default:
         throw new Error(`Unknown task type: ${taskType}`)
     }
   }
 
   async process(job: Job<AsyncTaskData>): Promise<unknown> {
-    const { logId, userId, userType, model, pricing, request, taskType } = job.data
+    const { logId, retry, request, taskType } = job.data
     this.logger.debug(`[log-${logId}] Processing async image task: ${taskType}`)
+
+    const aiLog = await this.aiLogRepo.getById(logId)
+    if (!aiLog || aiLog.status !== AiLogStatus.Generating) {
+      this.logger.warn(`[log-${logId}] Skipping async image task because AiLog is no longer pending`)
+      return undefined
+    }
 
     const startedAt = new Date()
     let attemptCount = 0
 
     try {
-      // 使用 RxJS 进行带重试的任务执行
-      const result = await lastValueFrom(
-        from(this.executeTask(taskType, userId, request)).pipe(
-          tap(() => {
-            attemptCount++
-          }),
-          retry({
-            count: this.MAX_RETRIES,
-            delay: (error, retryCount) => {
-              attemptCount = retryCount + 1
-              const isRetryable = this.isRetryableError(error)
-
-              // 如果不可重试，立即抛出错误
-              if (!isRetryable) {
-                this.logger.error(
-                  `[log-${logId}] Non-retryable error: ${getErrorMessage(error)}`,
-                  getErrorStack(error),
-                )
-                throw error
-              }
-
-              const delayMs = this.INITIAL_DELAY * this.BACKOFF_MULTIPLIER ** (retryCount - 1)
-              this.logger.warn(
-                `[log-${logId}] Attempt ${retryCount} failed: ${getErrorMessage(error)}. Retrying in ${delayMs}ms...`,
-              )
-
-              return timer(delayMs)
-            },
-          }),
-        ),
+      const result = await runWithAiGenerationRetry(
+        async () => {
+          attemptCount++
+          return await this.executeTask(taskType, request)
+        },
+        retry,
+        (error, attempt, maxAttempts) => {
+          this.logger.warn(
+            `[log-${logId}] Attempt ${attempt} failed: ${getErrorMessage(error)}. Retrying ${attempt + 1}/${maxAttempts}...`,
+          )
+        },
       )
 
       const duration = Date.now() - startedAt.getTime()
 
       // 更新日志为成功状态
-      await this.aiLogRepo.updateById(logId, {
-        duration,
-        status: AiLogStatus.Success,
-        response: result as Record<string, unknown>,
-      })
+      const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(
+        logId,
+        AiLogStatus.Generating,
+        {
+          $set: {
+            duration,
+            status: AiLogStatus.Success,
+            response: result as Record<string, unknown>,
+          },
+        },
+      )
 
-      await this.asyncSettlementService.settleSuccess(logId, pricing, {
-        taskType,
-      })
+      if (!updatedAiLog) {
+        this.logger.warn(`[log-${logId}] Skipping async image result update because AiLog status changed`)
+        return result
+      }
 
       this.logger.debug(
         `[log-${logId}] Task completed successfully${attemptCount > 1 ? ` after ${attemptCount} attempts` : ''}`,
@@ -180,34 +106,20 @@ export class ImageConsumer extends WorkerHost {
     catch (error: unknown) {
       const duration = Date.now() - startedAt.getTime()
       const errorMessage = getErrorMessage(error)
-      const isRetryable = this.isRetryableError(error)
 
       // 更新日志为失败状态
-      await this.aiLogRepo.updateById(logId, {
-        duration,
-        status: AiLogStatus.Failed,
-        errorMessage: isRetryable && attemptCount > 1
-          ? `${errorMessage} (已重试 ${attemptCount - 1} 次)`
-          : errorMessage,
+      const updatedAiLog = await this.aiLogRepo.updateByIdAndStatus(logId, AiLogStatus.Generating, {
+        $set: {
+          duration,
+          status: AiLogStatus.Failed,
+          errorMessage: attemptCount > 1
+            ? `${errorMessage} (已重试 ${attemptCount - 1} 次)`
+            : errorMessage,
+        },
       })
 
-      if (pricing > 0 && userType === UserType.User) {
-        await this.asyncSettlementService.refundFailedTask(logId, {
-          userId,
-          amount: pricing,
-          description: model,
-          metadata: {
-            taskType,
-            errorMessage,
-            settledBy: AiLogSettlementSettledBy.ImageAsyncConsumer,
-          },
-        })
-      }
-      else {
-        await this.asyncSettlementService.markFailed(logId, {
-          taskType,
-          errorMessage,
-        })
+      if (!updatedAiLog) {
+        this.logger.warn(`[log-${logId}] Skipping async image failure update because AiLog status changed`)
       }
 
       this.logger.error(

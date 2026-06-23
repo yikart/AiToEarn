@@ -1,4 +1,4 @@
-/**
+﻿/**
  * UserSection - 用户头像/登录按钮区域
  */
 
@@ -9,7 +9,7 @@ import { useTransClient } from '@/app/i18n/client'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 import { useUserStore } from '@/store/user'
 import { getOssUrl } from '@/utils/oss'
 

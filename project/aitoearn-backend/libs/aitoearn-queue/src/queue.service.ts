@@ -1,19 +1,24 @@
 import type { Job, JobsOptions, Queue } from 'bullmq'
 import type {
+  AgentTaskAnalysisData,
   AiImageData,
-  AiTaskRefundData,
   DraftGenerationData,
   EngagementReplyToCommentData,
   EngagementTaskDistributionData,
-  NotificationData,
+  MaterialGenerateData,
   PostMediaTaskData,
   PostPublishData,
-  UserEventBatchData,
 } from './interfaces'
 import { InjectQueue } from '@nestjs/bullmq'
 import { Injectable } from '@nestjs/common'
 import { QueueName } from './enums'
+import { ContentGenerationTaskData } from './interfaces/content-generation-task.interface'
 import { QueueConfig } from './queue.config'
+
+export interface DraftGenerationQueueInfo {
+  position: number | null
+  waitingCount: number
+}
 
 /**
  * 统一的队列服务
@@ -24,7 +29,9 @@ export class QueueService {
   private readonly defaultOptions: JobsOptions
 
   constructor(
-    config: QueueConfig,
+    private config: QueueConfig,
+    @InjectQueue(QueueName.MaterialGenerate)
+    private materialGenerateQueue: Queue,
     @InjectQueue(QueueName.PostPublish)
     private postPublishQueue: Queue,
     @InjectQueue(QueueName.PostMediaTask)
@@ -39,22 +46,30 @@ export class QueueService {
     private dumpSocialMediaAvatarQueue: Queue,
     @InjectQueue(QueueName.UpdatePublishedPost)
     private updatePublishedPostQueue: Queue,
-    @InjectQueue(QueueName.Notification)
-    private notificationQueue: Queue,
-    @InjectQueue(QueueName.AiTaskRefund)
-    private aiTaskRefundQueue: Queue,
+    @InjectQueue(QueueName.ContentGenerationTask)
+    private contentGenerationTaskQueue: Queue,
+    @InjectQueue(QueueName.AgentTaskAnalysis)
+    private agentTaskAnalysisQueue: Queue,
     @InjectQueue(QueueName.DraftGeneration)
     private draftGenerationQueue: Queue,
     @InjectQueue(QueueName.DraftGenerationLowPriority)
     private draftGenerationLowPriorityQueue: Queue,
-    @InjectQueue(QueueName.UserEventBatch)
-    private userEventBatchQueue: Queue,
   ) {
     // 从配置中读取默认的 job options
     this.defaultOptions = config.jobOptions || {
       removeOnComplete: { age: 30, count: 1000 },
       removeOnFail: { age: 60, count: 1000 },
     }
+  }
+
+  /**
+   * 添加素材生成任务
+   */
+  async addMaterialGenerateJob(data: MaterialGenerateData, options?: JobsOptions) {
+    return await this.materialGenerateQueue.add('start', data, {
+      ...this.defaultOptions,
+      ...options,
+    })
   }
 
   /**
@@ -91,8 +106,18 @@ export class QueueService {
   async addAiImageAsyncJob(data: AiImageData, options?: JobsOptions) {
     return await this.aiImageAsyncQueue.add('generate', data, {
       ...this.defaultOptions,
+      jobId: data.logId,
       ...options,
     })
+  }
+
+  async isAiImageAsyncJobActive(aiLogId: string): Promise<boolean> {
+    if (await this.isJobActive(await this.aiImageAsyncQueue.getJob(aiLogId))) {
+      return true
+    }
+
+    const activeJobs = await this.aiImageAsyncQueue.getJobs(['active'], 0, -1, true)
+    return activeJobs.some(job => job?.data?.logId === aiLogId)
   }
 
   /**
@@ -132,23 +157,20 @@ export class QueueService {
     })
   }
 
-  async addNotificationJob(data: NotificationData, options?: JobsOptions) {
-    return await this.notificationQueue.add('send-notification', data, {
+  async addContentGenerationTaskJob(data: ContentGenerationTaskData, options?: JobsOptions) {
+    return await this.contentGenerationTaskQueue.add('generate', data, {
       ...this.defaultOptions,
       ...options,
     })
   }
 
   /**
-   * 添加 AI任务失败退款处理任务
+   * 添加Agent任务分析任务
    */
-  async addAiTaskRefundJob(data: AiTaskRefundData, options?: JobsOptions) {
-    return await this.aiTaskRefundQueue.add('refund', data, {
+  async addAgentTaskAnalysisJob(data: AgentTaskAnalysisData, options?: JobsOptions) {
+    return await this.agentTaskAnalysisQueue.add('analyze', data, {
       ...this.defaultOptions,
       jobId: data.taskId,
-      removeOnComplete: {
-        age: 60 * 60,
-      },
       attempts: 3,
       backoff: {
         type: 'exponential',
@@ -164,9 +186,13 @@ export class QueueService {
   async addDraftGenerationJob(data: DraftGenerationData, options?: JobsOptions) {
     return await this.draftGenerationQueue.add('generate', data, {
       ...this.defaultOptions,
-      attempts: 2,
-      backoff: { type: 'exponential', delay: 10000 },
       ...options,
+      jobId: data.aiLogId,
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 5000,
+      },
     })
   }
 
@@ -176,19 +202,52 @@ export class QueueService {
   async addLowPriorityDraftGenerationJob(data: DraftGenerationData, options?: JobsOptions) {
     return await this.draftGenerationLowPriorityQueue.add('generate', data, {
       ...this.defaultOptions,
-      attempts: 2,
-      backoff: { type: 'exponential', delay: 10000 },
       ...options,
+      jobId: data.aiLogId,
+      attempts: 3,
+      backoff: {
+        type: 'exponential',
+        delay: 5000,
+      },
     })
   }
 
-  /**
-   * 添加用户事件批量写入任务
-   */
-  async addUserEventBatchJob(data: UserEventBatchData, options?: JobsOptions) {
-    return await this.userEventBatchQueue.add('batch-insert', data, {
-      ...this.defaultOptions,
-      ...options,
-    })
+  async getDraftGenerationQueueInfo(aiLogId: string): Promise<DraftGenerationQueueInfo | undefined> {
+    const normalQueueInfo = await this.getDraftGenerationQueueInfoFromQueue(this.draftGenerationQueue, aiLogId)
+    if (normalQueueInfo) {
+      return normalQueueInfo
+    }
+
+    return await this.getDraftGenerationQueueInfoFromQueue(this.draftGenerationLowPriorityQueue, aiLogId)
+  }
+
+  async isDraftGenerationJobActive(aiLogId: string): Promise<boolean> {
+    return await this.isJobActive(await this.draftGenerationQueue.getJob(aiLogId))
+      || await this.isJobActive(await this.draftGenerationLowPriorityQueue.getJob(aiLogId))
+  }
+
+  private async getDraftGenerationQueueInfoFromQueue(queue: Queue, jobId: string): Promise<DraftGenerationQueueInfo | undefined> {
+    const job = await queue.getJob(jobId)
+    if (!job) {
+      return undefined
+    }
+
+    const [state, waitingCount] = await Promise.all([
+      job.getState(),
+      queue.count(),
+    ])
+    let position: number | null = null
+
+    if (state === 'waiting' || state === 'prioritized' || state === 'delayed' || state === 'waiting-children') {
+      const jobs = await queue.getJobs(['prioritized', 'waiting', 'delayed', 'waiting-children'], 0, -1, true)
+      const index = jobs.findIndex(item => item?.id === jobId)
+      position = index >= 0 ? index + 1 : null
+    }
+
+    return { position, waitingCount }
+  }
+
+  private async isJobActive(job?: Job | undefined): Promise<boolean> {
+    return !!job && await job.getState() === 'active'
   }
 }

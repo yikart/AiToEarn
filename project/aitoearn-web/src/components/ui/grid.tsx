@@ -6,7 +6,7 @@
 'use client'
 
 import * as React from 'react'
-import { cn } from '@/lib/utils'
+import { cn } from '@/utils/className'
 
 interface RowProps extends React.HTMLAttributes<HTMLDivElement> {
   /** 栅格间隔 */
