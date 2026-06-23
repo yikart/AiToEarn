@@ -27,7 +27,7 @@ export const TiktokOptionSchema = z.object({
   brand_content_toggle: z.boolean().optional().describe('品牌内容'),
   auto_add_music: z.boolean().optional().describe('图文发布自动配乐'),
   photo_cover_index: z.number().int().min(0).optional().describe('图文封面图片下标'),
-  source: z.enum(TikTokPostSource).optional().describe('视频上传来源'),
+  source: z.enum(TikTokPostSource).optional().describe('视频上传来源，FILE_UPLOAD 由后端上传，PULL_FROM_URL 由 TikTok 拉取已验证 URL'),
   is_aigc: z.boolean().optional().describe('视频发布是否声明为 AI 生成内容'),
 })
 
@@ -37,6 +37,7 @@ export const TikTokPublishDataOptionSchema = z.object({
   publishId: z.string().min(1).describe('TikTok Content Posting API publish_id，仅用于发布状态关联'),
   source: z.enum(TikTokPostSource).optional().describe('发布媒体来源'),
   contentPath: z.enum(TikTokContentPath).describe('公开作品链接路径类型'),
+  privacyLevel: z.enum(TikTokPrivacyLevel).optional().describe('发布时实际使用的 TikTok 隐私级别'),
   username: z.string().min(1).optional().describe('TikTok username，用于构造 canonical 作品链接'),
   publishStatus: z.enum(TikTokPublishStatus).optional().describe('TikTok Content Posting API 官方发布状态'),
   finalPostId: z.string().min(1).optional().describe('TikTok 最终公开作品 post_id'),

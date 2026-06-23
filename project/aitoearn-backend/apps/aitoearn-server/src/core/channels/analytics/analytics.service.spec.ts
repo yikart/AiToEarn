@@ -49,7 +49,7 @@ vi.mock('@yikart/mongodb', async () => {
   }
 })
 
-vi.mock('../../relay/relay-account.exception', () => ({
+vi.mock('../relay/relay-account.exception', () => ({
   RelayAccountException: class RelayAccountException extends Error {},
 }))
 

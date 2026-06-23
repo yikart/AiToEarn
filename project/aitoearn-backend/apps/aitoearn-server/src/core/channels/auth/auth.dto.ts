@@ -7,7 +7,7 @@ const SelectedAccountIdentitySchema = z.object({
 })
 
 export const StartAuthQuerySchema = z.object({
-  callbackUrl: z.url({ protocol: /^https?$/, hostname: z.regexes.hostname }).optional().describe('授权完成后浏览器 POST relay 的回调地址'),
+  callbackUrl: z.url({ protocol: /^https?$/ }).optional().describe('授权完成后浏览器 POST relay 的回调地址'),
   redirectUri: z.httpUrl().optional().describe('授权完成后浏览器跳转地址'),
   groupId: z.string().optional().describe('账号组 ID，不传则使用默认组'),
 })

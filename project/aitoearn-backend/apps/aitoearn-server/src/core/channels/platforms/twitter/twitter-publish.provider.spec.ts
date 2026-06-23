@@ -1,5 +1,6 @@
 import type { MediaService } from '../../media/media.service'
 import type { TwitterService } from './twitter.service'
+import { Readable } from 'node:stream'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
 import { PublishValidationIssueCode } from '../publish.schema'
@@ -17,6 +18,18 @@ vi.mock('@yikart/mongodb', () => ({
   },
   Transactional: () => () => undefined,
 }))
+
+function createMediaService(buffer: Buffer, contentType = 'video/mp4'): MediaService {
+  return {
+    withUploadSource: vi.fn(async (_input, handler) => handler({
+      sizeBytes: buffer.length,
+      contentType,
+      filename: 'media',
+      stream: range => Readable.from(buffer.subarray(range?.start ?? 0, range ? range.end + 1 : buffer.length)),
+      blob: async range => new Blob([new Uint8Array(buffer.subarray(range?.start ?? 0, range ? range.end + 1 : buffer.length))], { type: contentType }),
+    })),
+  } as unknown as MediaService
+}
 
 describe('twitter publish provider', () => {
   it('rejects mixed media and excessive media during validation', async () => {
@@ -60,7 +73,7 @@ describe('twitter publish provider', () => {
       createPost: vi.fn(),
     } as unknown as TwitterService
     const mediaService = {
-      getBuffer: vi.fn(),
+      withUploadSource: vi.fn(),
     } as unknown as MediaService
     const provider = new TwitterPublishProvider(twitterService, mediaService)
 
@@ -82,7 +95,7 @@ describe('twitter publish provider', () => {
       code: ResponseCode.ChannelPlatformMediaUnsupported,
     })
 
-    expect(mediaService.getBuffer).not.toHaveBeenCalled()
+    expect(mediaService.withUploadSource).not.toHaveBeenCalled()
     expect(twitterService.initMediaUpload).not.toHaveBeenCalled()
     expect(twitterService.createPost).not.toHaveBeenCalled()
   })
@@ -111,9 +124,8 @@ describe('twitter publish provider', () => {
         permalink: 'https://x.com/i/status/tweet-1',
       })),
     } as unknown as TwitterService
-    const mediaService = {
-      getBuffer: vi.fn(async () => Buffer.from('video-data')),
-    } as unknown as MediaService
+    const videoBuffer = Buffer.from('video-data')
+    const mediaService = createMediaService(videoBuffer)
     const provider = new TwitterPublishProvider(twitterService, mediaService)
 
     await expect(provider.publish({
@@ -138,11 +150,60 @@ describe('twitter publish provider', () => {
       mediaType: 'video/mp4',
       mediaCategory: 'tweet_video',
     }))
+    expect(twitterService.appendMediaUpload).toHaveBeenCalledWith('access-token', {
+      mediaId: 'media-1',
+      media: expect.any(Blob),
+      segmentIndex: 0,
+    })
     expect(twitterService.createPost).toHaveBeenCalledWith('access-token', expect.objectContaining({
       mediaIds: ['media-1'],
     }))
     expect(vi.mocked(twitterService.getMediaStatus).mock.invocationCallOrder[0])
       .toBeLessThan(vi.mocked(twitterService.createPost).mock.invocationCallOrder[0])
+  })
+
+  it('uploads video media in 1 MiB append chunks', async () => {
+    const twitterService = {
+      initMediaUpload: vi.fn(async () => ({ mediaId: 'media-1' })),
+      appendMediaUpload: vi.fn(),
+      finalizeMediaUpload: vi.fn(async () => ({
+        mediaId: 'media-1',
+      })),
+      getMediaStatus: vi.fn(),
+      createMediaMetadata: vi.fn(),
+      createPost: vi.fn(async () => ({
+        postId: 'tweet-1',
+        permalink: 'https://x.com/i/status/tweet-1',
+      })),
+    } as unknown as TwitterService
+    const videoBuffer = Buffer.alloc(3 * 1024 * 1024, 1)
+    const mediaService = createMediaService(videoBuffer)
+    const provider = new TwitterPublishProvider(twitterService, mediaService)
+
+    await provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.Twitter,
+      accountId: 'account-1',
+      content: {
+        body: 'caption',
+        media: [{ url: 'https://cdn.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      credential: {
+        accessToken: 'access-token',
+      },
+    })
+
+    expect(twitterService.appendMediaUpload).toHaveBeenCalledTimes(3)
+    const appendCalls = vi.mocked(twitterService.appendMediaUpload).mock.calls
+    await Promise.all(appendCalls.map(async ([accessToken, params], index) => {
+      const chunkStart = index * 1024 * 1024
+      const expectedChunk = videoBuffer.subarray(chunkStart, chunkStart + 1024 * 1024)
+      expect(accessToken).toBe('access-token')
+      expect(params.mediaId).toBe('media-1')
+      expect(params.segmentIndex).toBe(index)
+      expect(params.media.size).toBe(expectedChunk.length)
+      expect(Buffer.from(await params.media.arrayBuffer()).equals(expectedChunk)).toBe(true)
+    }))
   })
 
   it('waits for gif media processing before creating the tweet', async () => {
@@ -169,9 +230,7 @@ describe('twitter publish provider', () => {
         permalink: 'https://x.com/i/status/tweet-1',
       })),
     } as unknown as TwitterService
-    const mediaService = {
-      getBuffer: vi.fn(async () => Buffer.from('gif-data')),
-    } as unknown as MediaService
+    const mediaService = createMediaService(Buffer.from('gif-data'), 'image/gif')
     const provider = new TwitterPublishProvider(twitterService, mediaService)
 
     await expect(provider.publish({

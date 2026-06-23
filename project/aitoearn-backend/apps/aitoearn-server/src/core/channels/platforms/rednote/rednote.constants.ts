@@ -13,8 +13,8 @@ export const REDNOTE_METADATA = {
     imageFormats: ['jpg', 'jpeg', 'png', 'bmp', 'webp'],
     videoFormats: ['mp4', 'avi', 'mkv', 'mov', 'webm'],
     maxImageSize: 20 * 1024 * 1024,
-    maxVideoSize: 100 * 1024 * 1024,
-    maxVideoDuration: 900,
+    maxVideoSize: 1024 * 1024 * 1024,
+    maxVideoDuration: 3600,
   },
   topic: { supported: true, nativeField: true, maxCount: 5 },
   publishPolicy: {

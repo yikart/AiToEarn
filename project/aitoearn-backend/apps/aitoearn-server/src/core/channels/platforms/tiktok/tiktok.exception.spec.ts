@@ -60,6 +60,62 @@ describe('tiktok platform exception', () => {
     expect(exception.platformCause?.type).toBe(PlatformErrorCauseType.Platform)
   })
 
+  it('classifies TikTok daily posting spam risk as rate limit instead of media processing', () => {
+    const config = {
+      method: 'post',
+      url: 'https://open.tiktokapis.com/v2/post/publish/video/init/',
+    } as InternalAxiosRequestConfig
+    const response: AxiosResponse<TikTokPlatformResponseBody> = {
+      data: {
+        error: {
+          code: 'spam_risk_too_many_posts',
+          message: 'This TikTok creator has made too many posts via OpenAPI in the last 24 hours',
+          log_id: 'log_1',
+        },
+      },
+      status: 403,
+      statusText: 'Forbidden',
+      headers: {},
+      config,
+    }
+    const error = new AxiosError('Request failed', 'ERR_BAD_REQUEST', config, undefined, response)
+
+    const exception = TikTokPlatformException.fromAxiosError(error)
+
+    expect(exception.code).toBe(ResponseCode.ChannelPlatformRateLimited)
+    expect(exception.category).toBe(PlatformErrorCategory.RateLimit)
+    expect(exception.retryable).toBe(false)
+    expect(exception.platformCause?.platformCode).toBe('spam_risk_too_many_posts')
+  })
+
+  it('classifies unverified pull-from-url ownership as validation instead of media processing', () => {
+    const config = {
+      method: 'post',
+      url: 'https://open.tiktokapis.com/v2/post/publish/content/init/',
+    } as InternalAxiosRequestConfig
+    const response: AxiosResponse<TikTokPlatformResponseBody> = {
+      data: {
+        error: {
+          code: 'url_ownership_unverified',
+          message: 'Please review our URL ownership verification rules',
+          log_id: 'log_1',
+        },
+      },
+      status: 403,
+      statusText: 'Forbidden',
+      headers: {},
+      config,
+    }
+    const error = new AxiosError('Request failed', 'ERR_BAD_REQUEST', config, undefined, response)
+
+    const exception = TikTokPlatformException.fromAxiosError(error)
+
+    expect(exception.code).toBe(ResponseCode.ChannelPlatformApiFailed)
+    expect(exception.category).toBe(PlatformErrorCategory.Validation)
+    expect(exception.retryable).toBe(false)
+    expect(exception.platformCause?.platformCode).toBe('url_ownership_unverified')
+  })
+
   it('classifies axios network errors as retryable network failures', () => {
     const config = {
       method: 'get',

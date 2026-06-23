@@ -1,5 +1,6 @@
+import type { AssetsConfig } from '@yikart/assets'
 import { Test } from '@nestjs/testing'
-import { ASSETS_CONFIG, type AssetsConfig } from '@yikart/assets'
+import { ASSETS_CONFIG } from '@yikart/assets'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RelayConfig } from '../libs/relay/relay.config'
 import { RelayMediaResolverService } from './relay-media-resolver.service'

@@ -3,7 +3,7 @@ import { Injectable, Logger } from '@nestjs/common'
 import { AppException, CommonResponse, ResponseCode } from '@yikart/common'
 import { AssetType } from '@yikart/mongodb'
 import axios, { AxiosRequestConfig } from 'axios'
-import { config } from '../../config'
+import { config } from '../../../config'
 
 interface UploadSignResult {
   id: string

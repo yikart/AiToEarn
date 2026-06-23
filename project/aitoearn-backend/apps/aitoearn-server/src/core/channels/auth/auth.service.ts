@@ -15,13 +15,13 @@ import { EventStream, EventStreamService, EventTopic } from '@yikart/redis'
 import { nanoid } from 'nanoid'
 import { UAParser } from 'ua-parser-js'
 import { ServerRedisService } from '../../../common/redis'
-import { RelayAccountException } from '../../relay/relay-account.exception'
-import { RelayAuthException } from '../../relay/relay-auth.exception'
-import { RelayClientService } from '../../relay/relay-client.service'
 import { CredentialService } from '../accounts/credential.service'
 import { ChannelPlatformException, PlatformErrorCategory } from '../platforms/platforms.exception'
 import { AuthCallbackResponseType, AuthType } from '../platforms/platforms.interface'
 import { PlatformIntegrationRegistry } from '../platforms/platforms.registry'
+import { RelayAccountException } from '../relay/relay-account.exception'
+import { RelayAuthException } from '../relay/relay-auth.exception'
+import { RelayClientService } from '../relay/relay-client.service'
 import {
   AuthCallbackResult,
   AuthSession,
@@ -574,6 +574,23 @@ export class AuthService {
     accountId: string,
     userId?: string,
   ): Promise<{ accessToken: string, refreshToken?: string, expiresAt?: Date, scope?: string }> {
+    const refreshed = await this.tryRefreshCredential(accountId, userId)
+    if (!refreshed) {
+      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
+    }
+
+    return {
+      accessToken: refreshed.accessToken,
+      refreshToken: refreshed.refreshToken,
+      expiresAt: refreshed.expiresAt,
+      scope: refreshed.scope,
+    }
+  }
+
+  async tryRefreshCredential(
+    accountId: string,
+    userId?: string,
+  ): Promise<{ accessToken: string, refreshToken?: string, expiresAt?: Date, scope?: string } | null> {
     const account = await this.getCredentialAccount(accountId, userId)
     let refreshed: Awaited<ReturnType<CredentialService['tryRefresh']>>
     try {
@@ -584,7 +601,7 @@ export class AuthService {
       throw error
     }
     if (!refreshed) {
-      throw new AppException(ResponseCode.ChannelAccessTokenFailed)
+      return null
     }
 
     return {

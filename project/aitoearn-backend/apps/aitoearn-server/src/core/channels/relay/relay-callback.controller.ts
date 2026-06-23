@@ -2,8 +2,8 @@ import { Body, Controller, Post, Query, Render } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
 import { AccountType, ApiDoc, AppException, ChannelAuthTaskStatus, ParseObjectIdPipe, ResponseCode } from '@yikart/common'
-import { ServerRedisService } from '../../common/redis'
-import { AccountService } from '../channels/accounts/account.service'
+import { ServerRedisService } from '../../../common/redis'
+import { AccountService } from '../accounts/account.service'
 import { RelayCallbackDto } from './relay-callback.dto'
 
 interface RelayCallbackAccount {
@@ -14,9 +14,9 @@ interface RelayCallbackAccount {
   platform: AccountType
 }
 
-@ApiTags('Relay/OAuth')
-@Controller('plat')
-export class RelayOAuthController {
+@ApiTags('Channels/Relay')
+@Controller({ path: '/channels/relay', version: '2' })
+export class RelayCallbackController {
   constructor(
     private readonly accountService: AccountService,
     private readonly redisService: ServerRedisService,
@@ -28,11 +28,12 @@ export class RelayOAuthController {
     description: '接收官方服务器 OAuth 完成后浏览器 form POST 过来的账号信息，在本地创建 relay 账号',
     body: RelayCallbackDto.schema,
   })
-  @Post('/relay-callback')
+  @Post('/callback')
   @Render('channels/auth/callback')
   async handleRelayCallback(
     @Body() body: RelayCallbackDto,
     @Query('userId', ParseObjectIdPipe) userId: string,
+    @Query('groupId') groupId: string | undefined,
   ) {
     if (!userId) {
       throw new AppException(ResponseCode.UserNotFound)
@@ -47,6 +48,7 @@ export class RelayOAuthController {
         nickname: relayAccount.nickname,
         avatar: relayAccount.avatar,
         relayAccountRef: relayAccount.relayAccountRef,
+        groupId,
       })
       if (account) {
         accounts.push(account)

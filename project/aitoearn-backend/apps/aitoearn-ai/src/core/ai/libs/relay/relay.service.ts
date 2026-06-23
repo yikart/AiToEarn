@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common'
+import { AppException, ResponseCode } from '@yikart/common'
 import axios, { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import { AiAvailabilityService } from '../../../ai-availability'
 import { RelayConfig } from './relay.config'
 import { RelayVideoCallbackDto, RelayVideoGenerationRequest, RelayVideoSubmitResponse } from './relay.interface'
 
 interface RelayCommonResponse<T> {
-  data: T
+  code?: number
+  message?: string
+  data?: T
 }
 
 @Injectable()
@@ -27,7 +30,7 @@ export class RelayLibService {
     })
 
     this.httpClient.interceptors.response.use(
-      response => response,
+      response => this.normalizeResponse(response),
       (error: AxiosError) => Promise.reject(this.normalizeError(error)),
     )
   }
@@ -41,6 +44,38 @@ export class RelayLibService {
     return error
   }
 
+  private normalizeResponse<T>(response: AxiosResponse<RelayCommonResponse<T> | T>): AxiosResponse<T> {
+    response.data = this.unwrapResponse(response.data)
+    return response as AxiosResponse<T>
+  }
+
+  private unwrapResponse<T>(body: RelayCommonResponse<T> | T): T {
+    if (!this.isCommonResponse(body)) {
+      return body as T
+    }
+
+    if (body.code != null && body.code !== ResponseCode.Success) {
+      throw new AppException(body.code, body.message ?? 'Relay API request failed')
+    }
+
+    return body.data as T
+  }
+
+  private isCommonResponse<T>(body: RelayCommonResponse<T> | T): body is RelayCommonResponse<T> {
+    return typeof body === 'object'
+      && body !== null
+      && 'data' in body
+  }
+
+  private stringifyForError(value: unknown): string {
+    try {
+      return JSON.stringify(value)
+    }
+    catch {
+      return String(value)
+    }
+  }
+
   /**
    * 提交视频生成任务到上游 relay 服务端
    * 对应上游 POST /ai/video/generations
@@ -49,11 +84,15 @@ export class RelayLibService {
     return this.aiAvailability.execute(
       { provider: 'relay', operation: 'createVideo', model: request.model },
       async () => {
-        const response: AxiosResponse<RelayCommonResponse<RelayVideoSubmitResponse>> = await this.httpClient.post(
+        const response: AxiosResponse<RelayVideoSubmitResponse> = await this.httpClient.post(
           '/api/ai/video/generations',
           request,
         )
-        return response.data.data
+        const result = response.data
+        if (!result?.id) {
+          throw new AppException(ResponseCode.AiCallFailed, { error: `Relay video task id is missing: ${this.stringifyForError(result)}` })
+        }
+        return result
       },
     )
   }
@@ -66,10 +105,10 @@ export class RelayLibService {
     return this.aiAvailability.execute(
       { provider: 'relay', operation: 'getVideo' },
       async () => {
-        const response: AxiosResponse<RelayCommonResponse<RelayVideoCallbackDto>> = await this.httpClient.get(
+        const response: AxiosResponse<RelayVideoCallbackDto> = await this.httpClient.get(
           `/api/ai/video/generations/${encodeURIComponent(taskId)}`,
         )
-        return response.data.data
+        return response.data
       },
     )
   }

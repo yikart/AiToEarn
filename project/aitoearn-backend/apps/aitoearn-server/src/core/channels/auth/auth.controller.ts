@@ -90,7 +90,7 @@ export class AuthController {
         { query },
         sessionId,
       )
-      return this.renderCallbackResult(res, result, sessionId)
+      return this.renderCallbackResult(res, result)
     }
     catch (error) {
       const callbackSessionId = sessionId ?? this.getOptionalCallbackSessionId(req, { query }) ?? 'unknown'
@@ -123,7 +123,7 @@ export class AuthController {
         { query, body },
         sessionId,
       )
-      return this.renderCallbackResult(res, result, sessionId)
+      return this.renderCallbackResult(res, result)
     }
     catch (error) {
       await this.markCallbackSessionFailed(sessionId ?? this.getOptionalCallbackSessionId(req, { query, body }), this.getErrorCode(error))
@@ -131,7 +131,7 @@ export class AuthController {
     }
   }
 
-  private renderCallbackResult(res: Response, result: Awaited<ReturnType<AuthService['completeCallback']>>, sessionId: string) {
+  private renderCallbackResult(res: Response, result: Awaited<ReturnType<AuthService['completeCallback']>>) {
     if (result.callbackResponseType === AuthCallbackResponseType.Json) {
       const accounts = result.connectedAccounts
         ? AuthConnectedAccountVoSchema.array().parse(result.connectedAccounts)
@@ -149,7 +149,6 @@ export class AuthController {
 
     const locale = getLocale()
     if (result.requiresSelection) {
-      setChannelAuthSessionCookie(res, sessionId)
       return res.render('channels/auth/select-accounts', {
         ...result,
         locale,

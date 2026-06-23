@@ -361,14 +361,14 @@ export const AgentMessageVoHelper = {
 export const ContentGenerationTaskVoSchema = z.object({
   id: z.string(),
   userId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   title: z.string().optional(),
   messages: z.array(AgentMessageVoSchema).optional(),
   status: z.enum(ContentGenerationTaskStatus),
   rating: z.number().int().min(1).max(5).optional(),
   ratingComment: z.string().optional(),
-  favoritedAt: z.date().nullable().optional(),
+  favoritedAt: z.coerce.date().nullable().optional(),
 })
 export class ContentGenerationTaskVo extends createZodDto(ContentGenerationTaskVoSchema) { }
 
@@ -377,11 +377,11 @@ export const ContentGenerationTaskListItemVoSchema = z.object({
   userId: z.string(),
   title: z.string().optional(),
   status: z.enum(ContentGenerationTaskStatus),
-  createdAt: z.date(),
-  updatedAt: z.date(),
+  createdAt: z.coerce.date(),
+  updatedAt: z.coerce.date(),
   rating: z.number().int().min(1).max(5).optional(),
   ratingComment: z.string().optional(),
-  favoritedAt: z.date().nullable().optional(),
+  favoritedAt: z.coerce.date().nullable().optional(),
 })
 export class ContentGenerationTaskListItemVo extends createZodDto(ContentGenerationTaskListItemVoSchema) { }
 
@@ -452,6 +452,6 @@ export class TaskMessagesVo extends createZodDto(TaskMessagesVoSchema, 'TaskMess
 
 export const PublicShareVoSchema = z.object({
   token: z.string(),
-  expiresAt: z.date(),
+  expiresAt: z.coerce.date(),
 })
 export class PublicShareVo extends createZodDto(PublicShareVoSchema, 'PublicShareVo') { }

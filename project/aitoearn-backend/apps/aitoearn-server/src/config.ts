@@ -27,7 +27,7 @@ const httpUrlSchema = z.url({ protocol: /^https?$/ })
 export const relayConfigSchema = z.object({
   serverUrl: httpUrlSchema.describe('中转服务器地址'),
   apiKey: z.string().describe('用户 API Key'),
-  callbackUrl: httpUrlSchema.describe('OAuth 回调完整地址，如 http://localhost:3000/api/plat/relay-callback'),
+  callbackUrl: httpUrlSchema.describe('OAuth 回调完整地址，如 http://localhost:3000/api/v2/channels/relay/callback'),
 })
 
 export const apiKeyConfigSchema = z.object({

@@ -41,7 +41,10 @@ class PinoContextManager implements ContextManager<PinoTelemetryContext> {
 
     const logger = PinoLogger.root.child(bindings)
     const store = new Store(logger)
-    return storage.run(store, fn) as ReturnType<A>
+    return propagationContext.run(
+      { headers: context.requestId ? { 'x-request-id': context.requestId } : {} },
+      () => storage.run(store, fn),
+    ) as ReturnType<A>
   }
 
   active(): PinoTelemetryContext {

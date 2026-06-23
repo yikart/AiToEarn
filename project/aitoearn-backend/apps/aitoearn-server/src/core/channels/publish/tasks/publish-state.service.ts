@@ -1,7 +1,8 @@
-import type { AccountType, WorkStatus } from '@yikart/common'
+import type { WorkStatus } from '@yikart/common'
 import type { PublishRecord, PublishRecordLinkStatus } from '@yikart/mongodb'
 import type { PublishContentInput, PublishMediaJob, PublishTaskError } from '../../platforms/platforms.interface'
 import { Injectable, Logger } from '@nestjs/common'
+import { AccountType } from '@yikart/common'
 import { PublishRecordRepository, PublishStatus } from '@yikart/mongodb'
 import { EventStream, EventStreamService, EventTopic } from '@yikart/redis'
 import { PublishMediaType } from '../../platforms/platforms.interface'
@@ -204,11 +205,12 @@ export class PublishStateService {
     if (!record)
       return false
     if (record.status === PublishStatus.Published) {
-      if (result.platformWorkId && record.platformWorkId !== result.platformWorkId) {
+      const replacingPlatformWorkId = Boolean(result.platformWorkId && record.platformWorkId !== result.platformWorkId)
+      if (replacingPlatformWorkId && !this.canReplacePublishedPlatformWorkId(record, result)) {
         return false
       }
 
-      const supplement = this.buildPublishedSupplementUpdate(record, result)
+      const supplement = this.buildPublishedSupplementUpdate(record, result, replacingPlatformWorkId)
       if (!Object.keys(supplement).length) {
         return true
       }
@@ -261,8 +263,13 @@ export class PublishStateService {
     return true
   }
 
-  private buildPublishedSupplementUpdate(record: PublishRecord, result: PublishCompletionResult): Record<string, unknown> {
+  private buildPublishedSupplementUpdate(record: PublishRecord, result: PublishCompletionResult, replacingPlatformWorkId = false): Record<string, unknown> {
     const update: Record<string, unknown> = {}
+    if (replacingPlatformWorkId && result.platformWorkId) {
+      update['platformWorkId'] = result.platformWorkId
+      update['dataId'] = result.platformWorkId
+      update['uniqueId'] = `${record.accountType}_${result.platformWorkId}`
+    }
     if (result.permalink && record.workLink !== result.permalink)
       update['workLink'] = result.permalink
     if (result.dataOption)
@@ -276,6 +283,25 @@ export class PublishStateService {
     if (result.linkMeta)
       update['linkMeta'] = this.mergeRecordData(record.linkMeta, result.linkMeta)
     return update
+  }
+
+  private canReplacePublishedPlatformWorkId(record: PublishRecord, result: PublishCompletionResult): boolean {
+    const currentPublishId = this.getRecordString(record.dataOption, 'publishId')
+    const nextPublishId = this.getRecordString(result.dataOption, 'publishId')
+    const finalPostId = this.getRecordString(result.dataOption, 'finalPostId')
+    return Boolean(
+      record.accountType === AccountType.TikTok
+      && record.platformWorkId
+      && result.platformWorkId
+      && currentPublishId === record.platformWorkId
+      && nextPublishId === record.platformWorkId
+      && finalPostId === result.platformWorkId,
+    )
+  }
+
+  private getRecordString(data: Record<string, unknown> | undefined, key: string): string | undefined {
+    const value = data?.[key]
+    return typeof value === 'string' ? value : undefined
   }
 
   private buildPublishedEventPayload(

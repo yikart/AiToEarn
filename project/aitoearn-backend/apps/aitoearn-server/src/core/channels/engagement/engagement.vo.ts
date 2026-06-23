@@ -10,7 +10,7 @@ export const ChannelCommentVoSchema = z.object({
   authorName: z.string().optional().describe('评论作者名称'),
   authorPlatformUid: z.string().optional().describe('评论作者平台 UID'),
   content: z.string().describe('评论内容'),
-  createdAt: z.date().optional().describe('评论时间'),
+  createdAt: z.coerce.date().optional().describe('评论时间'),
   likeCount: z.number().int().nonnegative().optional().describe('点赞数'),
   replyCount: z.number().int().nonnegative().optional().describe('回复数'),
 })
@@ -33,7 +33,7 @@ export const ChannelEngagementActionVoSchema = z.object({
   targetId: z.string().describe('互动目标 ID'),
   platformActionId: z.string().optional().describe('平台返回的动作 ID'),
   success: z.boolean().describe('操作是否成功'),
-  createdAt: z.date().optional().describe('动作创建时间'),
+  createdAt: z.coerce.date().optional().describe('动作创建时间'),
 })
 
 export class ChannelEngagementActionVo extends createZodDto(

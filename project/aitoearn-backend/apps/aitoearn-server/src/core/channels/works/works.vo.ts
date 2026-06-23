@@ -10,7 +10,7 @@ export const ChannelWorkDataVoSchema = z.object({
   snapshots: z.array(ChannelWorkDataSnapshotVoSchema).default([]).describe('本次保存的作品数据快照'),
   extra: z.record(z.string(), z.unknown()).optional().describe('平台特殊字段'),
   snapshotId: z.string().optional().describe('本次主快照 ID'),
-  fetchedAt: z.date().optional().describe('平台数据获取时间'),
+  fetchedAt: z.coerce.date().optional().describe('平台数据获取时间'),
   message: z.string().optional().describe('提示信息'),
 })
 
@@ -37,7 +37,7 @@ export const ChannelWorkListItemVoSchema = z.object({
   description: z.string().optional().describe('作品描述'),
   url: z.string().optional().describe('作品链接'),
   coverUrl: z.string().optional().describe('封面 URL'),
-  publishedAt: z.date().optional().describe('发布时间'),
+  publishedAt: z.coerce.date().optional().describe('发布时间'),
   authorName: z.string().optional().describe('作者名称'),
   authorPlatformUid: z.string().optional().describe('作者平台 UID'),
   status: z.string().optional().describe('作品状态'),

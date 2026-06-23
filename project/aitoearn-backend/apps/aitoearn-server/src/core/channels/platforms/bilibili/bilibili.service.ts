@@ -241,27 +241,33 @@ export class BilibiliService {
     uploadToken: string,
     videoUrl: string,
   ): Promise<void> {
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.Bilibili,
       endpoint: 'downloadVideo',
       url: videoUrl,
-    })
-    const chunkSize = 100 * 1024 * 1024
-    const partCount = Math.max(1, Math.ceil(videoBuffer.length / chunkSize))
+    }, async (source) => {
+      const chunkSize = 100 * 1024 * 1024
+      const partCount = Math.max(1, Math.ceil(source.sizeBytes / chunkSize))
 
-    for (let index = 0; index < partCount; index += 1) {
-      await this.platformHttp.post<BilibiliApiResponse<never>>(
-        'https://openupos.bilivideo.com/video/v2/part/upload',
-        videoBuffer.subarray(index * chunkSize, Math.min(videoBuffer.length, (index + 1) * chunkSize)),
-        {
-          params: {
-            upload_token: uploadToken,
-            part_number: (index + 1).toString(),
+      for (let index = 0; index < partCount; index += 1) {
+        const start = index * chunkSize
+        const end = Math.min(source.sizeBytes, (index + 1) * chunkSize) - 1
+        await this.platformHttp.post<BilibiliApiResponse<never>>(
+          'https://openupos.bilivideo.com/video/v2/part/upload',
+          source.stream({ start, end }),
+          {
+            params: {
+              upload_token: uploadToken,
+              part_number: (index + 1).toString(),
+            },
+            headers: {
+              'Content-Type': 'application/json',
+              'Content-Length': String(end - start + 1),
+            },
           },
-          headers: { 'Content-Type': 'application/json' },
-        },
-      )
-    }
+        )
+      }
+    })
   }
 
   async submitArchive(

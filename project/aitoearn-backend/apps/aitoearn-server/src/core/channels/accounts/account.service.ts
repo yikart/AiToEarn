@@ -3,10 +3,10 @@ import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode, TableDto } from '@yikart/common'
 import { AccountGroupRepository, AccountRepository, AccountStatus, ClientType, Transactional } from '@yikart/mongodb'
 import { EventStream, EventStreamService, EventTopic } from '@yikart/redis'
-import { RelayClientService } from '../../relay/relay-client.service'
 import { AuthType, PlatformStatus } from '../platforms/platforms.interface'
 import { PlatformIntegrationRegistry } from '../platforms/platforms.registry'
 import { WeChatService } from '../platforms/wechat/wechat.service'
+import { RelayClientService } from '../relay/relay-client.service'
 import { ChannelAccountListQueryDto } from './account.dto'
 import { CredentialService } from './credential.service'
 
@@ -98,10 +98,10 @@ export class AccountService {
         clientType: normalizedData.clientType,
       },
       {
+        ...normalizedData,
         groupId,
         userId,
         status: AccountStatus.NORMAL,
-        ...normalizedData,
       },
       userId,
     )
@@ -292,6 +292,7 @@ export class AccountService {
     nickname: string
     avatar?: string
     relayAccountRef: string
+    groupId?: string
   }): Promise<Account> {
     const account = await this.createRelayAccountRecord(userId, data)
     await this.emitAccountConnected(userId, account)
@@ -305,8 +306,9 @@ export class AccountService {
     nickname: string
     avatar?: string
     relayAccountRef: string
+    groupId?: string
   }): Promise<Account> {
-    const groupId = await this.resolveGroupId(userId)
+    const groupId = await this.resolveWritableGroupId(userId, data.groupId)
     return this.saveWritableAccount(
       { type: data.type, uid: data.uid },
       {

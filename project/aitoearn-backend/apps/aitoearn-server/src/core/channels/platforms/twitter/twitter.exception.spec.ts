@@ -2,6 +2,7 @@ import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
 import { ApiError } from '@xdevplatform/xdk'
 import { ResponseCode } from '@yikart/common'
 import { AxiosError } from 'axios'
+import { describe, expect, it } from 'vitest'
 import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
 import { TwitterPlatformException } from './twitter.exception'
 
@@ -73,6 +74,80 @@ describe('twitter platform exception', () => {
     expect(exception.platformCause?.httpStatus).toBe(400)
     expect(exception.platformCause?.platformCode).toBe('invalid_request')
     expect(exception.platformCause?.platformMessage).toBe('token missing')
+  })
+
+  it('converts X API axios errors[] responses', () => {
+    const response: AxiosResponse<{ errors: [{ code: number, detail: string }] }> = {
+      data: {
+        errors: [
+          {
+            code: 324,
+            detail: 'Media parameter is invalid',
+          },
+        ],
+      },
+      status: 400,
+      statusText: 'Bad Request',
+      headers: {},
+      config: {
+        method: 'post',
+        url: 'https://api.x.com/2/media/upload/media-1/append',
+      } as InternalAxiosRequestConfig,
+    }
+    const error = new AxiosError('Request failed', 'ERR_BAD_REQUEST', response.config, undefined, response)
+
+    const exception = TwitterPlatformException.fromAxiosError(error)
+
+    expect(exception.context?.endpoint).toBe('POST /2/media/upload/media-1/append')
+    expect(exception.category).toBe(PlatformErrorCategory.Validation)
+    expect(exception.platformCause?.type).toBe(PlatformErrorCauseType.Platform)
+    expect(exception.platformCause?.httpStatus).toBe(400)
+    expect(exception.platformCause?.platformCode).toBe(324)
+    expect(exception.platformCause?.platformMessage).toBe('Media parameter is invalid')
+  })
+
+  it('keeps text axios response bodies as platform messages', () => {
+    const response: AxiosResponse<string> = {
+      data: 'plain platform failure',
+      status: 400,
+      statusText: 'Bad Request',
+      headers: {},
+      config: {
+        method: 'post',
+        url: 'https://api.x.com/2/media/upload/media-1/append',
+      } as InternalAxiosRequestConfig,
+    }
+    const error = new AxiosError('Request failed', 'ERR_BAD_REQUEST', response.config, undefined, response)
+
+    const exception = TwitterPlatformException.fromAxiosError(error)
+
+    expect(exception.platformCause?.type).toBe(PlatformErrorCauseType.Http)
+    expect(exception.platformCause?.httpStatus).toBe(400)
+    expect(exception.platformCause?.platformCode).toBe(400)
+    expect(exception.platformCause?.platformMessage).toBe('plain platform failure')
+    expect(exception.platformCause?.raw).toBe('plain platform failure')
+  })
+
+  it('classifies media upload 413 as validation failure', () => {
+    const response: AxiosResponse<string> = {
+      data: '',
+      status: 413,
+      statusText: 'Payload Too Large',
+      headers: {},
+      config: {
+        method: 'post',
+        url: 'https://api.x.com/2/media/upload',
+      } as InternalAxiosRequestConfig,
+    }
+    const error = new AxiosError('Request failed with status code 413', 'ERR_BAD_REQUEST', response.config, undefined, response)
+
+    const exception = TwitterPlatformException.fromAxiosError(error)
+
+    expect(exception.context?.endpoint).toBe('POST /2/media/upload')
+    expect(exception.category).toBe(PlatformErrorCategory.Validation)
+    expect(exception.platformCause?.type).toBe(PlatformErrorCauseType.Http)
+    expect(exception.platformCause?.httpStatus).toBe(413)
+    expect(exception.platformCause?.platformCode).toBe(413)
   })
 
   it('classifies axios network errors as retryable network failures', () => {

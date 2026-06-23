@@ -1,7 +1,9 @@
 import { Module } from '@nestjs/common'
+import { config } from '../../config'
 import { AideoModule } from '../ai/aideo'
 import { ChatModule } from '../ai/chat'
 import { ImageModule } from '../ai/image'
+import { RelayMediaModule } from '../ai/relay-media'
 import { VideoModule } from '../ai/video'
 import { AgentTaskTimeoutScheduler } from './agent-task-timeout.scheduler'
 import { AgentController } from './agent.controller'
@@ -25,6 +27,7 @@ import { SkillInitService } from './skill-init.service'
     ImageModule,
     VideoModule,
     AideoModule,
+    RelayMediaModule.forRoot(config.ai.relay),
     ClaudeCodeRouterModule,
   ],
   controllers: [AgentController],

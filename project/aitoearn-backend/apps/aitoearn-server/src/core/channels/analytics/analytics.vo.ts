@@ -31,7 +31,7 @@ export const ChannelWorkSnapshotVoSchema = z.object({
   description: z.string().optional().describe('作品描述'),
   mediaType: z.string().optional().describe('作品媒体类型'),
   coverUrl: z.string().optional().describe('封面 URL'),
-  publishedAt: z.date().optional().describe('发布时间'),
+  publishedAt: z.coerce.date().optional().describe('发布时间'),
   status: z.string().optional().describe('作品状态'),
   author: z.string().optional().describe('作者'),
 })
@@ -54,10 +54,10 @@ export const ChannelWorkMetricsSnapshotVoSchema = z.object({
 export const ChannelAccountDataSnapshotVoSchema = z.object({
   id: z.string().optional().describe('快照 ID'),
   platformUid: z.string().optional().describe('平台账号 UID'),
-  snapshotAt: z.date().describe('快照对应时间'),
-  fetchedAt: z.date().describe('平台数据获取时间'),
-  periodStartAt: z.date().optional().describe('区间开始时间'),
-  periodEndAt: z.date().optional().describe('区间结束时间'),
+  snapshotAt: z.coerce.date().describe('快照对应时间'),
+  fetchedAt: z.coerce.date().describe('平台数据获取时间'),
+  periodStartAt: z.coerce.date().optional().describe('区间开始时间'),
+  periodEndAt: z.coerce.date().optional().describe('区间结束时间'),
   profile: ChannelAccountProfileSnapshotVoSchema.optional().describe('账号资料'),
   metrics: ChannelAccountMetricsSnapshotVoSchema.optional().describe('账号指标'),
   extra: z.record(z.string(), z.unknown()).optional().describe('平台特殊字段'),
@@ -66,10 +66,10 @@ export const ChannelAccountDataSnapshotVoSchema = z.object({
 export const ChannelWorkDataSnapshotVoSchema = z.object({
   id: z.string().optional().describe('快照 ID'),
   platformWorkId: z.string().optional().describe('平台作品 ID'),
-  snapshotAt: z.date().describe('快照对应时间'),
-  fetchedAt: z.date().describe('平台数据获取时间'),
-  periodStartAt: z.date().optional().describe('区间开始时间'),
-  periodEndAt: z.date().optional().describe('区间结束时间'),
+  snapshotAt: z.coerce.date().describe('快照对应时间'),
+  fetchedAt: z.coerce.date().describe('平台数据获取时间'),
+  periodStartAt: z.coerce.date().optional().describe('区间开始时间'),
+  periodEndAt: z.coerce.date().optional().describe('区间结束时间'),
   work: ChannelWorkSnapshotVoSchema.describe('作品资料'),
   metrics: ChannelWorkMetricsSnapshotVoSchema.optional().describe('作品指标'),
   extra: z.record(z.string(), z.unknown()).optional().describe('平台特殊字段'),
@@ -83,7 +83,7 @@ export const ChannelAccountAnalyticsVoSchema = z.object({
   snapshots: z.array(ChannelAccountDataSnapshotVoSchema).default([]).describe('本次保存的账号数据快照'),
   extra: z.record(z.string(), z.unknown()).optional().describe('平台特殊字段'),
   snapshotId: z.string().optional().describe('本次主快照 ID'),
-  fetchedAt: z.date().optional().describe('平台数据获取时间'),
+  fetchedAt: z.coerce.date().optional().describe('平台数据获取时间'),
   message: z.string().optional().describe('提示信息'),
 })
 
@@ -101,7 +101,7 @@ export const ChannelWorkAnalyticsVoSchema = z.object({
   snapshots: z.array(ChannelWorkDataSnapshotVoSchema).default([]).describe('本次保存的作品数据快照'),
   extra: z.record(z.string(), z.unknown()).optional().describe('平台特殊字段'),
   snapshotId: z.string().optional().describe('本次主快照 ID'),
-  fetchedAt: z.date().optional().describe('平台数据获取时间'),
+  fetchedAt: z.coerce.date().optional().describe('平台数据获取时间'),
   message: z.string().optional().describe('提示信息'),
 })
 

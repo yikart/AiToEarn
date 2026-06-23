@@ -300,7 +300,9 @@
         <input type="hidden" name="platformUid" value="<%= firstCallbackAccount.platformUid || '' %>" />
         <input type="hidden" name="account" value="<%= firstCallbackAccount.account || '' %>" />
         <input type="hidden" name="platform" value="<%= firstCallbackAccount.platform || '' %>" />
-        <input type="hidden" name="redirectUri" value="<%= pageRedirectUri %>" />
+        <% if (pageRedirectUri) { %>
+          <input type="hidden" name="redirectUri" value="<%= pageRedirectUri %>" />
+        <% } %>
         <input type="hidden" name="accounts" value="<%= JSON.stringify(callbackPayloadAccounts) %>" />
       </form>
     <% } %>

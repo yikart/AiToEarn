@@ -1,4 +1,5 @@
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import { Readable } from 'node:stream'
 import { describe, expect, it, vi } from 'vitest'
 import { FacebookContentCategory } from './facebook.enum'
 import { FacebookService } from './facebook.service'
@@ -8,8 +9,15 @@ vi.mock('../../media/media.service', () => ({
 }))
 
 function createService() {
+  const video = Buffer.from('video')
   const mediaService = {
-    getBuffer: vi.fn().mockResolvedValue(Buffer.from('video')),
+    withUploadSource: vi.fn(async (_input, handler) => handler({
+      sizeBytes: video.length,
+      contentType: 'video/mp4',
+      filename: 'video.mp4',
+      stream: range => Readable.from(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length)),
+      blob: async range => new Blob([new Uint8Array(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length))], { type: 'video/mp4' }),
+    })),
   }
   const service = new FacebookService(
     {
@@ -160,11 +168,11 @@ describe('facebook service stories', () => {
       postId: 'story-post-id',
       videoId: 'video-id',
     })
-    expect(mediaService.getBuffer).toHaveBeenCalledWith({
+    expect(mediaService.withUploadSource).toHaveBeenCalledWith({
       platform: 'facebook',
       endpoint: 'publishVideoStory.downloadMedia',
       url: 'https://cdn.example.test/story.mp4',
-    })
+    }, expect.any(Function))
     expect(requestedUrls).toEqual([
       'https://graph.facebook.com/v25.0/page-id/video_stories',
       'https://upload.facebook.test/story',
@@ -218,11 +226,11 @@ describe('facebook service stories', () => {
     ).resolves.toEqual({
       videoId: 'video-id',
     })
-    expect(mediaService.getBuffer).toHaveBeenCalledWith({
+    expect(mediaService.withUploadSource).toHaveBeenCalledWith({
       platform: 'facebook',
       endpoint: 'publishReel.downloadMedia',
       url: 'https://cdn.example.test/reel.mp4',
-    })
+    }, expect.any(Function))
   })
 
   it('requests only the documented video status fields needed by finalize', async () => {
@@ -304,11 +312,11 @@ describe('facebook service stories', () => {
         contentCategory: FacebookContentCategory.Post,
       }),
     ).resolves.toEqual({ id: 'video-post-id' })
-    expect(mediaService.getBuffer).toHaveBeenCalledWith({
+    expect(mediaService.withUploadSource).toHaveBeenCalledWith({
       platform: 'facebook',
       endpoint: 'publishVideoPost.downloadMedia',
       url: 'https://cdn.example.test/video.mp4',
-    })
+    }, expect.any(Function))
   })
 })
 

@@ -11,12 +11,11 @@ import type {
 } from './tiktok.schema'
 import { Injectable, Logger } from '@nestjs/common'
 import { AccountType, ResponseCode } from '@yikart/common'
+import { PublishRecordLinkStatus } from '@yikart/mongodb'
 import { MediaService } from '../../media/media.service'
 import { PlatformErrorCategory } from '../platforms.exception'
 import {
-
   PublishMediaType,
-
 } from '../platforms.interface'
 import { hasUrlPathExtension } from '../platforms.utils'
 import { PublishValidationField, PublishValidationIssueCode } from '../publish.schema'
@@ -66,6 +65,13 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         }
       }
     }
+    if (option.source === TikTokPostSource.FileUpload && imageMedia.length > 0 && videoMedia.length === 0) {
+      issues.push({
+        code: PublishValidationIssueCode.InvalidOption,
+        path: ['option', 'source'],
+        params: { field: PublishValidationField.Option },
+      })
+    }
 
     return { valid: issues.length === 0, issues: issues.length ? issues : undefined }
   }
@@ -100,13 +106,20 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     })
   }
 
-  async finalize(input: PublishFinalizeInput<TikTokPublishDataOption>): Promise<PublishProviderResult<TikTokPublishDataOption>> {
+  async finalize(input: PublishFinalizeInput<TikTokPublishDataOption, TiktokOption>): Promise<PublishProviderResult<TikTokPublishDataOption>> {
     const publishId = input.platformWorkId
     const accessToken = input.credential.accessToken
     const dataOption = this.parseDataOption(input.dataOption)
+    const privacyLevel = dataOption?.privacyLevel ?? input.option?.privacy_level
 
     const status = await this.tikTokService.getPublishStatus(accessToken, publishId)
     const finalPostId = this.getFinalPostId(status)
+    this.logger.log({
+      platform: AccountType.TikTok,
+      taskId: input.taskId,
+      publishId,
+      status,
+    }, 'TikTok publish status fetched')
 
     if (status.status === TikTokPublishStatus.PublishComplete && finalPostId) {
       const contentPath = dataOption?.contentPath ?? TikTokContentPath.Video
@@ -136,6 +149,18 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       }
     }
 
+    if (status.status === TikTokPublishStatus.PublishComplete && privacyLevel === TikTokPrivacyLevel.SelfOnly) {
+      return {
+        status: 200,
+        platformWorkId: publishId,
+        linkStatus: PublishRecordLinkStatus.PENDING,
+        dataOption: this.buildDataOption(dataOption, publishId, {
+          privacyLevel,
+          publishStatus: status.status,
+        }),
+      }
+    }
+
     if (status.status === TikTokPublishStatus.Failed) {
       const errorMessage = status.fail_reason ?? 'TikTok publish failed'
       return {
@@ -158,7 +183,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     }
   }
 
-  async verify(input: PublishVerifyInput<TikTokPublishDataOption>): Promise<PublishVerifyResult> {
+  async verify(input: PublishVerifyInput<TikTokPublishDataOption, TiktokOption>): Promise<PublishVerifyResult> {
     try {
       const status = await this.tikTokService.getPublishStatus(
         input.credential.accessToken,
@@ -166,12 +191,27 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       )
       const finalPostId = this.getFinalPostId(status)
       const dataOption = this.parseDataOption(input.dataOption)
+      const privacyLevel = dataOption?.privacyLevel ?? input.option?.privacy_level
       const contentPath = dataOption?.contentPath ?? TikTokContentPath.Video
       const username = dataOption?.username ?? input.credential.account
       const permalink = finalPostId
         ? await this.getFinalPostShareUrl(input.credential.accessToken, finalPostId)
         ?? this.buildWorkLink(username, contentPath, finalPostId)
         : undefined
+      this.logger.log({
+        platform: AccountType.TikTok,
+        taskId: input.taskId,
+        publishId: input.platformWorkId,
+        status,
+      }, 'TikTok publish verification checked')
+
+      if (status.status === TikTokPublishStatus.PublishComplete && !finalPostId && privacyLevel === TikTokPrivacyLevel.SelfOnly) {
+        return {
+          published: true,
+          platformWorkId: input.platformWorkId,
+          linkStatus: PublishRecordLinkStatus.PENDING,
+        }
+      }
 
       return {
         published: status.status === TikTokPublishStatus.PublishComplete && Boolean(finalPostId && permalink),
@@ -269,6 +309,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
           result.publish_id,
           TikTokPostSource.PullFromUrl,
           TikTokContentPath.Video,
+          privacyLevel,
           input.credential.account,
         ),
       }
@@ -317,6 +358,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         initResult.publish_id,
         TikTokPostSource.FileUpload,
         TikTokContentPath.Video,
+        privacyLevel,
         input.credential.account,
       ),
     }
@@ -337,6 +379,17 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     }
 
     const option: Partial<TiktokOption> = input.option ?? {}
+    if (option.source === TikTokPostSource.FileUpload) {
+      throw TikTokPlatformException.validation({
+        code: ResponseCode.ChannelPlatformOperationNotSupported,
+        category: PlatformErrorCategory.Validation,
+        context: {
+          endpoint: 'publishPhoto',
+          taskId: input.taskId,
+          accountId: input.accountId,
+        },
+      })
+    }
     const creatorInfo = await this.tikTokService.getCreatorInfo(input.credential.accessToken)
     const privacyLevel = this.resolvePrivacyLevel(option, creatorInfo)
     this.assertCreatorInteractionOptions(option, creatorInfo, false)
@@ -384,6 +437,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         result.publish_id,
         TikTokPostSource.PullFromUrl,
         TikTokContentPath.Photo,
+        privacyLevel,
         input.credential.account,
       ),
     }
@@ -448,7 +502,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       && !this.config.pullFromUrlAllowedPrefixes.some(prefix => url.startsWith(prefix))
     ) {
       throw TikTokPlatformException.validation({
-        code: ResponseCode.ChannelPlatformPublishOptionMissing,
+        code: ResponseCode.ChannelPlatformApiFailed,
         category: PlatformErrorCategory.Validation,
         context: { endpoint: 'assertPullFromUrl' },
       })
@@ -483,30 +537,6 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     return Number.parseInt(contentLength as string, 10)
   }
 
-  private async waitForPublishComplete(
-    accessToken: string,
-    publishId: string,
-  ): Promise<{ success: boolean, reason?: string }> {
-    let attempt = 0
-
-    while (attempt < 60) {
-      const status = await this.tikTokService.getPublishStatus(accessToken, publishId)
-
-      if (status.status === TikTokPublishStatus.PublishComplete && this.getFinalPostId(status)) {
-        return { success: true }
-      }
-
-      if (status.status === TikTokPublishStatus.Failed) {
-        return { success: false, reason: status.fail_reason }
-      }
-
-      await new Promise(resolve => setTimeout(resolve, 3000))
-      attempt++
-    }
-
-    return { success: false, reason: 'Publish status polling timeout' }
-  }
-
   private isImage(media: PublishMediaInput): boolean {
     if (media.metadata?.type === PublishMediaType.Image)
       return true
@@ -525,7 +555,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
 
   private getFinalPostId(status: TikTokPublishStatusResponse): string | undefined {
     const [postId] = status.publicaly_available_post_id ?? []
-    return postId === undefined ? undefined : String(postId)
+    return postId
   }
 
   private async getFinalPostShareUrl(accessToken: string, postId: string): Promise<string | undefined> {
@@ -542,12 +572,14 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     publishId: string,
     source: TikTokPostSource,
     contentPath: TikTokContentPath,
+    privacyLevel: TikTokPrivacyLevel,
     username?: string,
   ): TikTokPublishDataOption {
     const dataOption: TikTokPublishDataOption = {
       publishId,
       source,
       contentPath,
+      privacyLevel,
     }
     if (username) {
       dataOption.username = username
@@ -570,8 +602,14 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     if (current?.username) {
       dataOption.username = current.username
     }
+    if (current?.privacyLevel) {
+      dataOption.privacyLevel = current.privacyLevel
+    }
     if (patch.username) {
       dataOption.username = patch.username
+    }
+    if (patch.privacyLevel) {
+      dataOption.privacyLevel = patch.privacyLevel
     }
     if (patch.publishStatus) {
       dataOption.publishStatus = patch.publishStatus

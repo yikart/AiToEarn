@@ -21,6 +21,13 @@ interface TikTokPlatformErrorInfo {
   message?: string
 }
 
+interface TikTokPlatformErrorPolicy {
+  code: ResponseCode
+  category: PlatformErrorCategory
+  platformMessage?: string
+  retryable?: boolean
+}
+
 const TIKTOK_DIRECT_POST_PRIVATE_ONLY_MESSAGE = '未审核 TikTok Direct Post 客户端只能私密发布，请选择 SELF_ONLY 或完成 TikTok app 审核'
 
 export class TikTokPlatformException extends ChannelPlatformException {
@@ -40,49 +47,38 @@ export class TikTokPlatformException extends ChannelPlatformException {
     const body = response?.data
     const endpoint = TikTokPlatformException.endpointFromConfig(response?.config ?? error.config)
     const platformError = TikTokPlatformException.platformErrorFromBody(body)
-    const directPostPrivateOnly = TikTokPlatformException.isDirectPostPrivateOnlyError(platformError)
+    const policy = TikTokPlatformException.policyFromPlatformError(platformError)
     return new TikTokPlatformException({
-      code: directPostPrivateOnly
-        ? ResponseCode.ChannelPlatformPermissionMissing
-        : TikTokPlatformException.codeFromEndpoint(endpoint),
-      category: directPostPrivateOnly
-        ? PlatformErrorCategory.Permission
-        : TikTokPlatformException.categoryFromError(endpoint, response?.status),
+      code: policy?.code ?? TikTokPlatformException.codeFromEndpoint(endpoint),
+      category: policy?.category ?? TikTokPlatformException.categoryFromError(endpoint, response?.status),
       context: endpoint ? { endpoint } : undefined,
       cause: {
         type: TikTokPlatformException.causeTypeFromAxiosError(error, platformError.code),
         httpStatus: response?.status,
         platformCode: platformError.code,
-        platformMessage: directPostPrivateOnly
-          ? TIKTOK_DIRECT_POST_PRIVATE_ONLY_MESSAGE
-          : platformError.message ?? error.message,
+        platformMessage: policy?.platformMessage ?? platformError.message ?? error.message,
         raw: body ?? error,
       },
-      retryable: response ? isHttpStatusRetryable(response.status) : true,
+      retryable: policy?.retryable ?? (response ? isHttpStatusRetryable(response.status) : true),
     })
   }
 
   static fromPlatformResponse(response: AxiosResponse<TikTokPlatformResponseBody>): TikTokPlatformException {
     const endpoint = TikTokPlatformException.endpointFromConfig(response.config)
     const platformError = TikTokPlatformException.platformErrorFromBody(response.data)
-    const directPostPrivateOnly = TikTokPlatformException.isDirectPostPrivateOnlyError(platformError)
+    const policy = TikTokPlatformException.policyFromPlatformError(platformError)
     return new TikTokPlatformException({
-      code: directPostPrivateOnly
-        ? ResponseCode.ChannelPlatformPermissionMissing
-        : TikTokPlatformException.codeFromEndpoint(endpoint),
-      category: directPostPrivateOnly
-        ? PlatformErrorCategory.Permission
-        : TikTokPlatformException.categoryFromError(endpoint, response.status),
+      code: policy?.code ?? TikTokPlatformException.codeFromEndpoint(endpoint),
+      category: policy?.category ?? TikTokPlatformException.categoryFromError(endpoint, response.status),
       context: endpoint ? { endpoint } : undefined,
       cause: {
         type: platformError.code === undefined ? PlatformErrorCauseType.Http : PlatformErrorCauseType.Platform,
         httpStatus: response.status,
         platformCode: platformError.code,
-        platformMessage: directPostPrivateOnly
-          ? TIKTOK_DIRECT_POST_PRIVATE_ONLY_MESSAGE
-          : platformError.message,
+        platformMessage: policy?.platformMessage ?? platformError.message,
         raw: response.data,
       },
+      retryable: policy?.retryable ?? false,
     })
   }
 
@@ -188,12 +184,30 @@ export class TikTokPlatformException extends ChannelPlatformException {
     return {}
   }
 
-  private static isDirectPostPrivateOnlyError(error: TikTokPlatformErrorInfo): boolean {
-    const code = String(error.code ?? '').toLowerCase()
-    const message = String(error.message ?? '').toLowerCase()
-    return code === 'unaudited_client_can_only_post_to_private_accounts'
-      || message.includes('review our integration guidelines')
-      || message.includes('private accounts')
+  private static policyFromPlatformError(error: TikTokPlatformErrorInfo): TikTokPlatformErrorPolicy | undefined {
+    switch (String(error.code ?? '').toLowerCase()) {
+      case 'unaudited_client_can_only_post_to_private_accounts':
+        return {
+          code: ResponseCode.ChannelPlatformPermissionMissing,
+          category: PlatformErrorCategory.Permission,
+          platformMessage: TIKTOK_DIRECT_POST_PRIVATE_ONLY_MESSAGE,
+        }
+
+      case 'spam_risk_too_many_posts':
+        return {
+          code: ResponseCode.ChannelPlatformRateLimited,
+          category: PlatformErrorCategory.RateLimit,
+        }
+
+      case 'url_ownership_unverified':
+        return {
+          code: ResponseCode.ChannelPlatformApiFailed,
+          category: PlatformErrorCategory.Validation,
+        }
+
+      default:
+        return undefined
+    }
   }
 
   private static pathFromUrl(rawUrl: string, baseURL?: string): string {

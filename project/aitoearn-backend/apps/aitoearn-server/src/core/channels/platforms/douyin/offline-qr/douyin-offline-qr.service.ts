@@ -48,7 +48,7 @@ export class DouyinOfflineQrService {
       desc: content.body,
       topics: parseTopicsFromBody(content.body),
       publishTime: new Date(),
-      source: PublishRecordSource.OfflineQr,
+      source: dto.source ?? PublishRecordSource.OfflineQr,
       option: dto.option,
       videoUrl: media.videoUrl,
       imgUrlList: media.imgUrlList,

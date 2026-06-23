@@ -286,24 +286,31 @@ export class TwitterService {
 
   async appendMediaUpload(
     accessToken: string,
-    params: { mediaId: string, media: string | Blob | ArrayBuffer, segmentIndex: number },
+    params: { mediaId: string, media: Blob, segmentIndex: number },
   ): Promise<void> {
-    const mediaData = typeof params.media === 'string'
-      ? params.media
-      : await this.encodeMedia(params.media)
+    const formData = new FormData()
+    formData.append('segment_index', String(params.segmentIndex))
+    formData.append('media', params.media, 'media')
 
-    await this.runApiClientOperation({
-      accessToken,
-      endpoint: 'POST /2/media/upload/append',
-      category: PlatformErrorCategory.MediaProcessingFailed,
-      context: { metadata: { mediaId: params.mediaId, segmentIndex: params.segmentIndex } },
-      call: client => client.media.appendUpload(params.mediaId, {
-        body: {
-          media: mediaData,
-          segment_index: params.segmentIndex,
+    try {
+      await axios.post(
+        `https://api.x.com/2/media/upload/${params.mediaId}/append`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+          maxBodyLength: Infinity,
+          maxContentLength: Infinity,
         },
-      }),
-    })
+      )
+    }
+    catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw TwitterPlatformException.fromAxiosError(error)
+      }
+      throw error
+    }
   }
 
   async finalizeMediaUpload(
@@ -654,15 +661,5 @@ export class TwitterService {
       return link
     }
     return link
-  }
-
-  private async encodeMedia(media: string | Blob | ArrayBuffer): Promise<string> {
-    if (typeof media === 'string')
-      return media
-    if (media instanceof Blob) {
-      const arrayBuffer = await media.arrayBuffer()
-      return Buffer.from(arrayBuffer).toString('base64')
-    }
-    return Buffer.from(media).toString('base64')
   }
 }

@@ -1,4 +1,4 @@
-import { createPaginationVo, createZodDto, zodI18nString } from '@yikart/common'
+import { createPaginationVo, createZodDto, FileUtil, zodI18nString } from '@yikart/common'
 import { z } from 'zod'
 import { AiLogStatus } from '../enums'
 
@@ -21,15 +21,30 @@ export const DraftGenerationTaskQueueVoSchema = z.object({
   waitingCount: z.number().describe('当前队列待执行任务总数'),
 })
 
+const fileUrlSchema = () => FileUtil.zodBuildUrl().optional()
+const fileUrlListSchema = () => z.array(FileUtil.zodBuildUrl().nonoptional()).optional()
+
+const DraftGenerationTaskPayloadVoSchema = z.object({
+  imageUrl: fileUrlSchema().describe('图片 URL'),
+  imageUrls: fileUrlListSchema().describe('图片 URL 列表'),
+  videoUrl: fileUrlSchema().describe('视频 URL'),
+  videoUrls: fileUrlListSchema().describe('视频 URL 列表'),
+  audioUrl: fileUrlSchema().describe('音频 URL'),
+  audioUrls: fileUrlListSchema().describe('音频 URL 列表'),
+  coverUrl: fileUrlSchema().describe('封面 URL'),
+  url: fileUrlSchema().describe('媒体 URL'),
+  thumbUrl: fileUrlSchema().describe('缩略图 URL'),
+}).loose()
+
 export const DraftGenerationTaskVoSchema = z.object({
   id: z.string().describe('任务 ID'),
   status: z.enum(AiLogStatus).describe('任务状态'),
   errorMessage: z.string().optional().describe('错误信息'),
-  request: z.record(z.string(), z.unknown()).optional().describe('生成输入参数'),
-  response: z.union([z.record(z.string(), z.unknown()), z.string()]).optional().describe('生成结果'),
+  request: DraftGenerationTaskPayloadVoSchema.optional().describe('生成输入参数'),
+  response: z.union([DraftGenerationTaskPayloadVoSchema, z.string()]).optional().describe('生成结果'),
   queue: DraftGenerationTaskQueueVoSchema.optional().describe('任务队列展示信息'),
-  createdAt: z.date().describe('创建时间'),
-  updatedAt: z.date().describe('更新时间'),
+  createdAt: z.coerce.date().describe('创建时间'),
+  updatedAt: z.coerce.date().describe('更新时间'),
 })
 
 export class DraftGenerationTaskVo extends createZodDto(DraftGenerationTaskVoSchema, 'DraftGenerationTaskVo') {}

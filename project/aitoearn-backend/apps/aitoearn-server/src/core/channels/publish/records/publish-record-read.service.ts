@@ -3,9 +3,9 @@ import type { PublishRecordWorkLinkUpdateDto } from './publish-record.dto'
 import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AccountType, AppException, ResponseCode, WorkStatus } from '@yikart/common'
 import { AccountRepository, PublishRecordLinkStatus, PublishRecordRepository, PublishRecordSource, PublishStatus, PublishType } from '@yikart/mongodb'
-import { RelayAuthException } from '../../../relay/relay-auth.exception'
-import { RelayClientService } from '../../../relay/relay-client.service'
 import { parseDouyinDataOption } from '../../platforms/douyin/douyin.interface'
+import { RelayAuthException } from '../../relay/relay-auth.exception'
+import { RelayClientService } from '../../relay/relay-client.service'
 import { WorkService } from '../../works/work.service'
 
 interface WorkLinkInfoData {
@@ -286,11 +286,11 @@ export class PublishRecordReadService {
         continue
       }
       try {
-        const result = await this.relayClientService.get<{ records?: PublishRecord[] }>(path, {
+        const relayRecords = await this.relayClientService.get<PublishRecord[]>(path, {
           ...query,
           accountId: account.relayAccountRef,
         })
-        records.push(...(result.records ?? []).map(record => this.withLocalRelayAccountId(record, account.id)))
+        records.push(...relayRecords.map(record => this.withLocalRelayAccountId(record, account.id)))
       }
       catch (error) {
         this.logger.error(error, 'Fetch relay publish records failed')

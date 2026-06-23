@@ -93,7 +93,7 @@ vi.mock('../../user/user.service', () => ({
   UserService: class UserService {},
 }))
 
-vi.mock('../../relay/relay-client.service', () => ({
+vi.mock('../relay/relay-client.service', () => ({
   RelayClientService: class RelayClientService {},
 }))
 
@@ -1523,6 +1523,21 @@ describe('channel auth service', () => {
     expect(credentialService.getCredential).not.toHaveBeenCalled()
   })
 
+  it('returns null for try credential refresh when another refresh owns the lock', async () => {
+    const { service, credentialService, accountRepo } = createService()
+    accountRepo.getByIdAndUserId.mockResolvedValue({
+      id: 'account-1',
+      type: AccountType.Twitter,
+      status: AccountStatus.NORMAL,
+    })
+    credentialService.tryRefresh.mockResolvedValue(null)
+
+    await expect(service.tryRefreshCredential('account-1', 'user-1')).resolves.toBeNull()
+
+    expect(accountRepo.updateById).not.toHaveBeenCalled()
+    expect(credentialService.invalidateCredential).not.toHaveBeenCalled()
+  })
+
   it('waits for a refreshed credential only while getting a valid credential', async () => {
     const { service, credentialService, accountRepo } = createService()
     accountRepo.getByIdAndUserId.mockResolvedValue({
@@ -1588,6 +1603,23 @@ describe('channel auth service', () => {
     credentialService.tryRefresh.mockRejectedValue(new AppException(ResponseCode.ChannelRefreshTokenFailed))
 
     await expect(service.refreshCredential('account-1', 'user-1'))
+      .rejects
+      .toMatchObject({ code: ResponseCode.ChannelRefreshTokenFailed })
+
+    expect(accountRepo.updateById).toHaveBeenCalledWith('account-1', { status: AccountStatus.ABNORMAL })
+    expect(credentialService.invalidateCredential).toHaveBeenCalledWith('account-1')
+  })
+
+  it('marks the account offline when try credential refresh fails', async () => {
+    const { service, credentialService, accountRepo } = createService()
+    accountRepo.getByIdAndUserId.mockResolvedValue({
+      id: 'account-1',
+      type: AccountType.Twitter,
+      status: AccountStatus.NORMAL,
+    })
+    credentialService.tryRefresh.mockRejectedValue(new AppException(ResponseCode.ChannelRefreshTokenFailed))
+
+    await expect(service.tryRefreshCredential('account-1', 'user-1'))
       .rejects
       .toMatchObject({ code: ResponseCode.ChannelRefreshTokenFailed })
 

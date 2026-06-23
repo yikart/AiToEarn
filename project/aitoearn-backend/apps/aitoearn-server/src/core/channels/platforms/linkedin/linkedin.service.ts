@@ -1,4 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
+import type { Readable } from 'node:stream'
 import type { LinkedInErrorBody } from './linkedin.exception'
 import type {
   LinkedInCommentCreateResponse,
@@ -200,9 +201,12 @@ export class LinkedInService {
     return response.data
   }
 
-  async uploadBinary(uploadUrl: string, binary: Buffer): Promise<string | undefined> {
+  async uploadBinary(uploadUrl: string, binary: Buffer | Blob | Readable, contentLength?: number): Promise<string | undefined> {
     const response = await this.http.put(uploadUrl, binary, {
-      headers: { 'Content-Type': 'application/octet-stream' },
+      headers: {
+        'Content-Type': 'application/octet-stream',
+        ...(contentLength !== undefined ? { 'Content-Length': String(contentLength) } : {}),
+      },
       maxContentLength: Infinity,
       maxBodyLength: Infinity,
     })

@@ -47,6 +47,50 @@ describe('oAuth2CredentialRepository', () => {
       { $unwind: '$account' },
       { $match: { 'account.status': AccountStatus.NORMAL } },
       { $limit: 100 },
+      { $addFields: { cursorId: '$_id' } },
+      { $project: { account: 0 } },
+    ])
+  })
+
+  it('continues listing expiring credentials from the previous expiry cursor', async () => {
+    const exec = vi.fn(async () => [])
+    const model = {
+      aggregate: vi.fn(() => ({ exec })),
+    }
+    const repo = new OAuth2CredentialRepository(model as never)
+
+    await repo.listByAccessTokenExpiresAtAndNormalAccount(1767229200, 100, {
+      accessTokenExpiresAt: 1767225600,
+      cursorId: 'cursor-id',
+    })
+
+    expect(model.aggregate).toHaveBeenCalledWith([
+      {
+        $match: {
+          accessTokenExpiresAt: { $type: 'number', $lte: 1767229200 },
+          refreshToken: { $type: 'string', $ne: '' },
+          $or: [
+            { accessTokenExpiresAt: { $gt: 1767225600 } },
+            {
+              accessTokenExpiresAt: 1767225600,
+              _id: { $gt: 'cursor-id' },
+            },
+          ],
+        },
+      },
+      { $sort: { accessTokenExpiresAt: 1, _id: 1 } },
+      {
+        $lookup: {
+          from: 'account',
+          localField: 'accountId',
+          foreignField: '_id',
+          as: 'account',
+        },
+      },
+      { $unwind: '$account' },
+      { $match: { 'account.status': AccountStatus.NORMAL } },
+      { $limit: 100 },
+      { $addFields: { cursorId: '$_id' } },
       { $project: { account: 0 } },
     ])
   })

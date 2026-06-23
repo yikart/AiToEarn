@@ -287,12 +287,12 @@ export class PinterestService {
     return response.data
   }
 
-  async uploadVideoMedia(upload: PinterestMediaUpload, video: Buffer): Promise<void> {
+  async uploadVideoMedia(upload: PinterestMediaUpload, video: Blob, filename: string): Promise<void> {
     const formData = new FormData()
     for (const [key, value] of Object.entries(upload.upload_parameters)) {
       formData.append(key, value)
     }
-    formData.append('file', new Blob([new Uint8Array(video)]), 'video.mp4')
+    formData.append('file', video, filename)
 
     await this.http.post(upload.upload_url, formData, {
       headers: { 'Content-Type': 'multipart/form-data' },

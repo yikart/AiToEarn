@@ -1,5 +1,6 @@
 import type { MediaService } from '../../media/media.service'
 import type { KwaiService } from './kwai.service'
+import { Readable } from 'node:stream'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
 import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
@@ -53,7 +54,15 @@ describe('kwai publish provider validation', () => {
         pending: false,
       })),
     } as unknown as KwaiService
+    const video = Buffer.from('media')
     const mediaService = {
+      withUploadSource: vi.fn(async (_input, handler) => handler({
+        sizeBytes: video.length,
+        contentType: 'video/mp4',
+        filename: 'video.mp4',
+        stream: range => Readable.from(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length)),
+        blob: async range => new Blob([new Uint8Array(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length))], { type: 'video/mp4' }),
+      })),
       getBuffer: vi.fn(async () => Buffer.from('media')),
     } as unknown as MediaService
     const provider = new KwaiPublishProvider(kwaiService, mediaService)

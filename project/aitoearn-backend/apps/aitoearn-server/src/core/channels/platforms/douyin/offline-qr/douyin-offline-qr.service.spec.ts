@@ -9,6 +9,7 @@ vi.mock('@yikart/mongodb', () => ({
   PublishRecordRepository: class PublishRecordRepository {},
   PublishRecordSource: {
     OfflineQr: 'offline_qr',
+    Web: 'web',
   },
   PublishStatus: {
     WaitingForUserAction: 8,
@@ -145,4 +146,25 @@ describe('douyin offline qr service', () => {
       },
     })).rejects.toMatchObject({ code: ResponseCode.MaterialNotFound })
   })
+
+  it.each([PublishRecordSource.Web])(
+    'uses explicit %s source when caller passes it',
+    async (source) => {
+      const { service, publishRecordRepo } = createService()
+
+      await service.createPublish({
+        materialGroupId: 'group_1',
+        materialId: 'material_1',
+        content: {
+          body: '正文',
+          media: [{ url: 'https://cdn.example.com/video.mp4' }],
+        },
+        source,
+      })
+
+      expect(publishRecordRepo.create).toHaveBeenCalledWith(expect.objectContaining({
+        source,
+      }))
+    },
+  )
 })

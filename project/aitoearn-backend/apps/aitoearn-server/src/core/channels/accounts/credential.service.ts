@@ -21,6 +21,17 @@ export interface RefreshedCredential {
   scope?: string
 }
 
+export interface ExpiringCredentialCursor {
+  accessTokenExpiresAt: number
+  cursorId: unknown
+}
+
+export interface ExpiringCredential extends ExpiringCredentialCursor {
+  accountId: string
+  platform: AccountType
+  refreshTokenExpiresAt?: number
+}
+
 @Injectable()
 export class CredentialService {
   constructor(
@@ -145,12 +156,17 @@ export class CredentialService {
     }
   }
 
-  async listExpiringCredentials(beforeTimestamp: number, limit: number): Promise<Array<{ accountId: string, platform: AccountType, accessTokenExpiresAt?: number, refreshTokenExpiresAt?: number }>> {
-    const records = await this.credentialRepo.listByAccessTokenExpiresAtAndNormalAccount(beforeTimestamp, limit)
+  async listExpiringCredentials(
+    beforeTimestamp: number,
+    limit: number,
+    cursor?: ExpiringCredentialCursor,
+  ): Promise<ExpiringCredential[]> {
+    const records = await this.credentialRepo.listByAccessTokenExpiresAtAndNormalAccount(beforeTimestamp, limit, cursor)
     return records.map(r => ({
+      cursorId: r.cursorId,
       accountId: r.accountId,
       platform: r.platform,
-      accessTokenExpiresAt: r.accessTokenExpiresAt,
+      accessTokenExpiresAt: r.accessTokenExpiresAt as number,
       refreshTokenExpiresAt: r.refreshTokenExpiresAt,
     }))
   }

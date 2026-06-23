@@ -379,6 +379,9 @@ importers:
       dayjs:
         specifier: 1.11.20
         version: 1.11.20
+      ejs:
+        specifier: 6.0.1
+        version: 6.0.1
       express:
         specifier: 5.1.0
         version: 5.1.0
@@ -409,6 +412,9 @@ importers:
       lodash:
         specifier: 4.17.23
         version: 4.17.23
+      lossless-json:
+        specifier: 4.3.0
+        version: 4.3.0
       mime-types:
         specifier: 3.0.2
         version: 3.0.2
@@ -4774,6 +4780,11 @@ packages:
     engines: {node: '>=0.12.18'}
     hasBin: true
 
+  ejs@6.0.1:
+    resolution: {integrity: sha512-UaaM14yby8U3k02ihS1Bmj5Kz2d7CCQM1scxpgs4Mhkq8F1wR2gl3+Ts4h5Ne4Mnt7M9m4Dw7jsuMr3+xO4vZA==}
+    engines: {node: '>=0.12.18'}
+    hasBin: true
+
   electron-to-chromium@1.5.344:
     resolution: {integrity: sha512-4MxfbmNDm+KPh066EZy+eUnkcDPcZ35wNmOWzFuh/ijvHsve6kbLTLURy88uCNK5FbpN+yk2nQY6BYh1GEt+wg==}
 
@@ -6305,6 +6316,9 @@ packages:
 
   longest-streak@3.1.0:
     resolution: {integrity: sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g==}
+
+  lossless-json@4.3.0:
+    resolution: {integrity: sha512-ToxOC+SsduRmdSuoLZLYAr5zy1Qu7l5XhmPWM3zefCZ5IcrzW/h108qbJUKfOlDlhvhjUK84+8PSVX0kxnit0g==}
 
   lower-case@1.1.4:
     resolution: {integrity: sha512-2Fgx1Ycm599x+WGpIYwJOvsjmXFzTSc34IwDWALRA/8AopUKAVPwfJ+h5+f85BCp0PWmmJcWzEpxOpoXycMpdA==}
@@ -12693,6 +12707,8 @@ snapshots:
 
   ejs@5.0.1: {}
 
+  ejs@6.0.1: {}
+
   electron-to-chromium@1.5.344: {}
 
   emittery@0.13.1: {}
@@ -14566,6 +14582,8 @@ snapshots:
   long@5.3.2: {}
 
   longest-streak@3.1.0: {}
+
+  lossless-json@4.3.0: {}
 
   lower-case@1.1.4: {}
 

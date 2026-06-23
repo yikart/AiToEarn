@@ -1,6 +1,9 @@
+import { RequestMethod } from '@nestjs/common'
+import { METHOD_METADATA, PATH_METADATA, VERSION_METADATA } from '@nestjs/common/constants'
 import { AccountType } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
-import { RelayOAuthController } from './relay-oauth.controller'
+import { RelayCallbackController } from './relay-callback.controller'
+import { RelayCallbackDto } from './relay-callback.dto'
 
 vi.mock('@yikart/mongodb', () => ({
   AssetType: {
@@ -30,7 +33,7 @@ vi.mock('@yikart/mongodb', () => ({
   },
 }))
 
-vi.mock('../channels/accounts/account.service', () => ({
+vi.mock('../accounts/account.service', () => ({
   AccountService: class AccountService {},
 }))
 
@@ -45,13 +48,36 @@ function createController() {
   }
 
   return {
-    controller: new RelayOAuthController(accountService as never, redisService as never),
+    controller: new RelayCallbackController(accountService as never, redisService as never),
     accountService,
     redisService,
   }
 }
 
-describe('relay oauth controller', () => {
+describe('relay callback controller', () => {
+  it('uses the versioned channels relay callback route', () => {
+    expect(Reflect.getMetadata(PATH_METADATA, RelayCallbackController)).toEqual('/channels/relay')
+    expect(Reflect.getMetadata(VERSION_METADATA, RelayCallbackController)).toEqual('2')
+    expect(Reflect.getMetadata(PATH_METADATA, RelayCallbackController.prototype.handleRelayCallback)).toEqual('/callback')
+    expect(Reflect.getMetadata(METHOD_METADATA, RelayCallbackController.prototype.handleRelayCallback)).toEqual(RequestMethod.POST)
+  })
+
+  it('normalizes empty redirect uri from form posts', () => {
+    expect(RelayCallbackDto.schema.parse({
+      relayAccountRef: 'relay-account-1',
+      nickname: 'Relay User',
+      platformUid: 'platform-user',
+      platform: AccountType.Twitter,
+      redirectUri: '',
+    })).toEqual({
+      relayAccountRef: 'relay-account-1',
+      nickname: 'Relay User',
+      platformUid: 'platform-user',
+      platform: AccountType.Twitter,
+      redirectUri: undefined,
+    })
+  })
+
   it('creates a relay account and renders the new callback view data with body redirect uri', async () => {
     const { controller, accountService } = createController()
 
@@ -62,7 +88,7 @@ describe('relay oauth controller', () => {
       platformUid: 'platform-user',
       platform: AccountType.Twitter,
       redirectUri: 'https://client.example.test/redirect',
-    } as never, 'user-1')
+    } as never, 'user-1', 'group-1')
 
     expect(accountService.createRelayAccount).toHaveBeenCalledWith(
       'user-1',
@@ -71,6 +97,7 @@ describe('relay oauth controller', () => {
         uid: 'platform-user',
         nickname: 'Relay User',
         relayAccountRef: 'relay-account-1',
+        groupId: 'group-1',
       }),
     )
     expect(result).toEqual({

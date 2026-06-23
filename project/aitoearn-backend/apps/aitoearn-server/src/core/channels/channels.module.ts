@@ -1,5 +1,4 @@
 import { Module } from '@nestjs/common'
-import { RelayClientService } from '../relay/relay-client.service'
 import { AccountGroupService } from './accounts/account-group.service'
 import { AccountGroupsController } from './accounts/account-groups.controller'
 import { AccountService } from './accounts/account.service'
@@ -29,6 +28,8 @@ import { PublishQueueService } from './publish/tasks/publish-queue.service'
 import { PublishStateService } from './publish/tasks/publish-state.service'
 import { PublishTaskController } from './publish/tasks/publish-task.controller'
 import { PublishTaskService } from './publish/tasks/publish-task.service'
+import { RelayCallbackController } from './relay/relay-callback.controller'
+import { RelayClientService } from './relay/relay-client.service'
 import { WorkService } from './works/work.service'
 import { WorksController } from './works/works.controller'
 
@@ -46,6 +47,7 @@ import { WorksController } from './works/works.controller'
     TikTokLegacyController,
     EngagementController,
     WorksController,
+    RelayCallbackController,
   ],
   providers: [
     // Accounts

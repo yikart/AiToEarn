@@ -1,7 +1,7 @@
 import type { AccountType } from '@yikart/common'
 import type { PublishContentInput, PublishContentOverride } from '../schemas/publish-content.schema'
 import { createZodDto, PaginationDtoSchema } from '@yikart/common'
-import { PublishRecordSource, PublishType } from '@yikart/mongodb'
+import { PublishRecordSource } from '@yikart/mongodb'
 import { z } from 'zod'
 import { createPlatformPublishOptionItemSchema } from '../../platforms/publish.schema'
 import { PublishContentInputSchema, PublishContentOverrideSchema } from '../schemas/publish-content.schema'
@@ -12,13 +12,10 @@ const PublishFlowItemSchema = createPlatformPublishOptionItemSchema({
 })
 
 export const PublishFlowContextSchema = z.object({
-  type: z.enum(PublishType).optional().describe('发布类型'),
   taskId: z.string().optional().describe('外部任务 ID'),
   materialGroupId: z.string().optional().describe('素材组 ID'),
   materialId: z.string().optional().describe('素材 ID'),
   source: z.enum(PublishRecordSource).optional().describe('发布来源'),
-  videoUrl: z.string().optional().describe('视频 URL'),
-  imgUrlList: z.array(z.string()).optional().describe('图片 URL 列表'),
 })
 
 export const CreatePublishFlowSchema = z.object({

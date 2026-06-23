@@ -3,7 +3,11 @@ import type { AxiosError, AxiosInstance, AxiosResponse } from 'axios'
 import type { Readable } from 'node:stream'
 import type { PlatformMediaPolicy, PlatformMediaRules, PublishMediaMetadata } from '../platforms/platforms.interface'
 import type { PublishMediaAdaptationOption } from '../platforms/publish-media-adaptation.schema'
-import { extname } from 'node:path'
+import { createReadStream, createWriteStream, openAsBlob } from 'node:fs'
+import { mkdtemp, rm, stat } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { basename, extname, join } from 'node:path'
+import { pipeline } from 'node:stream/promises'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
 import { AppException, ResponseCode } from '@yikart/common'
@@ -24,6 +28,19 @@ export interface MediaHttpInput {
   accountId?: string
   taskId?: string
   platformWorkId?: string
+}
+
+export interface MediaUploadRange {
+  start: number
+  end: number
+}
+
+export interface MediaUploadSource {
+  sizeBytes: number
+  contentType?: string
+  filename: string
+  stream: (range?: MediaUploadRange) => Readable
+  blob: (range?: MediaUploadRange) => Promise<Blob>
 }
 
 declare module 'axios' {
@@ -143,6 +160,39 @@ export class MediaService {
       channelMedia: input,
     })
     return response.data as Readable
+  }
+
+  async withUploadSource<T>(
+    input: MediaHttpInput,
+    handler: (source: MediaUploadSource) => Promise<T>,
+  ): Promise<T> {
+    const tempDir = await mkdtemp(join(tmpdir(), 'aitoearn-media-'))
+    try {
+      const response = await this.http.get(input.url, {
+        responseType: 'stream',
+        channelMedia: input,
+      })
+      const contentType = this.getHeaderString(response.headers['content-type'])
+      const filename = this.getUploadSourceFilename(input.url, contentType)
+      const filePath = join(tempDir, filename)
+
+      await pipeline(response.data as Readable, createWriteStream(filePath))
+      const fileStats = await stat(filePath)
+      const source: MediaUploadSource = {
+        sizeBytes: fileStats.size,
+        contentType,
+        filename,
+        stream: range => createReadStream(filePath, range ? { start: range.start, end: range.end } : {}),
+        blob: async (range) => {
+          const blob = await openAsBlob(filePath, contentType ? { type: contentType } : undefined)
+          return range ? blob.slice(range.start, range.end + 1, blob.type) : blob
+        },
+      }
+      return await handler(source)
+    }
+    finally {
+      await rm(tempDir, { recursive: true, force: true })
+    }
   }
 
   async head(input: MediaHttpInput): Promise<AxiosResponse['headers']> {
@@ -885,6 +935,15 @@ export class MediaService {
       })
     }
     return buffer
+  }
+
+  private getUploadSourceFilename(url: string, contentType?: string): string {
+    const filename = basename(this.getUrlPathname(url))
+    if (filename && filename !== '.' && filename !== '/') {
+      return filename
+    }
+    const extension = contentType ? mimeExtension(contentType) : undefined
+    return extension ? `media.${extension}` : 'media'
   }
 
   private getMediaType(media: { metadata?: { type?: unknown } }): PublishMediaType | undefined {

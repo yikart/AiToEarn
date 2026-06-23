@@ -114,50 +114,49 @@ export class TwitterPublishProvider implements PublishProvider<TwitterOption, un
       })
     }
 
-    // Download media
-    const mediaBuffer = await this.mediaService.getBuffer({
+    return await this.mediaService.withUploadSource({
       platform: this.platform,
       endpoint: 'uploadMedia.downloadMedia',
       url: media.url,
       accountId,
-    })
-    const totalBytes = mediaBuffer.length
+    }, async (source) => {
+      const totalBytes = source.sizeBytes
 
-    // Initialize upload
-    const initResult = await this.twitterService.initMediaUpload(accessToken, {
-      mediaType: this.getMediaMimeType(media, mediaKind),
-      totalBytes,
-      mediaCategory,
-    })
-
-    const mediaId = initResult.mediaId
-
-    // Upload in chunks (5MB for videos, single chunk for images)
-    const chunkSize = isVideo ? 5 * 1024 * 1024 : totalBytes
-    let segmentIndex = 0
-
-    for (let offset = 0; offset < totalBytes; offset += chunkSize) {
-      const chunk = mediaBuffer.slice(offset, offset + chunkSize)
-      await this.twitterService.appendMediaUpload(accessToken, {
-        mediaId,
-        media: chunk.toString('base64'),
-        segmentIndex,
+      const initResult = await this.twitterService.initMediaUpload(accessToken, {
+        mediaType: this.getMediaMimeType(media, mediaKind),
+        totalBytes,
+        mediaCategory,
       })
-      segmentIndex++
-    }
 
-    // Finalize upload
-    const finalizeResult = await this.twitterService.finalizeMediaUpload(accessToken, mediaId)
+      const mediaId = initResult.mediaId
 
-    if (finalizeResult.processingInfo) {
-      await this.waitForProcessing(accessToken, mediaId, finalizeResult.processingInfo)
-    }
+      // X chunked upload examples split media into 1 MiB APPEND chunks.
+      const chunkSize = isVideo ? 1024 * 1024 : totalBytes
+      let segmentIndex = 0
 
-    if (altText) {
-      await this.twitterService.createMediaMetadata(accessToken, { mediaId, altText, accountId })
-    }
+      for (let offset = 0; offset < totalBytes; offset += chunkSize) {
+        const end = Math.min(offset + chunkSize, totalBytes) - 1
+        const chunk = await source.blob({ start: offset, end })
+        await this.twitterService.appendMediaUpload(accessToken, {
+          mediaId,
+          media: chunk,
+          segmentIndex,
+        })
+        segmentIndex++
+      }
 
-    return mediaId
+      const finalizeResult = await this.twitterService.finalizeMediaUpload(accessToken, mediaId)
+
+      if (finalizeResult.processingInfo) {
+        await this.waitForProcessing(accessToken, mediaId, finalizeResult.processingInfo)
+      }
+
+      if (altText) {
+        await this.twitterService.createMediaMetadata(accessToken, { mediaId, altText, accountId })
+      }
+
+      return mediaId
+    })
   }
 
   private validateMedia(mediaList: PublishMediaInput[]): PublishValidationIssue[] {

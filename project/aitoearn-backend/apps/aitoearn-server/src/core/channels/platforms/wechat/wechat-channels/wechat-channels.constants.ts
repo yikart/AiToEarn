@@ -13,7 +13,7 @@ export const WECHAT_CHANNELS_METADATA = {
     imageFormats: ['jpg', 'jpeg', 'png', 'bmp'],
     videoFormats: ['mp4', 'avi', 'mkv', 'mov', 'flv', 'rmvb', 'wmv', 'webm'],
     maxImageSize: 20 * 1024 * 1024,
-    maxVideoSize: 100 * 1024 * 1024,
+    maxVideoSize: 1024 * 1024 * 1024,
     maxVideoDuration: 3600,
   },
   topic: { supported: true, nativeField: true },

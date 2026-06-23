@@ -374,26 +374,28 @@ export class FacebookService {
 
     const sessionId = startResponse.data.upload_session_id
 
-    // Download and upload the video
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.Facebook,
       endpoint: 'uploadVideo.downloadMedia',
       url: params.videoUrl,
-    })
-
-    await this.http.post(
-      `${this.graphApiBaseUrl}/${pageId}/video_reels`,
-      videoBuffer,
-      {
-        params: {
-          upload_phase: 'transfer',
-          upload_session_id: sessionId,
-          start_offset: 0,
-          access_token: pageAccessToken,
+    }, async (source) => {
+      await this.http.post(
+        `${this.graphApiBaseUrl}/${pageId}/video_reels`,
+        source.stream(),
+        {
+          params: {
+            upload_phase: 'transfer',
+            upload_session_id: sessionId,
+            start_offset: 0,
+            access_token: pageAccessToken,
+          },
+          headers: {
+            'Content-Type': 'application/octet-stream',
+            'Content-Length': String(source.sizeBytes),
+          },
         },
-        headers: { 'Content-Type': 'application/octet-stream' },
-      },
-    )
+      )
+    })
 
     const finishParams: Record<string, string> = {
       upload_phase: 'finish',
@@ -447,51 +449,51 @@ export class FacebookService {
     const sessionId = startResponse.data.upload_session_id
     let startOffset = Number(startResponse.data.start_offset ?? 0)
     let endOffset = Number(startResponse.data.end_offset ?? 0)
+    if (Number.isNaN(startOffset) || startOffset < 0)
+      startOffset = 0
 
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.Facebook,
       endpoint: 'publishVideoPost.downloadMedia',
       url: params.videoUrl,
-    })
+    }, async (source) => {
+      if (Number.isNaN(endOffset) || endOffset <= startOffset)
+        endOffset = source.sizeBytes
 
-    if (Number.isNaN(startOffset) || startOffset < 0)
-      startOffset = 0
-    if (Number.isNaN(endOffset) || endOffset <= startOffset)
-      endOffset = videoBuffer.length
+      while (startOffset < endOffset) {
+        const chunk = await source.blob({ start: startOffset, end: endOffset - 1 })
+        const formData = new FormData()
+        formData.append('video_file_chunk', chunk, source.filename)
 
-    while (startOffset < endOffset) {
-      const chunk = videoBuffer.subarray(startOffset, endOffset)
-      const formData = new FormData()
-      formData.append('video_file_chunk', new Blob([new Uint8Array(chunk)]), 'video.mp4')
-
-      const transferResponse = await this.http.post<{
-        start_offset?: string
-        end_offset?: string
-      }>(
-        `${this.graphApiBaseUrl}/${pageId}/videos`,
-        formData,
-        {
-          params: {
-            upload_phase: 'transfer',
-            upload_session_id: sessionId,
-            start_offset: startOffset,
-            access_token: pageAccessToken,
+        const transferResponse = await this.http.post<{
+          start_offset?: string
+          end_offset?: string
+        }>(
+          `${this.graphApiBaseUrl}/${pageId}/videos`,
+          formData,
+          {
+            params: {
+              upload_phase: 'transfer',
+              upload_session_id: sessionId,
+              start_offset: startOffset,
+              access_token: pageAccessToken,
+            },
           },
-        },
-      )
+        )
 
-      const nextStartOffset = Number(transferResponse.data.start_offset ?? videoBuffer.length)
-      const nextEndOffset = Number(transferResponse.data.end_offset ?? videoBuffer.length)
-      if (Number.isNaN(nextStartOffset) || Number.isNaN(nextEndOffset) || nextStartOffset <= startOffset) {
-        throw FacebookPlatformException.validation({
-          code: ResponseCode.ChannelPlatformResponseInvalid,
-          category: PlatformErrorCategory.Validation,
-          context: { endpoint: 'publishVideoPost.transfer' },
-        })
+        const nextStartOffset = Number(transferResponse.data.start_offset ?? source.sizeBytes)
+        const nextEndOffset = Number(transferResponse.data.end_offset ?? source.sizeBytes)
+        if (Number.isNaN(nextStartOffset) || Number.isNaN(nextEndOffset) || nextStartOffset <= startOffset) {
+          throw FacebookPlatformException.validation({
+            code: ResponseCode.ChannelPlatformResponseInvalid,
+            category: PlatformErrorCategory.Validation,
+            context: { endpoint: 'publishVideoPost.transfer' },
+          })
+        }
+        startOffset = nextStartOffset
+        endOffset = nextEndOffset
       }
-      startOffset = nextStartOffset
-      endOffset = nextEndOffset
-    }
+    })
 
     const finishParams: Record<string, string> = {
       upload_phase: 'finish',
@@ -607,19 +609,20 @@ export class FacebookService {
     const videoId = startResponse.data.video_id
     const uploadUrl = startResponse.data.upload_url
 
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.Facebook,
       endpoint: 'publishReel.downloadMedia',
       url: params.videoUrl,
-    })
-
-    await this.http.post(uploadUrl, videoBuffer, {
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Authorization': `OAuth ${pageAccessToken}`,
-        'offset': '0',
-        'file_size': videoBuffer.length.toString(),
-      },
+    }, async (source) => {
+      await this.http.post(uploadUrl, source.stream(), {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': String(source.sizeBytes),
+          'Authorization': `OAuth ${pageAccessToken}`,
+          'offset': '0',
+          'file_size': source.sizeBytes.toString(),
+        },
+      })
     })
 
     const finishParams: Record<string, string> = {
@@ -675,19 +678,20 @@ export class FacebookService {
     const videoId = startResponse.data.video_id
     const uploadUrl = startResponse.data.upload_url
 
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.Facebook,
       endpoint: 'publishVideoStory.downloadMedia',
       url: params.videoUrl,
-    })
-
-    await this.http.post(uploadUrl, videoBuffer, {
-      headers: {
-        'Content-Type': 'application/octet-stream',
-        'Authorization': `OAuth ${pageAccessToken}`,
-        'offset': '0',
-        'file_size': videoBuffer.length.toString(),
-      },
+    }, async (source) => {
+      await this.http.post(uploadUrl, source.stream(), {
+        headers: {
+          'Content-Type': 'application/octet-stream',
+          'Content-Length': String(source.sizeBytes),
+          'Authorization': `OAuth ${pageAccessToken}`,
+          'offset': '0',
+          'file_size': source.sizeBytes.toString(),
+        },
+      })
     })
 
     const finishResponse = await this.http.post<{

@@ -8,11 +8,11 @@ import { randomUUID } from 'node:crypto'
 import { Injectable, Logger } from '@nestjs/common'
 import { AppException, getLocale, ResponseCode } from '@yikart/common'
 import { AccountRepository, PublishRecordLinkStatus, PublishRecordRepository, PublishStatus, PublishType, Transactional } from '@yikart/mongodb'
-import { RelayAccountException } from '../../../relay/relay-account.exception'
 import { MediaService } from '../../media/media.service'
 import { AuthType, PublishMediaType } from '../../platforms/platforms.interface'
 import { PlatformIntegrationRegistry } from '../../platforms/platforms.registry'
 import { formatPublishValidationIssue, parseTopicsFromBody, PublishValidationField, PublishValidationIssueCode } from '../../platforms/publish.schema'
+import { RelayAccountException } from '../../relay/relay-account.exception'
 import { validatePublishContent } from '../../utils/publish-content.utils'
 import { PublishQueueService } from '../tasks/publish-queue.service'
 import { PublishStateService } from '../tasks/publish-state.service'
@@ -180,8 +180,8 @@ export class PublishFlowService {
       }
 
       const account = accounts.get(`${item.accountId}:${item.platform}`)
-      const type = this.resolvePublishType(preparedContent, dto.context)
-      const media = this.resolveRecordMedia(preparedContent, dto.context, type)
+      const type = this.resolvePublishType(preparedContent)
+      const media = this.resolveRecordMedia(preparedContent, type)
       preparedRecords.push({
         item,
         account,
@@ -440,41 +440,32 @@ export class PublishFlowService {
     }
   }
 
-  private resolvePublishType(
-    content: PublishContentInput,
-    context?: CreatePublishFlowCommand['context'],
-  ): PublishType {
-    if (context?.type) {
-      return context.type
-    }
-    if (context?.videoUrl || content.media.some(media => this.isVideoMedia(media))) {
-      return PublishType.VIDEO
+  private resolvePublishType(content: PublishContentInput): PublishType {
+    if (content.media.length > 0) {
+      return content.media.some(media => this.isVideoMedia(media))
+        ? PublishType.VIDEO
+        : PublishType.ARTICLE
     }
     return PublishType.ARTICLE
   }
 
   private resolveRecordMedia(
     content: PublishContentInput,
-    context: CreatePublishFlowCommand['context'],
     type: PublishType,
   ): { videoUrl?: string, imgUrlList?: string[] } {
-    if (context?.videoUrl || context?.imgUrlList) {
+    if (content.media.length > 0) {
+      if (type === PublishType.VIDEO) {
+        return {
+          videoUrl: content.media.find(media => this.isVideoMedia(media))?.url ?? content.media[0]?.url,
+          imgUrlList: [],
+        }
+      }
       return {
-        videoUrl: context.videoUrl,
-        imgUrlList: context.imgUrlList,
+        imgUrlList: content.media.map(media => media.url),
       }
     }
 
-    if (type === PublishType.VIDEO) {
-      return {
-        videoUrl: content.media.find(media => this.isVideoMedia(media))?.url ?? content.media[0]?.url,
-        imgUrlList: [],
-      }
-    }
-
-    return {
-      imgUrlList: content.media.map(media => media.url),
-    }
+    return {}
   }
 
   private isVideoUrl(url: string): boolean {

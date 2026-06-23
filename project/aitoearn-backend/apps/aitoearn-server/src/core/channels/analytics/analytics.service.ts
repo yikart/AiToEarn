@@ -10,10 +10,10 @@ import { Injectable, Logger } from '@nestjs/common'
 import { ChannelAccountDataSnapshotRepository, ChannelWorkDataSnapshotRepository } from '@yikart/channel-db'
 import { AccountType, AppException, ResponseCode } from '@yikart/common'
 import { AccountRepository } from '@yikart/mongodb'
-import { RelayAccountException } from '../../relay/relay-account.exception'
 import { AuthService } from '../auth/auth.service'
 import { ChannelPlatformException, PlatformErrorCategory } from '../platforms/platforms.exception'
 import { PlatformIntegrationRegistry } from '../platforms/platforms.registry'
+import { RelayAccountException } from '../relay/relay-account.exception'
 
 @Injectable()
 export class AnalyticsService {

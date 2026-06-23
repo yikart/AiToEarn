@@ -1,7 +1,7 @@
 import { AccountType, ResponseCode, WorkStatus } from '@yikart/common'
 import { PublishRecordLinkStatus, PublishStatus, PublishType } from '@yikart/mongodb'
 import { describe, expect, it, vi } from 'vitest'
-import { RelayAuthException } from '../../../relay/relay-auth.exception'
+import { RelayAuthException } from '../../relay/relay-auth.exception'
 import { PublishRecordReadService } from './publish-record-read.service'
 
 vi.mock('@yikart/mongodb', () => ({
@@ -33,7 +33,7 @@ vi.mock('@yikart/mongodb', () => ({
   },
 }))
 
-vi.mock('../../../relay/relay-client.service', () => ({
+vi.mock('../../relay/relay-client.service', () => ({
   RelayClientService: class RelayClientService {},
 }))
 

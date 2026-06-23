@@ -58,6 +58,7 @@ export class RelayVideoService {
 
     const logRequest: RelayVideoAiLog['request'] = {
       ...payload,
+      remoteTaskId,
     }
     if (request.groupId) {
       logRequest.groupId = request.groupId

@@ -1,6 +1,11 @@
+import { Readable } from 'node:stream'
+import { ResponseCode } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
+import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
 import { PublishValidationIssueCode } from '../publish.schema'
 import { PinterestPublishProvider } from './pinterest-publish.provider'
+import { PinterestPlatformException } from './pinterest.exception'
+import { PinterestMediaStatusValue } from './pinterest.interface'
 
 vi.mock('../../media/media.service', () => ({
   MediaService: class {},
@@ -19,6 +24,7 @@ vi.mock('@yikart/mongodb', () => ({
 }))
 
 function createProvider() {
+  const video = Buffer.from('video')
   const pinterestService = {
     createPin: vi.fn(),
     getPin: vi.fn(),
@@ -28,7 +34,15 @@ function createProvider() {
     uploadVideoMedia: vi.fn(),
     getMediaStatus: vi.fn(),
   }
-  const mediaService = { getBuffer: vi.fn() }
+  const mediaService = {
+    withUploadSource: vi.fn(async (_input, handler) => handler({
+      sizeBytes: video.length,
+      contentType: 'video/mp4',
+      filename: 'video.mp4',
+      stream: range => Readable.from(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length)),
+      blob: async range => new Blob([new Uint8Array(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length))], { type: 'video/mp4' }),
+    })),
+  }
   return {
     provider: new PinterestPublishProvider(pinterestService as never, mediaService as never),
     pinterestService,
@@ -169,5 +183,103 @@ describe('pinterest publish provider result links', () => {
       permalink: 'https://www.pinterest.com/pin/created-pin-id/',
       linkStatus: 'pending',
     })
+  })
+
+  it('marks video processing timeout as a retryable platform timeout', async () => {
+    vi.useFakeTimers()
+    try {
+      const { provider, pinterestService } = createProvider()
+      pinterestService.createVideoMediaUpload.mockResolvedValue({
+        media_id: 'media-1',
+        upload_url: 'https://upload.example.test/video',
+        upload_parameters: {},
+      })
+      pinterestService.getMediaStatus.mockResolvedValue({
+        media_id: 'media-1',
+        status: PinterestMediaStatusValue.Processing,
+      })
+
+      const errorPromise = provider.publish({
+        taskId: 'task-id',
+        accountId: 'account-id',
+        credential: { accessToken: 'access-token' },
+        content: {
+          title: 'Pin title',
+          body: 'Pin description',
+          media: [{ url: 'https://cdn.example.test/video.mp4' }],
+        },
+        option: {
+          boardId: 'board-id',
+          coverImageUrl: 'https://cdn.example.test/cover.jpg',
+        },
+      } as never).catch(err => err)
+      await vi.advanceTimersByTimeAsync(4999)
+      expect(pinterestService.getMediaStatus).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(1)
+      expect(pinterestService.getMediaStatus).toHaveBeenCalledTimes(1)
+      await vi.runAllTimersAsync()
+      const error = await errorPromise
+
+      expect(error).toBeInstanceOf(PinterestPlatformException)
+      expect(error).toMatchObject({
+        code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
+        category: PlatformErrorCategory.Timeout,
+        retryable: true,
+        platformCause: {
+          type: PlatformErrorCauseType.Platform,
+          platformCode: PinterestMediaStatusValue.Processing,
+        },
+      })
+      expect(pinterestService.getMediaStatus).toHaveBeenCalledTimes(60)
+      expect(pinterestService.createPin).not.toHaveBeenCalled()
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('marks failed video media status as a platform media processing failure', async () => {
+    vi.useFakeTimers()
+    try {
+      const { provider, pinterestService } = createProvider()
+      pinterestService.createVideoMediaUpload.mockResolvedValue({
+        media_id: 'media-1',
+        upload_url: 'https://upload.example.test/video',
+        upload_parameters: {},
+      })
+      pinterestService.getMediaStatus.mockResolvedValue({
+        media_id: 'media-1',
+        status: PinterestMediaStatusValue.Failed,
+      })
+
+      const assertion = expect(provider.publish({
+        taskId: 'task-id',
+        accountId: 'account-id',
+        credential: { accessToken: 'access-token' },
+        content: {
+          title: 'Pin title',
+          body: 'Pin description',
+          media: [{ url: 'https://cdn.example.test/video.mp4' }],
+        },
+        option: {
+          boardId: 'board-id',
+          coverImageUrl: 'https://cdn.example.test/cover.jpg',
+        },
+      } as never)).rejects.toMatchObject({
+        code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+        category: PlatformErrorCategory.MediaProcessingFailed,
+        retryable: false,
+        platformCause: {
+          type: PlatformErrorCauseType.Platform,
+          platformCode: PinterestMediaStatusValue.Failed,
+        },
+      })
+      await vi.runAllTimersAsync()
+      await assertion
+      expect(pinterestService.createPin).not.toHaveBeenCalled()
+    }
+    finally {
+      vi.useRealTimers()
+    }
   })
 })

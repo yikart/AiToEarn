@@ -67,7 +67,7 @@ export class CreateOrderDto extends createZodDto(CreateOrderDtoSchema, 'CreateOr
 import { createPaginationVo, createZodDto } from '@yikart/common';
 import { z } from 'zod';
 
-export const OrderDetailVoSchema = z.object({ id: z.string(), amount: z.number(), createdAt: z.date() });
+export const OrderDetailVoSchema = z.object({ id: z.string(), amount: z.number(), createdAt: z.coerce.date() });
 export class OrderDetailVo extends createZodDto(OrderDetailVoSchema, 'OrderDetailVo') {}
 export class OrderListVo extends createPaginationVo(OrderDetailVoSchema, 'OrderListVo') {}
 ```
@@ -111,7 +111,7 @@ export const CreateOrderDtoSchema = z.object({
 export const OrderDetailVoSchema = z.object({
   id: z.string().describe('订单 ID'),
   amount: z.number().describe('订单金额'),
-  createdAt: z.date().describe('创建时间'),
+  createdAt: z.coerce.date().describe('创建时间'),
 });
 ```
 

@@ -107,6 +107,10 @@ function createService(
       accessToken: 'access-token',
       refreshToken: 'refresh-token',
     })),
+    refreshCredential: vi.fn(async () => ({
+      accessToken: 'new-access-token',
+      refreshToken: 'new-refresh-token',
+    })),
     markAccountOfflineForCredentialFailure: vi.fn(async () => true),
   }
   const stateService = {
@@ -161,11 +165,11 @@ describe('publish task service timeout recovery', () => {
     expect(provider.finalize).toHaveBeenCalledWith(expect.objectContaining({
       taskId: 'task-1',
       platformWorkId: 'work-1',
-      credential: {
+      credential: expect.objectContaining({
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
         platformUid: 'platform-user-1',
-      },
+      }),
     }))
     expect(stateService.markPublished).toHaveBeenCalledWith('task-1', {
       platformWorkId: 'work-1',
@@ -175,7 +179,7 @@ describe('publish task service timeout recovery', () => {
   })
 
   it('verifies stale publishing tasks when finalize is unavailable', async () => {
-    const { service, provider, stateService } = createService({
+    const { service, provider, stateService, record } = createService({
       finalize: undefined,
       verify: vi.fn(async () => ({
         published: true,
@@ -183,6 +187,8 @@ describe('publish task service timeout recovery', () => {
         permalink: 'https://provider.example.test/verified-work-1',
       })),
     })
+    record.option = { privacy_level: 'SELF_ONLY' }
+    record.dataOption = { publishId: 'publish-1' }
 
     await service.processPublishingTimeout('task-1')
 
@@ -190,6 +196,8 @@ describe('publish task service timeout recovery', () => {
     expect(provider.verify).toHaveBeenCalledWith(expect.objectContaining({
       taskId: 'task-1',
       platformWorkId: 'work-1',
+      option: { privacy_level: 'SELF_ONLY' },
+      dataOption: { publishId: 'publish-1' },
     }))
     expect(stateService.markPublished).toHaveBeenCalledWith('task-1', {
       platformWorkId: 'verified-work-1',
@@ -207,6 +215,57 @@ describe('publish task service timeout recovery', () => {
     expect(provider.finalize).not.toHaveBeenCalled()
     expect(stateService.markFailed).not.toHaveBeenCalled()
     expect(stateService.markPublished).not.toHaveBeenCalled()
+  })
+
+  it('passes stored options to finalize without platform-specific mutation', async () => {
+    const { service, provider, record } = createService()
+    record.option = { privacy_level: 'SELF_ONLY' }
+    record.dataOption = { publishId: 'publish-1' }
+
+    await service.processFinalizeJob('task-1')
+
+    expect(provider.finalize).toHaveBeenCalledWith(expect.objectContaining({
+      taskId: 'task-1',
+      platformWorkId: 'work-1',
+      option: { privacy_level: 'SELF_ONLY' },
+      dataOption: { publishId: 'publish-1' },
+    }))
+  })
+
+  it('retries finalize with a refreshed credential when finalize fails with an auth platform error', async () => {
+    const authError = new ChannelPlatformException({
+      code: ResponseCode.ChannelAccessTokenFailed,
+      platform: AccountType.Kwai,
+      category: PlatformErrorCategory.Auth,
+      cause: {
+        type: PlatformErrorCauseType.Http,
+        httpStatus: 401,
+        platformMessage: 'token invalid',
+      },
+      retryable: false,
+    })
+    const { service, provider, authService, stateService } = createService({
+      finalize: vi.fn()
+        .mockRejectedValueOnce(authError)
+        .mockResolvedValueOnce({
+          status: 200,
+          platformWorkId: 'work-2',
+          permalink: 'https://provider.example.test/work-2',
+        }),
+    })
+
+    await service.processFinalizeJob('task-1')
+
+    expect(authService.refreshCredential).toHaveBeenCalledWith('account-1', 'user-1')
+    expect(provider.finalize).toHaveBeenCalledTimes(2)
+    expect(provider.finalize).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      credential: expect.objectContaining({ accessToken: 'new-access-token' }),
+    }))
+    expect(authService.markAccountOfflineForCredentialFailure).not.toHaveBeenCalled()
+    expect(stateService.markPublished).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      platformWorkId: 'work-2',
+      permalink: 'https://provider.example.test/work-2',
+    }))
   })
 })
 
@@ -301,7 +360,7 @@ describe('publish task service retry', () => {
     expect(stateService.markFailed).not.toHaveBeenCalled()
   })
 
-  it('marks the account offline when publish fails with a non-retryable auth platform error', async () => {
+  it('retries publish with a refreshed credential when publish fails with an auth platform error', async () => {
     const authError = new ChannelPlatformException({
       code: ResponseCode.ChannelAccessTokenFailed,
       platform: AccountType.Kwai,
@@ -314,15 +373,56 @@ describe('publish task service retry', () => {
       retryable: false,
     })
     const { service, provider, authService, stateService, record } = createService({
-      publish: vi.fn(async () => {
-        throw authError
-      }),
+      publish: vi.fn()
+        .mockRejectedValueOnce(authError)
+        .mockResolvedValueOnce({
+          status: 200,
+          platformWorkId: 'work-2',
+          permalink: 'https://provider.example.test/work-2',
+        }),
     })
     record.status = PublishStatus.Queued
 
     await service.processPublishJob('task-1')
 
-    expect(provider.publish).toHaveBeenCalled()
+    expect(authService.refreshCredential).toHaveBeenCalledWith('account-1', 'user-1')
+    expect(provider.publish).toHaveBeenCalledTimes(2)
+    expect(provider.publish).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      credential: expect.objectContaining({ accessToken: 'access-token' }),
+    }))
+    expect(provider.publish).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      credential: expect.objectContaining({ accessToken: 'new-access-token' }),
+    }))
+    expect(authService.markAccountOfflineForCredentialFailure).not.toHaveBeenCalled()
+    expect(stateService.markPublished).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      platformWorkId: 'work-2',
+      permalink: 'https://provider.example.test/work-2',
+    }))
+  })
+
+  it('marks the account offline when publish auth failure remains after credential refresh', async () => {
+    const authError = new ChannelPlatformException({
+      code: ResponseCode.ChannelAccessTokenFailed,
+      platform: AccountType.Kwai,
+      category: PlatformErrorCategory.Auth,
+      cause: {
+        type: PlatformErrorCauseType.Http,
+        httpStatus: 401,
+        platformMessage: 'token invalid',
+      },
+      retryable: false,
+    })
+    const { service, provider, authService, stateService, record } = createService({
+      publish: vi.fn()
+        .mockRejectedValueOnce(authError)
+        .mockRejectedValueOnce(authError),
+    })
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalledTimes(2)
+    expect(authService.refreshCredential).toHaveBeenCalledWith('account-1', 'user-1')
     expect(authService.markAccountOfflineForCredentialFailure).toHaveBeenCalledWith(
       'account-1',
       authError,
@@ -333,6 +433,39 @@ describe('publish task service retry', () => {
       code: String(ResponseCode.ChannelAccessTokenFailed),
       retryable: false,
     }))
+  })
+
+  it('does not retry publish auth failures when the credential has no refresh token', async () => {
+    const authError = new ChannelPlatformException({
+      code: ResponseCode.ChannelAccessTokenFailed,
+      platform: AccountType.Kwai,
+      category: PlatformErrorCategory.Auth,
+      cause: {
+        type: PlatformErrorCauseType.Http,
+        httpStatus: 401,
+        platformMessage: 'token invalid',
+      },
+      retryable: false,
+    })
+    const { service, provider, authService, record } = createService({
+      publish: vi.fn(async () => {
+        throw authError
+      }),
+    })
+    authService.getValidCredential.mockResolvedValueOnce({
+      accessToken: 'access-token',
+    })
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalledTimes(1)
+    expect(authService.refreshCredential).not.toHaveBeenCalled()
+    expect(authService.markAccountOfflineForCredentialFailure).toHaveBeenCalledWith(
+      'account-1',
+      authError,
+      'platform_auth_failed',
+    )
   })
 
   it('rolls publish retries back to waiting when requeue fails', async () => {

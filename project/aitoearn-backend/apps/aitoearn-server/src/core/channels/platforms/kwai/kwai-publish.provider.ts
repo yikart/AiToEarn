@@ -61,35 +61,34 @@ export class KwaiPublishProvider implements PublishProvider<KwaiOption, KwaiData
     // Step 1: Initialize upload
     const uploadInit = await this.kwaiService.startUpload(input.credential.accessToken)
 
-    // Step 2: Download video and upload in fragments
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: this.platform,
       endpoint: 'publish.downloadVideo',
       url: video.url,
       taskId: input.taskId,
       accountId: input.accountId,
-    })
-    const fragmentCount = Math.ceil(videoBuffer.length / FRAGMENT_SIZE)
+    }, async (source) => {
+      const fragmentCount = Math.ceil(source.sizeBytes / FRAGMENT_SIZE)
 
-    for (let i = 0; i < fragmentCount; i++) {
-      const start = i * FRAGMENT_SIZE
-      const end = Math.min(start + FRAGMENT_SIZE, videoBuffer.length)
-      const fragment = videoBuffer.subarray(start, end)
+      for (let i = 0; i < fragmentCount; i++) {
+        const start = i * FRAGMENT_SIZE
+        const end = Math.min(start + FRAGMENT_SIZE, source.sizeBytes) - 1
 
-      await this.kwaiService.fragmentUploadVideo(
+        await this.kwaiService.fragmentUploadVideo(
+          uploadInit.uploadToken,
+          i,
+          uploadInit.endpoint,
+          source.stream({ start, end }),
+          end - start + 1,
+        )
+      }
+
+      await this.kwaiService.completeFragmentUpload(
         uploadInit.uploadToken,
-        i,
+        fragmentCount,
         uploadInit.endpoint,
-        fragment,
       )
-    }
-
-    // Step 3: Complete fragment upload
-    await this.kwaiService.completeFragmentUpload(
-      uploadInit.uploadToken,
-      fragmentCount,
-      uploadInit.endpoint,
-    )
+    })
 
     // Step 4: Build caption with topics
     const caption = this.buildCaption(input.content.body)

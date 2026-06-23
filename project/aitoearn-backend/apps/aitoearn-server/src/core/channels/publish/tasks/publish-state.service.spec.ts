@@ -145,6 +145,113 @@ describe('publish state service', () => {
     expect(eventStream.emit).not.toHaveBeenCalled()
   })
 
+  it('replaces a TikTok pending publish id with the final post id after already published', async () => {
+    const publishRecordRepo = {
+      getById: vi.fn(async () => ({
+        id: 'task-1',
+        userId: 'user-1',
+        accountId: 'account-1',
+        accountType: AccountType.TikTok,
+        status: 1,
+        platformWorkId: 'publish-1',
+        dataOption: { publishId: 'publish-1' },
+      })),
+      updateByIdAndStatuses: vi.fn(async () => ({
+        id: 'task-1',
+        status: 1,
+      })),
+    }
+    const eventStream = {
+      emit: vi.fn(),
+    }
+    const service = new PublishStateService(publishRecordRepo as never, eventStream as never)
+
+    await expect(service.markPublished('task-1', {
+      platformWorkId: 'post-1',
+      permalink: 'https://www.tiktok.com/@creator/video/post-1',
+      dataOption: {
+        publishId: 'publish-1',
+        finalPostId: 'post-1',
+      },
+    })).resolves.toBe(true)
+
+    expect(publishRecordRepo.updateByIdAndStatuses).toHaveBeenCalledWith('task-1', [1], {
+      $set: {
+        platformWorkId: 'post-1',
+        dataId: 'post-1',
+        uniqueId: `${AccountType.TikTok}_post-1`,
+        workLink: 'https://www.tiktok.com/@creator/video/post-1',
+        dataOption: {
+          publishId: 'publish-1',
+          finalPostId: 'post-1',
+        },
+      },
+    })
+    expect(eventStream.emit).not.toHaveBeenCalled()
+  })
+
+  it('does not replace a published work id when the final id does not match the result', async () => {
+    const publishRecordRepo = {
+      getById: vi.fn(async () => ({
+        id: 'task-1',
+        userId: 'user-1',
+        accountId: 'account-1',
+        accountType: AccountType.TikTok,
+        status: 1,
+        platformWorkId: 'publish-1',
+        dataOption: { publishId: 'publish-1' },
+      })),
+      updateByIdAndStatuses: vi.fn(),
+    }
+    const eventStream = {
+      emit: vi.fn(),
+    }
+    const service = new PublishStateService(publishRecordRepo as never, eventStream as never)
+
+    await expect(service.markPublished('task-1', {
+      platformWorkId: 'post-1',
+      permalink: 'https://www.tiktok.com/@creator/video/post-1',
+      dataOption: {
+        publishId: 'publish-1',
+        finalPostId: 'post-2',
+      },
+    })).resolves.toBe(false)
+
+    expect(publishRecordRepo.updateByIdAndStatuses).not.toHaveBeenCalled()
+    expect(eventStream.emit).not.toHaveBeenCalled()
+  })
+
+  it('does not replace a published work id outside TikTok publish-id finalization', async () => {
+    const publishRecordRepo = {
+      getById: vi.fn(async () => ({
+        id: 'task-1',
+        userId: 'user-1',
+        accountId: 'account-1',
+        accountType: AccountType.Douyin,
+        status: 1,
+        platformWorkId: 'publish-1',
+        dataOption: { publishId: 'publish-1' },
+      })),
+      updateByIdAndStatuses: vi.fn(),
+    }
+    const eventStream = {
+      emit: vi.fn(),
+    }
+    const service = new PublishStateService(publishRecordRepo as never, eventStream as never)
+
+    await expect(service.markPublished('task-1', {
+      platformWorkId: 'post-1',
+      permalink: 'https://www.douyin.com/video/post-1',
+      dataOption: {
+        publishId: 'publish-1',
+        finalPostId: 'post-1',
+      },
+    })).resolves.toBe(false)
+
+    expect(publishRecordRepo.updateByIdAndStatuses).not.toHaveBeenCalled()
+    expect(eventStream.emit).not.toHaveBeenCalled()
+  })
+
   it('clears previous publish errors when marking a task as publishing', async () => {
     const publishRecordRepo = {
       getById: vi.fn(async () => ({

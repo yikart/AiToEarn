@@ -27,7 +27,7 @@ vi.mock('@yikart/mongodb', () => ({
   },
 }))
 
-vi.mock('../../../relay/relay-client.service', () => ({
+vi.mock('../../relay/relay-client.service', () => ({
   RelayClientService: class RelayClientService {},
 }))
 

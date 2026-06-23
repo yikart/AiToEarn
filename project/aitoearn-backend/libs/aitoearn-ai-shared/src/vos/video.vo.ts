@@ -40,9 +40,9 @@ const videoTaskStatusResponseSchema = z.object({
   error: z.object({
     message: z.string().describe('错误信息'),
   }).optional().describe('错误信息'),
-  submittedAt: z.date().describe('提交时间'),
-  startedAt: z.date().describe('开始时间'),
-  finishedAt: z.date().optional().describe('完成时间'),
+  submittedAt: z.coerce.date().describe('提交时间'),
+  startedAt: z.coerce.date().describe('开始时间'),
+  finishedAt: z.coerce.date().optional().describe('完成时间'),
 })
 
 export class VideoTaskStatusResponseVo extends createZodDto(videoTaskStatusResponseSchema) {}

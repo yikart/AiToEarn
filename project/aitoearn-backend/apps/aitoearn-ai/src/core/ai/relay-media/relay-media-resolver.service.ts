@@ -1,6 +1,7 @@
+import type { AssetsConfig } from '@yikart/assets'
 import { basename } from 'node:path'
 import { Inject, Injectable, Logger, Optional } from '@nestjs/common'
-import { ASSETS_CONFIG, type AssetsConfig } from '@yikart/assets'
+import { ASSETS_CONFIG } from '@yikart/assets'
 import { AssetType } from '@yikart/mongodb'
 import axios, { AxiosInstance } from 'axios'
 import { RelayConfig } from '../libs/relay/relay.config'

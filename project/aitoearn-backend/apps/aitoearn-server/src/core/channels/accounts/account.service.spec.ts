@@ -47,7 +47,7 @@ vi.mock('@yikart/redis', () => ({
   RedisService: class RedisService {},
 }))
 
-vi.mock('../../relay/relay-client.service', () => ({
+vi.mock('../relay/relay-client.service', () => ({
   RelayClientService: class RelayClientService {},
 }))
 
@@ -268,6 +268,32 @@ describe('channel account service', () => {
         type: AccountType.RedNote,
         uid: 'rednote_uid',
         clientType: ClientType.WEB,
+      }),
+    )
+  })
+
+  it('keeps resolved default group when plugin input has undefined groupId', async () => {
+    const { service, accountRepository } = createService({
+      status: PlatformStatus.Available,
+      authType: AuthType.Plugin,
+    })
+
+    await service.addAccount('user_1', {
+      type: AccountType.RedNote,
+      uid: 'rednote_uid',
+      nickname: 'RedNote Account',
+      groupId: undefined,
+    })
+
+    expect(accountRepository.createByIdentity).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: AccountType.RedNote,
+        uid: 'rednote_uid',
+      }),
+      expect.objectContaining({
+        groupId: 'group_default',
+        userId: 'user_1',
+        status: AccountStatus.NORMAL,
       }),
     )
   })
@@ -629,7 +655,7 @@ describe('channel account service', () => {
   })
 
   it('stores relay accounts as local ownership refs instead of upstream display data', async () => {
-    const { service, accountRepository, eventStream } = createService()
+    const { service, accountRepository, accountGroupRepository, eventStream } = createService()
 
     await service.createRelayAccount('user_1', {
       type: AccountType.Twitter,
@@ -637,8 +663,10 @@ describe('channel account service', () => {
       nickname: 'Upstream Name',
       avatar: 'https://assets.example.test/upstream.png',
       relayAccountRef: 'relay_account_1',
+      groupId: 'group_custom',
     })
 
+    expect(accountGroupRepository.getAccountGorupListByIds).toHaveBeenCalledWith(['group_custom'], 'user_1')
     expect(accountRepository.createByIdentity).toHaveBeenCalledWith(
       { type: AccountType.Twitter, uid: 'platform_uid' },
       expect.objectContaining({
@@ -646,6 +674,7 @@ describe('channel account service', () => {
         type: AccountType.Twitter,
         uid: 'platform_uid',
         nickname: 'relay_account_1',
+        groupId: 'group_custom',
         relayAccountRef: 'relay_account_1',
       }),
     )

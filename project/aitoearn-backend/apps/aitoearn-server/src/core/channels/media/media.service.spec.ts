@@ -1,4 +1,7 @@
 import type { InternalAxiosRequestConfig } from 'axios'
+import { readdir } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { Readable } from 'node:stream'
 import { AccountType } from '@yikart/common'
 import { AxiosError } from 'axios'
 import sharp from 'sharp'
@@ -30,6 +33,18 @@ function setHttpAdapter(service: MediaService, adapter: (config: InternalAxiosRe
   serviceWithHttp.http.defaults.adapter = adapter
 }
 
+async function readStream(stream: Readable): Promise<Buffer> {
+  const chunks: Buffer[] = []
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+  }
+  return Buffer.concat(chunks)
+}
+
+async function listMediaTempDirs(): Promise<string[]> {
+  return (await readdir(tmpdir())).filter(name => name.startsWith('aitoearn-media-'))
+}
+
 describe('media service http downloads', () => {
   it('returns media downloads as Buffer', async () => {
     const service = createService()
@@ -49,6 +64,63 @@ describe('media service http downloads', () => {
 
     expect(Buffer.isBuffer(buffer)).toBe(true)
     expect(buffer.toString()).toBe('media-bytes')
+  })
+
+  it('creates upload sources with range streams and blobs without retaining temp files', async () => {
+    const service = createService()
+    setHttpAdapter(service, async config => ({
+      data: Readable.from(Buffer.from('0123456789')),
+      status: 200,
+      statusText: 'OK',
+      headers: { 'content-type': 'video/mp4' },
+      config,
+    }))
+    const before = new Set(await listMediaTempDirs())
+
+    const result = await service.withUploadSource({
+      platform: AccountType.TikTok,
+      endpoint: 'downloadVideo',
+      url: 'https://cdn.example.test/video.mp4',
+    }, async source => ({
+      sizeBytes: source.sizeBytes,
+      contentType: source.contentType,
+      filename: source.filename,
+      streamBytes: (await readStream(source.stream({ start: 2, end: 5 }))).toString(),
+      blobBytes: Buffer.from(await (await source.blob({ start: 6, end: 8 })).arrayBuffer()).toString(),
+    }))
+    const after = new Set(await listMediaTempDirs())
+
+    expect(result).toEqual({
+      sizeBytes: 10,
+      contentType: 'video/mp4',
+      filename: 'video.mp4',
+      streamBytes: '2345',
+      blobBytes: '678',
+    })
+    expect([...after].filter(name => !before.has(name))).toEqual([])
+  })
+
+  it('cleans upload source temp files when the handler fails', async () => {
+    const service = createService()
+    setHttpAdapter(service, async config => ({
+      data: Readable.from(Buffer.from('video-data')),
+      status: 200,
+      statusText: 'OK',
+      headers: { 'content-type': 'video/mp4' },
+      config,
+    }))
+    const before = new Set(await listMediaTempDirs())
+
+    await expect(service.withUploadSource({
+      platform: AccountType.TikTok,
+      endpoint: 'downloadVideo',
+      url: 'https://cdn.example.test/video.mp4',
+    }, async () => {
+      throw new Error('handler failed')
+    })).rejects.toThrow('handler failed')
+    const after = new Set(await listMediaTempDirs())
+
+    expect([...after].filter(name => !before.has(name))).toEqual([])
   })
 
   it('converts platform media download errors through the response interceptor', async () => {

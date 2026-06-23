@@ -1,5 +1,5 @@
 import { AccountType } from '@yikart/common'
-import { PublishRecordSource, PublishType } from '@yikart/mongodb'
+import { PublishRecordSource } from '@yikart/mongodb'
 import { describe, expect, it, vi } from 'vitest'
 import { CreatePublishFlowSchema } from './publish-flow.dto'
 
@@ -131,23 +131,34 @@ describe('publish flow dto', () => {
     }).success).toBe(false)
   })
 
-  it('accepts legacy publish context fields', () => {
-    expect(CreatePublishFlowSchema.safeParse({
+  it('strips publish context media fields from the input contract', () => {
+    const result = CreatePublishFlowSchema.safeParse({
       ...baseFlow,
       flowId: 'flow_1',
       context: {
-        type: PublishType.VIDEO,
+        type: 'video',
         taskId: 'task_1',
         materialGroupId: 'group_1',
         materialId: 'material_1',
         source: PublishRecordSource.Web,
         videoUrl: 'https://example.com/video.mp4',
+        imgUrlList: ['https://example.com/image.jpg'],
       },
       items: [{
         accountId: 'account-id',
         platform: AccountType.YouTube,
       }],
-    }).success).toBe(true)
+    })
+
+    expect(result.success).toBe(true)
+    if (result.success) {
+      expect(result.data.context).toEqual({
+        taskId: 'task_1',
+        materialGroupId: 'group_1',
+        materialId: 'material_1',
+        source: PublishRecordSource.Web,
+      })
+    }
   })
 
   it('does not expose content.topics as an input contract', () => {

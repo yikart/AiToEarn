@@ -10,7 +10,7 @@ import { AppException, GlobalExceptionFilter, ResponseCode } from '@yikart/commo
 import axios from 'axios'
 import { concatMap, from, of } from 'rxjs'
 import { z } from 'zod'
-import { relayConfigSchema } from '../../config'
+import { relayConfigSchema } from '../../../config'
 import { RelayAccountException } from './relay-account.exception'
 import { RelayAuthException } from './relay-auth.exception'
 import { RelayClientService } from './relay-client.service'
@@ -76,6 +76,14 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
         if (userId) {
           callbackUrl.searchParams.set('userId', userId)
         }
+        // Forward the local groupId through the callback so the relay callback can
+        // place the resulting account into the requested group. The local groupId
+        // is not meaningful to the relay server, so it is stripped from the proxied
+        // request below.
+        const groupId = this.extractGroupId(request)
+        if (groupId) {
+          callbackUrl.searchParams.set('groupId', groupId)
+        }
         const callbackUrlStr = callbackUrl.toString()
 
         const isGet = request.method.toUpperCase() === 'GET'
@@ -98,12 +106,22 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
       }
 
       try {
+        this.logger.debug({
+          method: request.method as Method,
+          url: targetUrl,
+          data: targetBody,
+          headers: forwardHeaders,
+        })
+
         const proxyResponse = await axios({
           method: request.method as Method,
           url: targetUrl,
           data: targetBody,
           headers: forwardHeaders,
           validateStatus: () => true,
+        })
+        this.logger.debug({
+          proxyResponse
         })
 
         response.status(proxyResponse.status).json(proxyResponse.data)
@@ -160,5 +178,17 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
     }
     forwardHeaders['x-api-key'] = this.relayConfig!.apiKey
     return forwardHeaders
+  }
+
+  private extractGroupId(request: Request & { body?: { groupId?: unknown } }): string | undefined {
+    const queryGroupId = request.query?.['groupId']
+    if (typeof queryGroupId === 'string' && queryGroupId) {
+      return queryGroupId
+    }
+    const bodyGroupId = request.body?.['groupId']
+    if (typeof bodyGroupId === 'string' && bodyGroupId) {
+      return bodyGroupId
+    }
+    return undefined
   }
 }

@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
 import { InstagramPublishProvider } from './instagram-publish.provider'
 import { InstagramPlatformException } from './instagram.exception'
+import { InstagramMediaContainerStatusCode } from './instagram.interface'
 import { InstagramMediaType } from './instagram.schema'
 import { InstagramService } from './instagram.service'
 
@@ -52,12 +53,30 @@ function createProvider() {
   }
 }
 
+async function runWithPollTimers<T>(operation: () => Promise<T>): Promise<T> {
+  vi.useFakeTimers()
+  try {
+    const result = operation()
+      .then(value => ({ value }))
+      .catch((error: unknown) => ({ error }))
+    await vi.runAllTimersAsync()
+    const settled = await result
+    if ('error' in settled) {
+      throw settled.error
+    }
+    return settled.value
+  }
+  finally {
+    vi.useRealTimers()
+  }
+}
+
 describe('instagram publish provider', () => {
   it('publishes a single image with the Graph media id and permalink', async () => {
     const { provider, instagramService } = createProvider()
     instagramService.createMediaContainer.mockResolvedValueOnce('container-1')
 
-    await expect(provider.publish(createInput('https://assets.example.test/image.jpg'))).resolves.toEqual({
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/image.jpg')))).resolves.toEqual({
       status: 200,
       platformWorkId: 'media-1',
       permalink: 'https://www.instagram.com/p/media-shortcode/',
@@ -77,13 +96,13 @@ describe('instagram publish provider', () => {
     const { provider, instagramService } = createProvider()
     instagramService.createMediaContainer.mockResolvedValueOnce('container-1')
 
-    await provider.publish({
+    await runWithPollTimers(() => provider.publish({
       ...createInput('https://assets.example.test/signed-media'),
       content: {
         body: 'caption',
         media: [{ url: 'https://assets.example.test/signed-media', metadata: { type: 'image' } }],
       },
-    })
+    }))
 
     expect(instagramService.createMediaContainer).toHaveBeenCalledWith(
       'access-token',
@@ -98,13 +117,13 @@ describe('instagram publish provider', () => {
     const { provider, instagramService } = createProvider()
     instagramService.createMediaContainer.mockResolvedValueOnce('container-1')
 
-    await provider.publish({
+    await runWithPollTimers(() => provider.publish({
       ...createInput('https://assets.example.test/image.jpg'),
       content: {
         body: 'caption #topic @natgeo',
         media: [{ url: 'https://assets.example.test/image.jpg' }],
       },
-    })
+    }))
 
     expect(instagramService.createMediaContainer).toHaveBeenCalledWith(
       'access-token',
@@ -151,7 +170,7 @@ describe('instagram publish provider', () => {
       .mockResolvedValueOnce('child-container-2')
     instagramService.createCarouselContainer.mockResolvedValueOnce('carousel-container-1')
 
-    await expect(provider.publish({
+    await expect(runWithPollTimers(() => provider.publish({
       ...createInput('https://assets.example.test/first.jpg'),
       content: {
         body: 'caption',
@@ -160,7 +179,7 @@ describe('instagram publish provider', () => {
           { url: 'https://assets.example.test/second.jpeg' },
         ],
       },
-    })).resolves.toEqual({
+    }))).resolves.toEqual({
       status: 200,
       platformWorkId: 'media-1',
       permalink: 'https://www.instagram.com/p/media-shortcode/',
@@ -176,14 +195,14 @@ describe('instagram publish provider', () => {
     const { provider, instagramService } = createProvider()
     instagramService.createMediaContainer.mockResolvedValueOnce('reel-container-1')
 
-    await expect(provider.publish({
+    await expect(runWithPollTimers(() => provider.publish({
       ...createInput('https://assets.example.test/video.mp4', { media_type: InstagramMediaType.Reels }),
       content: {
         body: 'caption',
         media: [{ url: 'https://assets.example.test/video.mp4' }],
         cover: { url: 'https://assets.example.test/reel-cover.jpg' },
       },
-    })).resolves.toEqual({
+    }))).resolves.toEqual({
       status: 200,
       platformWorkId: 'media-1',
       permalink: 'https://www.instagram.com/p/media-shortcode/',
@@ -207,7 +226,7 @@ describe('instagram publish provider', () => {
     const { provider, instagramService } = createProvider()
     instagramService.createMediaContainer.mockResolvedValueOnce('reel-container-1')
 
-    await expect(provider.publish(createInput('https://assets.example.test/video.mp4'))).resolves.toMatchObject({
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/video.mp4')))).resolves.toMatchObject({
       dataOption: {
         containerId: 'reel-container-1',
         mediaType: InstagramMediaType.Reels,
@@ -221,6 +240,66 @@ describe('instagram publish provider', () => {
         mediaType: InstagramMediaType.Reels,
       }),
     )
+  })
+
+  it('marks container processing timeout as a retryable platform timeout', async () => {
+    vi.useFakeTimers()
+    try {
+      const { provider, instagramService } = createProvider()
+      instagramService.createMediaContainer.mockResolvedValueOnce('reel-container-1')
+      instagramService.getMediaContainerStatus.mockResolvedValue({
+        statusCode: InstagramMediaContainerStatusCode.InProgress,
+        status: 'In Progress',
+      })
+
+      const errorPromise = provider.publish(createInput('https://assets.example.test/video.mp4'))
+        .catch(err => err)
+      await vi.advanceTimersByTimeAsync(4999)
+      expect(instagramService.getMediaContainerStatus).not.toHaveBeenCalled()
+      await vi.advanceTimersByTimeAsync(1)
+      expect(instagramService.getMediaContainerStatus).toHaveBeenCalledTimes(1)
+      await vi.runAllTimersAsync()
+      const error = await errorPromise
+
+      expect(error).toBeInstanceOf(InstagramPlatformException)
+      expect(error).toMatchObject({
+        code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
+        category: PlatformErrorCategory.Timeout,
+        retryable: true,
+        platformCause: {
+          type: PlatformErrorCauseType.Platform,
+          platformCode: InstagramMediaContainerStatusCode.InProgress,
+        },
+      })
+      expect(instagramService.getMediaContainerStatus).toHaveBeenCalledTimes(60)
+      expect(instagramService.publishContainer).not.toHaveBeenCalled()
+    }
+    finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('marks failed container status as a platform media processing failure', async () => {
+    const { provider, instagramService } = createProvider()
+    instagramService.createMediaContainer.mockResolvedValueOnce('reel-container-1')
+    instagramService.getMediaContainerStatus.mockResolvedValueOnce({
+      statusCode: InstagramMediaContainerStatusCode.Error,
+      status: 'The media failed to process',
+    })
+
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/video.mp4'))))
+      .rejects
+      .toMatchObject({
+        code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+        category: PlatformErrorCategory.MediaProcessingFailed,
+        retryable: false,
+        platformCause: {
+          type: PlatformErrorCauseType.Platform,
+          platformCode: InstagramMediaContainerStatusCode.Error,
+          platformMessage: 'The media failed to process',
+        },
+      })
+    expect(instagramService.publishContainer).not.toHaveBeenCalled()
   })
 
   it('converts Instagram content publishing limit errors into local task messages', async () => {
@@ -287,13 +366,13 @@ describe('instagram publish provider', () => {
       .mockResolvedValueOnce('image-story-container')
       .mockResolvedValueOnce('video-story-container')
 
-    await expect(provider.publish(createInput('https://assets.example.test/story.jpg', { media_type: InstagramMediaType.Stories }))).resolves.toMatchObject({
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/story.jpg', { media_type: InstagramMediaType.Stories })))).resolves.toMatchObject({
       dataOption: {
         containerId: 'image-story-container',
         mediaType: InstagramMediaType.Stories,
       },
     })
-    await expect(provider.publish(createInput('https://assets.example.test/story.mp4', { media_type: InstagramMediaType.Stories }))).resolves.toMatchObject({
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/story.mp4', { media_type: InstagramMediaType.Stories })))).resolves.toMatchObject({
       dataOption: {
         containerId: 'video-story-container',
         mediaType: InstagramMediaType.Stories,
@@ -401,7 +480,7 @@ describe('instagram publish provider', () => {
       mediaType: 'IMAGE',
     })
 
-    await expect(provider.publish(createInput('https://assets.example.test/image.jpg')))
+    await expect(runWithPollTimers(() => provider.publish(createInput('https://assets.example.test/image.jpg'))))
       .rejects
       .toMatchObject({ code: ResponseCode.ChannelPlatformResponseInvalid })
   })

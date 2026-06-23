@@ -149,7 +149,7 @@ export enum TikTokOAuthGrantType {
 export interface TikTokPublishStatusResponse {
   status: TikTokPublishStatus
   fail_reason?: string
-  publicaly_available_post_id?: Array<string | number>
+  publicaly_available_post_id?: string[]
   uploaded_bytes?: number
 }
 

@@ -1,5 +1,6 @@
 import type { MediaService } from '../../media/media.service'
 import type { LinkedInService } from './linkedin.service'
+import { Readable } from 'node:stream'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
 import { PlatformErrorCauseType } from '../platforms.exception'
@@ -10,7 +11,16 @@ vi.mock('../../media/media.service', () => ({
   MediaService: class {},
 }))
 
+async function readStream(stream: Readable): Promise<Buffer> {
+  const chunks: Buffer[] = []
+  for await (const chunk of stream) {
+    chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk))
+  }
+  return Buffer.concat(chunks)
+}
+
 function createProvider() {
+  const video = Buffer.from('video-data')
   const linkedinService = {
     registerVideoUpload: vi.fn(),
     uploadBinary: vi.fn(),
@@ -19,7 +29,13 @@ function createProvider() {
     createTextPost: vi.fn(),
   }
   const mediaService = {
-    getBuffer: vi.fn(async () => Buffer.from('video-data')),
+    withUploadSource: vi.fn(async (_input, handler) => handler({
+      sizeBytes: video.length,
+      contentType: 'video/mp4',
+      filename: 'video.mp4',
+      stream: range => Readable.from(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length)),
+      blob: async range => new Blob([new Uint8Array(video.subarray(range?.start ?? 0, range ? range.end + 1 : video.length))], { type: 'video/mp4' }),
+    })),
   }
 
   return {
@@ -64,7 +80,7 @@ describe('linkedin publish provider video upload', () => {
       code: ResponseCode.ChannelPlatformMediaUnsupported,
     })
 
-    expect(mediaService.getBuffer).not.toHaveBeenCalled()
+    expect(mediaService.withUploadSource).not.toHaveBeenCalled()
     expect(linkedinService.createTextPost).not.toHaveBeenCalled()
     expect(linkedinService.createVideoPost).not.toHaveBeenCalled()
   })
@@ -72,7 +88,6 @@ describe('linkedin publish provider video upload', () => {
   it('accepts an empty LinkedIn upload token and finalizes the video upload', async () => {
     const { provider, linkedinService, mediaService } = createProvider()
     const videoBuffer = Buffer.from('video-data')
-    mediaService.getBuffer.mockResolvedValueOnce(videoBuffer)
     linkedinService.registerVideoUpload.mockResolvedValueOnce({
       value: {
         video: 'urn:li:video:video-1',
@@ -108,11 +123,11 @@ describe('linkedin publish provider video upload', () => {
       },
     })
 
-    expect(mediaService.getBuffer).toHaveBeenCalledWith({
+    expect(mediaService.withUploadSource).toHaveBeenCalledWith({
       platform: AccountType.LinkedIn,
       endpoint: 'uploadVideo.downloadMedia',
       url: 'https://cdn.example.test/video.mp4',
-    })
+    }, expect.any(Function))
     expect(linkedinService.registerVideoUpload).toHaveBeenCalledWith(
       'access-token',
       'urn:li:person:member-1',
@@ -121,13 +136,17 @@ describe('linkedin publish provider video upload', () => {
     expect(linkedinService.uploadBinary).toHaveBeenNthCalledWith(
       1,
       'https://upload.linkedin.example.test/part-1',
-      Buffer.from('video'),
+      expect.any(Readable),
+      5,
     )
     expect(linkedinService.uploadBinary).toHaveBeenNthCalledWith(
       2,
       'https://upload.linkedin.example.test/part-2',
-      Buffer.from('-data'),
+      expect.any(Readable),
+      5,
     )
+    expect(await readStream(linkedinService.uploadBinary.mock.calls[0][1])).toEqual(Buffer.from('video'))
+    expect(await readStream(linkedinService.uploadBinary.mock.calls[1][1])).toEqual(Buffer.from('-data'))
     expect(linkedinService.finalizeVideoUpload).toHaveBeenCalledWith(
       'access-token',
       'urn:li:video:video-1',

@@ -1,10 +1,10 @@
 import type { NormalizedPublishTask, PublishCancelInput, PublishCancelResult, PublishMediaInput, PublishNormalizeInput, PublishProvider, PublishProviderResult, PublishPublishInput, PublishUpdateInput, PublishValidateInput, PublishValidationResult, PublishVerifyInput, PublishVerifyResult } from '../platforms.interface'
 import type { PinterestOption } from './pinterest.schema'
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountType, ResponseCode } from '@yikart/common'
+import { AccountType, poll, ResponseCode } from '@yikart/common'
 import { PublishRecordLinkStatus } from '@yikart/mongodb'
 import { MediaService } from '../../media/media.service'
-import { PlatformErrorCategory } from '../platforms.exception'
+import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
 import {
 
   PublishMediaType,
@@ -227,32 +227,59 @@ export class PinterestPublishProvider implements PublishProvider<PinterestOption
 
   private async uploadVideo(accessToken: string, videoUrl: string): Promise<string> {
     const upload = await this.pinterestService.createVideoMediaUpload(accessToken)
-    const video = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: this.platform,
       endpoint: 'uploadVideo.downloadMedia',
       url: videoUrl,
+    }, async (source) => {
+      await this.pinterestService.uploadVideoMedia(upload, await source.blob(), source.filename)
     })
-    await this.pinterestService.uploadVideoMedia(upload, video)
 
-    for (let attempt = 0; attempt < 30; attempt++) {
-      const status = await this.pinterestService.getMediaStatus(accessToken, upload.media_id)
-      if (status.status === PinterestMediaStatusValue.Succeeded) {
-        return upload.media_id
-      }
-      if (status.status === PinterestMediaStatusValue.Failed) {
-        throw PinterestPlatformException.validation({
-          code: ResponseCode.ChannelPlatformMediaProcessingFailed,
-          category: PlatformErrorCategory.MediaProcessingFailed,
-          context: { endpoint: 'uploadVideo' },
-        })
-      }
-      await new Promise(resolve => setTimeout(resolve, 2000))
-    }
+    let lastStatus: Awaited<ReturnType<PinterestService['getMediaStatus']>> | undefined
 
-    throw PinterestPlatformException.validation({
-      code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
-      category: PlatformErrorCategory.MediaProcessingFailed,
-      context: { endpoint: 'uploadVideo' },
-    })
+    return await poll(
+      async () => {
+        const status = await this.pinterestService.getMediaStatus(accessToken, upload.media_id)
+        lastStatus = status
+        if (status.status === PinterestMediaStatusValue.Succeeded) {
+          return { done: true, data: upload.media_id }
+        }
+        if (status.status === PinterestMediaStatusValue.Failed) {
+          throw new PinterestPlatformException({
+            code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+            category: PlatformErrorCategory.MediaProcessingFailed,
+            context: {
+              endpoint: 'uploadVideo',
+              metadata: { mediaId: upload.media_id, status: status.status },
+            },
+            cause: {
+              type: PlatformErrorCauseType.Platform,
+              platformCode: status.status,
+              raw: status,
+            },
+          })
+        }
+        return { done: false }
+      },
+      {
+        intervalMs: 5000,
+        maxPollingMs: 5 * 60 * 1000,
+        taskName: 'Pinterest video media processing',
+        errorMapper: () => new PinterestPlatformException({
+          code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
+          category: PlatformErrorCategory.Timeout,
+          context: {
+            endpoint: 'uploadVideo',
+            metadata: { mediaId: upload.media_id, status: lastStatus?.status },
+          },
+          cause: {
+            type: PlatformErrorCauseType.Platform,
+            platformCode: lastStatus?.status,
+            raw: lastStatus,
+          },
+          retryable: true,
+        }),
+      },
+    )
   }
 }

@@ -19,6 +19,7 @@ import type {
 import { Injectable } from '@nestjs/common'
 import { AccountType, ResponseCode } from '@yikart/common'
 import axios from 'axios'
+import { isSafeNumber, parse } from 'lossless-json'
 import { MediaService } from '../../media/media.service'
 import { PlatformErrorCategory } from '../platforms.exception'
 import { TiktokConfig } from './tiktok.config'
@@ -330,11 +331,21 @@ export class TikTokService {
     accessToken: string,
     publishId: string,
   ): Promise<TikTokPublishStatusResponse> {
-    return this.contentRequest<TikTokPublishStatusResponse>(
+    const response = await this.http.post<TikTokApiResponse<TikTokPublishStatusResponse>>(
       `${this.apiBaseUrl}/post/publish/status/fetch/`,
       { publish_id: publishId },
-      accessToken,
+      {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        responseType: 'text',
+        transformResponse: [(data: string) => parse(data, undefined, {
+          parseNumber: value => isSafeNumber(value) ? Number(value) : value,
+        })],
+      },
     )
+    return response.data.data
   }
 
   async cancelPublish(
@@ -350,15 +361,14 @@ export class TikTokService {
 
   async uploadVideoFile(
     uploadUrl: string,
-    videoBuffer: Buffer,
+    video: Blob,
+    fileSize: number,
     contentType = 'video/mp4',
   ): Promise<void> {
-    const fileSize = videoBuffer.length
-
-    await this.http.put(uploadUrl, videoBuffer, {
+    await this.http.put(uploadUrl, video, {
       headers: {
         'Content-Type': contentType,
-        'Content-Length': videoBuffer.length,
+        'Content-Length': fileSize,
         'Content-Range': `bytes 0-${fileSize - 1}/${fileSize}`,
       },
     })
@@ -366,15 +376,15 @@ export class TikTokService {
 
   async chunkedUploadVideoFile(
     uploadUrl: string,
-    videoBuffer: Buffer,
+    video: Blob,
     range: [number, number],
     fileSize: number,
     contentType = 'video/mp4',
   ): Promise<void> {
-    await this.http.put(uploadUrl, videoBuffer, {
+    await this.http.put(uploadUrl, video, {
       headers: {
         'Content-Type': contentType,
-        'Content-Length': videoBuffer.length,
+        'Content-Length': range[1] - range[0] + 1,
         'Content-Range': `bytes ${range[0]}-${range[1]}/${fileSize}`,
       },
     })
@@ -384,24 +394,31 @@ export class TikTokService {
     uploadUrl: string,
     videoUrl: string,
   ): Promise<void> {
-    const videoBuffer = await this.mediaService.getBuffer({
+    await this.mediaService.withUploadSource({
       platform: AccountType.TikTok,
       endpoint: 'downloadVideo',
       url: videoUrl,
+    }, async (source) => {
+      const totalSize = source.sizeBytes
+      const contentType = source.contentType ?? 'video/mp4'
+
+      if (totalSize <= MAX_SINGLE_CHUNK_SIZE) {
+        await this.uploadVideoFile(uploadUrl, await source.blob(), totalSize, contentType)
+        return
+      }
+
+      const plan = this.getUploadPlan(totalSize)
+
+      for (const [chunkStart, chunkEnd] of plan.ranges) {
+        await this.chunkedUploadVideoFile(
+          uploadUrl,
+          await source.blob({ start: chunkStart, end: chunkEnd }),
+          [chunkStart, chunkEnd],
+          totalSize,
+          contentType,
+        )
+      }
     })
-    const totalSize = videoBuffer.length
-
-    if (totalSize <= MAX_SINGLE_CHUNK_SIZE) {
-      await this.uploadVideoFile(uploadUrl, videoBuffer)
-      return
-    }
-
-    const plan = this.getUploadPlan(totalSize)
-
-    for (const [chunkStart, chunkEnd] of plan.ranges) {
-      const chunk = videoBuffer.slice(chunkStart, chunkEnd + 1)
-      await this.chunkedUploadVideoFile(uploadUrl, chunk, [chunkStart, chunkEnd], totalSize)
-    }
   }
 
   getUploadPlan(fileSize: number): TikTokUploadPlan {
@@ -422,14 +439,8 @@ export class TikTokService {
       }
     }
 
-    let chunkSize = 10 * 1024 * 1024
-    let totalChunkCount = Math.ceil(fileSize / chunkSize)
-
-    const lastChunkSize = fileSize - (totalChunkCount - 1) * chunkSize
-    if (lastChunkSize > 0 && lastChunkSize < MIN_CHUNK_SIZE) {
-      chunkSize = Math.ceil(fileSize / (totalChunkCount - 1))
-      totalChunkCount = Math.ceil(fileSize / chunkSize)
-    }
+    const chunkSize = 10 * 1024 * 1024
+    const totalChunkCount = Math.floor(fileSize / chunkSize)
 
     const ranges: Array<[number, number]> = []
 
@@ -441,7 +452,13 @@ export class TikTokService {
     }
 
     const resolvedLastChunkSize = ranges[ranges.length - 1][1] - ranges[ranges.length - 1][0] + 1
-    if (resolvedLastChunkSize < MIN_CHUNK_SIZE || chunkSize > MAX_SINGLE_CHUNK_SIZE || totalChunkCount > 1000) {
+    if (
+      chunkSize < MIN_CHUNK_SIZE
+      || chunkSize > MAX_SINGLE_CHUNK_SIZE
+      || resolvedLastChunkSize < MIN_CHUNK_SIZE
+      || resolvedLastChunkSize > 128 * 1024 * 1024
+      || totalChunkCount > 1000
+    ) {
       throw TikTokPlatformException.fromPlatformError({
         code: ResponseCode.ChannelPlatformApiFailed,
         category: PlatformErrorCategory.Unknown,

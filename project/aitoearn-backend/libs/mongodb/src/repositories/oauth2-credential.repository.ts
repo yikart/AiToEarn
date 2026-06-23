@@ -5,6 +5,13 @@ import { Model } from 'mongoose'
 import { AccountStatus, OAuth2Credential } from '../schemas'
 import { BaseRepository } from './base.repository'
 
+export interface OAuth2CredentialExpiryCursor {
+  accessTokenExpiresAt: number
+  cursorId: unknown
+}
+
+export type OAuth2CredentialExpiryRecord = OAuth2Credential & OAuth2CredentialExpiryCursor
+
 @Injectable()
 export class OAuth2CredentialRepository extends BaseRepository<OAuth2Credential> {
   constructor(
@@ -35,13 +42,28 @@ export class OAuth2CredentialRepository extends BaseRepository<OAuth2Credential>
     })
   }
 
-  async listByAccessTokenExpiresAtAndNormalAccount(beforeTimestamp: number, limit: number) {
-    return await this.model.aggregate<OAuth2Credential>([
-      {
-        $match: {
-          accessTokenExpiresAt: { $type: 'number', $lte: beforeTimestamp },
-          refreshToken: { $type: 'string', $ne: '' },
+  async listByAccessTokenExpiresAtAndNormalAccount(
+    beforeTimestamp: number,
+    limit: number,
+    cursor?: OAuth2CredentialExpiryCursor,
+  ) {
+    const match: Record<string, unknown> = {
+      accessTokenExpiresAt: { $type: 'number', $lte: beforeTimestamp },
+      refreshToken: { $type: 'string', $ne: '' },
+    }
+    if (cursor) {
+      match['$or'] = [
+        { accessTokenExpiresAt: { $gt: cursor.accessTokenExpiresAt } },
+        {
+          accessTokenExpiresAt: cursor.accessTokenExpiresAt,
+          _id: { $gt: cursor.cursorId },
         },
+      ]
+    }
+
+    return await this.model.aggregate<OAuth2CredentialExpiryRecord>([
+      {
+        $match: match,
       },
       { $sort: { accessTokenExpiresAt: 1, _id: 1 } },
       {
@@ -55,6 +77,7 @@ export class OAuth2CredentialRepository extends BaseRepository<OAuth2Credential>
       { $unwind: '$account' },
       { $match: { 'account.status': AccountStatus.NORMAL } },
       { $limit: limit },
+      { $addFields: { cursorId: '$_id' } },
       { $project: { account: 0 } },
     ]).exec()
   }

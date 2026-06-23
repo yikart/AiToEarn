@@ -1,4 +1,5 @@
 import type { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios'
+import type { Readable } from 'node:stream'
 import type { GenerateAuthUrlInput } from '../platforms.interface'
 import type { KwaiPlatformResponseBody } from './kwai.exception'
 import type {
@@ -219,11 +220,16 @@ export class KwaiService {
     uploadToken: string,
     fragmentId: number,
     endpoint: string,
-    video: Buffer,
+    video: Buffer | Readable,
+    contentLength?: number,
   ): Promise<void> {
     const params = {
       fragment_id: fragmentId,
       upload_token: uploadToken,
+    }
+    const headers: Record<string, string> = { 'Content-Type': 'video/mp4' }
+    if (contentLength !== undefined) {
+      headers['Content-Length'] = String(contentLength)
     }
 
     const url = `http://${endpoint}/api/upload/fragment`
@@ -232,7 +238,7 @@ export class KwaiService {
       {
         method: 'POST',
         params,
-        headers: { 'Content-Type': 'video/mp4' },
+        headers,
         data: video,
       },
     )

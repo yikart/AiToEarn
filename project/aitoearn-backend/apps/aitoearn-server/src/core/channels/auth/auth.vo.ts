@@ -5,7 +5,7 @@ import { LocaleTextSchema } from '../platforms/platforms.vo'
 export const AuthStartVoSchema = z.object({
   url: z.string().describe('平台授权 URL 或二维码图片 data URL'),
   sessionId: z.string().describe('授权 Session ID'),
-  expiresAt: z.date().describe('授权 Session 过期时间'),
+  expiresAt: z.coerce.date().describe('授权 Session 过期时间'),
   authInstructions: LocaleTextSchema.optional().describe('授权操作提示语'),
 })
 
@@ -34,7 +34,7 @@ export const AuthSessionStatusVoSchema = z.object({
   status: z.enum(ChannelAuthSessionStatus).describe('授权 Session 状态'),
   requiresSelection: z.boolean().describe('是否需要选择二级账号'),
   errorCode: z.number().optional().describe('授权失败错误码'),
-  expiresAt: z.date().optional().describe('授权 Session 过期时间'),
+  expiresAt: z.coerce.date().optional().describe('授权 Session 过期时间'),
   accountId: z.string().optional().describe('首个本地账号 ID'),
   accountIds: z.array(z.string()).optional().describe('本地账号 ID 列表'),
   accounts: z.array(AuthConnectedAccountVoSchema).optional().describe('已连接账号列表'),

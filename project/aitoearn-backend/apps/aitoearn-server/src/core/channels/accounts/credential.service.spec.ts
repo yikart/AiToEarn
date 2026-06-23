@@ -165,18 +165,20 @@ describe('credential service', () => {
   it('lists expiring credentials with a caller supplied limit', async () => {
     const { service, credentialRepo } = createService()
     credentialRepo.listByAccessTokenExpiresAtAndNormalAccount.mockResolvedValue([{
+      cursorId: 'cursor-id',
       accountId: 'account-1',
       platform: AccountType.Facebook,
       accessTokenExpiresAt: 1767225600,
     }])
 
     await expect(service.listExpiringCredentials(1767225600, 100)).resolves.toEqual([{
+      cursorId: 'cursor-id',
       accountId: 'account-1',
       platform: AccountType.Facebook,
       accessTokenExpiresAt: 1767225600,
       refreshTokenExpiresAt: undefined,
     }])
-    expect(credentialRepo.listByAccessTokenExpiresAtAndNormalAccount).toHaveBeenCalledWith(1767225600, 100)
+    expect(credentialRepo.listByAccessTokenExpiresAtAndNormalAccount).toHaveBeenCalledWith(1767225600, 100, undefined)
   })
 
   it('deletes credential records and cache entries together', async () => {

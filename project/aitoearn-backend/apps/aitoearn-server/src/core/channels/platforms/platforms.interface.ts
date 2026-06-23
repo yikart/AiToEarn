@@ -289,19 +289,21 @@ export interface PublishUserAction {
   data?: Record<string, unknown>
 }
 
-export interface PublishFinalizeInput<TDataOption = Record<string, unknown>> {
+export interface PublishFinalizeInput<TDataOption = Record<string, unknown>, TOption = Record<string, unknown>> {
   taskId: string
   platform: AccountType
   platformWorkId: string
   mediaJobs: PublishMediaJob[]
+  option?: TOption
   dataOption?: TDataOption
   credential: CredentialContext
 }
 
-export interface PublishVerifyInput<TDataOption = Record<string, unknown>> {
+export interface PublishVerifyInput<TDataOption = Record<string, unknown>, TOption = Record<string, unknown>> {
   taskId: string
   platform: AccountType
   platformWorkId: string
+  option?: TOption
   dataOption?: TDataOption
   credential: CredentialContext
 }
@@ -341,8 +343,8 @@ export interface PublishProvider<TOption = Record<string, unknown>, TDataOption 
   normalize: (input: PublishNormalizeInput<TOption>) => Promise<NormalizedPublishTask<TOption>>
   publish: (input: PublishPublishInput<TOption>) => Promise<PublishProviderResult<TDataOption>>
   resolveMediaRules?: (input: PublishValidateInput<TOption>) => PlatformMediaRules
-  finalize?: (input: PublishFinalizeInput<TDataOption>) => Promise<PublishProviderResult<TDataOption>>
-  verify?: (input: PublishVerifyInput<TDataOption>) => Promise<PublishVerifyResult>
+  finalize?: (input: PublishFinalizeInput<TDataOption, TOption>) => Promise<PublishProviderResult<TDataOption>>
+  verify?: (input: PublishVerifyInput<TDataOption, TOption>) => Promise<PublishVerifyResult>
   cancel?: (input: PublishCancelInput) => Promise<PublishCancelResult>
   update?: (input: PublishUpdateInput<TOption>) => Promise<PublishProviderResult<TDataOption>>
 }

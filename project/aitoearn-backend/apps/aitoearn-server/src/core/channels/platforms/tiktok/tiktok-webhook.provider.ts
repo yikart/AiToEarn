@@ -179,6 +179,15 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
       this.logger.warn({ platform: AccountType.TikTok, publishId, platformWorkId }, 'TikTok webhook missing work link')
       return
     }
+    this.logger.log({
+      platform: AccountType.TikTok,
+      publishId,
+      platformWorkId,
+      permalink,
+      event: body.event,
+      recordId: record.id,
+      currentPlatformWorkId: record.platformWorkId,
+    }, 'TikTok webhook final post link resolved')
 
     await this.stateService.markPublished(record.id, {
       platformWorkId,

@@ -183,45 +183,24 @@ export class LinkedInPublishProvider implements PublishProvider<LinkedInOption, 
     ownerUrn: string,
     videoUrl: string,
   ): Promise<string> {
-    const videoBuffer = await this.mediaService.getBuffer({
+    return await this.mediaService.withUploadSource({
       platform: this.platform,
       endpoint: 'uploadVideo.downloadMedia',
       url: videoUrl,
-    })
+    }, async (source) => {
+      const initResponse = await this.linkedinService.registerVideoUpload(
+        accessToken,
+        ownerUrn,
+        source.sizeBytes,
+      )
 
-    const initResponse = await this.linkedinService.registerVideoUpload(
-      accessToken,
-      ownerUrn,
-      videoBuffer.length,
-    )
+      const initValue = initResponse.value
+      const uploadUrl = initValue?.uploadUrl
+      const uploadInstructions = initValue?.uploadInstructions ?? []
+      const videoUrn = initValue?.video ?? initValue?.mediaArtifact
+      const uploadToken = initValue?.uploadToken
 
-    const initValue = initResponse.value
-    const uploadUrl = initValue?.uploadUrl
-    const uploadInstructions = initValue?.uploadInstructions ?? []
-    const videoUrn = initValue?.video ?? initValue?.mediaArtifact
-    const uploadToken = initValue?.uploadToken
-
-    if (!videoUrn || typeof uploadToken !== 'string') {
-      throw LinkedInPlatformException.validation({
-        code: ResponseCode.ChannelPlatformResponseInvalid,
-        category: PlatformErrorCategory.PlatformUnavailable,
-        context: { endpoint: 'uploadVideo' },
-        cause: { raw: initResponse },
-      })
-    }
-
-    const uploadedPartIds: string[] = []
-    if (uploadInstructions.length) {
-      for (const instruction of uploadInstructions) {
-        const chunk = videoBuffer.slice(instruction.firstByte, instruction.lastByte + 1)
-        const etag = await this.linkedinService.uploadBinary(instruction.uploadUrl, chunk)
-        if (etag) {
-          uploadedPartIds.push(etag)
-        }
-      }
-    }
-    else {
-      if (!uploadUrl) {
+      if (!videoUrn || typeof uploadToken !== 'string') {
         throw LinkedInPlatformException.validation({
           code: ResponseCode.ChannelPlatformResponseInvalid,
           category: PlatformErrorCategory.PlatformUnavailable,
@@ -230,15 +209,40 @@ export class LinkedInPublishProvider implements PublishProvider<LinkedInOption, 
         })
       }
 
-      const etag = await this.linkedinService.uploadBinary(uploadUrl, videoBuffer)
-      if (etag) {
-        uploadedPartIds.push(etag)
+      const uploadedPartIds: string[] = []
+      if (uploadInstructions.length) {
+        for (const instruction of uploadInstructions) {
+          const chunkLength = instruction.lastByte - instruction.firstByte + 1
+          const etag = await this.linkedinService.uploadBinary(
+            instruction.uploadUrl,
+            source.stream({ start: instruction.firstByte, end: instruction.lastByte }),
+            chunkLength,
+          )
+          if (etag) {
+            uploadedPartIds.push(etag)
+          }
+        }
       }
-    }
+      else {
+        if (!uploadUrl) {
+          throw LinkedInPlatformException.validation({
+            code: ResponseCode.ChannelPlatformResponseInvalid,
+            category: PlatformErrorCategory.PlatformUnavailable,
+            context: { endpoint: 'uploadVideo' },
+            cause: { raw: initResponse },
+          })
+        }
 
-    await this.linkedinService.finalizeVideoUpload(accessToken, videoUrn, uploadToken, uploadedPartIds)
+        const etag = await this.linkedinService.uploadBinary(uploadUrl, source.stream(), source.sizeBytes)
+        if (etag) {
+          uploadedPartIds.push(etag)
+        }
+      }
 
-    return videoUrn
+      await this.linkedinService.finalizeVideoUpload(accessToken, videoUrn, uploadToken, uploadedPartIds)
+
+      return videoUrn
+    })
   }
 
   private resolveOwner(

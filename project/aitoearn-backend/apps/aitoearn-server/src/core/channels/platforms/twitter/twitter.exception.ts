@@ -126,20 +126,31 @@ export class TwitterPlatformException extends ChannelPlatformException {
     })
   }
 
-  static fromAxiosError(error: AxiosError<TwitterOAuthErrorBody>): TwitterPlatformException {
+  static fromAxiosError(error: AxiosError<TwitterSdkErrorData | string>): TwitterPlatformException {
     const response = error.response
-    const body = response?.data
+    const data = response?.data
+    const body = typeof data === 'object' && data !== null && !Array.isArray(data) ? data : undefined
+    const problem = body?.errors?.[0]
+    const platformCode = problem?.code ?? body?.code ?? body?.error
     const endpoint = TwitterPlatformException.endpointFromConfig(response?.config ?? error.config)
     return new TwitterPlatformException({
       code: ResponseCode.ChannelPlatformApiFailed,
       category: TwitterPlatformException.categoryFromAxiosError(response?.status, endpoint),
       context: endpoint ? { endpoint } : undefined,
       cause: {
-        type: TwitterPlatformException.causeTypeFromAxiosError(error, body?.error),
+        type: TwitterPlatformException.causeTypeFromAxiosError(error, platformCode),
         httpStatus: response?.status,
-        platformCode: body?.error,
-        platformMessage: body?.error_description ?? body?.message ?? error.message,
-        raw: body ?? error,
+        platformCode: platformCode ?? response?.status,
+        platformMessage: problem?.detail
+          ?? problem?.message
+          ?? problem?.title
+          ?? body?.detail
+          ?? body?.message
+          ?? body?.error_description
+          ?? body?.error
+          ?? (typeof data === 'string' ? data : undefined)
+          ?? error.message,
+        raw: data ?? error,
       },
       retryable: response ? isHttpStatusRetryable(response.status) : true,
     })
@@ -151,6 +162,9 @@ export class TwitterPlatformException extends ChannelPlatformException {
     }
     if (endpoint?.includes('/oauth2/')) {
       return PlatformErrorCategory.Auth
+    }
+    if (status === 413 && endpoint?.includes('/2/media/upload')) {
+      return PlatformErrorCategory.Validation
     }
     return categoryFromHttpStatus(status)
   }
@@ -174,8 +188,8 @@ export class TwitterPlatformException extends ChannelPlatformException {
   }
 
   private static causeTypeFromAxiosError(
-    error: AxiosError<TwitterOAuthErrorBody>,
-    platformCode?: string,
+    error: AxiosError<TwitterSdkErrorData | string>,
+    platformCode?: string | number,
   ): PlatformErrorCauseType {
     if (platformCode !== undefined) {
       return PlatformErrorCauseType.Platform

@@ -2,7 +2,7 @@ import type { NormalizedPublishTask, PlatformMediaRules, PublishCancelInput, Pub
 import type { PublishValidationIssue } from '../publish.schema'
 import type { InstagramOption, InstagramPublishDataOption } from './instagram.schema'
 import { Injectable, Logger } from '@nestjs/common'
-import { AccountType, ResponseCode } from '@yikart/common'
+import { AccountType, poll, ResponseCode } from '@yikart/common'
 import { PlatformErrorCategory, PlatformErrorCauseType } from '../platforms.exception'
 import {
 
@@ -415,45 +415,68 @@ export class InstagramPublishProvider implements PublishProvider<InstagramOption
     accessToken: string,
     containerId: string,
   ): Promise<void> {
-    let attempt = 0
+    let lastStatus: Awaited<ReturnType<InstagramService['getMediaContainerStatus']>> | undefined
 
-    while (attempt < 30) {
-      const status = await this.instagramService.getMediaContainerStatus(
-        accessToken,
-        containerId,
-      )
+    await poll(
+      async () => {
+        const status = await this.instagramService.getMediaContainerStatus(
+          accessToken,
+          containerId,
+        )
+        lastStatus = status
 
-      if (status.statusCode === InstagramMediaContainerStatusCode.Finished) {
-        return
-      }
+        if (status.statusCode === InstagramMediaContainerStatusCode.Finished) {
+          return { done: true, data: true }
+        }
 
-      if (
-        status.statusCode === InstagramMediaContainerStatusCode.Error
-        || status.statusCode === InstagramMediaContainerStatusCode.Expired
-      ) {
-        throw InstagramPlatformException.validation({
-          code: ResponseCode.ChannelPlatformMediaProcessingFailed,
-          category: PlatformErrorCategory.MediaProcessingFailed,
+        if (
+          status.statusCode === InstagramMediaContainerStatusCode.Error
+          || status.statusCode === InstagramMediaContainerStatusCode.Expired
+        ) {
+          throw new InstagramPlatformException({
+            code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+            category: PlatformErrorCategory.MediaProcessingFailed,
+            context: {
+              endpoint: 'waitForContainerReady',
+              platformWorkId: containerId,
+              metadata: { statusCode: status.statusCode, status: status.status },
+            },
+            cause: {
+              type: PlatformErrorCauseType.Platform,
+              platformCode: status.statusCode,
+              platformMessage: status.status,
+              raw: status,
+            },
+          })
+        }
+
+        return { done: false }
+      },
+      {
+        intervalMs: 5000,
+        maxPollingMs: 5 * 60 * 1000,
+        taskName: 'Instagram media container processing',
+        errorMapper: () => new InstagramPlatformException({
+          code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
+          category: PlatformErrorCategory.Timeout,
           context: {
             endpoint: 'waitForContainerReady',
             platformWorkId: containerId,
+            metadata: {
+              statusCode: lastStatus?.statusCode,
+              status: lastStatus?.status,
+            },
           },
-        })
-      }
-
-      // Status is IN_PROGRESS or equivalent — wait and retry
-      await new Promise(resolve => setTimeout(resolve, 2000))
-      attempt++
-    }
-
-    throw InstagramPlatformException.validation({
-      code: ResponseCode.ChannelPlatformMediaProcessingTimeout,
-      category: PlatformErrorCategory.MediaProcessingFailed,
-      context: {
-        endpoint: 'waitForContainerReady',
-        platformWorkId: containerId,
+          cause: {
+            type: PlatformErrorCauseType.Platform,
+            platformCode: lastStatus?.statusCode,
+            platformMessage: lastStatus?.status,
+            raw: lastStatus,
+          },
+          retryable: true,
+        }),
       },
-    })
+    )
   }
 
   private async fetchPermalink(

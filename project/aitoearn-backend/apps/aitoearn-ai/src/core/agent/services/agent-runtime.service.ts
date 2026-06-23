@@ -302,7 +302,20 @@ export class AgentRuntimeService {
                   this.logger.debug({ input }, 'Received PostToolUse hook')
                   const response = input.tool_response
                   if (Array.isArray(response)) {
-                    const updatedResponse = await this.resolveRelayJson(response)
+                    const mappedResponse = response.map<ContentBlockParam>((block) => {
+                      if (block.type === 'text' && typeof block.text === 'string' && block.text.startsWith('[Resource link: Image')) {
+                        const url = block.text.split('] ')[1]
+                        return {
+                          type: 'image',
+                          source: {
+                            type: 'url',
+                            url,
+                          },
+                        }
+                      }
+                      return block
+                    })
+                    const updatedResponse = await this.resolveRelayJson(mappedResponse)
                     return {
                       hookSpecificOutput: {
                         hookEventName: 'PostToolUse',
@@ -875,6 +888,10 @@ export class AgentRuntimeService {
     })
   }
 
+  private buildSystemPromptContent(): ContentBlockParam[] {
+    return [{ type: 'text', text: SYSTEM_PROMPT }]
+  }
+
   private async prepareAgentPrompt(dto: CreateContentGenerationTaskDto): Promise<{
     normalizedContent: ContentBlock[]
     enhancedContent: ContentBlockParam[]
@@ -885,7 +902,7 @@ export class AgentRuntimeService {
     return {
       normalizedContent,
       enhancedContent: enhancePrompt(relayContent),
-      systemPromptContent: this.buildSystemPromptContent(),
+      systemPromptContent: await this.buildSystemPromptContent(),
     }
   }
 
@@ -894,10 +911,6 @@ export class AgentRuntimeService {
       return value
     }
     return await this.relayMediaResolver.resolveJson(value)
-  }
-
-  private buildSystemPromptContent(): ContentBlockParam[] {
-    return [{ type: 'text', text: SYSTEM_PROMPT }]
   }
 
   private async uploadAgentSession(sessionId: string, taskId: string): Promise<void> {

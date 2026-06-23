@@ -1,10 +1,10 @@
 import type { Job } from 'bullmq'
-import { Processor, WorkerHost } from '@nestjs/bullmq'
+import { WorkerHost } from '@nestjs/bullmq'
 import { Logger } from '@nestjs/common'
-import { QueueName } from '@yikart/aitoearn-queue'
+import { QueueName, QueueProcessor } from '@yikart/aitoearn-queue'
 import { PublishTaskService } from '../tasks/publish-task.service'
 
-@Processor(QueueName.PostPublish)
+@QueueProcessor(QueueName.PostPublish, { concurrency: 10 })
 export class PublishConsumer extends WorkerHost {
   private readonly logger = new Logger(PublishConsumer.name)
 

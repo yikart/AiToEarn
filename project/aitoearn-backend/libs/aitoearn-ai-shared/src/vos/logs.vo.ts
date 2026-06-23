@@ -13,10 +13,10 @@ const logItemSchema = z.object({
   channel: z.enum(AiLogChannel).describe('渠道'),
   action: z.string().optional().describe('操作'),
   status: z.enum(AiLogStatus).describe('日志状态'),
-  startedAt: z.date().describe('开始时间'),
+  startedAt: z.coerce.date().describe('开始时间'),
   duration: z.number().optional().describe('持续时间'),
-  createdAt: z.date().describe('创建时间'),
-  updatedAt: z.date().describe('更新时间'),
+  createdAt: z.coerce.date().describe('创建时间'),
+  updatedAt: z.coerce.date().describe('更新时间'),
 })
 
 export class LogItemVo extends createZodDto(logItemSchema) {}

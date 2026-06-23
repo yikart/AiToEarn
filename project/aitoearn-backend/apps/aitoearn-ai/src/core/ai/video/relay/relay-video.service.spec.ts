@@ -9,7 +9,17 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { RelayVideoService } from './relay-video.service'
 
 vi.mock('../../models-config', () => ({ ModelsConfigService: class ModelsConfigService {} }))
+
+vi.mock('../../../ai-availability/ai-availability.service', () => ({
+  AiAvailabilityService: class AiAvailabilityService {},
+}))
+
+vi.mock('../../relay-media', () => ({
+  RelayMediaResolverService: class RelayMediaResolverService {},
+}))
+
 vi.mock('@yikart/mongodb', () => ({
+  AiLog: class AiLog {},
   AiLogChannel: {
     Relay: 'relay',
   },
@@ -103,6 +113,7 @@ describe('relayVideoService', () => {
       request: {
         model: 'relay-video-model',
         prompt: 'A vertical product video',
+        remoteTaskId: 'relay-task-1',
       },
       response: {
         id: 'relay-task-1',
@@ -112,7 +123,17 @@ describe('relayVideoService', () => {
     })
   })
 
-  it('forwards media fields without converting local paths or storage urls', async () => {
+  it('resolves media fields before forwarding relay payload while keeping local log input unchanged', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: 'https://relay.example.com/assets/start.png',
+      image_tail: 'https://relay.example.com/assets/end.png',
+      video_url: 'https://relay.example.com/assets/source.mp4',
+      images: ['https://relay.example.com/assets/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://relay.example.com/assets/ref.mp4'],
+      audios: ['https://relay.example.com/assets/ref.mp3'],
+    }) as never)
+
     await service.createFromRequest({
       userId: 'user-1',
       userType: UserType.User,
@@ -127,13 +148,23 @@ describe('relayVideoService', () => {
     })
 
     expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: 'https://relay.example.com/assets/start.png',
+      image_tail: 'https://relay.example.com/assets/end.png',
+      video_url: 'https://relay.example.com/assets/source.mp4',
+      images: ['https://relay.example.com/assets/ref.png', 'https://external.example.com/ref.png'],
+      videos: ['https://relay.example.com/assets/ref.mp4'],
+      audios: ['https://relay.example.com/assets/ref.mp3'],
+    }))
+
+    const createdLog = mockAiLogRepo.create.mock.calls[0][0]
+    expect(createdLog.request).toMatchObject({
       image: 'images/start.png',
       image_tail: 'https://cdn.example.com/images/end.png?version=1',
       video_url: 'videos/source.mp4',
       images: ['images/ref.png', 'https://external.example.com/ref.png'],
       videos: ['https://storage.example.com/videos/ref.mp4'],
       audios: ['audios/ref.mp3'],
-    }))
+    })
   })
 
   it('keeps local groupId in ai log but does not forward it to upstream relay', async () => {
@@ -225,6 +256,25 @@ describe('relayVideoService', () => {
       aspectRatio: '9:16',
       watermark: true,
     })
+  })
+
+  it('resolves array image references before forwarding relay payload', async () => {
+    mockRelayMediaResolver.resolveJson.mockImplementationOnce(async value => ({
+      ...(value as Record<string, unknown>),
+      image: ['https://relay.example.com/assets/start.png', 'https://external.example.com/start.png'],
+    }) as never)
+
+    await service.createFromRequest({
+      userId: 'user-1',
+      userType: UserType.User,
+      model: 'relay-video-model',
+      prompt: 'A video with image array',
+      image: ['images/start.png', 'https://external.example.com/start.png'],
+    })
+
+    expect(mockRelayLibService.createVideo).toHaveBeenCalledWith(expect.objectContaining({
+      image: ['https://relay.example.com/assets/start.png', 'https://external.example.com/start.png'],
+    }))
   })
 
   it('keeps relay callback video urls unchanged on success', async () => {

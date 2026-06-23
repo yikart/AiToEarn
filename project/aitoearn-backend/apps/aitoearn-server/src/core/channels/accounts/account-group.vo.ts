@@ -11,8 +11,8 @@ const ChannelAccountGroupOutputSchema = z.object({
   proxyIp: z.string().optional().describe('代理 IP'),
   isDefault: z.boolean().optional().describe('是否默认分组'),
   hasBrowserConfig: z.boolean().describe('是否包含浏览器指纹配置'),
-  createdAt: z.date().optional().describe('创建时间'),
-  updatedAt: z.date().optional().describe('更新时间'),
+  createdAt: z.coerce.date().optional().describe('创建时间'),
+  updatedAt: z.coerce.date().optional().describe('更新时间'),
 })
 
 export const ChannelAccountGroupVoSchema = z.preprocess((input) => {

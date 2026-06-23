@@ -11,11 +11,11 @@ import { Injectable } from '@nestjs/common'
 import { ChannelWorkDataSnapshotRepository } from '@yikart/channel-db'
 import { AppException, ResponseCode } from '@yikart/common'
 import { AccountRepository } from '@yikart/mongodb'
-import { RelayAccountException } from '../../relay/relay-account.exception'
 import { AuthService } from '../auth/auth.service'
 import { normalizeChannelPagination } from '../platforms/platform-pagination.helper'
 import { AuthType, ChannelPaginationMode } from '../platforms/platforms.interface'
 import { PlatformIntegrationRegistry } from '../platforms/platforms.registry'
+import { RelayAccountException } from '../relay/relay-account.exception'
 
 @Injectable()
 export class WorkService {

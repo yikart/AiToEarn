@@ -30,6 +30,17 @@ interface PublishRuntime {
   mediaPolicy?: PlatformMediaPolicy
 }
 
+interface PublishAccountContext {
+  accountId: string
+  platformUid: string
+  account?: string
+}
+
+interface PublishCredentialContext {
+  accessToken: string
+  refreshToken?: string
+}
+
 @Injectable()
 export class PublishTaskService {
   private readonly logger = new Logger(PublishTaskService.name)
@@ -60,22 +71,16 @@ export class PublishTaskService {
     try {
       const { provider, publishPolicy } = this.getPublishRuntime(record.accountType)
       const account = await this.getRecordAccount(record)
-      const credential = await this.authService.getValidCredential(account.accountId, record.userId)
 
-      const result = await provider.publish({
+      const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.publish({
         taskId,
         platform: record.accountType,
         accountId: account.accountId,
         content: this.buildPublishContent(record),
         option: record.option,
         publishAt: record.publishTime,
-        credential: {
-          accessToken: credential.accessToken,
-          refreshToken: credential.refreshToken,
-          platformUid: account.platformUid,
-          account: account.account,
-        },
-      })
+        credential: this.toPublishCredential(credential, account),
+      }))
 
       if (result.userAction) {
         const waiting = await this.stateService.markWaitingForUserAction(taskId, {
@@ -203,20 +208,15 @@ export class PublishTaskService {
       }
 
       const account = await this.getRecordAccount(record)
-      const credential = await this.authService.getValidCredential(account.accountId, record.userId)
-      const result = await provider.finalize({
+      const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.finalize!({
         taskId,
         platform: record.accountType,
         platformWorkId: record.platformWorkId ?? '',
         mediaJobs: this.getPendingMediaJobs(record),
+        option: record.option,
         dataOption: record.dataOption,
-        credential: {
-          accessToken: credential.accessToken,
-          refreshToken: credential.refreshToken,
-          platformUid: account.platformUid,
-          account: account.account,
-        },
-      })
+        credential: this.toPublishCredential(credential, account),
+      }))
 
       if (this.isFailedResult(result)) {
         await this.stateService.markFailed(taskId, {
@@ -337,6 +337,7 @@ export class PublishTaskService {
     const record = await this.publishRecordRepo.getById(taskId)
     if (!record || !record.platformWorkId)
       return
+    const platformWorkId = record.platformWorkId
 
     const updating = await this.stateService.markUpdating(taskId)
     if (!updating)
@@ -355,20 +356,14 @@ export class PublishTaskService {
       }
 
       const account = await this.getRecordAccount(record)
-      const credential = await this.authService.getValidCredential(account.accountId, record.userId)
-      const result = await provider.update({
+      const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.update!({
         taskId,
         platform: record.accountType,
-        platformWorkId: record.platformWorkId,
+        platformWorkId,
         content: this.buildUpdateContent(record),
         option: this.getUpdateOption(record),
-        credential: {
-          accessToken: credential.accessToken,
-          refreshToken: credential.refreshToken,
-          platformUid: account.platformUid,
-          account: account.account,
-        },
-      })
+        credential: this.toPublishCredential(credential, account),
+      }))
 
       if (this.isFailedResult(result)) {
         await this.stateService.markUpdatedFailed(taskId, {
@@ -415,21 +410,16 @@ export class PublishTaskService {
     }
 
     if (record.status === PublishStatus.PlatformScheduled && record.platformWorkId) {
+      const platformWorkId = record.platformWorkId
       const { provider } = this.getPublishRuntime(record.accountType)
       if (provider.cancel) {
         const account = await this.getRecordAccount(record)
-        const credential = await this.authService.getValidCredential(account.accountId, record.userId)
-        const result = await provider.cancel({
+        const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.cancel!({
           taskId,
           platform: record.accountType,
-          platformWorkId: record.platformWorkId,
-          credential: {
-            accessToken: credential.accessToken,
-            refreshToken: credential.refreshToken,
-            platformUid: account.platformUid,
-            account: account.account,
-          },
-        })
+          platformWorkId,
+          credential: this.toPublishCredential(credential, account),
+        }))
         if (!result.canceled) {
           throw new AppException(ResponseCode.ChannelPublishPlatformCancelFailed)
         }
@@ -725,6 +715,40 @@ export class PublishTaskService {
     await this.authService.markAccountOfflineForCredentialFailure(record.accountId, error, 'platform_auth_failed')
   }
 
+  private async runWithCredentialRefresh<T>(
+    account: PublishAccountContext,
+    userId: string,
+    call: (credential: PublishCredentialContext) => Promise<T>,
+  ): Promise<T> {
+    const credential = await this.authService.getValidCredential(account.accountId, userId)
+    try {
+      return await call(credential)
+    }
+    catch (error) {
+      if (!this.canRefreshAfterAuthFailure(error, credential)) {
+        throw error
+      }
+      const refreshed = await this.authService.refreshCredential(account.accountId, userId)
+      return await call(refreshed)
+    }
+  }
+
+  private canRefreshAfterAuthFailure(error: unknown, credential: PublishCredentialContext): boolean {
+    return Boolean(credential.refreshToken)
+      && error instanceof ChannelPlatformException
+      && error.category === PlatformErrorCategory.Auth
+      && !error.retryable
+  }
+
+  private toPublishCredential(credential: PublishCredentialContext, account: PublishAccountContext) {
+    return {
+      accessToken: credential.accessToken,
+      refreshToken: credential.refreshToken,
+      platformUid: account.platformUid,
+      account: account.account,
+    }
+  }
+
   private async getTaskForUser(taskId: string, userId: string): Promise<PublishRecord> {
     const record = await this.publishRecordRepo.getById(taskId)
     if (!record || record.userId !== userId) {
@@ -752,7 +776,7 @@ export class PublishTaskService {
     return record
   }
 
-  private async getRecordAccount(record: PublishRecord): Promise<{ accountId: string, platformUid: string, account?: string }> {
+  private async getRecordAccount(record: PublishRecord): Promise<PublishAccountContext> {
     const accountId = this.requireAccountId(record)
     const account = await this.accountRepo.getByIdAndUserId(accountId, record.userId)
     if (!account || account.type !== record.accountType || !account.uid) {
@@ -763,19 +787,14 @@ export class PublishTaskService {
 
   private async verifyPublishingRecord(record: PublishRecord, provider: PublishProvider): Promise<void> {
     const account = await this.getRecordAccount(record)
-    const credential = await this.authService.getValidCredential(account.accountId, record.userId)
-    const result = await provider.verify!({
+    const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.verify!({
       taskId: record.id,
       platform: record.accountType,
       platformWorkId: record.platformWorkId!,
+      option: record.option,
       dataOption: record.dataOption,
-      credential: {
-        accessToken: credential.accessToken,
-        refreshToken: credential.refreshToken,
-        platformUid: account.platformUid,
-        account: account.account,
-      },
-    })
+      credential: this.toPublishCredential(credential, account),
+    }))
 
     if (!result.published) {
       await this.stateService.markFailed(record.id, {
@@ -799,21 +818,17 @@ export class PublishTaskService {
     if (!record.platformWorkId) {
       return
     }
+    const platformWorkId = record.platformWorkId
 
     const account = await this.getRecordAccount(record)
-    const credential = await this.authService.getValidCredential(account.accountId, record.userId)
-    const result = await provider.verify!({
+    const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.verify!({
       taskId: record.id,
       platform: record.accountType,
-      platformWorkId: record.platformWorkId,
+      platformWorkId,
+      option: record.option,
       dataOption: record.dataOption,
-      credential: {
-        accessToken: credential.accessToken,
-        refreshToken: credential.refreshToken,
-        platformUid: account.platformUid,
-        account: account.account,
-      },
-    })
+      credential: this.toPublishCredential(credential, account),
+    }))
 
     if (result.published) {
       await this.stateService.markPublished(record.id, {

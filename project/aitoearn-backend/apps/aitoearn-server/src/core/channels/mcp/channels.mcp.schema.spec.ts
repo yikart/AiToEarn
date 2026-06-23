@@ -1,6 +1,6 @@
 import { AccountType } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
-import { RequestChannelPublishUpdateSchema } from './channels-mcp.schema'
+import { CreateChannelPublishFlowSchema, RequestChannelPublishUpdateSchema } from './channels-mcp.schema'
 
 vi.mock('@yikart/mongodb', () => ({
   PublishRecordSource: {
@@ -62,5 +62,32 @@ describe('requestChannelPublishUpdateSchema', () => {
         arbitrary: 'value',
       },
     })).toThrow()
+  })
+})
+
+describe('createChannelPublishFlowSchema', () => {
+  it('strips context media fields from MCP publish flow input', () => {
+    const result = CreateChannelPublishFlowSchema.parse({
+      content: {
+        body: 'Body',
+        media: [{ url: 'https://assets.example.test/video.mp4' }],
+      },
+      publishAt: '2026-05-22T10:00:00.000Z',
+      context: {
+        type: 'video',
+        taskId: 'task-1',
+        source: 'web',
+        videoUrl: 'https://assets.example.test/wrong-video.mp4',
+        imgUrlList: ['https://assets.example.test/wrong-image.jpg'],
+      },
+      items: [{
+        accountId: 'account-1',
+        platform: AccountType.YouTube,
+      }],
+    })
+
+    expect(result.context).toEqual({
+      taskId: 'task-1',
+    })
   })
 })

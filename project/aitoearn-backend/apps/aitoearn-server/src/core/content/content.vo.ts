@@ -21,8 +21,8 @@ export const MediaVoSchema = z.object({
   desc: z.string().optional().describe('描述'),
   useCount: z.number().optional().describe('使用次数'),
   metadata: metadataSchema,
-  createdAt: z.date().optional().describe('创建时间'),
-  updatedAt: z.date().optional().describe('更新时间'),
+  createdAt: z.coerce.date().optional().describe('创建时间'),
+  updatedAt: z.coerce.date().optional().describe('更新时间'),
 })
 export class MediaVo extends createZodDto(MediaVoSchema, 'MediaVo') {}
 
@@ -65,8 +65,8 @@ export const MaterialVoSchema = z.object({
   model: z.string().optional().describe('模型'),
   generationParams: z.record(z.string(), z.unknown()).optional().describe('AI 生成参数'),
   accountTypes: z.array(z.enum(AccountType)).optional().describe('适用账号类型'),
-  createdAt: z.date().optional().describe('创建时间'),
-  updatedAt: z.date().optional().describe('更新时间'),
+  createdAt: z.coerce.date().optional().describe('创建时间'),
+  updatedAt: z.coerce.date().optional().describe('更新时间'),
 })
 export class MaterialVo extends createZodDto(MaterialVoSchema, 'MaterialVo') {}
 
@@ -86,8 +86,8 @@ export const MediaGroupWithMediaListVoSchema = z.object({
   desc: z.string().optional().describe('描述'),
   isDefault: z.boolean().optional().describe('是否默认分组'),
   mediaList: MediaListVoSchema.optional().describe('媒体列表'),
-  createdAt: z.date().optional().describe('创建时间'),
-  updatedAt: z.date().optional().describe('更新时间'),
+  createdAt: z.coerce.date().optional().describe('创建时间'),
+  updatedAt: z.coerce.date().optional().describe('更新时间'),
 })
 export class MediaGroupWithMediaListVo extends createZodDto(
   MediaGroupWithMediaListVoSchema,

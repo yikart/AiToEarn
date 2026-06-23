@@ -105,7 +105,7 @@ describe('publish flow service', () => {
     vi.useRealTimers()
   })
 
-  it('persists legacy context and keeps image media out of videoUrl', async () => {
+  it('persists context metadata and keeps image media out of videoUrl', async () => {
     const { service, publishRecordRepo } = createService()
 
     await service.createFlow('user_1', {
@@ -117,7 +117,6 @@ describe('publish flow service', () => {
       },
       publishAt: new Date('2026-05-23T10:00:00.000Z'),
       context: {
-        type: PublishType.ARTICLE,
         taskId: 'task_1',
         materialGroupId: 'group_1',
         materialId: 'material_1',
@@ -172,6 +171,73 @@ describe('publish flow service', () => {
       type: PublishType.VIDEO,
       videoUrl,
       imgUrlList: [],
+    }))
+  })
+
+  it('persists item media overrides instead of legacy context media', async () => {
+    const { service, publishRecordRepo, accountRepo } = createService()
+    const globalVideo = 'https://assets.example.test/global.mp4'
+    const globalCover = 'https://assets.example.test/global.jpg'
+    const tiktokVideo = 'https://assets.example.test/tiktok.mp4'
+    const tiktokCover = 'https://assets.example.test/tiktok.jpg'
+    accountRepo.getByIdAndUserId.mockImplementation(async (accountId: string) => ({
+      id: accountId,
+      type: accountId === 'twitter_account' ? AccountType.Twitter : AccountType.TikTok,
+      uid: `${accountId}_uid`,
+      account: accountId === 'tiktok_account' ? 'creator' : undefined,
+    }))
+
+    await service.createFlow('user_1', {
+      flowId: 'flow_platform_overrides',
+      content: {
+        body: '5555',
+        media: [{ url: globalVideo }],
+        cover: { url: globalCover },
+      },
+      publishAt: new Date('2026-05-23T10:00:00.000Z'),
+      context: {
+        type: PublishType.ARTICLE,
+        videoUrl: 'https://assets.example.test/wrong-context.mp4',
+        imgUrlList: ['https://assets.example.test/wrong-context.jpg'],
+        source: PublishRecordSource.Web,
+      } as never,
+      items: [
+        {
+          accountId: 'twitter_account',
+          platform: AccountType.Twitter,
+          overrides: {
+            body: '5555',
+            media: [{ url: globalVideo }],
+            cover: { url: globalCover },
+          },
+        },
+        {
+          accountId: 'tiktok_account',
+          platform: AccountType.TikTok,
+          overrides: {
+            body: '1111111111',
+            media: [{ url: tiktokVideo }],
+            cover: { url: tiktokCover },
+          },
+        },
+      ],
+    })
+
+    expect(publishRecordRepo.create).toHaveBeenNthCalledWith(1, expect.objectContaining({
+      accountId: 'twitter_account',
+      accountType: AccountType.Twitter,
+      desc: '5555',
+      videoUrl: globalVideo,
+      imgUrlList: [],
+      coverUrl: globalCover,
+    }))
+    expect(publishRecordRepo.create).toHaveBeenNthCalledWith(2, expect.objectContaining({
+      accountId: 'tiktok_account',
+      accountType: AccountType.TikTok,
+      desc: '1111111111',
+      videoUrl: tiktokVideo,
+      imgUrlList: [],
+      coverUrl: tiktokCover,
     }))
   })
 
