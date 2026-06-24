@@ -9,7 +9,7 @@ import type { PlatformMetadataVo } from '@/api/channels/channel.types'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ThemeProvider } from 'next-themes'
 import { usePathname } from 'next/navigation'
-import { createContext, useContext, useEffect, useLayoutEffect, useRef } from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import ConfigManagerDialog from '@/app/layout/ConfigManagerDialog'
 import LoginDialog from '@/app/layout/LoginDialog'
@@ -35,15 +35,18 @@ export function Providers({
   children,
   lng,
   platformMetadata,
+  autoLoginToken,
 }: {
   children: React.ReactNode
   lng: string
   platformMetadata: PlatformMetadataVo[]
+  autoLoginToken?: string
 }) {
   const pathname = usePathname()
   const publicRoute = isPublicPage(pathname)
   // 用于追踪是否已经在当前路由弹出过登录框，避免重复弹出
   const hasPromptedRef = useRef(false)
+  const [authInitialized, setAuthInitialized] = useState(false)
 
   const { _hasHydrated, token } = useUserStore(
     useShallow(state => ({
@@ -75,8 +78,9 @@ export function Providers({
       return
     }
 
-    useUserStore.getState().appInit()
-  }, [_hasHydrated])
+    useUserStore.getState().appInit(autoLoginToken)
+    setAuthInitialized(true)
+  }, [_hasHydrated, autoLoginToken])
 
   useEffect(() => {
     useUserStore.getState().setLang(lng)
@@ -85,7 +89,7 @@ export function Providers({
   // 未登录用户访问非公开页面时，跳转到登录页
   useEffect(() => {
     // 等待持久化数据同步完成
-    if (!_hasHydrated) {
+    if (!_hasHydrated || !authInitialized) {
       return
     }
 
@@ -109,7 +113,7 @@ export function Providers({
     // 在当前页面弹出登录框，不跳转
     hasPromptedRef.current = true
     useLoginDialogStore.getState().openLoginDialog({ fromGuard: true })
-  }, [_hasHydrated, token, pathname, publicRoute])
+  }, [_hasHydrated, authInitialized, token, pathname, publicRoute])
 
   // 拦截 @react-oauth/google 的脚本加载，添加 ?hl= 参数以设置按钮语言
   useLayoutEffect(() => {

@@ -17,7 +17,6 @@
   "profile": {
     "totalIncome": "累计收入",
     "currentBalance": "当前余额",
-    "logout": "退出登录",
     "edit": "编辑",
     "editName": "编辑昵称",
     "changeAvatar": "更换头像",

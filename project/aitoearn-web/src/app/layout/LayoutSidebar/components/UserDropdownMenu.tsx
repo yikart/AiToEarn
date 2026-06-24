@@ -12,7 +12,6 @@ import {
   BookOpen,
   ChevronRight,
   FileText,
-  LogOut,
   ScrollText,
   Settings,
   Shield,
@@ -109,13 +108,7 @@ function LoggedInMenuContent({
 }) {
   const { t } = useTransClient(['common'])
   const userInfo = useUserStore(state => state.userInfo)
-  const logout = useUserStore(state => state.logout)
   const starCount = useGitHubStars()
-
-  const handleLogout = () => {
-    logout()
-    onClose()
-  }
 
   const handleOpenSettings = () => {
     onOpenSettings()
@@ -193,18 +186,6 @@ function LoggedInMenuContent({
         {/* 高频：设置 */}
         <div data-testid="sidebar-settings-entry">
           <MenuItem icon={Settings} label={t('common:settings')} onClick={handleOpenSettings} />
-        </div>
-
-        <div className="my-1 h-px bg-border" />
-
-        {/* 退出登录 */}
-        <div data-testid="sidebar-logout-entry">
-          <MenuItem
-            icon={LogOut}
-            label={t('common:logout')}
-            onClick={handleLogout}
-            className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-          />
         </div>
       </div>
     </>

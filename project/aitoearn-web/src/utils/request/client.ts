@@ -21,10 +21,9 @@ interface ApiErrorIssue {
 type RequestParamsWithSilent = RequestParams & {
   silent?: boolean // 是否静默处理错误，不显示提示
   authToken?: string // 临时指定本次请求使用的 token
-  skipAuthLogout?: boolean // 401/用户不存在时不触发全局登出
 }
 
-export type RequestOptions = Pick<RequestParamsWithSilent, 'authToken' | 'skipAuthLogout' | 'cache'>
+export type RequestOptions = Pick<RequestParamsWithSilent, 'authToken' | 'cache'>
 
 const fetchService = new FetchService({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/`,
@@ -157,22 +156,7 @@ export async function request<T>(params: RequestParamsWithSilent) {
     // 使用项目的静态翻译方法（只使用国际化字段，不再使用硬编码回退）
     const networkBusy = directTrans('common', 'networkBusy')
 
-    // 未登录拦截
-    if (data.code === 401 && (!useUserStore.getState().token || params.skipAuthLogout)) {
-      return data
-    }
-
-    // 已登录、但是登录过期
-    if (data.code === 401) {
-      useUserStore.getState().logout()
-      return data
-    }
-
-    // 用户未找到，登出
-    if (data.code === 12000) {
-      if (!params.skipAuthLogout) {
-        useUserStore.getState().logout()
-      }
+    if (data.code === 401 || data.code === 12000) {
       return data
     }
 

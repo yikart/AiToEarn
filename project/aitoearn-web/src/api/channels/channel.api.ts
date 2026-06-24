@@ -50,7 +50,6 @@ export function startChannelOAuthLoginApi(
       redirectUri: params?.redirectUri,
       inviteCode: params?.inviteCode,
     },
-    skipAuthLogout: true,
   })
 }
 
@@ -61,7 +60,6 @@ export function startChannelOAuthLoginApi(
  */
 export function getChannelPlatformsApi(options?: ChannelPlatformListOptions) {
   return http.get<PlatformMetadataVo[]>('v2/channels/platforms', undefined, true, {
-    skipAuthLogout: true,
     ...(options?.fresh ? { cache: 'no-store' } : {}),
   })
 }

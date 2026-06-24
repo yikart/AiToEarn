@@ -17,7 +17,6 @@
   "profile": {
     "totalIncome": "Balance",
     "currentBalance": "Current Credits",
-    "logout": "Logout",
     "edit": "Edit",
     "editName": "Edit nickname",
     "changeAvatar": "Change avatar",

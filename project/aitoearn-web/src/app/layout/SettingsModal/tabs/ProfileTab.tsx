@@ -4,7 +4,7 @@
 
 'use client'
 
-import { Camera, LogOut } from 'lucide-react'
+import { Camera } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useShallow } from 'zustand/shallow'
 import { updateUserInfoApi } from '@/api/auth/auth.api'
@@ -22,16 +22,15 @@ interface ProfileTabProps {
   onClose: () => void
 }
 
-export function ProfileTab({ onClose }: ProfileTabProps) {
+export function ProfileTab(_props: ProfileTabProps) {
   const { t } = useTransClient('settings')
   const { t: tCommon } = useTransClient('common')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const { userInfo, getUserInfo, logout } = useUserStore(
+  const { userInfo, getUserInfo } = useUserStore(
     useShallow(state => ({
       userInfo: state.userInfo,
       getUserInfo: state.getUserInfo,
-      logout: state.logout,
     })),
   )
 
@@ -141,12 +140,6 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
     }
   }
 
-  const handleLogout = () => {
-    logout()
-    toast.success(tCommon('logout'))
-    onClose()
-  }
-
   return (
     <div className="w-full space-y-6">
       {/* 用户信息卡片 */}
@@ -246,16 +239,6 @@ export function ProfileTab({ onClose }: ProfileTabProps) {
           />
         </a>
       </div>
-
-      {/* 退出登录按钮 */}
-      <Button
-        variant="ghost"
-        className="h-11 w-full justify-center gap-2 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
-        onClick={handleLogout}
-      >
-        <LogOut size={18} />
-        <span>{t('profile.logout')}</span>
-      </Button>
 
       {/* 头像裁剪弹窗 */}
       <AvatarCropModal

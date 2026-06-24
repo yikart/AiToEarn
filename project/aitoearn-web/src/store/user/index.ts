@@ -60,14 +60,6 @@ function getState(): IUserStore {
   return lodash.cloneDeep(state)
 }
 
-function getDevelopmentAutoLoginToken() {
-  if (process.env.NODE_ENV !== 'development')
-    return undefined
-
-  const token = process.env.NEXT_PUBLIC_AUTO_LOGIN_TOKEN?.trim()
-  return token || undefined
-}
-
 export const useUserStore = createPersistStore(
   {
     ...getState(),
@@ -91,8 +83,7 @@ export const useUserStore = createPersistStore(
       setUserInfo(userInfo: UserInfo) {
         set({ userInfo })
       },
-      appInit() {
-        const autoLoginToken = getDevelopmentAutoLoginToken()
+      appInit(autoLoginToken?: string) {
         if (!_get().token && autoLoginToken) {
           methods.setToken(autoLoginToken)
         }
@@ -132,15 +123,6 @@ export const useUserStore = createPersistStore(
       },
       setDefaultPlanId(planId: string | undefined) {
         set({ defaultPlanId: planId })
-      },
-      clearLoginStatus() {
-        const hasEverLoggedIn = _get().hasEverLoggedIn
-        set({ ...getState(), hasEverLoggedIn })
-        useAccountStore.getState().clear()
-      },
-      logout() {
-        methods.clearLoginStatus()
-        window.location.href = '/'
       },
     }
 

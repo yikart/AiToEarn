@@ -12,6 +12,8 @@ import { ChannelManager } from '@/components/ChannelManager'
 import { Providers } from '../layout/Providers'
 import '../globals.css'
 
+export const dynamic = 'force-dynamic'
+
 export async function generateMetadata({ params }: { params: Promise<{ lng: string }> }) {
   let { lng } = await params
   if (!languages.includes(lng))
@@ -54,6 +56,7 @@ export default async function RootLayout({
 }>) {
   const { lng } = await params
   const platformMetadata = await getPlatformMetadataInitialData()
+  const autoLoginToken = process.env.AUTO_LOGIN_TOKEN?.trim() || undefined
 
   return (
     <html lang={lng} dir={dir(lng)} suppressHydrationWarning>
@@ -78,7 +81,7 @@ export default async function RootLayout({
           }}
         />
         <Script src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" strategy="afterInteractive" />
-        <Providers lng={lng} platformMetadata={platformMetadata ?? []}>
+        <Providers lng={lng} platformMetadata={platformMetadata ?? []} autoLoginToken={autoLoginToken}>
           {/* 全局频道管理弹框 */}
           <ChannelManager />
           <p className="hidden">Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf</p>

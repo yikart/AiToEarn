@@ -4,14 +4,13 @@
  */
 'use client'
 
-import { LogOut, Settings } from 'lucide-react'
+import { Settings } from 'lucide-react'
 import { useState } from 'react'
 import { useShallow } from 'zustand/react/shallow'
 import { useTransClient } from '@/app/i18n/client'
 import { useNavigationLogic } from '@/app/layout/shared'
 import { useChannelManagerStore } from '@/components/ChannelManager'
 import { useSettingsModalStore } from '@/store/settingsModal'
-import { useUserStore } from '@/store/user'
 import { cn } from '@/utils/className'
 import { MobileBottomBar, MobileNavList, MobileTopBar } from './components'
 import { MobileUserSection } from './components/MobileUserSection'
@@ -21,13 +20,6 @@ function MobileNav() {
   const { currRouter, isAuthPage, isBottomNavHidden } = useNavigationLogic()
   const { openSettings } = useSettingsModalStore()
   const { t } = useTransClient('common')
-
-  const { token, logout } = useUserStore(
-    useShallow(state => ({
-      token: state.token,
-      logout: state.logout,
-    })),
-  )
 
   // 频道管理器
   const { openModal } = useChannelManagerStore(
@@ -42,11 +34,6 @@ function MobileNav() {
   }
 
   const handleClose = () => setIsOpen(false)
-
-  const handleLogout = () => {
-    handleClose()
-    logout()
-  }
 
   const actionItemClassName
     = 'flex w-full items-center gap-3 px-4 py-3 rounded-lg text-base font-medium text-muted-foreground transition-all hover:bg-brand-cyan/10 hover:text-brand-cyan cursor-pointer'
@@ -105,23 +92,6 @@ function MobileNav() {
               </span>
               <span>{t('settings')}</span>
             </button>
-
-            {/* 退出登录 - 仅登录时显示 */}
-            {token && (
-              <>
-                <div className="my-1 h-px bg-border" />
-                <button
-                  onClick={handleLogout}
-                  className={actionItemClassName}
-                  data-testid="mobile-logout-btn"
-                >
-                  <span className="flex items-center justify-center">
-                    <LogOut size={20} />
-                  </span>
-                  <span>{t('logout')}</span>
-                </button>
-              </>
-            )}
           </div>
         </div>
       </div>

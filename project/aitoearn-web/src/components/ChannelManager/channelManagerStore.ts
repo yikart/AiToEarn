@@ -109,11 +109,6 @@ async function getAuthUrl(platform: PlatType, spaceId?: string): Promise<AuthUrl
   try {
     const res = await startChannelAccountAuthApi(platform, { groupId: spaceId })
 
-    if (res?.code === 1) {
-      useUserStore.getState().logout()
-      return null
-    }
-
     if (res?.code === 0 && res.data?.url && res.data.sessionId) {
       return {
         url: res.data.url,
@@ -153,11 +148,6 @@ async function checkAuthStatus(
 ): Promise<AuthStatusResult | null> {
   try {
     const res = await getChannelAccountAuthStatusApi(platform, sessionId)
-
-    if (res?.code === 1) {
-      useUserStore.getState().logout()
-      return null
-    }
 
     if (res?.code === 0 && res.data) {
       return {

@@ -127,7 +127,7 @@
     "permissionDescription": "Plugin is installed but requires necessary permissions to work properly. Please grant the required permissions in your browser extension settings.",
     "siteAccessRequiredTitle": "Site access permission is required",
     "siteAccessRequiredDescription": "Site access is not granted, so the extension cannot work on AiToEarn pages. You can fix it in either way:",
-    "siteAccessStepReauthorize": "Log out and authorize the extension again.",
+    "siteAccessStepReauthorize": "Authorize the extension again.",
     "siteAccessStepExtensionSettings": "Open your browser extension manager, find “AiToEarn Extension”, click “Details”, then set “Site access” to “On all sites”.",
     "checkPermission": "Check Permission Again",
     "sync": "Sync",

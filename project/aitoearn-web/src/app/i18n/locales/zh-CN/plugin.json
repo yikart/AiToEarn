@@ -127,7 +127,7 @@
     "permissionDescription": "插件已安装，但需要授予必需的权限才能正常使用。请在浏览器扩展设置中授权插件所需权限。",
     "siteAccessRequiredTitle": "需要授予站点访问权限",
     "siteAccessRequiredDescription": "当前未授予站点访问权限，插件无法在 AiToEarn 页面正常使用。你可以通过以下方式处理：",
-    "siteAccessStepReauthorize": "退出登录后重新授权插件。",
+    "siteAccessStepReauthorize": "重新授权插件。",
     "siteAccessStepExtensionSettings": "进入浏览器管理扩展，找到 “AiToEarn Extension”，点击 “详细信息”，在 “站点访问权限” 中选择 “在所有站点上”。",
     "checkPermission": "重新检查权限",
     "sync": "同步",
