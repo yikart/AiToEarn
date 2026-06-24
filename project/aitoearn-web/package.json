@@ -30,11 +30,7 @@
     "lint:fix": "eslint ./src --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "migrateToLocize": "locize migrate --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --api-key=c9805cd1-fd50-4d98-967a-383b39066de8 --path=./app/i18n/locales",
-    "downloadLocales": "locize download --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --ver=latest --clean=true --path=./app/i18n/locales && npm run i18next-resources-for-ts",
-    "syncLocales": "locize sync --project-id=01b2e5e8-6243-47d1-b36f-963dbb8bcae3 --api-key=bd8cb856-d6b3-4c82-a456-862c729a1674 --ver=latest --path=./app/i18n/locales --dry=true",
-    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts",
-    "prepare": "husky"
+    "i18next-resources-for-ts": "i18next-resources-for-ts interface -i ./src/app/i18n/locales/zh-CN -o ./@types/resources.d.ts"
   },
   "dependencies": {
     "@annotorious/react": "^3.8.2",
@@ -177,10 +173,8 @@
     "eslint-plugin-react-hooks": "^7.0.1",
     "estraverse": "^5.3.0",
     "file-loader": "^6.2.0",
-    "husky": "^9.1.7",
     "i18next-resources-for-ts": "1.5.0",
     "lint-staged": "^16.2.7",
-    "locize-cli": "9.0.1",
     "postcss": "^8.5.6",
     "prettier": "^3.8.1",
     "tailwindcss": "^4.1.18",
