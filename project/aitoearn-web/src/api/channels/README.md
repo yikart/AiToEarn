@@ -9,7 +9,6 @@
 - `channel.api.ts`
 - `channel.constants.ts`
 - `channel.types.ts`
-- `channel.server.ts`
 
 ## 接口清单
 
@@ -31,19 +30,6 @@
 | `startChannelAccountAuthApi`       | `GET v2/channels/accounts/auth/{param}`                | 开始平台授权             |
 | `startChannelOAuthLoginApi`        | `GET v2/channels/oauth/{param}`                        | 开始平台 OAuth 登录      |
 | `updateChannelPublishAtApi`        | `PATCH v2/channels/publish/tasks/{param}/publish-at`   | 修改发布时间             |
-
-## SSR Helper 清单
-
-| 方法                             | 说明                             |
-| -------------------------------- | -------------------------------- |
-| `getPlatformMetadataInitialData` | SSR 预取平台元数据原始列表。     |
-| `getPlatformMetadataSSR`         | 按语言归一化 SSR 平台元数据。    |
-| `getPlatformInfoMapSSR`          | SSR 获取平台信息 Map。           |
-| `getPlatformInfoSSR`             | SSR 获取单个平台信息。           |
-| `getEnabledPlatformsSSR`         | SSR 获取启用平台 tuple 列表。    |
-| `getPublishPlatformsSSR`         | SSR 获取发布平台 tuple 列表。    |
-| `getTaskPlatformsSSR`            | SSR 获取任务平台 tuple 列表。    |
-| `getPlatformNameFromMap`         | 从 SSR 平台 Map 中解析平台名称。 |
 
 ## 类型清单
 

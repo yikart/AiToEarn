@@ -13,7 +13,7 @@ src/store/
 ├── settingsModal.ts         # 全局设置弹窗状态
 ├── configManagerDialog.ts   # 全局配置管理弹窗状态
 ├── login-dialog/            # 全局登录弹窗状态
-├── platformMetadata/        # 平台元数据、静态图标和场景过滤
+├── platformMetadata/        # 客户端平台元数据、静态图标和场景过滤
 ├── publishDetailCache.ts    # 发布详情缓存
 ├── douyinPublishSession.ts  # 抖音 H5 发布会话缓存
 ├── thumbnailCache.ts        # 视频缩略图缓存
@@ -32,7 +32,7 @@ src/store/
 | `settingsModal.ts`        | `useSettingsModalStore`                  | 全局设置弹窗可见性、默认 Tab 与子 Tab                    | 否              |
 | `configManagerDialog.ts`  | `useConfigManagerDialogStore`            | 全局配置管理弹窗可见性与触发来源                         | 否              |
 | `login-dialog/`           | `useLoginDialogStore`                    | 全局登录弹窗、登录后跳转与邀请码                         | 否              |
-| `platformMetadata/`       | `usePlatformMetadataStore`               | 后端平台元数据、静态图标兜底、平台状态与场景过滤         | 否              |
+| `platformMetadata/`       | `usePlatformMetadataStore`               | 客户端平台元数据、静态图标兜底、平台状态与场景过滤       | 否              |
 | `publishDetailCache.ts`   | `usePublishDetailCache`                  | 发布详情缓存（5 分钟过期）                               | 是（IndexedDB） |
 | `douyinPublishSession.ts` | `useDouyinPublishSessionStore`           | 抖音 H5 发布会话缓存（10 分钟恢复）                      | 是（IndexedDB） |
 | `thumbnailCache.ts`       | `useThumbnailCacheStore`                 | 视频缩略图缓存                                           | 是              |
@@ -56,7 +56,7 @@ src/store/
 
 ### `usePlatformMetadataStore` — 平台元数据
 
-- 统一承接 SSR 初始平台数据和客户端刷新。
+- 统一通过客户端请求加载平台数据，并支持按语言重新归一化已有数据。
 - 提供平台 Map、静态图标兜底、启用平台、发布平台、任务平台等场景过滤能力。
 
 ### `useDouyinPublishSessionStore` — 抖音 H5 发布会话

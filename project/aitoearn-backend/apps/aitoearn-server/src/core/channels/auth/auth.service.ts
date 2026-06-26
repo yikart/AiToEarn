@@ -429,6 +429,9 @@ export class AuthService {
     platform: AccountType | undefined,
     sessionId: string,
   ): Promise<AuthSessionResult> {
+    if (this.relayClientService?.enabled) {
+      throw new RelayAuthException()
+    }
     const session = await this.redis.getChannelAuthSession<AuthSession>(sessionId)
     if (!session || session.userId !== userId) {
       throw new AppException(ResponseCode.ChannelAuthSessionInvalid)

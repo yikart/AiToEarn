@@ -1,7 +1,6 @@
 import { dir } from 'i18next'
 import { headers } from 'next/headers'
 import Script from 'next/script'
-import { getPlatformMetadataInitialData } from '@/api/channels/channel.server'
 import { useTranslation } from '@/app/i18n'
 import { getHreflang } from '@/app/i18n/languageConfig'
 import { fallbackLng, languages } from '@/app/i18n/settings'
@@ -55,7 +54,6 @@ export default async function RootLayout({
   params: Promise<{ lng: string }>
 }>) {
   const { lng } = await params
-  const platformMetadata = await getPlatformMetadataInitialData()
   const autoLoginToken = process.env.AUTO_LOGIN_TOKEN?.trim() || undefined
 
   return (
@@ -81,7 +79,7 @@ export default async function RootLayout({
           }}
         />
         <Script src="https://r.wdfl.co/rw.js" data-rewardful="ded70f" strategy="afterInteractive" />
-        <Providers lng={lng} platformMetadata={platformMetadata ?? []} autoLoginToken={autoLoginToken}>
+        <Providers lng={lng} autoLoginToken={autoLoginToken}>
           {/* 全局频道管理弹框 */}
           <ChannelManager />
           <p className="hidden">Impact-Site-Verification: f9836212-462a-482f-9232-8a877970eacf</p>

@@ -27,7 +27,6 @@ import {
   PluginStatus,
   usePluginStore,
 } from '@/store/plugin'
-import { useUserStore } from '@/store/user'
 import { confirmPlatformRegionRedirect } from '@/utils/region/redirect'
 import { toast } from '@/utils/ui/toast'
 import { DEFAULT_AUTH_COUNTDOWN, POLLING_INTERVAL } from './types'

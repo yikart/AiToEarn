@@ -5,7 +5,6 @@
 
 'use client'
 
-import type { PlatformMetadataVo } from '@/api/channels/channel.types'
 import { GoogleOAuthProvider } from '@react-oauth/google'
 import { ThemeProvider } from 'next-themes'
 import { usePathname } from 'next/navigation'
@@ -34,12 +33,10 @@ export function usePublicRoute() {
 export function Providers({
   children,
   lng,
-  platformMetadata,
   autoLoginToken,
 }: {
   children: React.ReactNode
   lng: string
-  platformMetadata: PlatformMetadataVo[]
   autoLoginToken?: string
 }) {
   const pathname = usePathname()
@@ -54,14 +51,6 @@ export function Providers({
       token: state.token,
     })),
   )
-
-  useLayoutEffect(() => {
-    if (platformMetadata.length === 0)
-      return
-    if (usePlatformMetadataStore.getState().loadedLng === lng)
-      return
-    usePlatformMetadataStore.getState().setPlatformMetadata(platformMetadata, lng)
-  }, [lng, platformMetadata])
 
   useEffect(() => {
     if (usePlatformMetadataStore.getState().loadedLng === lng)

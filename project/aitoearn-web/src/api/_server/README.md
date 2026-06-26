@@ -11,5 +11,5 @@
 ## 使用规则
 
 - 仅用于无需鉴权的公开 API。
-- 具体业务 SSR helper 放回对应 API 模块，例如 `src/api/tasks/task.server.ts`、`src/api/channels/channel.server.ts`。
+- 具体业务 SSR helper 放回对应 API 模块，例如 `src/api/tasks/task.server.ts` 或其它模块的 `*.server.ts`。
 - 客户端请求继续使用 `src/utils/request`。

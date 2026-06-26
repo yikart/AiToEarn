@@ -97,11 +97,6 @@ function createPlatformMetadataState(rawList: PlatformMetadataVo[], lng: string)
 
 export const usePlatformMetadataStore = create(
   combine(initialState, (set, get) => ({
-    setPlatformMetadata(rawList: PlatformMetadataVo[], lng: string) {
-      latestRequestedLng = lng
-      set(createPlatformMetadataState(rawList, lng))
-    },
-
     async ensureLoaded(lng: string, options?: { force?: boolean }) {
       latestRequestedLng = lng
       const force = options?.force === true

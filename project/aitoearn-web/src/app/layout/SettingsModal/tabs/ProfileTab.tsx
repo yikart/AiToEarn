@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ProfileTab - 个人资料设置 Tab
  */
 
@@ -10,13 +10,13 @@ import { useShallow } from 'zustand/shallow'
 import { updateUserInfoApi } from '@/api/auth/auth.api'
 import { uploadToOss } from '@/api/materials/material.api'
 import { useTransClient } from '@/app/i18n/client'
-import { AvatarCropModal } from './components/AvatarCropModal'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
-import { toast } from '@/utils/ui/toast'
-import { cn } from '@/utils/className'
 import { useUserStore } from '@/store/user'
+import { cn } from '@/utils/className'
 import { getOssUrl } from '@/utils/oss'
+import { toast } from '@/utils/ui/toast'
+import { AvatarCropModal } from './components/AvatarCropModal'
 
 interface ProfileTabProps {
   onClose: () => void

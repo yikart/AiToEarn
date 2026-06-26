@@ -1,4 +1,4 @@
-﻿import type { ChannelAccountAuthStart, ChannelAccountAuthStatus, ChannelCreatePublishFlowParams, ChannelOAuthLoginStart, ChannelPlatformListOptions, ChannelPublicPublishRecordItem, ChannelPublishFlowVo, ChannelPublishRecordItem, ChannelPublishRecordListVo, ChannelPublishRecordQueryParams, ChannelPublishTaskActionVo, ChannelPublishUserActionVo, ChannelWorkAnalyticsVo, ChannelWorkQueryParams, PlatformMetadataVo, StartChannelAccountAuthParams, StartChannelOAuthLoginParams } from './channel.types'
+import type { ChannelAccountAuthStart, ChannelAccountAuthStatus, ChannelCreatePublishFlowParams, ChannelOAuthLoginStart, ChannelPlatformListOptions, ChannelPublicPublishRecordItem, ChannelPublishFlowVo, ChannelPublishRecordItem, ChannelPublishRecordListVo, ChannelPublishRecordQueryParams, ChannelPublishTaskActionVo, ChannelPublishUserActionVo, ChannelWorkAnalyticsVo, ChannelWorkQueryParams, PlatformMetadataVo, StartChannelAccountAuthParams, StartChannelOAuthLoginParams } from './channel.types'
 import type { PlatType } from '@/app/config/platConfig'
 import http, { request } from '@/utils/request'
 
@@ -76,7 +76,6 @@ function encodePathSegment(value: string) {
 export function createChannelPublishFlowApi(data: ChannelCreatePublishFlowParams) {
   return http.post<ChannelPublishFlowVo>('v2/channels/publish/flows', data)
 }
-
 
 /**
  * 获取 Flow 详情
