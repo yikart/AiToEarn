@@ -1,0 +1,7 @@
+export * from './dedup-types'
+export * from './frame-scorer'
+export * from './audio-scorer'
+export * from './subtitle-scorer'
+export * from './composite-scorer'
+export * from './remix-wrapper'
+export * from './dedup.module'

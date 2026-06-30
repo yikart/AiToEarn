@@ -10,6 +10,7 @@ import { LogsModule } from './logs'
 import { ModelsConfigModule } from './models-config'
 import { RelayMediaModule } from './relay-media'
 import { VideoModule } from './video'
+import { DedupModule } from '../dedup/dedup.module'
 
 @Module({
   imports: [
@@ -23,9 +24,10 @@ import { VideoModule } from './video'
     AideoModule,
     ModelsConfigModule,
     AssetsModule,
+    DedupModule,
   ],
   controllers: [],
   providers: [],
-  exports: [ChatModule, LogsModule, ImageModule, VideoModule, AideoModule, ModelsConfigModule, AssetsModule, RelayMediaModule],
+  exports: [ChatModule, LogsModule, ImageModule, VideoModule, AideoModule, ModelsConfigModule, AssetsModule, RelayMediaModule, DedupModule],
 })
 export class AiModule { }
