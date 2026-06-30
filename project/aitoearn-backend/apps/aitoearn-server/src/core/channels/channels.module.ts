@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common'
 import { AccountGroupService } from './accounts/account-group.service'
+import { NurtureModule } from './nurture/nurture.module'
 import { AccountGroupsController } from './accounts/account-groups.controller'
 import { AccountService } from './accounts/account.service'
 import { AccountsController } from './accounts/accounts.controller'
@@ -34,7 +35,7 @@ import { WorkService } from './works/work.service'
 import { WorksController } from './works/works.controller'
 
 @Module({
-  imports: [PlatformsModule, MediaModule],
+  imports: [PlatformsModule, MediaModule, NurtureModule.register()],
   controllers: [
     AccountsController,
     AccountGroupsController,

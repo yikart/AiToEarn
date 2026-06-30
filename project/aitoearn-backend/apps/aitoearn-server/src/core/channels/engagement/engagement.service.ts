@@ -1,4 +1,7 @@
 import type { AccountType } from '@yikart/common'
+import { IntentClassifier, IntentLevel, NurtureStage, NurtureStateMachine } from '../nurture'
+import { ServerRedisKeys, ServerRedisService } from '../../common/redis'
+
 import type {
   ChannelPaginationInput,
   CredentialContext,
@@ -33,6 +36,8 @@ export class EngagementService {
     private readonly registry: PlatformIntegrationRegistry,
     private readonly authService: AuthService,
     private readonly accountRepository: AccountRepository,
+    private readonly intentClassifier: IntentClassifier,
+    private readonly redis: ServerRedisService,
   ) {}
 
   async listComments(
@@ -324,6 +329,101 @@ export class EngagementService {
     catch (error) {
       await this.authService.markAccountOfflineForCredentialFailure(accountId, error, 'platform_auth_failed')
       throw error
+    }
+  }
+
+
+  // ═══════════════════════════════════════════════════════════
+  // 养号状态机集成
+  // ═══════════════════════════════════════════════════════════
+
+  /**
+   * 获取或初始化账户的养号上下文
+   * 从 Redis 读取状态，不存在则创建默认 COLD 状态
+   */
+  private async getNurtureContext(accountId: string, platform: AccountType): Promise<{
+    context: {
+      accountId: string
+      platform: AccountType
+      registeredAt: Date
+      currentStage: string
+      todayCounts: { publish: number; engagement: number; comments: number }
+    }
+    isNew: boolean
+  }> {
+    const stateKey = ServerRedisKeys.nurtureAccountState(accountId)
+    const cached = await this.redis.getChannelAuthSession<any>(stateKey)
+
+    const now = new Date()
+    const registeredAt = cached?.registeredAt ? new Date(cached.registeredAt) : now
+
+    const ctx = {
+      accountId,
+      platform,
+      registeredAt,
+      currentStage: cached?.currentStage ?? NurtureStateMachine.inferStage(registeredAt),
+      todayCounts: cached?.todayCounts ?? { publish: 0, engagement: 0, comments: 0 },
+    }
+
+    // 如果是新账户（无缓存），初始化为 COLD
+    const isNew = !cached
+    if (isNew) {
+      ctx.currentStage = NurtureStage.COLD
+      ctx.registeredAt = now
+    }
+
+    return { context: ctx, isNew }
+  }
+
+  /**
+   * 检查评论动作是否受养号状态机允许
+   */
+  private async checkNurtureForComment(
+    accountId: string,
+    platform: AccountType,
+  ): Promise<{ allowed: boolean; reason?: string; stage: string }> {
+    const { context } = await this.getNurtureContext(accountId, platform)
+
+    const result = NurtureStateMachine.checkAction(context as any, 'comment')
+    if (!result.allowed) {
+      return { allowed: false, reason: result.reason, stage: result.stage }
+    }
+
+    return { allowed: true, stage: result.stage }
+  }
+
+  /**
+   * 保存养号上下文到 Redis
+   */
+  private async saveNurtureContext(
+    accountId: string,
+    context: {
+      registeredAt: Date
+      currentStage: string
+      todayCounts: { publish: number; engagement: number; comments: number }
+    },
+  ): Promise<void> {
+    const stateKey = ServerRedisKeys.nurtureAccountState(accountId)
+    await this.redis.saveChannelAuthSession(stateKey, context, 60 * 60 * 24) // 24h TTL
+  }
+
+  /**
+   * LLM 意图分类：判断评论是否值得回复
+   * 高意向 → 走私信触发；中意向 → 仅回评；无效 → 忽略
+   */
+  private async classifyCommentIntent(comment: string): Promise<{
+    level: IntentLevel
+    confidence: number
+    shouldReply: boolean
+    shouldDm: boolean
+  }> {
+    const classification = await this.intentClassifier.classify(comment)
+
+    return {
+      level: classification.level,
+      confidence: classification.confidence,
+      shouldReply: classification.level !== IntentLevel.INVALID,
+      shouldDm: classification.level === IntentLevel.HIGH,
     }
   }
 }

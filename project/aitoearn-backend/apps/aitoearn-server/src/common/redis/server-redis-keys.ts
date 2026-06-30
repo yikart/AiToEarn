@@ -46,4 +46,13 @@ export class ServerRedisKeys {
   static douyinOpenTicket(): string {
     return 'douyin:open_ticket'
   }
+
+  static nurtureAccountState(accountId: string): string {
+    return `nurture:account:${accountId}`
+  }
+
+
+  static nurtureDailyCount(accountId: string): string {
+    return `nurture:daily_count:${accountId}`
+  }
 }
