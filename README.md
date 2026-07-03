@@ -264,13 +264,24 @@ docker compose up -d
 在浏览器打开部署后的界面，进入 **配置管理**，按需分别配置：
 
 - **Server → Relay 中转**：用于内容发布和社交平台 OAuth 授权。
-- **AI → Relay 中转**：用于使用平台提供的 AI 模型。
+- **AI → Relay 中转**：提供视频模型，不包含文本和图片模型。
 
-OpenAI、Gemini、Anthropic 等模型服务商也可以在 **AI → 模型服务商** 中填写平台提供的 API Key 和 API 地址。
+OpenAI、Gemini、Anthropic 等模型服务商**需要分别**在 **AI → 模型服务商** 中填写各自平台提供的 API Key 和 API 地址（草稿生成依赖其中的 OpenAI/Gemini 等文本和图片模型，见下方说明）。
 
 API Key 获取方式见 [上方说明](#get-api-key)。中国版 Key 搭配 `https://aitoearn.cn/api`，国际版 Key 搭配 `https://aitoearn.ai/api`；环境和 Key 不匹配会导致 401。
 
 保存后点击 **保存并重启**，让对应服务重新加载配置。
+
+#### 草稿生成的最小配置
+
+> 草稿生成走的是文本和图片模型（OpenAI / Gemini 等），**不走 Relay**。即便已配好 AI Relay，也需要单独填写对应模型的 Key，否则草稿生成会因 401 失败。
+
+草稿生成 planner 默认模型是 `gpt-5.5`（openai channel），因此**至少要在 AI → 模型服务商 → OpenAI 里填一个有效的 API Key 和 API 地址**。二选一：
+
+- 填平台提供的 OpenAI 兼容 Key 和地址——中国版 Key 搭配 `https://aitoearn.cn/api/ai`，国际版 Key 搭配 `https://aitoearn.ai/api/ai`（与上方 Relay 用同一套 Key 即可）；
+- 或把 planner 默认模型改成 gemini channel 模型，并在 **AI → 模型服务商 → Gemini** 里填 Gemini 的 API Key 和 API 地址。
+
+保存后点击 **保存并重启**，aitoearn-ai 服务重新加载后草稿生成才可用。
 
 > 📖 完整部署指南（生产环境配置、AI 服务、OAuth、存储等）请参阅 [DOCKER_DEPLOYMENT_CN.md](DOCKER_DEPLOYMENT_CN.md)。
 
