@@ -29,6 +29,37 @@ interface SubtitleEntry {
   text: string
 }
 
+/**
+ * Validate that a media URL is a safe http(s) URL before passing it to FFmpeg.
+ *
+ * FFmpeg's `-i` input accepts many protocols beyond http/https (e.g. `file:`,
+ * `concat:`, `data:`, `subfile:`, `pipe:`, `srtp:`, `rtmp:`), which can be
+ * abused to read arbitrary local files or reach internal network services when
+ * the URL is attacker-controlled (as it is here, coming from an MCP tool
+ * argument driven by an LLM/user prompt). We restrict inputs to http(s) URLs
+ * and additionally pass FFmpeg's `-protocol_whitelist` to defense-in-depth
+ * against protocol chaining inside playlists/segments.
+ *
+ * See: CWE-78 / CWE-918 / FFmpeg protocol abuse.
+ */
+function assertSafeMediaUrl(mediaUrl: string): URL {
+  let parsed: URL
+  try {
+    parsed = new URL(mediaUrl)
+  }
+  catch {
+    throw new Error('Invalid mediaUrl: must be an absolute http(s) URL')
+  }
+  if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+    throw new Error(`Invalid mediaUrl protocol "${parsed.protocol}": only http and https are allowed`)
+  }
+  // Guard against argument-injection via a leading dash being interpreted as a flag.
+  if (mediaUrl.startsWith('-')) {
+    throw new Error('Invalid mediaUrl: must not start with "-"')
+  }
+  return parsed
+}
+
 @Injectable()
 export class SubtitleMcp {
   private readonly logger = new Logger(SubtitleMcp.name)
@@ -43,11 +74,15 @@ export class SubtitleMcp {
    * 使用 FFmpeg 从 URL 提取音频
    */
   private async extractAudioWithFFmpeg(mediaUrl: string): Promise<Buffer> {
+    assertSafeMediaUrl(mediaUrl)
+
     const tempDir = os.tmpdir()
     const outputPath = path.join(tempDir, `audio-${Date.now()}.aac`)
 
     try {
       await execa('ffmpeg', [
+        '-protocol_whitelist',
+        'https,http,tls,tcp',
         '-i',
         mediaUrl,
         '-vn',
@@ -139,6 +174,10 @@ Use this tool when user wants to:
       generateSubtitleSchema.shape,
       async ({ mediaUrl, language }) => {
         this.logger.log({ mediaUrl, language }, 'Starting subtitle generation')
+
+        // Reject non-http(s) URLs (e.g. file://, concat:, data:) up front so
+        // that the caller gets a clear error instead of an FFmpeg failure.
+        assertSafeMediaUrl(mediaUrl)
 
         // Step 1: 使用 FFmpeg 提取音频
         this.logger.debug('Extracting audio from media URL')
