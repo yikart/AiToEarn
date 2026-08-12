@@ -224,6 +224,44 @@ describe('tiktok publish provider finalize', () => {
     expect(tikTokService.uploadVideo).toHaveBeenCalledWith('https://upload.example.test/video', videoUrl)
   })
 
+  it('checkpoints publish_id before uploading FILE_UPLOAD video bytes', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    const checkpoint = vi.fn(async () => undefined)
+    tikTokService.uploadVideo.mockRejectedValueOnce(new Error('upload connection reset'))
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://cdn.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.FileUpload,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+      checkpoint,
+    })).rejects.toThrow('upload connection reset')
+
+    expect(checkpoint).toHaveBeenCalledWith({
+      platformWorkId: 'publish-video-1',
+      dataOption: {
+        publishId: 'publish-video-1',
+        source: TikTokPostSource.FileUpload,
+        contentPath: TikTokContentPath.Video,
+        privacyLevel: TikTokPrivacyLevel.Public,
+        username: 'creator',
+      },
+    })
+    expect(checkpoint.mock.invocationCallOrder[0]).toBeLessThan(
+      tikTokService.uploadVideo.mock.invocationCallOrder[0],
+    )
+  })
+
   it('rejects PULL_FROM_URL video URLs outside configured TikTok verified prefixes as validation failures', async () => {
     const { provider, tikTokService } = createPublishProvider({
       config: {
@@ -479,6 +517,41 @@ describe('tiktok publish provider finalize', () => {
       },
     })
     expect(tikTokService.queryVideos).toHaveBeenCalledWith('access-token', ['post-1'])
+  })
+
+  it('retains every public post id returned for one publish_id', async () => {
+    const { provider, tikTokService } = createProvider({
+      status: TikTokPublishStatus.PublishComplete,
+      publicaly_available_post_id: ['post-1', 'post-2'],
+    })
+    tikTokService.queryVideos.mockResolvedValue({
+      videos: [{ id: 'post-1', share_url: 'https://www.tiktok.com/@creator/video/post-1' }],
+    })
+
+    await expect(provider.finalize({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      platformWorkId: 'publish-1',
+      mediaJobs: [],
+      dataOption: {
+        publishId: 'publish-1',
+        source: TikTokPostSource.FileUpload,
+        contentPath: TikTokContentPath.Video,
+        username: 'creator',
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 200,
+      platformWorkId: 'post-1',
+      dataOption: {
+        publishId: 'publish-1',
+        finalPostId: 'post-1',
+        publicPostIds: ['post-1', 'post-2'],
+      },
+    })
   })
 
   it('does not verify as published when final post id has no canonical link', async () => {

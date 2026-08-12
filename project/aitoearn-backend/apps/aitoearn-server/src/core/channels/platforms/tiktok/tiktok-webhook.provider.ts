@@ -163,13 +163,15 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
       return
     }
 
-    const platformWorkId = content.post_id
-    if (!platformWorkId) {
+    const publicPostId = content.post_id
+    if (!publicPostId) {
       this.logger.warn({ platform: AccountType.TikTok, publishId }, 'TikTok webhook missing final post id')
       return
     }
 
-    const dataOption = this.parseDataOption(record.dataOption)
+    const currentDataOption = this.parseDataOption(record.dataOption)
+    const dataOption = this.buildDataOption(currentDataOption, publishId, publicPostId, body)
+    const platformWorkId = dataOption.finalPostId ?? publicPostId
     const permalink = this.buildWorkLink(
       dataOption?.username,
       dataOption?.contentPath ?? TikTokContentPath.Video,
@@ -178,6 +180,14 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
     if (!permalink) {
       this.logger.warn({ platform: AccountType.TikTok, publishId, platformWorkId }, 'TikTok webhook missing work link')
       return
+    }
+    if ((dataOption.publicPostIds?.length ?? 0) > 1) {
+      this.logger.error({
+        platform: AccountType.TikTok,
+        publishId,
+        publicPostIds: dataOption.publicPostIds,
+        recordId: record.id,
+      }, 'Multiple TikTok posts resolved from one publish_id')
     }
     this.logger.log({
       platform: AccountType.TikTok,
@@ -192,7 +202,7 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
     await this.stateService.markPublished(record.id, {
       platformWorkId,
       permalink,
-      dataOption: this.buildDataOption(dataOption, publishId, platformWorkId, body),
+      dataOption,
     })
   }
 
@@ -215,9 +225,15 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
   private buildDataOption(
     current: TikTokPublishDataOption | undefined,
     publishId: string,
-    finalPostId: string,
+    publicPostId: string,
     body: TikTokContentPostingWebhookBody,
   ): TikTokPublishDataOption {
+    const finalPostId = current?.finalPostId ?? publicPostId
+    const publicPostIds = [...new Set([
+      ...(current?.publicPostIds ?? []),
+      ...(current?.finalPostId ? [current.finalPostId] : []),
+      publicPostId,
+    ])]
     const dataOption: TikTokPublishDataOption = {
       publishId,
       contentPath: current?.contentPath ?? TikTokContentPath.Video,
@@ -231,6 +247,9 @@ export class TikTokWebhookProvider implements PlatformWebhookHandler {
     }
     if (current?.username) {
       dataOption.username = current.username
+    }
+    if (publicPostIds.length > 1) {
+      dataOption.publicPostIds = publicPostIds
     }
     return dataOption
   }

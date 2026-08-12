@@ -68,19 +68,34 @@ export class PublishTaskService {
       return
     }
 
+    let autoRetryPublish = true
+    let publishCheckpointed = false
     try {
       const { provider, publishPolicy } = this.getPublishRuntime(record.accountType)
+      autoRetryPublish = publishPolicy.autoRetryPublish !== false
       const account = await this.getRecordAccount(record)
 
-      const result = await this.runWithCredentialRefresh(account, record.userId, credential => provider.publish({
-        taskId,
-        platform: record.accountType,
-        accountId: account.accountId,
-        content: this.buildPublishContent(record),
-        option: record.option,
-        publishAt: record.publishTime,
-        credential: this.toPublishCredential(credential, account),
-      }))
+      const result = await this.runWithCredentialRefresh(
+        account,
+        record.userId,
+        credential => provider.publish({
+          taskId,
+          platform: record.accountType,
+          accountId: account.accountId,
+          content: this.buildPublishContent(record),
+          option: record.option,
+          publishAt: record.publishTime,
+          credential: this.toPublishCredential(credential, account),
+          checkpoint: async (checkpoint) => {
+            const saved = await this.stateService.markPublishingProgress(taskId, checkpoint)
+            if (!saved) {
+              throw new AppException(ResponseCode.PublishTaskFailed)
+            }
+            publishCheckpointed = true
+          },
+        }),
+        () => !publishCheckpointed,
+      )
 
       if (result.userAction) {
         const waiting = await this.stateService.markWaitingForUserAction(taskId, {
@@ -141,6 +156,15 @@ export class PublishTaskService {
     }
     catch (err) {
       this.logger.error(err, `Failed to publish task ${taskId}`)
+      if (publishCheckpointed) {
+        try {
+          await this.queueService.enqueueMediaFinalize(taskId)
+        }
+        catch (enqueueErr) {
+          this.logger.warn(enqueueErr, `Failed to enqueue finalize job for checkpointed publishing task ${taskId}`)
+        }
+        return
+      }
       await this.markAccountOfflineForPlatformAuthFailure(record, err)
       const error: {
         category: PlatformErrorCategory
@@ -157,7 +181,7 @@ export class PublishTaskService {
         code: error.code,
         message: this.getErrorMessage(err, ResponseCode.PublishTaskFailed, { accountType: record.accountType }),
         originalData: error.originalData,
-        retryable: error.retryable,
+        retryable: autoRetryPublish && error.retryable,
         occurredAt: new Date(),
       }
 
@@ -719,13 +743,14 @@ export class PublishTaskService {
     account: PublishAccountContext,
     userId: string,
     call: (credential: PublishCredentialContext) => Promise<T>,
+    canRefresh = () => true,
   ): Promise<T> {
     const credential = await this.authService.getValidCredential(account.accountId, userId)
     try {
       return await call(credential)
     }
     catch (error) {
-      if (!this.canRefreshAfterAuthFailure(error, credential)) {
+      if (!canRefresh() || !this.canRefreshAfterAuthFailure(error, credential)) {
         throw error
       }
       const refreshed = await this.authService.refreshCredential(account.accountId, userId)

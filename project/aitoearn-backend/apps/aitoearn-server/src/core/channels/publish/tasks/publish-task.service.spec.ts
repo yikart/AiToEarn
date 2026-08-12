@@ -48,6 +48,7 @@ function createService(
       completionStrategy?: CompletionStrategy
       scheduleByPlatform?: boolean
       updateSupported?: boolean
+      autoRetryPublish?: boolean
     }
     optionSchema?: z.ZodTypeAny
     mediaRules?: Record<string, unknown>
@@ -325,6 +326,108 @@ describe('publish task service update', () => {
 })
 
 describe('publish task service retry', () => {
+  it('continues status reconciliation instead of republishing after a remote checkpoint', async () => {
+    const retryableError = new ChannelPlatformException({
+      code: ResponseCode.ChannelPlatformApiFailed,
+      platform: AccountType.TikTok,
+      category: PlatformErrorCategory.Network,
+      cause: {
+        type: PlatformErrorCauseType.Network,
+        platformMessage: 'upload connection reset',
+      },
+      retryable: true,
+    })
+    const { service, provider, stateService, queueService, record } = createService({
+      publish: vi.fn(async (input) => {
+        await input.checkpoint?.({
+          platformWorkId: 'publish-1',
+          dataOption: { publishId: 'publish-1' },
+        })
+        throw retryableError
+      }),
+    }, {
+      publishPolicy: { autoRetryPublish: false },
+    })
+    record.accountType = AccountType.TikTok
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalled()
+    expect(stateService.markPublishingProgress).toHaveBeenCalledWith('task-1', {
+      platformWorkId: 'publish-1',
+      dataOption: { publishId: 'publish-1' },
+    })
+    expect(queueService.enqueueMediaFinalize).toHaveBeenCalledWith('task-1')
+    expect(stateService.markPublishingRetryQueued).not.toHaveBeenCalled()
+    expect(queueService.enqueueImmediate).not.toHaveBeenCalled()
+    expect(stateService.markFailed).not.toHaveBeenCalled()
+  })
+
+  it('does not invoke publish again for credential refresh after a remote checkpoint', async () => {
+    const authError = new ChannelPlatformException({
+      code: ResponseCode.ChannelAccessTokenFailed,
+      platform: AccountType.TikTok,
+      category: PlatformErrorCategory.Auth,
+      cause: {
+        type: PlatformErrorCauseType.Http,
+        httpStatus: 401,
+        platformMessage: 'token expired after publish init',
+      },
+      retryable: false,
+    })
+    const { service, provider, authService, queueService, record } = createService({
+      publish: vi.fn(async (input) => {
+        await input.checkpoint?.({
+          platformWorkId: 'publish-1',
+          dataOption: { publishId: 'publish-1' },
+        })
+        throw authError
+      }),
+    }, {
+      publishPolicy: { autoRetryPublish: false },
+    })
+    record.accountType = AccountType.TikTok
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalledTimes(1)
+    expect(authService.refreshCredential).not.toHaveBeenCalled()
+    expect(queueService.enqueueMediaFinalize).toHaveBeenCalledWith('task-1')
+  })
+
+  it('does not automatically retry an ambiguous publish failure when the platform disables publish retries', async () => {
+    const retryableError = new ChannelPlatformException({
+      code: ResponseCode.ChannelPlatformApiFailed,
+      platform: AccountType.TikTok,
+      category: PlatformErrorCategory.Network,
+      cause: {
+        type: PlatformErrorCauseType.Network,
+        platformMessage: 'publish init timed out',
+      },
+      retryable: true,
+    })
+    const { service, stateService, queueService, record } = createService({
+      publish: vi.fn(async () => {
+        throw retryableError
+      }),
+    }, {
+      publishPolicy: { autoRetryPublish: false },
+    })
+    record.accountType = AccountType.TikTok
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(stateService.markPublishingRetryQueued).not.toHaveBeenCalled()
+    expect(queueService.enqueueImmediate).not.toHaveBeenCalled()
+    expect(stateService.markFailed).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      category: PlatformErrorCategory.Network,
+      retryable: false,
+    }))
+  })
+
   it('requeues retryable publish failures instead of failing the task immediately', async () => {
     const retryableError = new ChannelPlatformException({
       code: ResponseCode.ChannelPlatformApiFailed,

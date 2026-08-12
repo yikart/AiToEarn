@@ -137,6 +137,53 @@ describe('tiktok webhook provider', () => {
     expect(response.status).toHaveBeenCalledWith(200)
   })
 
+  it('retains a second public post id without replacing the first canonical post', async () => {
+    const publishRecordRepo = {
+      getByAccountTypeAndPlatformWorkId: vi.fn(async () => ({
+        id: 'task-1',
+        platformWorkId: 'post-1',
+        dataOption: {
+          publishId: 'publish-1',
+          source: TikTokPostSource.FileUpload,
+          contentPath: TikTokContentPath.Video,
+          username: 'creator',
+          finalPostId: 'post-1',
+          publicPostIds: ['post-1'],
+        },
+      })),
+    }
+    const stateService = {
+      markPublished: vi.fn(),
+      markFailed: vi.fn(),
+    }
+    const provider = new TikTokWebhookProvider(
+      { clientSecret: 'client-secret' } as never,
+      publishRecordRepo as never,
+      stateService as never,
+    )
+    const response = createResponse()
+
+    await provider.handle(createSignedRequest(createWebhookBody(
+      TikTokContentPostingEvent.PostPublishPubliclyAvailable,
+      {
+        publish_id: 'publish-1',
+        publish_type: TikTokContentPostingPublishType.DirectPublish,
+        post_id: 'post-2',
+      },
+    )), response)
+
+    expect(stateService.markPublished).toHaveBeenCalledWith('task-1', {
+      platformWorkId: 'post-1',
+      permalink: 'https://www.tiktok.com/@creator/video/post-1',
+      dataOption: expect.objectContaining({
+        publishId: 'publish-1',
+        finalPostId: 'post-1',
+        publicPostIds: ['post-1', 'post-2'],
+      }),
+    })
+    expect(response.status).toHaveBeenCalledWith(200)
+  })
+
   it('marks failed webhook using official reason field', async () => {
     const publishRecordRepo = {
       getByAccountTypeAndPlatformWorkId: vi.fn(async () => ({ id: 'task-1' })),

@@ -21,6 +21,7 @@ export const TIKTOK_METADATA = {
     completionStrategy: CompletionStrategy.Polling,
     scheduleByPlatform: false,
     updateSupported: false,
+    autoRetryPublish: false,
   },
   analytics: { work: { dataSources: [ChannelWorkAnalyticsDataSource.PostInsightCrawler] } },
   optionSchema: TiktokOptionSchema,

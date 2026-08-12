@@ -41,6 +41,7 @@ export const TikTokPublishDataOptionSchema = z.object({
   username: z.string().min(1).optional().describe('TikTok username，用于构造 canonical 作品链接'),
   publishStatus: z.enum(TikTokPublishStatus).optional().describe('TikTok Content Posting API 官方发布状态'),
   finalPostId: z.string().min(1).optional().describe('TikTok 最终公开作品 post_id'),
+  publicPostIds: z.array(z.string().min(1)).optional().describe('同一 publish_id 对应的全部公开 post_id；超过一个表示重复发布'),
   error: z.string().optional().describe('TikTok 发布失败原因'),
   webhookEvent: z.enum(TikTokContentPostingEvent).optional().describe('TikTok Content Posting webhook 事件'),
   webhookCreateTime: z.number().int().optional().describe('TikTok Content Posting webhook create_time'),

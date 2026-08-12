@@ -113,7 +113,9 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     const privacyLevel = dataOption?.privacyLevel ?? input.option?.privacy_level
 
     const status = await this.tikTokService.getPublishStatus(accessToken, publishId)
-    const finalPostId = this.getFinalPostId(status)
+    const publicPostIds = this.getPublicPostIds(status)
+    const [finalPostId] = publicPostIds
+    this.logDuplicatePublicPosts(input.taskId, publishId, publicPostIds)
     this.logger.log({
       platform: AccountType.TikTok,
       taskId: input.taskId,
@@ -133,6 +135,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
           dataOption: this.buildDataOption(dataOption, publishId, {
             publishStatus: status.status,
             finalPostId,
+            publicPostIds: publicPostIds.length > 1 ? publicPostIds : undefined,
             username,
           }),
         }
@@ -144,6 +147,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         dataOption: this.buildDataOption(dataOption, publishId, {
           publishStatus: status.status,
           finalPostId,
+          publicPostIds: publicPostIds.length > 1 ? publicPostIds : undefined,
           username,
         }),
       }
@@ -189,7 +193,9 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         input.credential.accessToken,
         input.platformWorkId,
       )
-      const finalPostId = this.getFinalPostId(status)
+      const publicPostIds = this.getPublicPostIds(status)
+      const [finalPostId] = publicPostIds
+      this.logDuplicatePublicPosts(input.taskId, input.platformWorkId, publicPostIds)
       const dataOption = this.parseDataOption(input.dataOption)
       const privacyLevel = dataOption?.privacyLevel ?? input.option?.privacy_level
       const contentPath = dataOption?.contentPath ?? TikTokContentPath.Video
@@ -302,16 +308,22 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         sourceInfo,
       )
 
+      const dataOption = this.createDataOption(
+        result.publish_id,
+        TikTokPostSource.PullFromUrl,
+        TikTokContentPath.Video,
+        privacyLevel,
+        input.credential.account,
+      )
+      await input.checkpoint?.({
+        platformWorkId: result.publish_id,
+        dataOption,
+      })
+
       return {
         status: 202,
         platformWorkId: result.publish_id,
-        dataOption: this.createDataOption(
-          result.publish_id,
-          TikTokPostSource.PullFromUrl,
-          TikTokContentPath.Video,
-          privacyLevel,
-          input.credential.account,
-        ),
+        dataOption,
       }
     }
 
@@ -337,6 +349,18 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       sourceInfo,
     )
 
+    const dataOption = this.createDataOption(
+      initResult.publish_id,
+      TikTokPostSource.FileUpload,
+      TikTokContentPath.Video,
+      privacyLevel,
+      input.credential.account,
+    )
+    await input.checkpoint?.({
+      platformWorkId: initResult.publish_id,
+      dataOption,
+    })
+
     if (!initResult.upload_url) {
       throw TikTokPlatformException.validation({
         code: ResponseCode.ChannelPlatformResponseInvalid,
@@ -354,13 +378,7 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     return {
       status: 202,
       platformWorkId: initResult.publish_id,
-      dataOption: this.createDataOption(
-        initResult.publish_id,
-        TikTokPostSource.FileUpload,
-        TikTokContentPath.Video,
-        privacyLevel,
-        input.credential.account,
-      ),
+      dataOption,
     }
   }
 
@@ -430,16 +448,22 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       sourceInfo,
     )
 
+    const dataOption = this.createDataOption(
+      result.publish_id,
+      TikTokPostSource.PullFromUrl,
+      TikTokContentPath.Photo,
+      privacyLevel,
+      input.credential.account,
+    )
+    await input.checkpoint?.({
+      platformWorkId: result.publish_id,
+      dataOption,
+    })
+
     return {
       status: 202,
       platformWorkId: result.publish_id,
-      dataOption: this.createDataOption(
-        result.publish_id,
-        TikTokPostSource.PullFromUrl,
-        TikTokContentPath.Photo,
-        privacyLevel,
-        input.credential.account,
-      ),
+      dataOption,
     }
   }
 
@@ -553,9 +577,20 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     return hasUrlPathExtension(media.url, ['.mp4', '.mov', '.webm'])
   }
 
-  private getFinalPostId(status: TikTokPublishStatusResponse): string | undefined {
-    const [postId] = status.publicaly_available_post_id ?? []
-    return postId
+  private getPublicPostIds(status: TikTokPublishStatusResponse): string[] {
+    return [...new Set(status.publicaly_available_post_id ?? [])]
+  }
+
+  private logDuplicatePublicPosts(taskId: string, publishId: string, publicPostIds: string[]): void {
+    if (publicPostIds.length <= 1) {
+      return
+    }
+    this.logger.error({
+      platform: AccountType.TikTok,
+      taskId,
+      publishId,
+      publicPostIds,
+    }, 'Multiple TikTok posts resolved from one publish_id')
   }
 
   private async getFinalPostShareUrl(accessToken: string, postId: string): Promise<string | undefined> {
@@ -616,6 +651,9 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     }
     if (patch.finalPostId) {
       dataOption.finalPostId = patch.finalPostId
+    }
+    if (patch.publicPostIds && patch.publicPostIds.length > 1) {
+      dataOption.publicPostIds = patch.publicPostIds
     }
     if (patch.error) {
       dataOption.error = patch.error

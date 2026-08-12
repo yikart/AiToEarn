@@ -265,6 +265,12 @@ export interface PublishPublishInput<TOption = Record<string, unknown>> {
   option?: TOption
   publishAt?: Date
   credential: CredentialContext
+  checkpoint?: (result: PublishCheckpoint) => Promise<void>
+}
+
+export interface PublishCheckpoint {
+  platformWorkId: string
+  dataOption?: Record<string, unknown>
 }
 
 export interface PublishProviderResult<TDataOption = Record<string, unknown>> {
@@ -846,6 +852,7 @@ export interface PlatformPublishPolicy {
   completionStrategy: CompletionStrategy
   scheduleByPlatform: boolean
   updateSupported: boolean
+  autoRetryPublish?: boolean
 }
 
 export interface PlatformEmptyAccountHint {
