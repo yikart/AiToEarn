@@ -26,7 +26,7 @@ export const FACEBOOK_METADATA = {
   },
   editor: EditorType.Text,
   contentLimits: { modes: [PublishContentMode.Text, PublishContentMode.ImageText, PublishContentMode.Video], maxBodyLength: 63206, maxImages: 10, maxVideos: 1 },
-  mediaRules: { imageFormats: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'], videoFormats: ['mp4', 'mov', 'avi'], maxImageSize: 10 * 1024 * 1024, maxVideoSize: 1024 * 1024 * 1024, maxVideoDuration: 90 },
+  mediaRules: { imageFormats: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'tiff'], videoFormats: ['mp4', 'mov', 'avi'], maxImageSize: 10 * 1024 * 1024, maxVideoSize: 1024 * 1024 * 1024, maxVideoDuration: 3600 },
   topic: { supported: false },
   publishPolicy: {
     completionStrategy: CompletionStrategy.Sync,

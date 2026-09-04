@@ -27,7 +27,10 @@ const FACEBOOK_REEL_MEDIA_RULES: PlatformMediaRules = {
   videoFormats: ['mp4'],
   maxVideoSize: 1024 * 1024 * 1024,
   minVideoDuration: 3,
-  maxVideoDuration: 90,
+  // Facebook removed the 90s Reels length restriction in June 2025 ("all videos are
+  // Reels", no length/format caps). The old 90s cap rejects valid longer Reels with
+  // invalid_duration. Raised to 60 min to match Facebook's current Reels limit.
+  maxVideoDuration: 3600,
 }
 
 const FACEBOOK_STORY_MEDIA_RULES: PlatformMediaRules = {
