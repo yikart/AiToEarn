@@ -15,6 +15,24 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
 対応チャンネル：
 抖音（Douyin）、小紅書（Rednote）、快手（Kuaishou）、bilibili、視頻号（WeChat Channels）、微信公式アカウント（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
 
+## 特別なご支援に感謝 ❤️
+
+<table align="center">
+  <tr>
+    <td align="center" width="120">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="秘塔科技" width="100"></a><br>
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>秘塔科技</strong></a>
+    </td>
+    <td align="left">
+      本プロジェクトをご支援いただいた<a href="https://metaso.cn/minimax-h3/?s=ATE">秘塔科技</a>に心より感謝します！<br>
+      <strong>MiniMax H3 動画生成 API｜秘塔科技</strong><br>
+      秘塔科技は、コストパフォーマンスに優れた MiniMax H3 動画生成サービスを提供しています：<strong>768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒</strong>。ネイティブ 2K と音声・映像の同期に対応し、API は <strong>OpenAI プロトコル</strong>と互換性があり、<strong>ComfyUI</strong>にも対応しています。GPU を自前で用意する必要はありません。<br>
+      🎁 <a href="https://metaso.cn/minimax-h3/?s=ATE">AiToEarn 専用リンクから登録</a>すると、無料クレジットと限定特典を受け取れます。<br>
+      ビジネスに関するお問い合わせは WeChat：metasota12 まで。
+    </td>
+  </tr>
+</table>
+
 ## 🚀 AiToEarnをすぐに使う（5つの方法）
 
 | 方法 | 対象 | デプロイ必要？ |

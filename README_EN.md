@@ -15,6 +15,24 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 Supported Channels:
 Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, WeChat Channels, WeChat Official Accounts, TikTok, YouTube, Facebook, Instagram, Threads, Twitter (X), Pinterest, LinkedIn
 
+## Special Thanks ❤️
+
+<table align="center">
+  <tr>
+    <td align="center" width="120">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="Metaso" width="100"></a><br>
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>Metaso</strong></a>
+    </td>
+    <td align="left">
+      Thanks to <a href="https://metaso.cn/minimax-h3/?s=ATE">Metaso</a> for sponsoring this project!<br>
+      <strong>MiniMax H3 Video Generation API | Metaso</strong><br>
+      Metaso offers cost-effective MiniMax H3 video generation: <strong>768P for just RMB 0.09/sec and 2K for just RMB 0.15/sec</strong>. It supports native 2K and synchronized audio and video; its API is compatible with the <strong>OpenAI protocol</strong>, and it also supports <strong>ComfyUI</strong>—no GPU deployment required.<br>
+      🎁 Sign up through the <a href="https://metaso.cn/minimax-h3/?s=ATE">exclusive AiToEarn link</a> to receive complimentary credits and special offers.<br>
+      For business inquiries, please add WeChat: metasota12
+    </td>
+  </tr>
+</table>
+
 ## 🚀 Quick Start with AiToEarn (5 Ways)
 
 | Option | Best for | Deployment needed? |
