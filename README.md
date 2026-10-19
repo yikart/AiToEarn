@@ -31,15 +31,6 @@ AiToEarn 通过 **AI Agent自动化**，帮助 OPC（一人公司）、创作者
       商务对接可加微信：metasota12
     </td>
   </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://go.apimart.ai/gh-aitoearn"><img src="docs/sponsors/apimart-logo.png" alt="APIMart" width="100"></a><br>
-      <a href="https://go.apimart.ai/gh-aitoearn"><strong>APIMart</strong></a>
-    </td>
-    <td align="left">
-      感谢 APIMart 赞助了本项目！APIMart 是专注 AI 图片/视频生成的低价 API 平台，GPT-Image-2 低至 <strong>$0.006/张</strong>，1 美元可出图 <strong>160+ 张</strong>。图片、视频一套异步 API 通吃，提交任务拿 ID、回调取结果，跑批万张不超时、换模型不改代码。按量付费、无月费，通过此<a href="https://go.apimart.ai/gh-aitoearn">注册链接</a>注册即可开用。
-    </td>
-  </tr>
 </table>
 
 ## 🚀 快速使用 AiToEarn（5 种方式）

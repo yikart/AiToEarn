@@ -31,15 +31,6 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
       ビジネスに関するお問い合わせは WeChat：metasota12 まで。
     </td>
   </tr>
-  <tr>
-    <td align="center" width="120">
-      <a href="https://go.apimart.ai/gh-aitoearn"><img src="docs/sponsors/apimart-logo.png" alt="APIMart" width="100"></a><br>
-      <a href="https://go.apimart.ai/gh-aitoearn"><strong>APIMart</strong></a>
-    </td>
-    <td align="left">
-      APIMart に本プロジェクトをご支援いただき、ありがとうございます！APIMart は AI 画像・動画生成に特化した低価格 API プラットフォームです。GPT-Image-2 は<strong>1枚あたり $0.006</strong>から、1ドルで<strong>160枚以上</strong>生成できます。画像と動画の両方に1つの非同期 API で対応し、タスクを送信して ID を取得し、ポーリングまたはコールバックで結果を取得できます。数万枚の画像をタイムアウトなしで一括処理でき、モデルを変更してもコードを変更する必要はありません。従量課金制で月額料金は不要です。<a href="https://go.apimart.ai/gh-aitoearn">こちらから登録</a>してご利用ください。
-    </td>
-  </tr>
 </table>
 
 ## 🚀 AiToEarnをすぐに使う（5つの方法）
