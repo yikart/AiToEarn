@@ -174,6 +174,7 @@ In your MCP settings, fill in the **MCP URL** and the **Auth Header** (`x-api-ke
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+# Configure the required authentication secrets and export JWT_SECRET as described in DOCKER_DEPLOYMENT_EN.md.
 docker compose up -d
 ```
 

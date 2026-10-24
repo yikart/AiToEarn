@@ -10,7 +10,10 @@ import { dirname } from 'path'
 import crypto from 'crypto'
 
 const MONGO_URI = process.env.MONGO_URI || 'mongodb://admin:password@mongodb:27017'
-const JWT_SECRET = process.env.JWT_SECRET || 'change-this-jwt-secret'
+const JWT_SECRET = process.env.JWT_SECRET
+if (!JWT_SECRET || !/^\S{32,}$/.test(JWT_SECRET)) {
+  throw new Error('Set JWT_SECRET to the same random key as the backend auth.secret (at least 32 characters).')
+}
 const DB_NAME = process.env.DB_NAME || 'aitoearn'
 const TOKEN_PATH = process.env.AUTO_LOGIN_TOKEN_PATH || '/data/init/token.txt'
 const DEFAULT_EMAIL = 'admin@aitoearn.local'

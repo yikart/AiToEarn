@@ -11,8 +11,8 @@ logger:
 appDomain: localhost
 environment: production
 auth:
-  secret: change-this-jwt-secret
-  internalToken: change-this-secret-token
+  secret: ""
+  internalToken: ""
 apiKey:
   prefix: ai_
 redis:
@@ -45,7 +45,7 @@ assets:
   provider: s3
 aiClient:
   baseUrl: http://aitoearn-ai:3010
-  token: change-this-secret-token
+  token: ""
 channel:
   channelDb:
     uri: mongodb://admin:password@mongodb:27017/?authSource=admin&directConnection=true
