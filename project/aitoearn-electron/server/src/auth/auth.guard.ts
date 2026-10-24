@@ -50,9 +50,7 @@ export class AuthGuard implements CanActivate {
       throw new UnauthorizedException();
     }
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.AUTH_SECRET,
-      });
+      const payload = await this.jwtService.verifyAsync(token);
       // 以便我们可以在路由处理器中访问它
       request['user'] = payload;
     } catch {

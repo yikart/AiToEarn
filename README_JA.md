@@ -269,6 +269,7 @@ SSE接続もサポート：`https://aitoearn.ai/api/unified/sse`
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+# 起動前に DOCKER_DEPLOYMENT_EN.md に従って認証キーを設定し、JWT_SECRET をエクスポートしてください。
 docker compose up -d
 ```
 

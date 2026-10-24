@@ -270,6 +270,7 @@ MCP 地址：https://aitoearn.ai/api/unified/mcp
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+# 启动前按 DOCKER_DEPLOYMENT_CN.md 配置必填认证密钥，并导出 JWT_SECRET。
 docker compose up -d
 ```
 

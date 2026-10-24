@@ -60,6 +60,18 @@ Just 3 steps to run the complete AiToEarn on your machine.
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+export JWT_SECRET="$(openssl rand -hex 32)"
+```
+
+Before starting, set `auth.secret` in both mounted `config.yaml` files to the value of
+`JWT_SECRET` above so the auto-login token issued by the initialization script can be verified.
+Generate a separate internal token with `openssl rand -hex 32` and configure it as
+`auth.internalToken` in both files. Set the backend's `aiClient.token` to the AI service's
+`auth.internalToken`. These fields have no defaults; empty values, whitespace, and values
+shorter than 32 characters prevent startup. Retain the configured values for restarts and
+replicas, and do not commit them to a public repository.
+
+```bash
 docker compose up -d
 ```
 
@@ -133,5 +145,6 @@ Mounted as writable volumes and editable from the Configuration UI. Restart the 
 |----------|------------|-------------|---------|
 | `MONGO_INITDB_ROOT_PASSWORD` | mongodb | MongoDB root password | `password` |
 | `RUSTFS_ACCESS_KEY` / `RUSTFS_SECRET_KEY` | rustfs | RustFS credentials | `rustfsadmin` |
-| `MONGO_URI` / `JWT_SECRET` / `DB_NAME` / `AUTO_LOGIN_TOKEN_PATH` | aitoearn-init | First-start admin initialization and auto-login token | Built-in defaults |
+| `JWT_SECRET` | aitoearn-init | Must match the backend's `auth.secret` | Required; no default |
+| `MONGO_URI` / `DB_NAME` / `AUTO_LOGIN_TOKEN_PATH` | aitoearn-init | First-start admin initialization and auto-login token | Built-in defaults |
 | `NODE_ENV` / `NEXT_TELEMETRY_DISABLED` | aitoearn-web | Web runtime mode and Next.js telemetry setting | `production` / `1` |
