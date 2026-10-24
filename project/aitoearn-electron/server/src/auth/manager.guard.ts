@@ -49,9 +49,7 @@ export class ManagerGuard implements CanActivate {
     }
 
     try {
-      const payload = await this.jwtService.verifyAsync(token, {
-        secret: process.env.AUTH_SECRET,
-      });
+      const payload = await this.jwtService.verifyAsync(token);
 
       if (!payload.isManager) {
         throw new UnauthorizedException('需要管理员权限1');

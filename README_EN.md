@@ -264,6 +264,7 @@ For teams wanting to run AiToEarn on their own server. 3 commands, no manual dat
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+# Configure the required authentication secrets and export JWT_SECRET as described in DOCKER_DEPLOYMENT_EN.md.
 docker compose up -d
 ```
 

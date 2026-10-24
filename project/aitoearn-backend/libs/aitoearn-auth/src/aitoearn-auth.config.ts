@@ -4,8 +4,8 @@ import { z } from 'zod'
 export const AITOEARN_AUTH_OPTIONS = Symbol('AITOEARN_AUTH_OPTIONS')
 
 export const aitoearnAuthConfigSchema = z.object({
-  secret: z.string().default(''),
-  internalToken: z.string().min(1),
+  secret: z.string().min(32).regex(/^\S+$/),
+  internalToken: z.string().min(32).regex(/^\S+$/),
 })
 
 export class AitoearnAuthConfig extends createZodDto(aitoearnAuthConfigSchema) {}

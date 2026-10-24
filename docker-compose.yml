@@ -87,7 +87,7 @@ services:
     working_dir: /app
     environment:
       MONGO_URI: mongodb://admin:password@mongodb:27017
-      JWT_SECRET: change-this-jwt-secret
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET to the same random key as backend auth.secret}
       DB_NAME: aitoearn
       AUTO_LOGIN_TOKEN_PATH: /data/init/token.txt
     entrypoint: /bin/sh -c "npm install --omit=dev 2>/dev/null && node init.mjs"

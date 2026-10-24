@@ -60,6 +60,16 @@ docker compose version
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
 cd AiToEarn
+export JWT_SECRET="$(openssl rand -hex 32)"
+```
+
+启动前先配置认证密钥：两个挂载的 `config.yaml` 中，`auth.secret` 都应设置为上述
+`JWT_SECRET` 的值，使初始化脚本签发的自动登录 token 能被验证。另用
+`openssl rand -hex 32` 生成独立的内部通信令牌，填入两个文件的 `auth.internalToken`，
+并将后端配置的 `aiClient.token` 设置为 AI 服务的 `auth.internalToken`。这些字段没有默认值，
+为空、包含空白或不足 32 字符时会拒绝启动。保留配置供重启和其他实例共享，不要提交到公开仓库。
+
+```bash
 docker compose up -d
 ```
 
@@ -133,5 +143,6 @@ docker compose up -d
 |------|----------|------|--------|
 | `MONGO_INITDB_ROOT_PASSWORD` | mongodb | MongoDB root 密码 | `password` |
 | `RUSTFS_ACCESS_KEY` / `RUSTFS_SECRET_KEY` | rustfs | RustFS 访问凭证 | `rustfsadmin` |
-| `MONGO_URI` / `JWT_SECRET` / `DB_NAME` / `AUTO_LOGIN_TOKEN_PATH` | aitoearn-init | 首次启动初始化管理员与自动登录 token | 内置默认值 |
+| `JWT_SECRET` | aitoearn-init | 必须与后端 `auth.secret` 一致 | 必填，无默认值 |
+| `MONGO_URI` / `DB_NAME` / `AUTO_LOGIN_TOKEN_PATH` | aitoearn-init | 首次启动初始化管理员与自动登录 token | 内置默认值 |
 | `NODE_ENV` / `NEXT_TELEMETRY_DISABLED` | aitoearn-web | Web 运行环境与 Next.js telemetry 设置 | `production` / `1` |

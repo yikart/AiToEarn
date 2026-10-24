@@ -7,6 +7,7 @@
  */
 import { Global, Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { APP_GUARD } from '@nestjs/core';
@@ -15,10 +16,24 @@ import { ManagerGuard } from './manager.guard';
 @Global()
 @Module({
   imports: [
-    JwtModule.register({
+    JwtModule.registerAsync({
       global: true,
-      secret: process.env.AUTH_SECRET || '550e8400-e29b-41d4-a716-446655440000',
-      signOptions: { expiresIn: '30d' },
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        const secret = config.get<string>('AUTH_SECRET');
+        if (
+          !secret ||
+          secret.length < 32 ||
+          /\s/.test(secret) ||
+          secret === '550e8400-e29b-41d4-a716-446655440000'
+        ) {
+          throw new Error(
+            'Set AUTH_SECRET to a unique random secret of at least 32 characters (openssl rand -hex 32).',
+          );
+        }
+        return { secret, signOptions: { expiresIn: '30d' } };
+      },
     }),
   ],
   providers: [
