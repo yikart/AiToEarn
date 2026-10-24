@@ -10,8 +10,8 @@ logger:
     translateTime: true
 appDomain: ""
 auth:
-  secret: change-this-jwt-secret
-  internalToken: change-this-secret-token
+  secret: ""
+  internalToken: ""
 redis:
   host: redis
   port: 6379
