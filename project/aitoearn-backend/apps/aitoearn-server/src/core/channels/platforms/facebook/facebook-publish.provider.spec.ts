@@ -143,7 +143,7 @@ describe('facebook publish provider validation', () => {
     ).toMatchObject({
       videoFormats: ['mp4'],
       minVideoDuration: 3,
-      maxVideoDuration: 90,
+      maxVideoDuration: 3600,
     })
     expect(
       provider.resolveMediaRules({
