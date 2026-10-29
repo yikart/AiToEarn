@@ -1,4 +1,4 @@
-# [Aitoearn: The Best Open-Source AI Agent for Content Marketing](https://aitoearn.ai)
+# [Aitoearn: The AI Content Marketing Agent for OPCs (One-Person Companies)](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -38,12 +38,11 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, WeChat Channels, WeChat Offic
 | Option | Best for | Deployment needed? |
 |--------|----------|-------------------|
 | [① Use the Website](#use-web) | Everyone | ❌ No |
-| [② Use in OpenClaw](#use-in-openclaw) | OpenClaw users | ❌ No |
-| [③ Use in Claude / Cursor / Other AI Assistants](#use-in-claude) | AI tool users | ❌ No |
+| [③ Use in Claude / Cursor / Other AI Assistants](https://docs.aitoearn.ai/zh/use/introduction) | AI tool users | ❌ No |
 | [④ Docker One-Click Deploy](#use-docker) | Teams wanting self-hosted | ✅ Server needed |
 | [⑤ Build from Source](#use-source) | Developers | ✅ Dev environment needed |
 
-> 💡 **Options ②③④ require an API Key first.** See [How to Get an API Key](#get-api-key).
+> 💡 **Options ③④ require an API Key first.** See [How to Get an API Key](#get-api-key).
 
 ## What's New
 
@@ -51,9 +50,9 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, WeChat Channels, WeChat Offic
 - **2026-05-21**: [2.4 version](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) — Draft generation now supports HappyHorse 1.0 and Seedance 2.0, with improved batch video/image-text draft generation, multi-model selection, reference images/videos, target-platform limits, and caption prompts; refreshed interface style and enhanced Twitter/X exploration and engagement.
 - **2026-04-20**: OpenClaw now supports AiToEarn earning workflows, so you can receive and execute monetization tasks directly inside OpenClaw.
 - **2026-03-26**: [2.1 version](https://www.aitoearn.ai/) — Content marketplace launched; added OpenClaw support for using AiToEarn directly within OpenClaw; added MCP protocol support for using AiToEarn in Claude, Cursor, and any MCP-compatible Agent or LLM.
-- **2026-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline business promotion solutions for restaurants, retail stores, hotels, beauty salons, gyms, and more.
-- **2025-12-15**: "All In Agent" arrives! We've introduced a super AI agent that can automatically generate and publish content. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
-- **2025-11-28**: Support automatic updates within the application. Added AI functions: abbreviation, expansion, image creation, video creation, tag generation, etc. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
+- **2026-02-07**: [1.8.0 version](https://www.aitoearn.ai/) — Added offline merchant promotion solutions covering restaurants, retail stores, B&Bs, beauty salons, gyms, and other offline businesses: offline promotional activities are turned into executable online sharing tasks, and through content publishing and user participation mechanisms, stores gain more online exposure and in-store foot traffic.
+- **2025-12-15**: "All In Agent" begins! We've added super AI agents that can automatically generate and publish content, along with agents that help you operate Aitoearn. [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
+- **2025-11-28**: In-app automatic updates supported. Added many AI features in the creation interface, such as abbreviation, expansion, image generation, video generation, and tag generation, with Nano Banana Pro support. [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
 - **2025-11-12**: The first open-source, fully usable version. [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
 - **2025-09-16**: First international version, added support for Facebook, Instagram, Threads, Twitter, YouTube, TikTok, Pinterest. [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
 - **2025-02-26**: First open-source release, initial support for one-click publishing to Xiaohongshu, Douyin, Kuaishou, and WeChat Channels. [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)
@@ -159,7 +158,7 @@ The simplest way — just open your browser:
 
 <h2 id="get-api-key">🔑 How to Get an API Key (Required for Steps Below)</h2>
 
-> Options ②③④ all need an API Key. You only need to get it once.
+> Options ③④ all need an API Key. You only need to get it once.
 
 **3 steps**:
 
@@ -168,26 +167,6 @@ The simplest way — just open your browser:
 3. Go to **API Key**, click Create, and copy the generated key
 
 <img src="presentation/app-screenshot/0.%20api-key/api-key-settings.png" alt="Get API Key" width="600">
-
-> ⚠️ Keep your API Key safe. Do not share it with others.
-
----
-
-<h2 id="use-in-openclaw">② Use in OpenClaw</h2>
-
-> Prerequisite: [Get an API Key](#get-api-key) first
-
-**Install the plugin**
-
-```bash
-npx -y @aitoearn/openclaw-plugin-cli
-```
-
-On first run, select the environment and enter your API Key. Make sure they match: China uses an API Key from `aitoearn.cn`, and international uses one from `aitoearn.ai`. A mismatch returns 401.
-
-After setup, you can receive and execute AiToEarn earning tasks directly inside OpenClaw:
-
-<img src="presentation/openclaw-earn-demo.png" alt="Run AiToEarn earning tasks in OpenClaw" width="360">
 
 ---
 
@@ -317,30 +296,6 @@ pnpm run dev
 
 </details>
 
-<details>
-<summary>🖥️ Start Electron desktop project</summary>
-
-```bash
-# Clone the repo
-git clone https://github.com/yikart/AttAiToEarn.git
-
-# Enter directory
-cd AttAiToEarn
-
-# Install dependencies
-npm install
-
-# Compile sqlite (better-sqlite3 requires node-gyp and local Python)
-npm run rebuild
-
-# Start development
-npm run dev
-```
-
-The Electron project provides a desktop client for AiToEarn.
-
-</details>
-
 ## Contributing
 
 Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
@@ -352,10 +307,11 @@ If you run into usage difficulties, questions, or unexpected behavior, please op
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
 - WeChat: Scan to add
 
-<img src="presentation/wechat.jpg" alt="WeChat QR Code" width="200">
+<img src="presentation/wechat-1029.png" alt="WeChat QR Code" width="200">
 
 ## Recommended
 
+- [AtomGit Hosting](https://atomgit.com/yikart/AitoEarn)
 - [MuseTalk](https://github.com/TMElyralab/MuseTalk)
 - [video_spider](https://github.com/5ime/video_spider)
 - [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)

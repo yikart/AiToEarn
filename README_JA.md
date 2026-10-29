@@ -1,4 +1,4 @@
-# [Aitoearn：個人ビジネス向けAIコンテンツマーケティングエージェント](https://aitoearn.ai)
+# [Aitoearn：OPC（一人会社）のためのAIコンテンツマーケティングエージェント](https://aitoearn.ai)
 
 <a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
 
@@ -10,7 +10,7 @@
 
 **収益化 · 公開 · エンゲージメント · クリエイト —— オールインワンプラットフォーム。**
 
-AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企業が世界中の主要プラットフォームでコンテンツを構築、配信、収益化するのを支援します。
+AiToEarnは**AIエージェントによる自動化**を通じて、OPC（一人会社）、クリエイター、ブランド、企業が世界中の主要プラットフォームでコンテンツを構築、配信、収益化するのを支援します。
 
 対応チャンネル：
 抖音（Douyin）、小紅書（Rednote）、快手（Kuaishou）、bilibili、視頻号（WeChat Channels）、微信公式アカウント（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
@@ -38,16 +38,15 @@ AiToEarnは**AI自動化**を通じて、クリエイター、ブランド、企
 | 方法 | 対象 | デプロイ必要？ |
 |------|------|--------------|
 | [① ウェブサイトで直接使う](#use-web) | すべてのユーザー | ❌ 不要 |
-| [② OpenClaw（ロブスター）で使う](#use-in-openclaw) | OpenClawユーザー | ❌ 不要 |
-| [③ Claude / Cursor などのAIアシスタントで使う](#use-in-claude) | AIツールユーザー | ❌ 不要 |
+| [③ Claude / Cursor などのAIアシスタントで使う](https://docs.aitoearn.ai/zh/use/introduction) | AIツールユーザー | ❌ 不要 |
 | [④ Dockerワンクリックデプロイ](#use-docker) | 自己デプロイしたいチーム | ✅ サーバー必要 |
 | [⑤ ソースコードから開発](#use-source) | 開発者 | ✅ 開発環境必要 |
 
-> 💡 **方法②③④は事前にAPI Keyの取得が必要です**。[API Keyの取得方法](#get-api-key)を先にご覧ください。
+> 💡 **方法③④は事前にAPI Keyの取得が必要です**。[API Keyの取得方法](#get-api-key)を先にご覧ください。
 
 ## 最新情報
 
-- **2026-06-23**: [2.5バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) — Relay 設定は設定管理画面で操作する方式になり、Server Relay と AI Relay に分かれました。Server Relay は公開プラットフォームの認証に、AI Relay はプラットフォーム提供の AI モデル利用に使用します。
+- **2026-06-23**: [2.5バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) — Relay 設定は設定管理画面で操作する方式になり、Server Relay と AI Relay に分かれました。Server Relay は公開プラットフォームの認証に、AI Relay はプラットフォーム提供の AI モデル利用に使用します。新たに[オープンプラットフォーム](https://docs.aitoearn.cn/)も追加されました。
 - **2026-05-21**: [2.4バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) — 草稿生成が HappyHorse 1.0 と Seedance 2.0 に新対応。動画・画像/テキスト草稿の一括生成、複数モデル選択、参照画像/動画、対象プラットフォーム制限、文案プロンプトを強化し、新しいUIスタイルと Twitter/X の探索・エンゲージメント機能も強化しました。
 - **2026-04-20**: OpenClaw（ロブスター）で AiToEarn の収益化タスクに新対応し、OpenClaw 内で直接受け取り実行できるようになりました。
 - **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — コンテンツ取引マーケットプレイスをリリース。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
@@ -92,9 +91,7 @@ AiToEarnの最も重要な目標：**すべてのクリエイターが稼げる�
 | **CPE** | Cost Per Engagement | エンゲージメント数に基づいて決済 |
 | **CPM** | Cost Per Mille | 再生数に基づいて決済 |
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/monetize-cn.png" width="50%">
-</div>
+<img src="presentation/monetize-cn.png" width="30%">
 
 ---
 
@@ -105,10 +102,7 @@ AiToEarnの最も重要な目標：**すべてのクリエイターが稼げる�
 - **マルチプラットフォーム配信**：抖音、快手、B站、小紅書、視頻号（WeChat Channels）、微信公式アカウント（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedInに対応
 - **カレンダースケジュール**：カレンダーのように全プラットフォームのコンテンツ公開時間を統一的に計画
 
-<div style="display: flex; justify-content: space-around;">
-  <img src="presentation/publish-cn.png" width="30%">
-  <img src="presentation/app-screenshot/1.%20content%20publish/support_channels.jpeg" width="30%">
-</div>
+<img src="presentation/publish-cn.png" width="30%"> <img src="presentation/channel-cn.png" width="30%">
 
 > ▶ デモ動画を見る
 
@@ -164,7 +158,7 @@ AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラット
 
 <h2 id="get-api-key">🔑 API Keyの取得方法（以下の手順に必要）</h2>
 
-> 以下の方法②③④にはAPI Keyが必要です。一度取得すれば、すべての方法で使用可能です。
+> 以下の方法③④にはAPI Keyが必要です。一度取得すれば、すべての方法で使用可能です。
 
 **3ステップで取得**：
 
@@ -173,26 +167,6 @@ AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラット
 3. **API Key**に移動し、作成をクリックして、生成されたキーをコピー
 
 <img src="presentation/app-screenshot/0.%20api-key/api-key-settings.png" alt="API Key取得" width="600">
-
-> ⚠️ API Keyは安全に保管し、他人に共有しないでください。
-
----
-
-<h2 id="use-in-openclaw">② OpenClaw（ロブスター）で使う</h2>
-
-> 前提条件：[API Keyを取得済み](#get-api-key)
-
-**プラグインをインストール**
-
-```bash
-npx -y @aitoearn/openclaw-plugin-cli
-```
-
-初回実行時は環境を選択し、API Key を入力してください。中国版は `aitoearn.cn` の API Key、国際版は `aitoearn.ai` の API Key を使用します。環境と Key が一致しない場合は 401 になります。
-
-設定後は、OpenClaw 内で AiToEarn の収益化タスクを直接受け取り実行できます。
-
-<img src="presentation/openclaw-earn-demo.png" alt="OpenClaw で AiToEarn の収益化タスクを実行" width="360">
 
 ---
 
@@ -323,30 +297,6 @@ pnpm run dev
 
 </details>
 
-<details>
-<summary>🖥️ Electronデスクトッププロジェクトを起動</summary>
-
-```bash
-# リポジトリをクローン
-git clone https://github.com/yikart/AttAiToEarn.git
-
-# ディレクトリに移動
-cd AttAiToEarn
-
-# 依存関係をインストール
-npm install
-
-# sqliteをコンパイル（better-sqlite3にはnode-gypとローカルPythonが必要）
-npm run rebuild
-
-# 開発を起動
-npm run dev
-```
-
-ElectronプロジェクトはAiToEarnのデスクトップクライアントを提供します。
-
-</details>
-
 ## 貢献ガイド
 
 参加するには[貢献ガイド](./CONTRIBUTING.md)をご覧ください。
@@ -358,10 +308,10 @@ ElectronプロジェクトはAiToEarnのデスクトップクライアントを�
 - Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
 - WeChat：QRコードをスキャンして追加
 
-<img src="presentation/wechat.jpg" alt="WeChat QRコード" width="200">
+<img src="presentation/wechat-1029.png" alt="WeChat QRコード" width="200">
 
 ## 推奨
-
+- [AtomGitホスティング](https://atomgit.com/yikart/AitoEarn)
 - [MuseTalk](https://github.com/TMElyralab/MuseTalk)
 - [video_spider](https://github.com/5ime/video_spider)
 - [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
