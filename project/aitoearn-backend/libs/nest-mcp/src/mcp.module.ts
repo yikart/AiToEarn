@@ -7,6 +7,7 @@ import type {
 import { DynamicModule, Module, Provider, Type } from '@nestjs/common'
 import { DiscoveryModule } from '@nestjs/core'
 import { McpTransportType } from './interfaces'
+import { MCP_TOOL_FILTER, McpToolFilter } from './interfaces/mcp-tool-filter.interface'
 import { MCP_TOOL_MONITOR, McpToolMonitor } from './interfaces/mcp-tool-monitor.interface'
 import { McpExecutorService } from './services/mcp-executor.service'
 import { McpRegistryService } from './services/mcp-registry.service'
@@ -27,6 +28,15 @@ const DEFAULT_TOOL_MONITOR_PROVIDER: Provider = {
       return undefined
     },
   } satisfies McpToolMonitor,
+}
+
+const DEFAULT_TOOL_FILTER_PROVIDER: Provider = {
+  provide: MCP_TOOL_FILTER,
+  useValue: {
+    filterTools(tools) {
+      return tools
+    },
+  } satisfies McpToolFilter,
 }
 
 let instanceIdCounter = 0
@@ -102,6 +112,7 @@ export class McpModule {
         useValue: moduleId,
       },
       DEFAULT_TOOL_MONITOR_PROVIDER,
+      DEFAULT_TOOL_FILTER_PROVIDER,
       McpRegistryService,
       McpExecutorService,
       SsePingService,
@@ -254,6 +265,7 @@ export class McpModule {
         useValue: moduleId,
       },
       options.toolMonitorProvider ?? DEFAULT_TOOL_MONITOR_PROVIDER,
+      options.toolFilterProvider ?? DEFAULT_TOOL_FILTER_PROVIDER,
       McpRegistryService,
       McpExecutorService,
       SsePingService,

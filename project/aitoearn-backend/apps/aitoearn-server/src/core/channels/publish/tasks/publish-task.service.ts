@@ -1,10 +1,13 @@
+import type { DraftBlock, PostDraft } from '@airongrong/plugin-api'
 import type { AccountType } from '@yikart/common'
 import type { PublishRecord } from '@yikart/mongodb'
+import type { PluginHostService } from '../../../../plugin-host/plugin-host.service'
 import type { PlatformMediaPolicy, PlatformMediaRules, PlatformPublishPolicy, PublishContentInput, PublishMediaJob, PublishProvider, PublishProviderResult } from '../../platforms/platforms.interface'
 import type { PublishValidationIssue } from '../../platforms/publish.schema'
 import type { PendingPublishUpdate, PublishFailureSnapshot } from './publish-state.service'
 import type { PublishUpdateData } from './publish-update.schema'
-import { Injectable, Logger } from '@nestjs/common'
+import { DraftBlockKind, DraftVisibility, PluginError, PluginErrorCode } from '@airongrong/plugin-api'
+import { Injectable, Logger, Optional } from '@nestjs/common'
 import { AppException, getCodeMessage, getLocale, ResponseCode } from '@yikart/common'
 import { AccountRepository, PublishRecordRepository, PublishStatus, Transactional } from '@yikart/mongodb'
 import { z } from 'zod'
@@ -53,12 +56,30 @@ export class PublishTaskService {
     private readonly authService: AuthService,
     private readonly stateService: PublishStateService,
     private readonly queueService: PublishQueueService,
+    @Optional() private readonly pluginHost?: PluginHostService,
   ) {}
 
   async processPublishJob(taskId: string, attempts = 0): Promise<void> {
     const record = await this.publishRecordRepo.getById(taskId)
     if (!record) {
       this.logger.warn({ taskId }, 'Publish task not found')
+      return
+    }
+
+    // fail-closed 校验钩子（AIT-PL-007）：插件拒绝则任务直接判失败，不进入发布
+    try {
+      await this.pluginHost?.runBeforePublish(this.toPluginDraft(record, taskId))
+    }
+    catch (error) {
+      const message = error instanceof Error ? error.message : String(error)
+      this.logger.warn({ taskId, message }, 'Plugin beforePublish hook rejected the task')
+      await this.stateService.markFailed(taskId, {
+        category: PlatformErrorCategory.Validation,
+        code: error instanceof PluginError ? error.code : PluginErrorCode.HookRejected,
+        message,
+        retryable: false,
+        occurredAt: new Date(),
+      })
       return
     }
 
@@ -137,6 +158,7 @@ export class PublishTaskService {
           linkStatus: result.linkStatus,
           linkMeta: result.linkMeta,
         })
+        await this.runAfterPublishHook(record, result)
       }
     }
     catch (err) {
@@ -873,6 +895,38 @@ export class PublishTaskService {
     }
     const date = new Date(expiresAt)
     return Number.isNaN(date.getTime()) ? undefined : date
+  }
+
+  /** 发布记录 → 插件契约草稿（钩子调度入参） */
+  private toPluginDraft(record: PublishRecord, taskId: string): PostDraft {
+    const blocks: DraftBlock[] = [
+      ...(record.videoUrl ? [{ kind: DraftBlockKind.Video, url: record.videoUrl, durationSec: 0 } as const] : []),
+      ...(record.imgUrlList ?? []).map((url): DraftBlock => ({ kind: DraftBlockKind.Image, url, width: 0, height: 0 })),
+    ]
+    return {
+      draftId: taskId,
+      text: record.desc || record.title || '',
+      blocks,
+      topics: [],
+      mentions: [],
+      visibility: DraftVisibility.Public,
+      ...(record.publishTime ? { scheduledAt: record.publishTime.toISOString() } : {}),
+      locale: 'zh-CN',
+    }
+  }
+
+  /** afterPublish 为 fail-open：钩子异常只记日志，不影响已完成的发布结果 */
+  private async runAfterPublishHook(record: PublishRecord, result: PublishProviderResult): Promise<void> {
+    try {
+      await this.pluginHost?.runAfterPublish({
+        externalId: result.platformWorkId ?? '',
+        url: result.permalink ?? '',
+        publishedAt: new Date().toISOString(),
+      })
+    }
+    catch (error) {
+      this.logger.warn(error, `Plugin afterPublish hook failed for task ${record.id ?? ''}`)
+    }
   }
 
   private buildPublishContent(record: PublishRecord): PublishContentInput {

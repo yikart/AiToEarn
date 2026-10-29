@@ -45,3 +45,6 @@ public/bin/*
 
 sh/*
 project/web/.cursor/
+
+# 本地 pnpm 内容寻址仓库（pnpm config set store-dir 指向仓库根时生成，949MB 勿入库）
+.pnpm-store/

@@ -5,6 +5,13 @@ dist
 tmp
 out-tsc
 
+# 官方插件产物需要随仓库分发（plugins/<id>/dist/*.mjs），因此放开 plugins 下的 dist
+!plugins/**/dist/
+!plugins/**/dist/**
+# 打包产物与签名由 CI 生成，不入库
+plugins/**/*.aitpkg
+plugins/**/*.sig
+
 # dependencies
 node_modules
 

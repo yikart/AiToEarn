@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common'
+import { PluginHostModule } from '../../plugin-host/plugin-host.module'
 import { AccountGroupService } from './accounts/account-group.service'
 import { AccountGroupsController } from './accounts/account-groups.controller'
 import { AccountService } from './accounts/account.service'
@@ -34,7 +35,7 @@ import { WorkService } from './works/work.service'
 import { WorksController } from './works/works.controller'
 
 @Module({
-  imports: [PlatformsModule, MediaModule],
+  imports: [PlatformsModule, MediaModule, PluginHostModule],
   controllers: [
     AccountsController,
     AccountGroupsController,

@@ -5,7 +5,7 @@ trustPolicyExclude:
 packages:
   - 'apps/*'
   - 'libs/*'
-  - 'tools/*'
+  # tools/plugin-cli 已抽离到 yikart/aitoearn-sdk（见 docs/npm-packages.md）
 
 onlyBuiltDependencies:
   - '@alicloud/openapi-core'

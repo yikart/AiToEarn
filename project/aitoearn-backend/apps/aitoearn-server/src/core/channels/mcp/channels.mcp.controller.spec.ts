@@ -1,6 +1,7 @@
 import { AccountType } from '@yikart/common'
 import { PublishStatus, PublishType } from '@yikart/mongodb'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
+import { WriteConfirmService } from '../../agent/write-confirm'
 import { ChannelEngagementActionType, ChannelEngagementFunctionName, ChannelEngagementTargetType, ChannelPaginationMode } from '../platforms/platforms.interface'
 import { ChannelsMcpController } from './channels.mcp.controller'
 
@@ -52,6 +53,11 @@ vi.mock('./channels.mcp.service', () => ({
 }))
 
 describe('channelsMcpController', () => {
+  // 直执行替身：本文件关注 VO 序列化，dry-run 语义由 core/agent/agent-guard.spec.ts 覆盖
+  const writeConfirm = {
+    guard: (_action: string, _params: unknown, execute: () => Promise<unknown>) => execute(),
+  } as unknown as WriteConfirmService
+
   beforeEach(() => {
     commonMocks.getUser.mockClear()
     commonMocks.toYamlTextResult.mockClear()
@@ -61,7 +67,7 @@ describe('channelsMcpController', () => {
     const service = {
       getChannelPublishRecordByTaskId: vi.fn(async () => null),
     }
-    const controller = new ChannelsMcpController(service as never)
+    const controller = new ChannelsMcpController(service as never, writeConfirm)
 
     await controller.getChannelPublishRecordByTaskId({ taskId: 'task-1' })
 
@@ -88,7 +94,7 @@ describe('channelsMcpController', () => {
         rawResponse: { token: 'raw-token' },
         token: 'access-token',
       })),
-    } as never)
+    } as never, writeConfirm)
 
     await controller.getChannelWorkDetail({
       platform: AccountType.YouTube,
@@ -127,7 +133,7 @@ describe('channelsMcpController', () => {
         raw: { token: 'raw-token' },
         errorData: { token: 'error-token' },
       })),
-    } as never)
+    } as never, writeConfirm)
 
     await controller.getChannelAccountAnalytics({
       accountId: 'account-1',
@@ -157,7 +163,7 @@ describe('channelsMcpController', () => {
         pagination: { mode: ChannelPaginationMode.None },
         token: 'access-token',
       })),
-    } as never)
+    } as never, writeConfirm)
 
     await controller.listChannelEngagementComments({
       platform: AccountType.Facebook,
@@ -197,7 +203,7 @@ describe('channelsMcpController', () => {
         pendingUpdate: { title: 'draft' },
         pendingMediaJobs: [{ id: 'job-1' }],
       }]),
-    } as never)
+    } as never, writeConfirm)
 
     await controller.listChannelPublishRecords({
       accountType: AccountType.YouTube,
@@ -229,7 +235,7 @@ describe('channelsMcpController', () => {
         rawResponse: { token: 'raw-token' },
         accessToken: 'access-token',
       })),
-    } as never)
+    } as never, writeConfirm)
 
     await controller.callChannelEngagementFunction({
       platform: AccountType.Twitter,

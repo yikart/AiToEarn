@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { McpModule } from '@yikart/nest-mcp'
+import { AgentGuardModule } from '../../agent/agent-guard.module'
 import { ChannelsModule } from '../channels.module'
 import { ChannelsMcpController } from './channels.mcp.controller'
 import { ChannelsMcpService } from './channels.mcp.service'
@@ -13,6 +14,7 @@ import { ChannelsMcpService } from './channels.mcp.service'
       apiPrefix: 'channels',
       decorators: [ApiTags('MCP/Channels')],
     }),
+    AgentGuardModule,
     ChannelsModule,
   ],
   providers: [ChannelsMcpController, ChannelsMcpService],

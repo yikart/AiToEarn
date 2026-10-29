@@ -74,6 +74,13 @@
         "fix": true
       }
     },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "node apps/aitoearn-server/src/seed/seed.mjs",
+        "cwd": "{workspaceRoot}"
+      }
+    },
     "docker-context": {},
     "docker-build": {}
   }

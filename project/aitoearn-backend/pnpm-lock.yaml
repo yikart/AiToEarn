@@ -280,6 +280,9 @@ importers:
 
   apps/aitoearn-server:
     dependencies:
+      '@airongrong/plugin-api':
+        specifier: 1.0.0-beta.0
+        version: 1.0.0-beta.0
       '@modelcontextprotocol/sdk':
         specifier: 1.27.1
         version: 1.27.1(@cfworker/json-schema@4.1.1)(zod@4.3.6)
@@ -449,6 +452,12 @@ importers:
         specifier: 4.3.6
         version: 4.3.6
     devDependencies:
+      '@airongrong/capability':
+        specifier: 1.0.0-beta.0
+        version: 1.0.0-beta.0
+      '@airongrong/plugin-cli':
+        specifier: 1.0.0-beta.0
+        version: 1.0.0-beta.0
       '@types/cookie-parser':
         specifier: 1.4.10
         version: 1.4.10(@types/express@5.0.6)
@@ -991,6 +1000,19 @@ packages:
   '@ai-sdk/provider@3.0.8':
     resolution: {integrity: sha512-oGMAgGoQdBXbZqNG0Ze56CHjDZ1IDYOwGYxYjO5KLSlz5HiNQ9udIXsPZ61VWaHGZ5XW/jyjmr6t2xz2jGVwbQ==}
     engines: {node: '>=18'}
+
+  '@airongrong/capability@1.0.0-beta.0':
+    resolution: {integrity: sha512-e4DSbJ/xNx9KZ9jKdbzfFVWhLwdk1F3XKLxAIoJ5KWxSF3W8CJS+WbYTrGSR2lRLIYhta7mnpx8NthOs+4emhQ==}
+    engines: {node: '>=20'}
+
+  '@airongrong/plugin-api@1.0.0-beta.0':
+    resolution: {integrity: sha512-dfvEAOGkXqzWx7tqSd0/X11tv9mXy/897xHFhQ76RY4Y+zOWk9sCYRW5kvDpu1Ob9JrLINLE4WQ2jQo/5esuhQ==}
+    engines: {node: '>=20'}
+
+  '@airongrong/plugin-cli@1.0.0-beta.0':
+    resolution: {integrity: sha512-MJw+6Ou0R7FaTKoneVzXsaRuYEh5BrUAinoZcZ4BfGtNtBXgt8dTwSWo8X0Be9km3xtRmkNx6jLfp7f8IfJW9A==}
+    engines: {node: '>=20'}
+    hasBin: true
 
   '@angular-devkit/core@19.2.24':
     resolution: {integrity: sha512-Kd49warf6U/EyWe5BszF/eebN3zQ3bk7tgfEljAw8q/rX95UUtriJubWvp6pgzHfzBA4jwq8f+QiNZB8eBEXPA==}
@@ -6672,6 +6694,7 @@ packages:
   nats@2.29.3:
     resolution: {integrity: sha512-tOQCRCwC74DgBTk4pWZ9V45sk4d7peoE2njVprMRCBXrhJ5q5cYM7i6W+Uvw2qUrcfOSnuisrX7bEx3b3Wx4QA==}
     engines: {node: '>= 14.0.0'}
+    deprecated: Package moved. Use @nats-io/transport-node from https://github.com/nats-io/nats.js
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -8200,6 +8223,22 @@ snapshots:
   '@ai-sdk/provider@3.0.8':
     dependencies:
       json-schema: 0.4.0
+
+  '@airongrong/capability@1.0.0-beta.0':
+    dependencies:
+      '@airongrong/plugin-api': 1.0.0-beta.0
+      yaml: 2.8.3
+      zod: 4.3.6
+
+  '@airongrong/plugin-api@1.0.0-beta.0':
+    dependencies:
+      zod: 4.3.6
+
+  '@airongrong/plugin-cli@1.0.0-beta.0':
+    dependencies:
+      '@airongrong/capability': 1.0.0-beta.0
+      '@airongrong/plugin-api': 1.0.0-beta.0
+      commander: 14.0.3
 
   '@angular-devkit/core@19.2.24':
     dependencies:

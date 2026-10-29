@@ -21,6 +21,7 @@ import { tiktokConfigSchema } from './core/channels/platforms/tiktok/tiktok.conf
 import { twitterConfigSchema } from './core/channels/platforms/twitter/twitter.config'
 import { wechatConfigSchema } from './core/channels/platforms/wechat/wechat.config'
 import { youtubeConfigSchema } from './core/channels/platforms/youtube/youtube.config'
+import { pluginsConfigSchema } from './plugin-host/plugin-host.config'
 
 const httpUrlSchema = z.url({ protocol: /^https?$/ })
 
@@ -66,6 +67,7 @@ export const appConfigSchema = z.object({
   assets: assetsConfigSchema,
   aiClient: aitoearnAiClientConfigSchema,
   channel: channelConfigSchema,
+  plugins: pluginsConfigSchema,
   relay: relayConfigSchema.optional(),
 })
 

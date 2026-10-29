@@ -1,0 +1,160 @@
+# AiToEarn 能力清单（方案 §13 唯一事实源）
+# 工具契约以 §12.2 的 12 个工具为准（工具名冻结，见 §9）；backend 字段标注当前由哪些后端工具实现，
+# 未实现的契约为占位条目（hot_topics / validate_content / revoke_post / earn 任务三件套），实现后回填 backend。
+# 用法：aitoearn-plugin cap --from capability/capability.yaml --out generated [--surface mcp,ui,openapi,sdk,validation]
+# 五种产物（MCP 工具 / GUI 表单 / OpenAPI / TS SDK / 校验规则）全部由本文件派生，禁止手工改动生成物。
+version: 1
+
+actions:
+  list_accounts:
+    summary: 可用平台、账号状态、粉丝数
+    sideEffect: read
+    confirm: none
+    backend: [listChannelPlatforms]
+    inputs: {}
+    returns:
+      accounts: array
+    errors: []
+
+  hot_topics:
+    summary: 按平台取热门话题（Top N + 热度），写作前缺什么火什么
+    sideEffect: read
+    confirm: none
+    inputs:
+      platform: { type: channelId, label: 平台 }
+      count: { type: number, default: 10, label: 条数 }
+    returns:
+      topics: array
+    errors: []
+
+  create_draft:
+    summary: 建草稿，返回 draftId
+    sideEffect: draft
+    confirm: none
+    backend: [createVideoDraft, createImageTextDraft, getDraftTaskStatus]
+    inputs:
+      kind: { type: string, label: 草稿类型, ui: select }
+      title: { type: string, maxLength: 100, label: 标题 }
+      text: { type: string, maxLength: 1000, label: 正文, ui: textarea }
+    returns:
+      draftId: string
+    errors: []
+
+  validate_content:
+    summary: 按平台校验长度、图片规格、敏感词，不通过给出可执行的修复建议
+    sideEffect: read
+    confirm: none
+    inputs:
+      text: { type: string, maxLength: 1000, label: 正文, ui: textarea }
+      images: { type: array, items: url, maxItems: 9, label: 配图, ui: uploader }
+      targets: { type: array, items: channelId, label: 发布到, ui: multi-select }
+    returns:
+      issues: array
+    errors: [TEXT_TOO_LONG, MEDIA_SPEC_INVALID, AIT-AG-004]
+
+  publish_post:
+    summary: 把内容发到一个或多个平台，默认 dryRun 预演
+    sideEffect: write
+    confirm: required
+    backend: [createChannelPublishFlow, publishChannelTaskNow]
+    inputs:
+      text: { type: string, maxLength: 1000, ui: textarea, label: 正文 }
+      images: { type: array, items: url, maxItems: 9, ui: uploader, label: 配图 }
+      targets: { type: array, items: channelId, ui: multi-select, label: 发布到 }
+      dryRun: { type: boolean, default: true, hidden: true }
+      confirmToken: { type: string, label: 确认令牌, hidden: true }
+    returns:
+      postIds: array
+      urls: array
+    errors: [TEXT_TOO_LONG, MEDIA_SPEC_INVALID, AUTH_EXPIRED, AIT-AG-002, AIT-AG-003, AIT-AG-004]
+
+  schedule_post:
+    summary: 定时发布
+    sideEffect: write
+    confirm: required
+    backend: [updateChannelPublishAt]
+    inputs:
+      postId: { type: string, label: 任务 ID }
+      publishAt: { type: string, label: 定时发布时间 }
+      dryRun: { type: boolean, default: true, label: 仅预演, ui: switch, hidden: true }
+      confirmToken: { type: string, label: 确认令牌, hidden: true }
+    returns:
+      postId: string
+      publishAt: string
+    errors: [AIT-AG-002, AIT-AG-003]
+
+  list_posts:
+    summary: 历史作品与状态（默认摘要，详情走 get_metrics）
+    sideEffect: read
+    confirm: none
+    backend: [listChannelWorks, listChannelPublishRecords]
+    inputs:
+      accountId: { type: string, label: 账号 }
+      platform: { type: string, label: 平台 }
+      status: { type: number, label: 状态 }
+      time: { type: array, items: string, maxItems: 2, label: 时间范围 }
+    returns:
+      posts: array
+    errors: []
+
+  get_metrics:
+    summary: 播放/互动/涨粉
+    sideEffect: read
+    confirm: none
+    backend: [getChannelWorkAnalytics, getChannelAccountAnalytics]
+    inputs:
+      accountId: { type: string, label: 账号 }
+      platform: { type: string, label: 平台 }
+      postId: { type: string, label: 作品 ID }
+    returns:
+      metrics: object
+    errors: []
+
+  revoke_post:
+    summary: 发布后 5 分钟内撤回（超时提示到 App 手动删除）
+    sideEffect: write
+    confirm: required
+    inputs:
+      postId: { type: string, label: 作品 ID }
+      dryRun: { type: boolean, default: true, label: 仅预演, ui: switch, hidden: true }
+      confirmToken: { type: string, label: 确认令牌, hidden: true }
+    returns:
+      postId: string
+      revoked: boolean
+    errors: [AIT-AG-005]
+
+  list_earn_tasks:
+    summary: 可接的赚钱任务（奖励、门槛）
+    sideEffect: read
+    confirm: none
+    inputs: {}
+    returns:
+      tasks: array
+    errors: []
+
+  accept_earn_task:
+    summary: 接任务
+    sideEffect: write
+    confirm: required
+    inputs:
+      taskId: { type: string, label: 任务 ID }
+      dryRun: { type: boolean, default: true, label: 仅预演, ui: switch, hidden: true }
+      confirmToken: { type: string, label: 确认令牌, hidden: true }
+    returns:
+      taskId: string
+      accepted: boolean
+    errors: [AIT-AG-002, AIT-AG-003]
+
+  submit_earn_task:
+    summary: 提交作品与凭证
+    sideEffect: write
+    confirm: required
+    inputs:
+      taskId: { type: string, label: 任务 ID }
+      postId: { type: string, label: 作品 ID }
+      dryRun: { type: boolean, default: true, label: 仅预演, ui: switch, hidden: true }
+      confirmToken: { type: string, label: 确认令牌, hidden: true }
+    returns:
+      taskId: string
+      submitted: boolean
+    errors: [AIT-AG-002, AIT-AG-003]

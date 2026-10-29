@@ -55,6 +55,8 @@ export default antfu(
           enforceBuildableLibDependency: true,
           allow: [
             '^.*/eslint(\\.base)?\\.config\\.[cm]?[jt]s$',
+            // @airongrong/* 是已发布到 npm 的外部 SDK（yikart/aitoearn-sdk），不属于本 workspace
+            '^@airongrong/',
           ],
           depConstraints: [
             {

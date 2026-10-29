@@ -1,5 +1,7 @@
 import type { AxiosResponse, InternalAxiosRequestConfig } from 'axios'
+import type { PluginHostService } from '../../../../plugin-host/plugin-host.service'
 import type { BilibiliPlatformResponseBody } from '../../platforms/bilibili/bilibili.exception'
+import { PluginError, PluginErrorCode } from '@airongrong/plugin-api'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { PublishStatus } from '@yikart/mongodb'
 import { describe, expect, it, vi } from 'vitest'
@@ -53,6 +55,7 @@ function createService(
     mediaRules?: Record<string, unknown>
     mediaPolicy?: Record<string, unknown>
   } = {},
+  pluginHost?: PluginHostService,
 ) {
   const record = {
     id: 'task-1',
@@ -150,6 +153,7 @@ function createService(
     authService as never,
     stateService as never,
     queueService as never,
+    pluginHost as never,
   )
 
   return { service, publishRecordRepo, accountRepo, authService, provider, mediaService, stateService, queueService, record }
@@ -1133,5 +1137,71 @@ describe('publish task service update validation', () => {
 
     expect(stateService.markWaitingForUpdate).not.toHaveBeenCalled()
     expect(queueService.enqueueUpdate).not.toHaveBeenCalled()
+  })
+})
+
+describe('publish task service plugin hooks', () => {
+  it('fails the task without publishing when a beforePublish hook rejects it', async () => {
+    const pluginHost = {
+      runBeforePublish: vi.fn(async () => {
+        throw new PluginError(PluginErrorCode.HookRejected, '视频时长超出平台限制', { pluginId: 'hook.media-spec' })
+      }),
+      runAfterPublish: vi.fn(async () => undefined),
+    }
+    const { service, provider, stateService, record } = createService({}, {}, pluginHost as never)
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).not.toHaveBeenCalled()
+    expect(stateService.markFailed).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      category: PlatformErrorCategory.Validation,
+      code: PluginErrorCode.HookRejected,
+      retryable: false,
+    }))
+    expect(pluginHost.runAfterPublish).not.toHaveBeenCalled()
+  })
+
+  it('runs beforePublish and afterPublish around a successful publish', async () => {
+    const pluginHost = {
+      runBeforePublish: vi.fn(async () => ({ issues: [] })),
+      runAfterPublish: vi.fn(async () => undefined),
+    }
+    const { service, record } = createService({
+      publish: vi.fn(async () => ({
+        status: 200,
+        platformWorkId: 'work-9',
+        permalink: 'https://provider.example.test/work-9',
+      })),
+    }, {}, pluginHost as never)
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(pluginHost.runBeforePublish).toHaveBeenCalledWith(expect.objectContaining({
+      draftId: 'task-1',
+      visibility: 'public',
+      locale: 'zh-CN',
+    }))
+    expect(pluginHost.runAfterPublish).toHaveBeenCalledWith(expect.objectContaining({
+      externalId: 'work-9',
+      url: 'https://provider.example.test/work-9',
+    }))
+  })
+
+  it('publishes normally when no plugin host is configured', async () => {
+    const { service, provider, stateService, record } = createService({
+      publish: vi.fn(async () => ({
+        status: 200,
+        platformWorkId: 'work-1',
+        permalink: 'https://provider.example.test/work-1',
+      })),
+    })
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalled()
+    expect(stateService.markPublished).toHaveBeenCalled()
   })
 })

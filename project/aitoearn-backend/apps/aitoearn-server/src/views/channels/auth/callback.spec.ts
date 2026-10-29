@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { createRequire } from 'node:module'
-import { join } from 'node:path'
+import { dirname, join } from 'node:path'
+import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 
 const require = createRequire(import.meta.url)
@@ -8,8 +9,11 @@ const ejs = require('ejs') as {
   render: (template: string, data: Record<string, unknown>, options: Record<string, unknown>) => string
 }
 
+const specDir = dirname(fileURLToPath(import.meta.url))
+
 function renderTemplate(name: string, data: Record<string, unknown>) {
-  const templatePath = join(process.cwd(), `src/views/channels/auth/${name}.ejs`)
+  // 以本文件所在目录解析模板，避免依赖 vitest 启动时的 process.cwd()
+  const templatePath = join(specDir, `${name}.ejs`)
   const template = readFileSync(templatePath, 'utf8')
   return ejs.render(template, {
     locale: 'en-US',

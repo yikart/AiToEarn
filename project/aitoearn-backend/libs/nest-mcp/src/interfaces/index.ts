@@ -1,4 +1,5 @@
 export * from './http-adapter.interface'
 export * from './mcp-options.interface'
+export * from './mcp-tool-filter.interface'
 export * from './mcp-tool-monitor.interface'
 export * from './mcp-tool.interface'

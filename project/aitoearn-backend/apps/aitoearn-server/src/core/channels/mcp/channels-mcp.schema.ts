@@ -6,9 +6,19 @@ import { ChannelEngagementFunctionName } from '../platforms/platforms.interface'
 import { CreatePublishFlowSchema, PublishFlowContextSchema } from '../publish/flows/publish-flow.dto'
 import { PublishUpdateDataSchema } from '../publish/tasks/publish-update.schema'
 
+/**
+ * 写操作确认字段（方案 §12.2 铁律 3）：
+ * 默认 dryRun=true 只返回将要发生的变更与 confirmToken，
+ * Agent 需以 dryRun=false + confirmToken 再次调用才真正执行。
+ */
+export const writeConfirmFields = {
+  dryRun: z.boolean().optional().default(true).describe('默认 true：仅返回执行计划与 confirmToken，不产生副作用'),
+  confirmToken: z.string().optional().describe('dryRun 返回的一次性确认令牌，10 分钟内有效'),
+} as const
+
 export const CreateChannelPublishFlowSchema = CreatePublishFlowSchema.extend({
   context: PublishFlowContextSchema.omit({ source: true }).optional().describe('外部业务关联，source 固定为 MCP'),
-})
+}).extend(writeConfirmFields)
 export type CreateChannelPublishFlowParams = z.infer<typeof CreateChannelPublishFlowSchema>
 
 const PublishTimeRangeSchema = z
@@ -46,7 +56,7 @@ export type GetChannelPublishRecordByFlowIdParams = z.infer<typeof GetChannelPub
 
 export const ChannelPublishTaskSchema = z.object({
   taskId: z.string().min(1).describe('发布任务 ID'),
-})
+}).extend(writeConfirmFields)
 export type ChannelPublishTaskParams = z.infer<typeof ChannelPublishTaskSchema>
 
 export const UpdateChannelPublishAtSchema = ChannelPublishTaskSchema.extend({
@@ -127,7 +137,7 @@ export const SubmitChannelEngagementCommentSchema = z.object({
   platformWorkId: z.string().min(1).describe('平台作品 ID'),
   content: z.string().min(1).describe('评论内容'),
   parentCommentId: z.string().optional().describe('父评论 ID'),
-})
+}).extend(writeConfirmFields)
 export type SubmitChannelEngagementCommentParams = z.infer<typeof SubmitChannelEngagementCommentSchema>
 
 export const CallChannelEngagementFunctionSchema = z.object({
@@ -135,5 +145,5 @@ export const CallChannelEngagementFunctionSchema = z.object({
   platform: z.enum(AccountType).describe('平台'),
   name: z.enum(ChannelEngagementFunctionName).describe('互动函数名称'),
   data: z.record(z.string(), z.unknown()).describe('函数参数：delete_comment/hide_reply/unhide_reply 传 commentId；work 动作传 platformWorkId；quote 额外传 content；follow/unfollow 传 targetPlatformUid'),
-})
+}).extend(writeConfirmFields)
 export type CallChannelEngagementFunctionParams = z.infer<typeof CallChannelEngagementFunctionSchema>

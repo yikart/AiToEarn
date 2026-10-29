@@ -128,6 +128,10 @@ function createLogger() {
   return {
     log: vi.fn(),
     error: vi.fn(),
+    warn: vi.fn(),
+    debug: vi.fn(),
+    verbose: vi.fn(),
+    fatal: vi.fn(),
   }
 }
 

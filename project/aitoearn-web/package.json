@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 6061",
+    "dev": "node scripts/check-env.mjs && next dev -p 6061",
     "dev:local": "cross-env NEXT_PUBLIC_API_URL=http://localhost:7001/api next dev",
     "build": "next build",
     "type-check": "tsc --noEmit",
@@ -180,6 +180,12 @@
     "tailwindcss": "^4.1.18",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@parcel/watcher",
+      "sharp"
+    ]
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [

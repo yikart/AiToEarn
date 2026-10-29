@@ -2,6 +2,7 @@ import type { z } from 'zod'
 import { Injectable } from '@nestjs/common'
 import { getUser, toYamlTextResult } from '@yikart/common'
 import { Tool } from '@yikart/nest-mcp'
+import { WriteConfirmService } from '../../agent/write-confirm'
 import { ChannelAccountAnalyticsVo, ChannelWorkAnalyticsVo } from '../analytics/analytics.vo'
 import { ChannelCommentListVo, ChannelEngagementActionVo } from '../engagement/engagement.vo'
 import { ChannelPublishRecordVo } from '../publish/records/publish-record.vo'
@@ -31,16 +32,24 @@ import { ChannelsMcpService } from './channels.mcp.service'
 
 @Injectable()
 export class ChannelsMcpController {
-  constructor(private readonly channelsMcpService: ChannelsMcpService) {}
+  constructor(
+    private readonly channelsMcpService: ChannelsMcpService,
+    private readonly writeConfirm: WriteConfirmService,
+  ) {}
 
   @Tool({
     name: 'createChannelPublishFlow',
-    description: 'Create a channels publish flow with the v2 channels input shape. Side Effect: yes.',
+    description: 'Create a channels publish flow with the v2 channels input shape. Side Effect: yes. Default dryRun: returns the plan plus a one-time confirmToken.',
     parameters: CreateChannelPublishFlowSchema,
   })
   async createChannelPublishFlow(params: z.infer<typeof CreateChannelPublishFlowSchema>) {
     const user = getUser()
-    return toYamlTextResult(await this.channelsMcpService.createChannelPublishFlow(user.id, params))
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'createChannelPublishFlow',
+      params as Record<string, unknown>,
+      () => this.channelsMcpService.createChannelPublishFlow(user.id, params),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -98,7 +107,12 @@ export class ChannelsMcpController {
   })
   async publishChannelTaskNow(params: z.infer<typeof ChannelPublishTaskSchema>) {
     const user = getUser()
-    return toYamlTextResult(await this.channelsMcpService.publishChannelTaskNow(user.id, params))
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'publishChannelTaskNow',
+      params as Record<string, unknown>,
+      () => this.channelsMcpService.publishChannelTaskNow(user.id, params),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -108,7 +122,12 @@ export class ChannelsMcpController {
   })
   async cancelChannelPublishTask(params: z.infer<typeof ChannelPublishTaskSchema>) {
     const user = getUser()
-    return toYamlTextResult(await this.channelsMcpService.cancelChannelPublishTask(user.id, params))
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'cancelChannelPublishTask',
+      params as Record<string, unknown>,
+      () => this.channelsMcpService.cancelChannelPublishTask(user.id, params),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -118,7 +137,12 @@ export class ChannelsMcpController {
   })
   async updateChannelPublishAt(params: z.infer<typeof UpdateChannelPublishAtSchema>) {
     const user = getUser()
-    return toYamlTextResult(await this.channelsMcpService.updateChannelPublishAt(user.id, params))
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'updateChannelPublishAt',
+      params as Record<string, unknown>,
+      () => this.channelsMcpService.updateChannelPublishAt(user.id, params),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -128,7 +152,12 @@ export class ChannelsMcpController {
   })
   async requestChannelPublishUpdate(params: z.infer<typeof RequestChannelPublishUpdateSchema>) {
     const user = getUser()
-    return toYamlTextResult(await this.channelsMcpService.requestChannelPublishUpdate(user.id, params))
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'requestChannelPublishUpdate',
+      params as Record<string, unknown>,
+      () => this.channelsMcpService.requestChannelPublishUpdate(user.id, params),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -260,9 +289,12 @@ export class ChannelsMcpController {
   })
   async submitChannelEngagementComment(params: z.infer<typeof SubmitChannelEngagementCommentSchema>) {
     const user = getUser()
-    return toYamlTextResult(
-      ChannelEngagementActionVo.create(await this.channelsMcpService.submitChannelEngagementComment(user.id, params)),
-    )
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'submitChannelEngagementComment',
+      params as Record<string, unknown>,
+      async () => ChannelEngagementActionVo.create(await this.channelsMcpService.submitChannelEngagementComment(user.id, params)),
+      user.id,
+    ))
   }
 
   @Tool({
@@ -272,8 +304,11 @@ export class ChannelsMcpController {
   })
   async callChannelEngagementFunction(params: z.infer<typeof CallChannelEngagementFunctionSchema>) {
     const user = getUser()
-    return toYamlTextResult(
-      ChannelEngagementActionVo.create(await this.channelsMcpService.callChannelEngagementFunction(user.id, params)),
-    )
+    return toYamlTextResult(await this.writeConfirm.guard(
+      'callChannelEngagementFunction',
+      params as Record<string, unknown>,
+      async () => ChannelEngagementActionVo.create(await this.channelsMcpService.callChannelEngagementFunction(user.id, params)),
+      user.id,
+    ))
   }
 }

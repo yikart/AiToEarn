@@ -1,0 +1,27 @@
+{
+  "$schema": "https://cdn.aitoearn.ai/schema/plugin-v1.json",
+  "id": "skill.aitoearn",
+  "version": "1.0.0",
+  "apiVersion": "^1.0.0",
+  "type": "skill",
+  "name": "AiToEarn Agent 技能包",
+  "description": "让任意 Agent 通过 AiToEarn 完成多平台发布、数据查询与账号管理；开发者可用 Open API，无代码用户装技能即用",
+  "contributes": {
+    "skills": [
+      "aitoearn-publish",
+      "aitoearn-analytics",
+      "aitoearn-accounts"
+    ]
+  },
+  "permissions": {
+    "network": []
+  },
+  "engines": {
+    "aitoearn": ">=1.8.0 <3"
+  },
+  "license": "MIT",
+  "publisher": {
+    "id": "aitoearn-official",
+    "name": "aitoearn-official"
+  }
+}

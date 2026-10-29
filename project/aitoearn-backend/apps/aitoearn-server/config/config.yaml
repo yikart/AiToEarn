@@ -220,3 +220,18 @@ relay:
   serverUrl: https://aitoearn.ai/api
   apiKey: ""
   callbackUrl: http://localhost:8080/api/v2/channels/relay/callback
+
+# 插件宿主（方案 §5/§12）：留空 dir 表示不加载任何插件
+plugins:
+  # 部署时指向持久化卷，例如 /app/plugins；开发可指向 project/aitoearn-backend/plugins
+  dir: ""
+  # adapter 插件的受信 ed25519 公钥（PEM 字符串数组），未列出的发布者一律拒绝加载
+  trustedKeys: []
+  # 宿主版本，用于 engines.aitoearn 兼容性判断
+  hostVersion: 1.0.0
+  # 文件系统隔离：auto（Node 支持则启用）| on（强制，生产建议）| off（仅本地调试）
+  fsIsolation: auto
+  # 是否允许把明文密钥回传插件进程；false 时插件只能用 http.request 的 authSecret 注入
+  allowRawSecrets: false
+  # 插件 KV 存储后端：redis（默认，多实例共享）| memory（仅本地调试）
+  storage: redis

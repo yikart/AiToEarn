@@ -11,6 +11,7 @@ import { getErrorMessage, zodToJsonSchemaOptions } from '@yikart/common'
 import { z, ZodTypeAny } from 'zod'
 import { ResultTool } from '../../interfaces'
 import { HttpRequest } from '../../interfaces/http-adapter.interface'
+import { MCP_TOOL_FILTER, McpToolFilter } from '../../interfaces/mcp-tool-filter.interface'
 import { MCP_TOOL_MONITOR, McpToolMonitor } from '../../interfaces/mcp-tool-monitor.interface'
 import { McpRegistryService } from '../mcp-registry.service'
 import { McpHandlerBase } from './mcp-handler.base'
@@ -22,6 +23,7 @@ export class McpToolsHandler extends McpHandlerBase {
     registry: McpRegistryService,
     @Inject('MCP_MODULE_ID') private readonly mcpModuleId: string,
     @Inject(MCP_TOOL_MONITOR) private readonly toolMonitor: McpToolMonitor,
+    @Inject(MCP_TOOL_FILTER) private readonly toolFilter: McpToolFilter,
   ) {
     super(moduleRef, registry, McpToolsHandler.name)
   }
@@ -59,6 +61,58 @@ export class McpToolsHandler extends McpHandlerBase {
     }
   }
 
+  private buildToolList(): ResultTool[] {
+    return this.registry.getTools(this.mcpModuleId).map((tool) => {
+      // Create base schema
+      const toolSchema: Partial<ResultTool> = {
+        name: tool.metadata.name,
+        description: tool.metadata.description,
+        annotations: tool.metadata.annotations,
+        _meta: tool.metadata._meta,
+      }
+
+      // Add input schema if defined
+      if (tool.metadata.parameters) {
+        toolSchema['inputSchema'] = z.toJSONSchema(tool.metadata.parameters, {
+          ...zodToJsonSchemaOptions,
+          io: 'input',
+        }) as ResultTool['inputSchema']
+      }
+
+      // Add output schema if defined, ensuring it has type: 'object'
+      if (tool.metadata.outputSchema) {
+        const outputSchema = z.toJSONSchema(tool.metadata.outputSchema, {
+          ...zodToJsonSchemaOptions,
+          io: 'output',
+        })
+
+        // Create a new object that explicitly includes type: 'object'
+        const jsonSchema = {
+          ...outputSchema,
+          type: 'object',
+        }
+
+        toolSchema['outputSchema'] = jsonSchema as ResultTool['outputSchema']
+      }
+
+      return toolSchema as ResultTool
+    })
+  }
+
+  /** CallTool 拦截：被过滤器隐藏的工具一律按未知工具拒绝（与 tools/list 口径一致） */
+  private assertToolVisible(toolName: string): void {
+    const nameStubs = this.registry
+      .getTools(this.mcpModuleId)
+      .map(tool => ({ name: tool.metadata.name }) as ResultTool)
+    const visible = new Set(this.toolFilter.filterTools(nameStubs).map(tool => tool.name))
+    if (!visible.has(toolName)) {
+      throw new McpError(
+        ErrorCode.MethodNotFound,
+        `Unknown tool: ${toolName}`,
+      )
+    }
+  }
+
   registerHandlers(mcpServer: McpServer, httpRequest: HttpRequest) {
     if (this.registry.getTools(this.mcpModuleId).length === 0) {
       this.logger.debug('No tools registered, skipping tool handlers')
@@ -66,44 +120,8 @@ export class McpToolsHandler extends McpHandlerBase {
     }
 
     mcpServer.server.setRequestHandler(ListToolsRequestSchema, () => {
-      const tools = this.registry.getTools(this.mcpModuleId).map((tool) => {
-        // Create base schema
-        const toolSchema: Partial<ResultTool> = {
-          name: tool.metadata.name,
-          description: tool.metadata.description,
-          annotations: tool.metadata.annotations,
-          _meta: tool.metadata._meta,
-        }
-
-        // Add input schema if defined
-        if (tool.metadata.parameters) {
-          toolSchema['inputSchema'] = z.toJSONSchema(tool.metadata.parameters, {
-            ...zodToJsonSchemaOptions,
-            io: 'input',
-          }) as ResultTool['inputSchema']
-        }
-
-        // Add output schema if defined, ensuring it has type: 'object'
-        if (tool.metadata.outputSchema) {
-          const outputSchema = z.toJSONSchema(tool.metadata.outputSchema, {
-            ...zodToJsonSchemaOptions,
-            io: 'output',
-          })
-
-          // Create a new object that explicitly includes type: 'object'
-          const jsonSchema = {
-            ...outputSchema,
-            type: 'object',
-          }
-
-          toolSchema['outputSchema'] = jsonSchema as ResultTool['outputSchema']
-        }
-
-        return toolSchema
-      })
-
       return {
-        tools,
+        tools: this.toolFilter.filterTools(this.buildToolList()),
       }
     })
 
@@ -111,6 +129,8 @@ export class McpToolsHandler extends McpHandlerBase {
       CallToolRequestSchema,
       async (request) => {
         this.logger.debug('CallToolRequestSchema is being called')
+
+        this.assertToolVisible(request.params.name)
 
         const toolInfo = this.registry.findTool(
           this.mcpModuleId,

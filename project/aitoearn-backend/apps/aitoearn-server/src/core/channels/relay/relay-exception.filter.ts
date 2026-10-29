@@ -105,6 +105,18 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
         }
       }
 
+      // 转发审计：redirectUri / callbackUrl 携带授权回跳地址，落日志前必须脱敏
+      this.logger.log({
+        exception: exception.constructor.name,
+        method: request.method,
+        originalUrl: this.redactRelayUrl(request.originalUrl),
+        targetUrl: this.redactRelayUrl(targetUrl),
+        userId: request.user?.id,
+        groupId: this.extractGroupId(request),
+        bodyKeys: targetBody && typeof targetBody === 'object' ? Object.keys(targetBody as Record<string, unknown>) : [],
+        forwardedHeaderKeys: Object.keys(forwardHeaders).filter(key => key !== 'x-api-key'),
+      }, 'Relay proxy request')
+
       try {
         this.logger.debug({
           method: request.method as Method,
@@ -121,7 +133,7 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
           validateStatus: () => true,
         })
         this.logger.debug({
-          proxyResponse
+          proxyResponse,
         })
 
         response.status(proxyResponse.status).json(proxyResponse.data)
@@ -164,6 +176,26 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
     }
 
     return JSON.parse(bodyStr)
+  }
+
+  /** redirectUri / callbackUrl 携带授权回跳地址，审计日志里统一脱敏为 [redacted] */
+  private redactRelayUrl(url: string): string {
+    const placeholder = '[redacted]'
+    const base = 'http://aitoearn.internal'
+    const isAbsolute = /^https?:\/\//.test(url)
+    try {
+      const parsed = new URL(url, base)
+      for (const key of ['redirectUri', 'callbackUrl']) {
+        if (parsed.searchParams.has(key)) {
+          parsed.searchParams.set(key, placeholder)
+        }
+      }
+      const serialized = parsed.toString()
+      return isAbsolute ? serialized : serialized.slice(base.length)
+    }
+    catch {
+      return url
+    }
   }
 
   private buildForwardHeaders(request: Request): Record<string, string> {

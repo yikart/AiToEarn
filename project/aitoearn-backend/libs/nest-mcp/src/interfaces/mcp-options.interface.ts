@@ -44,6 +44,12 @@ export interface McpOptions {
    * Defaults to a no-op adapter if not provided.
    */
   toolMonitorProvider?: Provider
+  /**
+   * Custom provider for MCP tool filtering.
+   * Must provide `MCP_TOOL_FILTER` token implementing `McpToolFilter`.
+   * Defaults to an identity (no-op) filter if not provided.
+   */
+  toolFilterProvider?: Provider
 }
 
 // Async variant omits transport since controllers are not auto-registered in forRootAsync

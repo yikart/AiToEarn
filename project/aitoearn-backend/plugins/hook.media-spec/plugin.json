@@ -1,0 +1,30 @@
+{
+  "$schema": "https://cdn.aitoearn.ai/schema/plugin-v1.json",
+  "id": "hook.media-spec",
+  "version": "1.0.0",
+  "apiVersion": "^1.0.0",
+  "type": "hook",
+  "name": "媒体规格校验",
+  "description": "发布前校验图片数量/尺寸与视频时长，不通过即拒绝发布",
+  "entry": {
+    "module": "dist/index.mjs",
+    "sha256": "b87c77a2adba0da354fef7c587e45eeafc522e5045d711f3654eb48d59da0eab"
+  },
+  "contributes": {
+    "hooks": [
+      "validateDraft",
+      "beforePublish"
+    ]
+  },
+  "permissions": {
+    "network": []
+  },
+  "engines": {
+    "aitoearn": ">=1.8.0 <3"
+  },
+  "license": "MIT",
+  "publisher": {
+    "id": "aitoearn-official",
+    "name": "aitoearn-official"
+  }
+}

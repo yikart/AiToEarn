@@ -18,10 +18,13 @@ import { ChannelsMcpModule } from './core/channels/mcp/channels.mcp.module'
 import { RelayModule } from './core/channels/relay/relay.module'
 import { ContentMcpModule } from './core/content/content-mcp.module'
 import { ContentModule } from './core/content/content.module'
+import { OpenApiModule } from './core/open-api/open-api.module'
 import { PublishModule } from './core/publish-record/publish-record.module'
 import { ShortLinkModule } from './core/short-link/short-link.module'
 import { UnifiedMcpModule } from './core/unified-mcp/unified-mcp.module'
 import { UserModule } from './core/user/user.module'
+import { PluginHostModule } from './plugin-host/plugin-host.module'
+import { PluginSecretBridge } from './plugin-host/plugin-host.secret-bridge'
 
 @Module({
   imports: [
@@ -69,6 +72,8 @@ import { UserModule } from './core/user/user.module'
     UserModule,
     ContentModule,
     ChannelsModule,
+    PluginHostModule,
+    OpenApiModule,
     PublishModule,
     ShortLinkModule,
     ApiKeyModule,
@@ -79,6 +84,6 @@ import { UserModule } from './core/user/user.module'
     UnifiedMcpModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [PluginSecretBridge],
 })
 export class AppModule { }
