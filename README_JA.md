@@ -46,6 +46,7 @@ AiToEarnは**AIエージェントによる自動化**を通じて、OPC（一人
 
 ## 最新情報
 
+- **2026-10-29**: リポジトリ内蔵のElectronデスクトップクライアントプロジェクト（aitoearn-electron）を削除し、Web・サーバー側機能に注力。ドキュメントも整理しました。
 - **2026-06-23**: [2.5バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) — Relay 設定は設定管理画面で操作する方式になり、Server Relay と AI Relay に分かれました。Server Relay は公開プラットフォームの認証に、AI Relay はプラットフォーム提供の AI モデル利用に使用します。新たに[オープンプラットフォーム](https://docs.aitoearn.cn/)も追加されました。
 - **2026-05-21**: [2.4バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) — 草稿生成が HappyHorse 1.0 と Seedance 2.0 に新対応。動画・画像/テキスト草稿の一括生成、複数モデル選択、参照画像/動画、対象プラットフォーム制限、文案プロンプトを強化し、新しいUIスタイルと Twitter/X の探索・エンゲージメント機能も強化しました。
 - **2026-04-20**: OpenClaw（ロブスター）で AiToEarn の収益化タスクに新対応し、OpenClaw 内で直接受け取り実行できるようになりました。

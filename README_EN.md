@@ -46,6 +46,7 @@ Douyin, Xiaohongshu (Rednote), Kuaishou, Bilibili, WeChat Channels, WeChat Offic
 
 ## What's New
 
+- **2026-10-29**: Removed the bundled Electron desktop client project (aitoearn-electron) to focus on web and server-side capabilities, and streamlined the docs accordingly.
 - **2026-06-23**: [2.5 version](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) — Relay configuration now happens in the Configuration UI and is split into Server Relay and AI Relay: Server Relay handles publishing platform authorization, while AI Relay lets users use AI models provided by the platform; also introduced the [Open Platform](https://docs.aitoearn.cn/).
 - **2026-05-21**: [2.4 version](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) — Draft generation now supports HappyHorse 1.0 and Seedance 2.0, with improved batch video/image-text draft generation, multi-model selection, reference images/videos, target-platform limits, and caption prompts; refreshed interface style and enhanced Twitter/X exploration and engagement.
 - **2026-04-20**: OpenClaw now supports AiToEarn earning workflows, so you can receive and execute monetization tasks directly inside OpenClaw.
