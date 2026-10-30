@@ -306,7 +306,7 @@ pnpm run dev
 
 利用中に困ったこと、使い方の質問、不具合がある場合は、まず [GitHub Issues](https://github.com/yikart/AiToEarn/issues) でご連絡ください。内容を一元管理し、順番に対応できます。
 
-- Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- Telegram: [https://t.me/+447704864210](https://t.me/+447704864210)
 - WeChat：QRコードをスキャンして追加
 
 <img src="presentation/wechat-1029.png" alt="WeChat QRコード" width="200">

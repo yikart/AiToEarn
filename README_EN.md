@@ -305,7 +305,7 @@ Please see [Contributing Guide](./CONTRIBUTING.md) to get started.
 
 If you run into usage difficulties, questions, or unexpected behavior, please open a [GitHub Issue](https://github.com/yikart/AiToEarn/issues) first so we can track and respond in one place.
 
-- Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- Telegram: [https://t.me/+447704864210](https://t.me/+447704864210)
 - WeChat: Scan to add
 
 <img src="presentation/wechat-1029.png" alt="WeChat QR Code" width="200">

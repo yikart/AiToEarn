@@ -306,7 +306,7 @@ pnpm run dev
 
 如果你在使用过程中遇到困难、使用问题或异常情况，优先通过 [GitHub Issues](https://github.com/yikart/AiToEarn/issues) 提交反馈，方便我们统一跟进和处理。
 
-- Telegram: [https://t.me/harryyyy2025](https://t.me/harryyyy2025)
+- Telegram: [https://t.me/+447704864210](https://t.me/+447704864210)
 - 微信：扫码添加
 
 <img src="presentation/wechat-1029.png" alt="微信二维码" width="200">
