@@ -1,193 +1,121 @@
-# [Aitoearn：OPC（一人会社）のためのAIコンテンツマーケティングエージェント](https://aitoearn.ai)
+# AiToEarn
 
-<a href="https://trendshift.io/repositories/20785" target="_blank"><img src="https://trendshift.io/api/badge/repositories/20785" alt="yikart%2FAiToEarn | Trendshift" style="width: 250px; height: 55px;" width="250" height="55"/></a>
+**OPC（一人会社）のための AI コンテンツマーケティングエージェント**
 
-[![GitHub stars](https://img.shields.io/github/stars/yikart/AiToEarn?color=fa6470)](https://github.com/yikart/AiToEarn/stargazers)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-[![Required Node.JS 20.18.x](https://img.shields.io/static/v1?label=node&message=20.18.x&logo=node.js&color=3f893e)](https://nodejs.org/about/releases)
+[![Stars](https://img.shields.io/github/stars/yikart/AiToEarn?style=flat-square&color=3ECF8E&logo=github)](https://github.com/yikart/AiToEarn/stargazers)
+[![License](https://img.shields.io/badge/license-MIT-3ECF8E?style=flat-square)](LICENSE)
+[![Node](https://img.shields.io/badge/node-20.18.x-3ECF8E?style=flat-square&logo=node.js)](https://nodejs.org/about/releases)
+[![Docs](https://img.shields.io/badge/docs-aitoearn.ai-3ECF8E?style=flat-square)](https://docs.aitoearn.ai/en/home)
+[![Trendshift](https://trendshift.io/api/badge/repositories/20785)](https://trendshift.io/repositories/20785)
 
-日本語 | [简体中文](README.md) | [English](README_EN.md)
+[简体中文](README.md) · [English](README_EN.md) · 日本語
 
-**収益化 · 公開 · エンゲージメント · クリエイト —— オールインワンプラットフォーム。**
+**収益化 · 公開 · エンゲージメント · クリエイト —— AI によるコンテンツ収益化のオールインワンプラットフォーム。**
 
-AiToEarnは**AIエージェントによる自動化**を通じて、OPC（一人会社）、クリエイター、ブランド、企業が世界中の主要プラットフォームでコンテンツを構築、配信、収益化するのを支援します。
+AiToEarn は AI エージェントの自動化により、OPC（一人会社）、クリエイター、ブランド、企業が世界中の主要プラットフォームでコンテンツを構築・配信・収益化するのを支援します。
 
-対応チャンネル：
-抖音（Douyin）、小紅書（Rednote）、快手（Kuaishou）、bilibili、視頻号（WeChat Channels）、微信公式アカウント（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、Twitter（X）、Pinterest、LinkedIn
-
-## 特別なご支援に感謝 ❤️
-
-<table align="center">
-  <tr>
-    <td align="center" width="120">
-      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="秘塔科技" width="100"></a><br>
-      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>秘塔科技</strong></a>
-    </td>
-    <td align="left">
-      本プロジェクトをご支援いただいた<a href="https://metaso.cn/minimax-h3/?s=ATE">秘塔科技</a>に心より感謝します！<br>
-      <strong>MiniMax H3 動画生成 API｜秘塔科技</strong><br>
-      秘塔科技は、コストパフォーマンスに優れた MiniMax H3 動画生成サービスを提供しています：<strong>768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒</strong>。ネイティブ 2K と音声・映像の同期に対応し、API は <strong>OpenAI プロトコル</strong>と互換性があり、<strong>ComfyUI</strong>にも対応しています。GPU を自前で用意する必要はありません。<br>
-      🎁 <a href="https://metaso.cn/minimax-h3/?s=ATE">AiToEarn 専用リンクから登録</a>すると、無料クレジットと限定特典を受け取れます。<br>
-      ビジネスに関するお問い合わせは WeChat：metasota12 まで。
-    </td>
-  </tr>
-</table>
-
-## 🚀 AiToEarnをすぐに使う（5つの方法）
-
-| 方法 | 対象 | デプロイ必要？ |
-|------|------|--------------|
-| [① ウェブサイトで直接使う](#use-web) | すべてのユーザー | ❌ 不要 |
-| [③ Claude / Cursor などのAIアシスタントで使う](https://docs.aitoearn.ai/zh/use/introduction) | AIツールユーザー | ❌ 不要 |
-| [④ Dockerワンクリックデプロイ](#use-docker) | 自己デプロイしたいチーム | ✅ サーバー必要 |
-| [⑤ ソースコードから開発](#use-source) | 開発者 | ✅ 開発環境必要 |
-
-> 💡 **方法③④は事前にAPI Keyの取得が必要です**。[API Keyの取得方法](#get-api-key)を先にご覧ください。
-
-## 最新情報
-
-- **2026-10-29**: リポジトリ内蔵のElectronデスクトップクライアントプロジェクト（aitoearn-electron）を削除し、Web・サーバー側機能に注力。ドキュメントも整理しました。
-- **2026-06-23**: [2.5バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) — Relay 設定は設定管理画面で操作する方式になり、Server Relay と AI Relay に分かれました。Server Relay は公開プラットフォームの認証に、AI Relay はプラットフォーム提供の AI モデル利用に使用します。新たに[オープンプラットフォーム](https://docs.aitoearn.cn/)も追加されました。
-- **2026-05-21**: [2.4バージョン](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) — 草稿生成が HappyHorse 1.0 と Seedance 2.0 に新対応。動画・画像/テキスト草稿の一括生成、複数モデル選択、参照画像/動画、対象プラットフォーム制限、文案プロンプトを強化し、新しいUIスタイルと Twitter/X の探索・エンゲージメント機能も強化しました。
-- **2026-04-20**: OpenClaw（ロブスター）で AiToEarn の収益化タスクに新対応し、OpenClaw 内で直接受け取り実行できるようになりました。
-- **2026-03-26**: [2.1バージョン](https://www.aitoearn.ai/) — コンテンツ取引マーケットプレイスをリリース。OpenClaw（ロブスター）対応を追加し、OpenClaw内で直接AiToEarnを使用可能に。MCPプロトコル対応を追加し、Claude、CursorなどMCP対応のエージェントやLLMでAiToEarnを使用可能に。
-- **2026-02-07**: [1.8.0バージョン](https://www.aitoearn.ai/) — オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多様なオフラインビジネスに対応。オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換し、コンテンツ公開とユーザー参加メカニズムを通じて店舗のオンライン露出と来店トラフィックの増加を支援。
-- **2025-12-15**: 「All In Agent」の始まり！コンテンツの自動生成・公開、そしてAitoearnの操作を支援するスーパーAIエージェントを追加。[v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)
-- **2025-11-28**: アプリ内自動更新に対応。作成画面に多くのAI機能を追加：要約、拡張、画像生成、動画生成、タグ生成など。Nano Banana Proにも対応。[v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)
-- **2025-11-12**: 初のオープンソースで完全に使用可能なバージョン。[v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)
-- **2025-09-16**: 初の海外展開バージョン、Facebook、Instagram、Threads、Twitter、YouTube、TikTok、Pinterestに対応。[v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18)
-- **2025-02-26**: 初のオープンソースバージョン、小紅書・抖音・快手・ビデオアカウントへのワンクリック動画投稿を実現。[v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)
-
-<details>
-  <summary><h2 style="display:inline;margin:0">目次</h2></summary>
-
-  <br/>
-
-  1. [AiToEarnをすぐに使う（5つの方法）](#-aitoearnをすぐに使う5つの方法)
-  2. [最新情報](#最新情報)
-  3. [主な機能](#主な機能)
-  4. [API Keyの取得方法](#get-api-key)
-  5. [貢献ガイド](#貢献ガイド)
-  6. [お問い合わせ](#お問い合わせ)
-  7. [推奨](#推奨)
-</details>
-
-## 主な機能
-
-AiToEarnはコンテンツクリエイターの完全な収益化パイプラインを中心に、4つのエージェント機能を提供します：
-
-> **収益化 · 公開 · エンゲージメント · クリエイト**
+- **中国**：抖音（Douyin） · 小紅書（Rednote） · 快手（Kuaishou） · bilibili · 視頻号（WeChat Channels） · 微信公式アカウント
+- **グローバル**：TikTok · YouTube · Facebook · Instagram · Threads · X（Twitter） · Pinterest · LinkedIn
 
 ---
 
-### 💰 収益化 —— コンテンツで稼ぐ
+## 特別なご支援に感謝
 
-AiToEarnの最も重要な目標：**すべてのクリエイターが稼げるようにする**。
+本プロジェクトをご支援いただいた [秘塔科技（Metaso）](https://metaso.cn/minimax-h3/?s=ATE) に心より感謝します。
 
-クリエイターはプラットフォーム上でコンテンツを販売し、ブランドのプロモーションタスクを完了できます。すべての決済は成果報酬型で、3つの決済モードを提供：
+[![Metaso](docs/sponsors/metaso-logo.png)](https://metaso.cn/minimax-h3/?s=ATE)
+
+**MiniMax H3 動画生成 API**：768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒。ネイティブ 2K と音声・映像の同期に対応し、API は OpenAI プロトコルと互換性があり、ComfyUI にも対応しています。GPU を自前で用意する必要はありません。
+
+[AiToEarn 専用リンクから登録](https://metaso.cn/minimax-h3/?s=ATE)すると、無料クレジットと限定特典を受け取れます。ビジネスに関するお問い合わせは WeChat：metasota12 まで。
+
+---
+
+## 目次
+
+- [主な機能](#主な機能)
+- [クイックスタート](#クイックスタート)
+- [MCP 統合](#mcp-統合)
+- [Docker デプロイ](#docker-ワンクリックデプロイ)
+- [最新情報](#最新情報)
+- [コミュニティとサポート](#コミュニティとサポート)
+- [推奨プロジェクト](#推奨プロジェクト)
+
+---
+
+## 主な機能
+
+AiToEarn はクリエイターの完全な収益化パイプラインを中心に、4 つのエージェント機能を提供します：**収益化 · 公開 · エンゲージメント · クリエイト**。
+
+### 💰 Monetize —— コンテンツで稼ぐ
+
+AiToEarn の最重要目標：すべてのクリエイターが稼げるようにすること。クリエイターはプラットフォーム上でコンテンツを販売し、ブランドのプロモーションタスクを完了できます。すべての決済は成果報酬型です：
 
 | 決済モード | 正式名称 | 意味 |
-|---------|------|------|
+|---------|---------|------|
 | **CPS** | Cost Per Sale | 売上額に基づいて決済 |
 | **CPE** | Cost Per Engagement | エンゲージメント数に基づいて決済 |
 | **CPM** | Cost Per Mille | 再生数に基づいて決済 |
 
-<img src="presentation/monetize-cn.png" width="30%">
+![Monetize](presentation/monetize-cn.png)
+
+### 📢 Publish —— コンテンツ公開
+
+ワンクリックで 14+ の主要プラットフォームにコンテンツを配信。プラットフォームごとに手作業で投稿する日々を終わらせましょう。統一カレンダーで全プラットフォームの公開日時をスケジューリングできます。
+
+![Publish](presentation/publish-cn.png) ![Channels](presentation/channel-cn.png)
+
+▶ デモ動画：[YouTube — Publish](https://www.youtube.com/watch?v=5041jEKaiU8)
+
+### 💬 Engage —— コンテンツエンゲージメント
+
+AiToEarn ブラウザ拡張により、対応プラットフォーム全体でエンゲージメント運用を自動化：自動いいね・保存・フォロー、AI によるコメントへのスマート返信、「リンクを知りたい」「どこで購入？」など高コンバージョン信号の検出、ブランド言及のリアルタイム監視とホットトピックへの積極的な参加。
+
+▶ デモ動画：[YouTube — Engage](https://youtu.be/-QoHNrZBmp0)
+
+### 🎨 Create —— コンテンツ制作
+
+コンテンツ制作ワークフローをエージェントで再構築。必要内容をエージェントに伝えるだけで、アイデアから完成品までを自動で処理します：
+
+- **動画**：Grok / Veo / Seedance などの動画生成モデル、動画翻訳、動画編集を自動呼び出し
+- **画像 / テキスト**：Nano Banana などの最新の画像モデルを呼び出し、高品質な視覚コンテンツを自動生成
+- **一括生成**：タスクを一括投入すればエージェントが並列で複数コンテンツを生成。マトリックスアカウント運用や大規模配信に最適
+
+▶ デモ動画：[YouTube — Create](https://youtu.be/y900LxIrZT4)
 
 ---
 
-### 📢 公開 —— コンテンツ公開エージェント
+## クイックスタート
 
-ワンクリックで世界中の10以上の主要プラットフォームにコンテンツを配信。各プラットフォームで手動投稿する手間から解放されます。
+| 方法 | 対象 | デプロイ | エントリ |
+|------|------|---------|---------|
+| [① ウェブサイトで直接使う](#-ウェブサイトで直接使う) | すべてのユーザー | ❌ | [aitoearn.cn](https://aitoearn.cn/) · [aitoearn.ai](https://aitoearn.ai/) |
+| [② MCP 統合](#mcp-統合) | Claude / Cursor などの AI アシスタントユーザー | ❌ | MCP 統合セクション参照 |
+| [③ Docker デプロイ](#docker-ワンクリックデプロイ) | 自己デプロイしたいチーム | ✅ サーバー | 下記 3 コマンド |
 
-- **マルチプラットフォーム配信**：抖音、快手、B站、小紅書、視頻号（WeChat Channels）、微信公式アカウント（WeChat Official Accounts）、TikTok、YouTube、Facebook、Instagram、Threads、X（Twitter）、Pinterest、LinkedInに対応
-- **カレンダースケジュール**：カレンダーのように全プラットフォームのコンテンツ公開時間を統一的に計画
+### ① ウェブサイトで直接使う
 
-<img src="presentation/publish-cn.png" width="30%"> <img src="presentation/channel-cn.png" width="30%">
+設定不要、ブラウザを開くだけで利用できます：
 
-> ▶ デモ動画を見る
-
-<a href="https://www.youtube.com/watch?v=5041jEKaiU8">
-  <img src="https://img.youtube.com/vi/5041jEKaiU8/0.jpg" alt="公開 デモ動画" width="480">
-</a>
-
----
-
-### 💬 エンゲージメント —— コンテンツ交流エージェント
-
-AiToEarnブラウザ拡張機能を通じて、上記のすべてのプラットフォームで自動化された交流運用を実現。
-
-- **自動化アクション**：自動いいね、保存、フォロー — 大規模な一括操作
-- **AIスマート返信**：LLMを使用して各コメントに的確な返信を生成
-- **コメントマイニング**：「リンクください」「購入方法は」などの高コンバージョンシグナルを検出し、即座に対応
-- **ブランドモニタリング**：ブランドに関する言及をリアルタイムで追跡し、トレンドの会話に積極的に参加
-
-> ▶ デモ動画を見る
-
-<a href="https://youtu.be/-QoHNrZBmp0">
-  <img src="./presentation/engage-thumbnail-cn.png" alt="エンゲージメント デモ動画" width="480">
-</a>
+- 🇨🇳 中国ユーザー：[aitoearn.cn](https://aitoearn.cn/)
+- 🌍 海外ユーザー：[aitoearn.ai](https://aitoearn.ai/)
 
 ---
 
-### 🎨 クリエイト —— コンテンツ作成エージェント
+## MCP 統合
 
-エージェント方式でコンテンツ制作ワークフローを再構築しました。エージェントにコンテンツのニーズを伝えるだけで、アイデアから完成品まで全てを自動的に処理します。
+> 前提条件：先に [API Key](https://docs.aitoearn.ai/en/use/api-key) を取得してください（設定 → API Key → 作成）。
 
-**動画コンテンツ**：エージェントが自動的に動画生成モデル（Grok、Veo、Seedanceなど）、動画翻訳モジュール、動画編集モジュールを呼び出し、一貫して動画を制作。
+AiToEarn は MCP プロトコルに対応するすべての AI アシスタントと連携できます。**API Key の環境に合ったアドレスを選択**してください。環境と Key が一致しないと `401` が返ります：
 
-**画像・テキストコンテンツ**：Nano Bananaなどのトップクラスの画像モデルをサポートし、高品質なビジュアルコンテンツを自動生成。
-
-**一括生成**：作成タスクを一括で投入 — エージェントが複数のコンテンツを並列生成。マトリックスアカウント運用や大規模コンテンツ配信に最適。
-
-> ▶ デモ動画を見る
-
-<a href="https://youtu.be/y900LxIrZT4">
-  <img src="./presentation/display-1.5.2png.png" alt="クリエイト デモ動画" width="480">
-</a>
-
----
-
-<h2 id="use-web">① ウェブサイトで直接使う</h2>
-
-最も簡単な方法 — ブラウザを開くだけで使用可能：
-
-- 🇨🇳 中国のユーザー：**[aitoearn.cn](https://aitoearn.cn/)**
-- 🌍 その他のユーザー：**[aitoearn.ai](https://aitoearn.ai/)**
-
----
-
-<h2 id="get-api-key">🔑 API Keyの取得方法（以下の手順に必要）</h2>
-
-> 以下の方法③④にはAPI Keyが必要です。一度取得すれば、すべての方法で使用可能です。
-
-**3ステップで取得**：
-
-1. [aitoearn.cn](https://aitoearn.cn/)（中国）または[aitoearn.ai](https://aitoearn.ai/)（その他）を開き、登録・ログイン
-2. 左メニューの**設定**をクリック
-3. **API Key**に移動し、作成をクリックして、生成されたキーをコピー
-
-<img src="presentation/app-screenshot/0.%20api-key/api-key-settings.png" alt="API Key取得" width="600">
-
----
-
-<h2 id="use-in-claude">③ Claude / Cursor / その他のAIアシスタントで使う</h2>
-
-> 前提条件：[API Keyを取得済み](#get-api-key)
-
-AiToEarnはMCPプロトコルに対応するすべてのAIアシスタントで動作します。一般的なツールの設定方法：
-
-API Key の取得元に合わせて URL を選択してください。環境と Key が一致しない場合は 401 になります。
-
-| 環境 | MCP URL | SSE URL |
-|------|---------|---------|
+| 環境 | MCP アドレス | SSE アドレス |
+|------|-------------|-------------|
 | 中国版 | `https://aitoearn.cn/api/unified/mcp` | `https://aitoearn.cn/api/unified/sse` |
 | 国際版 | `https://aitoearn.ai/api/unified/mcp` | `https://aitoearn.ai/api/unified/sse` |
 
-<details open>
-<summary><b>Claude Desktop</b></summary>
+### Claude Desktop
 
-`claude_desktop_config.json`を見つけて編集し、以下を追加：
+`claude_desktop_config.json` を編集し、以下を追加：
 
 ```json
 {
@@ -196,50 +124,24 @@ API Key の取得元に合わせて URL を選択してください。環境と 
       "type": "http",
       "url": "https://aitoearn.ai/api/unified/mcp",
       "headers": {
-        "x-api-key": "あなたのAPI-Key"
+        "x-api-key": "your-api-key"
       }
     }
   }
 }
 ```
 
-</details>
+### Cursor / その他の AI アシスタント
 
-<details>
-<summary><b>Cursor</b></summary>
+MCP 設定に **MCP アドレス** と **認証ヘッダー**（`x-api-key: your-api-key`）を入力してください。各ツールの手順とスクリーンショット入り解説は [docs の MCP ガイド](https://docs.aitoearn.ai/api-reference/post-api-ai-agent-mcp) をご覧ください。
 
-CursorのMCP設定で以下を追加：
-
-```
-MCP URL: https://aitoearn.ai/api/unified/mcp
-認証ヘッダー: x-api-key: あなたのAPI-Key
-```
-
-</details>
-
-<details>
-<summary><b>その他のAIアシスタント（汎用設定）</b></summary>
-
-MCPプロトコル対応のツールなら、2つの情報だけでOK：
-
-| 設定項目 | 値 |
-|--------|------|
-| **MCP URL** | `https://aitoearn.ai/api/unified/mcp` |
-| **認証ヘッダー** | `x-api-key: あなたのAPI-Key` |
-
-SSE接続もサポート：`https://aitoearn.ai/api/unified/sse`
-
-</details>
-
-> 💡 自己デプロイの場合は、`aitoearn.ai`をご自身のアドレス（例：`localhost:8080`）に置き換えてください。
+> 💡 セルフホストの場合、`aitoearn.ai` をご自身のアドレス（例：`localhost:8080`）に置き換えてください。
 
 ---
 
-<h2 id="use-docker">④ Dockerワンクリックデプロイ</h2>
+## Docker ワンクリックデプロイ
 
-> 前提条件：[Docker](https://docs.docker.com/get-docker/)がインストール済み
-
-自分のサーバーでAiToEarnを運用したいチーム向け。3つのコマンドで完了、データベースの手動インストール不要：
+> 前提条件：[Docker](https://docs.docker.com/get-docker/) がインストール済み。3 コマンドで完結し、データベースの手動インストールは不要です：
 
 ```bash
 git clone https://github.com/yikart/AiToEarn.git
@@ -247,75 +149,52 @@ cd AiToEarn
 docker compose up -d
 ```
 
-起動後、**[http://localhost:8080](http://localhost:8080)** を開けば使用可能。
+起動後 **[http://localhost:8080](http://localhost:8080)** を開けばすぐに利用できます。
 
-#### Relayの設定（強く推奨）
-
-> **なぜRelayが必要？** コンテンツを公開するにはソーシャルメディアアカウント（TikTok、Instagram、YouTubeなど）へのログインが必要で、これらのプラットフォームのOAuthログインには開発者認証情報が必要です。Relayを設定すれば、公式aitoearn.aiの認証情報を直接借用して認証を完了できるため、**各プラットフォームで開発者アカウントを申請する必要がありません**。
-
-ブラウザでデプロイ済みの画面を開き、**設定管理** に入り、必要に応じて次の項目を設定します：
-
-- **Server → Relay**：コンテンツ公開とソーシャルプラットフォームの OAuth 認証に使用します。
-- **AI → Relay**：プラットフォームが提供する AI モデルを利用するために使用します。
-
-OpenAI、Gemini、Anthropic などのモデルプロバイダーも、**AI → モデルプロバイダー** でプラットフォーム提供の API Key と API URL を入力できます。
-
-API Key の取得方法は [上記](#get-api-key) を参照してください。中国版 Key は `https://aitoearn.cn/api`、国際版 Key は `https://aitoearn.ai/api` と組み合わせて使用します。環境と Key が一致しない場合は 401 になります。
-
-保存後、**保存して再起動** をクリックして、対象サービスに設定を再読み込みさせます。
-
-> 📖 完全なデプロイガイド（本番環境設定、AIサービス、OAuth、ストレージなど）：[DOCKER_DEPLOYMENT_EN.md](DOCKER_DEPLOYMENT_EN.md)を参照。
+**強く推奨：Relay の設定** —— 公式の認証情報を借りて抖音・小紅書・TikTok などの OAuth 認可を完了でき、各プラットフォームで開発者アカウントを申請する必要がなくなります。Relay・AI モデルプロバイダー・本番環境・ストレージなどの完全なデプロイガイドは [Docker デプロイガイド](https://docs.aitoearn.ai/en/use/installer) をご覧ください。
 
 ---
 
-<h2 id="use-source">⑤ ソースコードから開発</h2>
+## 最新情報
 
-<details>
-<summary>🧪 バックエンドとフロントエンドを手動で実行（開発モード）</summary>
+| 日付 | バージョン | 主な内容 |
+|------|-----------|---------|
+| 2026-10-30 | — | ドキュメント更新 |
+| 2026-10-29 | — | リポジトリ内蔵の Electron デスクトップクライアントを削除し、Web とサーバー側機能に注力 |
+| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay を Server Relay と AI Relay に分割；オープンプラットフォームを追加 |
+| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | 草稿生成に HappyHorse 1.0 と Seedance 2.0 を追加；全新 UI；Twitter/X の探索・エンゲージメント強化 |
+| 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | コンテンツ取引マーケットプレイス公開；MCP プロトコル対応（Claude / Cursor） |
+| 2026-02-07 | [v1.8](https://www.aitoearn.ai/) | オフライン店舗プロモーション（飲食、小売、民宿、美容、ジム） |
+| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3) | 「All In Agent」：コンテンツの自動生成・公開 |
+| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0) | アプリ内自動更新；作成画面に要約 / 拡張 / 画像・動画生成 / タグ生成を追加；Nano Banana Pro 対応 |
+| 2025-11-12 | [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2) | オープンソースで完全に使用可能な初のバージョン |
+| 2025-09-16 | [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18) | 初の海外展開版：FB / IG / Threads / X / YouTube / TikTok / Pinterest |
+| 2025-02-26 | [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1) | 初のオープンソース版：小紅書 / 抖音 / 快手 / 視頻号 ワンクリック投稿 |
 
-このモードは主にローカル開発とデバッグ用です。
-Dockerを使用してMongoDB/Redisを実行するか、設定ファイルで独自のサービスを指定できます。
+---
 
-#### 1. バックエンドサービスを起動
+## コミュニティとサポート
 
-```bash
-cd project/aitoearn-backend
-pnpm install
-# ローカル開発用設定ファイルをコピー
-cp apps/aitoearn-ai/config/config.yaml apps/aitoearn-ai/config/local.config.yaml
-cp apps/aitoearn-server/config/config.yaml apps/aitoearn-server/config/local.config.yaml
-pnpm nx serve aitoearn-ai
-# 別のターミナルで
-pnpm nx serve aitoearn-server
-```
+ご利用中の疑問や異常は、まず [GitHub Issues](https://github.com/yikart/AiToEarn/issues) までご連絡ください。一元管理してお返しします。
 
-#### 2. フロントエンド `aitoearn-web` を起動
+- **Telegram**：[t.me/+447704864210](https://t.me/+447704864210)
+- **WeChat**：下の QR コードをスキャン
+- **貢献ガイド**：[docs 貢献ガイド](https://docs.aitoearn.ai/en/use/contributing)
 
-```bash
-pnpm install
-pnpm run dev
-```
+![WeChat QR コード](presentation/wechat-1029.png)
 
-</details>
+---
 
-## 貢献ガイド
+## 推奨プロジェクト
 
-参加するには[貢献ガイド](./CONTRIBUTING.md)をご覧ください。
-
-## お問い合わせ
-
-利用中に困ったこと、使い方の質問、不具合がある場合は、まず [GitHub Issues](https://github.com/yikart/AiToEarn/issues) でご連絡ください。内容を一元管理し、順番に対応できます。
-
-- Telegram: [https://t.me/+447704864210](https://t.me/+447704864210)
-- WeChat：QRコードをスキャンして追加
-
-<img src="presentation/wechat-1029.png" alt="WeChat QRコード" width="200">
-
-## 推奨
-- [AtomGitホスティング](https://atomgit.com/yikart/AitoEarn)
+- [AtomGit ホスティング](https://atomgit.com/yikart/AitoEarn)
 - [MuseTalk](https://github.com/TMElyralab/MuseTalk)
 - [video_spider](https://github.com/5ime/video_spider)
 - [CosyVoice](https://github.com/FunAudioLLM/CosyVoice?tab=readme-ov-file)
 - [facefusion](https://github.com/facefusion/facefusion)
 - [NarratoAI](https://github.com/linyqh/NarratoAI)
 - [MoneyPrinterTurbo](https://github.com/harry0703/MoneyPrinterTurbo)
+
+---
+
+MIT License · © AiToEarn Team
