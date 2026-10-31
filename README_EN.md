@@ -19,15 +19,23 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 
 ---
 
-## Special Thanks
+## Special Thanks ❤️
 
-Thanks to [Metaso](https://metaso.cn/minimax-h3/?s=ATE) for sponsoring this project.
-
-[![Metaso](docs/sponsors/metaso-logo.png)](https://metaso.cn/minimax-h3/?s=ATE)
-
-**MiniMax H3 Video Generation API**: 768P for just RMB 0.09/sec, 2K for just RMB 0.15/sec. Native 2K with synchronized audio and video, OpenAI-compatible API, also supports ComfyUI — no GPU deployment required.
-
-Sign up through the [exclusive AiToEarn link](https://metaso.cn/minimax-h3/?s=ATE) to receive complimentary credits and special offers. For business inquiries, add WeChat: metasota12
+<table align="center">
+  <tr>
+    <td align="center" width="120">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="Metaso" width="100"></a><br>
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>Metaso</strong></a>
+    </td>
+    <td align="left">
+      Thanks to <a href="https://metaso.cn/minimax-h3/?s=ATE">Metaso</a> for sponsoring this project!<br>
+      <strong>MiniMax H3 Video Generation API | Metaso</strong><br>
+      Metaso offers cost-effective MiniMax H3 video generation: <strong>768P for just RMB 0.09/sec and 2K for just RMB 0.15/sec</strong>. It supports native 2K and synchronized audio and video; its API is compatible with the <strong>OpenAI protocol</strong>, and it also supports <strong>ComfyUI</strong>—no GPU deployment required.<br>
+      🎁 Sign up through the <a href="https://metaso.cn/minimax-h3/?s=ATE">exclusive AiToEarn link</a> to receive complimentary credits and special offers.<br>
+      For business inquiries, please add WeChat: metasota12
+    </td>
+  </tr>
+</table>
 
 ---
 
@@ -159,8 +167,6 @@ Open **[http://localhost:8080](http://localhost:8080)** and you're ready to go.
 
 | Date | Version | Highlights |
 |------|---------|-----------|
-| 2026-10-30 | — | Documentation updated |
-| 2026-10-29 | — | Removed the bundled Electron desktop client; focused on web and server-side capabilities |
 | 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay split into Server Relay and AI Relay; introduced the Open Platform |
 | 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | Draft generation adds HappyHorse 1.0 and Seedance 2.0; refreshed UI; enhanced Twitter/X exploration and engagement |
 | 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | Content marketplace launched; MCP protocol support (Claude / Cursor) |
@@ -181,7 +187,7 @@ If you run into usage difficulties, questions, or unexpected behavior, please op
 - **WeChat**: scan the QR code below
 - **Contributing Guide**: [docs contributing guide](https://docs.aitoearn.ai/en/use/contributing)
 
-![WeChat QR Code](presentation/wechat-1029.png)
+<img src="presentation/wechat-1029.png" alt="WeChat QR Code" width="200">
 
 ---
 
