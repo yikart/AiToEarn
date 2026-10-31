@@ -19,17 +19,24 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 ***
 
-## 特别感谢
+## 特别感谢 ❤️
 
-感谢 [秘塔科技](https://metaso.cn/minimax-h3/?s=ATE) 对本项目的赞助。
+<table align="center">
+  <tr>
+    <td align="center" width="120">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="秘塔科技" width="100"></a><br>
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>秘塔科技</strong></a>
+    </td>
+    <td align="left">
+      感谢<a href="https://metaso.cn/minimax-h3/?s=ATE">秘塔科技</a>对本项目的赞助！<br>
+      <strong>MiniMax H3 视频生成 API｜秘塔科技</strong><br>
+      秘塔科技提供高性价比的 MiniMax H3 视频生成服务：<strong>768P 仅 0.09 元/秒，2K 仅 0.15 元/秒</strong>。支持原生 2K、音画同步，API 兼容 <strong>OpenAI 协议</strong>，同时支持 <strong>ComfyUI</strong>，无需自行部署 GPU。<br>
+      🎁 通过 <a href="https://metaso.cn/minimax-h3/?s=ATE">AiToEarn专属链接注册</a>，即可领取赠送额度及专属优惠。<br>
+      商务对接可加微信：metasota12
+    </td>
+  </tr>
+</table>
 
-[![秘塔科技](docs/sponsors/metaso-logo.png)](https://metaso.cn/minimax-h3/?s=ATE)
-
-**MiniMax H3 视频生成 API**：768P 仅 0.09 元/秒，2K 仅 0.15 元/秒。原生 2K、音画同步、兼容 OpenAI 协议，亦支持 ComfyUI，无需自建 GPU。
-
-通过 [AiToEarn 专属链接注册](https://metaso.cn/minimax-h3/?s=ATE)，可领取赠送额度与专属优惠。商务对接微信：metasota12
-
-***
 
 ## 目录
 
@@ -159,8 +166,6 @@ docker compose up -d
 
 | 日期         | 版本                                                                 | 重点                                                     |
 | ---------- | ------------------------------------------------------------------ | ------------------------------------------------------ |
-| 2026-10-30 | —                                                                  | 文档更新                                                   |
-| 2026-10-29 | —                                                                  | 移除仓库内置 Electron 桌面客户端，聚焦 Web 与服务端能力                    |
 | 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0)     | Relay 拆分为 Server Relay 与 AI Relay；新增开放平台               |
 | 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0)     | 草稿生成新增 HappyHorse 1.0、Seedance 2.0；全新界面；Twitter/X 互动增强 |
 | 2026-03-26 | [v2.1](https://www.aitoearn.ai/)                                   | 内容交易市场上线；MCP 协议支持（Claude / Cursor）                     |
@@ -181,7 +186,7 @@ docker compose up -d
 - **微信扫码**：见下方二维码
 - **贡献指南**：[docs 站贡献指南](https://docs.aitoearn.ai/zh/use/contributing)
 
-![微信二维码](presentation/wechat-1029.png)
+<img src="presentation/wechat-1029.png" alt="微信二维码" width="200">
 
 ***
 
