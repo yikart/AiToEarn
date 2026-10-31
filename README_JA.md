@@ -1,4 +1,4 @@
-# AiToEarn
+<a href="https://docs.aitoearn.ai/zh/home"><img src="presentation/aitoearn-logo.png" alt="AiToEarn" width="360"></a>
 
 **OPC（一人会社）のための AI コンテンツマーケティングエージェント**
 
@@ -23,7 +23,7 @@ AiToEarn は AI エージェントの自動化により、OPC（一人会社）�
 
 本プロジェクトをご支援いただいた [秘塔科技（Metaso）](https://metaso.cn/minimax-h3/?s=ATE) に心より感謝します。
 
-[![Metaso](docs/sponsors/metaso-logo.png)](https://metaso.cn/minimax-h3/?s=ATE)
+<a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="Metaso" width="200"></a>
 
 **MiniMax H3 動画生成 API**：768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒。ネイティブ 2K と音声・映像の同期に対応し、API は OpenAI プロトコルと互換性があり、ComfyUI にも対応しています。GPU を自前で用意する必要はありません。
 
@@ -159,8 +159,6 @@ docker compose up -d
 
 | 日付 | バージョン | 主な内容 |
 |------|-----------|---------|
-| 2026-10-30 | — | ドキュメント更新 |
-| 2026-10-29 | — | リポジトリ内蔵の Electron デスクトップクライアントを削除し、Web とサーバー側機能に注力 |
 | 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay を Server Relay と AI Relay に分割；オープンプラットフォームを追加 |
 | 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | 草稿生成に HappyHorse 1.0 と Seedance 2.0 を追加；全新 UI；Twitter/X の探索・エンゲージメント強化 |
 | 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | コンテンツ取引マーケットプレイス公開；MCP プロトコル対応（Claude / Cursor） |

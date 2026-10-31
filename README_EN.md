@@ -1,4 +1,4 @@
-# AiToEarn
+<a href="https://docs.aitoearn.ai/zh/home"><img src="presentation/aitoearn-logo.png" alt="AiToEarn" width="360"></a>
 
 **The AI Content Marketing Agent for OPCs (One-Person Companies)**
 

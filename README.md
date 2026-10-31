@@ -1,4 +1,4 @@
-# AiToEarn
+<a href="https://docs.aitoearn.ai/zh/home"><img src="presentation/aitoearn-logo.png" alt="AiToEarn" width="360"></a>
 
 **OPC（一人公司）的 AI 内容营销智能体**
 
