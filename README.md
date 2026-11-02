@@ -166,15 +166,15 @@ docker compose up -d
 
 | 日期         | 版本                                                                 | 重点                                                     |
 | ---------- | ------------------------------------------------------------------ | ------------------------------------------------------ |
-| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0)     | Relay 拆分为 Server Relay 与 AI Relay；新增开放平台               |
-| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0)     | 草稿生成新增 HappyHorse 1.0、Seedance 2.0；全新界面；Twitter/X 互动增强 |
-| 2026-03-26 | [v2.1](https://www.aitoearn.ai/)                                   | 内容交易市场上线；MCP 协议支持（Claude / Cursor）                     |
-| 2026-02-07 | [v1.8](https://www.aitoearn.ai/)                                   | 线下商户推广解决方案（餐饮、零售、民宿、美业、健身）                             |
-| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)   | All In Agent：自动内容生成与发布                                 |
-| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)   | 应用内自动更新；创作界面新增缩写/扩写/图视频生成；支持 Nano Banana Pro           |
-| 2025-11-12 | [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)   | 首个完全可用的开源版本                                            |
-| 2025-09-16 | [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18) | 首个出海版本：FB/IG/Threads/X/YouTube/TikTok/Pinterest        |
-| 2025-02-26 | [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)   | 首个开源版本：小红书/抖音/快手/视频号一键发布                               |
+| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0)     | Relay 配置改为在配置管理界面中操作，并拆分为 Server Relay 与 AI Relay：Server Relay 用于发布平台授权，AI Relay 用于使用平台提供的 AI 模型；新增开放平台 |
+| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0)     | 草稿生成新增支持 HappyHorse 1.0 和 Seedance 2.0，增强视频/图文草稿批量生成、多模型选择、参考图片/视频、目标平台限制与文案提示词；带来全新界面风格，并增强 Twitter/X 探索与互动能力 |
+| 2026-03-26 | [v2.1](https://www.aitoearn.ai/)                                   | 内容交易市场上线；新增 MCP 协议支持，可在 Claude、Cursor 等任何支持 MCP 的 Agent 或大模型中使用 AiToEarn |
+| 2026-02-07 | [v1.8](https://www.aitoearn.ai/)                                   | 新增线下商户推广解决方案，支持餐厅、零售店、民宿、美容美发、健身房等多种线下业态，将线下推广活动转化为可执行的线上传播任务，通过内容发布与用户参与机制，帮助门店获取更多线上曝光和到店流量 |
+| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3)   | "All In Agent" 的开始！我们加入了能够自动内容生成和发布，以及一些帮助你操作 AiToEarn 的超级 AI 智能 Agent |
+| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0)   | 支持应用内自动更新；在创作界面新增大量 AI 功能，例如：缩写、扩写、图片生成、视频生成、标签生成等，并支持 Nano Banana Pro |
+| 2025-11-12 | [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2)   | 首个开源且可完全使用的版本                                            |
+| 2025-09-16 | [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18) | 首个出海版本，新增支持 Facebook、Instagram、Threads、Twitter、YouTube、TikTok、Pinterest |
+| 2025-02-26 | [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1)   | 首个开源版本，初步实现小红书、抖音、快手、视频号一键发布                               |
 
 ***
 

@@ -167,12 +167,12 @@ Open **[http://localhost:8080](http://localhost:8080)** and you're ready to go.
 
 | Date | Version | Highlights |
 |------|---------|-----------|
-| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay split into Server Relay and AI Relay; introduced the Open Platform |
-| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | Draft generation adds HappyHorse 1.0 and Seedance 2.0; refreshed UI; enhanced Twitter/X exploration and engagement |
-| 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | Content marketplace launched; MCP protocol support (Claude / Cursor) |
-| 2026-02-07 | [v1.8](https://www.aitoearn.ai/) | Offline merchant promotion (restaurants, retail, B&Bs, beauty salons, gyms) |
-| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3) | "All In Agent": automatic content generation and publishing |
-| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0) | In-app auto-update; creation UI gains summarize / expand / image / video / tag generation; Nano Banana Pro support |
+| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay configuration moved into the settings UI and split into Server Relay (for publishing platform authorization) and AI Relay (for using platform-provided AI models); introduced the Open Platform |
+| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | Draft generation adds HappyHorse 1.0 and Seedance 2.0, with enhanced batch generation for video and image-text drafts, multi-model selection, reference images/videos, target platform restrictions, and copywriting prompts; a brand-new UI style, plus enhanced Twitter/X exploration and engagement |
+| 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | Content marketplace launched; MCP protocol support — use AiToEarn in any MCP-capable Agent or LLM, such as Claude and Cursor |
+| 2026-02-07 | [v1.8](https://www.aitoearn.ai/) | New offline merchant promotion solution covering restaurants, retail stores, B&Bs, beauty salons, gyms, and more — turning offline promotional activities into executable online content tasks, and helping stores gain more online exposure and in-store traffic through content publishing and user participation mechanisms |
+| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3) | The beginning of "All In Agent"! We added a super AI agent that can automatically generate and publish content, and help you operate AiToEarn |
+| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0) | In-app auto-update; the creation UI gains many AI features such as summarize, expand, image generation, video generation, and tag generation, plus Nano Banana Pro support |
 | 2025-11-12 | [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2) | First open-source, fully usable version |
 | 2025-09-16 | [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18) | First international version: FB/IG/Threads/X/YouTube/TikTok/Pinterest |
 | 2025-02-26 | [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1) | First open-source release: one-click publishing to Xiaohongshu / Douyin / Kuaishou / WeChat Channels |

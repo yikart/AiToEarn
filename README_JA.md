@@ -159,12 +159,12 @@ docker compose up -d
 
 | 日付 | バージョン | 主な内容 |
 |------|-----------|---------|
-| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay を Server Relay と AI Relay に分割；オープンプラットフォームを追加 |
-| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | 草稿生成に HappyHorse 1.0 と Seedance 2.0 を追加；全新 UI；Twitter/X の探索・エンゲージメント強化 |
-| 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | コンテンツ取引マーケットプレイス公開；MCP プロトコル対応（Claude / Cursor） |
-| 2026-02-07 | [v1.8](https://www.aitoearn.ai/) | オフライン店舗プロモーション（飲食、小売、民宿、美容、ジム） |
-| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3) | 「All In Agent」：コンテンツの自動生成・公開 |
-| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0) | アプリ内自動更新；作成画面に要約 / 拡張 / 画像・動画生成 / タグ生成を追加；Nano Banana Pro 対応 |
+| 2026-06-23 | [v2.5](https://github.com/yikart/AiToEarn/releases/tag/v2.5.0) | Relay の設定を設定管理画面で操作可能にし、Server Relay（投稿プラットフォームの認可用）と AI Relay（プラットフォーム提供の AI モデル利用用）に分割；オープンプラットフォームを追加 |
+| 2026-05-21 | [v2.4](https://github.com/yikart/AiToEarn/releases/tag/v2.4.0) | 草稿生成に HappyHorse 1.0 と Seedance 2.0 を追加。動画・图文草稿の一括生成、マルチモデル選択、参考画像・動画、対象プラットフォーム制限、文案プロンプトを強化；全新の UI スタイルを導入し、Twitter/X の探索・エンゲージメントを強化 |
+| 2026-03-26 | [v2.1](https://www.aitoearn.ai/) | コンテンツ取引マーケットプレイス公開；MCP プロトコル対応——Claude、Cursor など MCP 対応の Agent や大モデルで AiToEarn を利用可能 |
+| 2026-02-07 | [v1.8](https://www.aitoearn.ai/) | オフライン店舗プロモーションソリューションを追加。レストラン、小売店、民宿、美容室、ジムなど多業態に対応し、オフラインのプロモーション活動を実行可能なオンライン拡散タスクに変換。コンテンツ投稿とユーザー参加の仕組みで、店舗のオンライン露出と来店流量を拡大 |
+| 2025-12-15 | [v1.4.3](https://github.com/yikart/AiToEarn/releases/tag/v1.4.3) | 「All In Agent」の始まり！コンテンツの自動生成・公開、および AiToEarn の操作を支援するスーパー AI エージェントを追加 |
+| 2025-11-28 | [v1.4.0](https://github.com/yikart/AiToEarn/releases/tag/v1.4.0) | アプリ内自動更新に対応；作成画面に要約、拡張、画像生成、動画生成、タグ生成など豊富な AI 機能を追加し、Nano Banana Pro に対応 |
 | 2025-11-12 | [v1.3.2](https://github.com/yikart/AiToEarn/releases/tag/v1.3.2) | オープンソースで完全に使用可能な初のバージョン |
 | 2025-09-16 | [v1.0.18](https://github.com/yikart/AiToEarn/releases/tag/v1.0.18) | 初の海外展開版：FB / IG / Threads / X / YouTube / TikTok / Pinterest |
 | 2025-02-26 | [v0.1.1](https://github.com/yikart/AiToEarn/releases/tag/v0.1.1) | 初のオープンソース版：小紅書 / 抖音 / 快手 / 視頻号 ワンクリック投稿 |
