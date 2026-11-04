@@ -1,5 +1,5 @@
 ---
-name: 自媒体运营增长变现专家|全域内容增长助手
+name: 全域内容运营助手
 description: aitoearn帮你生成文章、短视频、图文与海报，一键分发抖音、快手、小红书、视频号、Facebook、TikTok 等海内外全平台，覆盖起号、涨粉、带货与变现全链路。
 keywords: [一键生成视频, 一键多平台发布, 新媒体增长变现]
 icon: icon.png

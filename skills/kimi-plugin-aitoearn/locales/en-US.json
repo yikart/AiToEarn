@@ -1,5 +1,5 @@
 {
-  "displayName": "AiToEarn Omnichannel Content Studio",
+  "displayName": "全域内容运营助手",
   "shortDescription": "Content creation + one-click multi-platform publishing",
   "longDescription": "Covers the full path from launch to growth, sales and monetization: write copy, generate images and videos, edit with captions, add voiceover, and publish to your authorized accounts on Douyin, Kuaishou, RedNote, WeChat Channels, TikTok and more.",
   "developerName": "AiToEarn",
@@ -10,7 +10,7 @@
   ],
   "skillOverrides": {
     "aitoearn-growth": {
-      "displayName": "AiToEarn Omnichannel Content Studio",
+      "displayName": "全域内容运营助手",
       "description": "Generate articles, videos and posters, then publish everywhere in one click"
     }
   }

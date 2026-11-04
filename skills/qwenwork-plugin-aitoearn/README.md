@@ -13,7 +13,7 @@
 1. 把本目录复制到 `~/.qwenworkcn/plugins-custom/aitoearn`
 2. 把 `paste-config.json` 中的 `__AITOEARN_KEY__` 替换为第 0 步询问到的 Key（国际站 Key 需同时把 URL 换成 `https://aitoearn.ai/api/ai/agent/mcp`）
 3. **完全退出并重新打开千问办公**（不是关闭窗口），重启后「扩展」里才会出现本插件
-4. 左侧「扩展 → 专家套件」打开 AiToEarn 全域内容运营
+4. 左侧「扩展 → 专家套件」打开全域内容运营助手
 5. 左侧「扩展 → 连接器」→ 右上角「添加」→「导入 JSON」→ 粘贴替换好 Key 的 `paste-config.json` 内容
 6. 新建任务，发送「列出可用的发布渠道」验证
 

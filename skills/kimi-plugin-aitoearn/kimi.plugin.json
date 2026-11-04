@@ -18,7 +18,7 @@
   "license": "UNLICENSED",
   "skillInstructions": "当用户要生成或发布内容、做图、剪视频、配音、提取字幕、规划跨平台发布时，加载本插件的 aitoearn-growth 技能。该技能依赖下方两个 MCP 服务提供生成与发布工具；工具不可用时如实告知配置方法，不要虚构工具调用。",
   "interface": {
-    "displayName": "AiToEarn 全域内容运营",
+    "displayName": "全域内容运营助手",
     "shortDescription": "内容创作 + 多平台一键分发",
     "longDescription": "覆盖起号、涨粉、带货与变现全链路：写文案、生成图片和视频、剪辑与字幕、配音，并把成品发布到已有授权的平台账号。",
     "developerName": "AiToEarn",
@@ -34,7 +34,7 @@
     ],
     "skillOverrides": {
       "aitoearn-growth": {
-        "displayName": "AiToEarn 全域内容运营",
+        "displayName": "全域内容运营助手",
         "description": "生成文章、视频、海报，一键分发全平台"
       }
     }

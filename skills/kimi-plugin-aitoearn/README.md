@@ -14,7 +14,7 @@
 1. 把本目录复制到 `~/Library/Application Support/kimi-desktop/daimon-share/plugin-sources/personal/aitoearn-growth`
 2. 把 `mcp.json` 中 `__AITOEARN_KEY__` 替换为第 0 步询问到的 Key（国际站 Key 同时换 URL），然后把 `aitoearn-cn` 条目合并进 `~/Library/Application Support/kimi-desktop/daimon-share/daimon/runtime/kimi-code/home/mcp.json`
 3. 打开 Kimi Work → 插件 → 自定义插件（Plugin Builder）→ 导入该目录（或在「个人」页签中启用）
-4. **完全退出并重新打开 Kimi Work**（不是关闭窗口），重启后「插件 → 已安装」里才会出现「AiToEarn 全域内容运营」
+4. **完全退出并重新打开 Kimi Work**（不是关闭窗口），重启后「插件 → 已安装」里才会出现「全域内容运营助手」
 5. 新会话里说「列出可用的发布渠道」验证
 
 卸载：删除上述 plugin-sources 目录与已安装条目；MCP 条目从 mcp.json 删除。
