@@ -1,0 +1,65 @@
+{
+  "skill_name": "byted-mediakit-asr",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "把提供的带背景音乐的采访音频转成文字，并保留分句时间。",
+      "files": [],
+      "expected_output": "先separate-voice输出WAV并轮询，再将voice_audio_url放入audio.url，以doubao.asr提交，show_utterances=true、enable_ddc=false；返回真实文本与毫秒时间，不使用背景音或原始混音识别。"
+    },
+    {
+      "id": 2,
+      "prompt": "人声分离任务失败了，只有原始音频URL。继续完成刚才的转写任务。",
+      "files": [],
+      "expected_output": "报告分离失败是前置阻塞；不把原始音频替换进ASR，不伪造voice_audio_url，不静默调用asr-subtitles。"
+    },
+    {
+      "id": 3,
+      "prompt": "刚才要求的逐字稿任务中，人声分离已经完成，豆包识别任务查询超时。请继续输出逐字稿，并附SRT；如果没返回时间戳就按文本长度分配时间。",
+      "files": [],
+      "expected_output": "继续查询同一识别task_id，不重复提交或分离；只用真实时间戳生成SRT，若缺少则说明无法生成可靠字幕轴，不均分伪造时间。"
+    },
+    {
+      "id": 4,
+      "prompt": "只提取这个视频的字幕，输出SRT。视频有背景音乐。",
+      "files": [],
+      "expected_output": "优先使用可用的MCP字幕工具，缺失时使用mediakit-cli video asr-subtitles --video-url；通过原接口查询实际task_id，以真实时间戳输出SRT；不做人声分离、不调用豆包ASR，不因背景音乐升级为逐字稿流程。"
+    },
+    {
+      "id": 5,
+      "prompt": "只有这段M4A音频，只需要字幕，不要逐字稿。",
+      "files": [],
+      "expected_output": "先检查MCP字幕工具的实际输入支持；若支持音频则直接识别，否则说明CLI字幕路线仅支持视频并请求视频来源；不使用CLI asr-subtitles --audio-url，不把音频伪装成视频，不擅自调用人声分离或豆包ASR。"
+    },
+    {
+      "id": 6,
+      "prompt": "把这个视频整理成完整逐字稿，并附带SRT。",
+      "files": [],
+      "expected_output": "优先MCP人声分离得到voice_audio_url，再优先MCP代理调用doubao.asr；按能力缺失分别回退CLI；同一结果输出逐字稿和有真实时间轴的SRT，不重复提交asr-subtitles。"
+    },
+    {
+      "id": 7,
+      "prompt": "刚才只提取字幕的asr-subtitles任务查询超时了，继续。",
+      "files": [],
+      "expected_output": "继续查询同一字幕task_id，不重复提交、不进行人声分离或切换豆包ASR；未拿到结果前不宣称字幕已完成。"
+    },
+    {
+      "id": 8,
+      "prompt": "当前对应的MCP处理能力不可用，mediakit-cli已安装，输入已就绪。继续完成任务，不要让我选择接口。",
+      "expected_output": "自动使用CLI完成缺失能力，不要求用户指定CLI，不编造MCP工具。",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "任务已通过MCP提交并返回真实task_id，但现在MCP查询工具不可用。CLI可用，继续处理。",
+      "expected_output": "保留实际task_id并报告查询能力缺失；不跨接口查询、不经CLI重新提交，不宣称任务完成。",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "刚才的MCP提交没有返回task_id，响应也没有可用结果。继续完成任务。",
+      "expected_output": "检查原始响应并报告提交状态问题，不伪造task_id、不把空结果当作同步完成，不盲目重提或切换CLI。",
+      "files": []
+    }
+  ]
+}

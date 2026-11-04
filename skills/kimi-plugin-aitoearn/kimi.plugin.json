@@ -1,0 +1,43 @@
+{
+  "$schema": "https://catalog.msh.team/misc/kimi.plugin.schema.json",
+  "name": "aitoearn-growth",
+  "version": "0.2.0",
+  "description": "生成文章、短视频、图文与海报，并一键分发到抖音、快手、小红书、视频号、TikTok 等海内外平台的全域内容助手。",
+  "keywords": [
+    "内容创作",
+    "短视频",
+    "图文",
+    "海报",
+    "多平台发布",
+    "抖音",
+    "小红书",
+    "AiToEarn"
+  ],
+  "author": "AiToEarn",
+  "homepage": "https://aitoearn.cn",
+  "license": "UNLICENSED",
+  "skillInstructions": "当用户要生成或发布内容、做图、剪视频、配音、提取字幕、规划跨平台发布时，加载本插件的 aitoearn-growth 技能。该技能依赖下方两个 MCP 服务提供生成与发布工具；工具不可用时如实告知配置方法，不要虚构工具调用。",
+  "interface": {
+    "displayName": "AiToEarn 全域内容运营",
+    "shortDescription": "内容创作 + 多平台一键分发",
+    "longDescription": "覆盖起号、涨粉、带货与变现全链路：写文案、生成图片和视频、剪辑与字幕、配音，并把成品发布到已有授权的平台账号。",
+    "developerName": "AiToEarn",
+    "websiteURL": "https://aitoearn.cn",
+    "iconUrl": "",
+    "category": "PRODUCTIVITY",
+    "defaultLocale": "zh-CN",
+    "locales": "./locales/",
+    "tryPrompts": [
+      "帮我写一篇小红书种草笔记并生成配图",
+      "生成一段 4 秒的产品展示短视频",
+      "把这篇内容一键发布到抖音和小红书"
+    ],
+    "skillOverrides": {
+      "aitoearn-growth": {
+        "displayName": "AiToEarn 全域内容运营",
+        "description": "生成文章、视频、海报，一键分发全平台"
+      }
+    }
+  },
+  "skills": "./skills/"
+}

@@ -1,0 +1,17 @@
+{
+  "displayName": "AiToEarn Omnichannel Content Studio",
+  "shortDescription": "Content creation + one-click multi-platform publishing",
+  "longDescription": "Covers the full path from launch to growth, sales and monetization: write copy, generate images and videos, edit with captions, add voiceover, and publish to your authorized accounts on Douyin, Kuaishou, RedNote, WeChat Channels, TikTok and more.",
+  "developerName": "AiToEarn",
+  "tryPrompts": [
+    "Write a RedNote post and generate matching images",
+    "Generate a 4-second product showcase video",
+    "Publish this post to Douyin and RedNote in one click"
+  ],
+  "skillOverrides": {
+    "aitoearn-growth": {
+      "displayName": "AiToEarn Omnichannel Content Studio",
+      "description": "Generate articles, videos and posters, then publish everywhere in one click"
+    }
+  }
+}

@@ -1,0 +1,93 @@
+{
+  "skill_name": "byted-mediakit-cloudedit-planner",
+  "evals": [
+    {
+      "id": 1,
+      "name": "mixed-media-pending",
+      "prompt": "离线推演，不调用真实媒体服务或写工程。用户要求：先充分理解全部素材，再做约45秒周末骑行Vlog，保留高光瞬间和我的原声。素材 ride.mp4、03_reconciliation_sad.wav、cover.jpg。视频已有完整画面结果：出发、骑行、到达；对白需要理解，ASR尚未提交。wav只有时长与声道，jpg只有尺寸。已注册 media_understanding 支持三种素材；ASR可用；CLI也已安装。请给出下一步工具安排、能确定的方案和basic交接状态，不编造任何工具结果。",
+      "expected_output": "按Vlog意图取证，补独立音频和图片理解，ASR与独立理解先提交再轮询，不因文件名推断故事；方案保持条件性。",
+      "files": [],
+      "assertions": [
+        "Keeps the deliverable a Vlog rather than standalone highlight extraction.",
+        "Obtains content understanding for both the independent WAV and image rather than treating metadata or filename as evidence.",
+        "Reuses video visual evidence and starts required ASR alongside independent understanding before polling either to completion.",
+        "Keeps content-dependent selection and the basic handoff conditional; invents no content, timestamps, or executed project."
+      ]
+    },
+    {
+      "id": 2,
+      "name": "processed-source-clock",
+      "prompt": "离线方案，不调用工具或写工程。已确认原视频A的12–20秒完整一句话，原始ASR词句时间为14–16秒。已完成必要的音频清理，输出D是A的12–20秒，验证过保持1x且无额外偏移，所以D长8秒；输出仅有可访问URL，未入库。成片使用A画面12–20秒放在时间线0–8秒且原声静音，D作为唯一声音从时间线0秒开始，末尾加已审核图片B停留3秒。加这一句的字幕。请给出来源、三种时钟、轨道安排、basic交接和验收边界，不宣称工程已经完成。",
+      "expected_output": "原14–16对应D2–4和时间线2–4；画面0–8图片8–11，D0–8，整体11秒；D需同步真实ID，不重复字幕；区分结构和视听验证。",
+      "files": [],
+      "assertions": [
+        "Maps original speech 14–16 s to derived D 2–4 s and timeline 2–4 s.",
+        "Places video and sole audio at 0–8 s, image at 8–11 s, and computes total 11 s.",
+        "Requires explicit synchronization of D and real material IDs before use, preserving original and derived identity.",
+        "Avoids duplicated audio/subtitles and distinguishes project readback from composed audiovisual validation."
+      ]
+    },
+    {
+      "id": 3,
+      "name": "independent-cuts-conflict",
+      "prompt": "离线计划，不调用工具或写工程。用户要两条独立发布的演讲精选，每条最多10秒，不能变速，必须保留各自完整指定论点。专用高光工具已返回并审核：第一条唯一完整必保留span为S1源0–12秒，第二条为S2源20–28秒；不存在转场重叠或可删停顿，所有相关理解与ASR都已核对完成。当前只知道一个已有工程P。请说明冲突、可继续部分、交给basic所需内容和项目安排，不自行替用户放宽限制。",
+      "expected_output": "第一条12秒超10秒约束冲突需要选择，不截断变速；第二条8秒可规划；独立项目目的地需落实，不把两条放一条时间线，不重新取证或选高光。",
+      "files": [],
+      "assertions": [
+        "Identifies the first mandatory 12-second span as incompatible with the 10-second cap without changing speed or truncating it.",
+        "Plans the second independent 8-second cut while retaining the first conflict for user resolution.",
+        "Keeps separate deliverable/project destinations and resolves use of P rather than concatenating both cuts.",
+        "Reuses accepted selection and ASR evidence; does not rerun selection or claim application."
+      ]
+    },
+    {
+      "id": 4,
+      "name": "same-sources-different-intent",
+      "prompt": "离线设计，不调用媒体或工程工具。全部素材内容已核对：A是完整8秒操作，前2秒拿工具、中4秒操作、后2秒展示结果；B是同一次操作的细节近景4秒；C是一张结果照片；D是用户6秒原声，解释刚才容易犯的错误，文字与时间已有核对。针对同一组素材，分别设计两个不同思路：甲希望观众学会避免这个错误；乙希望给家人留一段安静的个人记录，不强调教学。均无固定时长，不加音乐/字幕/包装。请自主选材、解释顺序和节奏，不必列多套候选，不编造具体动作细节。",
+      "expected_output": "Two distinct evidence-backed ideas; instructional context vs personal observation, without default packaging or invented events.",
+      "files": [],
+      "assertions": [
+        "Develops different organizing ideas for the two user goals using the supplied content, rather than repeating a fixed sequence.",
+        "Explains retention/order/pacing with source evidence and preserves complete meaning without inventing specific actions.",
+        "Respects no music, subtitles, or packaging and does not unnecessarily delegate routine creative decisions back to the user."
+      ]
+    },
+    {
+      "id": 5,
+      "name": "label-versus-priority",
+      "prompt": "离线设计，素材均已理解。用户说“做一个产品Vlog，要高级一点”，进一步明确：仅让观众看清手工杯表面纹理，不卖货、不讲制作过程、不加文字或音乐；保留自然触摸声。现有A为12秒稳定缓慢转动杯子，纹理持续可辨，完整自然声音；B为3秒快速晃动，纹理看不清；C为4秒包装上的logo。无强制片长。请直接给出剪辑思路、选舍理由与basic可实现的计划，不再向用户提问。",
+      "expected_output": "Prioritizes observable texture and natural sound, can retain A simply, omits unsuitable footage without imposing ad/Vlog stages.",
+      "files": [],
+      "assertions": [
+        "Centers the plan on visible texture and natural touch sound rather than a Vlog or advertisement formula.",
+        "Gives concrete basic-implementable placement with source ranges or an explicit full-source use, without arbitrary fast cutting or padding.",
+        "Omits unclear B and irrelevant logo C with reasons; adds no text/music/selling message and asks no unnecessary question."
+      ]
+    },
+    {
+      "id": 6,
+      "name": "unknown-material-autonomy",
+      "prompt": "离线下一步计划。用户给了一段视频、一张照片和一段录音，说“帮我剪成一个让人能理解这件事的短片，你自己决定怎么剪”。只知道时长和尺寸，无内容结果。已注册media_understanding支持三类素材且可用ASR。请说明如何开始、会围绕哪些剪辑问题取证，以及什么条件下能形成思路。不要编造事件，也不要把所有创作选择都退回给用户。",
+      "expected_output": "Takes responsibility for discovery and editorial thinking; modality-aware evidence before structure; no premature story arc or mandatory questionnaire.",
+      "files": [],
+      "assertions": [
+        "Follows byted-mediakit-media-understand: extracts video frames for image understanding, analyzes the standalone image and relevant audio, and obtains required speech ASR. Does not submit direct video understanding; metadata is insufficient.",
+        "Frames evidence gathering around comprehension, relationships, usable boundaries, and editorial decisions rather than exhaustive genre checklists.",
+        "Keeps the organizing idea provisional until evidence arrives, invents no event or predetermined arc, and assumes responsibility for routine editorial decisions."
+      ]
+    },
+    {
+      "id": 7,
+      "name": "shared-understanding-routing",
+      "prompt": "离线推演，不调用真实工具。用户要求快速把62秒短剧剪出高光，素材没有内容证据。MCP提供extract_frames、media_understanding、asr_subtitles和query_task，理解工具支持视频和scene=editing；CLI也有高光分析工具。请根据planner及其依赖列出下一步调用顺序。",
+      "expected_output": "读取并遵循media-understand，抽帧与ASR并行，抽帧后提交图片理解；不直接提交视频、不调用禁止的高光工作流，证据未返回时方案保持条件性。",
+      "files": [],
+      "assertions": [
+        "Uses the shared understanding skill as the source of tool routing rather than a planner-specific router-first policy.",
+        "Starts MCP frame extraction and ASR independently, then submits extracted images to understanding.",
+        "Does not submit video understanding for speed or scene=editing and does not invoke prohibited highlight workflows.",
+        "Keeps source selections conditional until actual evidence is available."
+      ]
+    }
+  ]
+}

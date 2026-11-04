@@ -1,0 +1,28 @@
+{
+ "name": "aitoearn",
+ "displayName": "AiToEarn Content Growth",
+ "displayNameEn": "AiToEarn Content Growth",
+ "displayNameCn": "AiToEarn 全域内容运营",
+ "version": "0.0.4",
+ "description": "Create, publish and monetize content across Douyin, Kuaishou, RedNote, WeChat Channels, Facebook, TikTok and more. Requires the AiToEarn MCP connection bundled in this plugin.",
+ "descriptionEn": "Create, publish and monetize content across Douyin, Kuaishou, RedNote, WeChat Channels, Facebook, TikTok and more. Requires the AiToEarn MCP connection bundled in this plugin.",
+ "descriptionZh": "全域内容增长与变现助手：生成文章、短视频、图文与海报，并一键分发到抖音、快手、小红书、微信视频号、Facebook、TikTok 等海内外全平台，覆盖起号、涨粉、带货与变现全链路。MCP 连接已随插件内置。",
+ "author": {
+  "name": "AiToEarn",
+  "url": "https://aitoearn.cn"
+ },
+ "category": "marketing",
+ "tags": [
+  "content",
+  "publish",
+  "video",
+  "image",
+  "monetization",
+  "短视频",
+  "发布",
+  "变现"
+ ],
+ "skills": [
+  "skills/aitoearn"
+ ]
+}

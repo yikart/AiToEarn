@@ -1,0 +1,29 @@
+{
+  "skill_name": "byted-mediakit-audiogen",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "生成一句中文欢迎语音。MCP代理和查询工具可用，CLI也可用。",
+      "expected_output": "发现实际MCP schema并优先提交，通过MCP查询真实task_id；不调用CLI、不要求CLI认证。",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "当前对应的MCP处理能力不可用，mediakit-cli已安装，输入已就绪。继续完成任务，不要让我选择接口。",
+      "expected_output": "自动使用CLI完成缺失能力，不要求用户指定CLI，不编造MCP工具。",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "任务已通过MCP提交并返回真实task_id，但现在MCP查询工具不可用。CLI可用，继续处理。",
+      "expected_output": "保留实际task_id并报告查询能力缺失；不跨接口查询、不经CLI重新提交，不宣称任务完成。",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "刚才的MCP提交没有返回task_id，响应也没有可用结果。继续完成任务。",
+      "expected_output": "检查原始响应并报告提交状态问题，不伪造task_id、不把空结果当作同步完成，不盲目重提或切换CLI。",
+      "files": []
+    }
+  ]
+}

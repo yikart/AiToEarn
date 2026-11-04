@@ -1,0 +1,83 @@
+{
+  "skill_name": "byted-mediakit-media-understand",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Quickly summarize the visible events in this 102.4-second video. I only care about the visuals. Use the supplied video fixture.",
+      "expected_output": "Samples across the whole source, understands frames as images, refines relevant gaps, and gives a concise evidence-based summary. No audio work, whole-video model call or prohibited workflow. Retains reliable source timestamps.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Summarize this interview's claims and explain what the visuals show during each topic. Also describe the background music. Use the supplied interview fixture.",
+      "expected_output": "Combines image understanding, ASR and extracted-audio understanding, starts independent work concurrently, and aligns results to the source timeline. Distinguishes speech from visuals and music; does not send the whole video merely to hear sound.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Does the impact sound occur within 20 milliseconds of the bat touching the ball? The initial contact sheet only has one frame every three seconds. Use the supplied sports fixture.",
+      "expected_output": "Rejects the coarse sheet as sufficient timing evidence, seeks targeted visual and audio evidence with source timestamps, and leaves the result unresolved if precision is insufficient. Does not submit video to an understanding model without an explicit request for direct video understanding, or claim higher sampling FPS guarantees synchronization accuracy.",
+      "files": []
+    },
+    {
+      "id": 4,
+      "prompt": "Summarize only the visuals in the supplied video. Callable tools include prefixed extract_frames, media_understanding and query_task tools with descriptions and schemas, but no service or package name is shown. mediakit-cli is also available.",
+      "expected_output": "Identifies capabilities from exposed tool names, descriptions and schemas without requiring a service name. Uses MCP extraction and image understanding with media_url, typed sampling arguments and MCP polling. Does not invoke CLI or require its authentication. Preserves the same coverage and uncertainty rules.",
+      "files": []
+    },
+    {
+      "id": 5,
+      "prompt": "Summarize the visuals and background sounds in the supplied video. No MediaKit MCP tools are available; mediakit-cli is installed.",
+      "expected_output": "Uses CLI extraction, image understanding, soundtrack extraction and audio understanding with video-urls. Does not invent MCP tools or use media-url as a CLI flag. Retains source times and does not submit video to the understanding router.",
+      "files": []
+    },
+    {
+      "id": 6,
+      "prompt": "MCP media_understanding is available, but MCP extract_frames is absent. CLI is installed. After submitting the image understanding task through MCP, its query times out. Continue the visual summary.",
+      "expected_output": "Uses CLI only for missing extraction, transfers usable image references into MCP media_understanding, and resumes the same MCP task after the timeout. Does not resubmit understanding via CLI or treat timeout as capability absence.",
+      "files": []
+    },
+    {
+      "id": 7,
+      "prompt": "Quickly find the highlight candidates in this 62-second short drama. MCP extract_frames, asr_subtitles and media_understanding are available; media_understanding accepts video and exposes scene=editing.",
+      "expected_output": "Starts frame extraction and ASR concurrently, then submits the extracted images for understanding. Does not submit video understanding as an extra parallel task for speed or story context. Does not use scene=editing as an exception or claim its timestamps are precise. Refines candidate intervals from source evidence without invoking prohibited highlight workflows.",
+      "files": []
+    },
+    {
+      "id": 8,
+      "prompt": "I explicitly want you to submit this video directly to media_understanding for a summary. Use its video-input capability rather than the usual extracted-image route.",
+      "expected_output": "Allows direct video understanding because the user explicitly requested that input route. Uses the available MCP public schema and its task lifecycle, and treats returned event times as estimates rather than frame-accurate evidence.",
+      "files": []
+    },
+    {
+      "id": 9,
+      "prompt": "当前对应的MCP处理能力不可用，mediakit-cli已安装，输入已就绪。继续完成任务，不要让我选择接口。",
+      "expected_output": "自动使用CLI完成缺失能力，不要求用户指定CLI，不编造MCP工具。",
+      "files": []
+    },
+    {
+      "id": 10,
+      "prompt": "任务已通过MCP提交并返回真实task_id，但现在MCP查询工具不可用。CLI可用，继续处理。",
+      "expected_output": "保留实际task_id并报告查询能力缺失；不跨接口查询、不经CLI重新提交，不宣称任务完成。",
+      "files": []
+    },
+    {
+      "id": 11,
+      "prompt": "刚才的MCP提交没有返回task_id，响应也没有可用结果。继续完成任务。",
+      "expected_output": "检查原始响应并报告提交状态问题，不伪造task_id、不把空结果当作同步完成，不盲目重提或切换CLI。",
+      "files": []
+    },
+    {
+      "id": 12,
+      "prompt": "分析这段音频并给完整逐字稿。",
+      "expected_output": "完整逐字稿按ASR Skill先分离人声再豆包ASR，不能直接用字幕工具代替。",
+      "files": []
+    },
+    {
+      "id": 13,
+      "prompt": "只有M4A音频，只提取字幕；MCP不可用，CLI可用。",
+      "expected_output": "说明CLI字幕工具仅支持视频；不调用asr-subtitles --audio-url，不伪装视频，不升级完整逐字稿。",
+      "files": []
+    }
+  ]
+}

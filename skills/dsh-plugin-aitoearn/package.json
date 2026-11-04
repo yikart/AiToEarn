@@ -1,0 +1,15 @@
+{
+  "name": "dsh-plugin-aitoearn",
+  "version": "0.0.4",
+  "description": "AiToEarn 全域内容增长与变现助手：创作、生成、剪辑、配音、多平台一键分发与变现规划",
+  "type": "module",
+  "main": "lib/index.js",
+  "license": "Proprietary",
+  "dsh": {
+    "bundle": {
+      "patch": [
+        "./cordis.patch.yml"
+      ]
+    }
+  }
+}
