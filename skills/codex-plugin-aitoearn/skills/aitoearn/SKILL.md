@@ -6,7 +6,7 @@ description: >-
   依赖 AiToEarn MCP 提供生成与发布工具；工具未连接时如实告知用户配置方法，不虚构工具调用。
 license: Proprietary
 metadata:
-  version: 0.0.4
+  version: 0.0.5
   author: AiToEarn (support@aitoearn.ai)
   homepage: https://aitoearn.ai
 ---

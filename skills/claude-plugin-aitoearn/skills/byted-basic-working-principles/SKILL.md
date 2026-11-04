@@ -8,7 +8,6 @@ description: >-
   when a scenario skill is already selected. Establishes shared rules
   for following the brief, preserving source meaning and existing edits,
   acting within scope, verifying results, and reporting completion honestly.
-requiredTools: []
 ---
 
 ## Environment

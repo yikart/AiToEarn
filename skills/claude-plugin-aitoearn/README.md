@@ -1,7 +1,7 @@
 # AiToEarn — Claude Code 插件包（免安装器版）
 
-本目录是从 AiToEarn 全平台管理器 payload 中拆分出的、可上架 Claude / Anthropic 生态的自包含插件包，
-内容取自 `payload/doubao-skill-aitoearn`（13 个子技能的多技能格式，未改动任何源文件）。
+本目录是可上架 Claude / Anthropic 生态的自包含插件包，内容取自 `payload/doubao-skill-aitoearn`，
+已按官方 plugin 规范整理为扁平多技能结构（14 个技能平级位于 `skills/` 下）。
 
 ## 目录结构
 
@@ -9,20 +9,22 @@
 claude-plugin-aitoearn/
 ├── .claude-plugin/
 │   └── plugin.json        # 插件清单（name/version/description/author）
-├── .mcp.json.tpl          # MCP 配置模板（__AITOEARN_*__ 占位符，安装时替换）
+├── .mcp.json.tpl          # MCP 配置模板（__AITOEARN_*__ 占位符，安装时替换为 .mcp.json）
 ├── README.md
-└── skills/
-    └── aitoearn/          # 入口技能 + 13 个子技能（原始嵌套结构，相对路径全部自洽）
-        ├── SKILL.md       # 入口：路由表 + 核心规则
-        ├── assets/icon.png
-        ├── references/mcp-connector.md
-        └── skills/        # 13 个子技能，每个含 SKILL.md（name/description frontmatter）
+├── skills/
+│   ├── aitoearn/          # 入口技能：路由表 + 核心规则
+│   │   ├── SKILL.md
+│   │   ├── assets/icon.png
+│   │   └── references/mcp-connector.md
+│   └── …/                 # 其余 13 个子技能与入口平级，每个为 <name>/SKILL.md 目录
 ```
+
+即规范要求的 `skills/<name>/SKILL.md` 一层结构：14 个技能（入口 `aitoearn` + 13 个子技能）全部位于插件根 `skills/` 下，互相以 `../<name>/SKILL.md` 相对引用。
 
 ## 上架说明
 
-- Claude Code 插件要求 `skills/<name>/SKILL.md`，frontmatter 仅需 `name` 与 `description`，均已满足；
-  子技能里的 `requiredTools` 等扩展字段会被忽略，不影响加载。
+- 插件规范要求 `skills/<name>/SKILL.md`（插件根下一层），14 个技能均已满足；frontmatter 含 `name` 与 `description`（必需），
+  子技能另带规范内可选字段 `allowed-tools`（声明本技能需要的 MCP 工具）。
 - MCP 接入使用 `.mcp.json.tpl`：安装时替换 `__AITOEARN_SERVER__`、`__AITOEARN_URL__`、
   `__AITOEARN_KEY__` 三个占位符后另存为 `.mcp.json`（Claude Code 的 MCP 配置文件名与 Codex 相同）。
 

@@ -1,7 +1,7 @@
 ---
 name: byted-mediakit-cloudedit-basic
 description: Read this skill before using CloudEdit, a cloud-based video editor, to inspect, create, edit, or export video projects. Use it for importing media, trimming or combining clips, adjusting timelines, adding subtitles or text, changing canvas layouts, and applying transitions or effects. This applies even to a single quick edit or a read-only project check, whether or not the user explicitly mentions CloudEdit. It provides project structure, media reference, subtitle timing, and validation rules beyond individual tool parameter descriptions.
-requiredTools:
+allowed-tools:
   - probe_video_metadata
   - probe_audio_metadata
   - probe_image_metadata

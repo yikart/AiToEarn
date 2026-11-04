@@ -9,7 +9,7 @@ description: >-
   to relevant specialist skills. Skip routine timeline edits and audio fades
   or level balancing that require no asset preparation; an already selected,
   suitable specialist workflow can be followed directly.
-requiredTools:
+allowed-tools:
   - separate_voice
   - erase_video_subtitle_pro
   - matte_greenscreen_video

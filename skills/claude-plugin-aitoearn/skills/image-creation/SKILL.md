@@ -1,7 +1,7 @@
 ---
 name: image-creation
 description: Generate or edit raster images for social posts, product shots, covers, mockups, and variants. Use when the user asks to create, edit, restyle, adapt, or redesign images based on provided images, or batch-generate bitmap images, or mentions posters, covers, product photos, illustrations, or reference-image generation.
-requiredTools:
+allowed-tools:
   - list_image_models
   - generate_image
 ---

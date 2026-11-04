@@ -1,7 +1,7 @@
 ---
 name: byted-mediakit-cloudedit-planner
 description: Turn editing intent and video, audio, or image sources into an evidence-backed, executable CloudEdit plan. Use whenever an edit needs decisions about selection, story, ordering, pacing, sound, composition, or necessary media processing, even when the user simply says to make a video. Understand intent, obtain sufficient content and timing evidence, prepare needed assets, and hand the concrete plan to byted-mediakit-cloudedit-basic for requested project production. Plan-only requests stop at the plan. Exact mechanical edits, import-only, export-only, and isolated parameter changes can use basic directly.
-requiredTools:
+allowed-tools:
   - probe_video_metadata
   - probe_audio_metadata
   - probe_image_metadata

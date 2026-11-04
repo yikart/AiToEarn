@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "aitoearn",
+  "version": "0.0.5",
+  "description": "AiToEarn 全域内容运营助手：创作、生成、剪辑、配音、多平台一键分发与变现规划。When the user wants to create or publish content, generate/edit images or videos, transcribe audio, or plan content monetization.",
+  "author": {
+    "name": "AiToEarn",
+    "url": "https://aitoearn.cn"
+  },
+  "homepage": "https://aitoearn.cn",
+  "repository": "https://github.com/yikart/AiToEarn",
+  "license": "Proprietary",
+  "keywords": [
+    "aitoearn",
+    "content",
+    "publish",
+    "video",
+    "image",
+    "monetization",
+    "短视频",
+    "发布",
+    "变现"
+  ],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "全域内容运营助手",
+        "shortDescription": "创作并一键分发到全平台",
+        "longDescription": "覆盖起号、涨粉、带货与变现全链路：写文案、生成图片和视频、剪辑与字幕、配音，并把成品一键发布到抖音、快手、小红书、微信视频号、Facebook、TikTok 等海内外平台。",
+        "developerName": "AiToEarn",
+        "category": "Productivity",
+        "websiteURL": "https://aitoearn.cn",
+        "composerIcon": "./skills/aitoearn/icon.png"
+      }
+    }
+  }
+}

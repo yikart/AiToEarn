@@ -1,7 +1,7 @@
 ---
 name: channel-publish
 description: Publish content to the user's bound Channel Accounts, schedule or change Publish At, cancel an unfinished Publish Task, or update already published content. Use when the user wants to post, schedule, cancel, or update social content on a connected platform.
-requiredTools:
+allowed-tools:
   - list_channel_accounts
   - list_channel_platforms
   - get_channel_platform

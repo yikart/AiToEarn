@@ -1,7 +1,7 @@
 ---
 name: byted-mediakit-audiogen
 description: Generate audio with Seed Audio through MediaKit MCP. Use for speech, narration, character dialogue, sound effects, ambience, and audio scenes from text, preset voices, reference audio, or an image. Supports voice selection, delivery instructions, and optional word timestamps. Do not use for transcription or tasks requiring only deterministic audio editing, mixing, or transcoding. For pure narration or explainer TTS, use this skill with seed-audio-1.0.
-requiredTools:
+allowed-tools:
   - call_maas_proxy
 ---
 

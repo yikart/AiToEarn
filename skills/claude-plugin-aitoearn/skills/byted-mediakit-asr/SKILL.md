@@ -1,7 +1,7 @@
 ---
 name: byted-mediakit-asr
 description: Extract speech subtitles from videos via MediaKit MCP. Only for full transcripts, use voice separation followed by Doubao ASR through call-maas-proxy on audio or video. Use for subtitle extraction, SRT/VTT, recording-to-text and timestamped transcripts. Not for speech synthesis, visual OCR or general sound description.
-requiredTools:
+allowed-tools:
   - asr_subtitles
   - separate_voice
   - call_maas_proxy

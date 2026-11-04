@@ -1,7 +1,7 @@
 ---
 name: video-generation
 description: Generate, edit, or extend videos with Seedance models via list_video_generation_models and generate_video; optimizes prompts per model's conventions. Use when user asks to create, edit, extend, or storyboard a video, or mentions seedance / text-to-video / image-to-video / video-to-video.
-requiredTools:
+allowed-tools:
   - list_video_generation_models
   - generate_video
   - probe_video_metadata

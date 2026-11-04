@@ -9,7 +9,7 @@ description: >-
   the current project environment. Skip visual-only changes with unchanged
   audio. Does not cover general denoising, music selection,
   source separation, or visual transitions.
-requiredTools:
+allowed-tools:
   - inspect_elements
   - edit_element
   - preview_timeline

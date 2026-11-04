@@ -1,7 +1,7 @@
 ---
 name: image-edit
 description: Edit an existing image with deterministic pixel operations via image_edit — rotate, flip, crop (free/ratio/circle), resize, compress/format-convert, adjust brightness/saturation/contrast, sharpen, blur, mosaic, rounded corners, negate, overlay, and image watermark. Use when the user asks to 裁剪/旋转/翻转/缩放/压缩/打码/马赛克/加水印/叠图/圆角/调亮/调暗/锐化/模糊 an existing image, convert format, or hit a file-size limit. For AI re-creation, restyle, or adding text, use image-creation instead.
-requiredTools:
+allowed-tools:
   - image_edit
   - probe_image_metadata
 ---

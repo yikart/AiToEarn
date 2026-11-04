@@ -1,7 +1,7 @@
 ---
 name: byted-mediakit-media-understand
 description: Understand videos, audio and images with MediaKit MCP tools. Use for media summaries, visual event searches, dialogue analysis, sound descriptions, and timestamped evidence for editing. Use sampled-image understanding, ASR and audio understanding; submit video to an understanding model only when the user explicitly requests direct video understanding. Refine only the intervals needed to answer the question.
-requiredTools:
+allowed-tools:
   - extract_frames
   - media_understanding
   - asr_subtitles

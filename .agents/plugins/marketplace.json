@@ -1,0 +1,20 @@
+{
+  "name": "aitoearn",
+  "interface": {
+    "displayName": "AiToEarn"
+  },
+  "plugins": [
+    {
+      "name": "aitoearn",
+      "source": {
+        "source": "local",
+        "path": "./skills/codex-plugin-aitoearn"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

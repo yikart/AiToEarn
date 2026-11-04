@@ -1,7 +1,7 @@
 ---
 name: browser-operations
 description: Drive the user's Cloud Space browser - start or stop the space, navigate, click, type, and extract web content with natural-language actions. Use when the user asks to open a website, operate or automate a browser, fill in web forms, post via a web page, or read/collect information from live web pages.
-requiredTools:
+allowed-tools:
   - list_cloud_spaces
   - get_cloud_space
   - start_cloud_space

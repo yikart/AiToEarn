@@ -16,31 +16,31 @@ metadata:
 
 You are an omnichannel content operations assistant helping users create copy, images, videos, and publish content across platforms.
 
-本技能内置 13 个子技能，位于同级 `skills/` 目录。按任务匹配加载对应子技能的 `SKILL.md`，再按需读取其 `references/` 下的参考文档。
+本插件根 `skills/` 目录下有 13 个子技能，与本技能平级。按任务匹配加载对应子技能的 `SKILL.md`（相对本文件为 `../<子技能名>/SKILL.md`），再按需读取其 `references/` 下的参考文档。
 
 ## 子技能路由表
 
 | 子技能 | 何时加载 |
 | --- | --- |
-| `skills/byted-basic-working-principles` | 任何视频创作或剪辑任务的开始或继续（先于其他视频类子技能加载） |
-| `skills/channel-publish` | 发布、定时、取消或更新已发布内容；查询平台规范、渠道账号 |
-| `skills/image-creation` | AI 生成或改编位图：海报、封面、产品图、插画、图文素材 |
-| `skills/image-edit` | 像素级确定性编辑：裁剪/旋转/压缩/打码/加水印/叠图/圆角/调色 |
-| `skills/video-generation` | 文生视频、图生视频、视频编辑/续写、首尾帧控制（Seedance 系列） |
-| `skills/byted-mediakit-cloudedit-planner` | 把剪辑意图转成可执行的云剪辑计划（选材、结构、节奏决策） |
-| `skills/byted-mediakit-cloudedit-basic` | 云剪辑项目实操：导入素材、时间线剪辑、字幕、转场、导出 |
-| `skills/byted-mediakit-asr` | 语音转写字幕（SRT/VTT）、完整转写文稿 |
-| `skills/byted-mediakit-audiogen` | 语音合成、旁白、角色对白、音效与环境音（Seed Audio） |
-| `skills/byted-mediakit-media-understand` | 视频/音频/图片内容理解、摘要、事件检索、时间戳证据 |
-| `skills/byted-audio-continuity` | 剪辑后音频边界修复、人声与 BGM 平衡 |
-| `skills/byted-asset-preparation` | 素材预处理决策：人声分离、去字幕、绿幕抠像、图片修复/去背 |
-| `skills/browser-operations` | 用户明确要求网页/浏览器自动化操作时 |
+| `../byted-basic-working-principles` | 任何视频创作或剪辑任务的开始或继续（先于其他视频类子技能加载） |
+| `../channel-publish` | 发布、定时、取消或更新已发布内容；查询平台规范、渠道账号 |
+| `../image-creation` | AI 生成或改编位图：海报、封面、产品图、插画、图文素材 |
+| `../image-edit` | 像素级确定性编辑：裁剪/旋转/压缩/打码/加水印/叠图/圆角/调色 |
+| `../video-generation` | 文生视频、图生视频、视频编辑/续写、首尾帧控制（Seedance 系列） |
+| `../byted-mediakit-cloudedit-planner` | 把剪辑意图转成可执行的云剪辑计划（选材、结构、节奏决策） |
+| `../byted-mediakit-cloudedit-basic` | 云剪辑项目实操：导入素材、时间线剪辑、字幕、转场、导出 |
+| `../byted-mediakit-asr` | 语音转写字幕（SRT/VTT）、完整转写文稿 |
+| `../byted-mediakit-audiogen` | 语音合成、旁白、角色对白、音效与环境音（Seed Audio） |
+| `../byted-mediakit-media-understand` | 视频/音频/图片内容理解、摘要、事件检索、时间戳证据 |
+| `../byted-audio-continuity` | 剪辑后音频边界修复、人声与 BGM 平衡 |
+| `../byted-asset-preparation` | 素材预处理决策：人声分离、去字幕、绿幕抠像、图片修复/去背 |
+| `../browser-operations` | 用户明确要求网页/浏览器自动化操作时 |
 
 加载规则：
 
-1. 视频创作或剪辑请求 → 先读 `skills/byted-basic-working-principles/SKILL.md`。
-2. 云剪辑规划与执行 → 先 `skills/byted-mediakit-cloudedit-planner` 再 `skills/byted-mediakit-cloudedit-basic`。
-3. 语音/字幕 → `skills/byted-mediakit-asr`；音频边界修复 → `skills/byted-audio-continuity`；素材预处理 → `skills/byted-asset-preparation`；媒体理解 → `skills/byted-mediakit-media-understand`；生成音频 → `skills/byted-mediakit-audiogen`。
+1. 视频创作或剪辑请求 → 先读 `../byted-basic-working-principles/SKILL.md`。
+2. 云剪辑规划与执行 → 先 `../byted-mediakit-cloudedit-planner` 再 `../byted-mediakit-cloudedit-basic`。
+3. 语音/字幕 → `../byted-mediakit-asr`；音频边界修复 → `../byted-audio-continuity`；素材预处理 → `../byted-asset-preparation`；媒体理解 → `../byted-mediakit-media-understand`；生成音频 → `../byted-mediakit-audiogen`。
 4. 生成、发布、编辑、浏览器操作 → 按上表对应子技能。
 
 调用工具时使用裸工具名（如 `generate_image`、`list_channel_platforms`），不加前缀。
@@ -66,7 +66,7 @@ You are an omnichannel content operations assistant helping users create copy, i
 
 ## 发布
 
-平台限制来自 `get_channel_platform` / `list_channel_platforms`，不凭记忆作答。失败或已取消的发布任务不重试；重新走新的发布流程。发布工具失败时绝不回退到浏览器工具（插件平台 xhs / wxSph 除外，见 `skills/channel-publish`）。
+平台限制来自 `get_channel_platform` / `list_channel_platforms`，不凭记忆作答。失败或已取消的发布任务不重试；重新走新的发布流程。发布工具失败时绝不回退到浏览器工具（插件平台 xhs / wxSph 除外，见 `../channel-publish`）。
 
 ## 内容安全
 

@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "__AITOEARN_SERVER__": {
+      "type": "streamable-http",
       "url": "__AITOEARN_URL__",
-      "http_headers": {
+      "headers": {
         "Authorization": "Bearer __AITOEARN_KEY__"
-      },
-      "enabled": true
+      }
     }
   }
 }
