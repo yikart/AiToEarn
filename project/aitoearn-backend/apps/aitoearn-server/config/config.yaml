@@ -11,8 +11,8 @@ logger:
 appDomain: localhost
 environment: production
 auth:
-  secret: ""
-  internalToken: ""
+  secret: ''
+  internalToken: ''
 apiKey:
   prefix: ai_
 redis:
@@ -45,7 +45,7 @@ assets:
   provider: s3
 aiClient:
   baseUrl: http://aitoearn-ai:3010
-  token: ""
+  token: ''
 channel:
   channelDb:
     uri: mongodb://admin:password@mongodb:27017/?authSource=admin&directConnection=true
@@ -54,14 +54,14 @@ channel:
     baseUrl: https://localhost/api/shortLink/
   bilibili:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/bilibili/callback
     logoUrl: https://assets.aitoearn.ai/platforms/bilibili.svg
   douyin:
     status: hidden
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/douyin/callback
     logoUrl: https://assets.aitoearn.ai/platforms/douyin.svg
     scopes:
@@ -75,12 +75,12 @@ channel:
       sandbox: false
   facebook:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     graphApiVersion: v25.0
     redirectUri: https://localhost/api/v2/channels/accounts/auth/facebook/callback
     logoUrl: https://assets.aitoearn.ai/platforms/facebook.svg
-    webhookVerifyToken: ""
+    webhookVerifyToken: ''
     scopes:
       - public_profile
       - pages_show_list
@@ -91,8 +91,8 @@ channel:
       - read_insights
   kwai:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/KWAI/callback
     logoUrl: https://assets.aitoearn.ai/platforms/kwai.svg
     scopes:
@@ -101,12 +101,12 @@ channel:
       - user_video_info
   instagram:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     graphApiVersion: v25.0
     redirectUri: https://localhost/api/v2/channels/accounts/auth/instagram/callback
     logoUrl: https://assets.aitoearn.ai/platforms/instagram.svg
-    webhookVerifyToken: ""
+    webhookVerifyToken: ''
     scopes:
       - instagram_business_basic
       - instagram_business_manage_comments
@@ -114,12 +114,12 @@ channel:
       - instagram_business_manage_insights
   linkedin:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/plat/meta/auth/back
     logoUrl: https://assets.aitoearn.ai/platforms/linkedin.svg
-    restVersion: "202605"
-    webhookSecret: ""
+    restVersion: '202605'
+    webhookSecret: ''
     scopes:
       - openid
       - profile
@@ -130,8 +130,8 @@ channel:
     logoUrl: https://assets.aitoearn.ai/platforms/google-business.svg
   pinterest:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/pinterest/callback
     logoUrl: https://assets.aitoearn.ai/platforms/pinterest.svg
     baseUrl: https://api.pinterest.com
@@ -149,8 +149,8 @@ channel:
     accessTokenUrl: https://edith.xiaohongshu.com/api/sns/v1/ext/access/token
   threads:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/threads/callback
     logoUrl: https://assets.aitoearn.ai/platforms/threads.svg
     scopes:
@@ -163,8 +163,8 @@ channel:
       - threads_delete
   tiktok:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/tiktok/callback
     logoUrl: https://assets.aitoearn.ai/platforms/tiktok.svg
     scopes:
@@ -177,8 +177,8 @@ channel:
     pullFromUrlAllowedPrefixes: []
   twitter:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/twitter/callback
     logoUrl: https://assets.aitoearn.ai/platforms/twitter.svg
     scopes:
@@ -198,19 +198,19 @@ channel:
       logoUrl: https://assets.aitoearn.ai/platforms/wechat-official.svg
     channels:
       status: available
-      appId: ""
-      appSecret: ""
+      appId: ''
+      appSecret: ''
       token: aitoearn
-      encodingAESKey: ""
+      encodingAESKey: ''
       redirectUri: https://localhost/api/platcallback
       logoUrl: https://assets.aitoearn.ai/platforms/wechat-channels.svg
   youtube:
     status: available
-    clientId: ""
-    clientSecret: ""
+    clientId: ''
+    clientSecret: ''
     redirectUri: https://localhost/api/v2/channels/accounts/auth/youtube/callback
     logoUrl: https://assets.aitoearn.ai/platforms/youtube.svg
-    webhookVerifyToken: ""
+    webhookVerifyToken: ''
     scopes:
       - https://www.googleapis.com/auth/youtube
       - https://www.googleapis.com/auth/youtube.upload
@@ -219,5 +219,5 @@ channel:
       - https://www.googleapis.com/auth/userinfo.email
 relay:
   serverUrl: https://aitoearn.ai/api
-  apiKey: ""
+  apiKey: ''
   callbackUrl: http://localhost:8080/api/v2/channels/relay/callback
