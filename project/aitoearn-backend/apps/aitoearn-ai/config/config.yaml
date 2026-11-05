@@ -8,10 +8,10 @@ logger:
     pretty: false
     singleLine: false
     translateTime: true
-appDomain: ""
+appDomain: ''
 auth:
-  secret: ""
-  internalToken: ""
+  secret: ''
+  internalToken: ''
 redis:
   host: redis
   port: 6379
@@ -745,33 +745,33 @@ ai:
             aspectRatio: 9:16
             duration: 8
   openai:
-    apiKey: ""
+    apiKey: ''
     baseUrl: https://aitoearn.ai/api/ai
     timeout: 300000
   volcengine:
-    apiKey: ""
+    apiKey: ''
     baseUrl: https://ark.cn-beijing.volces.com/
-    accessKeyId: ""
-    secretAccessKey: ""
-    spaceName: ""
-    playbackBaseUrl: ""
-    urlAuthPrimaryKey: ""
+    accessKeyId: ''
+    secretAccessKey: ''
+    spaceName: ''
+    playbackBaseUrl: ''
+    urlAuthPrimaryKey: ''
   grok:
-    apiKey: ""
+    apiKey: ''
     baseUrl: https://api.x.ai
   dashscope:
-    apiKey: ""
+    apiKey: ''
     baseUrl: https://dashscope.aliyuncs.com
   gemini:
-    apiKey: ""
+    apiKey: ''
     baseUrl: https://aitoearn.ai/api/ai
   relay:
     url: https://aitoearn.ai/
-    apiKey: ""
+    apiKey: ''
     timeout: 300000
   anthropic:
     baseUrl: https://aitoearn.ai/api/ai
-    apiKey: ""
+    apiKey: ''
   draftGeneration:
     planner:
       defaultModel: gpt-5.5
