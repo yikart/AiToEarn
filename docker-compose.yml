@@ -95,18 +95,22 @@ services:
       - aitoearn-network
 
   rustfs-init:
-    image: minio/mc:latest
+    image: amazon/aws-cli:latest
     container_name: aitoearn-rustfs-init
     depends_on:
       rustfs:
         condition: service_healthy
+    environment:
+      AWS_ACCESS_KEY_ID: rustfsadmin
+      AWS_SECRET_ACCESS_KEY: rustfsadmin
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_EC2_METADATA_DISABLED: "true"
     networks:
       - aitoearn-network
     entrypoint: >
       /bin/sh -c "
-      mc alias set rustfs http://rustfs.local:9000 rustfsadmin rustfsadmin;
-      mc mb rustfs/aitoearn --ignore-existing;
-      mc anonymous set download rustfs/aitoearn;
+      aws --endpoint-url http://rustfs.local:9000 s3 mb s3://aitoearn || true;
+      aws --endpoint-url http://rustfs.local:9000 s3api put-bucket-policy --bucket aitoearn --policy '{\"Version\":\"2012-10-17\",\"Statement\":[{\"Effect\":\"Allow\",\"Principal\":\"*\",\"Action\":\"s3:GetObject\",\"Resource\":\"arn:aws:s3:::aitoearn/*\"}]}';
       exit 0;
       "
 
