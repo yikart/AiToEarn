@@ -19,6 +19,20 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 ***
 
+## AI 助手技能
+
+除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **Agent 技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
+
+在你的 AI 助手（Claude Code / Trae / Cursor 等）对话框里直接粘贴下面这段即可安装，AI 会自动索取 API Key、完成配置并验证：
+
+```text
+帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills 的插件包
+```
+
+各平台的安装方式与详细说明见 [AiToEarn 文档站](https://docs.aitoearn.ai/zh/use/installer-pack)。
+
+***
+
 ## 特别感谢 ❤️
 
 <table align="center">
@@ -43,7 +57,6 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 - [核心功能](#核心功能)
 - [快速开始](#快速开始)
 - [MCP 集成](#mcp-集成)
-- [AI 助手技能](#ai-助手技能)
 - [Docker 部署](#docker-一键部署)
 - [最新动态](#最新动态)
 - [社区与支持](#社区与支持)
@@ -108,6 +121,12 @@ AiToEarn 最核心的目标：帮助每一位创作者赚钱。创作者在平�
 - 🇨🇳 中国用户：[aitoearn.cn](https://aitoearn.cn/)
 - 🌍 国际用户：[aitoearn.ai](https://aitoearn.ai/)
 
+不知道第一句话说什么？注册登录后，把下面这段提示词直接粘贴到对话框发送即可（把主题换成你自己的，AI 会自动写文案、配图并发布）：
+
+```text
+帮我创作一条关于「周末在家做手冲咖啡」的小红书图文笔记，配 3 张生活感图片，语气轻松真实，写好之后直接发布到我的小红书账号。
+```
+
 ***
 
 ## MCP 集成
@@ -144,38 +163,6 @@ AiToEarn 兼容所有支持 MCP 协议的 AI 助手。**根据 API Key 来源选
 在 MCP 设置中填入 **MCP 地址** 与 **认证 Header**（`x-api-key: 你的API-Key`）。完整步骤与各工具截图见 [docs 站 MCP 指南](https://docs.aitoearn.ai/api-reference/post-api-ai-agent-mcp)。
 
 > 💡 自部署用户请将 `aitoearn.ai` 替换为你自己的地址（例如 `localhost:8080`）。
-
-***
-
-## AI 助手技能
-
-除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **Agent 技能包**：入口技能自动识别任务并路由到 13 个专业子技能，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
-
-| 子技能 | 用途 |
-| --- | --- |
-| `channel-publish` | 多平台一键发布、定时发布、更新已发布内容 |
-| `image-creation` / `image-edit` | AI 生成图片（海报、封面、配图）/ 像素级编辑（裁剪、水印、压缩、调色） |
-| `video-generation` | 文生视频、图生视频、视频编辑与续写（Seedance） |
-| `byted-mediakit-cloudedit-planner` / `-basic` | 云剪辑方案规划与项目实操（时间线、字幕、转场、导出） |
-| `byted-mediakit-asr` | 语音转写字幕（SRT/VTT）与完整文稿 |
-| `byted-mediakit-audiogen` | 语音合成、旁白、角色对白、音效（Seed Audio） |
-| `byted-mediakit-media-understand` | 视频/音频/图片内容理解、摘要与时间戳证据 |
-| `byted-asset-preparation` | 素材预处理（人声分离、去字幕、绿幕抠像、图片修复） |
-| `byted-audio-continuity` | 剪辑后的音频边界修复与混音平衡 |
-| `byted-basic-working-principles` | 视频创作通用工作规范（所有视频任务先加载） |
-| `browser-operations` | 网页/浏览器自动化操作 |
-
-### 平台插件包
-
-技能包已按平台拆分打包，支持两种安装方式：**插件包手动安装**，或**粘贴安装提示词由 AI 引导安装**（提示词会自动索取 API Key、完成配置并验证，无需编程基础）。
-
-| 平台 | 形态 |
-| --- | --- |
-| Codex / Claude Code | 插件库标准包（含插件清单与 MCP 配置模板） |
-| Trae / 千问办公 / 千问 / DeepSeek Harness / Kimi Work | 插件或技能目录 + 预置配置模板 |
-| 豆包 | 技能目录 + 连接器配置引导 |
-
-各平台安装包已内置在仓库 [`skills/`](./skills/) 目录（每个平台一个文件夹，含安装说明与安装提示词），也随「AiToEarn 全平台管理器」发布；在对应 AI 助手中粘贴安装提示词即可完成安装。
 
 ***
 

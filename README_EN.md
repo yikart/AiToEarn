@@ -19,6 +19,20 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 
 ---
 
+## AI Assistant Skills
+
+Beyond the MCP server, AiToEarn ships a ready-to-use **Agent skill bundle** covering the full pipeline: creation → editing → publishing → monetization — no complex prompting required.
+
+Just paste the line below into your AI assistant (Claude Code / Trae / Cursor, etc.) to install — it asks for your API Key, writes the config, and verifies:
+
+```text
+Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/skills for me
+```
+
+Per-platform install instructions and details: see the [AiToEarn Docs](https://docs.aitoearn.ai/en/use/installer-pack).
+
+---
+
 ## Special Thanks ❤️
 
 <table align="center">
@@ -44,7 +58,6 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 - [Key Features](#key-features)
 - [Quick Start](#quick-start)
 - [MCP Integration](#mcp-integration)
-- [AI Assistant Skills](#ai-assistant-skills)
 - [Docker Deployment](#docker-one-click-deploy)
 - [What's New](#whats-new)
 - [Community & Support](#community--support)
@@ -109,6 +122,12 @@ No setup required — just open your browser:
 - 🇨🇳 China users: [aitoearn.cn](https://aitoearn.cn/)
 - 🌍 International users: [aitoearn.ai](https://aitoearn.ai/)
 
+Not sure what to say first? After signing up and logging in, just paste the prompt below into the chat box and send it (replace the topic with your own — the AI will write the copy, create images, and publish it for you):
+
+```text
+Create a TikTok post about "making pour-over coffee at home on weekends" for me, with a short engaging script and matching visuals, then publish it to my TikTok account.
+```
+
 ---
 
 ## MCP Integration
@@ -145,38 +164,6 @@ Edit `claude_desktop_config.json`, add:
 In your MCP settings, fill in the **MCP URL** and the **Auth Header** (`x-api-key: your-api-key`). Step-by-step instructions with screenshots for each tool are in the [docs MCP guide](https://docs.aitoearn.ai/api-reference/post-api-ai-agent-mcp).
 
 > 💡 For self-hosted instances, replace `aitoearn.ai` with your own address (e.g., `localhost:8080`).
-
----
-
-## AI Assistant Skills
-
-Beyond the MCP server, AiToEarn ships a ready-to-use **Agent Skill bundle**: an entry skill routes each request to 13 specialized sub-skills, covering the full pipeline from creation to editing, publishing, and monetization — no complex prompting required.
-
-| Sub-skill | Purpose |
-| --- | --- |
-| `channel-publish` | One-click multi-platform publishing, scheduling, updating published content |
-| `image-creation` / `image-edit` | AI image generation (posters, covers, illustrations) / pixel-level editing (crop, watermark, compress, adjust) |
-| `video-generation` | Text-to-video, image-to-video, video editing and extension (Seedance) |
-| `byted-mediakit-cloudedit-planner` / `-basic` | Cloud-editing plan design and hands-on projects (timeline, subtitles, transitions, export) |
-| `byted-mediakit-asr` | Speech-to-text subtitles (SRT/VTT) and full transcripts |
-| `byted-mediakit-audiogen` | Voice synthesis, narration, character dialogue, sound effects (Seed Audio) |
-| `byted-mediakit-media-understand` | Video/audio/image understanding, summaries, timestamped evidence |
-| `byted-asset-preparation` | Media preparation (vocal separation, subtitle removal, greenscreen matting, image repair) |
-| `byted-audio-continuity` | Audio boundary repair and mixing balance after editing |
-| `byted-basic-working-principles` | General video-creation working rules (load first for any video task) |
-| `browser-operations` | Web/browser automation |
-
-### Platform Packages
-
-Skill bundles are packaged per platform with two install options: **manual package install**, or **paste the install prompt and let the AI guide the setup** (it asks for your API Key, writes the config, and verifies — no programming required).
-
-| Platform | Form |
-| --- | --- |
-| Codex / Claude Code | Standard plugin packages (manifest + skills + MCP config template) |
-| Trae / Qwen Work / Tongyi Qianwen / DeepSeek Harness / Kimi Work | Skill or plugin directory + config templates |
-| Doubao | Skill directory + connector setup guide |
-
-The packages live in the repo under [`skills/`](./skills/) (one folder per platform, each with a README and an install prompt) and ship with the AiToEarn Manager app.
 
 ---
 
