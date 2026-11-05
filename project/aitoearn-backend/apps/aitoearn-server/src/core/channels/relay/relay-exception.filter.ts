@@ -121,7 +121,7 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
           validateStatus: () => true,
         })
         this.logger.debug({
-          proxyResponse
+          proxyResponse,
         })
 
         response.status(proxyResponse.status).json(proxyResponse.data)
