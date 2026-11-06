@@ -360,6 +360,84 @@ describe('publish task service retry', () => {
     expect(stateService.markFailed).not.toHaveBeenCalled()
   })
 
+  it('persists the platform work id from retryable publish exceptions before requeueing', async () => {
+    const retryableError = new ChannelPlatformException({
+      code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+      platform: AccountType.TikTok,
+      category: PlatformErrorCategory.Network,
+      context: {
+        endpoint: 'uploadVideo',
+        taskId: 'task-1',
+        accountId: 'account-1',
+        platformWorkId: 'publish-tiktok-1',
+      },
+      cause: {
+        type: PlatformErrorCauseType.Network,
+        platformMessage: 'upload socket hang up',
+      },
+      retryable: true,
+    })
+    const { service, provider, stateService, queueService, record } = createService({
+      publish: vi.fn(async () => {
+        throw retryableError
+      }),
+    })
+    record.status = PublishStatus.Queued
+
+    await service.processPublishJob('task-1')
+
+    expect(provider.publish).toHaveBeenCalledWith(expect.objectContaining({
+      taskId: 'task-1',
+      platformWorkId: 'work-1',
+    }))
+    expect(stateService.markPublishingProgress).toHaveBeenCalledWith('task-1', { platformWorkId: 'publish-tiktok-1' })
+    expect(stateService.markPublishingProgress.mock.invocationCallOrder[0])
+      .toBeLessThan(stateService.markPublishingRetryQueued.mock.invocationCallOrder[0])
+    expect(stateService.markPublishingRetryQueued).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      category: PlatformErrorCategory.Network,
+      retryable: true,
+    }))
+    expect(queueService.enqueueImmediate).toHaveBeenCalledWith('task-1', 1)
+    expect(stateService.markFailed).not.toHaveBeenCalled()
+  })
+
+  it('still requeues when persisting the platform work id from a retryable publish exception fails', async () => {
+    const retryableError = new ChannelPlatformException({
+      code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+      platform: AccountType.TikTok,
+      category: PlatformErrorCategory.Network,
+      context: {
+        endpoint: 'uploadVideo',
+        taskId: 'task-1',
+        accountId: 'account-1',
+        platformWorkId: 'publish-tiktok-1',
+      },
+      cause: {
+        type: PlatformErrorCauseType.Network,
+        platformMessage: 'upload socket hang up',
+      },
+      retryable: true,
+    })
+    const { service, stateService, queueService, record } = createService({
+      publish: vi.fn(async () => {
+        throw retryableError
+      }),
+    })
+    record.status = PublishStatus.Queued
+    stateService.markPublishingProgress.mockRejectedValueOnce(new Error('mongo unavailable'))
+    const warn = vi.spyOn(service['logger'], 'warn').mockImplementation(() => undefined)
+
+    await service.processPublishJob('task-1')
+
+    expect(stateService.markPublishingProgress).toHaveBeenCalledWith('task-1', { platformWorkId: 'publish-tiktok-1' })
+    expect(stateService.markPublishingRetryQueued).toHaveBeenCalledWith('task-1', expect.objectContaining({
+      retryable: true,
+    }))
+    expect(queueService.enqueueImmediate).toHaveBeenCalledWith('task-1', 1)
+    expect(warn).toHaveBeenCalledWith(expect.anything(), 'Failed to persist platform work ID for retryable publish task task-1')
+    warn.mockRestore()
+  })
+
   it('retries publish with a refreshed credential when publish fails with an auth platform error', async () => {
     const authError = new ChannelPlatformException({
       code: ResponseCode.ChannelAccessTokenFailed,

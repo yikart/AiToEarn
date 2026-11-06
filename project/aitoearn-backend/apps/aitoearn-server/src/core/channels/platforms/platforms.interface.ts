@@ -265,6 +265,8 @@ export interface PublishPublishInput<TOption = Record<string, unknown>> {
   option?: TOption
   publishAt?: Date
   credential: CredentialContext
+  /** 重试恢复时本地已记录的平台侧作品 ID */
+  platformWorkId?: string
 }
 
 export interface PublishProviderResult<TDataOption = Record<string, unknown>> {

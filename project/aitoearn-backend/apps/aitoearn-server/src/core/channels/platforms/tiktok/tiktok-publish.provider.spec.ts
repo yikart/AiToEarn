@@ -58,6 +58,8 @@ function createPublishProvider(input?: {
     })),
     initPhotoPublish: vi.fn(async () => ({ publish_id: 'publish-photo-1' })),
     uploadVideo: vi.fn(async () => undefined),
+    getPublishStatus: vi.fn(async () => ({ status: TikTokPublishStatus.ProcessingUpload })),
+    cancelPublish: vi.fn(async () => undefined),
   }
   const mediaService = {
     head: vi.fn(async () => input?.mediaHeaders ?? { 'content-length': String(70 * 1024 * 1024 + 123) }),
@@ -530,5 +532,239 @@ describe('tiktok publish provider finalize', () => {
       linkStatus: PublishRecordLinkStatus.PENDING,
     })
     expect(tikTokService.queryVideos).not.toHaveBeenCalled()
+  })
+
+  it('wraps file upload failures with the publish id and retryable platform error', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.uploadVideo.mockRejectedValueOnce(new Error('upload socket hang up'))
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://mcp.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.FileUpload,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).rejects.toMatchObject({
+      code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+      category: PlatformErrorCategory.Network,
+      retryable: true,
+      context: {
+        endpoint: 'uploadVideo',
+        taskId: 'task-1',
+        accountId: 'account-1',
+        platformWorkId: 'publish-video-1',
+      },
+    })
+    expect(tikTokService.initVideoPublish).toHaveBeenCalledTimes(1)
+  })
+
+  it('skips init and returns the recorded publish id when a resumed file upload is already complete', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.getPublishStatus.mockResolvedValueOnce({ status: TikTokPublishStatus.PublishComplete })
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-video-0',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://mcp.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.FileUpload,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-video-0',
+      dataOption: {
+        publishId: 'publish-video-0',
+        source: TikTokPostSource.FileUpload,
+        contentPath: TikTokContentPath.Video,
+        privacyLevel: TikTokPrivacyLevel.Public,
+        username: 'creator',
+      },
+    })
+
+    expect(tikTokService.getPublishStatus).toHaveBeenCalledWith('access-token', 'publish-video-0')
+    expect(tikTokService.cancelPublish).not.toHaveBeenCalled()
+    expect(tikTokService.initVideoPublish).not.toHaveBeenCalled()
+    expect(tikTokService.uploadVideo).not.toHaveBeenCalled()
+  })
+
+  it('cancels the stale publish and re-inits when a resumed file upload has not completed', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.getPublishStatus.mockResolvedValueOnce({ status: TikTokPublishStatus.Failed, fail_reason: 'upload interrupted' })
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-video-0',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://mcp.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.FileUpload,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-video-1',
+    })
+
+    expect(tikTokService.getPublishStatus).toHaveBeenCalledWith('access-token', 'publish-video-0')
+    expect(tikTokService.cancelPublish).toHaveBeenCalledWith('access-token', 'publish-video-0')
+    expect(tikTokService.initVideoPublish).toHaveBeenCalledTimes(1)
+    expect(tikTokService.uploadVideo).toHaveBeenCalledWith('https://upload.example.test/video', 'https://mcp.example.test/video.mp4')
+  })
+
+  it('falls back to a fresh init when the resumed publish status cannot be fetched', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.getPublishStatus.mockRejectedValueOnce(new Error('status fetch timeout'))
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-video-0',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://mcp.example.test/video.mp4', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.FileUpload,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-video-1',
+    })
+
+    expect(tikTokService.cancelPublish).not.toHaveBeenCalled()
+    expect(tikTokService.initVideoPublish).toHaveBeenCalledTimes(1)
+    expect(tikTokService.uploadVideo).toHaveBeenCalled()
+  })
+})
+
+describe('tiktok publish provider resume extended coverage', () => {
+  it('skips init and returns the recorded publish id when a resumed PULL_FROM_URL video is already complete', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.getPublishStatus.mockResolvedValueOnce({ status: TikTokPublishStatus.PublishComplete })
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-video-0',
+      content: {
+        title: 'Title',
+        media: [{ url: 'https://cdn.example.test/signed-video', metadata: { type: 'video' } }],
+      },
+      option: {
+        source: TikTokPostSource.PullFromUrl,
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-video-0',
+      dataOption: {
+        publishId: 'publish-video-0',
+        source: TikTokPostSource.PullFromUrl,
+        contentPath: TikTokContentPath.Video,
+      },
+    })
+
+    expect(tikTokService.getPublishStatus).toHaveBeenCalledWith('access-token', 'publish-video-0')
+    expect(tikTokService.cancelPublish).not.toHaveBeenCalled()
+    expect(tikTokService.initVideoPublish).not.toHaveBeenCalled()
+  })
+
+  it('skips init and returns the recorded publish id when a resumed photo publish is already complete', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    tikTokService.getPublishStatus.mockResolvedValueOnce({ status: TikTokPublishStatus.PublishComplete })
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-photo-0',
+      content: {
+        title: 'Title',
+        media: [
+          { url: 'https://cdn.example.test/photo-1', metadata: { type: 'image' } },
+          { url: 'https://cdn.example.test/photo-2', metadata: { type: 'image' } },
+        ],
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-photo-0',
+      dataOption: {
+        publishId: 'publish-photo-0',
+        source: TikTokPostSource.PullFromUrl,
+        contentPath: TikTokContentPath.Photo,
+      },
+    })
+
+    expect(tikTokService.getPublishStatus).toHaveBeenCalledWith('access-token', 'publish-photo-0')
+    expect(tikTokService.cancelPublish).not.toHaveBeenCalled()
+    expect(tikTokService.initPhotoPublish).not.toHaveBeenCalled()
+  })
+
+  it('cancels the stale publish and re-inits when a resumed photo publish has not completed', async () => {
+    const { provider, tikTokService } = createPublishProvider()
+    // default getPublishStatus resolves to ProcessingUpload
+
+    await expect(provider.publish({
+      taskId: 'task-1',
+      platform: AccountType.TikTok,
+      accountId: 'account-1',
+      platformWorkId: 'publish-photo-0',
+      content: {
+        title: 'Title',
+        media: [
+          { url: 'https://cdn.example.test/photo-1', metadata: { type: 'image' } },
+          { url: 'https://cdn.example.test/photo-2', metadata: { type: 'image' } },
+        ],
+      },
+      credential: {
+        accessToken: 'access-token',
+        account: 'creator',
+      },
+    })).resolves.toMatchObject({
+      status: 202,
+      platformWorkId: 'publish-photo-1',
+    })
+
+    expect(tikTokService.getPublishStatus).toHaveBeenCalledWith('access-token', 'publish-photo-0')
+    expect(tikTokService.cancelPublish).toHaveBeenCalledWith('access-token', 'publish-photo-0')
+    expect(tikTokService.initPhotoPublish).toHaveBeenCalledTimes(1)
   })
 })

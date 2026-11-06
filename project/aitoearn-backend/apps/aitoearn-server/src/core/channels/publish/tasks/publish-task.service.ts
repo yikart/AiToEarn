@@ -80,6 +80,7 @@ export class PublishTaskService {
         option: record.option,
         publishAt: record.publishTime,
         credential: this.toPublishCredential(credential, account),
+        platformWorkId: record.platformWorkId ?? undefined,
       }))
 
       if (result.userAction) {
@@ -162,6 +163,14 @@ export class PublishTaskService {
       }
 
       if (failure.retryable && attempts + 1 < 3) {
+        if (err instanceof ChannelPlatformException && err.context?.platformWorkId) {
+          try {
+            await this.stateService.markPublishingProgress(taskId, { platformWorkId: err.context.platformWorkId })
+          }
+          catch (persistErr) {
+            this.logger.warn(persistErr, `Failed to persist platform work ID for retryable publish task ${taskId}`)
+          }
+        }
         const nextAttempts = attempts + 1
         const queued = await this.stateService.markPublishingRetryQueued(taskId, failure)
         if (!queued) {

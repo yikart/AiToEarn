@@ -1,4 +1,5 @@
 import type { NormalizedPublishTask, PublishCancelInput, PublishCancelResult, PublishFinalizeInput, PublishMediaInput, PublishNormalizeInput, PublishProvider, PublishProviderResult, PublishPublishInput, PublishValidateInput, PublishValidationResult, PublishVerifyInput, PublishVerifyResult } from '../platforms.interface'
+import type { TikTokPlatformResponseBody } from './tiktok.exception'
 import type {
   TikTokCreatorInfo,
   TikTokPhotoPostInfo,
@@ -12,6 +13,7 @@ import type {
 import { Injectable, Logger } from '@nestjs/common'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { PublishRecordLinkStatus } from '@yikart/mongodb'
+import { isAxiosError } from 'axios'
 import { MediaService } from '../../media/media.service'
 import { PlatformErrorCategory } from '../platforms.exception'
 import {
@@ -296,6 +298,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         video_url: video.url,
       }
 
+      const resumed = await this.resumePublish(input, privacyLevel, TikTokPostSource.PullFromUrl, TikTokContentPath.Video)
+      if (resumed) {
+        return resumed
+      }
+
       const result = await this.tikTokService.initVideoPublish(
         input.credential.accessToken,
         postInfo,
@@ -316,6 +323,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     }
 
     // File upload mode: init -> upload -> poll
+    const resumed = await this.resumePublish(input, privacyLevel, TikTokPostSource.FileUpload, TikTokContentPath.Video)
+    if (resumed) {
+      return resumed
+    }
+
     const videoSize = await this.getVideoSize(video.url)
     const uploadPlan = this.tikTokService.getUploadPlan(videoSize)
 
@@ -349,7 +361,27 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       })
     }
 
-    await this.tikTokService.uploadVideo(initResult.upload_url, video.url)
+    try {
+      await this.tikTokService.uploadVideo(initResult.upload_url, video.url)
+    }
+    catch (err) {
+      throw TikTokPlatformException.fromPlatformError({
+        code: ResponseCode.ChannelPlatformMediaProcessingFailed,
+        category: isAxiosError(err) && err.response
+          ? PlatformErrorCategory.PlatformUnavailable
+          : PlatformErrorCategory.Network,
+        context: {
+          endpoint: 'uploadVideo',
+          taskId: input.taskId,
+          accountId: input.accountId,
+          platformWorkId: initResult.publish_id,
+        },
+        platformCode: 'video_upload_failed',
+        platformMessage: err instanceof Error ? err.message : 'video upload failed',
+        raw: err as TikTokPlatformResponseBody,
+        retryable: true,
+      })
+    }
 
     return {
       status: 202,
@@ -361,6 +393,39 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         privacyLevel,
         input.credential.account,
       ),
+    }
+  }
+
+  private async resumePublish(
+    input: PublishPublishInput<TiktokOption>,
+    privacyLevel: TikTokPrivacyLevel,
+    source: TikTokPostSource,
+    contentPath: TikTokContentPath,
+  ): Promise<PublishProviderResult<TikTokPublishDataOption> | undefined> {
+    if (!input.platformWorkId) {
+      return undefined
+    }
+    try {
+      const publishStatus = await this.tikTokService.getPublishStatus(input.credential.accessToken, input.platformWorkId)
+      if (publishStatus.status !== TikTokPublishStatus.PublishComplete) {
+        await this.tikTokService.cancelPublish(input.credential.accessToken, input.platformWorkId)
+        return undefined
+      }
+      return {
+        status: 202,
+        platformWorkId: input.platformWorkId,
+        dataOption: this.createDataOption(
+          input.platformWorkId,
+          source,
+          contentPath,
+          privacyLevel,
+          input.credential.account,
+        ),
+      }
+    }
+    catch (err) {
+      this.logger.warn(err, `Failed to resume TikTok publish ${input.platformWorkId}, starting a new publish`)
+      return undefined
     }
   }
 
@@ -400,6 +465,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     let photoCoverIndex = coverIndex >= 0 ? coverIndex : 0
     if (option.photo_cover_index !== undefined) {
       photoCoverIndex = option.photo_cover_index
+    }
+
+    const resumed = await this.resumePublish(input, privacyLevel, TikTokPostSource.PullFromUrl, TikTokContentPath.Photo)
+    if (resumed) {
+      return resumed
     }
 
     const postInfo: TikTokPhotoPostInfo = {
