@@ -5,6 +5,16 @@ import { execa } from 'execa'
 import { StorageProvider } from './storage-provider'
 import { generateAssetPath, PathGeneratorOptions } from './utils/path-generator'
 
+const FFPROBE_USER_AGENT = 'AiToEarn-MediaProbe/1.0'
+
+function assertSafeVideoUrl(videoUrl: string): void {
+  const url = String(videoUrl ?? '').trim()
+  if (url.startsWith('-') || !(url.startsWith('http://') || url.startsWith('https://'))) {
+    throw new Error(`Invalid video URL: ${url}`)
+  }
+}
+
+
 export interface VideoMetadata {
   width: number
   height: number
@@ -27,9 +37,13 @@ export class VideoMetadataService {
   ) {}
 
   async probeVideoMetadata(videoUrl: string): Promise<VideoMetadata> {
+    assertSafeVideoUrl(videoUrl)
+
     const { stdout } = await execa('ffprobe', [
       '-v',
       'quiet',
+      '-user_agent',
+      FFPROBE_USER_AGENT,
       '-print_format',
       'json',
       '-show_format',
