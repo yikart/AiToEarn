@@ -19,11 +19,11 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 ***
 
-## AI 助手技能
+## AI 助手插件
 
-除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **Agent 技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
+除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **插件与技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
 
-在你的 AI 助手（Claude Code / Trae / Cursor 等）对话框里直接粘贴下面这段即可安装，AI 会自动索取 API Key、完成配置并验证：
+在你的 AI 助手（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）对话框里直接粘贴下面这段即可安装，AI 会自动索取 API Key、完成配置并验证：
 
 ```text
 帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills 的插件包
@@ -202,6 +202,8 @@ docker compose up -d
 ## 社区与支持
 
 遇到使用问题或异常情况，请优先通过 [GitHub Issues](https://github.com/yikart/AiToEarn/issues) 提交反馈，方便统一跟进。
+
+我们欢迎通过 Issue 提出需求与反馈，但暂不接受外部 Pull Request——新功能与修复由官方团队评估后排期实现。
 
 - **Telegram**：[t.me/+447704864210](https://t.me/+447704864210)
 - **微信扫码**：见下方二维码

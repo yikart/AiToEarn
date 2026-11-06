@@ -19,11 +19,11 @@ AiToEarn は AI エージェントの自動化により、OPC（一人会社）�
 
 ---
 
-## AI アシスタントスキル
+## AI アシスタントプラグイン
 
-MCP サーバーに加え、AiToEarn には **Agent スキルバンドル** が付属しています。作成 → 編集 → 投稿 → 収益化までの全工程をカバーし、複雑なプロンプトは不要です。
+MCP サーバーに加え、AiToEarn には **プラグインとスキルバンドル** が付属しています。作成 → 編集 → 投稿 → 収益化までの全工程をカバーし、複雑なプロンプトは不要です。
 
-お使いの AI アシスタント（Claude Code / Trae / Cursor など）のチャット欄に下記を貼り付けるだけでインストールできます（API Key の取得、設定、検証まで AI が案内します）：
+お使いの AI アシスタント（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）のチャット欄に下記を貼り付けるだけでインストールできます（API Key の取得、設定、検証まで AI が案内します）：
 
 ```text
 https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケージをインストールしてください
@@ -195,6 +195,8 @@ docker compose up -d
 ## コミュニティとサポート
 
 ご利用中の疑問や異常は、まず [GitHub Issues](https://github.com/yikart/AiToEarn/issues) までご連絡ください。一元管理してお返しします。
+
+機能要望やフィードバックは Issue で歓迎しますが、外部からの Pull Request は現状受け付けておりません。新機能と修正は公式チームが評価のうえ対応します。
 
 - **Telegram**：[t.me/+447704864210](https://t.me/+447704864210)
 - **WeChat**：下の QR コードをスキャン

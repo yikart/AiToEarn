@@ -40,7 +40,7 @@ claude-plugin-aitoearn/
 1. 将 `.mcp.json.tpl` 复制为 `.mcp.json` 并替换三个占位符（server 名 `aitoearn-cn`/`aitoearn`，URL 与 Key 按第 0 步）。
 2. 作为本地插件使用：
    ```bash
-   claude plugin marketplace add /Users/yika/codexOutPut/2026-11-04/codex-skill-codex/outputs/claude-plugin-aitoearn
+   claude plugin marketplace add <插件包目录>
    claude plugin install aitoearn@<marketplace-name>
    ```
    或直接把本目录复制到 `~/.claude/plugins/` 下，在 Claude Code 中启用；完全退出并重启 Claude Code 后新会话生效。

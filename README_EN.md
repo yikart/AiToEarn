@@ -19,11 +19,11 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 
 ---
 
-## AI Assistant Skills
+## AI Assistant Plugins
 
-Beyond the MCP server, AiToEarn ships a ready-to-use **Agent skill bundle** covering the full pipeline: creation → editing → publishing → monetization — no complex prompting required.
+Beyond the MCP server, AiToEarn ships a ready-to-use **plugin and skill bundle** covering the full pipeline: creation → editing → publishing → monetization — no complex prompting required.
 
-Just paste the line below into your AI assistant (Claude Code / Trae / Cursor, etc.) to install — it asks for your API Key, writes the config, and verifies:
+Just paste the line below into your AI assistant (Claude Code / Codex / Trae / Doubao / Qwen / Qwen Work / Kimi Work / DeepSeek Harness) to install — it asks for your API Key, writes the config, and verifies:
 
 ```text
 Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/skills for me
@@ -203,6 +203,8 @@ Open **[http://localhost:8080](http://localhost:8080)** and you're ready to go.
 ## Community & Support
 
 If you run into usage difficulties, questions, or unexpected behavior, please open a [GitHub Issue](https://github.com/yikart/AiToEarn/issues) first so we can track and respond in one place.
+
+We welcome feature requests and feedback via Issues, but we do not accept external Pull Requests at this time — new features and fixes are evaluated and implemented by the official team.
 
 - **Telegram**: [t.me/+447704864210](https://t.me/+447704864210)
 - **WeChat**: scan the QR code below
