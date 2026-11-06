@@ -33,6 +33,26 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
 }
 ```
 
+### Claude Desktop 配置（streamable HTTP）
+
+Claude Desktop 走 streamable HTTP 接入时，`type: "http"` 必填，省略会被当作本地命令启动而报错。在 `claude_desktop_config.json` 中加入：
+
+```json
+{
+  "mcpServers": {
+    "aitoearn": {
+      "type": "http",
+      "url": "https://aitoearn.ai/api/ai/agent/mcp",
+      "headers": {
+        "Authorization": "Bearer <你的 AiToEarn API Key>"
+      }
+    }
+  }
+}
+```
+
+中国站用户把 URL 换成 `https://aitoearn.cn/api/ai/agent/mcp`，并使用中国站 Key。保存后完全退出并重启 Claude Desktop 生效。
+
 ## API Key 获取
 
 - 登录 aitoearn.ai（国际站）或 aitoearn.cn（中国站），在个人设置 / 开发者页面创建 AiToEarn API Key。
