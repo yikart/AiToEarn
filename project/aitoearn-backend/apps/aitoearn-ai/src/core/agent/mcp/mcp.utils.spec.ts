@@ -4,6 +4,7 @@ import { AppException, ResponseCode } from '@yikart/common'
 import { vi } from 'vitest'
 import { z } from 'zod'
 import {
+  assertSafeMediaUrl,
   errorResult,
   formatList,
   formatObject,
@@ -14,6 +15,37 @@ import {
 } from './mcp.utils'
 
 describe('mcp.utils', () => {
+  describe('assertSafeMediaUrl', () => {
+    it('should accept http and https URLs', () => {
+      expect(() => assertSafeMediaUrl('http://example.com/video.mp4')).not.toThrow()
+      expect(() => assertSafeMediaUrl('https://cdn.example.com/a b/video.mp4?token=1')).not.toThrow()
+    })
+
+    it('should reject URLs starting with "-" to avoid ffmpeg option injection', () => {
+      expect(() => assertSafeMediaUrl('-i https://example.com/video.mp4')).toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+    })
+
+    it('should reject non-http schemes such as file://', () => {
+      expect(() => assertSafeMediaUrl('file:///etc/passwd')).toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+      expect(() => assertSafeMediaUrl('ftp://example.com/video.mp4')).toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+    })
+
+    it('should reject non-URL strings', () => {
+      expect(() => assertSafeMediaUrl('not a url')).toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+      expect(() => assertSafeMediaUrl('')).toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+    })
+  })
+
   describe('srtTimestampToMs', () => {
     it('should convert SRT timestamp to milliseconds', () => {
       expect(srtTimestampToMs('00:01:20,460')).toBe(80460)

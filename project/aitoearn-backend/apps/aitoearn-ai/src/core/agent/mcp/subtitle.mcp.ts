@@ -11,7 +11,7 @@ import { z } from 'zod'
 import { AiAvailabilityService } from '../../ai-availability'
 import { ChatService } from '../../ai/chat'
 import { McpServerName } from '../agent.constants'
-import { successResult, wrapTool } from './mcp.utils'
+import { assertSafeMediaUrl, successResult, wrapTool } from './mcp.utils'
 
 const generateSubtitleSchema = z.object({
   mediaUrl: z.string().describe('Video or audio URL to transcribe'),
@@ -43,6 +43,8 @@ export class SubtitleMcp {
    * 使用 FFmpeg 从 URL 提取音频
    */
   private async extractAudioWithFFmpeg(mediaUrl: string): Promise<Buffer> {
+    assertSafeMediaUrl(mediaUrl)
+
     const tempDir = os.tmpdir()
     const outputPath = path.join(tempDir, `audio-${Date.now()}.aac`)
 

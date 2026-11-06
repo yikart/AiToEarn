@@ -4,8 +4,40 @@ import { createSdkMcpServer, InferShape, McpSdkServerConfigWithInstance, tool } 
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { Logger } from '@nestjs/common'
-import { AppException, getErrorMessage } from '@yikart/common'
+import { AppException, getErrorMessage, ResponseCode } from '@yikart/common'
 import { z } from 'zod'
+
+// ==================== 媒体 URL 安全校验 ====================
+
+/**
+ * 校验传给 ffmpeg/ffprobe 的媒体 URL 是否安全：
+ * - 必须是合法的 http/https URL（拒绝 file:// 等非 http scheme，避免读取本地文件）
+ * - trim 后不允许以 '-' 开头，避免被 ffmpeg 当作命令行选项解析
+ * @param mediaUrl 用户传入的媒体 URL
+ * @throws AppException URL 不合法时抛出
+ */
+export function assertSafeMediaUrl(mediaUrl: string): void {
+  const trimmedUrl = mediaUrl.trim()
+  if (trimmedUrl.startsWith('-')) {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", URL must not start with '-'`)
+  }
+
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(trimmedUrl)
+  }
+  catch {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", expected a valid http(s) URL`)
+  }
+
+  if (parsedUrl.protocol !== 'http:' && parsedUrl.protocol !== 'https:') {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", only http/https URLs are supported`)
+  }
+
+  if (!parsedUrl.hostname) {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", missing hostname`)
+  }
+}
 
 // ==================== SRT 时间戳工具函数 ====================
 
