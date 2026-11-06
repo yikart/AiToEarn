@@ -1,6 +1,6 @@
 import { RequestMethod } from '@nestjs/common'
 import { METHOD_METADATA, PATH_METADATA, VERSION_METADATA } from '@nestjs/common/constants'
-import { AccountType } from '@yikart/common'
+import { AccountType, ResponseCode } from '@yikart/common'
 import { describe, expect, it, vi } from 'vitest'
 import { RelayCallbackController } from './relay-callback.controller'
 import { RelayCallbackDto } from './relay-callback.dto'
@@ -37,7 +37,7 @@ vi.mock('../accounts/account.service', () => ({
   AccountService: class AccountService {},
 }))
 
-function createController() {
+function createController(ticketValue: { userId?: string, groupId?: string } | null = { userId: 'user-1' }) {
   const accountService = {
     createRelayAccount: vi.fn(async (_userId: string, data: { uid: string }) => ({
       id: `account-${data.uid}`,
@@ -45,6 +45,8 @@ function createController() {
   }
   const redisService = {
     saveLegacyRelayAuthTask: vi.fn(async () => undefined),
+    getRelayCallbackTicket: vi.fn(async () => ticketValue),
+    deleteRelayCallbackTicket: vi.fn(async () => true),
   }
 
   return {
@@ -78,8 +80,8 @@ describe('relay callback controller', () => {
     })
   })
 
-  it('creates a relay account and renders the new callback view data with body redirect uri', async () => {
-    const { controller, accountService } = createController()
+  it('creates a relay account with the user stored in the one-time ticket', async () => {
+    const { controller, accountService, redisService } = createController({ userId: 'user-1', groupId: 'group-1' })
 
     const result = await controller.handleRelayCallback({
       relayAccountRef: 'relay-account-1',
@@ -88,8 +90,10 @@ describe('relay callback controller', () => {
       platformUid: 'platform-user',
       platform: AccountType.Twitter,
       redirectUri: 'https://client.example.test/redirect',
-    } as never, 'user-1', 'group-1')
+    } as never, 'ticket-1')
 
+    expect(redisService.getRelayCallbackTicket).toHaveBeenCalledWith('ticket-1')
+    expect(redisService.deleteRelayCallbackTicket).toHaveBeenCalledWith('ticket-1')
     expect(accountService.createRelayAccount).toHaveBeenCalledWith(
       'user-1',
       expect.objectContaining({
@@ -107,6 +111,33 @@ describe('relay callback controller', () => {
       accountIds: ['account-platform-user'],
       redirectUri: 'https://client.example.test/redirect',
     })
+  })
+
+  it('rejects relay callbacks without a ticket', async () => {
+    const { controller, accountService } = createController()
+
+    await expect(controller.handleRelayCallback({
+      relayAccountRef: 'relay-account-1',
+      nickname: 'Relay User',
+      platformUid: 'platform-user',
+      platform: AccountType.Twitter,
+    } as never, '')).rejects.toMatchObject({ code: ResponseCode.ChannelAuthCsrfInvalid })
+
+    expect(accountService.createRelayAccount).not.toHaveBeenCalled()
+  })
+
+  it('rejects relay callbacks with an unknown or already consumed ticket', async () => {
+    const { controller, accountService, redisService } = createController(null)
+
+    await expect(controller.handleRelayCallback({
+      relayAccountRef: 'relay-account-1',
+      nickname: 'Relay User',
+      platformUid: 'platform-user',
+      platform: AccountType.Twitter,
+    } as never, 'ticket-1')).rejects.toMatchObject({ code: ResponseCode.ChannelAuthCsrfInvalid })
+
+    expect(redisService.deleteRelayCallbackTicket).toHaveBeenCalledWith('ticket-1')
+    expect(accountService.createRelayAccount).not.toHaveBeenCalled()
   })
 
   it('uses platform fields from multi-account payloads', async () => {
@@ -131,7 +162,7 @@ describe('relay callback controller', () => {
           platform: AccountType.Facebook,
         },
       ]),
-    } as never, 'user-1')
+    } as never, 'ticket-1')
 
     expect(accountService.createRelayAccount).toHaveBeenCalledTimes(2)
     expect(accountService.createRelayAccount).toHaveBeenNthCalledWith(

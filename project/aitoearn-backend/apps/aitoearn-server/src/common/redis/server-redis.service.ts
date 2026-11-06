@@ -34,6 +34,18 @@ export class ServerRedisService {
     return this.redis.getJson(ServerRedisKeys.channelAuthSession(sessionId))
   }
 
+  async saveRelayCallbackTicket<T>(ticket: string, value: T): Promise<boolean> {
+    return this.redis.setJson(ServerRedisKeys.relayCallbackTicket(ticket), value, 60 * 30)
+  }
+
+  async getRelayCallbackTicket<T>(ticket: string): Promise<T | null> {
+    return this.redis.getJson(ServerRedisKeys.relayCallbackTicket(ticket))
+  }
+
+  async deleteRelayCallbackTicket(ticket: string): Promise<boolean> {
+    return this.redis.del(ServerRedisKeys.relayCallbackTicket(ticket))
+  }
+
   async getChannelCredentialCache<T>(accountId: string): Promise<T | null> {
     return this.redis.getJson(ServerRedisKeys.channelCredential(accountId))
   }

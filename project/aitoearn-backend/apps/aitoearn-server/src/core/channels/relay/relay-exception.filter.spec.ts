@@ -38,7 +38,7 @@ describe('relay exception filter', () => {
     })
   })
 
-  it('removes local groupId from relay auth GET query', async () => {
+  it('issues a one-time ticket for the relay auth callback', async () => {
     const response = createResponse()
     const request = {
       method: 'GET',
@@ -54,7 +54,8 @@ describe('relay exception filter', () => {
       },
       user: { id: 'user-1' },
     }
-    const filter = new RelayExceptionFilter(relayConfig, undefined, undefined)
+    const redisService = createRedisService()
+    const filter = new RelayExceptionFilter(relayConfig, undefined, undefined, redisService)
     const logger = createLogger()
     Reflect.set(filter, 'logger', logger)
 
@@ -64,25 +65,23 @@ describe('relay exception filter', () => {
     const url = new URL(proxyRequest.url)
     expect(url.searchParams.has('groupId')).toBe(false)
     expect(url.searchParams.get('redirectUri')).toBe('https://client.example.test/redirect')
-    expect(new URL(url.searchParams.get('callbackUrl')!).searchParams.get('userId')).toBe('user-1')
-    expect(new URL(url.searchParams.get('callbackUrl')!).searchParams.get('groupId')).toBe('group-1')
+    const callbackUrl = new URL(url.searchParams.get('callbackUrl')!)
+    const ticket = callbackUrl.searchParams.get('ticket')
+    expect(ticket).toMatch(/^[0-9a-f]{64}$/)
+    expect(callbackUrl.searchParams.has('userId')).toBe(false)
+    expect(callbackUrl.searchParams.has('groupId')).toBe(false)
+    expect(redisService.saveRelayCallbackTicket).toHaveBeenCalledWith(ticket, { userId: 'user-1', groupId: 'group-1' })
     expect(proxyRequest.data).toBeUndefined()
     expect(proxyRequest.headers).toEqual({
       'x-locale': 'zh-CN',
       'x-api-key': 'relay-key',
     })
-    expect(logger.log).toHaveBeenCalledWith(
+    expect(logger.debug).toHaveBeenCalledWith(
       expect.objectContaining({
-        exception: 'RelayAuthException',
         method: 'GET',
-        originalUrl: '/api/v2/channels/accounts/auth/twitter?groupId=group-1&redirectUri=%5Bredacted%5D',
-        targetUrl: 'https://relay.example.test/api/v2/channels/accounts/auth/twitter?redirectUri=%5Bredacted%5D&callbackUrl=%5Bredacted%5D',
-        userId: 'user-1',
-        groupId: 'group-1',
-        bodyKeys: [],
-        forwardedHeaderKeys: ['x-locale'],
+        url: expect.stringContaining('callbackUrl='),
+        data: undefined,
       }),
-      'Relay proxy request',
     )
     expect(response.status).toHaveBeenCalledWith(200)
     expect(response.json).toHaveBeenCalledWith({ code: 0, data: { ok: true } })
@@ -101,18 +100,24 @@ describe('relay exception filter', () => {
       },
       user: { id: 'user-1' },
     }
-    const filter = new RelayExceptionFilter(relayConfig, undefined, undefined)
+    const redisService = createRedisService()
+    const filter = new RelayExceptionFilter(relayConfig, undefined, undefined, redisService)
 
     await firstValueFrom(filter.catch(new RelayAuthException(), createHost(request, response)) as Observable<unknown>)
 
     const proxyRequest = axiosMock.request.mock.calls[0][0]
     expect(proxyRequest.url).toBe('https://relay.example.test/api/v2/channels/accounts/auth/twitter')
+    const callbackUrl = new URL(proxyRequest.data.callbackUrl)
+    const ticket = callbackUrl.searchParams.get('ticket')
+    expect(ticket).toMatch(/^[0-9a-f]{64}$/)
+    expect(callbackUrl.searchParams.has('userId')).toBe(false)
     expect(proxyRequest.data).toEqual({
       redirectUri: 'https://client.example.test/redirect',
       keep: 'value',
-      callbackUrl: 'http://localhost:8080/api/v2/channels/relay/callback?userId=user-1&groupId=group-1',
+      callbackUrl: proxyRequest.data.callbackUrl,
     })
     expect(proxyRequest.data).not.toHaveProperty('groupId')
+    expect(redisService.saveRelayCallbackTicket).toHaveBeenCalledWith(ticket, { userId: 'user-1', groupId: 'group-1' })
   })
 })
 
@@ -126,8 +131,17 @@ function createResponse() {
 
 function createLogger() {
   return {
+    debug: vi.fn(),
     log: vi.fn(),
+    warn: vi.fn(),
     error: vi.fn(),
+    fatal: vi.fn(),
+  }
+}
+
+function createRedisService() {
+  return {
+    saveRelayCallbackTicket: vi.fn(async () => true),
   }
 }
 

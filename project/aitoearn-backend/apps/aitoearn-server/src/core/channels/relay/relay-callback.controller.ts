@@ -1,7 +1,7 @@
 import { Body, Controller, Post, Query, Render } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Public } from '@yikart/aitoearn-auth'
-import { AccountType, ApiDoc, AppException, ChannelAuthTaskStatus, ParseObjectIdPipe, ResponseCode } from '@yikart/common'
+import { AccountType, ApiDoc, AppException, ChannelAuthTaskStatus, ResponseCode } from '@yikart/common'
 import { ServerRedisService } from '../../../common/redis'
 import { AccountService } from '../accounts/account.service'
 import { RelayCallbackDto } from './relay-callback.dto'
@@ -25,19 +25,25 @@ export class RelayCallbackController {
   @Public()
   @ApiDoc({
     summary: 'Relay OAuth 回调',
-    description: '接收官方服务器 OAuth 完成后浏览器 form POST 过来的账号信息，在本地创建 relay 账号',
+    description: '接收官方服务器 OAuth 完成后浏览器 form POST 过来的账号信息，凭一次性 ticket 换取本地用户并创建 relay 账号',
     body: RelayCallbackDto.schema,
   })
   @Post('/callback')
   @Render('channels/auth/callback')
   async handleRelayCallback(
     @Body() body: RelayCallbackDto,
-    @Query('userId', ParseObjectIdPipe) userId: string,
-    @Query('groupId') groupId: string | undefined,
+    @Query('ticket') ticket: string,
   ) {
-    if (!userId) {
-      throw new AppException(ResponseCode.UserNotFound)
+    if (!ticket) {
+      throw new AppException(ResponseCode.ChannelAuthCsrfInvalid)
     }
+
+    const ticketValue = await this.redisService.getRelayCallbackTicket<{ userId?: string, groupId?: string }>(ticket)
+    await this.redisService.deleteRelayCallbackTicket(ticket)
+    if (!ticketValue?.userId) {
+      throw new AppException(ResponseCode.ChannelAuthCsrfInvalid)
+    }
+    const { userId, groupId } = ticketValue
 
     const relayAccounts = this.getRelayCallbackAccounts(body)
     const accounts: Array<{ id: string }> = []

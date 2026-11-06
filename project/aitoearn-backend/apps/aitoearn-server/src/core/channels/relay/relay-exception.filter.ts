@@ -1,6 +1,7 @@
 import type { AssetsConfig } from '@yikart/assets'
 import type { Method } from 'axios'
 import type { Request, Response } from 'express'
+import { randomBytes } from 'node:crypto'
 import {
   ArgumentsHost,
   Catch,
@@ -10,6 +11,7 @@ import { AppException, GlobalExceptionFilter, ResponseCode } from '@yikart/commo
 import axios from 'axios'
 import { concatMap, from, of } from 'rxjs'
 import { z } from 'zod'
+import { ServerRedisService } from '../../../common/redis'
 import { relayConfigSchema } from '../../../config'
 import { RelayAccountException } from './relay-account.exception'
 import { RelayAuthException } from './relay-auth.exception'
@@ -26,6 +28,7 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
     private readonly relayConfig: RelayConfig | undefined,
     private readonly assetsConfig: AssetsConfig | undefined,
     private readonly relayClientService: RelayClientService | undefined,
+    private readonly redisService?: ServerRedisService,
   ) {
     super()
     this.localUrlPrefixes = []
@@ -73,16 +76,18 @@ export class RelayExceptionFilter extends GlobalExceptionFilter<unknown> {
       else {
         const userId = request.user?.id
         const callbackUrl = new URL(relayConfig.callbackUrl)
-        if (userId) {
-          callbackUrl.searchParams.set('userId', userId)
-        }
-        // Forward the local groupId through the callback so the relay callback can
-        // place the resulting account into the requested group. The local groupId
-        // is not meaningful to the relay server, so it is stripped from the proxied
-        // request below.
         const groupId = this.extractGroupId(request)
-        if (groupId) {
-          callbackUrl.searchParams.set('groupId', groupId)
+        if (userId && this.redisService) {
+          // Issue a one-time ticket so the public relay callback can recover the
+          // local user/group without trusting query parameters from the request.
+          const ticket = randomBytes(32).toString('hex')
+          await this.redisService.saveRelayCallbackTicket(ticket, { userId, groupId })
+          callbackUrl.searchParams.set('ticket', ticket)
+        }
+        else if (userId) {
+          // Without a ticket the relay callback controller rejects the callback, so
+          // fail loudly here instead of silently proxying an unusable callback URL.
+          this.logger.error('Relay callback ticket unavailable: ServerRedisService is not injected, the relay auth callback will be rejected')
         }
         const callbackUrlStr = callbackUrl.toString()
 

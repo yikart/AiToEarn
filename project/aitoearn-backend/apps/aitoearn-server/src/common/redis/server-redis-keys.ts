@@ -19,6 +19,10 @@ export class ServerRedisKeys {
     return `channels:auth:session:${sessionId}`
   }
 
+  static relayCallbackTicket(ticket: string): string {
+    return `relay:callback:ticket:${ticket}`
+  }
+
   static legacyChannelAuthTask(platform: string, id: string): string {
     return `${platform}:auth_task:${id}`
   }
