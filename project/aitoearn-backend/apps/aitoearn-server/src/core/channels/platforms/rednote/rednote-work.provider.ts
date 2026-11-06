@@ -66,7 +66,7 @@ export class RedNoteWorkProvider implements WorkProvider {
     }
 
     const hostname = url.hostname.replace(/^www\./, '')
-    if (hostname === 'xiaohongshu.com') {
+    if (hostname === 'xiaohongshu.com' || hostname === 'rednote.com') {
       return {
         noteId: this.extractNoteId(url),
         resolvedUrl: workLink,
@@ -113,7 +113,8 @@ export class RedNoteWorkProvider implements WorkProvider {
       }
 
       const resolvedUrl = new URL(finalUrl)
-      if (resolvedUrl.hostname.replace(/^www\./, '') !== 'xiaohongshu.com') {
+      const resolvedHostname = resolvedUrl.hostname.replace(/^www\./, '')
+      if (resolvedHostname !== 'xiaohongshu.com' && resolvedHostname !== 'rednote.com') {
         return { noteId: null }
       }
 

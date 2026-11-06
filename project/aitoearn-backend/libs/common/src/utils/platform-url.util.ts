@@ -15,6 +15,7 @@ const DOMAIN_TO_ACCOUNT_TYPE: Record<string, AccountType> = {
   'm.bilibili.com': AccountType.Bilibili,
   'b23.tv': AccountType.Bilibili,
   'xiaohongshu.com': AccountType.RedNote,
+  'rednote.com': AccountType.RedNote,
   'xhslink.com': AccountType.RedNote,
   'twitter.com': AccountType.Twitter,
   'x.com': AccountType.Twitter,
