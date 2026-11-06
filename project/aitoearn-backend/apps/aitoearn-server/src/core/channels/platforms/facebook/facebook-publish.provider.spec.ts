@@ -11,6 +11,10 @@ vi.mock('./facebook.service', () => ({
   FacebookService: class {},
 }))
 
+vi.mock('@yikart/assets', () => ({
+  VideoMetadataService: class {},
+}))
+
 function createProvider() {
   const facebookService = {
     createFeedPost: vi.fn(),
@@ -36,9 +40,13 @@ function createProvider() {
     getVideoStatus: vi.fn(),
     deletePost: vi.fn(),
   }
+  const videoMetadataService = {
+    ensureCompatibleVideo: vi.fn((url: string) => Promise.resolve(url)),
+  }
   return {
-    provider: new FacebookPublishProvider(facebookService as never),
+    provider: new FacebookPublishProvider(facebookService as never, videoMetadataService as never),
     facebookService,
+    videoMetadataService,
   }
 }
 
@@ -301,6 +309,70 @@ describe('facebook publish provider routing', () => {
         }),
       ],
     })
+  })
+
+  it('normalizes the video through the compatibility check before publishing a Reel', async () => {
+    const { provider, facebookService, videoMetadataService } = createProvider()
+    videoMetadataService.ensureCompatibleVideo.mockResolvedValueOnce(
+      'https://cdn.example.test/reel-compatible.mp4',
+    )
+
+    const result = await provider.publish({
+      taskId: 'task-id',
+      platform: 'facebook' as never,
+      accountId: 'account-id',
+      content: {
+        body: 'caption',
+        media: [{ url: 'https://cdn.example.test/reel-hevc.mp4' }],
+      },
+      option: { content_category: FacebookContentCategory.Reel },
+      credential: { accessToken: 'page-token', platformUid: 'page-id' },
+    })
+
+    expect(videoMetadataService.ensureCompatibleVideo).toHaveBeenCalledWith('https://cdn.example.test/reel-hevc.mp4')
+    expect(facebookService.publishReel).toHaveBeenCalledWith(
+      'page-token',
+      'page-id',
+      expect.objectContaining({
+        videoUrl: 'https://cdn.example.test/reel-compatible.mp4',
+      }),
+    )
+    expect(result.mediaJobs).toEqual([
+      expect.objectContaining({
+        url: 'https://cdn.example.test/reel-compatible.mp4',
+      }),
+    ])
+  })
+
+  it('normalizes the video through the compatibility check before publishing a video post', async () => {
+    const { provider, facebookService, videoMetadataService } = createProvider()
+    videoMetadataService.ensureCompatibleVideo.mockResolvedValueOnce(
+      'https://cdn.example.test/video-compatible.mp4',
+    )
+    facebookService.publishVideoPost.mockResolvedValueOnce({
+      id: 'video-post-id',
+    })
+
+    await provider.publish({
+      taskId: 'task-id',
+      platform: 'facebook' as never,
+      accountId: 'account-id',
+      content: {
+        title: 'Video title',
+        media: [{ url: 'https://cdn.example.test/video-hevc.mp4' }],
+      },
+      option: { content_category: FacebookContentCategory.Post },
+      credential: { accessToken: 'page-token', platformUid: 'page-id' },
+    })
+
+    expect(videoMetadataService.ensureCompatibleVideo).toHaveBeenCalledWith('https://cdn.example.test/video-hevc.mp4')
+    expect(facebookService.publishVideoPost).toHaveBeenCalledWith(
+      'page-token',
+      'page-id',
+      expect.objectContaining({
+        videoUrl: 'https://cdn.example.test/video-compatible.mp4',
+      }),
+    )
   })
 
   it('uses the upload video id for video story media finalize', async () => {

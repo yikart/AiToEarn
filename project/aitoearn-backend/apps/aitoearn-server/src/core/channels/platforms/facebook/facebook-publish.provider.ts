@@ -2,6 +2,7 @@ import type { NormalizedPublishTask, PlatformMediaRules, PublishCancelInput, Pub
 import type { FacebookDataOption } from './facebook.interface'
 import type { FacebookOption } from './facebook.schema'
 import { Injectable, Logger } from '@nestjs/common'
+import { VideoMetadataService } from '@yikart/assets'
 import { AccountType, ResponseCode } from '@yikart/common'
 import { PlatformErrorCategory } from '../platforms.exception'
 import {
@@ -48,7 +49,10 @@ export class FacebookPublishProvider implements PublishProvider<FacebookOption, 
 
   readonly platform = AccountType.Facebook
 
-  constructor(private readonly facebookService: FacebookService) {}
+  constructor(
+    private readonly facebookService: FacebookService,
+    private readonly videoMetadataService: VideoMetadataService,
+  ) {}
 
   async validate(input: PublishValidateInput<FacebookOption>): Promise<PublishValidationResult> {
     const issues: PublishValidationResult['issues'] = []
@@ -320,12 +324,16 @@ export class FacebookPublishProvider implements PublishProvider<FacebookOption, 
       contentCategory: FacebookContentCategory.Post | FacebookContentCategory.Reel
     },
   ): Promise<PublishProviderResult<FacebookDataOption>> {
+    // Meta rejects non-H.264 or non-faststart uploads with error 1363045, so normalize
+    // the video before handing it to the Facebook service.
+    const videoUrl = await this.videoMetadataService.ensureCompatibleVideo(params.videoUrl)
+
     if (params.contentCategory === FacebookContentCategory.Reel) {
       const result = await this.facebookService.publishReel(
         pageAccessToken,
         pageId,
         {
-          videoUrl: params.videoUrl,
+          videoUrl,
           description: params.description,
           contentCategory: params.contentCategory,
         },
@@ -346,7 +354,7 @@ export class FacebookPublishProvider implements PublishProvider<FacebookOption, 
           {
             mediaId: result.videoId,
             type: PublishMediaType.Video,
-            url: params.videoUrl,
+            url: videoUrl,
           },
         ],
       }
@@ -358,7 +366,7 @@ export class FacebookPublishProvider implements PublishProvider<FacebookOption, 
       {
         title: params.title,
         description: params.description,
-        videoUrl: params.videoUrl,
+        videoUrl,
         contentCategory: params.contentCategory,
       },
     )
