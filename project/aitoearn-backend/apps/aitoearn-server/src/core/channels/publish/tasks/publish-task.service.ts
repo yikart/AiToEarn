@@ -81,6 +81,9 @@ export class PublishTaskService {
         publishAt: record.publishTime,
         credential: this.toPublishCredential(credential, account),
         platformWorkId: record.platformWorkId ?? undefined,
+        checkpointPlatformWorkId: async (platformWorkId) => {
+          await this.stateService.markPublishingProgress(taskId, { platformWorkId })
+        },
       }))
 
       if (result.userAction) {

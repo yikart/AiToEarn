@@ -25,6 +25,13 @@ export class FileUtil {
     return zodTrimHost(() => this.hostUrl)
   }
 
+  static isStorageUrl(url: string): boolean {
+    return [this.cdnEndpoint, this.s3Endpoint]
+      .filter(Boolean)
+      .map(endpoint => endpoint.replace(/\/+$/, ''))
+      .some(endpoint => url === endpoint || url.startsWith(`${endpoint}/`))
+  }
+
   static trimHost(url: string): string {
     if (!url)
       return url

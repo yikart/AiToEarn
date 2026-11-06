@@ -13,7 +13,7 @@ import { AiAvailabilityService } from '../../ai-availability'
 import { ChatService } from '../../ai/chat'
 import { VolcengineService } from '../../ai/libs/volcengine'
 import { McpServerName } from '../agent.constants'
-import { assertSafeMediaUrl, errorResult, srtTimestampToMs, successResult, wrapTool } from './mcp.utils'
+import { errorResult, FFMPEG_REMOTE_PROTOCOL_WHITELIST, resolveSafeMediaUrl, srtTimestampToMs, successResult, wrapTool } from './mcp.utils'
 
 const getVolcVideoInfoSchema = z.object({
   vids: z.array(z.string()).min(1).describe('Volcengine video VID list, supports vid://xxx format or plain VID string'),
@@ -238,10 +238,10 @@ Use this tool when you only need video metadata (duration, dimensions) without e
 Returns: { width, height, duration, bitrate, frameRate }`,
       probeVideoMetadataSchema.shape,
       async ({ videoUrl }) => {
-        assertSafeMediaUrl(videoUrl)
+        const safeVideoUrl = await resolveSafeMediaUrl(videoUrl)
         this.logger.debug({ url: videoUrl }, '[ProbeVideoMetadata] Probing video metadata')
 
-        const metadata = await this.videoMetadataService.probeVideoMetadata(videoUrl)
+        const metadata = await this.videoMetadataService.probeVideoMetadata(safeVideoUrl)
 
         return successResult(`Video Metadata:
 - Resolution: ${metadata.width}x${metadata.height}
@@ -265,10 +265,10 @@ Note: This video has NOT been uploaded to Volcengine. Use uploadAndGetVid if you
       'Extract a thumbnail from a video URL at a specified time point. Uses ffmpeg to directly stream from the URL without downloading the full video. Returns the uploaded thumbnail URL.',
       extractThumbnailSchema.shape,
       async ({ videoUrl, timeInSeconds }) => {
-        assertSafeMediaUrl(videoUrl)
+        const safeVideoUrl = await resolveSafeMediaUrl(videoUrl)
         this.logger.debug({ userId, videoUrl, timeInSeconds }, '[extractThumbnail] Starting thumbnail extraction')
 
-        const thumbnailBuffer = await this.videoMetadataService.extractThumbnailFromUrl(videoUrl, timeInSeconds)
+        const thumbnailBuffer = await this.videoMetadataService.extractThumbnailFromUrl(safeVideoUrl, timeInSeconds)
         this.logger.debug({ size: thumbnailBuffer.length }, '[extractThumbnail] Frame extracted')
 
         const result = await this.assetsService.uploadFromBuffer(userId, thumbnailBuffer, {
@@ -289,14 +289,16 @@ Note: This video has NOT been uploaded to Volcengine. Use uploadAndGetVid if you
    * 使用 FFmpeg 从 URL 提取音频
    */
   private async extractAudioWithFFmpeg(mediaUrl: string): Promise<Buffer> {
-    assertSafeMediaUrl(mediaUrl)
+    const safeMediaUrl = await resolveSafeMediaUrl(mediaUrl)
 
     const tempDir = os.tmpdir()
     const outputPath = path.join(tempDir, `audio-${Date.now()}.mp3`)
     try {
       await execa('ffmpeg', [
+        '-protocol_whitelist',
+        FFMPEG_REMOTE_PROTOCOL_WHITELIST,
         '-i',
-        mediaUrl,
+        safeMediaUrl,
         '-map',
         '0:a:0',
         '-vn',

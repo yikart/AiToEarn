@@ -267,6 +267,8 @@ export interface PublishPublishInput<TOption = Record<string, unknown>> {
   credential: CredentialContext
   /** 重试恢复时本地已记录的平台侧作品 ID */
   platformWorkId?: string
+  /** 平台受理发布后立即持久化平台侧作品 ID，供重试时对账而不是重新发布 */
+  checkpointPlatformWorkId?: (platformWorkId: string) => Promise<void>
 }
 
 export interface PublishProviderResult<TDataOption = Record<string, unknown>> {

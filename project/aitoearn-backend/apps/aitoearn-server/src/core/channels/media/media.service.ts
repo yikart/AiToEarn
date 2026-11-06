@@ -10,7 +10,7 @@ import { basename, extname, join } from 'node:path'
 import { pipeline } from 'node:stream/promises'
 import { Injectable, Logger } from '@nestjs/common'
 import { AssetsService, VideoMetadataService } from '@yikart/assets'
-import { AppException, ResponseCode } from '@yikart/common'
+import { AppException, getErrorMessage, ResponseCode } from '@yikart/common'
 import { AssetType } from '@yikart/mongodb'
 import axios from 'axios'
 import sizeOf from 'image-size'
@@ -381,9 +381,9 @@ export class MediaService {
         catch (err) {
           this.logger.warn(err, `Failed to probe video ${m.url}`)
           issues.push({
-            code: PublishValidationIssueCode.InvalidUrl,
+            code: PublishValidationIssueCode.MediaUnreachable,
             path: pathPrefix,
-            params: { field: PublishValidationField.Video, url: m.url },
+            params: { field: PublishValidationField.Video, url: m.url, reason: this.getProbeFailureReason(err) },
           })
         }
       }
@@ -395,9 +395,9 @@ export class MediaService {
         catch (err) {
           this.logger.warn(err, `Failed to probe image ${m.url}`)
           issues.push({
-            code: PublishValidationIssueCode.InvalidUrl,
+            code: PublishValidationIssueCode.MediaUnreachable,
             path: pathPrefix,
-            params: { field: PublishValidationField.Image, url: m.url },
+            params: { field: PublishValidationField.Image, url: m.url, reason: this.getProbeFailureReason(err) },
           })
         }
       }
@@ -411,9 +411,9 @@ export class MediaService {
       catch (err) {
         this.logger.warn(err, `Failed to probe cover ${content.cover.url}`)
         issues.push({
-          code: PublishValidationIssueCode.InvalidUrl,
+          code: PublishValidationIssueCode.MediaUnreachable,
           path: pathPrefix,
-          params: { field: PublishValidationField.Image, url: content.cover.url },
+          params: { field: PublishValidationField.Image, url: content.cover.url, reason: this.getProbeFailureReason(err) },
         })
       }
     }
@@ -506,9 +506,9 @@ export class MediaService {
       return {
         item: this.stripPublishMediaOptions(item),
         issues: [{
-          code: PublishValidationIssueCode.InvalidUrl,
+          code: PublishValidationIssueCode.MediaUnreachable,
           path,
-          params: { field: PublishValidationField.Media, url: item.url },
+          params: { field: PublishValidationField.Media, url: item.url, reason: this.getProbeFailureReason(err) },
         }],
       }
     }
@@ -534,9 +534,9 @@ export class MediaService {
       return {
         item: this.stripPublishMediaOptions(item),
         issues: [{
-          code: PublishValidationIssueCode.InvalidUrl,
+          code: PublishValidationIssueCode.MediaUnreachable,
           path,
-          params: { field: PublishValidationField.Cover, url: item.url },
+          params: { field: PublishValidationField.Cover, url: item.url, reason: this.getProbeFailureReason(err) },
         }],
       }
     }
@@ -956,6 +956,21 @@ export class MediaService {
       return typeof value[0] === 'string' ? value[0] : undefined
     }
     return typeof value === 'string' ? value : undefined
+  }
+
+  private getProbeFailureReason(err: unknown): string {
+    if (axios.isAxiosError(err)) {
+      const method = err.config?.method?.toUpperCase() ?? 'request'
+      return err.response
+        ? `${method} returned HTTP ${err.response.status}`
+        : `${method} failed: ${err.code ?? err.message}`
+    }
+    if (err instanceof ChannelPlatformException) {
+      return err.platformCause?.httpStatus
+        ? `download returned HTTP ${err.platformCause.httpStatus}`
+        : `download failed: ${err.platformCause?.platformMessage ?? err.message}`
+    }
+    return getErrorMessage(err)
   }
 
   private fromAxiosError(error: AxiosError, input: MediaHttpInput): ChannelPlatformException {

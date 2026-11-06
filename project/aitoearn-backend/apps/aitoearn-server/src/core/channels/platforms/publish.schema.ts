@@ -26,6 +26,7 @@ export enum PublishValidationIssueCode {
   UnsupportedContentMode = 'unsupported_content_mode',
   InvalidDuration = 'invalid_duration',
   InvalidUrl = 'invalid_url',
+  MediaUnreachable = 'media_unreachable',
   InvalidOption = 'invalid_option',
 }
 
@@ -100,6 +101,11 @@ function getPublishValidationIssueMessage(issue: PublishValidationIssue, locale:
       return locale === 'zh-CN'
         ? `${label}必须使用 HTTPS`
         : `${label} must use HTTPS`
+
+    case PublishValidationIssueCode.MediaUnreachable:
+      return locale === 'zh-CN'
+        ? `${label}无法从服务端拉取或解析：${String(issue.params?.['reason'] ?? '')}`
+        : `${label} could not be fetched or probed by the server: ${String(issue.params?.['reason'] ?? '')}`
 
     case PublishValidationIssueCode.InvalidOption:
       return locale === 'zh-CN'

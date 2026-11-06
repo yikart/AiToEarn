@@ -268,6 +268,11 @@ describe('facebook service stories', () => {
         config.url === 'https://graph.facebook.com/v25.0/page-id/videos'
         && config.params?.upload_phase === 'start'
       ) {
+        expect(config.params).toEqual({
+          upload_phase: 'start',
+          file_size: 5,
+          access_token: 'page-token',
+        })
         return createResponse(
           {
             upload_session_id: 'session-id',

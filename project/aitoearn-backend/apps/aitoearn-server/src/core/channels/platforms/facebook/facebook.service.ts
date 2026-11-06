@@ -430,33 +430,33 @@ export class FacebookService {
       contentCategory: FacebookContentCategory.Post
     },
   ): Promise<FacebookVideoPublishResult> {
-    const startResponse = await this.http.post<{
-      video_id?: string
-      upload_session_id: string
-      start_offset?: string
-      end_offset?: string
-    }>(
-      `${this.graphApiBaseUrl}/${pageId}/videos`,
-      null,
-      {
-        params: {
-          upload_phase: 'start',
-          access_token: pageAccessToken,
-        },
-      },
-    )
-
-    const sessionId = startResponse.data.upload_session_id
-    let startOffset = Number(startResponse.data.start_offset ?? 0)
-    let endOffset = Number(startResponse.data.end_offset ?? 0)
-    if (Number.isNaN(startOffset) || startOffset < 0)
-      startOffset = 0
-
-    await this.mediaService.withUploadSource({
+    const sessionId = await this.mediaService.withUploadSource({
       platform: AccountType.Facebook,
       endpoint: 'publishVideoPost.downloadMedia',
       url: params.videoUrl,
     }, async (source) => {
+      // Meta rejects the transfer with subcode 1363045 when the session is started without the real file_size.
+      const startResponse = await this.http.post<{
+        video_id?: string
+        upload_session_id: string
+        start_offset?: string
+        end_offset?: string
+      }>(
+        `${this.graphApiBaseUrl}/${pageId}/videos`,
+        null,
+        {
+          params: {
+            upload_phase: 'start',
+            file_size: source.sizeBytes,
+            access_token: pageAccessToken,
+          },
+        },
+      )
+
+      let startOffset = Number(startResponse.data.start_offset ?? 0)
+      let endOffset = Number(startResponse.data.end_offset ?? 0)
+      if (Number.isNaN(startOffset) || startOffset < 0)
+        startOffset = 0
       if (Number.isNaN(endOffset) || endOffset <= startOffset)
         endOffset = source.sizeBytes
 
@@ -474,7 +474,7 @@ export class FacebookService {
           {
             params: {
               upload_phase: 'transfer',
-              upload_session_id: sessionId,
+              upload_session_id: startResponse.data.upload_session_id,
               start_offset: startOffset,
               access_token: pageAccessToken,
             },
@@ -493,6 +493,8 @@ export class FacebookService {
         startOffset = nextStartOffset
         endOffset = nextEndOffset
       }
+
+      return startResponse.data.upload_session_id
     })
 
     const finishParams: Record<string, string> = {

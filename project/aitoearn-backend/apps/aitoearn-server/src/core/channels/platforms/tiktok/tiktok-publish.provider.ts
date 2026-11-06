@@ -15,7 +15,7 @@ import { AccountType, ResponseCode } from '@yikart/common'
 import { PublishRecordLinkStatus } from '@yikart/mongodb'
 import { isAxiosError } from 'axios'
 import { MediaService } from '../../media/media.service'
-import { PlatformErrorCategory } from '../platforms.exception'
+import { ChannelPlatformException, PlatformErrorCategory } from '../platforms.exception'
 import {
   PublishMediaType,
 } from '../platforms.interface'
@@ -303,11 +303,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
         return resumed
       }
 
-      const result = await this.tikTokService.initVideoPublish(
+      const result = await this.initPublish(input, () => this.tikTokService.initVideoPublish(
         input.credential.accessToken,
         postInfo,
         sourceInfo,
-      )
+      ))
 
       return {
         status: 202,
@@ -343,11 +343,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       total_chunk_count: uploadPlan.totalChunkCount,
     }
 
-    const initResult = await this.tikTokService.initVideoPublish(
+    const initResult = await this.initPublish(input, () => this.tikTokService.initVideoPublish(
       input.credential.accessToken,
       postInfo,
       sourceInfo,
-    )
+    ))
 
     if (!initResult.upload_url) {
       throw TikTokPlatformException.validation({
@@ -405,28 +405,80 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
     if (!input.platformWorkId) {
       return undefined
     }
+
+    let publishStatus: TikTokPublishStatus
     try {
-      const publishStatus = await this.tikTokService.getPublishStatus(input.credential.accessToken, input.platformWorkId)
-      if (publishStatus.status !== TikTokPublishStatus.PublishComplete) {
-        await this.tikTokService.cancelPublish(input.credential.accessToken, input.platformWorkId)
-        return undefined
-      }
-      return {
-        status: 202,
-        platformWorkId: input.platformWorkId,
-        dataOption: this.createDataOption(
-          input.platformWorkId,
-          source,
-          contentPath,
-          privacyLevel,
-          input.credential.account,
-        ),
-      }
+      publishStatus = (await this.tikTokService.getPublishStatus(input.credential.accessToken, input.platformWorkId)).status
     }
     catch (err) {
-      this.logger.warn(err, `Failed to resume TikTok publish ${input.platformWorkId}, starting a new publish`)
+      // Without a confirmed status a new init could duplicate a post that TikTok already accepted.
+      throw TikTokPlatformException.fromPlatformError({
+        code: ResponseCode.ChannelPlatformResponseInvalid,
+        category: PlatformErrorCategory.PlatformUnavailable,
+        context: {
+          endpoint: 'resumePublish',
+          taskId: input.taskId,
+          accountId: input.accountId,
+          platformWorkId: input.platformWorkId,
+        },
+        platformCode: 'publish_status_unknown',
+        platformMessage: err instanceof Error ? err.message : 'publish status unavailable',
+        retryable: false,
+      })
+    }
+
+    if (publishStatus === TikTokPublishStatus.Failed) {
       return undefined
     }
+    if (publishStatus === TikTokPublishStatus.ProcessingUpload && source === TikTokPostSource.FileUpload) {
+      // TikTok never publishes a FILE_UPLOAD post whose upload did not finish, so a fresh init is safe.
+      await this.tikTokService.cancelPublish(input.credential.accessToken, input.platformWorkId).catch((err) => {
+        this.logger.warn(err, `Failed to cancel stale TikTok publish ${input.platformWorkId}`)
+      })
+      return undefined
+    }
+
+    return {
+      status: 202,
+      platformWorkId: input.platformWorkId,
+      dataOption: this.createDataOption(
+        input.platformWorkId,
+        source,
+        contentPath,
+        privacyLevel,
+        input.credential.account,
+      ),
+    }
+  }
+
+  /**
+   * 调用 TikTok 发布初始化并立即持久化 publish_id。
+   * 无响应或 5xx 时无法确认 TikTok 是否已受理，标记为不可重试，避免重试再次 init 产生重复帖子。
+   */
+  private async initPublish<T extends { publish_id: string }>(
+    input: PublishPublishInput<TiktokOption>,
+    init: () => Promise<T>,
+  ): Promise<T> {
+    let result: T
+    try {
+      result = await init()
+    }
+    catch (err) {
+      const httpStatus = err instanceof ChannelPlatformException ? err.platformCause?.httpStatus : undefined
+      if (err instanceof ChannelPlatformException && err.retryable && (!httpStatus || httpStatus >= 500)) {
+        throw new TikTokPlatformException({
+          code: err.code as ResponseCode,
+          category: err.category,
+          context: { ...err.context, taskId: input.taskId, accountId: input.accountId },
+          cause: err.platformCause,
+          retryable: false,
+        })
+      }
+      throw err
+    }
+
+    await input.checkpointPlatformWorkId?.(result.publish_id)
+    return result
   }
 
   private async publishPhoto(input: PublishPublishInput<TiktokOption>): Promise<PublishProviderResult<TikTokPublishDataOption>> {
@@ -494,11 +546,11 @@ export class TikTokPublishProvider implements PublishProvider<TiktokOption, TikT
       photo_cover_index: photoCoverIndex,
     }
 
-    const result = await this.tikTokService.initPhotoPublish(
+    const result = await this.initPublish(input, () => this.tikTokService.initPhotoPublish(
       input.credential.accessToken,
       postInfo,
       sourceInfo,
-    )
+    ))
 
     return {
       status: 202,

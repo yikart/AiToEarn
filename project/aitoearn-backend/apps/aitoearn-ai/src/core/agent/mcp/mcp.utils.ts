@@ -1,10 +1,12 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js'
 import type { AiAvailabilityService } from '../../ai-availability'
+import { lookup } from 'node:dns/promises'
+import { BlockList } from 'node:net'
 import { createSdkMcpServer, InferShape, McpSdkServerConfigWithInstance, tool } from '@anthropic-ai/claude-agent-sdk'
 import { Client } from '@modelcontextprotocol/sdk/client/index.js'
 import { StreamableHTTPClientTransport } from '@modelcontextprotocol/sdk/client/streamableHttp.js'
 import { Logger } from '@nestjs/common'
-import { AppException, getErrorMessage, ResponseCode } from '@yikart/common'
+import { AppException, FileUtil, getErrorMessage, ResponseCode } from '@yikart/common'
 import { z } from 'zod'
 
 // ==================== 媒体 URL 安全校验 ====================
@@ -38,6 +40,82 @@ export function assertSafeMediaUrl(mediaUrl: string): void {
     throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", missing hostname`)
   }
 }
+
+const blockedMediaAddresses = new BlockList()
+for (const [network, prefix] of [
+  ['0.0.0.0', 8],
+  ['10.0.0.0', 8],
+  ['100.64.0.0', 10],
+  ['127.0.0.0', 8],
+  ['169.254.0.0', 16],
+  ['172.16.0.0', 12],
+  ['192.0.0.0', 24],
+  ['192.168.0.0', 16],
+  ['198.18.0.0', 15],
+  ['224.0.0.0', 4],
+  ['240.0.0.0', 4],
+] as const) {
+  blockedMediaAddresses.addSubnet(network, prefix, 'ipv4')
+}
+for (const [network, prefix] of [
+  ['::', 128],
+  ['::1', 128],
+  ['64:ff9b::', 96],
+  ['fc00::', 7],
+  ['fe80::', 10],
+  ['ff00::', 8],
+] as const) {
+  blockedMediaAddresses.addSubnet(network, prefix, 'ipv6')
+}
+
+async function assertPublicMediaHost(url: URL): Promise<void> {
+  const hostname = url.hostname.replace(/^\[|\]$/g, '')
+  const addresses = await lookup(hostname, { all: true, verbatim: true }).catch(() => {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${url.href}", hostname cannot be resolved`)
+  })
+  const blocked = addresses.some(({ address, family }) => blockedMediaAddresses.check(address, family === 6 ? 'ipv6' : 'ipv4'))
+  if (blocked) {
+    throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${url.href}", private or reserved network addresses are not allowed`)
+  }
+}
+
+/**
+ * 在交给 ffmpeg/ffprobe 之前解析媒体 URL，防止 SSRF：
+ * - 自有存储（cdnEndpoint / endpoint）地址直接放行，私有化部署时它们通常就是内网地址
+ * - 其余地址逐跳跟随重定向，每一跳都要求解析到公网地址，ffmpeg 拿到的是最终地址
+ * @param mediaUrl 用户传入的媒体 URL
+ * @returns 可以交给 ffmpeg/ffprobe 的最终 URL
+ * @throws AppException URL 不合法、指向内网/保留地址或重定向过多时抛出
+ */
+export async function resolveSafeMediaUrl(mediaUrl: string): Promise<string> {
+  assertSafeMediaUrl(mediaUrl)
+  let currentUrl = new URL(mediaUrl.trim())
+  if (FileUtil.isStorageUrl(currentUrl.href)) {
+    return currentUrl.href
+  }
+
+  for (let hop = 0; hop <= 5; hop++) {
+    await assertPublicMediaHost(currentUrl)
+    const response = await fetch(currentUrl, {
+      redirect: 'manual',
+      headers: { range: 'bytes=0-0' },
+      signal: AbortSignal.timeout(15000),
+    })
+    await response.body?.cancel()
+    const location = response.headers.get('location')
+    if (response.status < 300 || response.status >= 400 || !location) {
+      return currentUrl.href
+    }
+    const nextUrl = new URL(location, currentUrl).href
+    assertSafeMediaUrl(nextUrl)
+    currentUrl = new URL(nextUrl)
+  }
+
+  throw new AppException(ResponseCode.ValidationFailed, `Invalid media URL: "${mediaUrl}", too many redirects`)
+}
+
+// httpproxy is required for https inputs when http_proxy is set
+export const FFMPEG_REMOTE_PROTOCOL_WHITELIST = 'http,https,tls,tcp,httpproxy'
 
 // ==================== SRT 时间戳工具函数 ====================
 

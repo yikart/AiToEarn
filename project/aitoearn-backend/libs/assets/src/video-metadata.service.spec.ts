@@ -219,6 +219,28 @@ describe('videoMetadataService.probeVideoMetadata', () => {
     expect(execaMock).not.toHaveBeenCalled()
   })
 
+  it('reports the last ffprobe error line when probing fails', async () => {
+    execaMock.mockRejectedValueOnce(Object.assign(new Error('Command failed'), {
+      stderr: 'https://cdn.example.test/video.mp4: Server returned 403 Forbidden (access denied)',
+      exitCode: 1,
+      timedOut: false,
+    }))
+    const { service } = createService()
+
+    await expect(service.probeVideoMetadata('https://cdn.example.test/video.mp4'))
+      .rejects
+      .toThrow('ffprobe failed: https://cdn.example.test/video.mp4: Server returned 403 Forbidden (access denied)')
+  })
+
+  it('reports ffprobe timeouts', async () => {
+    execaMock.mockRejectedValueOnce(Object.assign(new Error('Command timed out'), { stderr: '', timedOut: true }))
+    const { service } = createService()
+
+    await expect(service.probeVideoMetadata('https://cdn.example.test/video.mp4'))
+      .rejects
+      .toThrow('ffprobe timed out after 60s')
+  })
+
   it('passes a fixed user agent to ffprobe', async () => {
     execaMock.mockResolvedValueOnce({
       stdout: JSON.stringify({

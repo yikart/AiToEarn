@@ -193,6 +193,43 @@ describe('media service publish validation', () => {
     expect(probeImage).toHaveBeenCalledWith('https://93.184.216.34/cover.jpeg')
   })
 
+  it('reports why the server could not fetch or probe a video', async () => {
+    const service = createService()
+    setHttpAdapter(service, async (config) => {
+      throw new AxiosError('forbidden', 'ERR_BAD_REQUEST', config, undefined, {
+        status: 403,
+        statusText: 'Forbidden',
+        headers: {},
+        config,
+        data: '',
+      })
+    })
+
+    await expect(service.validateMedia({
+      media: [{ url: 'https://93.184.216.34/video.mp4', metadata: { type: 'video' } }],
+    }, {})).resolves.toEqual([{
+      code: PublishValidationIssueCode.MediaUnreachable,
+      path: ['content', 'media', 0],
+      params: { field: 'video', url: 'https://93.184.216.34/video.mp4', reason: 'HEAD returned HTTP 403' },
+    }])
+  })
+
+  it('surfaces ffprobe failures as the unreachable reason', async () => {
+    const service = createService()
+    setHttpAdapter(service, async config => ({ data: '', status: 200, statusText: 'OK', headers: {}, config }))
+    const serviceWithMetadata = service as unknown as { videoMetadataService: { probeVideoMetadata: () => Promise<never> } }
+    serviceWithMetadata.videoMetadataService = {
+      probeVideoMetadata: vi.fn().mockRejectedValue(new Error('ffprobe failed: Server returned 403 Forbidden (access denied)')),
+    }
+
+    await expect(service.validateMedia({
+      media: [{ url: 'https://93.184.216.34/video.mp4', metadata: { type: 'video' } }],
+    }, {})).resolves.toEqual([expect.objectContaining({
+      code: PublishValidationIssueCode.MediaUnreachable,
+      params: expect.objectContaining({ reason: 'ffprobe failed: Server returned 403 Forbidden (access denied)' }),
+    })])
+  })
+
   it('accepts extensionless video media normalized with metadata when probe format is unknown', async () => {
     const service = createService()
     vi.spyOn(service, 'probeVideo').mockResolvedValue({

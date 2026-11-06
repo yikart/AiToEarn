@@ -1,6 +1,7 @@
 import type { AiAvailabilityService } from '../../ai-availability'
+import { lookup } from 'node:dns/promises'
 import { Logger } from '@nestjs/common'
-import { AppException, ResponseCode } from '@yikart/common'
+import { AppException, FileUtil, ResponseCode } from '@yikart/common'
 import { vi } from 'vitest'
 import { z } from 'zod'
 import {
@@ -8,11 +9,16 @@ import {
   errorResult,
   formatList,
   formatObject,
+  resolveSafeMediaUrl,
   secondsToSrtTimestamp,
   srtTimestampToMs,
   successResult,
   wrapTool,
 } from './mcp.utils'
+
+vi.mock('node:dns/promises', () => ({
+  lookup: vi.fn(),
+}))
 
 describe('mcp.utils', () => {
   describe('assertSafeMediaUrl', () => {
@@ -43,6 +49,85 @@ describe('mcp.utils', () => {
       expect(() => assertSafeMediaUrl('')).toThrowError(
         expect.objectContaining({ code: ResponseCode.ValidationFailed }),
       )
+    })
+  })
+
+  describe('resolveSafeMediaUrl', () => {
+    const fetchMock = vi.fn()
+
+    beforeEach(() => {
+      vi.mocked(lookup).mockReset()
+      fetchMock.mockReset()
+      vi.stubGlobal('fetch', fetchMock)
+      FileUtil.init({ endpoint: 'http://rustfs.local:9000', cdnEndpoint: 'http://localhost:8080/oss' })
+    })
+
+    afterEach(() => {
+      vi.unstubAllGlobals()
+    })
+
+    function mockLookup(addresses: Record<string, { address: string, family: number }[]>) {
+      vi.mocked(lookup).mockImplementation((async (hostname: string) => addresses[hostname] ?? []) as never)
+    }
+
+    it('should allow own storage URLs even when they point to private networks', async () => {
+      await expect(resolveSafeMediaUrl('http://localhost:8080/oss/video.mp4')).resolves.toBe('http://localhost:8080/oss/video.mp4')
+      expect(lookup).not.toHaveBeenCalled()
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it('should not treat storage endpoint prefixes as storage URLs', async () => {
+      mockLookup({ localhost: [{ address: '127.0.0.1', family: 4 }] })
+      await expect(resolveSafeMediaUrl('http://localhost:8080/oss-evil/video.mp4')).rejects.toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+    })
+
+    it('should reject hosts resolving to private, loopback, link-local or mapped addresses', async () => {
+      mockLookup({
+        '169.254.169.254': [{ address: '169.254.169.254', family: 4 }],
+        'internal.example.com': [{ address: '10.0.0.5', family: 4 }],
+        '::1': [{ address: '::1', family: 6 }],
+        'mapped.example.com': [{ address: '::ffff:127.0.0.1', family: 6 }],
+      })
+      for (const url of [
+        'http://169.254.169.254/latest/meta-data/',
+        'https://internal.example.com/video.mp4',
+        'http://[::1]/video.mp4',
+        'http://mapped.example.com/video.mp4',
+      ]) {
+        await expect(resolveSafeMediaUrl(url)).rejects.toThrowError(
+          expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+        )
+      }
+      expect(fetchMock).not.toHaveBeenCalled()
+    })
+
+    it('should reject redirects to private addresses', async () => {
+      mockLookup({
+        'cdn.example.com': [{ address: '93.184.216.34', family: 4 }],
+        '169.254.169.254': [{ address: '169.254.169.254', family: 4 }],
+      })
+      fetchMock.mockResolvedValueOnce(new Response(null, {
+        status: 302,
+        headers: { location: 'http://169.254.169.254/latest/meta-data/' },
+      }))
+
+      await expect(resolveSafeMediaUrl('https://cdn.example.com/video.mp4')).rejects.toThrowError(
+        expect.objectContaining({ code: ResponseCode.ValidationFailed }),
+      )
+    })
+
+    it('should return the final public URL after following redirects', async () => {
+      mockLookup({
+        'cdn.example.com': [{ address: '93.184.216.34', family: 4 }],
+        'media.example.net': [{ address: '93.184.216.35', family: 4 }],
+      })
+      fetchMock
+        .mockResolvedValueOnce(new Response(null, { status: 302, headers: { location: 'https://media.example.net/signed.mp4?x=1' } }))
+        .mockResolvedValueOnce(new Response(null, { status: 206 }))
+
+      await expect(resolveSafeMediaUrl('https://cdn.example.com/video.mp4')).resolves.toBe('https://media.example.net/signed.mp4?x=1')
     })
   })
 

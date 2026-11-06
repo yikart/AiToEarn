@@ -1,3 +1,4 @@
+import type { ExecaError } from 'execa'
 import { createReadStream, createWriteStream } from 'node:fs'
 import { mkdtemp, open, rm } from 'node:fs/promises'
 import * as os from 'node:os'
@@ -24,6 +25,8 @@ export interface ExtractThumbnailOptions {
 }
 
 const FFPROBE_USER_AGENT = 'AiToEarn-MediaProbe/1.0'
+// httpproxy is required for https inputs when http_proxy is set
+const REMOTE_PROTOCOL_WHITELIST = 'http,https,tls,tcp,httpproxy'
 const DOWNLOAD_TIMEOUT_MS = 10 * 60 * 1000
 const MAX_DOWNLOAD_BYTES = 2 * 1024 * 1024 * 1024 // 2GB
 
@@ -48,9 +51,11 @@ export class VideoMetadataService {
 
     const { stdout } = await execa('ffprobe', [
       '-v',
-      'quiet',
+      'error',
       '-user_agent',
       FFPROBE_USER_AGENT,
+      '-protocol_whitelist',
+      REMOTE_PROTOCOL_WHITELIST,
       '-print_format',
       'json',
       '-show_format',
@@ -58,6 +63,11 @@ export class VideoMetadataService {
       videoUrl,
     ], {
       timeout: 60000,
+    }).catch((err: ExecaError) => {
+      const stderr = String(err.stderr ?? '').trim()
+      throw new Error(err.timedOut
+        ? 'ffprobe timed out after 60s'
+        : `ffprobe failed: ${stderr.split('\n').pop() || `exit code ${err.exitCode}`}`)
     })
 
     const probeData = JSON.parse(stdout)
@@ -243,9 +253,13 @@ export class VideoMetadataService {
   }
 
   async extractThumbnailFromUrl(videoUrl: string, timeInSeconds: number): Promise<Buffer> {
+    assertSafeVideoUrl(videoUrl)
+
     const { stdout } = await execa('ffmpeg', [
       '-ss',
       String(timeInSeconds),
+      '-protocol_whitelist',
+      REMOTE_PROTOCOL_WHITELIST,
       '-i',
       videoUrl,
       '-vframes',
