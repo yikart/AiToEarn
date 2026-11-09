@@ -31,6 +31,10 @@ Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/ski
 
 Per-platform install instructions and details: see the [AiToEarn Docs](https://docs.aitoearn.ai/en/use/installer-pack).
 
+> 💡 WorkBuddy users don't need to install anything: use the built-in official expert “自媒体运营增长变现专家” — just search for it on the “Experts” page and start chatting.
+>
+> ![WorkBuddy official expert “自媒体运营增长变现专家”](skills/workbuddy-expert.png)
+
 ---
 
 ## Special Thanks ❤️

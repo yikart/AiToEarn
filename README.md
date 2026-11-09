@@ -31,6 +31,10 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 各平台的安装方式与详细说明见 [AiToEarn 文档站](https://docs.aitoearn.ai/zh/use/installer-pack)。
 
+> 💡 WorkBuddy 用户无需安装：直接使用内置官方专家「**自媒体运营增长变现专家**」，在「专家」页搜索名称即可开始对话。
+>
+> ![WorkBuddy 官方专家「自媒体运营增长变现专家」](skills/workbuddy-expert.png)
+
 ***
 
 ## 特别感谢 ❤️
