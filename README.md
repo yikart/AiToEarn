@@ -33,7 +33,7 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 > 💡 WorkBuddy 用户无需安装：直接使用内置官方专家「**自媒体运营增长变现专家**」，在「专家」页搜索名称即可开始对话。
 >
-> ![WorkBuddy 官方专家「自媒体运营增长变现专家」](skills/workbuddy-expert.png)
+> ![WorkBuddy 官方专家「自媒体运营增长变现专家」](assets/workbuddy-expert.png)
 
 ***
 

@@ -33,7 +33,7 @@ https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケ�
 
 > 💡 WorkBuddy をご利用の方はインストール不要：組み込みの公式エキスパート「**自媒体运营增长变现专家**」を「专家」ページで検索するだけでそのまま使えます。
 >
-> ![WorkBuddy 公式エキスパート「自媒体运营增长变现专家」](skills/workbuddy-expert.png)
+> ![WorkBuddy 公式エキスパート「自媒体运营增长变现专家」](assets/workbuddy-expert.png)
 
 ---
 
