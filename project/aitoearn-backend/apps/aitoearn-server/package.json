@@ -49,7 +49,7 @@
     "lodash": "4.17.23",
     "lossless-json": "4.3.0",
     "mime-types": "3.0.2",
-    "mongoose": "8.23.0",
+    "mongoose": "8.24.7",
     "nanoid": "5.1.7",
     "qs": "6.15.0",
     "rxjs": "7.8.2",
