@@ -1,3 +1,5 @@
+<div align="center">
+
 <a href="https://docs.aitoearn.ai/zh/home"><img src="presentation/aitoearn-logo.png" alt="AiToEarn" width="360"></a>
 
 **The AI Content Marketing Agent for OPCs (One-Person Companies)**
@@ -6,9 +8,12 @@
 [![License](https://img.shields.io/badge/license-MIT-3ECF8E?style=flat-square)](LICENSE)
 [![Node](https://img.shields.io/badge/node-20.18.x-3ECF8E?style=flat-square&logo=node.js)](https://nodejs.org/about/releases)
 [![Docs](https://img.shields.io/badge/docs-aitoearn.ai-3ECF8E?style=flat-square)](https://docs.aitoearn.ai/en/home)
-<a href="https://trendshift.io/repositories/20785"><img src="https://trendshift.io/api/badge/repositories/20785" alt="Trendshift" height="20"></a>
+
+<a href="https://trendshift.io/repositories/20785"><img src="https://trendshift.io/api/badge/repositories/20785" alt="Trendshift"></a>
 
 [简体中文](README.md) · English · [日本語](README_JA.md)
+
+</div>
 
 **Monetize · Publish · Engage · Create — one platform for AI-powered content monetization.**
 
