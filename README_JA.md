@@ -208,10 +208,10 @@ docker compose up -d
 機能要望やフィードバックは Issue で歓迎しますが、外部からの Pull Request は現状受け付けておりません。新機能と修正は公式チームが評価のうえ対応します。
 
 - **Telegram**：[t.me/+447704864210](https://t.me/+447704864210)
-- **WeChat**：下の QR コードをスキャン
+- **企業微信（WeCom）**：下の QR コードをスキャン
 - **貢献ガイド**：[docs 貢献ガイド](https://docs.aitoearn.ai/en/use/contributing)
 
-![WeChat QR コード](presentation/wechat-1029.png)
+![WeCom QR コード](presentation/wecom-qr.jpg)
 
 ---
 

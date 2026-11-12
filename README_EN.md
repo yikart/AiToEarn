@@ -216,10 +216,10 @@ If you run into usage difficulties, questions, or unexpected behavior, please op
 We welcome feature requests and feedback via Issues, but we do not accept external Pull Requests at this time — new features and fixes are evaluated and implemented by the official team.
 
 - **Telegram**: [t.me/+447704864210](https://t.me/+447704864210)
-- **WeChat**: scan the QR code below
+- **WeCom**: scan the QR code below
 - **Contributing Guide**: [docs contributing guide](https://docs.aitoearn.ai/en/use/contributing)
 
-<img src="presentation/wechat-1029.png" alt="WeChat QR Code" width="200">
+<img src="presentation/wecom-qr.jpg" alt="WeCom QR Code" width="200">
 
 ---
 

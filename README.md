@@ -215,10 +215,10 @@ docker compose up -d
 我们欢迎通过 Issue 提出需求与反馈，但暂不接受外部 Pull Request——新功能与修复由官方团队评估后排期实现。
 
 - **Telegram**：[t.me/+447704864210](https://t.me/+447704864210)
-- **微信扫码**：见下方二维码
+- **企业微信**：见下方二维码
 - **贡献指南**：[docs 站贡献指南](https://docs.aitoearn.ai/zh/use/contributing)
 
-<img src="presentation/wechat-1029.png" alt="微信二维码" width="200">
+<img src="presentation/wecom-qr.jpg" alt="企业微信二维码" width="200">
 
 ***
 
