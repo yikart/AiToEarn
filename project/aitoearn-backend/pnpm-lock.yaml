@@ -303,7 +303,7 @@ importers:
         version: 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(ioredis@5.10.1)(nats@2.29.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/mongoose':
         specifier: 11.0.4
-        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.23.0(socks@2.8.7))(rxjs@7.8.2)
+        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.24.7(socks@2.8.7))(rxjs@7.8.2)
       '@nestjs/platform-express':
         specifier: 11.1.24
         version: 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)
@@ -419,8 +419,8 @@ importers:
         specifier: 3.0.2
         version: 3.0.2
       mongoose:
-        specifier: 8.23.0
-        version: 8.23.0(socks@2.8.7)
+        specifier: 8.24.7
+        version: 8.24.7(socks@2.8.7)
       nanoid:
         specifier: 5.1.7
         version: 5.1.7
@@ -711,7 +711,7 @@ importers:
         version: 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.24)(@nestjs/platform-express@11.1.24)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/mongoose':
         specifier: 11.0.4
-        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.23.0(socks@2.8.7))(rxjs@7.8.2)
+        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.24.7(socks@2.8.7))(rxjs@7.8.2)
       '@yikart/common':
         specifier: workspace:*
         version: link:../common
@@ -725,11 +725,11 @@ importers:
         specifier: 6.20.0
         version: 6.20.0(socks@2.8.7)
       mongoose:
-        specifier: 8.23.0
-        version: 8.23.0(socks@2.8.7)
+        specifier: 8.24.7
+        version: 8.24.7(socks@2.8.7)
       mongoose-lean-virtuals:
         specifier: 2.1.0
-        version: 2.1.0(mongoose@8.23.0(socks@2.8.7))
+        version: 2.1.0(mongoose@8.24.7(socks@2.8.7))
       tslib:
         specifier: 2.8.1
         version: 2.8.1
@@ -777,8 +777,8 @@ importers:
         specifier: 5.1.0
         version: 5.1.0
       mongoose:
-        specifier: 8.23.0
-        version: 8.23.0(socks@2.8.7)
+        specifier: 8.24.7
+        version: 8.24.7(socks@2.8.7)
       nanoid:
         specifier: 5.1.7
         version: 5.1.7
@@ -851,7 +851,7 @@ importers:
         version: 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.24)(@nestjs/platform-express@11.1.24)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/mongoose':
         specifier: 11.0.4
-        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.23.0(socks@2.8.7))(rxjs@7.8.2)
+        version: 11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.24.7(socks@2.8.7))(rxjs@7.8.2)
       '@yikart/aitoearn-ai-shared':
         specifier: workspace:*
         version: link:../aitoearn-ai-shared
@@ -868,11 +868,11 @@ importers:
         specifier: 6.20.0
         version: 6.20.0(socks@2.8.7)
       mongoose:
-        specifier: 8.23.0
-        version: 8.23.0(socks@2.8.7)
+        specifier: 8.24.7
+        version: 8.24.7(socks@2.8.7)
       mongoose-lean-virtuals:
         specifier: 2.1.0
-        version: 2.1.0(mongoose@8.23.0(socks@2.8.7))
+        version: 2.1.0(mongoose@8.24.7(socks@2.8.7))
       tslib:
         specifier: 2.8.1
         version: 2.8.1
@@ -4582,6 +4582,7 @@ packages:
 
   crypto-js@4.2.0:
     resolution: {integrity: sha512-KALDyEYgpY+Rlob/iriUtjV6d5Eq+Y191A5g4UqLAi8CyGP9N1+FdVbkc1SxKc2r4YAYqG8JzO2KGL+AizD70Q==}
+    deprecated: Active development of CryptoJS has been discontinued. This library is no longer maintained.
 
   cssesc@3.0.0:
     resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
@@ -6606,8 +6607,8 @@ packages:
     peerDependencies:
       mongoose: '>=8.0.0 || ^9.0.0-0'
 
-  mongoose@8.23.0:
-    resolution: {integrity: sha512-Bul4Ha6J8IqzFrb0B1xpVzkC3S0sk43dmLSnhFOn8eJlZiLwL5WO6cRymmjaADdCMjUcCpj2ce8hZI6O4ZFSug==}
+  mongoose@8.24.7:
+    resolution: {integrity: sha512-+hrEOLpLGPgOt7S/UrcBAKZ4gvB6+5qf16jspWH5xQ8WtQu9lRTzcqy04ZNQrlIox4Pl6Nh2RzlNDPSOFw9rng==}
     engines: {node: '>=16.20.1'}
 
   mpath@0.8.4:
@@ -6618,8 +6619,8 @@ packages:
     resolution: {integrity: sha512-ikJRQTk8hw5DEoFVxHG1Gn9T/xcjtdnOKIU1JTmGjZZlg9LST2mBLmcX3/ICIbgJydT2GOc15RnNy5mHmzfSew==}
     engines: {node: '>=4.0.0'}
 
-  mquery@5.0.0:
-    resolution: {integrity: sha512-iQMncpmEK8R8ncT8HJGsGc9Dsp8xcgYMVSbs5jgnm1lFHTZqMJTUWTDx1LBO8+mK3tPNZWFLBghQEIOULSTHZg==}
+  mquery@5.0.1:
+    resolution: {integrity: sha512-C99lWV0TFI34pS008jBsi3JrE2xZPnTgUw5yApQR71nRP0hxLy8D5m1Lbbk83c8AQWJwdJ0329HzFtZ1MRTUIw==}
     engines: {node: '>=14.0.0'}
 
   ms@2.1.2:
@@ -6672,6 +6673,7 @@ packages:
   nats@2.29.3:
     resolution: {integrity: sha512-tOQCRCwC74DgBTk4pWZ9V45sk4d7peoE2njVprMRCBXrhJ5q5cYM7i6W+Uvw2qUrcfOSnuisrX7bEx3b3Wx4QA==}
     engines: {node: '>= 14.0.0'}
+    deprecated: Package moved. Use @nats-io/transport-node from https://github.com/nats-io/nats.js
 
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
@@ -6703,6 +6705,7 @@ packages:
   nkeys.js@1.1.0:
     resolution: {integrity: sha512-tB/a0shZL5UZWSwsoeyqfTszONTt4k2YS0tuQioMOD180+MbombYVgzDUYHlx+gejYK6rgf08n/2Df99WY0Sxg==}
     engines: {node: '>=10.0.0'}
+    deprecated: 'Package moved. Use @nats-io/nkeys instead: https://www.npmjs.com/package/@nats-io/nkeys'
 
   no-case@2.3.2:
     resolution: {integrity: sha512-rmTZ9kz+f3rCvK2TD1Ue/oZlns7OGoIWP4fc3llxxRXlOkHKoWPPWJOfFYpITabSow43QJbRIoHQXtt10VldyQ==}
@@ -10422,11 +10425,11 @@ snapshots:
       ioredis: 5.10.1
       nats: 2.29.3
 
-  '@nestjs/mongoose@11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.23.0(socks@2.8.7))(rxjs@7.8.2)':
+  '@nestjs/mongoose@11.0.4(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)(mongoose@8.24.7(socks@2.8.7))(rxjs@7.8.2)':
     dependencies:
       '@nestjs/common': 11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2)
       '@nestjs/core': 11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/microservices@11.1.24)(@nestjs/platform-express@11.1.24)(reflect-metadata@0.2.2)(rxjs@7.8.2)
-      mongoose: 8.23.0(socks@2.8.7)
+      mongoose: 8.24.7(socks@2.8.7)
       rxjs: 7.8.2
 
   '@nestjs/platform-express@11.1.24(@nestjs/common@11.1.24(class-transformer@0.5.1)(class-validator@0.14.4)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.24)':
@@ -15034,18 +15037,18 @@ snapshots:
     optionalDependencies:
       socks: 2.8.7
 
-  mongoose-lean-virtuals@2.1.0(mongoose@8.23.0(socks@2.8.7)):
+  mongoose-lean-virtuals@2.1.0(mongoose@8.24.7(socks@2.8.7)):
     dependencies:
-      mongoose: 8.23.0(socks@2.8.7)
+      mongoose: 8.24.7(socks@2.8.7)
       mpath: 0.8.4
 
-  mongoose@8.23.0(socks@2.8.7):
+  mongoose@8.24.7(socks@2.8.7):
     dependencies:
       bson: 6.10.4
       kareem: 2.6.3
       mongodb: 6.20.0(socks@2.8.7)
       mpath: 0.9.0
-      mquery: 5.0.0
+      mquery: 5.0.1
       ms: 2.1.3
       sift: 17.1.3
     transitivePeerDependencies:
@@ -15062,7 +15065,7 @@ snapshots:
 
   mpath@0.9.0: {}
 
-  mquery@5.0.0:
+  mquery@5.0.1:
     dependencies:
       debug: 4.4.3
     transitivePeerDependencies:
