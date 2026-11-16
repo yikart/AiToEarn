@@ -66,7 +66,11 @@ https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケ�
     <td align="left">
       <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">FastAIToken</a>の本プロジェクトへのご支援に感謝します！<br>
       <strong>大規模モデルのテキスト・画像・動画ワンストップ接続｜FastAIToken</strong><br>
-      FastAIToken は Claude / GPT / Gemini / DeepSeek などの大規模モデルに対し、テキスト・画像・動画のワンストップ接続を提供します。<strong>最低 0.6 折</strong>（最大 94% オフ）、法人向けの請求書発行にも対応しています。<br>
+      FastAIToken は Claude / GPT / Gemini / DeepSeek などの大規模モデルに対し、テキスト・画像・動画のワンストップ接続を提供します：<br>
+      · ChatGPT / OpenAI 0.06x の超低倍率<br>
+      · MiniMax H3 768P 0.07 元/秒<br>
+      · Seedance 480P 0.1 元/秒<br>
+      · 法人向けの請求書発行に対応<br>
       🎁 <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">AiToEarn 専用リンクから登録</a>すると、限定特典を受け取れます。<br>
       公式サイト：<a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">www.fastaitoken.com</a> ／ QQ サポートグループ：1054566214
     </td>
