@@ -69,7 +69,7 @@ export class S3Service {
     }
     catch {
       const response = await fetch(url)
-      if (response.body === null) {
+      if (!response.ok || response.body === null) {
         throw new AppException(ResponseCode.S3DownloadFileFailed)
       }
       const contentType = response.headers.get('content-type') || undefined

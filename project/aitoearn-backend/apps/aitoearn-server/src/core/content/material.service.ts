@@ -69,11 +69,9 @@ export class MaterialService {
     if (!res)
       return false
     if (material.autoDeleteMedia) {
-      for (const item of material.mediaList) {
-        if (!item.mediaId)
-          continue
-        this.mediaService.del(item.mediaId)
-      }
+      await Promise.allSettled(material.mediaList
+        .filter(item => item.mediaId)
+        .map(item => this.mediaService.del(item.mediaId!)))
     }
     return res
   }
