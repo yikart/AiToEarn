@@ -60,19 +60,19 @@ Per-platform install instructions and details: see the [AiToEarn Docs](https://d
   </tr>
   <tr>
     <td align="center" width="120">
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><strong>FastAIToken</strong></a>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN&utm=aiearn"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN&utm=aiearn"><strong>FastAIToken</strong></a>
     </td>
     <td align="left">
-      Thanks to <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">FastAIToken</a> for sponsoring this project!<br>
+      Thanks to <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN&utm=aiearn">FastAIToken</a> for sponsoring this project!<br>
       <strong>One-stop Text / Image / Video LLM Access | FastAIToken</strong><br>
       FastAIToken provides one-stop access to Claude / GPT / Gemini / DeepSeek and other large models for text, image, and video:<br>
       · ChatGPT / OpenAI at 0.06x ultra-low rate<br>
       · MiniMax H3 768P at RMB 0.07/sec<br>
       · Seedance 480P at RMB 0.1/sec<br>
       · Corporate invoicing supported<br>
-      🎁 Sign up through the <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">exclusive AiToEarn link</a> to enjoy exclusive offers.<br>
-      Website: <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">www.fastaitoken.com</a> | QQ group: 1054566214
+      🎁 Sign up through the <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN&utm=aiearn">exclusive AiToEarn link</a> to enjoy exclusive offers.<br>
+      Website: <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN&utm=aiearn">www.fastaitoken.com</a> | QQ group: 1054566214
     </td>
   </tr>
 </table>
