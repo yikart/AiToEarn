@@ -104,10 +104,10 @@ export class McpStreamableHttpService implements OnModuleDestroy {
 
     try {
       if (this.isStatelessMode) {
-        return this.handleStatelessRequest(adaptedReq, adaptedRes, body)
+        return await this.handleStatelessRequest(adaptedReq, adaptedRes, body)
       }
       else {
-        return this.handleStatefulRequest(adaptedReq, adaptedRes, body)
+        return await this.handleStatefulRequest(adaptedReq, adaptedRes, body)
       }
     }
     catch (error) {

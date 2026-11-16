@@ -170,9 +170,17 @@ export const agentApi = {
             // 调用消息回调
             onMessage(data)
 
-            // 如果收到结束信号，关闭连接
+            // 如果收到结束信号，关闭连接并触发回调
             if (data.type === 'done' || data.type === 'error') {
-              isCompleted = true
+              if (!isCompleted) {
+                isCompleted = true
+                if (data.type === 'done') {
+                  onDone(sessionId)
+                }
+                else {
+                  onError(new Error(data.message || 'SSE error'))
+                }
+              }
               abortController.abort()
             }
           }

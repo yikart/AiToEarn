@@ -156,7 +156,7 @@ export class MaterialRepository extends BaseRepository<Material> {
       }),
       ...(inFilter.groupId && { groupId: inFilter.groupId }),
       ...(inFilter.status !== undefined && { status: inFilter.status }),
-      ...(inFilter.ids && { _id: { $in: [inFilter.ids] } }),
+      ...(inFilter.ids && { _id: { $in: inFilter.ids } }),
       ...(inFilter.useCount !== undefined && { useCount: { $gte: inFilter.useCount } }),
     }
 
