@@ -58,6 +58,19 @@ Per-platform install instructions and details: see the [AiToEarn Docs](https://d
       For business inquiries, please add WeChat: metasota12
     </td>
   </tr>
+  <tr>
+    <td align="center" width="120">
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><strong>FastAIToken</strong></a>
+    </td>
+    <td align="left">
+      Thanks to <a href="https://www.fastaitoken.com/register?aff=AITOEARN">FastAIToken</a> for sponsoring this project!<br>
+      <strong>One-stop Text / Image / Video LLM Access | FastAIToken</strong><br>
+      FastAIToken provides one-stop access to Claude / GPT / Gemini / DeepSeek and other large models for text, image, and video, with <strong>up to 94% off official pricing</strong>, and supports corporate invoicing.<br>
+      🎁 Sign up through the <a href="https://www.fastaitoken.com/register?aff=AITOEARN">exclusive AiToEarn link</a> to enjoy exclusive offers.<br>
+      Website: <a href="https://www.fastaitoken.com/register?aff=AITOEARN">www.fastaitoken.com</a> | QQ group: 1054566214
+    </td>
+  </tr>
 </table>
 
 ---

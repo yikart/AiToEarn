@@ -52,6 +52,14 @@ https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケ�
 
 [AiToEarn 専用リンクから登録](https://metaso.cn/minimax-h3/?s=ATE)すると、無料クレジットと限定特典を受け取れます。ビジネスに関するお問い合わせは WeChat：metasota12 まで。
 
+本プロジェクトをご支援いただいた [FastAIToken](https://www.fastaitoken.com/register?aff=AITOEARN) に心より感謝します。
+
+<a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="200"></a>
+
+**大規模モデルのテキスト・画像・動画ワンストップ接続｜FastAIToken**：Claude / GPT / Gemini / DeepSeek などの大規模モデルに対応し、テキスト・画像・動画をワンストップで利用できます。**最低 0.6 折**（最大 94% オフ）、法人向けの請求書発行にも対応しています。
+
+[AiToEarn 専用リンクから登録](https://www.fastaitoken.com/register?aff=AITOEARN)すると限定特典を受け取れます。公式サイト：[www.fastaitoken.com](https://www.fastaitoken.com/register?aff=AITOEARN) ／ QQ サポートグループ：1054566214
+
 ---
 
 ## 目次
