@@ -60,15 +60,15 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
   </tr>
   <tr>
     <td align="center" width="120">
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><strong>FastAIToken</strong></a>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><strong>FastAIToken</strong></a>
     </td>
     <td align="left">
-      感谢<a href="https://www.fastaitoken.com/register?aff=AITOEARN">FastAIToken</a>对本项目的赞助！<br>
+      感谢<a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">FastAIToken</a>对本项目的赞助！<br>
       <strong>大模型文本-图片-视频一站式接入｜FastAIToken</strong><br>
       FastAIToken 提供 Claude / GPT / Gemini / DeepSeek 等大模型文本-图片-视频一站式接入方案，<strong>最低 0.6 折</strong>，支持对公开票。<br>
-      🎁 通过 <a href="https://www.fastaitoken.com/register?aff=AITOEARN">AiToEarn 专属链接注册</a>，即可享受专属优惠。<br>
-      官网：<a href="https://www.fastaitoken.com/register?aff=AITOEARN">www.fastaitoken.com</a> ｜ QQ 服务群：1054566214
+      🎁 通过 <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">AiToEarn 专属链接注册</a>，即可享受专属优惠。<br>
+      官网：<a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">www.fastaitoken.com</a> ｜ QQ 服务群：1054566214
     </td>
   </tr>
 </table>

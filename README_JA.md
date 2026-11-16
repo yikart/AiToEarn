@@ -60,15 +60,15 @@ https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケ�
   </tr>
   <tr>
     <td align="center" width="120">
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><strong>FastAIToken</strong></a>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN"><strong>FastAIToken</strong></a>
     </td>
     <td align="left">
-      <a href="https://www.fastaitoken.com/register?aff=AITOEARN">FastAIToken</a>の本プロジェクトへのご支援に感謝します！<br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">FastAIToken</a>の本プロジェクトへのご支援に感謝します！<br>
       <strong>大規模モデルのテキスト・画像・動画ワンストップ接続｜FastAIToken</strong><br>
       FastAIToken は Claude / GPT / Gemini / DeepSeek などの大規模モデルに対し、テキスト・画像・動画のワンストップ接続を提供します。<strong>最低 0.6 折</strong>（最大 94% オフ）、法人向けの請求書発行にも対応しています。<br>
-      🎁 <a href="https://www.fastaitoken.com/register?aff=AITOEARN">AiToEarn 専用リンクから登録</a>すると、限定特典を受け取れます。<br>
-      公式サイト：<a href="https://www.fastaitoken.com/register?aff=AITOEARN">www.fastaitoken.com</a> ／ QQ サポートグループ：1054566214
+      🎁 <a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">AiToEarn 専用リンクから登録</a>すると、限定特典を受け取れます。<br>
+      公式サイト：<a href="https://www.fastaitoken.com/register?aff=AITOEARN&promo=AITOEARN">www.fastaitoken.com</a> ／ QQ サポートグループ：1054566214
     </td>
   </tr>
 </table>
