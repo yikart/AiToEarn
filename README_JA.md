@@ -42,23 +42,36 @@ https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケ�
 
 ---
 
-## 特別なご支援に感謝
+## 特別なご支援に感謝 ❤️
 
-本プロジェクトをご支援いただいた [秘塔科技（Metaso）](https://metaso.cn/minimax-h3/?s=ATE) に心より感謝します。
-
-<a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="Metaso" width="200"></a>
-
-**MiniMax H3 動画生成 API**：768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒。ネイティブ 2K と音声・映像の同期に対応し、API は OpenAI プロトコルと互換性があり、ComfyUI にも対応しています。GPU を自前で用意する必要はありません。
-
-[AiToEarn 専用リンクから登録](https://metaso.cn/minimax-h3/?s=ATE)すると、無料クレジットと限定特典を受け取れます。ビジネスに関するお問い合わせは WeChat：metasota12 まで。
-
-本プロジェクトをご支援いただいた [FastAIToken](https://www.fastaitoken.com/register?aff=AITOEARN) に心より感謝します。
-
-<a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="200"></a>
-
-**大規模モデルのテキスト・画像・動画ワンストップ接続｜FastAIToken**：Claude / GPT / Gemini / DeepSeek などの大規模モデルに対応し、テキスト・画像・動画をワンストップで利用できます。**最低 0.6 折**（最大 94% オフ）、法人向けの請求書発行にも対応しています。
-
-[AiToEarn 専用リンクから登録](https://www.fastaitoken.com/register?aff=AITOEARN)すると限定特典を受け取れます。公式サイト：[www.fastaitoken.com](https://www.fastaitoken.com/register?aff=AITOEARN) ／ QQ サポートグループ：1054566214
+<table align="center">
+  <tr>
+    <td align="center" width="120">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><img src="docs/sponsors/metaso-logo.png" alt="秘塔科技" width="100"></a><br>
+      <a href="https://metaso.cn/minimax-h3/?s=ATE"><strong>秘塔科技</strong></a>
+    </td>
+    <td align="left">
+      <a href="https://metaso.cn/minimax-h3/?s=ATE">秘塔科技</a>の本プロジェクトへのご支援に感謝します！<br>
+      <strong>MiniMax H3 動画生成 API｜秘塔科技</strong><br>
+      秘塔科技は高コストパフォーマンスな MiniMax H3 動画生成サービスを提供しています：<strong>768P はわずか 0.09 元/秒、2K はわずか 0.15 元/秒</strong>。ネイティブ 2K と音声・映像の同期に対応し、API は <strong>OpenAI プロトコル</strong>と互換性があり、<strong>ComfyUI</strong> にも対応しています。GPU を自前で用意する必要はありません。<br>
+      🎁 <a href="https://metaso.cn/minimax-h3/?s=ATE">AiToEarn 専用リンクから登録</a>すると、無料クレジットと限定特典を受け取れます。<br>
+      ビジネスに関するお問い合わせは WeChat：metasota12 まで
+    </td>
+  </tr>
+  <tr>
+    <td align="center" width="120">
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><img src="docs/sponsors/fastaitoken-logo.png" alt="FastAIToken" width="100"></a><br>
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN"><strong>FastAIToken</strong></a>
+    </td>
+    <td align="left">
+      <a href="https://www.fastaitoken.com/register?aff=AITOEARN">FastAIToken</a>の本プロジェクトへのご支援に感謝します！<br>
+      <strong>大規模モデルのテキスト・画像・動画ワンストップ接続｜FastAIToken</strong><br>
+      FastAIToken は Claude / GPT / Gemini / DeepSeek などの大規模モデルに対し、テキスト・画像・動画のワンストップ接続を提供します。<strong>最低 0.6 折</strong>（最大 94% オフ）、法人向けの請求書発行にも対応しています。<br>
+      🎁 <a href="https://www.fastaitoken.com/register?aff=AITOEARN">AiToEarn 専用リンクから登録</a>すると、限定特典を受け取れます。<br>
+      公式サイト：<a href="https://www.fastaitoken.com/register?aff=AITOEARN">www.fastaitoken.com</a> ／ QQ サポートグループ：1054566214
+    </td>
+  </tr>
+</table>
 
 ---
 
