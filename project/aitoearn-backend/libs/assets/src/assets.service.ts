@@ -255,7 +255,7 @@ export class AssetsService {
       throw new AppException(ResponseCode.AssetNotFound, 'File not found in storage')
     }
 
-    const asset = await this.assetRepository.create({
+    const asset = await this.assetRepository.upsertByPath({
       userId,
       userType,
       path,

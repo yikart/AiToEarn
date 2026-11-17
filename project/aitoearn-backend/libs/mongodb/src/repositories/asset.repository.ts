@@ -14,6 +14,16 @@ export interface ListAssetsParams extends Pagination {
   statuses?: AssetStatus[]
 }
 
+export interface UpsertAssetByPathParams {
+  path: string
+  userId: string
+  userType: UserType
+  type: AssetType
+  status: AssetStatus
+  size: number
+  mimeType: string
+}
+
 export class AssetRepository extends BaseRepository<Asset> {
   constructor(
     @InjectModel(Asset.name) assetModel: Model<Asset>,
@@ -26,6 +36,31 @@ export class AssetRepository extends BaseRepository<Asset> {
       path,
       deletedAt: { $exists: false },
     })
+  }
+
+  /**
+   * 以 path 為唯一鍵寫入，已存在（含軟刪除）則取回同一筆，避免 check-then-act 的 E11000。
+   */
+  async upsertByPath(params: UpsertAssetByPathParams) {
+    try {
+      const asset = await this.updateOne(
+        { path: params.path },
+        { $set: params, $unset: { deletedAt: '' } },
+        { upsert: true },
+      )
+      return asset!
+    }
+    catch (err) {
+      // 並發 upsert 撞上唯一索引時，另一個請求已經寫入，回讀即可
+      if ((err as { code?: number }).code !== 11000)
+        throw err
+
+      const existing = await this.getByPath(params.path)
+      if (!existing)
+        throw err
+
+      return existing
+    }
   }
 
   async getByIdAndUserId(id: string, userId: string, userType?: UserType) {
