@@ -2,7 +2,7 @@ import type { InstanceWrapper } from '@nestjs/core/injector/instance-wrapper'
 import type { EventStream } from './enum/event-stream.enum'
 import type { EventTopic } from './enum/event-topic.enum'
 import type { EventStreamHandlerMetadata } from './event-stream.decorator'
-import { randomUUID } from 'node:crypto'
+import { hostname } from 'node:os'
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common'
 import { MetadataScanner, ModulesContainer } from '@nestjs/core'
 import { EventStream as EventStreamEnum } from './enum/event-stream.enum'
@@ -56,11 +56,13 @@ export class EventStreamExplorer implements OnModuleInit {
       }
       this.eventStreamService.subscribe({
         group,
-        consumer: metadata.options.consumer ?? `${group}:${process.pid}:${randomUUID()}`,
+        consumer: metadata.options.consumer ?? `${group}:${hostname()}:${process.pid}`,
         streams,
         topics: metadata.topics,
         maxRetries: metadata.options.maxRetries,
         pollInterval: metadata.options.pollInterval,
+        pendingMinIdleMs: metadata.options.pendingMinIdleMs,
+        reclaimInterval: metadata.options.reclaimInterval,
         handler: async (envelope) => {
           await (instance as Record<string, (...args: unknown[]) => unknown>)[methodName](envelope)
         },

@@ -7,6 +7,8 @@ export interface OnEventStreamOptions {
   consumer?: string
   maxRetries?: number
   pollInterval?: number
+  pendingMinIdleMs?: number
+  reclaimInterval?: number
 }
 
 export interface EventStreamHandlerMetadata {

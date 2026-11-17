@@ -24,6 +24,16 @@ export interface ConsumerConfig {
   handler: (envelope: EventEnvelope) => Promise<void>
   maxRetries?: number
   pollInterval?: number
+  /**
+   * 認領待處理（PEL）訊息的閒置門檻（毫秒），需大於單條訊息的最長處理時間
+   * @default 60000
+   */
+  pendingMinIdleMs?: number
+  /**
+   * 兩次認領的間隔（毫秒）
+   * @default 15000
+   */
+  reclaimInterval?: number
 }
 
 @Injectable()
@@ -95,9 +105,16 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
   private async startPolling(config: ConsumerConfig): Promise<void> {
     const pollInterval = config.pollInterval ?? 1000
     const maxRetries = config.maxRetries ?? 5
+    const reclaimInterval = config.reclaimInterval ?? 15000
+    let nextReclaimAt = 0
 
     while (this.running) {
       try {
+        if (Date.now() >= nextReclaimAt) {
+          nextReclaimAt = Date.now() + reclaimInterval
+          await this.reclaimPendingMessages(config, maxRetries)
+        }
+
         const streamArgs = Array.from({ length: config.streams.length }, () => '>')
 
         const results = await this.redis.xreadgroup(
@@ -116,7 +133,7 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
         if (results) {
           for (const [stream, messages] of results as Array<[string, Array<[string, string[]]>]>) {
             for (const [id, fields] of messages) {
-              await this.processMessage(stream, id, fields, config, maxRetries)
+              await this.processMessageSafely(stream, id, fields, config, maxRetries)
             }
           }
         }
@@ -127,6 +144,61 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
           await this.sleep(pollInterval)
         }
       }
+    }
+  }
+
+  /**
+   * 認領（XAUTOCLAIM）閒置超過門檻的待處理訊息，補上 XREADGROUP `>` 永遠讀不到的重投路徑。
+   * 消費端崩潰、重啟或 `XACK` 前的異常都會把訊息留在 PEL，只有這裡能讓它們重新被處理。
+   */
+  private async reclaimPendingMessages(config: ConsumerConfig, maxRetries: number): Promise<void> {
+    const minIdleTime = config.pendingMinIdleMs ?? 60000
+
+    for (const stream of config.streams) {
+      let startId = '0-0'
+
+      // 每次最多掃 5 批（每批 10 條），避免大量積壓時餓死正常輪詢
+      for (let batch = 0; batch < 5; batch++) {
+        const [nextStartId, messages] = await this.redis.xautoclaim(
+          stream,
+          config.group,
+          config.consumer,
+          minIdleTime,
+          startId,
+          'COUNT',
+          10,
+        ) as [string, Array<[string, string[]]>]
+
+        if (messages?.length) {
+          this.logger.warn(`Reclaimed ${messages.length} pending message(s) on stream ${stream} for group ${config.group}`)
+          for (const [id, fields] of messages) {
+            await this.processMessageSafely(stream, id, fields, config, maxRetries)
+          }
+        }
+
+        startId = nextStartId
+        if (startId === '0-0') {
+          break
+        }
+      }
+    }
+  }
+
+  /**
+   * 單條訊息失敗不得影響同批其他訊息，也不得讓整批停在 PEL 裡沒被處理。
+   */
+  private async processMessageSafely(
+    stream: string,
+    id: string,
+    fields: string[],
+    config: ConsumerConfig,
+    maxRetries: number,
+  ): Promise<void> {
+    try {
+      await this.processMessage(stream, id, fields, config, maxRetries)
+    }
+    catch (err: any) {
+      this.logger.error(err, `Unhandled error for message ${id} on stream ${stream} in group ${config.group}`)
     }
   }
 
@@ -143,7 +215,17 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
       return
     }
 
-    const envelope: EventEnvelope = JSON.parse(dataField)
+    let envelope: EventEnvelope
+    try {
+      envelope = this.parseEnvelope(dataField)
+    }
+    catch (err: any) {
+      this.logger.error(err, `Discarding malformed message ${id} on stream ${stream} in group ${config.group}`)
+      await this.sendToDlq(stream, dataField, err, 0)
+      await this.redis.xack(stream, config.group, id)
+      return
+    }
+
     if (config.topics?.length && !config.topics.includes(envelope.topic)) {
       await this.redis.xack(stream, config.group, id)
       return
@@ -170,10 +252,18 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
     }
   }
 
-  private async sendToDlq(stream: string, envelope: EventEnvelope, error: unknown, retries: number): Promise<void> {
+  private parseEnvelope(dataField: string): EventEnvelope {
+    const envelope = JSON.parse(dataField) as EventEnvelope
+    if (typeof envelope?.topic !== 'string') {
+      throw new TypeError('Event envelope is missing a topic')
+    }
+    return envelope
+  }
+
+  private async sendToDlq(stream: string, message: unknown, error: unknown, retries: number): Promise<void> {
     const dlqStream = `${stream}:dlq`
     const dlqPayload = {
-      originalEnvelope: JSON.stringify(envelope),
+      originalEnvelope: typeof message === 'string' ? message : JSON.stringify(message),
       error: error instanceof Error ? error.message : String(error),
       retries,
       sentToDlqAt: new Date().toISOString(),
