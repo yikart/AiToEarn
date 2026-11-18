@@ -17,6 +17,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, chmodSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const SITES = { cn: 'https://aitoearn.cn', ai: 'https://aitoearn.ai' };
 const key = process.argv[2] || '';
@@ -54,7 +55,7 @@ chmodSync(configPath, 0o600);
 console.log(`已写入 ${configPath} (${envName})`);
 
 // 2. Codex：服务器已注册在 ~/.codex/config.toml（stdio 桥），此处仅确认桥文件存在
-const bridgePath = new URL('./aitoearn-bridge.mjs', import.meta.url).pathname;
+const bridgePath = fileURLToPath(new URL('./aitoearn-bridge.mjs', import.meta.url));
 if (!existsSync(bridgePath)) {
   console.error(`验证失败：找不到桥接脚本 ${bridgePath}，请重新安装 aitoearn 技能。`);
   process.exit(1);
