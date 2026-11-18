@@ -67,6 +67,10 @@ export class RedlockInjector implements OnModuleInit {
   private reDecorate(source: object, destination: object): void {
     const keys = Reflect.getMetadataKeys(source)
     for (const key of keys) {
+      // REDLOCK_METADATA 不能複製：同一 provider 被掃描兩次時會再包一層，形成同 key 自嵌套
+      if (key === REDLOCK_METADATA)
+        continue
+
       const meta = Reflect.getMetadata(key, source)
       Reflect.defineMetadata(key, meta, destination)
     }
@@ -120,8 +124,23 @@ export class RedlockInjector implements OnModuleInit {
 
         logger.debug(`Acquired lock ${lockKey} for ${className}.${methodName}, executing method`)
 
+        // 臨界區可能比 TTL 長（如一次脈完 20 筆資料庫往返），若不在持有期間續期，
+        // 下一個 cron 週期會拿到已過期的鎖，同一個 key 就會併發執行。
+        const renewTimer = setInterval(() => {
+          lockService.renewLock(lockKey, lockValue, ttl).then((renewed) => {
+            if (!renewed) {
+              clearInterval(renewTimer)
+              logger.error(`Lock ${lockKey} for ${className}.${methodName} is no longer held, stopped renewing`)
+            }
+          }).catch((err) => {
+            logger.error(err, `Failed to renew lock ${lockKey} for ${className}.${methodName}`)
+          })
+        }, Math.max(500, (ttl * 1000) / 3))
+        renewTimer.unref()
+
         const result = (async () => Reflect.apply(target, thisArg, args))()
         return result.finally(async () => {
+          clearInterval(renewTimer)
           await lockService.releaseLock(lockKey, lockValue)
           logger.debug(`Released lock ${lockKey} for ${className}.${methodName}`)
         })
