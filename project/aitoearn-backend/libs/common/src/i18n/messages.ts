@@ -500,6 +500,10 @@ export const messages: Record<ResponseCode, Record<Locale, MessageValue>> = {
     'en-US': 'This publish task cannot be retried',
     'zh-CN': '当前发布任务不允许重试',
   },
+  [ResponseCode.ChannelPublishCancelNotAllowed]: {
+    'en-US': 'This publish task cannot be canceled in its current status',
+    'zh-CN': '当前发布任务状态不允许取消',
+  },
   [ResponseCode.ChannelWebhookNotSupported]: {
     'en-US': 'This platform does not support webhooks',
     'zh-CN': '该平台不支持 webhook',

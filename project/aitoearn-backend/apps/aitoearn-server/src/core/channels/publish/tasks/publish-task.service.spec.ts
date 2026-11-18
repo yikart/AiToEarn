@@ -131,6 +131,7 @@ function createService(
     markUpdatedFailed: vi.fn(async () => true),
     restoreWaitingForUpdate: vi.fn(async () => true),
     restoreRetryStateToFailed: vi.fn(async () => true),
+    markCanceled: vi.fn(async () => true),
   }
   const queueService = {
     enqueueImmediate: vi.fn(async () => undefined),
@@ -154,6 +155,20 @@ function createService(
 
   return { service, publishRecordRepo, accountRepo, authService, provider, mediaService, stateService, queueService, record }
 }
+
+describe('publish task service cancellation', () => {
+  it('rejects cancellation when the task state transition fails', async () => {
+    const { service, stateService, record } = createService()
+    record.status = PublishStatus.WaitingForPublish
+    stateService.markCanceled.mockResolvedValueOnce(false)
+
+    await expect(service.cancelTask('user-1', 'task-1')).rejects.toMatchObject({
+      code: ResponseCode.ChannelPublishCancelNotAllowed,
+    })
+
+    expect(stateService.markCanceled).toHaveBeenCalledWith('task-1', 'user_requested')
+  })
+})
 
 describe('publish task service timeout recovery', () => {
   it('finalizes stale publishing tasks without invoking publish again', async () => {

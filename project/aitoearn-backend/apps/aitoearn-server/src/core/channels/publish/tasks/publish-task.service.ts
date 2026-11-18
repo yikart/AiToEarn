@@ -441,7 +441,10 @@ export class PublishTaskService {
       }
     }
 
-    await this.stateService.markCanceled(taskId, 'user_requested')
+    const canceled = await this.stateService.markCanceled(taskId, 'user_requested')
+    if (!canceled) {
+      throw new AppException(ResponseCode.ChannelPublishCancelNotAllowed)
+    }
   }
 
   async publishNow(userId: string, taskId: string): Promise<void> {

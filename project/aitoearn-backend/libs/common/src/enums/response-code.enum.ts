@@ -183,6 +183,7 @@ export enum ResponseCode {
   ChannelPublishPermalinkMissing = 15093,
   ChannelPlatformServiceUnavailable = 15094,
   ChannelPublishRetryNotAllowed = 15095,
+  ChannelPublishCancelNotAllowed = 15096,
 
   // 15100-15199: short-link（短链接）
   ShortLinkNotFound = 15100,
