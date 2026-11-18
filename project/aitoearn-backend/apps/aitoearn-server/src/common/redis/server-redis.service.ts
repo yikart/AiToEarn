@@ -19,7 +19,7 @@ export class ServerRedisService {
   }
 
   async saveShortLink(code: string, originalUrl: string): Promise<boolean> {
-    return this.redis.set(ServerRedisKeys.shortLink(code), originalUrl, 60 * 60 * 24)
+    return this.redis.setNx(ServerRedisKeys.shortLink(code), originalUrl, 60 * 60 * 24)
   }
 
   async getShortLink(code: string): Promise<string | null> {
