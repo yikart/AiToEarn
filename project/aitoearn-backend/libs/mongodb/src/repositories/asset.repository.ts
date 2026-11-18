@@ -1,5 +1,5 @@
 import { InjectModel } from '@nestjs/mongoose'
-import { Pagination, UserType } from '@yikart/common'
+import { AppException, Pagination, ResponseCode, UserType } from '@yikart/common'
 import { FilterQuery, Model } from 'mongoose'
 import { AssetStatus, AssetType } from '../enums'
 import { Asset } from '../schemas'
@@ -39,27 +39,49 @@ export class AssetRepository extends BaseRepository<Asset> {
   }
 
   /**
-   * 以 path 為唯一鍵寫入，已存在（含軟刪除）則取回同一筆，避免 check-then-act 的 E11000。
+   * 以 path 為唯一鍵寫入；只能重用同一擁有者的資產，避免跨使用者改寫所有權。
    */
   async upsertByPath(params: UpsertAssetByPathParams) {
+    const restoreOwnedAsset = async (asset: Asset) => {
+      if (asset.userId !== params.userId || asset.userType !== params.userType) {
+        throw new AppException(ResponseCode.AssetNotFound)
+      }
+
+      if (!asset.deletedAt)
+        return asset
+
+      const restored = await this.updateById(asset.id, {
+        $set: params,
+        $unset: { deletedAt: '' },
+      })
+      if (!restored)
+        throw new AppException(ResponseCode.AssetNotFound)
+      return restored as Asset
+    }
+
+    const existing = await this.findOne({ path: params.path })
+    if (existing)
+      return await restoreOwnedAsset(existing as Asset)
+
     try {
       const asset = await this.updateOne(
         { path: params.path },
-        { $set: params, $unset: { deletedAt: '' } },
+        { $setOnInsert: params },
         { upsert: true },
       )
-      return asset!
+      if (!asset)
+        throw new AppException(ResponseCode.AssetNotFound)
+      return await restoreOwnedAsset(asset as Asset)
     }
     catch (err) {
-      // 並發 upsert 撞上唯一索引時，另一個請求已經寫入，回讀即可
       if ((err as { code?: number }).code !== 11000)
         throw err
 
-      const existing = await this.getByPath(params.path)
-      if (!existing)
+      const concurrent = await this.findOne({ path: params.path })
+      if (!concurrent)
         throw err
 
-      return existing
+      return await restoreOwnedAsset(concurrent as Asset)
     }
   }
 
