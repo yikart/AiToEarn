@@ -282,6 +282,7 @@ export class AgentService implements OnModuleInit, OnModuleDestroy {
     const result = await this.contentGenerateRepository.batchUpdateStatus(taskIds, ContentGenerationTaskStatus.Error)
 
     for (const task of timeoutTasks) {
+      this.agentRuntimeService.abortTask(task.id, ContentGenerationTaskStatus.Error)
       const errorMessage = {
         type: AgentMessageType.Error,
         code: ResponseCode.AgentTaskTimeout,

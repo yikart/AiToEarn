@@ -64,6 +64,7 @@ import { AideoMcp, AideoToolName } from '../mcp/volcengine/aideo.mcp'
 import { DramaRecapMcp, DramaRecapToolName } from '../mcp/volcengine/drama-recap.mcp'
 import { StyleTransferMcp, StyleTransferToolName } from '../mcp/volcengine/style-transfer.mcp'
 import { VideoEditMcp, VideoEditToolName } from '../mcp/volcengine/video-edit.mcp'
+import { abortAgentTask, waitForAgentTasks } from './agent-task-lifecycle'
 
 export interface ClaudeQueryOptions {
   includePartialMessages?: boolean
@@ -84,6 +85,8 @@ export interface RuntimeRunningTaskInfo {
   claudeCodeProcess?: ReturnType<typeof spawn>
   completionPromise: Promise<void>
   sessionId?: string
+  finalStatus: ContentGenerationTaskStatus
+  abortStatusPersisted: boolean
 }
 
 @Injectable()
@@ -454,6 +457,8 @@ export class AgentRuntimeService {
           claudeCodeProcess: undefined,
           completionPromise,
           sessionId,
+          finalStatus: ContentGenerationTaskStatus.Aborted,
+          abortStatusPersisted: false,
         }
         this.runningTasks.set(taskId, taskInfo)
 
@@ -465,7 +470,8 @@ export class AgentRuntimeService {
             sessionId: taskInfo.sessionId,
             userId,
           }, `Task ${taskId} was aborted`)
-          void this.contentGenerateRepository.updateStatus(taskId, ContentGenerationTaskStatus.Aborted)
+          taskInfo.abortStatusPersisted = true
+          void this.contentGenerateRepository.updateStatus(taskId, taskInfo.finalStatus)
         })
 
         return from(this.prepareAgentPrompt(dto)).pipe(
@@ -642,6 +648,9 @@ export class AgentRuntimeService {
               await this.uploadAgentSession(sessionId, taskId)
             }
 
+            if (abortController.signal.aborted) {
+              await this.contentGenerateRepository.updateStatus(taskId, taskInfo.finalStatus)
+            }
             completionResolver()
             this.runningTasks.delete(taskId)
 
@@ -668,21 +677,28 @@ export class AgentRuntimeService {
     )
   }
 
-  abortTask(taskId: string): void {
+  abortTask(taskId: string, status = ContentGenerationTaskStatus.Aborted): void {
     const taskInfo = this.runningTasks.get(taskId)
-    if (!taskInfo || taskInfo.abortController.signal.aborted) {
+    if (!taskInfo) {
       return
     }
 
-    this.logger.debug({ taskId, sessionId: taskInfo.sessionId }, `Aborting task ${taskId} via Redis broadcast`)
-    taskInfo.abortController.abort()
+    this.logger.debug({ taskId, sessionId: taskInfo.sessionId, status }, `Aborting task ${taskId}`)
+    abortAgentTask(taskInfo, status)
+    if (taskInfo.abortStatusPersisted) {
+      void this.contentGenerateRepository.updateStatus(taskId, status)
+    }
   }
 
-  async waitForRunningTasks(): Promise<void> {
+  async waitForRunningTasks(timeoutMs = 30_000): Promise<void> {
     const memoryTasks = Array.from(this.runningTasks.values())
 
     if (memoryTasks.length === 0) {
       return
+    }
+
+    for (const taskInfo of memoryTasks) {
+      this.abortTask(taskInfo.taskId)
     }
 
     const waitPromises = memoryTasks.map(taskInfo =>
@@ -694,7 +710,10 @@ export class AgentRuntimeService {
           this.logger.error({ error, taskId: taskInfo.taskId }, `Task ${taskInfo.taskId} failed during shutdown`)
         }),
     )
-    await Promise.all(waitPromises)
+
+    await waitForAgentTasks(waitPromises, timeoutMs, () => {
+      this.logger.error(`Timed out after ${timeoutMs}ms waiting for ${memoryTasks.length} agent task(s) during shutdown`)
+    })
   }
 
   private async initializeTask(
@@ -835,7 +854,7 @@ export class AgentRuntimeService {
 
           await this.contentGenerateRepository.updateMessage(taskId, messageToSave as unknown as Record<string, unknown>)
 
-          const requiresActionTypes = ['createChannel', 'updateChannel', 'loginChannel']
+          const requiresActionTypes = ['createChannel', 'updateChannel']
           const resultArray = taskResult ? (Array.isArray(taskResult) ? taskResult : [taskResult]) : []
           const hasRequiresAction = resultArray.some(item => item && 'action' in item && requiresActionTypes.includes(item.action as string))
           const finalStatus = hasRequiresAction ? ContentGenerationTaskStatus.RequiresAction : ContentGenerationTaskStatus.Completed

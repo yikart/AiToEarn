@@ -74,6 +74,9 @@ export class AgentController {
 
     res.on('close', () => {
       this.logger.debug(`User ${token.id} closed connection`)
+      if (!res.writableFinished && !abortController.signal.aborted) {
+        abortController.abort()
+      }
     })
 
     return this.agentService.createContentGenerationTask(token.id, UserType.User, body, abortController, req, res)
