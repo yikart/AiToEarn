@@ -756,6 +756,53 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       .exec()
   }
 
+  async listByFilterPaginated(
+    query: {
+      userId: string
+      accountId?: string
+      accountType?: AccountType
+      flowId?: string
+      source?: PublishRecordSource
+      status?: PublishStatus
+      type?: PublishType
+      time?: [Date, Date]
+      uid?: string
+      pageNo: number
+      pageSize: number
+      limit?: number
+    },
+  ): Promise<{ records: PublishRecord[], total: number }> {
+    const filters: RootFilterQuery<PublishRecord> = {
+      userId: query.userId,
+      source: query.source ?? { $nin: [PublishRecordSource.TaskLink, PublishRecordSource.OfflineQr] },
+      ...(query.flowId !== undefined && { flowId: query.flowId }),
+      ...(query.accountId !== undefined && { accountId: query.accountId }),
+      ...(query.accountType !== undefined && {
+        accountType: query.accountType,
+      }),
+      ...(query.status !== undefined && {
+        status: query.status,
+      }),
+      ...(query.type !== undefined && { type: query.type }),
+      ...(query.time !== undefined
+        && query.time.length === 2 && {
+        publishTime: { $gte: query.time[0], $lte: query.time[1] },
+      }),
+      ...(query.uid !== undefined && { uid: query.uid }),
+    }
+    const limit = query.limit ?? query.pageSize
+    const [total, records] = await Promise.all([
+      this.publishRecordModel.countDocuments(filters).exec(),
+      this.publishRecordModel.find(filters)
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(limit)
+        .lean({ virtuals: true })
+        .exec(),
+    ])
+
+    return { records, total }
+  }
+
   async listByFilter(query: any): Promise<PublishRecord[]> {
     const filters: RootFilterQuery<PublishRecord> = {
       userId: query.userId,

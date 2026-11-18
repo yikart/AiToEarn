@@ -37,6 +37,18 @@ export class ChannelPublishRecordVo extends createZodDto(
   'ChannelPublishRecordVo',
 ) {}
 
+export const ChannelPublishRecordListVoSchema = z.object({
+  records: z.array(ChannelPublishRecordVoSchema).describe('发布记录'),
+  total: z.number().int().nonnegative().describe('记录总数'),
+  pageNo: z.number().int().min(1).describe('当前页码'),
+  pageSize: z.number().int().min(1).describe('每页数量'),
+})
+
+export class ChannelPublishRecordListVo extends createZodDto(
+  ChannelPublishRecordListVoSchema,
+  'ChannelPublishRecordListVo',
+) {}
+
 export const ChannelPublicPublishRecordVoSchema = z.object({
   id: z.string().describe('发布记录 ID'),
   accountType: z.enum(AccountType).describe('账号平台'),

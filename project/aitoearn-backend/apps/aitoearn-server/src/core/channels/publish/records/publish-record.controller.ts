@@ -4,7 +4,7 @@ import { GetToken, Public, TokenInfo } from '@yikart/aitoearn-auth'
 import { ApiDoc, ParseObjectIdPipe } from '@yikart/common'
 import { PublishRecordReadService } from './publish-record-read.service'
 import { PublishRecordAccountQueryDto, PublishRecordListQueryDto, PublishRecordWorkLinkUpdateDto } from './publish-record.dto'
-import { ChannelPublicPublishRecordVo, ChannelPublishRecordVo, ChannelPublishUserActionVo } from './publish-record.vo'
+import { ChannelPublicPublishRecordVo, ChannelPublishRecordListVo, ChannelPublishRecordVo, ChannelPublishUserActionVo } from './publish-record.vo'
 
 @ApiTags('Channels/Publish')
 @Controller({ path: '/channels/publish/records', version: '2' })
@@ -15,20 +15,25 @@ export class PublishRecordController {
     summary: '获取发布历史',
     description: '分页获取用户发布历史记录',
     query: PublishRecordListQueryDto.schema,
-    response: [ChannelPublishRecordVo],
+    response: ChannelPublishRecordListVo,
   })
   @Get('/')
   async listRecords(
     @GetToken() token: TokenInfo,
     @Query() query: PublishRecordListQueryDto,
   ) {
-    const records = await this.recordReadService.listByUserId(token.id, {
+    const result = await this.recordReadService.listByUserIdPaginated(token.id, {
       accountId: query.accountId,
       accountType: query.accountType,
       status: query.status,
       time: query.time,
+      pageNo: query.pageNo,
+      pageSize: query.pageSize,
     })
-    return records.map(record => ChannelPublishRecordVo.create(record))
+    return ChannelPublishRecordListVo.create({
+      ...result,
+      records: result.records.map(record => ChannelPublishRecordVo.create(record)),
+    })
   }
 
   @ApiDoc({

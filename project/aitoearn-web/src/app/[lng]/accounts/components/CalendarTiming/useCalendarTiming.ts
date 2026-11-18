@@ -58,27 +58,7 @@ function getPublishRecordList(data?: ChannelPublishRecordListVo) {
     return []
   }
 
-  if (Array.isArray(data)) {
-    return data
-  }
-
-  if (Array.isArray(data.records)) {
-    return data.records
-  }
-
-  if (Array.isArray(data.list)) {
-    return data.list
-  }
-
-  if (Array.isArray(data.items)) {
-    return data.items
-  }
-
-  if (Array.isArray(data.rows)) {
-    return data.rows
-  }
-
-  return []
+  return Array.isArray(data.records) ? data.records : []
 }
 
 function normalizePublishRecord(record: ChannelPublishRecordItem): PublishRecordItem {
@@ -241,16 +221,25 @@ export const useCalendarTiming = create(
               status,
             }
 
-            const res = await getChannelPublishRecordsApi(requestParams)
-            methods.setListLoading(false)
-            const records = getPublishRecordList(res?.data)
-
-            // 检查响应数据是否有效
-            if (!res || !res.data) {
-              console.warn('获取发布记录数据失败或数据格式不正确:', res)
+            const firstRes = await getChannelPublishRecordsApi({ ...requestParams, pageNo: 1, pageSize: 100 })
+            if (!firstRes || !firstRes.data) {
+              methods.setListLoading(false)
+              console.warn('获取发布记录数据失败或数据格式不正确:', firstRes)
               methods.setRecordMap(new Map())
               return
             }
+
+            const firstPageRecords = getPublishRecordList(firstRes.data)
+            const pageCount = Math.ceil((firstRes.data.total ?? firstPageRecords.length) / 100)
+            const laterPages = await Promise.all(
+              Array.from({ length: Math.max(0, pageCount - 1) }, (_, index) =>
+                getChannelPublishRecordsApi({ ...requestParams, pageNo: index + 2, pageSize: 100 })),
+            )
+            methods.setListLoading(false)
+            const records = [
+              ...firstPageRecords,
+              ...laterPages.flatMap(response => response?.data ? getPublishRecordList(response.data) : []),
+            ]
 
             const recordMap = new Map<string, PublishRecordItem[]>()
             // 将数据分拣到对应天中

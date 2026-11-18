@@ -56,6 +56,113 @@ function createService(input: {
 }
 
 describe('publish record read service', () => {
+  it('merges local and relay records before applying pagination', async () => {
+    const localRecords = [
+      { id: 'local-2', createdAt: new Date('2026-01-02T00:00:00.000Z') },
+      { id: 'local-1', createdAt: new Date('2026-01-01T00:00:00.000Z') },
+      { id: 'local-3', createdAt: new Date('2025-12-31T00:00:00.000Z') },
+    ]
+    const publishRecordRepo = {
+      listByFilterPaginated: vi.fn(async () => ({ records: localRecords, total: 3 })),
+    }
+    const accountRepository = {
+      listRelayAccountsByUserId: vi.fn(async () => [{
+        id: 'local-account',
+        relayAccountRef: 'remote-account',
+        type: AccountType.Douyin,
+      }]),
+    }
+    const relayClientService = {
+      enabled: true,
+      get: vi.fn(async () => ({
+        records: [
+          { id: 'relay-1', createdAt: new Date('2026-01-03T00:00:00.000Z') },
+          { id: 'relay-2', createdAt: new Date('2025-12-30T00:00:00.000Z') },
+        ],
+        total: 2,
+      })),
+    }
+    const service = createService({ publishRecordRepo, accountRepository, relayClientService })
+
+    await expect(service.listByUserIdPaginated('user-1', {
+      pageNo: 2,
+      pageSize: 2,
+      accountType: AccountType.Douyin,
+    })).resolves.toEqual({
+      records: [expect.objectContaining({ id: 'local-1' }), expect.objectContaining({ id: 'local-3' })],
+      total: 5,
+      pageNo: 2,
+      pageSize: 2,
+    })
+
+    expect(publishRecordRepo.listByFilterPaginated).toHaveBeenCalledWith(expect.objectContaining({
+      userId: 'user-1',
+      pageNo: 2,
+      pageSize: 2,
+      limit: 4,
+    }))
+    expect(relayClientService.get).toHaveBeenCalledWith('/v2/channels/publish/records', expect.objectContaining({
+      pageNo: 1,
+      pageSize: 4,
+      accountId: 'remote-account',
+    }))
+  })
+
+  it('fetches enough relay pages before applying the merged offset', async () => {
+    const firstPage = Array.from({ length: 100 }, (_, index) => ({
+      id: `relay-${index}`,
+      createdAt: new Date(Date.UTC(2026, 0, 3) - index * 1_000),
+    }))
+    const secondPage = Array.from({ length: 50 }, (_, index) => ({
+      id: `relay-${index + 100}`,
+      createdAt: new Date(Date.UTC(2026, 0, 2) - index * 1_000),
+    }))
+    const publishRecordRepo = {
+      listByFilterPaginated: vi.fn(async () => ({ records: [], total: 0 })),
+    }
+    const accountRepository = {
+      listRelayAccountsByUserId: vi.fn(async () => [{ id: 'local-account', relayAccountRef: 'remote-account', type: AccountType.Douyin }]),
+    }
+    const relayClientService = {
+      enabled: true,
+      get: vi.fn(async (_path: string, query: { pageNo: number }) => ({
+        records: query.pageNo === 1 ? firstPage : secondPage,
+        total: 150,
+      })),
+    }
+    const service = createService({ publishRecordRepo, accountRepository, relayClientService })
+
+    const result = await service.listByUserIdPaginated('user-1', {
+      pageNo: 2,
+      pageSize: 100,
+      accountType: AccountType.Douyin,
+    })
+
+    expect(result).toMatchObject({ total: 150, pageNo: 2, pageSize: 100 })
+    expect(result.records).toHaveLength(50)
+    expect(result.records[0]).toMatchObject({ id: 'relay-100', accountId: 'local-account' })
+    expect(relayClientService.get).toHaveBeenNthCalledWith(2, '/v2/channels/publish/records', expect.objectContaining({
+      pageNo: 2,
+      pageSize: 100,
+      accountId: 'remote-account',
+    }))
+  })
+
+  it('returns no relay records when relay support is disabled', async () => {
+    const publishRecordRepo = {
+      listByFilterPaginated: vi.fn(async () => ({
+        records: [{ id: 'local-1', createdAt: new Date('2026-01-01T00:00:00.000Z') }],
+        total: 1,
+      })),
+    }
+    const service = createService({ publishRecordRepo, relayClientService: { enabled: false } })
+
+    await expect(service.listByUserIdPaginated('user-1', {
+      pageNo: 1,
+      pageSize: 20,
+    })).resolves.toMatchObject({ records: [{ id: 'local-1' }], total: 1 })
+  })
+
   it('returns local public detail without fetching relay records', async () => {
     const localRecord = {
       id: 'record-1',

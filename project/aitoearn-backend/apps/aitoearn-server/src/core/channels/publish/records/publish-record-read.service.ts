@@ -64,6 +64,47 @@ export class PublishRecordReadService {
     return [...localRecords, ...relayRecords]
   }
 
+  async listByUserIdPaginated(userId: string, query: {
+    accountId?: string
+    accountType?: AccountType
+    status?: PublishStatus
+    time?: [Date, Date]
+    pageNo: number
+    pageSize: number
+  }) {
+    const limit = query.pageNo * query.pageSize
+    const filter = {
+      accountId: query.accountId,
+      accountType: query.accountType,
+      status: query.status,
+      time: query.time,
+    }
+    const [localResult, relayResult] = await Promise.all([
+      this.publishRecordRepo.listByFilterPaginated({
+        userId,
+        ...filter,
+        pageNo: query.pageNo,
+        pageSize: query.pageSize,
+        limit,
+      }),
+      this.listRelayRecordsPaginated(userId, '/v2/channels/publish/records', filter, limit),
+    ])
+    const combined = [...localResult.records, ...relayResult.records]
+      .sort((a, b) => {
+        const aDate = new Date(a.createdAt ?? a.publishTime ?? 0).getTime()
+        const bDate = new Date(b.createdAt ?? b.publishTime ?? 0).getTime()
+        return bDate - aDate || b.id.localeCompare(a.id)
+      })
+    const offset = (query.pageNo - 1) * query.pageSize
+
+    return {
+      records: combined.slice(offset, offset + query.pageSize),
+      total: localResult.total + relayResult.total,
+      pageNo: query.pageNo,
+      pageSize: query.pageSize,
+    }
+  }
+
   async getDetail(id: string, userId: string) {
     const localRecord = await this.publishRecordRepo.getByIdAndUserId(id, userId)
     if (localRecord) {
@@ -298,6 +339,62 @@ export class PublishRecordReadService {
     }
 
     return records
+  }
+
+  private async listRelayRecordsPaginated(
+    userId: string,
+    path: string,
+    query: { accountId?: string, accountType?: AccountType, status?: PublishStatus, time?: [Date, Date] },
+    limit: number,
+  ): Promise<{ records: PublishRecord[], total: number }> {
+    if (!this.relayClientService?.enabled) {
+      return { records: [], total: 0 }
+    }
+
+    const relayAccounts = await this.getRelayAccountsForQuery(userId, query)
+    const accountResults = await Promise.all(relayAccounts
+      .filter(account => account.relayAccountRef)
+      .map(async (account) => {
+        try {
+          const firstPage = await this.relayClientService!.get<PublishRecord[] | { records: PublishRecord[], total: number }>(path, {
+            ...query,
+            pageNo: 1,
+            pageSize: Math.min(limit, 100),
+            accountId: account.relayAccountRef!,
+          })
+          if (Array.isArray(firstPage)) {
+            return {
+              records: firstPage.slice(0, limit).map(record => this.withLocalRelayAccountId(record, account.id)),
+              total: firstPage.length,
+            }
+          }
+
+          const records = firstPage.records.map(record => this.withLocalRelayAccountId(record, account.id))
+          const total = firstPage.total
+          const pageSize = Math.min(limit, 100)
+          const pageCount = Math.ceil(Math.min(limit, total) / pageSize)
+          const laterPages = await Promise.all(Array.from({ length: Math.max(pageCount - 1, 0) }, (_, index) =>
+            this.relayClientService!.get<{ records: PublishRecord[], total: number }>(path, {
+              ...query,
+              pageNo: index + 2,
+              pageSize,
+              accountId: account.relayAccountRef!,
+            })))
+          for (const page of laterPages) {
+            records.push(...page.records.map(record => this.withLocalRelayAccountId(record, account.id)))
+          }
+          return { records: records.slice(0, limit), total }
+        }
+        catch (error) {
+          this.logger.error(error, 'Fetch paginated relay publish records failed')
+          return { records: [], total: 0 }
+        }
+      }))
+
+    return {
+      records: accountResults.flatMap(result => result.records),
+      total: accountResults.reduce((sum, result) => sum + result.total, 0),
+    }
   }
 
   private async getRelayRecordDetail(id: string, userId: string): Promise<PublishRecord | null> {

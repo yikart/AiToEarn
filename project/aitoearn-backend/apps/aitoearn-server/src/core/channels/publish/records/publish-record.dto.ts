@@ -20,6 +20,8 @@ export class PublishRecordAccountQueryDto extends createZodDto(PublishRecordAcco
 
 export const PublishRecordListQuerySchema = PublishRecordAccountQuerySchema.extend({
   status: z.coerce.number().pipe(z.enum(PublishStatus)).optional().describe('发布状态'),
+  pageNo: z.coerce.number().int().min(1).max(100).default(1).describe('页码'),
+  pageSize: z.coerce.number().int().min(1).max(100).default(20).describe('每页数量'),
 })
 
 export class PublishRecordListQueryDto extends createZodDto(PublishRecordListQuerySchema) {}

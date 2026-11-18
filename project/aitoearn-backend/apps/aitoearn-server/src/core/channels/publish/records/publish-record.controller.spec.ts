@@ -38,32 +38,37 @@ vi.mock('../../works/work.service', () => ({
 describe('publish record controller', () => {
   it('returns only publish record VO fields from list responses', async () => {
     const recordReadService = {
-      listByUserId: vi.fn(async () => [{
-        id: 'record-1',
-        accountId: 'account-1',
-        accountType: AccountType.Douyin,
-        type: PublishType.VIDEO,
-        status: PublishStatus.Published,
-        publishTime: new Date('2026-05-22T10:00:00.000Z'),
-        source: PublishRecordSource.Web,
-        linkStatus: PublishRecordLinkStatus.PENDING,
-        linkError: 'waiting for link',
-        linkMeta: { mediaMd5sum: 'media_md5' },
-        option: { privateToken: 'debug-option' },
-        errorData: {
-          type: 'platform',
-          code: 'invalid_request',
-          message: 'Invalid request',
-          originalData: { raw: { token: 'debug-error' } },
-        },
-        pendingUpdate: { raw: 'debug-update' },
-      }]),
+      listByUserIdPaginated: vi.fn(async () => ({
+        records: [{
+          id: 'record-1',
+          accountId: 'account-1',
+          accountType: AccountType.Douyin,
+          type: PublishType.VIDEO,
+          status: PublishStatus.Published,
+          publishTime: new Date('2026-05-22T10:00:00.000Z'),
+          source: PublishRecordSource.Web,
+          linkStatus: PublishRecordLinkStatus.PENDING,
+          linkError: 'waiting for link',
+          linkMeta: { mediaMd5sum: 'media_md5' },
+          option: { privateToken: 'debug-option' },
+          errorData: {
+            type: 'platform',
+            code: 'invalid_request',
+            message: 'Invalid request',
+            originalData: { raw: { token: 'debug-error' } },
+          },
+          pendingUpdate: { raw: 'debug-update' },
+        }],
+        total: 1,
+        pageNo: 1,
+        pageSize: 20,
+      })),
     }
     const controller = new PublishRecordController(recordReadService as never)
 
-    const result = await controller.listRecords({ id: 'user-1' } as never, {} as never)
+    const result = await controller.listRecords({ id: 'user-1' } as never, { pageNo: 1, pageSize: 20 } as never)
 
-    expect(result).toEqual([expect.objectContaining({
+    expect(result.records).toEqual([expect.objectContaining({
       id: 'record-1',
       accountType: AccountType.Douyin,
       type: PublishType.VIDEO,
@@ -72,15 +77,15 @@ describe('publish record controller', () => {
       linkError: 'waiting for link',
       linkMeta: { mediaMd5sum: 'media_md5' },
     })])
-    expect(result[0]).not.toHaveProperty('option')
-    expect(result[0]).toMatchObject({
+    expect(result.records[0]).not.toHaveProperty('option')
+    expect(result.records[0]).toMatchObject({
       errorData: { type: 'platform', code: 'invalid_request', message: 'Invalid request' },
       linkStatus: PublishRecordLinkStatus.PENDING,
       linkError: 'waiting for link',
       linkMeta: { mediaMd5sum: 'media_md5' },
     })
-    expect(result[0].errorData).not.toHaveProperty('originalData')
-    expect(result[0]).not.toHaveProperty('pendingUpdate')
+    expect(result.records[0].errorData).not.toHaveProperty('originalData')
+    expect(result.records[0]).not.toHaveProperty('pendingUpdate')
   })
 
   it('returns only public publish record VO fields from public detail responses', async () => {

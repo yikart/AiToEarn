@@ -1,4 +1,4 @@
-﻿import type { ChannelPublishStatus, PlatformStatus, PublishContentMode } from './channel.constants'
+import type { ChannelPublishStatus, PlatformStatus, PublishContentMode } from './channel.constants'
 import type { PlatType } from '@/app/config/platConfig'
 import type { PubType } from '@/app/config/publishConfig'
 
@@ -414,15 +414,12 @@ export type ChannelPublicPublishRecordItem
 /**
  * ChannelPublishRecordListVo 响应数据。
  */
-export type ChannelPublishRecordListVo
-  = | ChannelPublishRecordItem[]
-    | {
-      records?: ChannelPublishRecordItem[]
-      list?: ChannelPublishRecordItem[]
-      items?: ChannelPublishRecordItem[]
-      rows?: ChannelPublishRecordItem[]
-    }
-
+export interface ChannelPublishRecordListVo {
+  records: ChannelPublishRecordItem[]
+  total: number
+  pageNo: number
+  pageSize: number
+}
 
 /**
  * ChannelPublishUserActionVo 响应数据。
@@ -444,6 +441,8 @@ export interface ChannelPublishRecordQueryParams {
   accountType?: PlatType
   status?: ChannelPublishStatus
   time?: [string, string]
+  pageNo?: number
+  pageSize?: number
 }
 
 /**
