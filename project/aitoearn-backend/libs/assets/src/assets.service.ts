@@ -240,6 +240,9 @@ export class AssetsService {
   async getOrCreateAssetByPath(path: string, userId: string, userType: UserType = UserType.User): Promise<Asset> {
     const existingAsset = await this.assetRepository.getByPath(path)
     if (existingAsset) {
+      if (existingAsset.userId !== userId || existingAsset.userType !== userType) {
+        throw new AppException(ResponseCode.AssetNotFound)
+      }
       return existingAsset
     }
 
