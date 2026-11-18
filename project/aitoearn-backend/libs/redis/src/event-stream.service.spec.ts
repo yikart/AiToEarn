@@ -128,4 +128,25 @@ describe('eventStreamService pending message recovery', () => {
       10,
     )
   })
+
+  it('continues scanning large pending lists from the saved cursor', async () => {
+    const redis = createRedis()
+    redis.xautoclaim
+      .mockResolvedValueOnce(['10-0', []])
+      .mockResolvedValueOnce(['20-0', []])
+      .mockResolvedValueOnce(['30-0', []])
+      .mockResolvedValueOnce(['40-0', []])
+      .mockResolvedValueOnce(['50-0', []])
+      .mockResolvedValueOnce(['0-0', []])
+
+    const service = new EventStreamService(redis as never)
+    const target = service as unknown as {
+      reclaimPendingMessages: (config: ConsumerConfig, maxRetries: number) => Promise<void>
+    }
+
+    await target.reclaimPendingMessages(createConfig(vi.fn()), 0)
+    await target.reclaimPendingMessages(createConfig(vi.fn()), 0)
+
+    expect(redis.xautoclaim.mock.calls[5][4]).toBe('50-0')
+  })
 })

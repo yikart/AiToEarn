@@ -40,6 +40,7 @@ export interface ConsumerConfig {
 export class EventStreamService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(EventStreamService.name)
   private readonly consumers: ConsumerConfig[] = []
+  private readonly pendingCursors = new Map<string, string>()
   private running = false
 
   constructor(private readonly redis: Redis) {}
@@ -155,7 +156,8 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
     const minIdleTime = config.pendingMinIdleMs ?? 60000
 
     for (const stream of config.streams) {
-      let startId = '0-0'
+      const cursorKey = `${config.group}:${stream}`
+      let startId = this.pendingCursors.get(cursorKey) ?? '0-0'
 
       // 每次最多掃 5 批（每批 10 條），避免大量積壓時餓死正常輪詢
       for (let batch = 0; batch < 5; batch++) {
@@ -181,6 +183,8 @@ export class EventStreamService implements OnModuleInit, OnModuleDestroy {
           break
         }
       }
+
+      this.pendingCursors.set(cursorKey, startId)
     }
   }
 
