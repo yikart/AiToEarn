@@ -5,7 +5,7 @@ import { AxiosError } from 'axios'
 export function isNonRetryableAiRequestError(error: unknown): boolean {
   const message = getErrorMessage(error)
   if (isContentSafetyMessage(message)) {
-    return false
+    return true
   }
 
   if (error instanceof AppException) {
@@ -57,10 +57,20 @@ export async function runWithAiGenerationRetry<T>(
         throw error
       }
       onRetry?.(error, attempt, maxAttempts)
+      await waitBeforeRetry(attempt)
     }
   }
 
   throw lastError
+}
+
+const RETRY_BASE_DELAY_MS = 1_000
+const RETRY_MAX_DELAY_MS = 30_000
+
+async function waitBeforeRetry(attempt: number): Promise<void> {
+  const exponentialDelay = Math.min(RETRY_BASE_DELAY_MS * 2 ** (attempt - 1), RETRY_MAX_DELAY_MS)
+  const jitteredDelay = exponentialDelay * (0.75 + Math.random() * 0.5)
+  await new Promise(resolve => setTimeout(resolve, jitteredDelay))
 }
 
 function getHttpStatus(error: unknown): number | undefined {

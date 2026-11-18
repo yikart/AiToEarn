@@ -10,10 +10,10 @@ describe('ai generation retry util', () => {
     expect(isNonRetryableAiRequestError(new BadRequestException('image size is not supported'))).toBe(true)
   })
 
-  it('keeps content safety errors retryable', () => {
-    expect(isNonRetryableAiRequestError(new BadRequestException('content policy violation'))).toBe(false)
-    expect(isNonRetryableAiRequestError(new Error('内容安全拦截'))).toBe(false)
-    expect(isNonRetryableAiRequestError(new Error('风控失败'))).toBe(false)
+  it('treats content safety errors as non-retryable', () => {
+    expect(isNonRetryableAiRequestError(new BadRequestException('content policy violation'))).toBe(true)
+    expect(isNonRetryableAiRequestError(new Error('内容安全拦截'))).toBe(true)
+    expect(isNonRetryableAiRequestError(new Error('风控失败'))).toBe(true)
   })
 
   it('keeps provider and transport failures retryable by default', () => {
@@ -28,19 +28,41 @@ describe('ai generation retry util', () => {
     expect(isNonRetryableAiRequestError(new Error('socket timeout'))).toBe(false)
   })
 
-  it('uses retry as extra attempts', async () => {
+  it('uses retry as extra attempts with exponential backoff and jitter', async () => {
+    vi.useFakeTimers()
+    vi.spyOn(Math, 'random').mockReturnValue(0)
     const run = vi.fn()
       .mockRejectedValueOnce(new Error('upstream failed'))
       .mockResolvedValue('ok')
 
-    await expect(runWithAiGenerationRetry(run, 1)).resolves.toBe('ok')
-    expect(run).toHaveBeenCalledTimes(2)
+    try {
+      const result = runWithAiGenerationRetry(run, 1)
+      await vi.waitFor(() => expect(run).toHaveBeenCalledTimes(1))
+      await vi.advanceTimersByTimeAsync(749)
+      expect(run).toHaveBeenCalledTimes(1)
+      await vi.advanceTimersByTimeAsync(1)
+      await expect(result).resolves.toBe('ok')
+      expect(run).toHaveBeenCalledTimes(2)
+    }
+    finally {
+      vi.restoreAllMocks()
+      vi.useRealTimers()
+    }
   })
 
   it('does not retry non-retryable errors', async () => {
-    const run = vi.fn().mockRejectedValue(new AppException(ResponseCode.InvalidModel))
+    const error = new AppException(ResponseCode.InvalidModel)
+    const run = vi.fn().mockRejectedValue(error)
 
-    await expect(runWithAiGenerationRetry(run, 1)).rejects.toMatchObject({ code: ResponseCode.InvalidModel })
+    await expect(runWithAiGenerationRetry(run, 1)).rejects.toBe(error)
+    expect(run).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not retry content safety rejections', async () => {
+    const error = new BadRequestException('content policy violation')
+    const run = vi.fn().mockRejectedValue(error)
+
+    await expect(runWithAiGenerationRetry(run, 3)).rejects.toBe(error)
     expect(run).toHaveBeenCalledTimes(1)
   })
 })
