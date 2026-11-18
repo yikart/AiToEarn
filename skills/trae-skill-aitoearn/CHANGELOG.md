@@ -10,7 +10,7 @@
 
 ### 验证
 
-- 真实端点 `https://aitoearn.cn/api/ai/agent/mcp`：连通 ✓；匿名会话仅暴露 `aitoearn_connection_help` ✓（与文档一致）。
+- 真实端点 `https://aitoearn.cn/api/ai/agent/mcp`：连通 ✓；匿名会话仅暴露 `aitoearn_connection_help` ✓（与当时文档一致）。
 - 脚本合并行为经 `AITOEARN_CONFIG` / `AITOEARN_MCP_CONFIG` 重定向测试：保留已有服务器 ✓、污染隔离 ✓。
 
 ## 0.0.4

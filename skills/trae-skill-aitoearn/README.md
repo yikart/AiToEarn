@@ -26,7 +26,7 @@
 如果安装时无法写入 `~/.trae-cn/mcp.json` 和 Trae CN 用户级 mcp.json，在 Trae 客户端里手动添加 MCP 服务器：
 
 1. Trae → 设置（齿轮图标）→ 「MCP」相关入口（MCP 工具 / MCP Servers / 模型上下文协议）
-2. 添加服务器：名称 `aitoearn-cn`，URL `https://aitoearn.cn/api/ai/agent/mcp`（国际站 `https://aitoearn.ai/api/ai/agent/mcp`），Headers 加一条 `X-Api-Key = `第 0 步的 Key
+2. 添加服务器：名称 `aitoearn-cn`，URL `https://aitoearn.cn/api/unified/mcp`（国际站 `https://aitoearn.ai/api/unified/mcp`），Headers 加一条 `X-Api-Key = `第 0 步的 Key
 3. 保存后新开对话重新验证
 
 卸载：删除 `~/.trae-cn/skills/aitoearn`，并从上述两个 mcp.json 删除 aitoearn-cn 条目、从 skill-config.json 删除 aitoearn 注册。

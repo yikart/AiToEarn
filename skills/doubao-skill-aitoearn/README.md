@@ -12,7 +12,7 @@
 
 1. 打开豆包 → 「技能」→ 导入技能 → 选择本目录
 2. 豆包 → 「技能 / 连接器 / 伙伴」→ 新建自定义连接器：
-   - 地址：`https://aitoearn.cn/api/ai/agent/mcp`（国际站用 `https://aitoearn.ai/api/ai/agent/mcp`）
+   - 地址：`https://aitoearn.cn/api/unified/mcp`（国际站用 `https://aitoearn.ai/api/unified/mcp`）
    - 鉴权：自定义请求头 `X-Api-Key`，值为第 0 步询问到的 Key
 3. 保存连接器后，**完全退出并重新打开豆包客户端**（不是关闭窗口），重启后新对话才会加载新技能和连接器
 4. 开新对话，说「列出可用的发布渠道」验证

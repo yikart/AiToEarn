@@ -9,11 +9,11 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
 ```toml
 [mcp_servers.aitoearn]
 command = "node"
-args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.ai/api/ai/agent/mcp", "--env-key", "AITOEARN_API_KEY"]
+args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.ai/api/unified/mcp", "--env-key", "AITOEARN_API_KEY"]
 
 [mcp_servers.aitoearn-cn]
 command = "node"
-args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.cn/api/ai/agent/mcp", "--env-key", "AITOEARN_CN_API_KEY"]
+args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.cn/api/unified/mcp", "--env-key", "AITOEARN_CN_API_KEY"]
 ```
 
 桥接脚本按以下顺序解析 API Key（先到先用）：
@@ -30,8 +30,8 @@ args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url
 
 ```toml
 [mcp_servers.aitoearn-cn]
-url = "https://aitoearn.cn/api/ai/agent/mcp"
-http_headers = { Authorization = "Bearer ${AITOEARN_CN_API_KEY}" }
+url = "https://aitoearn.cn/api/unified/mcp"
+http_headers = { "X-Api-Key" = "${AITOEARN_CN_API_KEY}" }
 ```
 
 ## API Key 获取

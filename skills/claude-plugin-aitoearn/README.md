@@ -32,7 +32,7 @@ claude-plugin-aitoearn/
 
 所有配置中的 `__AITOEARN_KEY__` 都是占位符，**安装时必须向用户询问 AiToEarn API Key**
 （获取方式：登录 aitoearn.cn（或国际站 aitoearn.ai）→ 设置 → API Key → 创建），
-拿到后替换进相应配置文件；两站 Key 不通用。需要国际站时同时把 URL 换成 `https://aitoearn.ai/api/ai/agent/mcp`。
+拿到后替换进相应配置文件；两站 Key 不通用。需要国际站时同时把 URL 换成 `https://aitoearn.ai/api/unified/mcp`。
 包里不预置任何真实 Key，配置模板可直接分发。
 
 ## 本地手动使用（不经过安装器）

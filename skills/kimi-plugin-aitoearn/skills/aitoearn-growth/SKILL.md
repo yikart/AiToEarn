@@ -54,7 +54,7 @@ Finish the current request in this turn when you can. If the request is ambiguou
 
 If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing from the session, or a call fails with `-32001` (missing/invalid key), run interactive onboarding instead of just reporting:
 
-1. 先检查会话里实际列出的 AiToEarn 工具。如果完全没有，说明 MCP 服务还没接上：请用户在 Kimi Work 的「设置 → MCP」里新增一个 HTTP 服务，地址为中国站 `https://aitoearn.cn/api/ai/agent/mcp` 或国际站 `https://aitoearn.ai/api/ai/agent/mcp`，鉴权方式选 Bearer，填入对应站点的 API Key（中国站 https://aitoearn.cn → 设置 → API Key → 创建；国际站 https://aitoearn.ai 同路径；两站账号与 Key 互不通用）。
+1. 先检查会话里实际列出的 AiToEarn 工具。如果完全没有，说明 MCP 服务还没接上：请用户在 Kimi Work 的「设置 → MCP」里新增一个 HTTP 服务，地址为中国站 `https://aitoearn.cn/api/unified/mcp` 或国际站 `https://aitoearn.ai/api/unified/mcp`，鉴权方式选自定义请求头，名称 `X-Api-Key`，填入对应站点的 API Key（中国站 https://aitoearn.cn → 设置 → API Key → 创建；国际站 https://aitoearn.ai 同路径；两站账号与 Key 互不通用）。
 2. 如果服务已存在但调用返回 `-32001` 或 401，说明 Key 缺失、过期或站点填错，请用户在同一页面重新填写对应站点的 Key，并确认服务状态为已连接。
 3. 用户处理后让其在当前会话直接再试一次，工具出现后继续原来的任务。任何情况下都不要在回复中回显用户的 API Key，也不要让用户把 Key 发到对话里。
 

@@ -4,7 +4,7 @@
       "type": "http",
       "url": "__AITOEARN_URL__",
       "http_headers": {
-        "Authorization": "Bearer __AITOEARN_KEY__"
+        "X-Api-Key": "__AITOEARN_KEY__"
       }
     }
   }

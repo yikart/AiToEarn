@@ -11,7 +11,7 @@
 ## 安装步骤（等价于安装器「DeepSeek Harness」）
 
 1. 把本目录复制到 `~/.dsh/plugins/dsh-plugin-aitoearn`
-2. 把 `cordis.patch.yml` 中的 `__AITOEARN_KEY__` 替换为第 0 步询问到的 Key（国际站 Key 同时把 URL 换成 `https://aitoearn.ai/api/ai/agent/mcp`）
+2. 把 `cordis.patch.yml` 中的 `__AITOEARN_KEY__` 替换为第 0 步询问到的 Key（国际站 Key 同时把 URL 换成 `https://aitoearn.ai/api/unified/mcp`）
 3. 编辑 `~/.dsh/profiles/desktop/package.json`：
    - `dependencies` 增加 `"dsh-plugin-aitoearn": "file:/Users/<你的用户名>/.dsh/plugins/dsh-plugin-aitoearn"`
    - `dsh.profile.bundles` 数组追加 `"dsh-plugin-aitoearn"`

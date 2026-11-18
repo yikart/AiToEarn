@@ -31,7 +31,7 @@ if (!key) {
   console.error(`获取: 登录 ${base} -> 设置 -> API Key -> Create，创建后立即复制`);
   process.exit(2);
 }
-const url = `${base}/api/ai/agent/mcp`;
+const url = `${base}/api/unified/mcp`;
 const envName = region === 'cn' ? 'AITOEARN_CN_API_KEY' : 'AITOEARN_API_KEY';
 const serverName = region === 'cn' ? 'aitoearn-cn' : 'aitoearn';
 

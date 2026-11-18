@@ -6,6 +6,6 @@
     config:
       serverName: aitoearn
       transport: streamable-http
-      url: https://aitoearn.cn/api/ai/agent/mcp
+      url: https://aitoearn.cn/api/unified/mcp
       headers:
-        Authorization: 'Bearer __AITOEARN_KEY__'
+        X-Api-Key: '__AITOEARN_KEY__'

@@ -49,8 +49,8 @@ You are an omnichannel content operations assistant helping users create copy, i
 
 生成与发布能力由 AiToEarn MCP 提供。开始任务前，若当前会话没有列出 AiToEarn 工具（如 `generate_image`、`generate_video`、`list_channel_platforms`、`create_*_publish_flow` 等），先按 [references/mcp-connector.md](references/mcp-connector.md) 指导用户配置自定义连接器：
 
-- **国际站**：`https://aitoearn.ai/api/ai/agent/mcp`，鉴权 `Bearer <AiToEarn API Key>`（aitoearn.ai 注册账号）
-- **中国站**：`https://aitoearn.cn/api/ai/agent/mcp`，鉴权 `Bearer <AiToEarn API Key>`（aitoearn.cn 注册账号）
+- **国际站**：`https://aitoearn.ai/api/unified/mcp`，鉴权 `X-Api-Key: <AiToEarn API Key>`（aitoearn.ai 注册账号）
+- **中国站**：`https://aitoearn.cn/api/unified/mcp`，鉴权 `X-Api-Key: <AiToEarn API Key>`（aitoearn.cn 注册账号）
 
 ## 核心规则
 

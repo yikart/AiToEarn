@@ -1,7 +1,7 @@
 {
   "mcpServers": {
     "aitoearn-cn": {
-      "url": "https://aitoearn.cn/api/ai/agent/mcp",
+      "url": "https://aitoearn.cn/api/unified/mcp",
       "headers": {
         "X-Api-Key": "__AITOEARN_KEY__"
       }

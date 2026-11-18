@@ -11,9 +11,9 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
 | 配置项 | 国际站（aitoearn.ai） | 中国站（aitoearn.cn） |
 | --- | --- | --- |
 | 服务器名称 | AiToEarn（或 AiToEarn-MCP） | AiToEarn-CN（或 AiToEarn-MCP-CN） |
-| 服务器 URL | `https://aitoearn.ai/api/ai/agent/mcp` | `https://aitoearn.cn/api/ai/agent/mcp` |
+| 服务器 URL | `https://aitoearn.ai/api/unified/mcp` | `https://aitoearn.cn/api/unified/mcp` |
 | 传输类型 | HTTP / Streamable HTTP | HTTP / Streamable HTTP |
-| 鉴权方式 | API Key（请求头 `Authorization: Bearer <Key>`） | API Key（请求头 `Authorization: Bearer <Key>`） |
+| 鉴权方式 | API Key（请求头 `X-Api-Key: <Key>`） | API Key（请求头 `X-Api-Key: <Key>`） |
 
 4. 保存连接器。之后在对话中触发本技能时，AiToEarn 工具（`generate_image`、`generate_video`、`list_channel_platforms` 等）即可被调用。
 
@@ -24,9 +24,9 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
   "mcpServers": {
     "aitoearn": {
       "type": "http",
-      "url": "https://aitoearn.ai/api/ai/agent/mcp",
+      "url": "https://aitoearn.ai/api/unified/mcp",
       "headers": {
-        "Authorization": "Bearer <你的 AiToEarn API Key>"
+        "X-Api-Key": "<你的 AiToEarn API Key>"
       }
     }
   }
@@ -42,16 +42,16 @@ Claude Desktop 走 streamable HTTP 接入时，`type: "http"` 必填，省略会
   "mcpServers": {
     "aitoearn": {
       "type": "http",
-      "url": "https://aitoearn.ai/api/ai/agent/mcp",
+      "url": "https://aitoearn.ai/api/unified/mcp",
       "headers": {
-        "Authorization": "Bearer <你的 AiToEarn API Key>"
+        "X-Api-Key": "<你的 AiToEarn API Key>"
       }
     }
   }
 }
 ```
 
-中国站用户把 URL 换成 `https://aitoearn.cn/api/ai/agent/mcp`，并使用中国站 Key。保存后完全退出并重启 Claude Desktop 生效。
+中国站用户把 URL 换成 `https://aitoearn.cn/api/unified/mcp`，并使用中国站 Key。保存后完全退出并重启 Claude Desktop 生效。
 
 ## API Key 获取
 

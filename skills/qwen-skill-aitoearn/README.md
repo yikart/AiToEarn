@@ -16,7 +16,7 @@
 2. 把 `aitoearn/` 复制到 `~/Library/Application Support/Qianwen/qwen-agent/<你的账号目录>/skills/aitoearn`
 3. 编辑同目录的 `.cloud-skills.json`，合并 `cloud-skills-entry.json` 中的条目（注意改 localPath 和时间戳）
 4. **完全退出并重新打开千问桌面端**（不是关闭窗口），重启后「技能 → 已安装」应出现「全域内容运营助手」
-5. 千问「连接」→ 添加：名称 AiToEarn，HTTP，URL `https://aitoearn.cn/api/ai/agent/mcp`（国际站 `https://aitoearn.ai/api/ai/agent/mcp`），Header `X-Api-Key = `第 0 步询问到的 Key
+5. 千问「连接」→ 添加：名称 AiToEarn，HTTP，URL `https://aitoearn.cn/api/unified/mcp`（国际站 `https://aitoearn.ai/api/unified/mcp`），Header `X-Api-Key = `第 0 步询问到的 Key
 6. **新建任务**（旧任务不加载新连接器），发送「使用全域内容运营助手技能，列出可用的发布渠道」验证
 
 卸载：删除技能目录与清单条目；连接器在千问「连接」里手动删除。

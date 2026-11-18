@@ -8,7 +8,7 @@
 //
 // 行为:
 //   1. Key 写入 ~/.aitoearn/config.json（合并保留已有内容，chmod 600，供 stdio 桥读取）
-//   2. 用该 Key 实测 tools/list 验证（Authorization: Bearer）；失败时输出诊断并退出码 1
+//   2. 用该 Key 实测 tools/list 验证（X-Api-Key）；失败时输出诊断并退出码 1
 //   3. 提示用户新开 Codex 会话以加载 MCP 工具
 //
 // MCP 服务器注册由 ~/.codex/config.toml 完成（stdio 桥接 scripts/aitoearn-bridge.mjs），本脚本不改动该文件。
@@ -32,7 +32,7 @@ if (!key) {
   console.error(`获取: 登录 ${base} -> 设置 -> API Key -> Create，创建后立即复制`);
   process.exit(2);
 }
-const url = `${base}/api/ai/agent/mcp`;
+const url = `${base}/api/unified/mcp`;
 const envName = region === 'cn' ? 'AITOEARN_CN_API_KEY' : 'AITOEARN_API_KEY';
 const serverName = region === 'cn' ? 'aitoearn-cn' : 'aitoearn';
 
@@ -69,7 +69,7 @@ try {
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
-      Authorization: `Bearer ${key}`,
+      'X-Api-Key': key,
     },
     body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
   });

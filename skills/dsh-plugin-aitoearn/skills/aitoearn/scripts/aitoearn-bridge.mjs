@@ -16,7 +16,7 @@
  *                                          or { "apiKey": "..." }
  *
  * Usage:
- *   node scripts/aitoearn-bridge.mjs --url https://aitoearn.ai/api/ai/agent/mcp --env-key AITOEARN_API_KEY
+ *   node scripts/aitoearn-bridge.mjs --url https://aitoearn.ai/api/unified/mcp --env-key AITOEARN_API_KEY
  *
  * Protocol: newline-delimited JSON-RPC on stdin/stdout (LSP framing is also accepted).
  * stderr is used for diagnostics only, so stdout stays a clean JSON-RPC channel.
@@ -89,7 +89,7 @@ function headers() {
     Accept: 'application/json, text/event-stream',
   };
   const key = resolveApiKey();
-  if (key) h.Authorization = `Bearer ${key}`;
+  if (key) h['X-Api-Key'] = key;
   if (sessionId) h['mcp-session-id'] = sessionId;
   if (EXTRA_HEADER) {
     const idx = EXTRA_HEADER.indexOf(':');
