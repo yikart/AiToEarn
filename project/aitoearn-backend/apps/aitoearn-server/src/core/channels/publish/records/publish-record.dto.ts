@@ -3,7 +3,17 @@ import { PublishRecordLinkStatus, PublishStatus } from '@yikart/mongodb'
 import { z } from 'zod'
 
 const PublishRecordTimeRangeSchema = z.preprocess(
-  value => typeof value === 'string' ? value.split(',') : value,
+  (value) => {
+    const range = typeof value === 'string' ? value.split(',') : value
+    if (!Array.isArray(range) || range.length !== 2 || typeof range[1] !== 'string') {
+      return range
+    }
+
+    if (/^\d{4}-\d{2}-\d{2}$/.test(range[1])) {
+      return [range[0], new Date(`${range[1]}T23:59:59.999Z`)]
+    }
+    return range
+  },
   z.tuple([
     z.coerce.date().describe('开始时间'),
     z.coerce.date().describe('结束时间'),
