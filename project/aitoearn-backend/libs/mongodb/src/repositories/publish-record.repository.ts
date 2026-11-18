@@ -756,7 +756,7 @@ export class PublishRecordRepository extends BaseRepository<PublishRecord> {
       .exec()
   }
 
-  async listByFilterPaginated(
+  async listByFiltersWithPagination(
     query: {
       userId: string
       accountId?: string

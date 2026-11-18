@@ -80,7 +80,7 @@ export class PublishRecordReadService {
       time: query.time,
     }
     const [localResult, relayResult] = await Promise.all([
-      this.publishRecordRepo.listByFilterPaginated({
+      this.publishRecordRepo.listByFiltersWithPagination({
         userId,
         ...filter,
         pageNo: query.pageNo,

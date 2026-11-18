@@ -63,7 +63,7 @@ describe('publish record read service', () => {
       { id: 'local-3', createdAt: new Date('2025-12-31T00:00:00.000Z') },
     ]
     const publishRecordRepo = {
-      listByFilterPaginated: vi.fn(async () => ({ records: localRecords, total: 3 })),
+      listByFiltersWithPagination: vi.fn(async () => ({ records: localRecords, total: 3 })),
     }
     const accountRepository = {
       listRelayAccountsByUserId: vi.fn(async () => [{
@@ -95,7 +95,7 @@ describe('publish record read service', () => {
       pageSize: 2,
     })
 
-    expect(publishRecordRepo.listByFilterPaginated).toHaveBeenCalledWith(expect.objectContaining({
+    expect(publishRecordRepo.listByFiltersWithPagination).toHaveBeenCalledWith(expect.objectContaining({
       userId: 'user-1',
       pageNo: 2,
       pageSize: 2,
@@ -118,7 +118,7 @@ describe('publish record read service', () => {
       createdAt: new Date(Date.UTC(2026, 0, 2) - index * 1_000),
     }))
     const publishRecordRepo = {
-      listByFilterPaginated: vi.fn(async () => ({ records: [], total: 0 })),
+      listByFiltersWithPagination: vi.fn(async () => ({ records: [], total: 0 })),
     }
     const accountRepository = {
       listRelayAccountsByUserId: vi.fn(async () => [{ id: 'local-account', relayAccountRef: 'remote-account', type: AccountType.Douyin }]),
@@ -150,7 +150,7 @@ describe('publish record read service', () => {
 
   it('returns no relay records when relay support is disabled', async () => {
     const publishRecordRepo = {
-      listByFilterPaginated: vi.fn(async () => ({
+      listByFiltersWithPagination: vi.fn(async () => ({
         records: [{ id: 'local-1', createdAt: new Date('2026-01-01T00:00:00.000Z') }],
         total: 1,
       })),
