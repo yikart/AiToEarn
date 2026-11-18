@@ -1,3 +1,4 @@
+import { createHash, timingSafeEqual } from 'node:crypto'
 import {
   CanActivate,
   ExecutionContext,
@@ -35,7 +36,7 @@ export class AitoearnAuthGuard implements CanActivate {
 
     if (isInternal) {
       const token = this.extractTokenFromHeader(request)
-      if (token === this.options.internalToken) {
+      if (token && this.isInternalToken(token)) {
         return true
       }
       throw new UnauthorizedException()
@@ -57,7 +58,7 @@ export class AitoearnAuthGuard implements CanActivate {
       // Authorization 特殊处理：优先按 JWT 校验，失败再兜底按 API Key 解析
       if (apiKeyHeader.toLowerCase() === 'authorization') {
         const token = this.extractTokenFromHeader(request)
-        if (token && token !== this.options.internalToken) {
+        if (token && !this.isInternalToken(token)) {
           if (await this.tryJwt(request, token)) {
             return true
           }
@@ -83,7 +84,7 @@ export class AitoearnAuthGuard implements CanActivate {
       throw new UnauthorizedException()
     }
 
-    if (token === this.options.internalToken) {
+    if (this.isInternalToken(token)) {
       return true
     }
 
@@ -119,6 +120,12 @@ export class AitoearnAuthGuard implements CanActivate {
       })
       return false
     }
+  }
+
+  private isInternalToken(token: string): boolean {
+    const tokenHash = createHash('sha256').update(token).digest()
+    const expectedHash = createHash('sha256').update(this.options.internalToken).digest()
+    return timingSafeEqual(tokenHash, expectedHash)
   }
 
   private extractTokenFromHeader(request: any): string | undefined {

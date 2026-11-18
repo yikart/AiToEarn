@@ -114,12 +114,6 @@ export class RateLimitGuard implements CanActivate {
   }
 
   private getClientIp(request: any): string {
-    return (
-      request.headers['x-forwarded-for']?.split(',')[0]
-      || request.headers['x-real-ip']
-      || request.connection?.remoteAddress
-      || request.socket?.remoteAddress
-      || 'unknown'
-    )
+    return request.ip || request.socket?.remoteAddress || 'unknown'
   }
 }
