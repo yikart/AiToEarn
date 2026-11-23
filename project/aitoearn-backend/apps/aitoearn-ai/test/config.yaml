@@ -10,8 +10,8 @@ logger:
     translateTime: true
 appDomain: ''
 auth:
-  secret: '368b012d4018ce6da66cbc8229cc0aa920e30e057d6d19547ada79ebe457f1e2'
-  internalToken: 'b81dd3851293ef44982e6052d001afabc15f28bd481fb158d82d70378516cbb8'
+  secret: 368b012d4018ce6da66cbc8229cc0aa920e30e057d6d19547ada79ebe457f1e2
+  internalToken: b81dd3851293ef44982e6052d001afabc15f28bd481fb158d82d70378516cbb8
 redis:
   host: redis
   port: 6379
