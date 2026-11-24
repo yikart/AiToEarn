@@ -11,6 +11,7 @@ import { spawn } from 'node:child_process'
 
 export const SITES = {
   cn: 'https://aitoearn.cn',
+  ai: 'https://aitoearn.ai',
 }
 
 export const DEFAULT_MCP_PATH = '/api/ai/agent/mcp'
@@ -48,7 +49,7 @@ export function readStore() {
     if (!parsed || typeof parsed !== 'object') return { version: 1, sites: {} }
     return {
       version: 1,
-      selectedSite: parsed.selectedSite === 'cn' ? parsed.selectedSite : '',
+      selectedSite: parsed.selectedSite === 'cn' || parsed.selectedSite === 'ai' ? parsed.selectedSite : '',
       sites: parsed.sites && typeof parsed.sites === 'object' ? parsed.sites : {},
     }
   } catch {
@@ -71,8 +72,8 @@ export function readSelectedSite() {
 }
 
 export function saveSelectedSite(site) {
-  if (site !== 'cn') {
-    throw new OAuthError('只支持国内站 cn（https://aitoearn.cn）', { code: 'bad_site' })
+  if (site !== 'cn' && site !== 'ai') {
+    throw new OAuthError('未知站点，可选 cn（https://aitoearn.cn）或 ai（https://aitoearn.ai）', { code: 'bad_site' })
   }
   const store = readStore()
   store.selectedSite = site
@@ -535,8 +536,8 @@ async function loopbackFlow(endpoints, { scope, mcpUrl, onPrompt }) {
  */
 export async function login({ site, url, scope, onPrompt = () => {} } = {}) {
   const base = site ? SITES[site] : null
-  if (site && !base) throw new OAuthError('只支持国内站 cn（https://aitoearn.cn）', { code: 'bad_site' })
-  if (!url && !base) throw new OAuthError('只支持国内站 cn（https://aitoearn.cn）', { code: 'site_required' })
+  if (site && !base) throw new OAuthError('未知站点，可选 cn（https://aitoearn.cn）或 ai（https://aitoearn.ai）', { code: 'bad_site' })
+  if (!url && !base) throw new OAuthError('请指定站点 cn 或 ai', { code: 'site_required' })
   const mcpUrl = url || `${base}${DEFAULT_MCP_PATH}`
   const endpoints = await resolveEndpoints({ url: mcpUrl, scope })
   const effectiveScope = scope || endpoints.scope || ''
@@ -591,7 +592,7 @@ export async function login({ site, url, scope, onPrompt = () => {} } = {}) {
 /** Delete the stored record for a site (or an explicit MCP URL). */
 export function logout({ site = 'cn', url } = {}) {
   const base = SITES[site]
-  if (!url && !base) throw new OAuthError('只支持国内站 cn（https://aitoearn.cn）', { code: 'bad_site' })
+  if (!url && !base) throw new OAuthError('未知站点，可选 cn（https://aitoearn.cn）或 ai（https://aitoearn.ai）', { code: 'bad_site' })
   removeRecord(url || `${base}${DEFAULT_MCP_PATH}`)
 }
 

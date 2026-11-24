@@ -1,5 +1,6 @@
 # AiToEarn bundle patch 模板。
-# 鉴权固定使用国内站 https://aitoearn.cn 。
+# 默认国内站 cn：https://aitoearn.cn
+# 海外站把 site 改成 ai：https://aitoearn.ai 。两站授权不通用。
 - insert:
     - id: dsh-plugin-aitoearn
       name: dsh-plugin-aitoearn

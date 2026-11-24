@@ -60,18 +60,33 @@ git clone https://github.com/yikart/AiToEarn.git
 
 ## OAuth 授权
 
-鉴权默认使用国内站 `https://aitoearn.cn/api/ai/agent/mcp`。
+登录前请用户自己选择站点。两个站点的授权不能混用。
+
+| 站点 | 地址 | 登录参数 |
+| --- | --- | --- |
+| 国内站 | `https://aitoearn.cn/api/ai/agent/mcp` | 不加参数，或 `--site cn` |
+| 海外站 | `https://aitoearn.ai/api/ai/agent/mcp` | `--site ai` |
+
+未指定站点时默认国内站。
 
 市场安装后，用装进该 profile 的命令。`<profile>` 与安装时的 `--profile` 相同，`dsh web` 一般是 `web`：
 
 ```bash
+# 国内站
 ~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login
+
+# 海外站
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login --site ai
 ```
 
 手工复制到 `~/.dsh/plugins/dsh-plugin-aitoearn` 时：
 
 ```bash
+# 国内站
 node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login
+
+# 海外站
+node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login --site ai
 ```
 
 令牌写入 `~/.aitoearn/oauth.json`（0600），内容不会打印。其他命令：`status`、`refresh`、`logout`。

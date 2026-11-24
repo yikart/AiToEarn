@@ -2,12 +2,12 @@
 // aitoearn-oauth — OAuth 2.1 login helper for the AiToEarn DSH plugin.
 //
 // Usage:
-//   node scripts/aitoearn.mjs login [--url <mcp-url>] [--scope <scope>]
-//   node scripts/aitoearn.mjs status [--url <mcp-url>]
-//   node scripts/aitoearn.mjs refresh [--url <mcp-url>]
-//   node scripts/aitoearn.mjs logout [--url <mcp-url>]
+//   node scripts/aitoearn.mjs login [--site cn|ai] [--url <mcp-url>] [--scope <scope>]
+//   node scripts/aitoearn.mjs status [--site cn|ai] [--url <mcp-url>]
+//   node scripts/aitoearn.mjs refresh [--site cn|ai] [--url <mcp-url>]
+//   node scripts/aitoearn.mjs logout [--site cn|ai] [--url <mcp-url>]
 //
-// 授权默认使用国内站 https://aitoearn.cn 。
+// 默认国内站 https://aitoearn.cn 。海外站加 --site ai（https://aitoearn.ai）。两站授权不通用。
 //
 // Environment overrides:
 //   AITOEARN_OAUTH_STORE, AITOEARN_OAUTH_ISSUER,
@@ -41,12 +41,12 @@ function flag(name, fallback = null) {
 const command = process.argv[2] || 'status'
 const url = flag('--url', process.env.AITOEARN_MCP_URL || '') || undefined
 const scope = flag('--scope', process.env.AITOEARN_OAUTH_SCOPE || '') || undefined
-const site = 'cn'
+const site = (flag('--site') || process.env.AITOEARN_SITE || 'cn').toLowerCase()
 
 function mcpUrl() {
   if (url) return url
   const base = SITES[site]
-  if (!base) throw new OAuthError('只支持国内站 cn（https://aitoearn.cn）', { code: 'bad_site' })
+  if (!base) throw new OAuthError('未知站点，可选 cn（https://aitoearn.cn）或 ai（https://aitoearn.ai）', { code: 'bad_site' })
   return `${base}/api/ai/agent/mcp`
 }
 

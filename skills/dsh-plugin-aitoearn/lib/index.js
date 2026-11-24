@@ -85,10 +85,12 @@ const provider = {
 function resolveConfig(config) {
   const raw = config && typeof config === 'object' ? config : {}
   const explicitUrl = String(raw.url || process.env.AITOEARN_MCP_URL || '').trim()
+  const configuredSite = String(raw.site || process.env.AITOEARN_SITE || 'cn').trim().toLowerCase()
+  const site = SITES[configuredSite] ? configuredSite : 'cn'
   return {
-    url: explicitUrl || `${SITES.cn}${DEFAULT_MCP_PATH}`,
+    url: explicitUrl || `${SITES[site]}${DEFAULT_MCP_PATH}`,
     serverName: String(raw.serverName || 'aitoearn'),
-    site: 'cn',
+    site,
   }
 }
 
@@ -97,7 +99,7 @@ async function startMcp(ctx, { url, serverName, site }) {
     const fn = ctx.logger?.[level]
     if (typeof fn === 'function') fn.call(ctx.logger, message)
   }
-  const loginHint = LOGIN_COMMAND
+  const loginHint = `${LOGIN_COMMAND} --site ${site}`
 
   const client = new McpHttpClient({
     url,
