@@ -1,10 +1,43 @@
 {
   "name": "dsh-plugin-aitoearn",
-  "version": "0.0.4",
-  "description": "AiToEarn 全域内容运营助手：创作、生成、剪辑、配音、多平台一键分发与变现规划",
+  "version": "0.1.0",
+  "description": "自媒体运营增长变现专家（Aitoearn）：帮你生成文案/图文/短视频，一键分发抖音、快手、小红书、公众号、bilibili、Facebook、TikTok 等海内外平台，覆盖自媒体运营从内容创作、内容发布到内容变现全链路。",
   "type": "module",
   "main": "lib/index.js",
-  "license": "Proprietary",
+  "bin": {
+    "aitoearn": "./scripts/aitoearn.mjs"
+  },
+  "exports": {
+    ".": "./lib/index.js",
+    "./locale/*.json": "./locale/*.json"
+  },
+  "files": [
+    "lib/",
+    "scripts/",
+    "skills/",
+    "locale/",
+    "registry/",
+    "cordis.patch.yml",
+    "cordis.patch.yml.tpl",
+    "安装提示词.md"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yikart/AiToEarn.git",
+    "directory": "skills/dsh-plugin-aitoearn"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "mcp",
+    "oauth",
+    "aitoearn",
+    "content"
+  ],
+  "license": "MIT",
   "dsh": {
     "bundle": {
       "patch": [

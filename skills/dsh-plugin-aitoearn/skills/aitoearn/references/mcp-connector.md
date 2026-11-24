@@ -1,48 +1,71 @@
-# AiToEarn MCP 连接器说明（Codex 版）
+# AiToEarn MCP 连接器说明
 
-AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力通过 MCP 服务提供。本技能在 Codex 中通过 stdio 桥接远端 Streamable HTTP 端点。
+AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力通过 MCP 服务提供。
+本插件在 DeepSeek Harness 内直接连接远端 Streamable HTTP 端点，使用 OAuth 2.1 授权。
 
-## 已完成的注册（安装时配置）
+## 连接方式
 
-`~/.codex/config.toml` 中已注册两个 MCP 服务器：
+- 插件加载 `cordis.patch.yml` 后，用配置里的 `url` 连接 MCP 端点：
+  - 国内站：`https://aitoearn.cn/api/ai/agent/mcp`
+- 每次请求前从 `~/.aitoearn/oauth.json` 取访问令牌并加 `Authorization: Bearer`；
+  令牌临近过期时自动用刷新令牌续期，收到 401/403 时强制刷新并重试一次。
+- 授权只使用国内站 https://aitoearn.cn 。
 
-```toml
-[mcp_servers.aitoearn]
-command = "node"
-args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.ai/api/ai/agent/mcp", "--env-key", "AITOEARN_API_KEY"]
+## OAuth 授权
 
-[mcp_servers.aitoearn-cn]
-command = "node"
-args = ["/Users/yika/.codex/skills/aitoearn/scripts/aitoearn-bridge.mjs", "--url", "https://aitoearn.cn/api/ai/agent/mcp", "--env-key", "AITOEARN_CN_API_KEY"]
+```bash
+# 市场安装：<profile> 与 dsh plugin --profile 相同，dsh web 一般是 web
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login
+
+# 手工复制到 ~/.dsh/plugins 时
+node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login
 ```
 
-桥接脚本按以下顺序解析 API Key（先到先用）：
+登录默认打开 https://aitoearn.cn 。
 
-1. 进程环境变量 `AITOEARN_API_KEY` / `AITOEARN_CN_API_KEY`
-2. `$AITOEARN_CONFIG` 指定的配置文件
-3. `~/.aitoearn/config.json`，形如 `{ "AITOEARN_API_KEY": "...", "AITOEARN_CN_API_KEY": "..." }`
+脚本按以下顺序工作：
 
-注意：从 macOS 图形界面启动的 Codex 不会读取 `~/.zshrc` 里的 `export`，因此推荐把 Key 写入 `~/.aitoearn/config.json`（setup 脚本自动完成，chmod 600），而不是只放在 shell 环境变量里。
+1. 通过 MCP 端点的 `/.well-known/oauth-protected-resource` 与授权服务器的
+   `/.well-known/oauth-authorization-server` 自动发现端点。
+2. 优先使用设备码流程（`device_authorization_endpoint`）；否则在本地
+   `127.0.0.1` 起回调服务，走授权码 + PKCE（S256）。
+3. 需要时用动态客户端注册（RFC 7591）获取 public client；也可用
+   `AITOEARN_OAUTH_CLIENT_ID` 指定已有客户端。
+4. 令牌写入 `~/.aitoearn/oauth.json`（chmod 600），并立即调用一次
+   `tools/list` 验证。
 
-## 替代方案：HTTP 直连
+其他子命令：
 
-若本机没有 node，可改用原生 HTTP 连接（Key 需另行注入，例如 launchd 环境）：
-
-```toml
-[mcp_servers.aitoearn-cn]
-url = "https://aitoearn.cn/api/ai/agent/mcp"
-http_headers = { Authorization = "Bearer ${AITOEARN_CN_API_KEY}" }
+```bash
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn status
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn refresh
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn logout
 ```
 
-## API Key 获取
+## 无 OAuth 元数据时
 
-- 登录 aitoearn.ai（国际站）或 aitoearn.cn（中国站），在设置 / 开发者页面创建 AiToEarn API Key。
-- 两个站点的账号与 Key 相互独立：国际站 Key 只能连国际站 URL，中国站 Key 只能连中国站 URL。
-- 不要把 API Key 写进技能文件或对话内容；只保存在 `~/.aitoearn/config.json` 或连接器鉴权配置中。
+如果部署尚未开启 OAuth（发现不到授权服务器），可用环境变量显式指定端点：
+
+```bash
+AITOEARN_OAUTH_ISSUER=https://your-issuer.example.com \
+AITOEARN_OAUTH_AUTHORIZE_URL=https://your-issuer.example.com/oauth/authorize \
+AITOEARN_OAUTH_TOKEN_URL=https://your-issuer.example.com/oauth/token \
+AITOEARN_OAUTH_REGISTRATION_URL=https://your-issuer.example.com/oauth/register \
+AITOEARN_OAUTH_CLIENT_ID=your-public-client \
+~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login
+```
+
+支持的环境变量：`AITOEARN_OAUTH_STORE`、`AITOEARN_OAUTH_ISSUER`、
+`AITOEARN_OAUTH_AUTHORIZE_URL`、`AITOEARN_OAUTH_TOKEN_URL`、
+`AITOEARN_OAUTH_REGISTRATION_URL`、`AITOEARN_OAUTH_DEVICE_AUTHORIZATION_URL`、
+`AITOEARN_OAUTH_CLIENT_ID`、`AITOEARN_OAUTH_CLIENT_SECRET`、
+`AITOEARN_OAUTH_SCOPE`、`AITOEARN_OAUTH_CALLBACK_PORT`、
+`AITOEARN_OAUTH_OPEN_BROWSER=0`、`AITOEARN_MCP_URL`。
 
 ## 故障排查
 
-- 会话中看不到 aitoearn 工具：新开一个 Codex 会话（MCP 服务器在会话启动时连接）；确认 `node --version` 可用。
-- 调用返回 `-32001`（missing/invalid key）：运行 `node <技能根>/scripts/aitoearn-mcp-setup.mjs <API_KEY> [cn|ai]` 重新写入并验证 Key。
-- 工具数量明显偏少或全部调用 401：多半是站点与 Key 不匹配（cn / ai 两站 Key 不通用）。
-- 验收参考：本包 `evals/` 目录下有 4 个子技能的评测用例（来自 WorkBuddy 打包，版本 0.0.4）。
+- 会话里看不到 aitoearn 工具：先运行 `status` 确认已授权，再新开一个会话；
+  插件也会在检测到 `oauth.json` 变化后自动重新同步工具。
+- 调用返回 `-32001`：令牌缺失或过期。运行 `login` 重新授权；不要手工编辑令牌文件。
+- 工具数量明显偏少或调用 401/403：重新执行 `aitoearn login`，用 aitoearn.cn 账号完成授权。
+- 授权脚本报“未发现 OAuth 授权服务器”：按上一节显式指定端点，或联系部署方开启 OAuth。

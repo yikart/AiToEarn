@@ -1,0 +1,6 @@
+url: https://github.com/yikart/AiToEarn/tree/main/skills/dsh-plugin-aitoearn
+name: yikart/AiToEarn#dsh-plugin-aitoearn
+category: tools
+description:
+  en: 'Generate copy, images and short videos, and publish with one click to Douyin, Kuaishou, Xiaohongshu, WeChat Official, Bilibili, Facebook, TikTok and more, covering the full content lifecycle from creation to publishing and monetization.'
+  zh: '帮你生成文案/图文/短视频，一键分发抖音、快手、小红书、公众号、bilibili、Facebook、TikTok 等海内外平台，覆盖自媒体运营从内容创作，内容发布到内容变现全链路。'

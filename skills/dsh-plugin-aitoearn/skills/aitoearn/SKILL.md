@@ -3,12 +3,12 @@ name: aitoearn
 description: >-
   全域内容运营助手（AiToEarn）：生成文章、短视频、图文与海报，并一键分发到抖音、快手、小红书、微信视频号、Facebook、TikTok 等海内外全平台，覆盖起号、涨粉、带货与变现全链路。
   当用户想要创作或发布内容、生成/编辑图片、生成/剪辑/续写视频、提取字幕或语音转写、生成配音与音效、多平台一键发布或定时发布、给内容做变现规划时使用此技能。
-  依赖 AiToEarn MCP 提供生成与发布工具；工具未连接时如实告知用户配置方法，不虚构工具调用。
-license: Proprietary
+  通过 OAuth（授权码 + PKCE，设备码兜底）授权后依赖 AiToEarn MCP 提供生成与发布工具；工具未连接时如实告知用户完成 OAuth 授权的方法，不虚构工具调用。
+license: MIT
 metadata:
-  version: 0.0.4
+  version: 0.1.0
   author: AiToEarn (support@aitoearn.ai)
-  homepage: https://aitoearn.ai
+  homepage: https://aitoearn.cn
 ---
 
 # 全域内容运营助手（合并包 · 13 个子技能）
@@ -45,7 +45,7 @@ This skill is the entry point. Load a sibling skill when the user names it or th
 
 For any video creation or editing request, load `byted-basic-working-principles` first. For CloudEdit planning and execution, read `byted-mediakit-cloudedit-planner` then `byted-mediakit-cloudedit-basic`. For speech/subtitles read `byted-mediakit-asr`; for audio boundary repair read `byted-audio-continuity`; for source preparation read `byted-asset-preparation`; for media understanding read `byted-mediakit-media-understand`; for generated audio read `byted-mediakit-audiogen`.
 
-Codex 中 MCP 工具带服务器前缀（如 `mcp__aitoearn-cn__generate_image`、`mcp__aitoearn__list_channel_platforms`）。始终按当前会话实际列出的工具名调用，不要臆造未列出的工具。
+MCP 工具带服务器前缀 `mcp__aitoearn__`（如 `mcp__aitoearn__generate_image`、`mcp__aitoearn__list_channel_platforms`）。始终按当前会话实际列出的工具名调用，不要臆造未列出的工具。
 
 ## Core Rules
 
@@ -57,11 +57,12 @@ Codex 中 MCP 工具带服务器前缀（如 `mcp__aitoearn-cn__generate_image`�
 
 Finish the current request in this turn when you can. If the request is ambiguous or a key fact is missing and you would have to guess, ask a concise clarifying question first; do not start tools on a guess. Copy you can write (title, body, captions) and optional publish settings are not key facts — generate sensible defaults yourself instead of asking. If a tool fails, take another path or say what is blocked; do not retry the same call.
 
-If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing from the session, or a call fails with `-32001` (missing/invalid key), run interactive onboarding instead of just reporting:
+If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing from the session, or a call fails with `-32001` (missing/expired credential), run interactive OAuth onboarding instead of just reporting:
 
-1. Tell the user the aitoearn MCP server is not configured and ask them for an API Key (obtained at https://aitoearn.cn -> 设置 -> API Key -> Create for Chinese platforms; https://aitoearn.ai for international platforms — the two sites' keys are NOT interchangeable).
-2. Run `node <this-skill-root>/scripts/aitoearn-mcp-setup.mjs <API_KEY> [cn|ai]`. The script writes the key to `~/.aitoearn/config.json` (chmod 600, merging existing content) and verifies it via a live `tools/list` call. The MCP servers (`aitoearn` / `aitoearn-cn`) are registered in `~/.codex/config.toml` as stdio bridges to `scripts/aitoearn-bridge.mjs`, which reads the key from that config file at runtime.
-3. On success, ask the user to start a new Codex session so the MCP servers connect and the tools appear; on failure, relay the script's diagnosis (invalid key vs site mismatch vs network). Never print the API key in output.
+1. Tell the user that the AiToEarn MCP connection has not been authorized yet and that a browser OAuth authorization is required at https://aitoearn.cn.
+2. Run the installed package's `aitoearn login`. After `dsh plugin add`, the binary is `~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn` — use the same `<profile>` the user installed into (`web` for `dsh web`). A manual copy may instead be `node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login`. Use a path that exists; do not assume the plugins directory. Login uses the China site only. It discovers the authorization server, registers a public client when needed, and either prints a device code or opens a browser for authorization code + PKCE. Tokens are stored in `~/.aitoearn/oauth.json` (chmod 600) and refreshed automatically; the token is never printed.
+3. Relay the printed authorization URL / user code to the user in plain text and wait for them to finish in the browser. On success, ask the user to open a new DeepSeek Harness session; the plugin also notices the new credential and re-syncs tools without reinstalling. On failure, relay the script's diagnosis (no OAuth metadata vs client registration vs network) and never print tokens.
+4. If the deployment has not enabled OAuth yet, tell the user that OAuth is not available and ask them to check the server configuration or provide authorization endpoints via `AITOEARN_OAUTH_*` environment variables.
 
 ## Terminology
 

@@ -1,11 +1,8 @@
+# AiToEarn bundle patch 模板。
+# 鉴权固定使用国内站 https://aitoearn.cn 。
 - insert:
-  - id: dsh-plugin-aitoearn
-    name: dsh-plugin-aitoearn
-  - id: mcp-aitoearn
-    name: '@deepseek-ai/dsh-mcp-client'
-    config:
-      serverName: aitoearn
-      transport: streamable-http
-      url: __AITOEARN_URL__
-      headers:
-        Authorization: 'Bearer __AITOEARN_KEY__'
+    - id: dsh-plugin-aitoearn
+      name: dsh-plugin-aitoearn
+      config:
+        serverName: aitoearn
+        site: cn
