@@ -3,6 +3,7 @@ import { QueueService } from '@yikart/aitoearn-queue'
 import { AssetsService } from '@yikart/assets'
 import { AppException, getErrorMessage, getExtByMimeType, ImageType, ResponseCode, UserType } from '@yikart/common'
 import { AiLogChannel, AiLogImageResult, AiLogRepository, AiLogStatus, AiLogType, AssetType, ImageAiLogResponse, Transactional } from '@yikart/mongodb'
+import axios from 'axios'
 import parseDataUri from 'data-urls'
 import OpenAI from 'openai'
 
@@ -21,6 +22,7 @@ import {
   UserImageEditDto,
   UserImageGenerationDto,
 } from './image.dto'
+import { MiniMaxImageConfig, MiniMaxImageModel } from './minimax-image.config'
 
 type Uploadable = File | Response
 
@@ -36,7 +38,53 @@ export class ImageService {
     private readonly modelsConfigService: ModelsConfigService,
     private readonly queueService: QueueService,
     @Optional() private readonly relayMediaResolver?: RelayMediaResolverService,
+    @Optional() private readonly miniMaxImageConfig?: MiniMaxImageConfig,
   ) { }
+
+  async userMiniMaxImageGeneration(userId: string, userType: UserType, model: MiniMaxImageModel, prompt: string, aspectRatio?: string) {
+    const config = this.miniMaxImageConfig
+    if (!config?.apiKey) {
+      throw new BadRequestException('MiniMax image generation is not configured')
+    }
+
+    return this.handleUserAiAction({
+      userId,
+      userType,
+      model,
+      channel: AiLogChannel.MiniMax,
+      type: AiLogType.Image,
+      request: { prompt, aspectRatio },
+      run: async () => {
+        const response = await axios.post<{
+          data?: { b64_json?: string, error?: unknown }[]
+          usage?: Record<string, unknown>
+        }>(config.endpoint, {
+          model,
+          prompt: await this.resolveRelayText(prompt),
+          aspect_ratio: aspectRatio,
+          response_format: 'b64_json',
+          output_format: 'png',
+        }, {
+          headers: { Authorization: `Bearer ${config.apiKey}` },
+          timeout: 600_000,
+          maxRedirects: 0,
+        }).catch((error: unknown) => {
+          const status = axios.isAxiosError(error) && error.response?.status
+          throw new Error(`MiniMax image generation failed${status ? ` (HTTP ${status})` : ''}`)
+        })
+
+        const image = response.data.data?.[0]
+        if (!image?.b64_json || image.error) {
+          throw new Error('MiniMax returned no generated image')
+        }
+        const { asset } = await this.assetsService.uploadFromBuffer(userId, Buffer.from(image.b64_json, 'base64'), {
+          type: AssetType.AiImage,
+          mimeType: 'image/png',
+        }, model)
+        return { images: [{ url: asset.path }], usage: response.data.usage }
+      },
+    })
+  }
 
   private resolveRuntimeImageModel(model: string, kind: 'generation' | 'edit'): string {
     const modelConfig = kind === 'generation'

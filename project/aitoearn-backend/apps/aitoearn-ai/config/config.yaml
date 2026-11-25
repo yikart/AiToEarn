@@ -744,6 +744,9 @@ ai:
           defaults:
             aspectRatio: 9:16
             duration: 8
+  minimaxImage:
+    apiKey: ''
+    endpoint: https://api.minimax.io/v1/images/generations
   openai:
     apiKey: ''
     baseUrl: https://aitoearn.ai/api/ai

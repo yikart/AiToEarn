@@ -6,6 +6,7 @@ import dayjs from 'dayjs'
 import { z } from 'zod'
 import { AiAvailabilityService } from '../../ai-availability'
 import { ImageService } from '../../ai/image'
+import { MiniMaxImageModel } from '../../ai/image/minimax-image.config'
 import { GrokVideoService, OpenAIVideoService } from '../../ai/video'
 import { McpServerName } from '../agent.constants'
 import { errorResult, successResult, wrapTool } from './mcp.utils'
@@ -15,7 +16,7 @@ const generateMediaSchema = z.object({
   imageUrls: z.array(z.string()).optional(),
   imageSize: z.enum(['1K', '2K', '4K']).optional(),
   aspectRatio: z.enum(['1:1', '2:3', '3:2', '3:4', '4:3', '4:5', '5:4', '9:16', '16:9', '21:9']).optional(),
-  model: z.enum(['gemini-3.1-flash-image-preview', 'gemini-3-pro-image-preview']).optional(),
+  model: z.enum(['gemini-3.1-flash-image-preview', 'gemini-3-pro-image-preview', MiniMaxImageModel.Standard, MiniMaxImageModel.Highspeed]).optional(),
 })
 
 const generateVideoSchema = z.object({
@@ -79,14 +80,14 @@ export class MediaMcp {
     return wrapTool(
       this.logger,
       MediaToolName.GenerateImage,
-      `Generate an image using Gemini model.
+      `Generate an image from a prompt.
 
 Parameters:
 - prompt: Text description of the image
 - imageUrls (optional): Reference image URLs for editing
 - imageSize (optional): "1K", "2K", or "4K"
 - aspectRatio (optional): "1:1", "2:3", "3:2", "3:4", "4:3", "4:5", "5:4", "9:16", "16:9", "21:9"
-- model (optional): "gemini-3.1-flash-image-preview" (default) or "gemini-3-pro-image-preview"
+- model (optional): Use MiniMax-H3-Image or MiniMax-H3-Image-Highspeed for text prompts with an optional aspectRatio. These models do not accept imageUrls or imageSize. Omit the model to use the default.
 
 Returns the generated image URL(s).`,
       generateMediaSchema.shape,
@@ -94,15 +95,21 @@ Returns the generated image URL(s).`,
         this.logger.debug(`[generateImage] Starting image generation for user ${userId}`)
         const startTime = Date.now()
 
-        const result = await this.imageService.userGeminiGeneration({
-          userId,
-          userType,
-          prompt,
-          imageUrls,
-          imageSize,
-          aspectRatio,
-          ...(model ? { model } : {}),
-        })
+        const isMiniMax = model === MiniMaxImageModel.Standard || model === MiniMaxImageModel.Highspeed
+        if (isMiniMax && (imageUrls.length || imageSize)) {
+          return errorResult('MiniMax image generation accepts a text prompt and optional aspect ratio only')
+        }
+        const result = isMiniMax
+          ? await this.imageService.userMiniMaxImageGeneration(userId, userType, model, prompt, aspectRatio)
+          : await this.imageService.userGeminiGeneration({
+              userId,
+              userType,
+              prompt,
+              imageUrls,
+              imageSize,
+              aspectRatio,
+              ...(model ? { model } : {}),
+            })
 
         const generatedImages = result.images.map(img => ({ ...img, url: FileUtil.buildUrl(img.url!) }))
 

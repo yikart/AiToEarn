@@ -34,6 +34,7 @@ describe('mediaMcp', () => {
 
     mockImageService = {
       userGeminiGeneration: vi.fn(),
+      userMiniMaxImageGeneration: vi.fn(),
     } as unknown as vi.Mocked<ImageService>
 
     mockAiAvailability = {
@@ -99,6 +100,22 @@ describe('mediaMcp', () => {
           model: 'gemini-3-pro-image-preview',
         }),
       )
+    })
+
+    it.each(['MiniMax-H3-Image', 'MiniMax-H3-Image-Highspeed'])('routes %s text prompts to image generation', async (model) => {
+      mockImageService.userMiniMaxImageGeneration.mockResolvedValue({ images: [{ url: 'sample.png' }], usage: undefined })
+      const tool = mediaMcp.createGenerateImageTool(userId, userType)
+      const result = await tool.handler({ prompt: 'A landscape', model, aspectRatio: '16:9' } as never, {})
+
+      expect(mockImageService.userMiniMaxImageGeneration).toHaveBeenCalledWith(userId, userType, model, 'A landscape', '16:9')
+      expect(result.content).toContainEqual(expect.objectContaining({ type: 'resource_link' }))
+    })
+
+    it('rejects reference images before calling MiniMax', async () => {
+      const tool = mediaMcp.createGenerateImageTool(userId, userType)
+      const result = await tool.handler({ prompt: 'A landscape', model: 'MiniMax-H3-Image', imageUrls: ['ref.png'] } as never, {})
+      expect(result.isError).toBe(true)
+      expect(mockImageService.userMiniMaxImageGeneration).not.toHaveBeenCalled()
     })
 
     it('should return generated image URLs', async () => {

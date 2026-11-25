@@ -5,6 +5,7 @@ import { AiLogChannel, mongodbConfigSchema } from '@yikart/mongodb'
 import { redisConfigSchema } from '@yikart/redis'
 import { redlockConfigSchema } from '@yikart/redlock'
 import z from 'zod'
+import { miniMaxImageConfigSchema } from './core/ai/image/minimax-image.config'
 import { dashscopeConfigSchema } from './core/ai/libs/dashscope'
 import { geminiConfigSchema } from './core/ai/libs/gemini'
 import { grokConfigSchema } from './core/ai/libs/grok'
@@ -116,6 +117,7 @@ export const aiModelsConfigSchema = z.object({
 
 export const aiConfigSchema = z.object({
   models: aiModelsConfigSchema,
+  minimaxImage: miniMaxImageConfigSchema.optional(),
   openai: openaiConfigSchema,
   volcengine: z.object({
     ...volcengineConfigSchema.shape,
