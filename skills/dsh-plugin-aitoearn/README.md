@@ -33,6 +33,10 @@ dsh-plugin-aitoearn/
 
 本插件不发布到 npm。它在 AiToEarn 仓库的 `skills/dsh-plugin-aitoearn`。仓库根目录没有 `dsh.bundle`，不要安装根目录。
 
+### 更新已有安装
+
+如果以前安装或配置过 AiToEarn，先删除旧的 `dsh-plugin-aitoearn` 插件及 profile 中对应的依赖、bundle 和符号链接，再删除 `cordis.patch.yml` 中旧的 AiToEarn MCP 条目；仅处理 `aitoearn`、`aitoearn-cn` 或指向旧 AiToEarn 地址的条目，不要删除其他服务。旧条目中的旧版 MCP 地址、认证请求头、环境变量和 API Key 也必须移除，然后再按下方步骤安装。
+
 ```bash
 dsh plugin --profile desktop add "github:yikart/AiToEarn#path:/skills/dsh-plugin-aitoearn"
 ```
@@ -115,17 +119,6 @@ npm pack --dry-run
 ```
 
 `npm pack --dry-run` 应包含 `lib/`、`scripts/`、`skills/`、`locale/`、`cordis.patch.yml`、`安装提示词.md` 与 `registry/`。
-
-## 上架 DSH 插件目录
-
-1. **插件达标**：`package.json` 已声明 `dsh.bundle.patch`，`cordis.patch.yml` 引用的文件全部在发布产物内
-2. **仓库达标**：
-   - 本包位于 AiToEarn 的 `skills/dsh-plugin-aitoearn/`
-   - 仓库地址：`https://github.com/yikart/AiToEarn`
-   - 仓库已有 `dsh-plugin` topic，创建已超过 1 天
-3. **提 PR** 到 `awesome-dsh-plugin/awesome-dsh-plugin`：
-   - 提交文件：`data/plugins/yikart__AiToEarn--skills-dsh-plugin-aitoearn.yml`
-   - 一个 PR 最多 3 条，README 由脚本生成，不要手改
 
 ## 卸载
 

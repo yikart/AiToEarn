@@ -28,11 +28,13 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **插件与技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
 
-在你的 AI 助手（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）对话框里直接粘贴下面这段即可安装，AI 会自动索取 API Key、完成配置并验证：
+在你的 AI 助手（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）对话框里直接粘贴下面这段即可安装，AI 会完成配置并引导你完成授权与验证：
 
 ```text
 帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills 的插件包
 ```
+
+> 🔐 **插件已全面改用 OAuth 鉴权，不再使用 API Key。** 安装过旧版插件的用户：请先删除旧插件和旧的 MCP/连接器配置（含旧 API Key），再重新安装；安装后按提示到 MCP 连接处主动完成 OAuth 授权，国内站与国际站授权不通用。
 
 各平台的安装方式与详细说明见 [AiToEarn 文档站](https://docs.aitoearn.ai/zh/use/installer-pack)。
 

@@ -3,17 +3,27 @@
 本目录收录 AiToEarn 全域内容运营能力在各 AI 助手平台的安装包：`*-plugin-aitoearn` 为**插件**包，`*-skill-aitoearn` 为**技能**包。每个平台一个文件夹，**两种安装方式任选**：
 
 1. **插件/技能包安装**：按包内 `README.md` 的步骤把文件放到指定位置；
-2. **提示词安装**：把包内 `安装提示词.md` 的内容（或让 AI 读取该文件）交给对应平台的 AI 助手，它会引导完成安装——自动索取 API Key、写配置、验证，无需编程基础。
+2. **提示词安装**：把包内 `安装提示词.md` 的内容（或让 AI 读取该文件）交给对应平台的 AI 助手，它会引导完成安装、OAuth 授权与验证，无需编程基础。
 
-> DeepSeek Harness 插件（`dsh-plugin-aitoearn`）使用 aitoearn.cn 的 OAuth，不填写 API Key。
-> 其余平台的前置条件：AiToEarn API Key（登录 aitoearn.cn → 设置 → API Key → 创建；国际站为 aitoearn.ai，两站 Key 不通用）。
-> 这些配置中的 `__AITOEARN_KEY__` 均为占位符，安装时替换为实际 Key。
+> 所有包均使用 AiToEarn MCP OAuth 鉴权，不填写、不保存、也不回退使用 API Key。
+> 中国版连接 `https://aitoearn.cn/api/ai/agent/mcp`，国际版连接 `https://aitoearn.ai/api/ai/agent/mcp`；两套环境分别完成 OAuth 授权。
+> 若宿主没有显示 OAuth 授权入口，必须明确报告该客户端当前无法连接，不能改用自定义静态请求头。
+
+## 更新已有安装
+
+如果以前安装或配置过 AiToEarn，请先在对应客户端删除旧的 AiToEarn 插件/技能，再删除旧的 AiToEarn MCP 服务或连接器条目。仅清理名称为 `aitoearn`、`aitoearn-cn` 或指向旧 AiToEarn 地址的条目；不要删除其他 MCP 服务。
+
+旧条目中若有旧版 MCP 地址、自定义认证请求头、环境变量或 API Key，也必须一并移除。随后重新安装本目录的当前包，并且每个客户端只保留一套 AiToEarn 插件/技能和一个对应站点的 MCP 连接。
+
+豆包不会从技能包自动创建 MCP 连接器：导入技能后，用户仍需在豆包内手动新增 AiToEarn 连接器。
+
+安装完成后，用户需要到对应客户端的 MCP/连接器管理页面，对 AiToEarn 连接**主动发起认证**（连接/授权/进行身份验证按钮），在浏览器完成 OAuth 登录；不要被动等待客户端自动弹出授权窗口。
 
 ## 平台列表
 
 | 目录 | 平台 | 类型 | 形态 |
 | --- | --- | --- | --- |
-| `codex-plugin-aitoearn/` | Codex | 插件 | 插件库标准包（.codex-plugin + skills + MCP 配置模板） |
+| `codex-plugin-aitoearn/` | Codex | 插件 | 插件库标准包（.codex-plugin + skills + `.mcp.json`） |
 | `claude-plugin-aitoearn/` | Claude Code | 插件 | 插件标准包（.claude-plugin + skills + MCP 配置模板） |
 | `trae-skill-aitoearn/` | Trae | 技能 | 技能目录 + mcp.json / skill-config.json 模板 |
 | `qwenwork-plugin-aitoearn/` | 千问办公 | 插件 | 插件目录（.qwenwork-plugin + skills）+ 连接器导入 JSON |

@@ -57,11 +57,11 @@ For any video creation or editing request, load `byted-basic-working-principles`
 
 Finish the current request in this turn when you can. If the request is ambiguous or a key fact is missing and you would have to guess, ask a concise clarifying question first; do not start tools on a guess. Copy you can write (title, body, captions) and optional publish settings are not key facts — generate sensible defaults yourself instead of asking. If a tool fails, take another path or say what is blocked; do not retry the same call.
 
-If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing from the session, or a call fails with `-32001` (missing/invalid key), run interactive onboarding instead of just reporting:
+If AiToEarn tools are missing from the session or the server returns an authorization failure, run OAuth onboarding instead of just reporting:
 
-1. Tell the user the aitoearn MCP server is not configured and ask them for an API Key (obtained at https://aitoearn.cn -> 设置 -> API Key -> Create for Chinese platforms; https://aitoearn.ai for international platforms — the two sites' keys are NOT interchangeable).
-2. Codex: run `node <this-skill-root>/scripts/aitoearn-mcp-setup.mjs <API_KEY> [cn|ai]`. 千问办公(QwenWork): in 扩展 → 连接器 → 添加, choose Streamable HTTP, URL `https://aitoearn.cn/api/ai/agent/mcp` (or `https://aitoearn.ai/api/ai/agent/mcp` for the international site), Header `X-Api-Key` = the key, then start a NEW task. The script writes the key to `~/.aitoearn/config.json` (chmod 600, merging existing content) and verifies it via a live `tools/list` call. The MCP servers (`aitoearn` / `aitoearn-cn`) are registered in `~/.codex/config.toml` as stdio bridges to `scripts/aitoearn-bridge.mjs`, which reads the key from that config file at runtime.
-3. On success, ask the user to start a new Codex session so the MCP servers connect and the tools appear; on failure, relay the script's diagnosis (invalid key vs site mismatch vs network). Never print the API key in output.
+1. Direct the user to reconnect `https://aitoearn.cn/api/ai/agent/mcp` (China) or `https://aitoearn.ai/api/ai/agent/mcp` (international) in the connector settings.
+2. Complete the OAuth flow shown by the client. Never request, save, print, or configure a static credential.
+3. Start a new task after authorization. If no OAuth entry point is available or authorization fails, state that MCP remains unavailable and stop.
 
 ## Terminology
 

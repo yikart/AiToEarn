@@ -1,0 +1,9 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
+  "mcpServers": {
+    "aitoearn-cn": {
+      "type": "streamable-http",
+      "url": "https://aitoearn.cn/api/ai/agent/mcp"
+    }
+  }
+}

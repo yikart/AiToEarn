@@ -28,11 +28,13 @@ AiToEarn は AI エージェントの自動化により、OPC（一人会社）�
 
 MCP サーバーに加え、AiToEarn には **プラグインとスキルバンドル** が付属しています。作成 → 編集 → 投稿 → 収益化までの全工程をカバーし、複雑なプロンプトは不要です。
 
-お使いの AI アシスタント（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）のチャット欄に下記を貼り付けるだけでインストールできます（API Key の取得、設定、検証まで AI が案内します）：
+お使いの AI アシスタント（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）のチャット欄に下記を貼り付けるだけでインストールできます（設定から OAuth 認証、検証まで AI が案内します）：
 
 ```text
 https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケージをインストールしてください
 ```
+
+> 🔐 **プラグインは OAuth 認証に全面移行しました（API Key は不要です）。** 旧版をインストール済みの方は、古いプラグインと MCP/コネクタ設定（API Key を含む）を削除してから再インストールし、案内に従って MCP 接続から OAuth 認証を完了してください。中国サイトと国際サイトの認証は共通ではありません。
 
 プラットフォームごとのインストール方法と詳細は [AiToEarn ドキュメント](https://docs.aitoearn.ai/en/use/installer-pack) をご覧ください。
 

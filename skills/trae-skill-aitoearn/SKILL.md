@@ -52,11 +52,11 @@ Call tools by their raw names (`generate_image`, `list_channel_platforms`). Do n
 
 Finish the current request in this turn when you can. If the request is ambiguous or a key fact is missing and you would have to guess, ask a concise clarifying question first; do not start tools on a guess. Copy you can write (title, body, captions) and optional publish settings are not key facts — generate sensible defaults yourself instead of asking. If a tool fails, take another path or say what is blocked; do not retry the same call.
 
-If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing from the session, or a call fails with `-32001` (missing/invalid key), run interactive onboarding instead of just reporting:
+If AiToEarn tools are missing from the session or the server returns an authorization failure, run OAuth onboarding instead of just reporting:
 
-1. Tell the user the aitoearn MCP server is not configured and ask them for an API Key (obtained at https://aitoearn.cn -> 设置 -> API Key -> Create for Chinese platforms; https://aitoearn.ai for international platforms — the two sites' keys are NOT interchangeable).
-2. Run `node <this-skill-root>/scripts/aitoearn-mcp-setup.mjs <API_KEY> [cn|ai]`. The script writes the key to `~/.aitoearn/config.json` (chmod 600), registers the server into Trae's user-level `~/.trae-cn/mcp.json` (merging, preserving existing servers), and verifies the key via a live `tools/list` call.
-3. On success, ask the user to reload MCP in the client (panel refresh or session restart) so the tools appear; on failure, relay the script's diagnosis (invalid key vs site mismatch vs network). Never print the API key in output.
+1. Direct the user to reconnect `https://aitoearn.cn/api/ai/agent/mcp` (China) or `https://aitoearn.ai/api/ai/agent/mcp` (international) in Trae.
+2. Complete the OAuth flow shown by Trae. Never request, save, print, or configure a static credential.
+3. Reload MCP or start a new session. If no OAuth entry point is available or authorization fails, state that MCP remains unavailable and stop.
 
 ## Terminology
 

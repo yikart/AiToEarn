@@ -1,59 +1,39 @@
-# AiToEarn — Codex 插件包（免安装器版）
+# AiToEarn — Codex 插件包
 
-本目录是从 AiToEarn 全平台管理器 payload 中拆分出的、可直接上架 Codex 插件库的自包含插件包。
-已按安装器原本会完成的组装步骤拼好：`skills/aitoearn/` 内是完整的合并技能包，根目录是插件清单。
+这是可直接上架或本地安装的 Codex 插件包。插件通过 AiToEarn MCP 提供创作、媒体生产与全平台发布能力。
 
-## 目录结构
+## 更新已有安装
 
+如果以前安装过 AiToEarn，先在 Codex 卸载旧的 `aitoearn` 插件，并删除旧的 AiToEarn MCP 服务条目；仅处理 `aitoearn`、`aitoearn-cn` 或指向旧 AiToEarn 地址的条目，不要删除其他 MCP 服务。旧配置中的旧版 MCP 地址、认证请求头、环境变量和 API Key 也必须移除，然后再安装本包。
+
+## OAuth MCP 配置
+
+包内直接提供 `.mcp.json`，与插件清单的 `mcpServers` 引用一致。它预设中国版 `aitoearn-cn` 和 `https://aitoearn.cn/api/ai/agent/mcp`，**不包含静态凭证**。由 Codex 在连接时依据服务端 OAuth discovery 打开登录与授权流程；不要添加自定义请求头、环境变量或本地密钥文件。
+
+## 注册全局 MCP（必需）
+
+安装并启用插件后，还必须把 AiToEarn 注册到 Codex 的全局 MCP 配置。插件内的 `.mcp.json` 不能替代这一步。中国版执行：
+
+```bash
+codex mcp add aitoearn-cn --url https://aitoearn.cn/api/ai/agent/mcp
+codex mcp login aitoearn-cn --oauth-client-registration dcr
 ```
-codex-plugin-aitoearn/
-├── .codex-plugin/
-│   └── plugin.json        # 插件清单（名称、版本、skills 路径、展示信息）
-├── .mcp.json.tpl          # MCP 配置模板（__AITOEARN_*__ 占位符，安装时替换）
-├── README.md
-└── skills/
-    └── aitoearn/          # 完整技能包（13 个子技能合并包）
-        ├── SKILL.md       # 入口技能（路由表 + 核心规则）
-        ├── icon.png
-        ├── references/    # 13 个子技能的 SKILL.md 及其参考文档
-        ├── scripts/       # aitoearn-bridge.mjs / aitoearn-mcp-setup.mjs
-        └── evals/         # 评测样例
+
+国际版只保留一套连接时执行：
+
+```bash
+codex mcp add aitoearn --url https://aitoearn.ai/api/ai/agent/mcp
+codex mcp login aitoearn --oauth-client-registration dcr
 ```
 
-## 上架说明
+使用 Codex 桌面版时也可以不改命令行，**明确提示用户去 MCP 连接认证**：设置 → 插件 → MCP，找到 `aitoearn-cn`，把连接类型从「自动」改为「动态客户端注册 (DCR)」，再点「进行身份验证」完成浏览器授权。该选择只作用于当次登录，与命令行参数等价。
 
-- `plugin.json` 中 `"skills": "./skills/"` 指向技能目录，每个子目录为一个技能，已满足插件库要求。
-- MCP 接入使用 `.mcp.json.tpl` 模板：上架时由插件安装流程（`authentication: ON_INSTALL`）
-  将 `__AITOEARN_SERVER__` / `__AITOEARN_URL__` / `__AITOEARN_KEY__` 替换为实际值后生成 `.mcp.json`。
-- 技能内引用的 `<this-skill-root>/scripts/` 已包含在 `skills/aitoearn/scripts/`，路径自洽。
+中国站的 `--oauth-client-registration dcr` 必须保留：Codex 默认的 CIMD 登录方式需要服务端拉取托管在 chatgpt.com 的客户端元数据文档，中国站服务端部署在国内、无法访问该域名，授权页会显示"应用配置错误"；DCR 动态注册由服务端直接签发 client_id，已实测可正常打开授权页。国际站未实测，若不带该参数也能正常打开授权页，可省略。如果 `codex mcp add` 自动弹出的授权页显示"应用配置错误"，忽略该页面，继续执行上面的 dcr 登录命令即可。
 
-## 第 0 步：获取 API Key（安装前置）
+登录完成后运行 `codex mcp list`，确认对应 server 显示为 `enabled`。不要同时注册国内站和国际站，也不要追加认证请求头、环境变量或 API Key。
 
-所有配置中的 `__AITOEARN_KEY__` 都是占位符，**安装时必须向用户询问 AiToEarn API Key**
-（获取方式：登录 aitoearn.cn（或国际站 aitoearn.ai）→ 设置 → API Key → 创建），
-拿到后替换进相应配置文件；两站 Key 不通用。需要国际站时同时把 URL 换成 `https://aitoearn.ai/api/ai/agent/mcp`。
-包里不预置任何真实 Key，配置模板可直接分发。
+如果 Codex 没有显示 OAuth 授权入口，必须明确报告“当前 Codex 环境无法完成 AiToEarn OAuth 连接”，停止配置，不得退回使用静态凭证。
 
-## 本地手动使用（不经过安装器）
+## 本地安装与验证
 
-1. 将 `.mcp.json.tpl` 复制为 `.mcp.json`，替换三个占位符：
-   - `__AITOEARN_SERVER__` → `aitoearn-cn`（国内站）或 `aitoearn`（国际站）
-   - `__AITOEARN_URL__` → `https://aitoearn.cn/api/ai/agent/mcp` 或 `https://aitoearn.ai/api/ai/agent/mcp`
-   - `__AITOEARN_KEY__` → 向用户询问获取
-2. 注册本地 marketplace（清单文件名必须是 `.agents/plugins/marketplace.json`）：
-   ```json
-   {
-     "name": "aitoearn-local",
-     "plugins": [{ "name": "aitoearn",
-       "source": { "source": "local", "path": "./plugins/aitoearn" },
-       "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" } }]
-   }
-   ```
-   插件目录放在该 marketplace 目录的 `plugins/aitoearn/` 下，并在 `~/.codex/config.toml` 增加
-   `[marketplaces.aitoearn-local]` 与 `[plugins."aitoearn@aitoearn-local"] enabled = true`。
-3. 执行 `codex plugin add aitoearn@aitoearn-local` 安装，完全退出并重启 Codex 后新会话生效。
-
-## 验证失败怎么办
-
-如果重启后发送「列出可用的发布渠道」提示没有相关工具或连接失败，说明 **MCP 没有配好（只装技能不算完成）**。
-请打开包内的 `安装提示词.md`，按其中「MCP 手动兜底」小节处理；自动配置搞不定时，改用官方「AiToEarn 全平台管理器」安装。
+将插件放入本地 marketplace 后启用 `aitoearn` 插件，按上节注册全局 MCP 并完成 OAuth 登录，然后完全退出并重启 Codex。新会话中发送「列出可用的发布渠道」验证：能列出渠道才表示 MCP 已连接；否则如实报告 OAuth 尚未完成或服务端不可用。

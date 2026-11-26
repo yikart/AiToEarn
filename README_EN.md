@@ -28,11 +28,13 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 
 Beyond the MCP server, AiToEarn ships a ready-to-use **plugin and skill bundle** covering the full pipeline: creation → editing → publishing → monetization — no complex prompting required.
 
-Just paste the line below into your AI assistant (Claude Code / Codex / Trae / Doubao / Qwen / Qwen Work / Kimi Work / DeepSeek Harness) to install — it asks for your API Key, writes the config, and verifies:
+Just paste the line below into your AI assistant (Claude Code / Codex / Trae / Doubao / Qwen / Qwen Work / Kimi Work / DeepSeek Harness) to install — it writes the config and walks you through authorization and verification:
 
 ```text
 Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/skills for me
 ```
+
+> 🔐 **The plugins now use OAuth — no API Key anymore.** If you installed an older version, remove the old plugin and its MCP/connector entries (including any API Key) first, then reinstall and complete OAuth authorization from the MCP connection when prompted. China-site and international-site authorizations are not interchangeable.
 
 Per-platform install instructions and details: see the [AiToEarn Docs](https://docs.aitoearn.ai/en/use/installer-pack).
 
