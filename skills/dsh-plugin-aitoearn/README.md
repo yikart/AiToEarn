@@ -2,6 +2,24 @@
 
 自媒体运营增长变现专家。帮你生成文案/图文/短视频，一键分发抖音、快手、小红书、公众号、bilibili、Facebook、TikTok 等海内外平台，覆盖从内容创作、内容发布到内容变现全链路。
 
+## 一键安装提示词 / One-click install prompt
+
+把下面任一段完整复制，发给 DeepSeek Harness 的 AI 助手即可开始安装。**默认中国版**；装国际版时把「中国版」改为「国际版」（英文段把 China version 改为 International version），其余不变。
+
+中文：
+
+```
+帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills/dsh-plugin-aitoearn 的插件包（中国版）。只下载该目录（例如 git sparse checkout，或只解压仓库压缩包中的这个子目录），不要克隆整个仓库。下载后按包内 README.md 和 安装提示词.md 完成安装，引导我完成 OAuth 授权，最后用「列出可用的发布渠道」验证。
+```
+
+English:
+
+```
+Install the AiToEarn plugin package for DeepSeek Harness from https://github.com/yikart/AiToEarn/tree/main/skills/dsh-plugin-aitoearn (China version). Download only that directory (e.g. git sparse checkout, or extract just this subdirectory from the repository archive) — do NOT clone the whole repository. Then follow the package's README.md and 安装提示词.md to finish installation, guide me through OAuth authorization, and verify with "List my available publishing channels".
+```
+
+如果 AI 助手无法联网下载，请手动下载该目录（仓库页面 Code → Download ZIP 后只取 `skills/dsh-plugin-aitoearn`，或用 sparse checkout），再把包内 `安装提示词.md` 的内容发给它。
+
 ## 功能
 
 - **OAuth 2.1 鉴权**：授权码 + PKCE（S256），设备码兜底，令牌自动刷新
@@ -16,7 +34,7 @@
 dsh-plugin-aitoearn/
 ├── package.json              # dsh.bundle，从 GitHub 子目录安装，不发布 npm
 ├── cordis.patch.yml          # bundle patch
-├── cordis.patch.yml.tpl      # 国内站配置模板
+├── cordis.patch.yml.tpl      # 中国版配置模板
 ├── 安装提示词.md              # 交给 AI 执行的安装指令
 ├── locale/                   # 插件管理面板元数据
 ├── lib/
@@ -64,32 +82,32 @@ git clone https://github.com/yikart/AiToEarn.git
 
 ## OAuth 授权
 
-登录前请用户自己选择站点。两个站点的授权不能混用。
+登录前请用户自己选择版本。两个版本的授权不能混用。
 
-| 站点 | 地址 | 登录参数 |
+| 版本 | 地址 | 登录参数 |
 | --- | --- | --- |
-| 国内站 | `https://aitoearn.cn/api/ai/agent/mcp` | 不加参数，或 `--site cn` |
-| 海外站 | `https://aitoearn.ai/api/ai/agent/mcp` | `--site ai` |
+| 中国版 | `https://aitoearn.cn/api/ai/agent/mcp` | 不加参数，或 `--site cn` |
+| 国际版 | `https://aitoearn.ai/api/ai/agent/mcp` | `--site ai` |
 
-未指定站点时默认国内站。
+未指定版本时默认中国版。
 
 市场安装后，用装进该 profile 的命令。`<profile>` 与安装时的 `--profile` 相同，`dsh web` 一般是 `web`：
 
 ```bash
-# 国内站
+# 中国版
 ~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login
 
-# 海外站
+# 国际版
 ~/.dsh/profiles/<profile>/node_modules/.bin/aitoearn login --site ai
 ```
 
 手工复制到 `~/.dsh/plugins/dsh-plugin-aitoearn` 时：
 
 ```bash
-# 国内站
+# 中国版
 node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login
 
-# 海外站
+# 国际版
 node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login --site ai
 ```
 
@@ -110,6 +128,15 @@ node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login --site ai
 | `AITOEARN_OAUTH_CALLBACK_PORT` | 本地回调固定端口，默认随机 |
 | `AITOEARN_OAUTH_OPEN_BROWSER=0` | 不自动打开浏览器 |
 | `AITOEARN_MCP_URL` | 覆盖 MCP 端点 |
+
+## 切换中国版 / 国际版
+
+两个版本的授权不通用。切换步骤：
+
+1. 清除当前授权：`aitoearn logout`（手工安装为 `node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs logout`）；
+2. 重新登录目标版本完成 OAuth 授权：中国版（`https://aitoearn.cn/api/ai/agent/mcp`）用 `aitoearn login`（或不加参数 / `--site cn`）；国际版（`https://aitoearn.ai/api/ai/agent/mcp`）用 `aitoearn login --site ai`；
+3. 如需长期固定版本，把 `cordis.patch.yml` 中的 `site` 改为 `cn` 或 `ai`；
+4. 新开会话发送「列出可用的发布渠道」验证。
 
 ## 验证
 

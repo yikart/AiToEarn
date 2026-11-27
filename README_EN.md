@@ -28,13 +28,33 @@ AiToEarn helps OPCs (One-Person Companies), creators, brands, and businesses bui
 
 Beyond the MCP server, AiToEarn ships a ready-to-use **plugin and skill bundle** covering the full pipeline: creation → editing → publishing → monetization — no complex prompting required.
 
-Just paste the line below into your AI assistant (Claude Code / Codex / Trae / Doubao / Qwen / Qwen Work / Kimi Work / DeepSeek Harness) to install — it writes the config and walks you through authorization and verification:
+Paste the line below into your AI assistant (Claude Code / Codex / Trae / Doubao / Qwen / Qwen Work / Kimi Work / DeepSeek Harness) to install — it writes the config and walks you through authorization and verification:
 
 ```text
-Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/skills for me
+Install the plugin package from https://github.com/yikart/AiToEarn/tree/main/skills/trae-skill-aitoearn for me (China site, aitoearn.cn)
 ```
 
-> 🔐 **The plugins now use OAuth — no API Key anymore.** If you installed an older version, remove the old plugin and its MCP/connector entries (including any API Key) first, then reinstall and complete OAuth authorization from the MCP connection when prompted. China-site and international-site authorizations are not interchangeable.
+Adjust two things before pasting:
+
+1. **Platform**: replace the last path segment with your platform's bundle, and download only that subdirectory — don't clone the whole repo.
+2. **Edition**: the China site uses `aitoearn.cn`, the international site uses `aitoearn.ai`; install only one.
+
+| Client | Directory |
+| --- | --- |
+| Codex | `codex-plugin-aitoearn` |
+| Claude Code | `claude-plugin-aitoearn` |
+| Trae | `trae-skill-aitoearn` |
+| Doubao | `doubao-skill-aitoearn` |
+| Qwen | `qwen-skill-aitoearn` |
+| Qwen Work | `qwenwork-plugin-aitoearn` |
+| Kimi Work | `kimi-plugin-aitoearn` |
+| DeepSeek Harness | `dsh-plugin-aitoearn` |
+
+> 🌍 For the international site, change only the parentheses, e.g. `...skills/codex-plugin-aitoearn for me (International site, aitoearn.ai)`. China-site and international-site authorizations are not interchangeable.
+
+> ⚠️ **Codex on the China site must switch the MCP connection type to DCR**: Settings → Plugins → MCP → AiToEarn server, change the connection type from “Automatic” to “Dynamic Client Registration (DCR)”, then click “Authenticate” to finish OAuth. The CLI equivalent is `codex mcp login aitoearn-cn --oauth-client-registration dcr`; the flag cannot be omitted, otherwise the default login path relies on the server reaching `chatgpt.com`, which is unreachable from the China site and the authorization page fails with “application configuration error”.
+
+> 🔐 **The plugins now use OAuth — no API Key anymore.** If you installed an older version, remove the old plugin and its MCP/connector entries (including any API Key) first, then reinstall and complete OAuth authorization from the MCP connection when prompted.
 
 Per-platform install instructions and details: see the [AiToEarn Docs](https://docs.aitoearn.ai/en/use/installer-pack).
 

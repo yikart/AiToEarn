@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "aitoearn-cn": {
+      "type": "http",
+      "url": "https://aitoearn.cn/api/ai/agent/mcp"
+    }
+  }
+}

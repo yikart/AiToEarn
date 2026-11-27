@@ -26,15 +26,35 @@ AiToEarn 通过 AI Agent 自动化，帮助一人公司、创作者、品牌与�
 
 ## AI 助手插件
 
-除了 MCP 工具，AiToEarn 还配套一套开箱即用的 **插件与技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
+除了 MCP 工具，AiToEarn 还配套一套开箱即用的**插件与技能包**，覆盖「创作 → 剪辑 → 发布 → 变现」全链路，无需手写复杂提示词。
 
-在你的 AI 助手（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）对话框里直接粘贴下面这段即可安装，AI 会完成配置并引导你完成授权与验证：
+把下面这段粘贴到你的 AI 助手（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）对话框即可安装，AI 会完成配置，并引导你完成授权与验证：
 
 ```text
-帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills 的插件包
+帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills/trae-skill-aitoearn 的插件包（中国版 aitoearn.cn）
 ```
 
-> 🔐 **插件已全面改用 OAuth 鉴权，不再使用 API Key。** 安装过旧版插件的用户：请先删除旧插件和旧的 MCP/连接器配置（含旧 API Key），再重新安装；安装后按提示到 MCP 连接处主动完成 OAuth 授权，国内站与国际站授权不通用。
+粘贴前按需改两处：
+
+1. **平台**：把链接末尾的目录换成你所用平台的包，只下载该子目录，不要克隆整个仓库。
+2. **版本**：中国版用 `aitoearn.cn`，国际版用 `aitoearn.ai`，两个版本只装一个。
+
+| 客户端 | 目录 |
+| --- | --- |
+| Codex | `codex-plugin-aitoearn` |
+| Claude Code | `claude-plugin-aitoearn` |
+| Trae | `trae-skill-aitoearn` |
+| 豆包 | `doubao-skill-aitoearn` |
+| 千问 | `qwen-skill-aitoearn` |
+| 千问办公 | `qwenwork-plugin-aitoearn` |
+| Kimi Work | `kimi-plugin-aitoearn` |
+| DeepSeek Harness | `dsh-plugin-aitoearn` |
+
+> 🌍 国际版只改括号内的版本即可，例如 `...skills/codex-plugin-aitoearn 的插件包（国际版 aitoearn.ai）`。国内站与国际站的授权不通用。
+
+> ⚠️ **Codex 用中国站时必须把 MCP 连接类型改为 DCR**：设置 → 插件 → MCP → 找到 AiToEarn 的 server，把连接类型从「自动」改为「动态客户端注册 (DCR)」，再点「进行身份验证」完成 OAuth 授权。命令行等价参数为 `codex mcp login aitoearn-cn --oauth-client-registration dcr`；该参数不能省略，否则默认登录方式依赖服务端访问 `chatgpt.com`，中国站不可达，授权页会报「应用配置错误」。
+
+> 🔐 **插件已全面改用 OAuth 鉴权，不再使用 API Key。** 安装过旧版插件的用户：请先删除旧插件和旧的 MCP/连接器配置（含旧 API Key），再重新安装；安装后按提示到 MCP 连接处主动完成 OAuth 授权。
 
 各平台的安装方式与详细说明见 [AiToEarn 文档站](https://docs.aitoearn.ai/zh/use/installer-pack)。
 

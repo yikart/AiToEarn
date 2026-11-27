@@ -58,6 +58,8 @@ If AiToEarn tools are missing from the session or the server returns an authoriz
 2. Complete the OAuth flow shown by Kimi Work. Never request, save, print, or configure a static credential.
 3. Retry only after the client reports that authorization completed. If there is no OAuth entry point or authorization fails, state that MCP remains unavailable and stop.
 
+When the user asks to switch between the China version and the international version, treat it as a reconnect: the two authorizations are not interchangeable. Have the user remove the current AiToEarn MCP server/connector, add the target version's URL, complete OAuth authorization again, and verify with "List my available publishing channels". Keep only one version connected at a time.
+
 ## Terminology
 
 In Chinese output, always render credits as 积分; never write 信用, 信用消耗, 点数, or similar variants. Keep amounts unchanged.
@@ -82,4 +84,4 @@ Limits come from `get_channel_platform` / `list_channel_platforms`, not from mem
 
 ## Presenting your work
 
-Lead with the usable deliverable. Do not dump raw tool JSON or internal ids.
+Lead with the usable deliverable. Do not dump raw tool JSON or internal ids. Every image, video, and audio asset generated through AiToEarn must be delivered with its returned URL written verbatim in the reply; for asynchronous tasks, wait for completion and report the final URL — never just a task ID or a local path. Omitting the URL is a failed delivery.

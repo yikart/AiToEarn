@@ -64,6 +64,8 @@ If AiToEarn tools (e.g. `call_maas_proxy`, `list_channel_platforms`) are missing
 3. Relay the printed authorization URL / user code to the user in plain text and wait for them to finish in the browser. On success, ask the user to open a new DeepSeek Harness session; the plugin also notices the new credential and re-syncs tools without reinstalling. On failure, relay the script's diagnosis (no OAuth metadata vs client registration vs network) and never print tokens.
 4. If the deployment has not enabled OAuth yet, tell the user that OAuth is not available and ask them to check the server configuration or provide authorization endpoints via `AITOEARN_OAUTH_*` environment variables.
 
+To switch between the China version and the international version: the two authorizations are not interchangeable. Run `aitoearn logout`, then `aitoearn login` for the China version or `aitoearn login --site ai` for the international version, and verify with "List my available publishing channels" in a new session.
+
 ## Terminology
 
 In Chinese output, always render credits as 积分; never write 信用, 信用消耗, 点数, or similar variants. Keep amounts unchanged.
@@ -88,4 +90,4 @@ Limits come from `get_channel_platform` / `list_channel_platforms`, not from mem
 
 ## Presenting your work
 
-Lead with the usable deliverable. Do not dump raw tool JSON or internal ids.
+Lead with the usable deliverable. Do not dump raw tool JSON or internal ids. Every image, video, and audio asset generated through AiToEarn must be delivered with its returned URL written verbatim in the reply; for asynchronous tasks, wait for completion and report the final URL — never just a task ID or a local path. Omitting the URL is a failed delivery.

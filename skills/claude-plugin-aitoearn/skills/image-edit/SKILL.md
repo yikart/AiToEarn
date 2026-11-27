@@ -66,7 +66,7 @@ Do not call other image CLIs, local scripts, or external image APIs.
 5. Call `image_edit` once with the full pipeline.
 6. Verify the output (`width`/`height`/`format`/`sizeBytes` match the request, e.g. size limit honored).
 7. Iterate by re-running the whole pipeline from the original URL with adjusted params — do not chain edits on the edited output (avoids compounding loss).
-8. Report the returned `url` and the final params.
+8. Write the returned `url` verbatim in your reply (omitting the URL is a failed delivery), and report the final params.
 
 ## Recipes
 

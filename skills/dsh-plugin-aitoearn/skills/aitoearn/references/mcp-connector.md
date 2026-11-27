@@ -6,11 +6,11 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
 ## 连接方式
 
 - 插件加载 `cordis.patch.yml` 后，用配置里的 `url` 连接 MCP 端点：
-  - 国内站（默认）：`https://aitoearn.cn/api/ai/agent/mcp`
-  - 海外站：`https://aitoearn.ai/api/ai/agent/mcp`
+  - 中国版（默认）：`https://aitoearn.cn/api/ai/agent/mcp`
+  - 国际版：`https://aitoearn.ai/api/ai/agent/mcp`
 - 每次请求前从 `~/.aitoearn/oauth.json` 取访问令牌并加 `Authorization: Bearer`；
   令牌临近过期时自动用刷新令牌续期，收到 401/403 时强制刷新并重试一次。
-- 默认授权国内站。海外站在 `cordis.patch.yml` 写 `site: ai`，或登录时加 `--site ai`。两站授权不通用。
+- 默认授权中国版。国际版在 `cordis.patch.yml` 写 `site: ai`，或登录时加 `--site ai`。中国版与国际版的授权不通用。
 
 ## OAuth 授权
 
@@ -22,7 +22,7 @@ AiToEarn 的内容生成（文案、图片、视频）与全平台发布能力�
 node ~/.dsh/plugins/dsh-plugin-aitoearn/scripts/aitoearn.mjs login
 ```
 
-登录默认打开 https://aitoearn.cn 。海外站加 `--site ai`，打开 https://aitoearn.ai 。
+登录默认打开 https://aitoearn.cn 。国际版加 `--site ai`，打开 https://aitoearn.ai 。
 
 脚本按以下顺序工作：
 
@@ -68,5 +68,5 @@ AITOEARN_OAUTH_CLIENT_ID=your-public-client \
 - 会话里看不到 aitoearn 工具：先运行 `status` 确认已授权，再新开一个会话；
   插件也会在检测到 `oauth.json` 变化后自动重新同步工具。
 - 调用返回 `-32001`：令牌缺失或过期。运行 `login` 重新授权；不要手工编辑令牌文件。
-- 工具数量明显偏少或调用 401/403：重新执行 `aitoearn login`。国内站用 aitoearn.cn 账号，海外站加 `--site ai` 后用 aitoearn.ai 账号。两站授权不能混用。
+- 工具数量明显偏少或调用 401/403：重新执行 `aitoearn login`。中国版用 aitoearn.cn 账号，国际版加 `--site ai` 后用 aitoearn.ai 账号。两个版本的授权不能混用。
 - 授权脚本报“未发现 OAuth 授权服务器”：按上一节显式指定端点，或联系部署方开启 OAuth。

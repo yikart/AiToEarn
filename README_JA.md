@@ -31,10 +31,30 @@ MCP サーバーに加え、AiToEarn には **プラグインとスキルバン�
 お使いの AI アシスタント（Claude Code / Codex / Trae / 豆包 / 千问 / 千问办公 / Kimi Work / DeepSeek Harness）のチャット欄に下記を貼り付けるだけでインストールできます（設定から OAuth 認証、検証まで AI が案内します）：
 
 ```text
-https://github.com/yikart/AiToEarn/tree/main/skills のプラグインパッケージをインストールしてください
+https://github.com/yikart/AiToEarn/tree/main/skills/trae-skill-aitoearn のプラグインパッケージをインストールしてください（中国サイト aitoearn.cn）
 ```
 
-> 🔐 **プラグインは OAuth 認証に全面移行しました（API Key は不要です）。** 旧版をインストール済みの方は、古いプラグインと MCP/コネクタ設定（API Key を含む）を削除してから再インストールし、案内に従って MCP 接続から OAuth 認証を完了してください。中国サイトと国際サイトの認証は共通ではありません。
+貼り付ける前に次の 2 点を変更してください：
+
+1. **プラットフォーム**：リンク末尾のディレクトリを、お使いのプラットフォームのパッケージに置き換えます。そのサブディレクトリのみをダウンロードし、リポジトリ全体はクローンしないでください。
+2. **エディション**：中国サイトは `aitoearn.cn`、国際サイトは `aitoearn.ai` を使用し、どちらか一方のみをインストールします。
+
+| クライアント | ディレクトリ |
+| --- | --- |
+| Codex | `codex-plugin-aitoearn` |
+| Claude Code | `claude-plugin-aitoearn` |
+| Trae | `trae-skill-aitoearn` |
+| 豆包 | `doubao-skill-aitoearn` |
+| 千问 | `qwen-skill-aitoearn` |
+| 千问办公 | `qwenwork-plugin-aitoearn` |
+| Kimi Work | `kimi-plugin-aitoearn` |
+| DeepSeek Harness | `dsh-plugin-aitoearn` |
+
+> 🌍 国際サイトの場合は括弧内だけを変更してください。例：`...skills/codex-plugin-aitoearn のプラグインパッケージをインストールしてください（国際サイト aitoearn.ai）`。中国サイトと国際サイトの認証は共通ではありません。
+
+> ⚠️ **Codex で中国サイトを使う場合は MCP 接続タイプを DCR に変更してください**：設定 → プラグイン → MCP → AiToEarn の server で、接続タイプを「自動」から「動的クライアント登録 (DCR)」に変更してから「認証」をクリックし、OAuth 認証を完了します。CLI の対応オプションは `codex mcp login aitoearn-cn --oauth-client-registration dcr` で、省略できません（省略すると既定のログイン方式がサーバーから `chatgpt.com` への到達を前提とするため、中国サイトでは到達できず、認証ページで「アプリケーション設定エラー」が発生します）。
+
+> 🔐 **プラグインは OAuth 認証に全面移行しました（API Key は不要です）。** 旧版をインストール済みの方は、古いプラグインと MCP/コネクタ設定（API Key を含む）を削除してから再インストールし、案内に従って MCP 接続から OAuth 認証を完了してください。
 
 プラットフォームごとのインストール方法と詳細は [AiToEarn ドキュメント](https://docs.aitoearn.ai/en/use/installer-pack) をご覧ください。
 
