@@ -9,62 +9,67 @@
 中文：
 
 ```
-帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills/codex-plugin-aitoearn 的插件包（中国版）。只下载该目录（例如 git sparse checkout，或只解压仓库压缩包中的这个子目录），不要克隆整个仓库。下载后按包内 README.md 和 安装提示词.md 完成安装，引导我完成 OAuth 授权，最后用「列出可用的发布渠道」验证。
+帮我安装 https://github.com/yikart/AiToEarn/tree/main/skills/codex-plugin-aitoearn 的插件包（中国版）。只下载该目录（例如 git sparse checkout，或只解压仓库压缩包中的这个子目录），不要克隆整个仓库。下载后按包内 README.md 和 安装提示词.md 完成安装：自动检查并注册 MCP，已有同名且配置正确的连接直接复用，不存在才注册，不要限制或擅自转换连接类型。需要 OAuth 时自动发起登录并引导我主动授权，已有有效授权不要重复登录。最后用「列出可用的发布渠道」验证。
 ```
 
 English:
 
 ```
-Install the AiToEarn plugin package for Codex from https://github.com/yikart/AiToEarn/tree/main/skills/codex-plugin-aitoearn (China version). Download only that directory (e.g. git sparse checkout, or extract just this subdirectory from the repository archive) — do NOT clone the whole repository. Then follow the package's README.md and 安装提示词.md to finish installation, guide me through OAuth authorization, and verify with "List my available publishing channels".
+Install the AiToEarn plugin package for Codex from https://github.com/yikart/AiToEarn/tree/main/skills/codex-plugin-aitoearn (China version). Download only that directory (e.g. git sparse checkout, or extract just this subdirectory from the repository archive) — do NOT clone the whole repository. Then follow the package's README.md and 安装提示词.md: inspect and register the MCP connection automatically, reuse an existing matching connection, register only when it is missing, and do not restrict or convert its transport type. Start OAuth automatically when needed and guide me through explicit authorization; do not repeat login when valid authorization already exists. Finally, verify with "List my available publishing channels".
 ```
 
 如果 AI 助手无法联网下载，请手动下载该目录（仓库页面 Code → Download ZIP 后只取 `skills/codex-plugin-aitoearn`，或用 sparse checkout），再把包内 `安装提示词.md` 的内容发给它。
 
+## 自动检查并注册 MCP
+
+安装器必须自己完成注册，不能把 `codex mcp add` 命令交给用户手工执行，也不能只检查 `.mcp.json` 文件是否存在。
+
+1. 确定目标版本：中国版使用 server 名 `aitoearn-cn` 与 `https://aitoearn.cn/api/ai/agent/mcp`；国际版使用 `aitoearn` 与 `https://aitoearn.ai/api/ai/agent/mcp`。两个版本只保留一个。
+2. 先运行 `codex mcp get <name> --json`：
+   - 已存在且 server 名、传输方式及 URL（或 stdio 启动配置）符合目标：直接复用，不删除、不重复注册、不主动重新授权；
+   - 不存在：由安装器自动执行 `codex mcp add`；
+   - 同名但配置不符：先展示差异并取得用户确认，再修正，不得静默覆盖。
+3. 不把连接类型写死。先读取包内 `.mcp.json` 和当前 `codex mcp add --help`，按服务的实际声明注册：URL 服务使用 `codex mcp add <name> --url <URL>`；stdio 服务使用 `codex mcp add <name> -- <COMMAND> [ARGS...]`，需要时再使用 CLI 支持的 `--env`。不得把 stdio 擅自改成 URL，也不得把 URL 服务擅自改成 stdio；遇到当前 Codex 不支持的传输方式，如实报告，不猜测配置字段。
+4. AiToEarn 官方服务当前使用 URL 连接，缺失时的注册命令为：
+
+```bash
+# 中国版
+codex mcp add aitoearn-cn --url https://aitoearn.cn/api/ai/agent/mcp
+
+# 国际版
+codex mcp add aitoearn --url https://aitoearn.ai/api/ai/agent/mcp
+```
+
+5. 注册后必须再次运行 `codex mcp get <name> --json` 和 `codex mcp list`，确认目标 server 已出现且为 `enabled`。只看到插件声明或配置文件，不等于注册成功。
+
+## OAuth MCP 配置与授权
+
+包内 `.mcp.json` 与插件清单的 `mcpServers` 引用一致，预设中国版，**不包含静态凭证**。它用于声明目标连接；安装器仍须按上节检查并注册实际可用的 MCP。使用国际版时，安装副本中的 server 名应为 `aitoearn`，URL 应为 `https://aitoearn.ai/api/ai/agent/mcp`。不要添加自定义请求头、环境变量或本地密钥文件。
+
+OAuth 必须由用户主动授权，但安装器应自动发起登录并打开或提供授权入口，不能让用户自己查找注册命令：
+
+- 中国版：需要授权时运行 `codex mcp login aitoearn-cn --oauth-client-registration dcr`。`dcr` 必须保留，因为默认 CIMD 方式要求服务端访问 chatgpt.com 的客户端元数据，中国版部署环境无法访问该域名；DCR 由服务端直接签发 client_id。
+- 国际版：需要授权时运行 `codex mcp login aitoearn`，使用默认注册方式，无需 DCR。
+- 如果 `codex mcp add` 已自动进入 OAuth 流程，直接引导用户完成该流程，不重复执行 `login`。
+- 已有有效授权时直接复用；不要仅因更新插件、重启 Codex 或重新安装而重复授权。只有服务明确返回未授权、授权已过期，或用户主动要求切换账号时，才重新发起授权。
+
+桌面版可在 设置 → 插件 → MCP 中完成授权；中国版的 OAuth 客户端注册方式选择「动态客户端注册 (DCR)」，国际版使用默认方式。这里只用于授权，不要求用户手工选择 MCP 传输类型或填写启动命令。
+
+如果没有 OAuth 授权入口或授权失败，必须明确报告“MCP 已注册，但 OAuth 尚未完成”，保留错误信息并停止；不得退回静态凭证，也不得把 `enabled` 当成已授权。
+
 ## 切换中国版 / 国际版
 
-两个版本的授权不通用，只保留一个连接。切换步骤：
+两个版本的授权不通用，只保留一个连接。切换版本属于用户明确要求的替换操作：
 
-1. 移除当前连接：`codex mcp remove aitoearn-cn`（国际版为 `aitoearn`）；
-2. 插件方式：直接改 `.mcp.json` 的 server 名与 URL 后重启认证；命令行方式（可选）按目标版本重新注册并登录：
-   - 中国版：`codex mcp add aitoearn-cn --url https://aitoearn.cn/api/ai/agent/mcp`，然后 `codex mcp login aitoearn-cn --oauth-client-registration dcr`（dcr 参数必须保留，原因见上节）；
-   - 国际版：`codex mcp add aitoearn --url https://aitoearn.ai/api/ai/agent/mcp`，然后 `codex mcp login aitoearn`（默认即可，无需 dcr）；
-3. 桌面版用户也可在 设置 → 插件 → MCP 中删除旧 server，按上节重新添加（手动添加时类型选「流式 HTTP」）；中国版再把连接类型改为「动态客户端注册 (DCR)」后认证，国际版直接认证即可；
-4. 以上登录即完成新版本的 OAuth 授权；完全退出并重启 Codex，发送「列出可用的发布渠道」验证。
+1. 移除当前 AiToEarn 连接：`codex mcp remove aitoearn-cn`（国际版为 `aitoearn`），不要删除其他 MCP 服务；
+2. 按「自动检查并注册 MCP」注册目标版本；
+3. 按「OAuth MCP 配置与授权」完成目标版本的授权；
+4. 运行 `codex mcp list` 确认目标 server 为 `enabled`，完全退出并重启 Codex，再发送「列出可用的发布渠道」验证。
 
 ## 更新已有安装
 
-如果以前安装过 AiToEarn，先在 Codex 卸载旧的 `aitoearn` 插件，并删除旧的 AiToEarn MCP 服务条目；仅处理 `aitoearn`、`aitoearn-cn` 或指向旧 AiToEarn 地址的条目，不要删除其他 MCP 服务。旧配置中的旧版 MCP 地址、认证请求头、环境变量和 API Key 也必须移除，然后再安装本包。
-
-## OAuth MCP 配置
-
-包内直接提供 `.mcp.json`，与插件清单的 `mcpServers` 引用一致。它预设中国版 `aitoearn-cn` 和 `https://aitoearn.cn/api/ai/agent/mcp`，**不包含静态凭证**。由 Codex 在连接时依据服务端 OAuth discovery 打开登录与授权流程；不要添加自定义请求头、环境变量或本地密钥文件。
-
-## 完成 OAuth 认证
-
-启用插件后，Codex 会**自动加载插件内 `.mcp.json` 声明的 MCP server，无需 `codex mcp add` 注册全局 MCP**——需要手动注册全局 MCP 的只有 Trae（见 Trae 包 README）。使用国际版时，先把 `.mcp.json` 的 server 名改为 `aitoearn`、URL 改为 `https://aitoearn.ai/api/ai/agent/mcp`。
-
-剩下的一步是 OAuth 认证，必须用户主动完成，不能装完就结束：**设置 → 插件 → MCP**，找到 AiToEarn server——中国版把连接类型从「自动」改为「动态客户端注册 (DCR)」再点「进行身份验证」；国际版直接点「进行身份验证」（已实测默认方式可用，无需 DCR）。
-
-习惯命令行的话，也可以走「全局注册 + login」的可选路径（与插件自动加载二选一，不要重复注册同名 server）：
-
-```bash
-# 中国版（dcr 参数必须保留，原因见下）
-codex mcp add aitoearn-cn --url https://aitoearn.cn/api/ai/agent/mcp
-codex mcp login aitoearn-cn --oauth-client-registration dcr
-
-# 国际版（默认登录方式即可，已实测无需 dcr）
-codex mcp add aitoearn --url https://aitoearn.ai/api/ai/agent/mcp
-codex mcp login aitoearn
-```
-
-在 设置 → 插件 → MCP 手动添加自定义 MCP 时：**类型必须选「流式 HTTP」**（默认停在 STDIO 无法连接），只填名称与 URL，不填启动命令、参数或环境变量。
-
-中国版的 `--oauth-client-registration dcr` 必须保留：Codex 默认的 CIMD 登录方式需要服务端拉取托管在 chatgpt.com 的客户端元数据文档，中国版服务端部署在国内、无法访问该域名，授权页会显示"应用配置错误"；DCR 动态注册由服务端直接签发 client_id，已实测可正常打开授权页。国际版已实测（2026-11-27）：默认登录方式即可正常打开授权页并完成授权，无需 dcr 参数。如果 `codex mcp add` 自动弹出的授权页显示"应用配置错误"，忽略该页面，继续执行上面的 dcr 登录命令即可。
-
-登录完成后运行 `codex mcp list`，确认对应 server 显示为 `enabled`。不要同时注册中国版和国际版，也不要追加认证请求头、环境变量或 API Key。
-
-如果 Codex 没有显示 OAuth 授权入口，必须明确报告“当前 Codex 环境无法完成 AiToEarn OAuth 连接”，停止配置，不得退回使用静态凭证。
+更新插件时不默认删除 MCP。先通过 `codex mcp get` 检查并复用正确连接；只有用户明确要求清理重装、切换版本，或确认修正错误配置时，才移除对应的 `aitoearn`、`aitoearn-cn` 或旧 AiToEarn 地址条目。不要删除其他 MCP 服务，不要复制旧配置中的认证请求头、环境变量或 API Key。
 
 ## 本地安装与验证
 
-将插件放入本地 marketplace 后启用 `aitoearn` 插件，按上节完成 OAuth 认证（插件自动加载 MCP，无需全局注册），然后完全退出并重启 Codex。新会话中发送「列出可用的发布渠道」验证：能列出渠道才表示 MCP 已连接；否则如实报告 OAuth 尚未完成或服务端不可用。
+将插件放入本地 marketplace 后启用 `aitoearn` 插件，由安装器按上节自动检查并注册 MCP，再在需要时引导用户完成 OAuth。完全退出并重启 Codex，在新会话中发送「列出可用的发布渠道」验证：只有工具实际出现并返回渠道列表，才能报告安装与连接均完成；否则分别报告插件、MCP 注册、OAuth 和渠道验证的实际状态。
